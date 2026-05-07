@@ -31,10 +31,19 @@ namespace PsdzRpcClient
         public PsdzRpcClient(TextWriter output = null, string caCertPath = null, string clientPfxPath = null)
         {
             _output = output;
-            _caCert     = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
-                        ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(Assembly.GetExecutingAssembly(), "ca.crt");
-            _clientCert = PsdzRpcCertificateHelper.LoadCertificate(clientPfxPath)
-                        ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(Assembly.GetExecutingAssembly(), "client.pfx");
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            if (!string.IsNullOrEmpty(caCertPath))
+            {
+                _caCert = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
+                          ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(caCertPath));
+            }
+
+            if (!string.IsNullOrEmpty(clientPfxPath))
+            {
+                _clientCert = PsdzRpcCertificateHelper.LoadCertificate(clientPfxPath)
+                              ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(clientPfxPath));
+            }
         }
 
         /// <summary>Verbindet via Named Pipe (bestehender Server).</summary>

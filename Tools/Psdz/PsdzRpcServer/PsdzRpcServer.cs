@@ -38,12 +38,19 @@ namespace PsdzRpcServer
             _dealerId = dealerId;
             _output = output;
             _tcpPort = tcpPort;
-            _caCert     = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
-                       ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(Assembly.GetExecutingAssembly(), "ca.crt");
-            _serverCert = PsdzRpcCertificateHelper.LoadCertificate(serverPfxPath)
-                       ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(Assembly.GetExecutingAssembly(), "server.pfx");
-            _clientCount = 0;
-            _hadClients = false;
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            if (!string.IsNullOrEmpty(caCertPath))
+            {
+                _caCert = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
+                          ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(caCertPath));
+            }
+
+            if (!string.IsNullOrEmpty(serverPfxPath))
+            {
+                _serverCert = PsdzRpcCertificateHelper.LoadCertificate(serverPfxPath)
+                           ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(serverPfxPath));
+            }
         }
 
         public async Task StartAsync(CancellationToken ct)
