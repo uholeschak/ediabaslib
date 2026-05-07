@@ -158,10 +158,10 @@ namespace PsdzRpcClient
             if (cert2 == null) return false;
 
             // CN des Server-Zertifikats prüfen
-            string expectedCn = "CN=PsdzRpcServer, O=EdiabasLib, C=DE";
-            if (string.Compare(cert2.Subject, expectedCn, StringComparison.OrdinalIgnoreCase) != 0)
+            string cn = cert2.GetNameInfo(X509NameType.SimpleName, forIssuer: false);
+            if (string.Compare(cn, "PsdzRpcServer", StringComparison.OrdinalIgnoreCase) != 0)
             {
-                _output?.WriteLine($"Server certificate subject mismatch: {cert2.Subject}");
+                _output?.WriteLine($"Server certificate CN mismatch: {cn}");
                 return false;
             }
 
