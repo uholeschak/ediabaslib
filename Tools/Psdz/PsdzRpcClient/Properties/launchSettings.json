@@ -10,7 +10,7 @@
     },
     "PsdzRpcClientTcpProxy": {
       "commandName": "Project",
-      "commandLineArgs": "--vehicleproxy -p 0"
+      "commandLineArgs": "--vehicleproxy -p 0 -s"
     },
     "PsdzRpcClientTcpProxyVmIsta": {
       "commandName": "Project",
