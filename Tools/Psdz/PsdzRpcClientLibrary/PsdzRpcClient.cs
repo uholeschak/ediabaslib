@@ -1,14 +1,15 @@
-﻿using PsdzRpcServer.Shared;
+﻿using Org.BouncyCastle.Tls;
+using PsdzRpcServer.Shared;
 using StreamJsonRpc;
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
-using System.Security.Authentication;
 
 namespace PsdzRpcClient
 {
@@ -87,7 +88,7 @@ namespace PsdzRpcClient
 #if NET
                     SslClientAuthenticationOptions options = new SslClientAuthenticationOptions
                     {
-                        TargetHost = _caCert != null ? "PsdzRpcServer" : hostName,
+                        TargetHost = _caCert != null ? PsdzRpcServiceConstants.ServerCnName : hostName,
                         EnabledSslProtocols = PsdzRpcServiceConstants.DefaultSslProtocols,
                         CertificateRevocationCheckMode = X509RevocationMode.NoCheck
                     };
@@ -159,7 +160,7 @@ namespace PsdzRpcClient
 
             // CN des Server-Zertifikats prüfen
             string cn = cert2.GetNameInfo(X509NameType.SimpleName, forIssuer: false);
-            if (string.Compare(cn, "PsdzRpcServer", StringComparison.OrdinalIgnoreCase) != 0)
+            if (string.Compare(cn, PsdzRpcServiceConstants.ServerCnName, StringComparison.OrdinalIgnoreCase) != 0)
             {
                 _output?.WriteLine($"Server certificate CN mismatch: {cn}");
                 return false;
