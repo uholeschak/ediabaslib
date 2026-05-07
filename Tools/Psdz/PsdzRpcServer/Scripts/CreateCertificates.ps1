@@ -1,10 +1,10 @@
 param(
     [string]$OutputPath = "$PSScriptRoot\..\..\Certificates",
-    [string]$Password = "BmwCoding12!!",
     [int]$ValidYears    = 100
 )
 
 $ErrorActionPreference = "Stop"
+$Password = "BmwCoding12!!"
 
 function Remove-OldCertificates
 {
