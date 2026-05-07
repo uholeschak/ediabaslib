@@ -132,6 +132,36 @@ function Remove-PfxPassword
     }
 }
 
+function Get-ExistingCaCertificate
+{
+    param(
+        [string]$OutputPath
+    )
+
+    $caCrtPath = "$OutputPath\ca.crt"
+    $caPfxPath = "$OutputPath\ca.pfx"
+
+    if (-not (Test-Path $caCrtPath) -or -not (Test-Path $caPfxPath))
+    {
+        return $null
+    }
+
+    # CA aus .pfx laden (enthält privaten Schlüssel zum Signieren)
+    $ca = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new(
+        $caPfxPath,
+        "",
+        [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
+
+    # Temporär in \My importieren damit -Signer funktioniert
+    $store = New-Object System.Security.Cryptography.X509Certificates.X509Store("My", "CurrentUser")
+    $store.Open("ReadWrite")
+    $store.Add($ca)
+    $store.Close()
+
+    Write-Host "CA reused: $($ca.Thumbprint)"
+    return $ca
+}
+
 # --- Passwort prüfen ---
 if ([string]::IsNullOrWhiteSpace($Password))
 {
@@ -142,16 +172,43 @@ if ([string]::IsNullOrWhiteSpace($Password))
 $secPwd = ConvertTo-SecureString -String $Password -Force -AsPlainText
 New-Item -ItemType Directory -Force -Path $OutputPath | Out-Null
 
-Remove-OldCertificates
-$ca = New-CaCertificate      -ValidYears $ValidYears
-Export-CaCertificate         -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd
-New-ServerCertificate        -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd -ValidYears $ValidYears
-New-ClientCertificate        -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd -ValidYears $ValidYears
+# Bestehende CA wiederverwenden oder neue erstellen
+$ca = Get-ExistingCaCertificate -OutputPath $OutputPath
+if ($ca -eq $null)
+{
+    Remove-OldCertificates
+    $ca = New-CaCertificate  -ValidYears $ValidYears
+    Export-CaCertificate     -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd
+    Remove-PfxPassword       -PfxPath "$OutputPath\ca.pfx"      -Password $Password
+}
+else
+{
+    # Nur Server/Client-Zertifikate bereinigen
+    $subjectsToClean = @(
+        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=PsdzRpcServer" },
+        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=PsdzRpcClient" }
+    )
+    foreach ($entry in $subjectsToClean)
+    {
+        Get-ChildItem -Path $entry.Store |
+            Where-Object { $_.Subject -like "*$($entry.Subject)*" } |
+            ForEach-Object {
+                Remove-Item -Path "$($entry.Store)\$($_.Thumbprint)" -Force
+                Write-Host "Removed old certificate: $($_.Subject) [$($_.Thumbprint)]"
+            }
+    }
+}
 
-foreach ($pfx in @("ca.pfx", "server.pfx", "client.pfx"))
+New-ServerCertificate -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd -ValidYears $ValidYears
+New-ClientCertificate -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd -ValidYears $ValidYears
+
+foreach ($pfx in @("server.pfx", "client.pfx"))
 {
     Remove-PfxPassword -PfxPath "$OutputPath\$pfx" -Password $Password
 }
+
+# CA aus \My entfernen (wurde nur temporär für -Signer benötigt)
+Remove-Item -Path "Cert:\CurrentUser\My\$($ca.Thumbprint)" -Force -ErrorAction SilentlyContinue
 
 Write-Host "`nAll certificates saved to: $OutputPath"
 Write-Host "Password removed from all .pfx files"
