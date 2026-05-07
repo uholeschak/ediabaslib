@@ -58,7 +58,6 @@ function New-ServerCertificate
 
     $server = New-SelfSignedCertificate `
         -Subject           "CN=PsdzRpcServer, O=EdiabasLib, C=DE" `
-        -DnsName           "bmw_coding.holeschak.de", "vm-ista.local.holeschak.de", "localhost", "127.0.0.1" `
         -KeyUsage          DigitalSignature, KeyEncipherment `
         -KeyLength         2048 `
         -HashAlgorithm     SHA256 `
