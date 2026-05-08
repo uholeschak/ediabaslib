@@ -7,7 +7,6 @@
     <Platforms>AnyCPU</Platforms>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>latest</LangVersion>
-    <RpcCertificates>..\RpcCertificates</RpcCertificates>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcClient.pfx" Link="Certificates\PsdzRpcClient.pfx" Condition="Exists('$(RpcCertificates)\PsdzRpcClient.pfx')" />
