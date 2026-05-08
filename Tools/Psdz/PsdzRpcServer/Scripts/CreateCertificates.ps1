@@ -6,12 +6,21 @@ param(
 $ErrorActionPreference = "Stop"
 $Password = "BmwCoding12!!"
 
+# --- Konstanten (müssen mit PsdzRpcServiceConstants übereinstimmen) ---
+$CaCertFile    = "PsdzRpcCa.crt"
+$CaPfxFile     = "PsdzRpcCa.pfx"
+$ServerPfxFile = "PsdzRpcServer.pfx"
+$ClientPfxFile = "PsdzRpcClient.pfx"
+$CaCnName      = "PsdzRpc-CA"
+$ServerCnName  = "PsdzRpcServer"
+$ClientCnName  = "PsdzRpcClient"
+
 function Remove-OldCertificates
 {
     $subjectsToClean = @(
-        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=PsdzRpc-CA" },
-        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=PsdzRpcServer" },
-        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=PsdzRpcClient" }
+        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=$CaCnName" },
+        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=$ServerCnName" },
+        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=$ClientCnName" }
     )
 
     foreach ($entry in $subjectsToClean)
@@ -34,7 +43,7 @@ function New-CaCertificate
     )
 
     $ca = New-SelfSignedCertificate `
-        -Subject           "CN=PsdzRpc-CA, O=EdiabasLib, C=DE" `
+        -Subject    "CN=$CaCnName, O=EdiabasLib, C=DE" `
         -KeyUsage          CertSign, CRLSign `
         -KeyUsageProperty  Sign `
         -KeyLength         4096 `
@@ -57,7 +66,7 @@ function New-ServerCertificate
     )
 
     $server = New-SelfSignedCertificate `
-        -Subject           "CN=PsdzRpcServer, O=EdiabasLib, C=DE" `
+        -Subject    "CN=$ServerCnName, O=EdiabasLib, C=DE" `
         -KeyUsage          DigitalSignature, KeyEncipherment `
         -KeyLength         2048 `
         -HashAlgorithm     SHA256 `
@@ -66,7 +75,7 @@ function New-ServerCertificate
         -FriendlyName      "PsdzRpc Server" `
         -Signer            $CaCert
 
-    Export-PfxCertificate -Cert $server -FilePath "$OutputPath\server.pfx" -Password $SecurePassword | Out-Null
+    Export-PfxCertificate -Cert $server -FilePath "$OutputPath\$ServerPfxFile" -Password $SecurePassword | Out-Null
     Write-Host "Server created: $($server.Thumbprint)"
 }
 
@@ -80,7 +89,7 @@ function New-ClientCertificate
     )
 
     $client = New-SelfSignedCertificate `
-        -Subject           "CN=PsdzRpcClient, O=EdiabasLib, C=DE" `
+        -Subject    "CN=$ClientCnName, O=EdiabasLib, C=DE" `
         -KeyUsage          DigitalSignature `
         -KeyLength         2048 `
         -HashAlgorithm     SHA256 `
@@ -89,7 +98,7 @@ function New-ClientCertificate
         -FriendlyName      "PsdzRpc Client" `
         -Signer            $CaCert
 
-    Export-PfxCertificate -Cert $client -FilePath "$OutputPath\client.pfx" -Password $SecurePassword | Out-Null
+    Export-PfxCertificate -Cert $client -FilePath "$OutputPath\$ClientPfxFile" -Password $SecurePassword | Out-Null
     Write-Host "Client created: $($client.Thumbprint)"
 }
 
@@ -101,8 +110,8 @@ function Export-CaCertificate
         [securestring]$SecurePassword
     )
 
-    Export-PfxCertificate -Cert $CaCert -FilePath "$OutputPath\ca.pfx" -Password $SecurePassword | Out-Null
-    Export-Certificate    -Cert $CaCert -FilePath "$OutputPath\ca.crt" -Type CERT                | Out-Null
+    Export-PfxCertificate -Cert $CaCert -FilePath "$OutputPath\$CaPfxFile"  -Password $SecurePassword | Out-Null
+    Export-Certificate    -Cert $CaCert -FilePath "$OutputPath\$CaCertFile" -Type CERT                 | Out-Null
 
     Write-Host "CA exported: $($CaCert.Thumbprint)"
 }
@@ -113,6 +122,17 @@ function Remove-PfxPassword
         [string]$PfxPath,
         [string]$Password
     )
+
+    # Zuerst prüfen ob die Datei überhaupt ein Passwort hat
+    try
+    {
+        # Laden ohne Passwort – wenn das klappt, ist kein Passwort gesetzt
+        $testCert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($PfxPath)
+        $testCert.Dispose()
+        Write-Host "No password on: $PfxPath (skipped)"
+        return
+    }
+    catch { }
 
     $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new(
         $PfxPath,
@@ -137,8 +157,8 @@ function Get-ExistingCaCertificate
         [string]$OutputPath
     )
 
-    $caCrtPath = "$OutputPath\ca.crt"
-    $caPfxPath = "$OutputPath\ca.pfx"
+    $caCrtPath = "$OutputPath\$CaCertFile"
+    $caPfxPath = "$OutputPath\$CaPfxFile"
 
     if (-not (Test-Path $caCrtPath) -or -not (Test-Path $caPfxPath))
     {
@@ -178,14 +198,14 @@ if ($ca -eq $null)
     Remove-OldCertificates
     $ca = New-CaCertificate  -ValidYears $ValidYears
     Export-CaCertificate     -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd
-    Remove-PfxPassword       -PfxPath "$OutputPath\ca.pfx"      -Password $Password
+    Remove-PfxPassword       -PfxPath "$OutputPath\PsdzRpcCa.pfx"      -Password $Password
 }
 else
 {
     # Nur Server/Client-Zertifikate bereinigen
     $subjectsToClean = @(
-        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=PsdzRpcServer" },
-        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=PsdzRpcClient" }
+        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=$ServerCnName" },
+        @{ Store = "Cert:\CurrentUser\My"; Subject = "CN=$ClientCnName" }
     )
     foreach ($entry in $subjectsToClean)
     {
@@ -201,7 +221,8 @@ else
 New-ServerCertificate -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd -ValidYears $ValidYears
 New-ClientCertificate -CaCert $ca -OutputPath $OutputPath -SecurePassword $secPwd -ValidYears $ValidYears
 
-foreach ($pfx in @("server.pfx", "client.pfx"))
+Remove-PfxPassword -PfxPath "$OutputPath\$CaPfxFile"     -Password $Password
+foreach ($pfx in @($ServerPfxFile, $ClientPfxFile))
 {
     Remove-PfxPassword -PfxPath "$OutputPath\$pfx" -Password $Password
 }
