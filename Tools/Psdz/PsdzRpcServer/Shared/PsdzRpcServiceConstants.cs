@@ -10,12 +10,18 @@ namespace PsdzRpcServer.Shared
     public static class PsdzRpcServiceConstants
     {
         public const string PipeName = "PsdzJsonRpcPipe";
-        public const string ServerCnName = "PsdzRpcServer";
         public const string DealerId = "40626";
         public const string Localhost = "127.0.0.1";
         public const int InterfaceVersion = 1;
         public const int DefaultTcpPort = 9090;
         public const SslProtocols DefaultSslProtocols = SslProtocols.Tls13;
+        public const string ServerCnName = "PsdzRpcServer";
+        public const string CaCertFile = "PsdzRpcCa.crt";
+        public const string CaPfxFile = "PsdzRpcCa.pfx";
+        public const string ServerPfxFile = "PsdzRpcServer.pfx";
+        public const string ClientPfxFile = "PsdzRpcClient.pfx";
+        public const string CaCnName = "PsdzRpc-CA";
+        public const string ClientCnName = "PsdzRpcClient";
 
         /// <summary>
         /// Berechnet eine Signatur aller Methoden des Interfaces.

@@ -108,8 +108,9 @@ namespace PsdzRpcServer
                 Console.WriteLine("SSL enabled");
 
                 string certsPath = Path.Combine(appDir, "Certificates");
-                caCertPath = Path.Combine(certsPath, "ca.crt");
-                serverPfxPath = Path.Combine(certsPath, "server.pfx");
+                caCertPath    = Path.Combine(certsPath, PsdzRpcServiceConstants.CaCertFile);
+                serverPfxPath = Path.Combine(certsPath, PsdzRpcServiceConstants.ServerPfxFile);
+
                 if (File.Exists(caCertPath))
                 {
                     Console.WriteLine($"CA certificate found at {caCertPath}");
