@@ -7,6 +7,7 @@
     <Platforms>AnyCPU</Platforms>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>latest</LangVersion>
+    <RpcCertificates>..\RpcCertificates</RpcCertificates>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="..\PsdzClient\log4net_config.xml" Link="log4net_config.xml">
@@ -14,8 +15,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\RpcCertificates\PsdzRpcServer.pfx" Link="RpcCertificates\PsdzRpcServer.pfx" Condition="Exists('..\RpcCertificates\PsdzRpcServer.pfx')" />
-    <EmbeddedResource Include="..\RpcCertificates\PsdzRpcCa.crt"     Link="RpcCertificates\PsdzRpcCa.crt"     Condition="Exists('..\RpcCertificates\PsdzRpcCa.crt')" />
+    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcServer.pfx" Link="Certificates\PsdzRpcServer.pfx" Condition="Exists('$(RpcCertificates)\PsdzRpcServer.pfx')" />
+    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcCa.crt"     Link="Certificates\PsdzRpcCa.crt"     Condition="Exists('$(RpcCertificates)\PsdzRpcCa.crt')" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />

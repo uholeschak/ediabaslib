@@ -16,7 +16,7 @@ namespace PsdzRpcServer.Shared
         public const int DefaultTcpPort = 9090;
         public const SslProtocols DefaultSslProtocols = SslProtocols.Tls13;
         public const string ServerCnName = "PsdzRpcServer";
-        public const string CertDir = "RpcCertificates";
+        public const string CertDir = "Certificates";
         public const string CaCertFile = "PsdzRpcCa.crt";
         public const string CaPfxFile = "PsdzRpcCa.pfx";
         public const string ServerPfxFile = "PsdzRpcServer.pfx";
