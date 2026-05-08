@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net10.0-windows10.0.26100.0;net481</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows10.0.26100.0;net481;net10.0-android36.1</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <Platforms>AnyCPU</Platforms>
@@ -8,14 +8,20 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-      <Compile Include="..\PsdzRpcServer\Shared\**\*.cs" LinkBase="Shared" />
+    <Compile Include="..\PsdzRpcServer\Shared\**\*.cs" LinkBase="Shared" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
+    <Compile Remove="PsdzRpcServerStarter.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Nerdbank.MessagePack" Version="1.1.62" />
     <PackageReference Include="StreamJsonRpc" Version="2.24.84" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.7" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
     <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
+    <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj" />
   </ItemGroup>
 </Project>
