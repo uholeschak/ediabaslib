@@ -31,6 +31,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzRpcClientLibrary", "Psd
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibAndroidNet", "..\..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj", "{482D16DA-0386-CACC-E50A-747FC305BE47}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{08D47877-5A73-487E-89F6-2359D39D5CA4}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
