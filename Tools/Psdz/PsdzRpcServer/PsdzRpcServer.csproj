@@ -14,8 +14,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Certificates\server.pfx" Link="Certificates\server.pfx" Condition="Exists('..\Certificates\server.pfx')" />
-    <EmbeddedResource Include="..\Certificates\ca.crt"     Link="Certificates\ca.crt"     Condition="Exists('..\Certificates\ca.crt')" />
+    <EmbeddedResource Include="..\Certificates\PsdzRpcServer.pfx" Link="Certificates\PsdzRpcServer.pfx" Condition="Exists('..\Certificates\PsdzRpcServer.pfx')" />
+    <EmbeddedResource Include="..\Certificates\PsdzRpcCa.crt"     Link="Certificates\PsdzRpcCa.crt"     Condition="Exists('..\Certificates\PsdzRpcCa.crt')" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />

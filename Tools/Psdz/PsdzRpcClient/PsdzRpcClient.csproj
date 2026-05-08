@@ -9,8 +9,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Certificates\client.pfx" Link="Certificates\client.pfx" Condition="Exists('..\Certificates\client.pfx')" />
-    <EmbeddedResource Include="..\Certificates\ca.crt"     Link="Certificates\ca.crt"     Condition="Exists('..\Certificates\ca.crt')" />
+    <EmbeddedResource Include="..\Certificates\PsdzRpcClient.pfx" Link="Certificates\PsdzRpcClient.pfx" Condition="Exists('..\Certificates\PsdzRpcClient.pfx')" />
+    <EmbeddedResource Include="..\Certificates\PsdzRpcCa.crt"     Link="Certificates\PsdzRpcCa.crt"     Condition="Exists('..\Certificates\PsdzRpcCa.crt')" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
