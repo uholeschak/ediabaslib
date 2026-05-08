@@ -33,7 +33,6 @@
     <Compile Remove="EdBluetoothInterfaceAndroid.cs" />
     <Compile Remove="EdFtdiInterfaceAndroid.cs" />
     <Compile Remove="EdSimInterface.cs" />
-    <Compile Remove="EdWebServer.cs" />
     <Compile Remove="MemoryStreamReaderAndroid.cs" />
     <Compile Remove="MemoryStreamReaderCe.cs" />
   </ItemGroup>
