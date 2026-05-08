@@ -1,11 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <_DotNetRoot Condition="'$(DOTNET_ROOT)' != ''">$(DOTNET_ROOT)</_DotNetRoot>
-    <_DotNetRoot Condition="'$(_DotNetRoot)' == '' And Exists('C:\Program Files\dotnet')">C:\Program Files\dotnet</_DotNetRoot>
-    <_DotNetRoot Condition="'$(_DotNetRoot)' == '' And Exists('$(LOCALAPPDATA)\Microsoft\dotnet')">$(LOCALAPPDATA)\Microsoft\dotnet</_DotNetRoot>
-    <_DotNetRoot Condition="'$(_DotNetRoot)' == '' And Exists('$(VSINSTALLDIR)\dotnet')">$(VSINSTALLDIR)\dotnet</_DotNetRoot>
-    <_AndroidWorkloadInstalled Condition="Exists('$(_DotNetRoot)\packs\Microsoft.Android.Sdk.Windows')">true</_AndroidWorkloadInstalled>
-    <_AndroidTargets Condition="'$(_AndroidWorkloadInstalled)' == 'true'">net10.0-android36.1</_AndroidTargets>
+    <_AndroidTargets Condition="'$(EnableAndroidTargets)' == 'true'">net10.0-android36.1</_AndroidTargets>
     <TargetFrameworks>net10.0-windows10.0.26100.0;net481;$(_AndroidTargets)</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>

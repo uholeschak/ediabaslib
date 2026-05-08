@@ -2,5 +2,6 @@
   <PropertyGroup>
     <RpcCertificates>$(MSBuildThisFileDirectory)RpcCertificates</RpcCertificates>
     <RpcCertificatesLink>Certificates</RpcCertificatesLink>
+    <EnableAndroidTargets>true</EnableAndroidTargets>
   </PropertyGroup>
 </Project>
