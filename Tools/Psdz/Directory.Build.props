@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
     <RpcCertificates>$(MSBuildThisFileDirectory)RpcCertificates</RpcCertificates>
+    <RpcCertificatesLink>Certificates</RpcCertificatesLink>
   </PropertyGroup>
 </Project>

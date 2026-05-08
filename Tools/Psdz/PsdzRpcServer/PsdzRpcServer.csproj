@@ -14,8 +14,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcServer.pfx" Link="Certificates\PsdzRpcServer.pfx" Condition="Exists('$(RpcCertificates)\PsdzRpcServer.pfx')" />
-    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcCa.crt"     Link="Certificates\PsdzRpcCa.crt"     Condition="Exists('$(RpcCertificates)\PsdzRpcCa.crt')" />
+    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcServer.pfx" Link="$(RpcCertificatesLink)\PsdzRpcServer.pfx" Condition="Exists('$(RpcCertificates)\PsdzRpcServer.pfx')" />
+    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcCa.crt"     Link="$(RpcCertificatesLink)\PsdzRpcCa.crt"     Condition="Exists('$(RpcCertificates)\PsdzRpcCa.crt')" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
