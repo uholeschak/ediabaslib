@@ -12,7 +12,7 @@
   <PropertyGroup>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
   </PropertyGroup>
-    <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481') ">
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
         <Reference Include="System.Windows.Forms" />
         <Reference Include="System.Data.DataSetExtensions" />
         <Reference Include="Microsoft.CSharp" />

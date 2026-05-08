@@ -62,7 +62,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-    <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481') ">
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
         <Reference Include="System.ComponentModel.DataAnnotations" />
         <Reference Include="System.Configuration" />
         <Reference Include="System.Management" />
