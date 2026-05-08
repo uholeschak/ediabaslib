@@ -107,7 +107,7 @@ namespace PsdzRpcServer
             {
                 Console.WriteLine("SSL enabled");
 
-                string certsPath = Path.Combine(appDir, "Certificates");
+                string certsPath = Path.Combine(appDir, PsdzRpcServiceConstants.CertDir);
                 caCertPath    = Path.Combine(certsPath, PsdzRpcServiceConstants.CaCertFile);
                 serverPfxPath = Path.Combine(certsPath, PsdzRpcServiceConstants.ServerPfxFile);
 

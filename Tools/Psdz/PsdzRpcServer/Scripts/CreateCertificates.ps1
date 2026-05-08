@@ -1,5 +1,5 @@
 param(
-    [string]$OutputPath = "$PSScriptRoot\..\..\Certificates",
+    [string]$OutputPath = "$PSScriptRoot\..\..\RpcCertificates",
     [int]$ValidYears    = 100
 )
 
