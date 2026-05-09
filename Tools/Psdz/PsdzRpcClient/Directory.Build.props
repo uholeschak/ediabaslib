@@ -1,12 +1,9 @@
 <Project>
-    <!-- Bevorzugt: aus Solution-Verzeichnis -->
-    <Import Project="$(SolutionDir)Directory.Build.props"
-            Condition="'$(SolutionDir)' != '' And Exists('$(SolutionDir)Directory.Build.props')" />
-    <!-- Fallback: übergeordnetes Verzeichnis -->
-    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"
-            Condition="'$(SolutionDir)' == '' Or !Exists('$(SolutionDir)Directory.Build.props')" />
+  <!-- Übergeordnete Directory.Build.props einbinden -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
-    <PropertyGroup>
-        <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
-    </PropertyGroup>
+  <!-- See https://aka.ms/dotnet/msbuild/customize for more details on customizing your build -->
+  <PropertyGroup>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
+  </PropertyGroup>
 </Project>
