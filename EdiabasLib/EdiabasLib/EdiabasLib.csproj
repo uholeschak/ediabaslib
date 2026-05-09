@@ -28,12 +28,14 @@
       <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" GeneratePathProperty="true" />
       <PackageReference Include="System.IO.Ports" Version="10.0.7" GeneratePathProperty="true" />
   </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
+     <PackageReference Include="SharpZipLib" Version="1.4.2" />
+  </ItemGroup>
   <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
     <Compile Remove="BtLeGattSppAndroid.cs" />
     <Compile Remove="EdBluetoothInterfaceAndroid.cs" />
     <Compile Remove="EdFtdiInterfaceAndroid.cs" />
     <Compile Remove="EdSimInterface.cs" />
     <Compile Remove="MemoryStreamReaderAndroid.cs" />
-    <Compile Remove="MemoryStreamReaderCe.cs" />
   </ItemGroup>
 </Project>
