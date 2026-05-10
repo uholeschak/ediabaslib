@@ -1,0 +1,7 @@
+<Project>
+    <Import Project="$(SolutionDir)Directory.Build.props"
+            Condition="'$(SolutionDir)' != '' And Exists('$(SolutionDir)Directory.Build.props')" />
+
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"
+            Condition="'$(SolutionDir)' == '' Or !Exists('$(SolutionDir)Directory.Build.props')" />
+</Project>

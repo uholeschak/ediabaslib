@@ -2,18 +2,20 @@
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</ProjectGuid>
-    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net481</TargetFrameworks>
+    <_AndroidTargets Condition="'$(EnableAndroidTargets)' == 'true'">net10.0-android36.1</_AndroidTargets>
+    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net481;$(_AndroidTargets)</TargetFrameworks>
     <AssemblyTitle>EDIABAS .NET Library</AssemblyTitle>
     <Product>EdiabasLib</Product>
     <Description>EDIABAS .NET Library</Description>
     <Copyright>Ulrich Holeschak</Copyright>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>EdiabasLib.snk</AssemblyOriginatorKeyFile>
     <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup Condition="!$(TargetFramework.Contains('android'))">
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>EdiabasLib.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('android'))">
+     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" GeneratePathProperty="true" />
@@ -28,12 +30,22 @@
       <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" GeneratePathProperty="true" />
       <PackageReference Include="System.IO.Ports" Version="10.0.7" GeneratePathProperty="true" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
+     <PackageReference Include="SharpZipLib" Version="1.4.2" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
+    <Compile Remove="BtLeGattSpp.cs" />
+    <Compile Remove="EdBluetoothInterface.cs" />
+    <Compile Remove="EdFtdiInterface.cs" />
+    <Compile Remove="MemoryStreamReader.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
     <Compile Remove="BtLeGattSppAndroid.cs" />
     <Compile Remove="EdBluetoothInterfaceAndroid.cs" />
     <Compile Remove="EdFtdiInterfaceAndroid.cs" />
-    <Compile Remove="EdSimInterface.cs" />
     <Compile Remove="MemoryStreamReaderAndroid.cs" />
-    <Compile Remove="MemoryStreamReaderCe.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
+    <ProjectReference Include="..\AndroidNetBindings\UsbSerialNetBinding\UsbSerialNetBinding.csproj" />
   </ItemGroup>
 </Project>

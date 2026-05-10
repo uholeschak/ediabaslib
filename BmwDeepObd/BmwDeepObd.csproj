@@ -96,7 +96,7 @@
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\DragListViewNetBinding\DragListViewNetBinding.csproj" />
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\SkydovesBalloonBinding\SkydovesBalloonBinding.csproj" />
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\UsbSerialNetBinding\UsbSerialNetBinding.csproj" />
-    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj" />
+    <ProjectReference Include="..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HexFiles\Type9\" />
