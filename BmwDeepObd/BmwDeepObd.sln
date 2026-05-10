@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34330.188
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11723.231 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BmwDeepObd", "BmwDeepObd.csproj", "{A754263F-50BD-4D7F-BB74-3A8FFBABDC3A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdiabasLibAndroidNet", "..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj", "{D5C0412D-40C4-48C7-B3A6-1D4FD45D1D09}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsbSerialNetBinding", "..\EdiabasLib\AndroidNetBindings\UsbSerialNetBinding\UsbSerialNetBinding.csproj", "{E5F53F56-E1FC-4D8B-AEB1-EBF5B4A944B9}"
 EndProject
@@ -14,6 +12,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomGaugeNetBinding", "..\EdiabasLib\AndroidNetBindings\CustomGaugeNetBinding\CustomGaugeNetBinding.csproj", "{281BD77B-5D28-47AE-8DD9-6FB995812EC7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkydovesBalloonBinding", "..\EdiabasLib\AndroidNetBindings\SkydovesBalloonBinding\SkydovesBalloonBinding.csproj", "{CE3F675E-9BDA-453C-8498-BBF7FE923A68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "..\EdiabasLib\EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +27,6 @@ Global
 		{A754263F-50BD-4D7F-BB74-3A8FFBABDC3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A754263F-50BD-4D7F-BB74-3A8FFBABDC3A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A754263F-50BD-4D7F-BB74-3A8FFBABDC3A}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{D5C0412D-40C4-48C7-B3A6-1D4FD45D1D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5C0412D-40C4-48C7-B3A6-1D4FD45D1D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5C0412D-40C4-48C7-B3A6-1D4FD45D1D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5C0412D-40C4-48C7-B3A6-1D4FD45D1D09}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5F53F56-E1FC-4D8B-AEB1-EBF5B4A944B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E5F53F56-E1FC-4D8B-AEB1-EBF5B4A944B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5F53F56-E1FC-4D8B-AEB1-EBF5B4A944B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,6 +43,10 @@ Global
 		{CE3F675E-9BDA-453C-8498-BBF7FE923A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE3F675E-9BDA-453C-8498-BBF7FE923A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE3F675E-9BDA-453C-8498-BBF7FE923A68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
