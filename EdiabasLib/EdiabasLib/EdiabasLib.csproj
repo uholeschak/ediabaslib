@@ -7,11 +7,11 @@
     <Product>EdiabasLib</Product>
     <Description>EDIABAS .NET Library</Description>
     <Copyright>Ulrich Holeschak</Copyright>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
-  <PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('windows'))">
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>EdiabasLib.snk</AssemblyOriginatorKeyFile>
-    <Nullable>disable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.Contains('android'))">
      <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
