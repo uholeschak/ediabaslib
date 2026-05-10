@@ -34,6 +34,7 @@
      <PackageReference Include="SharpZipLib" Version="1.4.2" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.Contains('android'))">
+    <Compile Remove="BtLeGattSpp.cs" />
     <Compile Remove="EdBluetoothInterface.cs" />
     <Compile Remove="EdFtdiInterface.cs" />
     <Compile Remove="MemoryStreamReader.cs" />
