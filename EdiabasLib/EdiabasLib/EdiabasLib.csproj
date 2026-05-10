@@ -10,10 +10,11 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>EdiabasLib.snk</AssemblyOriginatorKeyFile>
     <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('android'))">
+     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" GeneratePathProperty="true" />
