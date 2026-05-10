@@ -10,7 +10,7 @@
     <Copyright>Ulrich Holeschak</Copyright>
     <Nullable>disable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.Contains('windows'))">
+  <PropertyGroup Condition="!$(TargetFramework.Contains('android'))">
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>EdiabasLib.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
