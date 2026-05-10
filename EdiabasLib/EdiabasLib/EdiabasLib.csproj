@@ -42,4 +42,7 @@
     <Compile Remove="EdFtdiInterfaceAndroid.cs" />
     <Compile Remove="MemoryStreamReaderAndroid.cs" />
   </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
+    <ProjectReference Include="..\AndroidNetBindings\UsbSerialNetBinding\UsbSerialNetBinding.csproj" />
+  </ItemGroup>
 </Project>
