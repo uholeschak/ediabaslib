@@ -1,5 +1,7 @@
 <Project>
   <PropertyGroup>
+    <RpcCertificates>$(MSBuildThisFileDirectory)..\Tools\Psdz\RpcCertificates</RpcCertificates>
+    <RpcCertificatesLink>Certificates</RpcCertificatesLink>
     <EnableAndroidTargets>true</EnableAndroidTargets>
   </PropertyGroup>
 </Project>
