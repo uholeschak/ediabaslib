@@ -2,7 +2,8 @@
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</ProjectGuid>
-    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net481</TargetFrameworks>
+    <_AndroidTargets Condition="'$(EnableAndroidTargets)' == 'true'">net10.0-android36.1</_AndroidTargets>
+    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net481;$(_AndroidTargets)</TargetFrameworks>
     <AssemblyTitle>EDIABAS .NET Library</AssemblyTitle>
     <Product>EdiabasLib</Product>
     <Description>EDIABAS .NET Library</Description>
