@@ -21,10 +21,7 @@
   <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.7" />
   </ItemGroup>
-  <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
+  <ItemGroup>
     <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
-    <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj" />
   </ItemGroup>
 </Project>
