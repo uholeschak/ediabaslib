@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkydovesBalloonBinding", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "..\EdiabasLib\EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzRpcClientLibrary", "..\Tools\Psdz\PsdzRpcClientLibrary\PsdzRpcClientLibrary.csproj", "{BC4D68ED-F292-7010-D67C-D49683BCF262}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC4D68ED-F292-7010-D67C-D49683BCF262}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC4D68ED-F292-7010-D67C-D49683BCF262}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC4D68ED-F292-7010-D67C-D49683BCF262}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC4D68ED-F292-7010-D67C-D49683BCF262}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
