@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <EnableAndroidTargets>false</EnableAndroidTargets>
+  </PropertyGroup>
+</Project>

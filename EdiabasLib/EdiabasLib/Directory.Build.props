@@ -2,6 +2,10 @@
     <Import Project="$(SolutionDir)Directory.Build.props"
             Condition="'$(SolutionDir)' != '' And Exists('$(SolutionDir)Directory.Build.props')" />
 
-    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"
-            Condition="'$(SolutionDir)' == '' Or !Exists('$(SolutionDir)Directory.Build.props')" />
+    <PropertyGroup>
+        <_ParentBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</_ParentBuildProps>
+    </PropertyGroup>
+
+    <Import Project="$(_ParentBuildProps)"
+            Condition="'$(SolutionDir)' == '' Or !Exists('$(SolutionDir)Directory.Build.props') And '$(_ParentBuildProps)' != ''" />
 </Project>
