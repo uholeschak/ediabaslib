@@ -7,5 +7,5 @@
     </PropertyGroup>
 
     <Import Project="$(_ParentBuildProps)"
-            Condition="'$(SolutionDir)' == '' Or !Exists('$(SolutionDir)Directory.Build.props') And '$(_ParentBuildProps)' != ''" />
+            Condition="('$(SolutionDir)' == '' Or !Exists('$(SolutionDir)Directory.Build.props')) And '$(_ParentBuildProps)' != ''" />
 </Project>
