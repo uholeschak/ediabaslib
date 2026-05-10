@@ -71,9 +71,6 @@
     <Compile Include="..\Tools\ApkUncompress2\Utilities\MonoAndroidHelper.Basic.cs" Link="ApkUncompress\MonoAndroidHelper.Basic.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Xml\BmwDeepObd.xsd" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AndroidFlowLayout" Version="1.9.0.1" />
     <PackageReference Include="Base62-Net" Version="1.2.157201" />
     <PackageReference Include="ELFSharp" Version="2.17.3" />
@@ -110,6 +107,13 @@
     <Folder Include="HexFiles\Type16\" />
     <Folder Include="ApkUncompress\" />
     <Folder Include="VehicleInfo\" />
+  </ItemGroup>
+  <ItemGroup>
+   <EmbeddedResource Include="Xml\BmwDeepObd.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcClient.pfx" Link="$(RpcCertificatesLink)\PsdzRpcClient.pfx" Condition="Exists('$(RpcCertificates)\PsdzRpcClient.pfx')" />
+    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcCa.crt"     Link="$(RpcCertificatesLink)\PsdzRpcCa.crt"     Condition="Exists('$(RpcCertificates)\PsdzRpcCa.crt')" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\EdiabasLib\BmwFileReader\VehicleSeries.zip" Link="VehicleInfo\VehicleSeries.zip" />
