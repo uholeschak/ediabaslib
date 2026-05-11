@@ -93,6 +93,7 @@ namespace BmwDeepObd
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceAddress;
+        private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
@@ -106,6 +107,13 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
+
+        private Button _buttonCodingConnect;
+        private Button _buttonCodingDisconnect;
+        private Button _buttonCodingOptions;
+        private Button _buttonCodingTal;
+        private Button _buttonCodingExecute;
+        private Button _buttonCodingAbort;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -133,6 +141,60 @@ namespace BmwDeepObd
                     UpdateOptionsMenu();
                 }
             }, BroadcastReceived);
+
+            _buttonCodingConnect = FindViewById<Button>(Resource.Id.buttonCodingConnect);
+            _buttonCodingConnect.Click += (s, e) =>
+            {
+                if (!_activityActive)
+                {
+                    return;
+                }
+            };
+
+            _buttonCodingDisconnect = FindViewById<Button>(Resource.Id.buttonCodingDisconnect);
+            _buttonCodingDisconnect.Click += (s, e) =>
+            {
+                if (!_activityActive)
+                {
+                    return;
+                }
+            };
+
+            _buttonCodingOptions = FindViewById<Button>(Resource.Id.buttonCodingOptions);
+            _buttonCodingOptions.Click += (s, e) =>
+            {
+                if (!_activityActive)
+                {
+                    return;
+                }
+            };
+
+            _buttonCodingTal = FindViewById<Button>(Resource.Id.buttonCodingTal);
+            _buttonCodingTal.Click += (s, e) =>
+            {
+                if (!_activityActive)
+                {
+                    return;
+                }
+            };
+
+            _buttonCodingExecute = FindViewById<Button>(Resource.Id.buttonCodingExecute);
+            _buttonCodingExecute.Click += (s, e) =>
+            {
+                if (!_activityActive)
+                {
+                    return;
+                }
+            };
+
+            _buttonCodingAbort = FindViewById<Button>(Resource.Id.buttonCodingAbort);
+            _buttonCodingAbort.Click += (s, e) =>
+            {
+                if (!_activityActive)
+                {
+                    return;
+                }
+            };
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
@@ -212,6 +274,12 @@ namespace BmwDeepObd
                     // ignored
                 }
                 _infoHttpClient = null;
+            }
+
+            if (_psdzRpcClient != null)
+            {
+                _psdzRpcClient.Dispose();
+                _psdzRpcClient = null;
             }
 
             if (_activityCommon != null)

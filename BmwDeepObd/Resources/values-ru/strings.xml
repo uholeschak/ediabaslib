@@ -798,6 +798,16 @@
   <string name="bmw_coding_elm_reject">Адаптеры ELM327 недостаточно стабильны для кодирования.\nПожалуйста, используйте адаптер Deep OBD, ENET или FTDI.</string>
   <string name="bmw_coding_ssl_fail">Установка зашифрованного соединения не удалась, данные будут передаваться в незашифрованном виде.</string>
 
+  <!-- BMW RPC Coding Activity -->
+  <string name="bmw_rpc_coding_title">Кодирование BMW</string>
+  <!--Translate-->
+  <string name="bmw_rpc_coding_connect">Подключение</string>
+  <string name="bmw_rpc_coding_disconnect">Отключение</string>
+  <string name="bmw_rpc_coding_options">Генерация опций</string>
+  <string name="bmw_rpc_coding_tal">Генерация TAL</string>
+  <string name="bmw_rpc_coding_execute">Выполнить</string>
+  <string name="bmw_rpc_coding_abort">Прервать</string>
+
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
   <string name="can_adapter_mode_name">Режим работы CAN</string>
