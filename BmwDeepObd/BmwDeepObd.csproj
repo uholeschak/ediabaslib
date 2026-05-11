@@ -71,9 +71,6 @@
     <Compile Include="..\Tools\ApkUncompress2\Utilities\MonoAndroidHelper.Basic.cs" Link="ApkUncompress\MonoAndroidHelper.Basic.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Xml\BmwDeepObd.xsd" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AndroidFlowLayout" Version="1.9.0.1" />
     <PackageReference Include="Base62-Net" Version="1.2.157201" />
     <PackageReference Include="ELFSharp" Version="2.17.3" />
@@ -83,7 +80,7 @@
     <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.13.0" />
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.1.3" />
     <PackageReference Include="Xamarin.AndroidX.Car.App.App" Version="1.7.0.3" />
-    <PackageReference Include="Xamarin.AndroidX.Compose.Runtime.Annotation.Jvm" Version="1.10.6" ExcludeAssets="all" />
+    <PackageReference Include="Xamarin.AndroidX.Compose.Runtime.Annotation.Jvm" Version="1.11.0" ExcludeAssets="all" />
     <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="9.2.0" />
     <PackageReference Include="Xamarin.AndroidX.DocumentFile" Version="1.1.0.3" />
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.4.0.5" />
@@ -110,6 +107,13 @@
     <Folder Include="HexFiles\Type16\" />
     <Folder Include="ApkUncompress\" />
     <Folder Include="VehicleInfo\" />
+  </ItemGroup>
+  <ItemGroup>
+   <EmbeddedResource Include="Xml\BmwDeepObd.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcClient.pfx" Link="$(RpcCertificatesLink)\PsdzRpcClient.pfx" Condition="Exists('$(RpcCertificates)\PsdzRpcClient.pfx')" />
+    <EmbeddedResource Include="$(RpcCertificates)\PsdzRpcCa.crt" Link="$(RpcCertificatesLink)\PsdzRpcCa.crt" Condition="Exists('$(RpcCertificates)\PsdzRpcCa.crt')" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\EdiabasLib\BmwFileReader\VehicleSeries.zip" Link="VehicleInfo\VehicleSeries.zip" />
