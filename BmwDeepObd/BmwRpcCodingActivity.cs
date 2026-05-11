@@ -121,7 +121,7 @@ namespace BmwDeepObd
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SetContentView(Resource.Layout.bmw_coding);
+            SetContentView(Resource.Layout.bmw_rpc_coding);
 
             SetResult(Android.App.Result.Ok);
 
