@@ -97,7 +97,6 @@ namespace BmwDeepObd
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceAddress;
-        private Handler _updateHandler;
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
@@ -149,8 +148,6 @@ namespace BmwDeepObd
             _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
 
             _activityCommon.SetPreferredNetworkInterface();
-
-            _updateHandler = new Handler(Looper.MainLooper);
 
             lock (_ediabasLock)
             {
@@ -206,19 +203,6 @@ namespace BmwDeepObd
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
-            if (_updateHandler != null)
-            {
-                try
-                {
-                    _updateHandler.RemoveCallbacksAndMessages(null);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-                _updateHandler = null;
-            }
 
             if (_infoHttpClient != null)
             {
