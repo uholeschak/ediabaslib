@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutBmwRpcCoding"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+    <org.apmem.tools.layouts.FlowLayout
+        android:id="@+id/layoutCodingFunctions"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left">
+        <Button
+            android:id="@+id/buttonCodingConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/bmw_rpc_coding_connect" />
+        <Button
+            android:id="@+id/buttonCodingDisconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/bmw_rpc_coding_disconnect" />
+        <Button
+            android:id="@+id/buttonCodingOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/bmw_rpc_coding_options" />
+        <Button
+            android:id="@+id/buttonCodingTal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/bmw_rpc_coding_tal" />
+        <Button
+            android:id="@+id/buttonCodingExecute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/bmw_rpc_coding_execute" />
+        <Button
+            android:id="@+id/buttonCodingAbort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/bmw_rpc_coding_abort" />
+    </org.apmem.tools.layouts.FlowLayout>
+</LinearLayout>

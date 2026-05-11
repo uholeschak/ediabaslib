@@ -28,7 +28,7 @@ using Java.Interop;
 
 namespace BmwDeepObd
 {
-    [Android.App.Activity(Label = "@string/bmw_coding_title",
+    [Android.App.Activity(Label = "@string/bmw_rpc_coding_title",
         Name = ActivityCommon.AppNameSpace + "." + nameof(BmwRpcCodingActivity),
         LaunchMode = LaunchMode.SingleInstance,
         AlwaysRetainTaskState = true,
@@ -47,12 +47,10 @@ namespace BmwDeepObd
                 InitialUrl = string.Empty;
                 Url = string.Empty;
                 ServerConnected = false;
-                ConnectTimeouts = 0;
                 TraceDir = string.Empty;
                 TraceActive = true;
                 TraceAppend = false;
                 CommErrorsOccurred = false;
-                SslErrorShown = false;
             }
 
             public string CodingUrl { get; set; }
@@ -62,12 +60,10 @@ namespace BmwDeepObd
             public string InitialUrl { get; set; }
             public string Url { get; set; }
             public bool ServerConnected { get; set; }
-            public int ConnectTimeouts { get; set; }
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
             public bool CommErrorsOccurred { get; set; }
-            public bool SslErrorShown { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
