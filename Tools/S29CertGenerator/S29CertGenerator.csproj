@@ -33,10 +33,10 @@
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
-    <PackageReference Include="log4net" Version="3.3.0" />
+    <PackageReference Include="log4net" Version="3.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-    <PackageReference Include="System.Management" Version="10.0.6" />
+    <PackageReference Include="System.Management" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>
