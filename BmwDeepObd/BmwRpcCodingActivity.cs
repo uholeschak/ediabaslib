@@ -216,8 +216,32 @@ namespace BmwDeepObd
                 {
                     _instanceData.ServerConnected = connected;
                 }
+
+                if (!connected)
+                {
+                    ConnectionFailMessage();
+                }
+
                 UpdateConnectTime();
-                UpdateOptionsMenu();
+                UpdateDisplay();
+            };
+
+            _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
             };
 
             lock (_ediabasLock)
@@ -882,91 +906,14 @@ namespace BmwDeepObd
             }
         }
 
-        private void SendVehicleResponseThread(string id, string response)
+        private void UpdateDisplay()
         {
-            RunOnUiThread(() =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                SendVehicleResponse(id, response);
-            });
-        }
-
-        private void LoadWebServerUrl()
-        {
-            if (string.IsNullOrEmpty(_instanceData.CodingUrl))
+            if (_activityCommon == null)
             {
                 return;
             }
 
-            if (_urlLoaded)
-            {
-                return;
-            }
-
-            if (!_activityCommon.IsNetworkPresent(out string domains))
-            {
-                return;
-            }
-
-            try
-            {
-                string loadUrl;
-                lock (_instanceLock)
-                {
-                    if (string.IsNullOrEmpty(_instanceData.Url))
-                    {
-                        string url;
-                        if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
-                        {
-                            if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
-                            {
-                                url = _instanceData.CodingUrlTest;
-                            }
-                            else
-                            {
-                                //url = @"http://ulrich3.local.holeschak.de:3000";
-                                //url = @"https://ulrich3.local.holeschak.de:8443";
-                                //url = @"http://coding-server.local.holeschak.de:8008";
-                                url = @"http://vm-ista.local.holeschak.de:8000/";
-                            }
-                        }
-                        else
-                        {
-                            url = _instanceData.CodingUrl;
-                        }
-
-                        _instanceData.InitialUrl = url;
-                        _instanceData.Url = url;
-                    }
-
-                    loadUrl = _instanceData.Url;
-                }
-
-                _activityCommon.SetPreferredNetworkInterface();
-                _urlLoaded = true;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-
-        private bool SendVehicleResponse(string id, string response)
-        {
-            try
-            {
-                _activityCommon.SetPreferredNetworkInterface();
-                string script = string.Format(CultureInfo.InvariantCulture, "sendVehicleResponse(`{0}`, `{1}`);", id, response);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            UpdateOptionsMenu();
         }
 
         private void BroadcastReceived(Context context, Intent intent)
