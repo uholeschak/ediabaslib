@@ -1,4 +1,18 @@
-﻿using System;
+﻿using Android.Content;
+using Android.Content.PM;
+using Android.Hardware.Usb;
+using Android.Net.Http;
+using Android.OS;
+using Android.Text.Method;
+using Android.Util;
+using Android.Views;
+using Android.Widget;
+using AndroidX.AppCompat.App;
+using BmwDeepObd.Dialogs;
+using EdiabasLib;
+using Java.Security.Cert;
+using PsdzRpcServer.Shared;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,22 +23,6 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using Android.Content;
-using Android.Content.PM;
-using Android.Hardware.Usb;
-using Android.Net.Http;
-using Android.OS;
-using Android.Text.Method;
-using Android.Util;
-using Android.Views;
-using Android.Widget;
-using AndroidX.WebKit;
-using Android.Webkit;
-using AndroidX.AppCompat.App;
-using AndroidX.Core.Content.PM;
-using BmwDeepObd.Dialogs;
-using EdiabasLib;
-using Java.Interop;
 
 namespace BmwDeepObd
 {
@@ -207,6 +205,7 @@ namespace BmwDeepObd
 
             _activityCommon.SetPreferredNetworkInterface();
 
+            _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(null, PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile);
             lock (_ediabasLock)
             {
                 UpdateLogInfo();
