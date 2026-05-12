@@ -21,6 +21,7 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -894,6 +895,29 @@ namespace BmwDeepObd
                 }
 
                 return success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool GetRemoteStatus()
+        {
+            try
+            {
+                if (_psdzRpcClient.RpcService == null)
+                {
+                    return false;
+                }
+
+                bool psdzInitialized = Task.Run(() => _psdzRpcClient.RpcService.IsPsdzInitialized()).GetAwaiter().GetResult();
+                bool connected = Task.Run(() => _psdzRpcClient.RpcService.IsVehicleConnected()).GetAwaiter().GetResult();
+                bool talPresent = Task.Run(() => _psdzRpcClient.RpcService.IsTalPresent()).GetAwaiter().GetResult();
+                bool hasOptionsDict = Task.Run(() => _psdzRpcClient.RpcService.HasOptionsDict()).GetAwaiter().GetResult();
+                bool cancelPossible = Task.Run(() => _psdzRpcClient.RpcService.IsCancelPossible()).GetAwaiter().GetResult();
+
+                return true;
             }
             catch (Exception)
             {
