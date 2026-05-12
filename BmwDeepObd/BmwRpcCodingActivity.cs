@@ -104,6 +104,7 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
+        private bool _taskActive;
         private bool _statusPsdzInitialized;
         private bool _statusConnected;
         private bool _statusTalPresent;
@@ -116,6 +117,24 @@ namespace BmwDeepObd
         private Button _buttonCodingTal;
         private Button _buttonCodingExecute;
         private Button _buttonCodingAbort;
+
+        public bool TaskActive
+        {
+            get
+            {
+                lock (_statusLock)
+                {
+                    return _taskActive;
+                }
+            }
+            private set
+            {
+                lock (_statusLock)
+                {
+                    _taskActive = value;
+                }
+            }
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -245,6 +264,7 @@ namespace BmwDeepObd
                     return;
                 }
 
+                TaskActive = false;
                 GetRemoteStatus();
                 RunOnUiThread(() =>
                 {
@@ -952,6 +972,24 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            bool active = TaskActive;
+            bool statusPsdzInitialized;
+            bool statusConnected;
+            bool statusTalPresent;
+            bool statusHasOptionsDict;
+            bool statusCancelPossible;
+
+            lock (_statusLock)
+            {
+                statusPsdzInitialized = _statusPsdzInitialized;
+                statusConnected = _statusConnected;
+                statusTalPresent = _statusTalPresent;
+                statusHasOptionsDict = _statusHasOptionsDict;
+                statusCancelPossible = _statusCancelPossible;
+            }
+
+            _buttonCodingConnect.Enabled = !active && !statusConnected;
 
             UpdateConnectTime();
             UpdateOptionsMenu();
