@@ -53,6 +53,7 @@ namespace BmwDeepObd
             public string CodingUrlTest { get; set; }
             public string DayString { get; set; }
             public string ValidSerial { get; set; }
+            public string Vin { get; set; }
             public string InitialUrl { get; set; }
             public string Url { get; set; }
             public bool ServerConnected { get; set; }
@@ -265,6 +266,54 @@ namespace BmwDeepObd
                 }
 
                 TaskActive = false;
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += (s, success) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.ConnectVehicleCompleted += (s, connectArgs) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                if (connectArgs.Success)
+                {
+                    lock (_instanceLock)
+                    {
+                        _instanceData.Vin = connectArgs.Vin;
+                    }
+                }
+
                 GetRemoteStatus();
                 RunOnUiThread(() =>
                 {
