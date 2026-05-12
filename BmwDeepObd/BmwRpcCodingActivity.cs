@@ -212,18 +212,21 @@ namespace BmwDeepObd
                 {
                     return;
                 }
-                lock (_instanceLock)
-                {
-                    _instanceData.ServerConnected = connected;
-                }
 
-                if (!connected)
+                RunOnUiThread(() =>
                 {
-                    ConnectionFailMessage();
-                }
+                    lock (_instanceLock)
+                    {
+                        _instanceData.ServerConnected = connected;
+                    }
 
-                UpdateConnectTime();
-                UpdateDisplay();
+                    if (!connected)
+                    {
+                        ConnectionFailMessage();
+                    }
+
+                    UpdateDisplay();
+                });
             };
 
             _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
@@ -243,14 +246,6 @@ namespace BmwDeepObd
                     UpdateDisplay();
                 });
             };
-
-            lock (_ediabasLock)
-            {
-                UpdateLogInfo();
-            }
-
-            UpdateConnectTime();
-            UpdateOptionsMenu();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -913,6 +908,7 @@ namespace BmwDeepObd
                 return;
             }
 
+            UpdateConnectTime();
             UpdateOptionsMenu();
         }
 
