@@ -973,7 +973,6 @@ namespace BmwDeepObd
                 return;
             }
 
-            bool active = TaskActive;
             bool statusPsdzInitialized;
             bool statusConnected;
             bool statusTalPresent;
@@ -989,7 +988,14 @@ namespace BmwDeepObd
                 statusCancelPossible = _statusCancelPossible;
             }
 
+            bool active = TaskActive;
+            bool modifyTal = !active && statusPsdzInitialized && statusConnected && statusHasOptionsDict;
             _buttonCodingConnect.Enabled = !active && !statusConnected;
+            _buttonCodingDisconnect.Enabled = !active && statusPsdzInitialized && statusConnected;
+            _buttonCodingOptions.Enabled = !active && statusPsdzInitialized && statusConnected && !statusHasOptionsDict;
+            _buttonCodingTal.Enabled = modifyTal;
+            _buttonCodingExecute.Enabled = modifyTal && statusTalPresent;
+            _buttonCodingAbort.Enabled = active && statusCancelPossible;
 
             UpdateConnectTime();
             UpdateOptionsMenu();
