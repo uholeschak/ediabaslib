@@ -206,6 +206,20 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(null, PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile);
+            _psdzRpcClient.ClientConnected += (sender, connected) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+                lock (_instanceLock)
+                {
+                    _instanceData.ServerConnected = connected;
+                }
+                UpdateConnectTime();
+                UpdateOptionsMenu();
+            };
+
             lock (_ediabasLock)
             {
                 UpdateLogInfo();
