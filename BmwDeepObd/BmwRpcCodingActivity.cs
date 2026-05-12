@@ -1,7 +1,6 @@
 ﻿using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
-using Android.Net.Http;
 using Android.OS;
 using Android.Text.Method;
 using Android.Util;
@@ -237,6 +236,12 @@ namespace BmwDeepObd
                     return;
                 }
 
+                lock (_ediabasLock)
+                {
+                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
+                        connected);
+                }
+
                 if (connected)
                 {
                     GetRemoteStatus();
@@ -266,6 +271,12 @@ namespace BmwDeepObd
                 }
 
                 TaskActive = false;
+                lock (_ediabasLock)
+                {
+                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
+                        success);
+                }
+
                 GetRemoteStatus();
                 RunOnUiThread(() =>
                 {
@@ -286,6 +297,12 @@ namespace BmwDeepObd
                 }
 
                 TaskActive = false;
+                lock (_ediabasLock)
+                {
+                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
+                        success);
+                }
+
                 GetRemoteStatus();
                 RunOnUiThread(() =>
                 {
@@ -306,12 +323,75 @@ namespace BmwDeepObd
                 }
 
                 TaskActive = false;
+                lock (_ediabasLock)
+                {
+                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}",
+                        connectArgs.Success, connectArgs.Vin);
+                }
+
                 if (connectArgs.Success)
                 {
                     lock (_instanceLock)
                     {
                         _instanceData.Vin = connectArgs.Vin;
                     }
+                }
+
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += (s, success) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                lock (_ediabasLock)
+                {
+                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
+                        success);
+                }
+
+                lock (_instanceLock)
+                {
+                    _instanceData.Vin = null;
+                }
+
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.VehicleFunctionsCompleted += (s, vehicleArgs) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                lock (_ediabasLock)
+                {
+                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
+                        vehicleArgs.Success, vehicleArgs.OperationType);
                 }
 
                 GetRemoteStatus();
