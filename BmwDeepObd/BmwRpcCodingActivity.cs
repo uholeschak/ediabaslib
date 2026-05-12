@@ -10,7 +10,6 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using BmwDeepObd.Dialogs;
 using EdiabasLib;
-using Java.Security.Cert;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
@@ -18,8 +17,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -100,12 +97,18 @@ namespace BmwDeepObd
         private object _ediabasLock = new object();
         private object _timeLock = new object();
         private object _instanceLock = new object();
+        private object _statusLock = new object();
         private bool _activityActive;
         private HttpClient _infoHttpClient;
         private bool _urlLoaded;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
+        private bool _statusPsdzInitialized;
+        private bool _statusConnected;
+        private bool _statusTalPresent;
+        private bool _statusHasOptionsDict;
+        private bool _statusCancelPossible;
 
         private Button _buttonCodingConnect;
         private Button _buttonCodingDisconnect;
@@ -214,6 +217,11 @@ namespace BmwDeepObd
                     return;
                 }
 
+                if (connected)
+                {
+                    GetRemoteStatus();
+                }
+
                 RunOnUiThread(() =>
                 {
                     lock (_instanceLock)
@@ -237,6 +245,7 @@ namespace BmwDeepObd
                     return;
                 }
 
+                GetRemoteStatus();
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
@@ -920,11 +929,14 @@ namespace BmwDeepObd
                 Task.WhenAll(psdzInitializedTask, connectedTask, talPresentTask, hasOptionsDictTask, cancelPossibleTask)
                     .GetAwaiter().GetResult();
 
-                bool psdzInitialized = psdzInitializedTask.Result;
-                bool connected       = connectedTask.Result;
-                bool talPresent      = talPresentTask.Result;
-                bool hasOptionsDict  = hasOptionsDictTask.Result;
-                bool cancelPossible  = cancelPossibleTask.Result;
+                lock (_statusLock)
+                {
+                    _statusPsdzInitialized = psdzInitializedTask.Result;
+                    _statusConnected = connectedTask.Result;
+                    _statusTalPresent = talPresentTask.Result;
+                    _statusHasOptionsDict = hasOptionsDictTask.Result;
+                    _statusCancelPossible = cancelPossibleTask.Result;
+                }
 
                 return true;
             }
