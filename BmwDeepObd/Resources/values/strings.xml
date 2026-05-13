@@ -798,6 +798,7 @@
   <string name="bmw_rpc_coding_tal">Generate TAL</string>
   <string name="bmw_rpc_coding_execute">Execute</string>
   <string name="bmw_rpc_coding_abort">Abort</string>
+  <string name="bmw_rpc_coding_status_title">Status</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>
