@@ -9,6 +9,7 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using BmwDeepObd.Dialogs;
 using EdiabasLib;
+using PsdzRpcClient;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
@@ -93,6 +94,7 @@ namespace BmwDeepObd
         private string _appDataDir;
         private string _deviceAddress;
         private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
+        private EdiabasProxyClient _ediabasProxyClient;
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
@@ -1400,6 +1402,57 @@ namespace BmwDeepObd
                 }
 
                 return _ediabas.EdInterfaceClass.Connected;
+            }
+        }
+
+        private bool RpcConnect()
+        {
+            try
+            {
+                EdiabasOpen();
+                _ediabasProxyClient = new EdiabasProxyClient(_ediabas);
+                _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
+                {
+                    return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                };
+
+                _ediabasProxyClient.MessageEvent += (messageType, message) =>
+                {
+                    lock (_ediabasLock)
+                    {
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
+                    }
+                };
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                lock (_ediabasLock)
+                {
+                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Exception={0}",
+                        EdiabasNet.GetExceptionText(ex, false, false));
+                }
+                return false;
+            }
+        }
+
+        private void EdiabasOpen()
+        {
+            lock (_ediabasLock)
+            {
+                if (_ediabas == null)
+                {
+                    _ediabas = new EdiabasNet
+                    {
+                        EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+                    };
+                    _ediabas.SetConfigProperty("EcuPath", _ecuDir);
+                    UpdateLogInfo();
+                }
+
+                _ediabas.EdInterfaceClass.EnableTransmitCache = false;
+                _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
             }
         }
 
