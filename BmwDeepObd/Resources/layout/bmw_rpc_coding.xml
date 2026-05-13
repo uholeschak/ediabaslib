@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/scrollBmwRpcCoding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+    <LinearLayout
+        android:id="@+id/layoutBmwRpcCoding"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <org.apmem.tools.layouts.FlowLayout
+            android:id="@+id/layoutCodingFunctions"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left">
+            <Button
+                android:id="@+id/buttonCodingConnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/bmw_rpc_coding_connect" />
+            <Button
+                android:id="@+id/buttonCodingDisconnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/bmw_rpc_coding_disconnect" />
+            <Button
+                android:id="@+id/buttonCodingOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/bmw_rpc_coding_options" />
+            <Button
+                android:id="@+id/buttonCodingTal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/bmw_rpc_coding_tal" />
+            <Button
+                android:id="@+id/buttonCodingExecute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/bmw_rpc_coding_execute" />
+            <Button
+                android:id="@+id/buttonCodingAbort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/bmw_rpc_coding_abort" />
+        </org.apmem.tools.layouts.FlowLayout>
+        <LinearLayout
+            android:id="@+id/layoutCodingStatus"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewCodingStatusTitle"
+                android:text="@string/bmw_rpc_coding_status_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextViewInnerCaption" />
+            <TextView
+                android:id="@+id/textCodingStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars = "vertical"
+                android:fadeScrollbars="false"
+                android:minLines="1"
+                android:maxLines="10" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
