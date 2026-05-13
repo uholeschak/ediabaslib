@@ -118,6 +118,7 @@ namespace BmwDeepObd
         private Button _buttonCodingTal;
         private Button _buttonCodingExecute;
         private Button _buttonCodingAbort;
+        private TextView _textCodingStatus;
 
         public bool TaskActive
         {
@@ -218,6 +219,8 @@ namespace BmwDeepObd
                 }
             };
 
+            _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
+
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
@@ -246,6 +249,10 @@ namespace BmwDeepObd
                 if (connected)
                 {
                     GetRemoteStatus();
+                    lock (_statusLock)
+                    {
+                        _statusMessage = string.Empty;
+                    }
                 }
                 else
                 {
@@ -1135,6 +1142,7 @@ namespace BmwDeepObd
             bool statusTalPresent;
             bool statusHasOptionsDict;
             bool statusCancelPossible;
+            string statusMessage;
 
             lock (_statusLock)
             {
@@ -1143,6 +1151,7 @@ namespace BmwDeepObd
                 statusTalPresent = _statusTalPresent;
                 statusHasOptionsDict = _statusHasOptionsDict;
                 statusCancelPossible = _statusCancelPossible;
+                statusMessage = _statusMessage;
             }
 
             bool active = TaskActive;
@@ -1153,6 +1162,8 @@ namespace BmwDeepObd
             _buttonCodingTal.Enabled = modifyTal;
             _buttonCodingExecute.Enabled = modifyTal && statusTalPresent;
             _buttonCodingAbort.Enabled = active && statusCancelPossible;
+
+            _textCodingStatus.Text = statusMessage ?? string.Empty;
 
             UpdateConnectTime();
             UpdateOptionsMenu();
