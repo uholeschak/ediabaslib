@@ -20,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using static Android.Graphics.ColorSpace;
 
 namespace BmwDeepObd
 {
@@ -41,6 +42,7 @@ namespace BmwDeepObd
                 ValidSerial = string.Empty;
                 InitialUrl = string.Empty;
                 Url = string.Empty;
+                IstaFolder = string.Empty;
                 ServerConnected = false;
                 TraceDir = string.Empty;
                 TraceActive = true;
@@ -55,6 +57,7 @@ namespace BmwDeepObd
             public string Vin { get; set; }
             public string InitialUrl { get; set; }
             public string Url { get; set; }
+            public string IstaFolder { get; set; }
             public bool ServerConnected { get; set; }
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
@@ -116,7 +119,7 @@ namespace BmwDeepObd
         private Button _buttonCodingDisconnect;
         private Button _buttonCodingOptions;
         private Button _buttonCodingGenerateTal;
-        private Button _buttonCodingExecute;
+        private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
         private TextView _textCodingStatus;
         private ProgressBar _progressBar;
@@ -167,29 +170,122 @@ namespace BmwDeepObd
             }, BroadcastReceived);
 
             _buttonCodingConnect = FindViewById<Button>(Resource.Id.buttonCodingConnect);
-            _buttonCodingConnect.Click += (s, e) =>
+            _buttonCodingConnect.Click += async (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
+                }
+
+                try
+                {
+                    if (TaskActive)
+                    {
+                        return;
+                    }
+
+                    string istaFolder;
+                    lock (_instanceLock)
+                    {
+                        istaFolder = _instanceData.IstaFolder;
+                    }
+
+                    bool result = await _psdzRpcClient.RpcService.ConnectVehicle(istaFolder, string.Empty, false).ConfigureAwait(false);
+                    if (result)
+                    {
+                        TaskActive = true;
+                    }
+                    else
+                    {
+                        lock (_ediabasLock)
+                        {
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lock (_ediabasLock)
+                    {
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
                 }
             };
 
             _buttonCodingDisconnect = FindViewById<Button>(Resource.Id.buttonCodingDisconnect);
-            _buttonCodingDisconnect.Click += (s, e) =>
+            _buttonCodingDisconnect.Click += async (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
                 }
+
+                try
+                {
+                    if (TaskActive)
+                    {
+                        return;
+                    }
+
+                    bool result = await _psdzRpcClient.RpcService.DisconnectVehicle().ConfigureAwait(false);
+                    if (result)
+                    {
+                        TaskActive = true;
+                    }
+                    else
+                    {
+                        lock (_ediabasLock)
+                        {
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lock (_ediabasLock)
+                    {
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
+                }
             };
 
             _buttonCodingOptions = FindViewById<Button>(Resource.Id.buttonCodingOptions);
-            _buttonCodingOptions.Click += (s, e) =>
+            _buttonCodingOptions.Click += async (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
+                }
+
+                try
+                {
+                    if (TaskActive)
+                    {
+                        return;
+                    }
+
+                    bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.CreateOptions).ConfigureAwait(false);
+                    if (result)
+                    {
+                        TaskActive = true;
+                    }
+                    else
+                    {
+                        lock (_ediabasLock)
+                        {
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions failed");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lock (_ediabasLock)
+                    {
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
                 }
             };
 
@@ -200,8 +296,14 @@ namespace BmwDeepObd
                 {
                     return;
                 }
+
                 try
                 {
+                    if (TaskActive)
+                    {
+                        return;
+                    }
+
                     bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa).ConfigureAwait(false);
                     if (result)
                     {
@@ -219,14 +321,14 @@ namespace BmwDeepObd
                 {
                     lock (_ediabasLock)
                     {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions VehicleFunctions: Exception={0}",
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal: Exception={0}",
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 }
             };
 
-            _buttonCodingExecute = FindViewById<Button>(Resource.Id.buttonCodingExecute);
-            _buttonCodingExecute.Click += async (s, e) =>
+            _buttonCodingExecuteTal = FindViewById<Button>(Resource.Id.buttonCodingExecuteTal);
+            _buttonCodingExecuteTal.Click += async (s, e) =>
             {
                 if (!_activityActive)
                 {
@@ -235,6 +337,11 @@ namespace BmwDeepObd
 
                 try
                 {
+                    if (TaskActive)
+                    {
+                        return;
+                    }
+
                     bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.ExecuteTal).ConfigureAwait(false);
                     if (result)
                     {
@@ -1247,7 +1354,7 @@ namespace BmwDeepObd
             _buttonCodingDisconnect.Enabled = !active && statusPsdzInitialized && statusConnected;
             _buttonCodingOptions.Enabled = !active && statusPsdzInitialized && statusConnected && !statusHasOptionsDict;
             _buttonCodingGenerateTal.Enabled = modifyTal;
-            _buttonCodingExecute.Enabled = modifyTal && statusTalPresent;
+            _buttonCodingExecuteTal.Enabled = modifyTal && statusTalPresent;
             _buttonCodingAbort.Enabled = active && statusCancelPossible;
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;

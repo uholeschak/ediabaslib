@@ -796,7 +796,7 @@
   <string name="bmw_rpc_coding_disconnect">Disconnect</string>
   <string name="bmw_rpc_coding_options">Generate options</string>
   <string name="bmw_rpc_coding_generate_tal">Generate TAL</string>
-  <string name="bmw_rpc_coding_execute">Execute</string>
+  <string name="bmw_rpc_coding_execute_tal">Execute</string>
   <string name="bmw_rpc_coding_abort">Abort</string>
   <string name="bmw_rpc_coding_status_title">Status</string>
 
