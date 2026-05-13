@@ -212,11 +212,23 @@ namespace BmwDeepObd
             };
 
             _buttonCodingAbort = FindViewById<Button>(Resource.Id.buttonCodingAbort);
-            _buttonCodingAbort.Click += (s, e) =>
+            _buttonCodingAbort.Click += async (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
+                }
+
+                try
+                {
+                    await _psdzRpcClient.RpcService.CancelOperation();
+                }
+                catch (Exception exception)
+                {
+                    lock (_ediabasLock)
+                    {
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}", exception);
+                    }
                 }
             };
 
