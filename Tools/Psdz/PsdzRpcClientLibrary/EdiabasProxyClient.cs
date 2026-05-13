@@ -47,6 +47,7 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
 
     private bool _disposed;
     private EdiabasNet _ediabas;
+    private bool _ediabasOwner;
     private volatile bool _ediabasJobAbort;
     private Thread _ediabasThread;
     private AutoResetEvent _ediabasThreadWakeEvent;
@@ -57,9 +58,10 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
 
     public bool IsDisposed => _disposed;
 
-    public EdiabasProxyClient(EdiabasNet ediabas)
+    public EdiabasProxyClient(EdiabasNet ediabas, bool ediabasOwner)
     {
         _ediabas = ediabas;
+        _ediabasOwner = ediabasOwner;
         _ediabas.AbortJobFunc = AbortEdiabasJob;
         _ediabasThreadWakeEvent = new AutoResetEvent(false);
     }
@@ -396,7 +398,7 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
 
                 lock (_ediabasLock)
                 {
-                    if (_ediabas != null)
+                    if (_ediabas != null && _ediabasOwner)
                     {
                         _ediabas.Dispose();
                         _ediabas = null;

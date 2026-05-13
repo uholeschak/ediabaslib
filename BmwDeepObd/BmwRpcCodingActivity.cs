@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using static Android.Graphics.ColorSpace;
+using static PsdzRpcClient.EdiabasProxyClient;
 
 namespace BmwDeepObd
 {
@@ -1405,24 +1406,46 @@ namespace BmwDeepObd
             }
         }
 
-        private bool RpcConnect()
+        private bool RpcClientConnect()
         {
             try
             {
                 EdiabasOpen();
-                _ediabasProxyClient = new EdiabasProxyClient(_ediabas);
-                _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
+                if (_ediabasProxyClient == null)
                 {
-                    return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
-                };
+                    _ediabasProxyClient = new EdiabasProxyClient(_ediabas, false);
+                    _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
+                    {
+                        return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                    };
 
-                _ediabasProxyClient.MessageEvent += (messageType, message) =>
+                    _ediabasProxyClient.MessageEvent += (messageType, message) =>
+                    {
+                        lock (_ediabasLock)
+                        {
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
+                        }
+                    };
+                }
+
+                if (!_ediabasProxyClient.StartEdiabasThread())
                 {
                     lock (_ediabasLock)
                     {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
                     }
-                };
+                    return false;
+                }
+
+                bool proxyResult = Task.Run(() => _psdzRpcClient.RpcService.EnableVehicleProxy()).GetAwaiter().GetResult();
+                if (!proxyResult)
+                {
+                    lock (_ediabasLock)
+                    {
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
+                    }
+                    return false;
+                }
 
                 return true;
             }
