@@ -119,6 +119,7 @@ namespace BmwDeepObd
         private Button _buttonCodingExecute;
         private Button _buttonCodingAbort;
         private TextView _textCodingStatus;
+        private ProgressBar _progressBar;
 
         public bool TaskActive
         {
@@ -220,6 +221,10 @@ namespace BmwDeepObd
             };
 
             _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
+            _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
+            _progressBar.Max = 100;
+            _progressBar.Progress = 0;
+            _progressBar.Indeterminate = false;
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
@@ -271,6 +276,8 @@ namespace BmwDeepObd
                         ConnectionFailMessage();
                     }
 
+                    _progressBar.Progress = 0;
+                    _progressBar.Indeterminate = false;
                     UpdateDisplay();
                 });
             };
@@ -437,6 +444,26 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.UpdateProgress += (s, progressArgs) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    _progressBar.Indeterminate = progressArgs.Marquee;
+                    _progressBar.Progress = progressArgs.Percent;
                     UpdateDisplay();
                 });
             };
