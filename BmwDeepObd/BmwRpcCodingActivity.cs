@@ -246,6 +246,10 @@ namespace BmwDeepObd
                 {
                     GetRemoteStatus();
                 }
+                else
+                {
+                    TaskActive = false;
+                }
 
                 RunOnUiThread(() =>
                 {
