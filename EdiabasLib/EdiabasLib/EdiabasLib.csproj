@@ -28,7 +28,7 @@
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
       <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" GeneratePathProperty="true" />
-      <PackageReference Include="System.IO.Ports" Version="10.0.7" GeneratePathProperty="true" />
+      <PackageReference Include="System.IO.Ports" Version="10.0.8" GeneratePathProperty="true" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.Contains('android'))">
      <PackageReference Include="SharpZipLib" Version="1.4.2" />
