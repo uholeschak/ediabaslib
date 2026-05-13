@@ -110,6 +110,7 @@ namespace BmwDeepObd
         private bool _statusTalPresent;
         private bool _statusHasOptionsDict;
         private bool _statusCancelPossible;
+        private string _statusMessage;
 
         private Button _buttonCodingConnect;
         private Button _buttonCodingDisconnect;
@@ -399,6 +400,29 @@ namespace BmwDeepObd
                 }
 
                 GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.UpdateStatus += (s, message) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                lock (_statusLock)
+                {
+                    _statusMessage = message;
+                }
+
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
