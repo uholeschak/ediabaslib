@@ -36,11 +36,11 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/bmw_rpc_coding_options" />
             <Button
-                android:id="@+id/buttonCodingTal"
+                android:id="@+id/buttonCodingGenerateTal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/bmw_rpc_coding_tal" />
+                android:text="@string/bmw_rpc_coding_generate_tal" />
             <Button
                 android:id="@+id/buttonCodingExecute"
                 android:layout_width="wrap_content"

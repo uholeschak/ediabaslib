@@ -115,7 +115,7 @@ namespace BmwDeepObd
         private Button _buttonCodingConnect;
         private Button _buttonCodingDisconnect;
         private Button _buttonCodingOptions;
-        private Button _buttonCodingTal;
+        private Button _buttonCodingGenerateTal;
         private Button _buttonCodingExecute;
         private Button _buttonCodingAbort;
         private TextView _textCodingStatus;
@@ -193,21 +193,68 @@ namespace BmwDeepObd
                 }
             };
 
-            _buttonCodingTal = FindViewById<Button>(Resource.Id.buttonCodingTal);
-            _buttonCodingTal.Click += (s, e) =>
+            _buttonCodingGenerateTal = FindViewById<Button>(Resource.Id.buttonCodingGenerateTal);
+            _buttonCodingGenerateTal.Click += async (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
                 }
+                try
+                {
+                    bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa).ConfigureAwait(false);
+                    if (result)
+                    {
+                        TaskActive = true;
+                    }
+                    else
+                    {
+                        lock (_ediabasLock)
+                        {
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal failed");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lock (_ediabasLock)
+                    {
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions VehicleFunctions: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
+                }
             };
 
             _buttonCodingExecute = FindViewById<Button>(Resource.Id.buttonCodingExecute);
-            _buttonCodingExecute.Click += (s, e) =>
+            _buttonCodingExecute.Click += async (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
+                }
+
+                try
+                {
+                    bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.ExecuteTal).ConfigureAwait(false);
+                    if (result)
+                    {
+                        TaskActive = true;
+                    }
+                    else
+                    {
+                        lock (_ediabasLock)
+                        {
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal failed");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lock (_ediabasLock)
+                    {
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
                 }
             };
 
@@ -223,11 +270,12 @@ namespace BmwDeepObd
                 {
                     await _psdzRpcClient.RpcService.CancelOperation();
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
                     lock (_ediabasLock)
                     {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}", exception);
+                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 }
             };
@@ -1198,7 +1246,7 @@ namespace BmwDeepObd
             _buttonCodingConnect.Enabled = !active && !statusConnected;
             _buttonCodingDisconnect.Enabled = !active && statusPsdzInitialized && statusConnected;
             _buttonCodingOptions.Enabled = !active && statusPsdzInitialized && statusConnected && !statusHasOptionsDict;
-            _buttonCodingTal.Enabled = modifyTal;
+            _buttonCodingGenerateTal.Enabled = modifyTal;
             _buttonCodingExecute.Enabled = modifyTal && statusTalPresent;
             _buttonCodingAbort.Enabled = active && statusCancelPossible;
 
