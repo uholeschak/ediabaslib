@@ -60,6 +60,7 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
     public EdiabasProxyClient(EdiabasNet ediabas)
     {
         _ediabas = ediabas;
+        _ediabas.AbortJobFunc = AbortEdiabasJob;
         _ediabasThreadWakeEvent = new AutoResetEvent(false);
     }
 
