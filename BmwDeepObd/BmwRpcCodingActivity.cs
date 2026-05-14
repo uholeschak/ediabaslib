@@ -99,7 +99,6 @@ namespace BmwDeepObd
         private object _statusLock = new object();
         private bool _activityActive;
         private HttpClient _infoHttpClient;
-        private bool _urlLoaded;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
@@ -1386,6 +1385,41 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                if (!_activityCommon.IsNetworkPresent(out string domains))
+                {
+                    return false;
+                }
+
+                string loadUrl;
+                lock (_instanceLock)
+                {
+                    if (string.IsNullOrEmpty(_instanceData.Url))
+                    {
+                        string url;
+                        if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
+                            {
+                                url = _instanceData.CodingUrlTest;
+                            }
+                            else
+                            {
+                                url = @"http://vm-ista.local.holeschak.de:8000/";
+                            }
+                        }
+                        else
+                        {
+                            url = _instanceData.CodingUrl;
+                        }
+
+                        _instanceData.InitialUrl = url;
+                        _instanceData.Url = url;
+                    }
+
+                    loadUrl = _instanceData.Url;
+                }
+
+                string remoteHost = new Uri(loadUrl).Host;
                 if (!_ediabasProxyClient.StartEdiabasThread())
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
@@ -1397,6 +1431,16 @@ namespace BmwDeepObd
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
                     return false;
+                }
+
+                using CancellationTokenSource cts = new CancellationTokenSource();
+                {
+                    bool connected = Task.Run(() => _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, cts.Token)).GetAwaiter().GetResult();
+                    if (!connected)
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
+                        return false;
+                    }
                 }
 
                 return true;
