@@ -392,6 +392,8 @@ namespace BmwDeepObd
         {
             base.OnResume();
             _activityActive = true;
+
+            StartRpcClient();
             UpdateConnectTime();
         }
 
@@ -1145,13 +1147,13 @@ namespace BmwDeepObd
                     TaskActive = false;
                 }
 
+                lock (_instanceLock)
+                {
+                    _instanceData.ServerConnected = connected;
+                }
+
                 RunOnUiThread(() =>
                 {
-                    lock (_instanceLock)
-                    {
-                        _instanceData.ServerConnected = connected;
-                    }
-
                     if (!connected)
                     {
                         ConnectionFailMessage();
@@ -1380,11 +1382,6 @@ namespace BmwDeepObd
 
         private bool StartRpcClient()
         {
-            if (_startTask != null && !_startTask.IsCompleted)
-            {
-                return false;
-            }
-
             lock (_instanceLock)
             {
                 if (string.IsNullOrEmpty(_instanceData.CodingUrl))
@@ -1396,6 +1393,11 @@ namespace BmwDeepObd
                 {
                     return true;
                 }
+            }
+
+            if (_startTask != null && !_startTask.IsCompleted)
+            {
+                return false;
             }
 
             _startCts = new CancellationTokenSource();
