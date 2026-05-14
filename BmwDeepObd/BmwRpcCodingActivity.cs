@@ -94,6 +94,8 @@ namespace BmwDeepObd
         private string _deviceAddress;
         private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
         private EdiabasProxyClient _ediabasProxyClient;
+        private Task _startTask;
+        private CancellationTokenSource _startCts;
         private object _timeLock = new object();
         private object _instanceLock = new object();
         private object _statusLock = new object();
@@ -654,6 +656,8 @@ namespace BmwDeepObd
                     {
                         Finish();
                     }
+
+                    StartRpcClient();
                 };
             }
         }
@@ -1376,6 +1380,24 @@ namespace BmwDeepObd
             }
         }
 
+        private bool StartRpcClient()
+        {
+            if (_startTask != null && !_startTask.IsCompleted)
+            {
+                return false;
+            }
+
+            _startCts = new CancellationTokenSource();
+            _startTask = RpcClientConnect();
+            _startTask.ContinueWith(t =>
+            {
+                _startTask = null;
+                _startCts?.Dispose();
+                _startCts = null;
+            });
+            return true;
+        }
+
         private async Task<bool> RpcClientConnect()
         {
             try
@@ -1445,14 +1467,11 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                using CancellationTokenSource cts = new CancellationTokenSource();
+                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, _startCts.Token).ConfigureAwait(false);
+                if (!connected)
                 {
-                    bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, cts.Token).ConfigureAwait(false);
-                    if (!connected)
-                    {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
-                        return false;
-                    }
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
+                    return false;
                 }
 
                 return true;
