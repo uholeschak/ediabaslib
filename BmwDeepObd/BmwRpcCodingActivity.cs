@@ -1362,6 +1362,25 @@ namespace BmwDeepObd
         {
             try
             {
+                Task<bool> startTask;
+                lock (_startLock)
+                {
+                    _startCts?.Cancel();
+                    startTask = _startTask;
+                }
+
+                if (startTask != null)
+                {
+                    try
+                    {
+                        await startTask.ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
                 if (_psdzRpcClient != null)
                 {
                     _psdzRpcClient.Dispose();
@@ -1374,6 +1393,15 @@ namespace BmwDeepObd
                     await _ediabasProxyClient.DisposeAsync().ConfigureAwait(false);
                     _ediabasProxyClient = null;
                 }
+
+                lock (_startLock)
+                {
+                    if (_startCts != null)
+                    {
+                        _startCts.Dispose();
+                        _startCts = null;
+                    }
+                }
             }
             catch (Exception)
             {
@@ -1383,51 +1411,58 @@ namespace BmwDeepObd
 
         private bool StartRpcClient()
         {
-            lock (_instanceLock)
+            try
             {
-                if (string.IsNullOrEmpty(_instanceData.CodingUrl))
+                lock (_instanceLock)
                 {
-                    return false;
-                }
-
-                if (_instanceData.ServerConnected)
-                {
-                    return true;
-                }
-            }
-
-            lock (_startLock)
-            {
-                if (_startTask != null && !_startTask.IsCompleted)
-                {
-                    return false;
-                }
-            }
-
-            lock (_startLock)
-            {
-                _startCts = new CancellationTokenSource();
-                _startTask = RpcClientConnect();
-                _startTask.ContinueWith(t =>
-                {
-                    if (!t.Result)
+                    if (string.IsNullOrEmpty(_instanceData.CodingUrl))
                     {
-                        lock (_instanceLock)
+                        return false;
+                    }
+
+                    if (_instanceData.ServerConnected)
+                    {
+                        return true;
+                    }
+                }
+
+                lock (_startLock)
+                {
+                    if (_startTask != null && !_startTask.IsCompleted)
+                    {
+                        return false;
+                    }
+                }
+
+                lock (_startLock)
+                {
+                    _startCts = new CancellationTokenSource();
+                    _startTask = RpcClientConnect();
+                    _startTask.ContinueWith(t =>
+                    {
+                        if (!t.Result)
                         {
-                            _instanceData.ServerConnected = false;
+                            lock (_instanceLock)
+                            {
+                                _instanceData.ServerConnected = false;
+                            }
                         }
-                    }
 
-                    lock (_startLock)
-                    {
-                        _startTask = null;
-                        _startCts?.Dispose();
-                        _startCts = null;
-                    }
-                });
+                        lock (_startLock)
+                        {
+                            _startTask = null;
+                            _startCts?.Dispose();
+                            _startCts = null;
+                        }
+                    });
+                }
+
+                return true;
             }
-
-            return true;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private async Task<bool> RpcClientConnect()
