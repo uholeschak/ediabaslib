@@ -1376,7 +1376,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool RpcClientConnect()
+        private async Task<bool> RpcClientConnect()
         {
             try
             {
@@ -1425,20 +1425,20 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string remoteHost = new Uri(loadUrl).Host;
-                if (string.IsNullOrEmpty(remoteHost))
+                if (!Uri.TryCreate(loadUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: remoteHost is empty");
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Invalid loadUrl={0}", loadUrl);
                     return false;
                 }
 
+                string remoteHost = loadUri.Host;
                 if (!_ediabasProxyClient.StartEdiabasThread())
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
                     return false;
                 }
 
-                bool proxyResult = Task.Run(() => _psdzRpcClient.RpcService.EnableVehicleProxy()).GetAwaiter().GetResult();
+                bool proxyResult = await _psdzRpcClient.RpcService.EnableVehicleProxy().ConfigureAwait(false);
                 if (!proxyResult)
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
@@ -1447,7 +1447,7 @@ namespace BmwDeepObd
 
                 using CancellationTokenSource cts = new CancellationTokenSource();
                 {
-                    bool connected = Task.Run(() => _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, cts.Token)).GetAwaiter().GetResult();
+                    bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, cts.Token).ConfigureAwait(false);
                     if (!connected)
                     {
                         _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
