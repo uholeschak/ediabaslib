@@ -40,7 +40,6 @@ namespace BmwDeepObd
                 CodingUrlTest = string.Empty;
                 DayString = string.Empty;
                 ValidSerial = string.Empty;
-                InitialUrl = string.Empty;
                 Url = string.Empty;
                 IstaFolder = string.Empty;
                 ServerConnected = false;
@@ -55,7 +54,6 @@ namespace BmwDeepObd
             public string DayString { get; set; }
             public string ValidSerial { get; set; }
             public string Vin { get; set; }
-            public string InitialUrl { get; set; }
             public string Url { get; set; }
             public string IstaFolder { get; set; }
             public bool ServerConnected { get; set; }
@@ -94,7 +92,7 @@ namespace BmwDeepObd
         private string _deviceAddress;
         private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
         private EdiabasProxyClient _ediabasProxyClient;
-        private Task _startTask;
+        private Task<bool> _startTask;
         private CancellationTokenSource _startCts;
         private object _timeLock = new object();
         private object _instanceLock = new object();
@@ -854,7 +852,7 @@ namespace BmwDeepObd
                         { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" },
                     };
 
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
+                    Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
 
                     CustomProgressDialog progressLocal = progress;
                     RunOnUiThread(() =>
@@ -1387,10 +1385,31 @@ namespace BmwDeepObd
                 return false;
             }
 
+            lock (_instanceLock)
+            {
+                if (string.IsNullOrEmpty(_instanceData.CodingUrl))
+                {
+                    return false;
+                }
+
+                if (_instanceData.ServerConnected)
+                {
+                    return true;
+                }
+            }
+
             _startCts = new CancellationTokenSource();
             _startTask = RpcClientConnect();
             _startTask.ContinueWith(t =>
             {
+                if (!t.Result)
+                {
+                    lock (_instanceLock)
+                    {
+                        _instanceData.ServerConnected = false;
+                    }
+                }
+
                 _startTask = null;
                 _startCts?.Dispose();
                 _startCts = null;
@@ -1434,7 +1453,6 @@ namespace BmwDeepObd
                             url = _instanceData.CodingUrl;
                         }
 
-                        _instanceData.InitialUrl = url;
                         _instanceData.Url = url;
                     }
 
