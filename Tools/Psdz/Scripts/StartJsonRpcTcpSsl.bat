@@ -10,7 +10,7 @@ if NOT EXIST "!RPC_SERVER_BIN!" (
     exit /b 1
 )
 
-"!RPC_SERVER_BIN!" -p 0 || EXIT /b 1
+"!RPC_SERVER_BIN!" -p 0 -s || EXIT /b 1
 
 timeout /T 2
 exit /b 0
