@@ -94,6 +94,7 @@ namespace BmwDeepObd
         private EdiabasProxyClient _ediabasProxyClient;
         private Task<bool> _startTask;
         private CancellationTokenSource _startCts;
+        private object _startLock = new object();
         private object _timeLock = new object();
         private object _instanceLock = new object();
         private object _statusLock = new object();
@@ -1395,27 +1396,37 @@ namespace BmwDeepObd
                 }
             }
 
-            if (_startTask != null && !_startTask.IsCompleted)
+            lock (_startLock)
             {
-                return false;
+                if (_startTask != null && !_startTask.IsCompleted)
+                {
+                    return false;
+                }
             }
 
-            _startCts = new CancellationTokenSource();
-            _startTask = RpcClientConnect();
-            _startTask.ContinueWith(t =>
+            lock (_startLock)
             {
-                if (!t.Result)
+                _startCts = new CancellationTokenSource();
+                _startTask = RpcClientConnect();
+                _startTask.ContinueWith(t =>
                 {
-                    lock (_instanceLock)
+                    if (!t.Result)
                     {
-                        _instanceData.ServerConnected = false;
+                        lock (_instanceLock)
+                        {
+                            _instanceData.ServerConnected = false;
+                        }
                     }
-                }
 
-                _startTask = null;
-                _startCts?.Dispose();
-                _startCts = null;
-            });
+                    lock (_startLock)
+                    {
+                        _startTask = null;
+                        _startCts?.Dispose();
+                        _startCts = null;
+                    }
+                });
+            }
+
             return true;
         }
 
