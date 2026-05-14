@@ -56,6 +56,8 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
     private object _requestLock = new object();
     private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
 
+    public object EdiabasLock => _ediabasLock;
+
     public bool IsDisposed => _disposed;
 
     public EdiabasProxyClient(EdiabasNet ediabas, bool ediabasOwner)
@@ -163,54 +165,57 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
 
     public bool EdiabasConnect(ulong id)
     {
-        lock (_ediabasLock)
+        MessageEvent?.Invoke(MessageType.Info, $"Ediabas connect, Id={id}");
+        try
         {
-            if (_ediabas == null)
-            {
-                return false;
-            }
+            bool result;
 
-            MessageEvent?.Invoke(MessageType.Info, $"Ediabas connect, Id={id}");
-            try
+            lock (_ediabasLock)
             {
-                if (_ediabas.EdInterfaceClass.InterfaceConnect())
+                if (_ediabas == null)
                 {
-                    MessageEvent?.Invoke(MessageType.Info, "Ediabas connected");
-                    return true;
+                    return false;
                 }
 
-                MessageEvent?.Invoke(MessageType.Error, "Ediabas connect failed");
-                return false;
+                result = _ediabas.EdInterfaceClass.InterfaceConnect();
             }
-            catch (Exception ex)
+
+            if (result)
             {
-                MessageEvent?.Invoke(MessageType.Error, $"Ediabas connect Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
-                return false;
+                MessageEvent?.Invoke(MessageType.Info, "Ediabas connected");
+                return true;
             }
+
+            MessageEvent?.Invoke(MessageType.Error, "Ediabas connect failed");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            MessageEvent?.Invoke(MessageType.Error, $"Ediabas connect Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
+            return false;
         }
     }
 
     public bool EdiabasDisconnect(ulong id)
     {
-        lock (_ediabasLock)
+        MessageEvent?.Invoke(MessageType.Info, $"Ediabas disconnect, Id={id}");
+
+        try
         {
-            if (_ediabas == null)
+            lock (_ediabasLock)
             {
-                return false;
-            }
+                if (_ediabas == null)
+                {
+                    return false;
+                }
 
-            MessageEvent?.Invoke(MessageType.Info, $"Ediabas disconnect, Id={id}");
-
-            try
-            {
-                MessageEvent?.Invoke(MessageType.Info, "Ediabas disconnect");
                 return _ediabas.EdInterfaceClass.InterfaceDisconnect();
             }
-            catch (Exception ex)
-            {
-                MessageEvent?.Invoke(MessageType.Error, $"Ediabas disconnect Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
-                return false;
-            }
+        }
+        catch (Exception ex)
+        {
+            MessageEvent?.Invoke(MessageType.Error, $"Ediabas disconnect Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
+            return false;
         }
     }
 
@@ -235,60 +240,64 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
             return responseList;
         }
 
-        lock (_ediabasLock)
+        byte[] sendData = requestData;
+        bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+
+        MessageEvent?.Invoke(MessageType.Info, $"Ediabas transmit, Id={id}, Func={funcAddress}");
+
+        for (; ; )
         {
-            byte[] sendData = requestData;
-            bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+            bool dataReceived = false;
 
-            MessageEvent?.Invoke(MessageType.Info, $"Ediabas transmit, Id={id}, Func={funcAddress}");
-
-            for (; ; )
+            try
             {
-                bool dataReceived = false;
-
-                if (_ediabas == null)
+                bool result;
+                byte[] receiveData;
+                lock (_ediabasLock)
                 {
-                    break;
-                }
-
-                try
-                {
-                    if (_ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
+                    if (_ediabas == null)
                     {
-                        if (receiveData.Length > 0)
-                        {
-                            byte[] responseData = new byte[receiveData.Length - 1];
-                            Array.Copy(receiveData, responseData, responseData.Length);
-                            responseList.Add(responseData);
-                        }
-
-                        dataReceived = true;
+                        break;
                     }
-                    else
+
+                    result = _ediabas.EdInterfaceClass.TransmitData(sendData, out receiveData);
+                }
+
+                if (result)
+                {
+                    if (receiveData.Length > 0)
                     {
-                        if (!funcAddress)
-                        {
-                            MessageEvent?.Invoke(MessageType.Warning, "*** No response");
-                        }
+                        byte[] responseData = new byte[receiveData.Length - 1];
+                        Array.Copy(receiveData, responseData, responseData.Length);
+                        responseList.Add(responseData);
+                    }
+
+                    dataReceived = true;
+                }
+                else
+                {
+                    if (!funcAddress)
+                    {
+                        MessageEvent?.Invoke(MessageType.Warning, "*** No response");
                     }
                 }
-                catch (Exception ex)
-                {
-                    MessageEvent?.Invoke(MessageType.Warning, $"Ediabas transmit Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
-                }
-
-                if (!funcAddress || !dataReceived)
-                {
-                    break;
-                }
-
-                if (AbortEdiabasJob())
-                {
-                    break;
-                }
-
-                sendData = Array.Empty<byte>();
             }
+            catch (Exception ex)
+            {
+                MessageEvent?.Invoke(MessageType.Warning, $"Ediabas transmit Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
+            }
+
+            if (!funcAddress || !dataReceived)
+            {
+                break;
+            }
+
+            if (AbortEdiabasJob())
+            {
+                break;
+            }
+
+            sendData = Array.Empty<byte>();
         }
 
         return responseList;
