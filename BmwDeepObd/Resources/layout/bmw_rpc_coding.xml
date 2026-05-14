@@ -36,17 +36,17 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/bmw_rpc_coding_options" />
             <Button
-                android:id="@+id/buttonCodingTal"
+                android:id="@+id/buttonCodingGenerateTal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/bmw_rpc_coding_tal" />
+                android:text="@string/bmw_rpc_coding_generate_tal" />
             <Button
-                android:id="@+id/buttonCodingExecute"
+                android:id="@+id/buttonCodingExecuteTal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/bmw_rpc_coding_execute" />
+                android:text="@string/bmw_rpc_coding_execute_tal" />
             <Button
                 android:id="@+id/buttonCodingAbort"
                 android:layout_width="wrap_content"
@@ -73,6 +73,13 @@
                 android:fadeScrollbars="false"
                 android:minLines="1"
                 android:maxLines="10" />
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_marginTop="20dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

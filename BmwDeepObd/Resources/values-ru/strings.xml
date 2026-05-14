@@ -804,8 +804,8 @@
   <string name="bmw_rpc_coding_connect">Подключение</string>
   <string name="bmw_rpc_coding_disconnect">Отключение</string>
   <string name="bmw_rpc_coding_options">Генерация опций</string>
-  <string name="bmw_rpc_coding_tal">Генерация TAL</string>
-  <string name="bmw_rpc_coding_execute">Выполнить</string>
+  <string name="bmw_rpc_coding_generate_tal">Генерация TAL</string>
+  <string name="bmw_rpc_coding_execute_tal">Выполнить</string>
   <string name="bmw_rpc_coding_abort">Прервать</string>
   <string name="bmw_rpc_coding_status_title">Статус</string>
 
