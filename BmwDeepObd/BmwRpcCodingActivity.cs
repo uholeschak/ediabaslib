@@ -1149,15 +1149,7 @@ namespace BmwDeepObd
 
         public bool IsEdiabasConnected()
         {
-            lock (_ediabasProxyClient.EdiabasLock)
-            {
-                if (_ediabas == null)
-                {
-                    return false;
-                }
-
-                return _ediabas.EdInterfaceClass.Connected;
-            }
+            return _ediabasProxyClient.IsEdiabasConnected();
         }
 
         private bool CreateRpcClient()
