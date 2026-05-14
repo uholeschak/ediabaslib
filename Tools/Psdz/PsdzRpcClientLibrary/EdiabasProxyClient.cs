@@ -1,12 +1,9 @@
 ﻿using EdiabasLib;
+using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using PsdzRpcServer.Shared;
 
 namespace PsdzRpcClient;
 
@@ -47,7 +44,6 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
 
     private bool _disposed;
     private EdiabasNet _ediabas;
-    private bool _ediabasOwner;
     private volatile bool _ediabasJobAbort;
     private Thread _ediabasThread;
     private AutoResetEvent _ediabasThreadWakeEvent;
@@ -56,14 +52,13 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
     private object _requestLock = new object();
     private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
 
-    public object EdiabasLock => _ediabasLock;
+    public EdiabasNet Ediabas => _ediabas;
 
     public bool IsDisposed => _disposed;
 
-    public EdiabasProxyClient(EdiabasNet ediabas, bool ediabasOwner)
+    public EdiabasProxyClient(EdiabasNet ediabas)
     {
         _ediabas = ediabas;
-        _ediabasOwner = ediabasOwner;
         _ediabas.AbortJobFunc = AbortEdiabasJob;
         _ediabasThreadWakeEvent = new AutoResetEvent(false);
     }
@@ -216,6 +211,14 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
         {
             MessageEvent?.Invoke(MessageType.Error, $"Ediabas disconnect Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
             return false;
+        }
+    }
+
+    public void EdiabasLogFormat(EdiabasNet.EdLogLevel logLevel, string format, params object[] args)
+    {
+        lock (_ediabasLock)
+        {
+            _ediabas?.LogFormat(logLevel, format, args);
         }
     }
 
@@ -407,7 +410,7 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
 
                 lock (_ediabasLock)
                 {
-                    if (_ediabas != null && _ediabasOwner)
+                    if (_ediabas != null)
                     {
                         _ediabas.Dispose();
                         _ediabas = null;
