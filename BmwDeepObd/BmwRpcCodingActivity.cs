@@ -1419,7 +1419,19 @@ namespace BmwDeepObd
                     loadUrl = _instanceData.Url;
                 }
 
+                if (string.IsNullOrEmpty(loadUrl))
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
+                    return false;
+                }
+
                 string remoteHost = new Uri(loadUrl).Host;
+                if (string.IsNullOrEmpty(remoteHost))
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: remoteHost is empty");
+                    return false;
+                }
+
                 if (!_ediabasProxyClient.StartEdiabasThread())
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
