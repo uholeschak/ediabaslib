@@ -669,8 +669,8 @@ namespace PsdzRpcClient
                             }
 
                             ConsoleKeyInfo cmdKey = Console.ReadKey(intercept: true);
-                            bool active = await client.RpcService.OperationActive().ConfigureAwait(false);
-                            if (active)
+                            bool cancelPossible = await client.RpcService.IsCancelPossible().ConfigureAwait(false);
+                            if (!cancelPossible)
                             {
                                 Console.WriteLine("An operation is currently active. Please wait...");
                                 continue;

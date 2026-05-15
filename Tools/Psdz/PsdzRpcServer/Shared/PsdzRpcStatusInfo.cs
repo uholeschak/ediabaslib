@@ -2,13 +2,12 @@
 {
     public class PsdzRpcStatusInfo
     {
-        public PsdzRpcStatusInfo(bool psdzInitialized, bool vehicleConnected, bool talPresent, bool hasOptionDict, bool operationActive, bool cancelPossible)
+        public PsdzRpcStatusInfo(bool psdzInitialized, bool vehicleConnected, bool talPresent, bool hasOptionDict, bool cancelPossible)
         {
             PsdzInitialized = psdzInitialized;
             VehicleConnected = vehicleConnected;
             TalPresent = talPresent;
             HasOptionDict = hasOptionDict;
-            OperationActive = operationActive;
             CancelPossible = cancelPossible;
         }
 
@@ -16,7 +15,6 @@
         public bool VehicleConnected { get; private set; }
         public bool TalPresent { get; private set; }
         public bool HasOptionDict { get; private set; }
-        public bool OperationActive { get; private set; }
         public bool CancelPossible { get; private set; }
     }
 }

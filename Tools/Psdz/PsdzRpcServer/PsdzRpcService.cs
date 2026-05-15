@@ -53,12 +53,6 @@ namespace PsdzRpcServer
             return Task.CompletedTask;
         }
 
-        public Task<bool> OperationActive()
-        {
-            bool isActive = IsOperationActive();
-            return Task.FromResult(isActive);
-        }
-
         public Task<bool> IsCancelPossible()
         {
             bool cancelPossible = IsCancelPossibleInternal();
@@ -326,7 +320,6 @@ namespace PsdzRpcServer
                 IsVehicleConnectedInternal(),
                 _programmingJobs.PsdzContext?.Tal != null,
                 _programmingJobs.OptionsDict != null,
-                IsOperationActive(),
                 IsCancelPossibleInternal()
             );
 
