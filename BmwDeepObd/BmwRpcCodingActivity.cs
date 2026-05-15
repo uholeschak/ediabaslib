@@ -1025,22 +1025,14 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Task<bool> psdzInitializedTask = Task.Run(() => _psdzRpcClient.RpcService.IsPsdzInitialized());
-                Task<bool> connectedTask       = Task.Run(() => _psdzRpcClient.RpcService.IsVehicleConnected());
-                Task<bool> talPresentTask      = Task.Run(() => _psdzRpcClient.RpcService.IsTalPresent());
-                Task<bool> hasOptionsDictTask  = Task.Run(() => _psdzRpcClient.RpcService.HasOptionsDict());
-                Task<bool> cancelPossibleTask  = Task.Run(() => _psdzRpcClient.RpcService.IsCancelPossible());
-
-                Task.WhenAll(psdzInitializedTask, connectedTask, talPresentTask, hasOptionsDictTask, cancelPossibleTask)
-                    .GetAwaiter().GetResult();
-
+                PsdzRpcStatusInfo statusInfo = Task.Run(() => _psdzRpcClient.RpcService.GetStatusInfo()).GetAwaiter().GetResult();
                 lock (_statusLock)
                 {
-                    _statusPsdzInitialized = psdzInitializedTask.Result;
-                    _statusConnected = connectedTask.Result;
-                    _statusTalPresent = talPresentTask.Result;
-                    _statusHasOptionsDict = hasOptionsDictTask.Result;
-                    _statusCancelPossible = cancelPossibleTask.Result;
+                    _statusPsdzInitialized = statusInfo.PsdzInitialized;
+                    _statusConnected = statusInfo.VehicleConnected;
+                    _statusTalPresent = statusInfo.TalPresent;
+                    _statusHasOptionsDict = statusInfo.HasOptionsDict;
+                    _statusCancelPossible = statusInfo.CancelPossible;
                 }
 
                 return true;
