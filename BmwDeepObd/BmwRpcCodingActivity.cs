@@ -40,7 +40,6 @@ namespace BmwDeepObd
                 CodingUrlTest = string.Empty;
                 DayString = string.Empty;
                 ValidSerial = string.Empty;
-                InitialUrl = string.Empty;
                 Url = string.Empty;
                 IstaFolder = string.Empty;
                 ServerConnected = false;
@@ -55,7 +54,6 @@ namespace BmwDeepObd
             public string DayString { get; set; }
             public string ValidSerial { get; set; }
             public string Vin { get; set; }
-            public string InitialUrl { get; set; }
             public string Url { get; set; }
             public string IstaFolder { get; set; }
             public bool ServerConnected { get; set; }
@@ -94,17 +92,14 @@ namespace BmwDeepObd
         private string _deviceAddress;
         private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
         private EdiabasProxyClient _ediabasProxyClient;
-        private EdiabasNet _ediabas;
-        private volatile bool _ediabasJobAbort;
-        private Thread _ediabasThread;
-        private AutoResetEvent _ediabasThreadWakeEvent;
-        private object _ediabasLock = new object();
+        private Task<bool> _startTask;
+        private CancellationTokenSource _startCts;
+        private object _startLock = new object();
         private object _timeLock = new object();
         private object _instanceLock = new object();
         private object _statusLock = new object();
         private bool _activityActive;
         private HttpClient _infoHttpClient;
-        private bool _urlLoaded;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
@@ -161,7 +156,6 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Ok);
 
-            _ediabasThreadWakeEvent = new AutoResetEvent(false);
             _activityCommon = new ActivityCommon(this, () =>
             {
                 if (_activityActive)
@@ -198,19 +192,13 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        lock (_ediabasLock)
-                        {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
-                        }
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
                     }
                 }
                 catch (Exception ex)
                 {
-                    lock (_ediabasLock)
-                    {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
-                            EdiabasNet.GetExceptionText(ex, false, false));
-                    }
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
+                        EdiabasNet.GetExceptionText(ex, false, false));
                 }
             };
 
@@ -236,19 +224,13 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        lock (_ediabasLock)
-                        {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
-                        }
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
                     }
                 }
                 catch (Exception ex)
                 {
-                    lock (_ediabasLock)
-                    {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
-                            EdiabasNet.GetExceptionText(ex, false, false));
-                    }
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
+                        EdiabasNet.GetExceptionText(ex, false, false));
                 }
             };
 
@@ -274,19 +256,13 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        lock (_ediabasLock)
-                        {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions failed");
-                        }
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions failed");
                     }
                 }
                 catch (Exception ex)
                 {
-                    lock (_ediabasLock)
-                    {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions: Exception={0}",
-                            EdiabasNet.GetExceptionText(ex, false, false));
-                    }
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions: Exception={0}",
+                        EdiabasNet.GetExceptionText(ex, false, false));
                 }
             };
 
@@ -312,19 +288,13 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        lock (_ediabasLock)
-                        {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal failed");
-                        }
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal failed");
                     }
                 }
                 catch (Exception ex)
                 {
-                    lock (_ediabasLock)
-                    {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal: Exception={0}",
-                            EdiabasNet.GetExceptionText(ex, false, false));
-                    }
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal: Exception={0}",
+                        EdiabasNet.GetExceptionText(ex, false, false));
                 }
             };
 
@@ -350,19 +320,13 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        lock (_ediabasLock)
-                        {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal failed");
-                        }
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal failed");
                     }
                 }
                 catch (Exception ex)
                 {
-                    lock (_ediabasLock)
-                    {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal: Exception={0}",
-                            EdiabasNet.GetExceptionText(ex, false, false));
-                    }
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal: Exception={0}",
+                        EdiabasNet.GetExceptionText(ex, false, false));
                 }
             };
 
@@ -380,11 +344,8 @@ namespace BmwDeepObd
                 }
                 catch (Exception ex)
                 {
-                    lock (_ediabasLock)
-                    {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
-                            EdiabasNet.GetExceptionText(ex, false, false));
-                    }
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
+                        EdiabasNet.GetExceptionText(ex, false, false));
                 }
             };
 
@@ -405,236 +366,7 @@ namespace BmwDeepObd
 
             _activityCommon.SetPreferredNetworkInterface();
 
-            _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(null, PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile);
-            _psdzRpcClient.ClientConnected += (sender, connected) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                lock (_ediabasLock)
-                {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
-                        connected);
-                }
-
-                if (connected)
-                {
-                    GetRemoteStatus();
-                    lock (_statusLock)
-                    {
-                        _statusMessage = string.Empty;
-                    }
-                }
-                else
-                {
-                    TaskActive = false;
-                }
-
-                RunOnUiThread(() =>
-                {
-                    lock (_instanceLock)
-                    {
-                        _instanceData.ServerConnected = connected;
-                    }
-
-                    if (!connected)
-                    {
-                        ConnectionFailMessage();
-                    }
-
-                    _progressBar.Progress = 0;
-                    _progressBar.Indeterminate = false;
-                    UpdateDisplay();
-                });
-            };
-
-            _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                TaskActive = false;
-                lock (_ediabasLock)
-                {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
-                        success);
-                }
-
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
-            };
-
-            _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += (s, success) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                TaskActive = false;
-                lock (_ediabasLock)
-                {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
-                        success);
-                }
-
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
-            };
-
-            _psdzRpcClient.CallbackHandler.ConnectVehicleCompleted += (s, connectArgs) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                TaskActive = false;
-                lock (_ediabasLock)
-                {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}",
-                        connectArgs.Success, connectArgs.Vin);
-                }
-
-                if (connectArgs.Success)
-                {
-                    lock (_instanceLock)
-                    {
-                        _instanceData.Vin = connectArgs.Vin;
-                    }
-                }
-
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
-            };
-
-            _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += (s, success) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                TaskActive = false;
-                lock (_ediabasLock)
-                {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
-                        success);
-                }
-
-                lock (_instanceLock)
-                {
-                    _instanceData.Vin = null;
-                }
-
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
-            };
-
-            _psdzRpcClient.CallbackHandler.VehicleFunctionsCompleted += (s, vehicleArgs) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                TaskActive = false;
-                lock (_ediabasLock)
-                {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
-                        vehicleArgs.Success, vehicleArgs.OperationType);
-                }
-
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
-            };
-
-            _psdzRpcClient.CallbackHandler.UpdateStatus += (s, message) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                lock (_statusLock)
-                {
-                    _statusMessage = message;
-                }
-
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
-            };
-
-            _psdzRpcClient.CallbackHandler.UpdateProgress += (s, progressArgs) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    _progressBar.Indeterminate = progressArgs.Marquee;
-                    _progressBar.Progress = progressArgs.Percent;
-                    UpdateDisplay();
-                });
-            };
+            CreateRpcClient();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -661,6 +393,8 @@ namespace BmwDeepObd
         {
             base.OnResume();
             _activityActive = true;
+
+            StartRpcClient();
             UpdateConnectTime();
         }
 
@@ -697,22 +431,12 @@ namespace BmwDeepObd
                 _infoHttpClient = null;
             }
 
-            if (_psdzRpcClient != null)
-            {
-                _psdzRpcClient.Dispose();
-                _psdzRpcClient = null;
-            }
+            Task.Run(DisposeRpcClient).GetAwaiter().GetResult();
 
             if (_activityCommon != null)
             {
                 _activityCommon.Dispose();
                 _activityCommon = null;
-            }
-
-            if (_ediabasThreadWakeEvent != null)
-            {
-                _ediabasThreadWakeEvent.Dispose();
-                _ediabasThreadWakeEvent = null;
             }
         }
 
@@ -933,6 +657,8 @@ namespace BmwDeepObd
                     {
                         Finish();
                     }
+
+                    StartRpcClient();
                 };
             }
         }
@@ -1129,7 +855,7 @@ namespace BmwDeepObd
                         { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" },
                     };
 
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
+                    Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
 
                     CustomProgressDialog progressLocal = progress;
                     RunOnUiThread(() =>
@@ -1393,55 +1119,424 @@ namespace BmwDeepObd
 
         public bool IsEdiabasConnected()
         {
-            lock (_ediabasLock)
-            {
-                if (_ediabas == null)
-                {
-                    return false;
-                }
-
-                return _ediabas.EdInterfaceClass.Connected;
-            }
+            return _ediabasProxyClient.IsEdiabasConnected();
         }
 
-        private bool RpcClientConnect()
+        private bool CreateRpcClient()
+        {
+            _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(null, PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile);
+            _psdzRpcClient.ClientConnected += (sender, connected) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                _ediabasProxyClient.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
+                    connected);
+
+                if (connected)
+                {
+                    GetRemoteStatus();
+                    lock (_statusLock)
+                    {
+                        _statusMessage = string.Empty;
+                    }
+                }
+                else
+                {
+                    TaskActive = false;
+                }
+
+                lock (_instanceLock)
+                {
+                    _instanceData.ServerConnected = connected;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (!connected)
+                    {
+                        ConnectionFailMessage();
+                    }
+
+                    _progressBar.Progress = 0;
+                    _progressBar.Indeterminate = false;
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
+                    success);
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += (s, success) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
+                    success);
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.ConnectVehicleCompleted += (s, connectArgs) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}",
+                    connectArgs.Success, connectArgs.Vin);
+
+                if (connectArgs.Success)
+                {
+                    lock (_instanceLock)
+                    {
+                        _instanceData.Vin = connectArgs.Vin;
+                    }
+                }
+
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += (s, success) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
+                    success);
+                lock (_instanceLock)
+                {
+                    _instanceData.Vin = null;
+                }
+
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.VehicleFunctionsCompleted += (s, vehicleArgs) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                TaskActive = false;
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
+                    vehicleArgs.Success, vehicleArgs.OperationType);
+
+                GetRemoteStatus();
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.UpdateStatus += (s, message) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                lock (_statusLock)
+                {
+                    _statusMessage = message;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    UpdateDisplay();
+                });
+            };
+
+            _psdzRpcClient.CallbackHandler.UpdateProgress += (s, progressArgs) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    _progressBar.Indeterminate = progressArgs.Marquee;
+                    _progressBar.Progress = progressArgs.Percent;
+                    UpdateDisplay();
+                });
+            };
+
+            EdiabasNet ediabas = new EdiabasNet
+            {
+                EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+            };
+            ediabas.SetConfigProperty("EcuPath", _ecuDir);
+            ediabas.EdInterfaceClass.EnableTransmitCache = false;
+            _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress, _appDataDir);
+
+            UpdateLogInfo();
+
+            _ediabasProxyClient = new EdiabasProxyClient(ediabas);
+            _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
+            {
+                return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+            };
+
+            _ediabasProxyClient.MessageEvent += (messageType, message) =>
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
+            };
+
+            return true;
+        }
+
+        async Task DisposeRpcClient()
         {
             try
             {
-                EdiabasOpen();
-                if (_ediabasProxyClient == null)
+                Task<bool> startTask;
+                lock (_startLock)
                 {
-                    _ediabasProxyClient = new EdiabasProxyClient(_ediabas, false);
-                    _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
-                    {
-                        return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
-                    };
-
-                    _ediabasProxyClient.MessageEvent += (messageType, message) =>
-                    {
-                        lock (_ediabasLock)
-                        {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
-                        }
-                    };
+                    _startCts?.Cancel();
+                    startTask = _startTask;
                 }
 
-                if (!_ediabasProxyClient.StartEdiabasThread())
+                if (startTask != null)
                 {
-                    lock (_ediabasLock)
+                    try
                     {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
+                        await startTask.ConfigureAwait(false);
                     }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                if (_psdzRpcClient != null)
+                {
+                    _psdzRpcClient.Dispose();
+                    _psdzRpcClient = null;
+                }
+
+                if (_ediabasProxyClient != null)
+                {
+                    await _ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
+                    await _ediabasProxyClient.DisposeAsync().ConfigureAwait(false);
+                    _ediabasProxyClient = null;
+                }
+
+                lock (_startLock)
+                {
+                    if (_startCts != null)
+                    {
+                        _startCts.Dispose();
+                        _startCts = null;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private bool StartRpcClient()
+        {
+            try
+            {
+                lock (_instanceLock)
+                {
+                    if (string.IsNullOrEmpty(_instanceData.CodingUrl))
+                    {
+                        return false;
+                    }
+
+                    if (_instanceData.ServerConnected)
+                    {
+                        return true;
+                    }
+                }
+
+                lock (_startLock)
+                {
+                    if (_startTask != null && !_startTask.IsCompleted)
+                    {
+                        return false;
+                    }
+                }
+
+                lock (_startLock)
+                {
+                    _startCts = new CancellationTokenSource();
+                    _startTask = RpcClientConnect();
+                    _startTask.ContinueWith(t =>
+                    {
+                        if (!t.Result)
+                        {
+                            lock (_instanceLock)
+                            {
+                                _instanceData.ServerConnected = false;
+                            }
+                        }
+
+                        lock (_startLock)
+                        {
+                            _startTask = null;
+                            _startCts?.Dispose();
+                            _startCts = null;
+                        }
+                    });
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private async Task<bool> RpcClientConnect()
+        {
+            try
+            {
+                if (_ediabasProxyClient == null)
+                {
                     return false;
                 }
 
-                bool proxyResult = Task.Run(() => _psdzRpcClient.RpcService.EnableVehicleProxy()).GetAwaiter().GetResult();
+                if (!_activityCommon.IsNetworkPresent(out string domains))
+                {
+                    return false;
+                }
+
+                string loadUrl;
+                lock (_instanceLock)
+                {
+                    if (string.IsNullOrEmpty(_instanceData.Url))
+                    {
+                        string url;
+                        if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
+                            {
+                                url = _instanceData.CodingUrlTest;
+                            }
+                            else
+                            {
+                                url = @"http://vm-ista.local.holeschak.de:8000/";
+                            }
+                        }
+                        else
+                        {
+                            url = _instanceData.CodingUrl;
+                        }
+
+                        _instanceData.Url = url;
+                    }
+
+                    loadUrl = _instanceData.Url;
+                }
+
+                if (string.IsNullOrEmpty(loadUrl))
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
+                    return false;
+                }
+
+                if (!Uri.TryCreate(loadUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Invalid loadUrl={0}", loadUrl);
+                    return false;
+                }
+
+                string remoteHost = loadUri.Host;
+                if (!_ediabasProxyClient.StartEdiabasThread())
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
+                    return false;
+                }
+
+                bool proxyResult = await _psdzRpcClient.RpcService.EnableVehicleProxy().ConfigureAwait(false);
                 if (!proxyResult)
                 {
-                    lock (_ediabasLock)
-                    {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
-                    }
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
+                    return false;
+                }
+
+                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, _startCts.Token).ConfigureAwait(false);
+                if (!connected)
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
                     return false;
                 }
 
@@ -1449,31 +1544,9 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                lock (_ediabasLock)
-                {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Exception={0}",
-                        EdiabasNet.GetExceptionText(ex, false, false));
-                }
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Exception={0}",
+                    EdiabasNet.GetExceptionText(ex, false, false));
                 return false;
-            }
-        }
-
-        private void EdiabasOpen()
-        {
-            lock (_ediabasLock)
-            {
-                if (_ediabas == null)
-                {
-                    _ediabas = new EdiabasNet
-                    {
-                        EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
-                    };
-                    _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                    UpdateLogInfo();
-                }
-
-                _ediabas.EdInterfaceClass.EnableTransmitCache = false;
-                _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
             }
         }
 
@@ -1499,14 +1572,19 @@ namespace BmwDeepObd
                 _instanceData.TraceDir = logDir;
             }
 
-            if (_ediabas != null)
+            if (_ediabasProxyClient?.Ediabas != null)
             {
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, string.Empty, _instanceData.TraceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(_ediabasProxyClient.Ediabas, _instanceData.TraceDir, string.Empty, _instanceData.TraceAppend);
             }
         }
 
         private void SelectDataLogging()
         {
+            if (IsEdiabasConnected())
+            {
+                return;
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.SetTitle(Resource.String.menu_submenu_log);
             ListView listView = new ListView(this);
@@ -1552,11 +1630,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                lock (_ediabasLock)
-                {
-                    UpdateLogInfo();
-                }
-
+                UpdateLogInfo();
                 UpdateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
@@ -1648,10 +1722,7 @@ namespace BmwDeepObd
 
                 _instanceData.CommErrorsOccurred = true;
 
-                lock (_ediabasLock)
-                {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ReportError: {0}", msg);
-                }
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ReportError: {0}", msg);
             });
         }
 
