@@ -42,7 +42,6 @@ namespace BmwDeepObd
                 ValidSerial = string.Empty;
                 Url = string.Empty;
                 IstaFolder = string.Empty;
-                ServerConnected = false;
                 TraceDir = string.Empty;
                 TraceActive = true;
                 TraceAppend = false;
@@ -56,7 +55,6 @@ namespace BmwDeepObd
             public string Vin { get; set; }
             public string Url { get; set; }
             public string IstaFolder { get; set; }
-            public bool ServerConnected { get; set; }
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -103,9 +101,9 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
-        private bool _taskActive;
         private PsdzRpcStatusInfo _statusInfo;
         private string _statusMessage;
+        private bool _rpcClientConnected;
 
         private Button _buttonCodingConnect;
         private Button _buttonCodingDisconnect;
@@ -116,6 +114,7 @@ namespace BmwDeepObd
         private TextView _textCodingStatus;
         private ProgressBar _progressBar;
 
+        private bool _taskActive;
         public bool TaskActive
         {
             get
@@ -1142,6 +1141,11 @@ namespace BmwDeepObd
                 _ediabasProxyClient.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
                     connected);
 
+                lock (_statusLock)
+                {
+                    _rpcClientConnected = connected;
+                }
+
                 if (connected)
                 {
                     lock (_statusLock)
@@ -1149,11 +1153,6 @@ namespace BmwDeepObd
                         _statusMessage = string.Empty;
                     }
                     await RpcClientUpdateDisplay().ConfigureAwait(false);
-                }
-
-                lock (_instanceLock)
-                {
-                    _instanceData.ServerConnected = connected;
                 }
 
                 RunOnUiThread(() =>
@@ -1352,6 +1351,11 @@ namespace BmwDeepObd
                     _ediabasProxyClient = null;
                 }
 
+                lock (_statusLock)
+                {
+                    _rpcClientConnected = false;
+                }
+
                 lock (_startLock)
                 {
                     if (_startCts != null)
@@ -1378,9 +1382,12 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    if (_instanceData.ServerConnected)
+                    lock (_statusLock)
                     {
-                        return true;
+                        if (_rpcClientConnected)
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -1401,9 +1408,9 @@ namespace BmwDeepObd
                     {
                         if (!t.Result)
                         {
-                            lock (_instanceLock)
+                            lock (_statusLock)
                             {
-                                _instanceData.ServerConnected = false;
+                                _rpcClientConnected = false;
                             }
                         }
 
