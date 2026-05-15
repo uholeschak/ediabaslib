@@ -104,11 +104,7 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
         private bool _taskActive;
-        private bool _statusPsdzInitialized;
-        private bool _statusConnected;
-        private bool _statusTalPresent;
-        private bool _statusHasOptionsDict;
-        private bool _statusCancelPossible;
+        private PsdzRpcStatusInfo _statusInfo;
         private string _statusMessage;
 
         private Button _buttonCodingConnect;
@@ -1028,11 +1024,7 @@ namespace BmwDeepObd
                 PsdzRpcStatusInfo statusInfo = Task.Run(() => _psdzRpcClient.RpcService.GetStatusInfo()).GetAwaiter().GetResult();
                 lock (_statusLock)
                 {
-                    _statusPsdzInitialized = statusInfo.PsdzInitialized;
-                    _statusConnected = statusInfo.VehicleConnected;
-                    _statusTalPresent = statusInfo.TalPresent;
-                    _statusHasOptionsDict = statusInfo.HasOptionsDict;
-                    _statusCancelPossible = statusInfo.CancelPossible;
+                    _statusInfo = statusInfo;
                 }
 
                 return true;
@@ -1050,31 +1042,23 @@ namespace BmwDeepObd
                 return;
             }
 
-            bool statusPsdzInitialized;
-            bool statusConnected;
-            bool statusTalPresent;
-            bool statusHasOptionsDict;
-            bool statusCancelPossible;
+            PsdzRpcStatusInfo statusInfo;
             string statusMessage;
 
             lock (_statusLock)
             {
-                statusPsdzInitialized = _statusPsdzInitialized;
-                statusConnected = _statusConnected;
-                statusTalPresent = _statusTalPresent;
-                statusHasOptionsDict = _statusHasOptionsDict;
-                statusCancelPossible = _statusCancelPossible;
+                statusInfo = _statusInfo;
                 statusMessage = _statusMessage;
             }
 
             bool active = TaskActive;
-            bool modifyTal = !active && statusPsdzInitialized && statusConnected && statusHasOptionsDict;
-            _buttonCodingConnect.Enabled = !active && !statusConnected;
-            _buttonCodingDisconnect.Enabled = !active && statusPsdzInitialized && statusConnected;
-            _buttonCodingOptions.Enabled = !active && statusPsdzInitialized && statusConnected && !statusHasOptionsDict;
+            bool modifyTal = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected && statusInfo.HasOptionsDict;
+            _buttonCodingConnect.Enabled = !active && !statusInfo.VehicleConnected;
+            _buttonCodingDisconnect.Enabled = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected;
+            _buttonCodingOptions.Enabled = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected && !statusInfo.HasOptionsDict;
             _buttonCodingGenerateTal.Enabled = modifyTal;
-            _buttonCodingExecuteTal.Enabled = modifyTal && statusTalPresent;
-            _buttonCodingAbort.Enabled = active && statusCancelPossible;
+            _buttonCodingExecuteTal.Enabled = modifyTal && statusInfo.TalPresent;
+            _buttonCodingAbort.Enabled = active && statusInfo.CancelPossible;
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;
 
