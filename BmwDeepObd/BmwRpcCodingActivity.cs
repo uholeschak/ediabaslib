@@ -1051,6 +1051,11 @@ namespace BmwDeepObd
                 statusMessage = _statusMessage;
             }
 
+            if (statusInfo == null)
+            {
+                return;
+            }
+
             bool active = TaskActive;
             bool modifyTal = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected && statusInfo.HasOptionsDict;
             _buttonCodingConnect.Enabled = !active && !statusInfo.VehicleConnected;
