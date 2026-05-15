@@ -324,6 +324,19 @@ namespace PsdzRpcServer
             return Task.FromResult(vin);
         }
 
+        public Task<PsdzRpcStatusInfo> GetStatusInfo()
+        {
+            PsdzRpcStatusInfo statusInfo = new PsdzRpcStatusInfo(
+                _programmingJobs.ProgrammingService?.Psdz?.IsPsdzInitialized ?? false,
+                IsVehicleConnectedInternal(),
+                _programmingJobs.PsdzContext?.Tal != null,
+                _programmingJobs.OptionsDict != null,
+                IsOperationActive()
+            );
+
+            return Task.FromResult(statusInfo);
+        }
+
         public Task<string> GetPsdzServiceHostLogDir()
         {
             string hostLogDir = _programmingJobs.ProgrammingService?.GetPsdzServiceHostLogDir();

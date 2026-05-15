@@ -39,6 +39,7 @@ namespace PsdzRpcServer.Shared
         Task<bool> IsVehicleConnected();
         Task<bool> IsTalPresent();
         Task<string> GetVehicleVin();
+        Task<PsdzRpcStatusInfo> GetStatusInfo();
         Task<string> GetPsdzServiceHostLogDir();
         Task<List<PsdzRpcOptionType>> GetOptionTypes();
         Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzRpcSwiRegisterEnum? swiRegisterEnum);
