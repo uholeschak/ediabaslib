@@ -61,12 +61,7 @@ namespace PsdzRpcServer
 
         public Task<bool> IsCancelPossible()
         {
-            bool cancelPossible = false;
-            lock (_ctsLock)
-            {
-                cancelPossible = _cts != null;
-            }
-
+            bool cancelPossible = IsCancelPossibleInternal();
             return Task.FromResult(cancelPossible);
         }
 
@@ -331,7 +326,8 @@ namespace PsdzRpcServer
                 IsVehicleConnectedInternal(),
                 _programmingJobs.PsdzContext?.Tal != null,
                 _programmingJobs.OptionsDict != null,
-                IsOperationActive()
+                IsOperationActive(),
+                IsCancelPossibleInternal()
             );
 
             return Task.FromResult(statusInfo);
@@ -506,6 +502,16 @@ namespace PsdzRpcServer
                 isActive = _cts != null;
             }
             return isActive;
+        }
+
+        private bool IsCancelPossibleInternal()
+        {
+            bool cancelPossible;
+            lock (_ctsLock)
+            {
+                cancelPossible = _cts != null;
+            }
+            return cancelPossible;
         }
 
         private bool IsVehicleConnectedInternal()
