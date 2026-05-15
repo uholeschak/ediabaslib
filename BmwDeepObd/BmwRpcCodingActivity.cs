@@ -185,6 +185,16 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
+                        await GetRemoteStatusAsync().ConfigureAwait(false);
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            UpdateDisplay();
+                        });
                     }
                     else
                     {
@@ -217,7 +227,7 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
-                        GetRemoteStatus();
+                        await GetRemoteStatusAsync().ConfigureAwait(false);
                         RunOnUiThread(() =>
                         {
                             if (_activityCommon == null)
@@ -259,7 +269,7 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
-                        GetRemoteStatus();
+                        await GetRemoteStatusAsync().ConfigureAwait(false);
                         RunOnUiThread(() =>
                         {
                             if (_activityCommon == null)
@@ -301,7 +311,7 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
-                        GetRemoteStatus();
+                        await GetRemoteStatusAsync().ConfigureAwait(false);
                         RunOnUiThread(() =>
                         {
                             if (_activityCommon == null)
@@ -343,7 +353,7 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
-                        GetRemoteStatus();
+                        await GetRemoteStatusAsync().ConfigureAwait(false);
                         RunOnUiThread(() =>
                         {
                             if (_activityCommon == null)
@@ -1052,7 +1062,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool GetRemoteStatus()
+        private async Task<bool> GetRemoteStatusAsync()
         {
             try
             {
@@ -1061,7 +1071,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                PsdzRpcStatusInfo statusInfo = Task.Run(() => _psdzRpcClient.RpcService.GetStatusInfo()).GetAwaiter().GetResult();
+                PsdzRpcStatusInfo statusInfo = await _psdzRpcClient.RpcService.GetStatusInfo().ConfigureAwait(false);
                 lock (_statusLock)
                 {
                     _statusInfo = statusInfo;
@@ -1158,7 +1168,7 @@ namespace BmwDeepObd
 
                 if (connected)
                 {
-                    GetRemoteStatus();
+                    Task.Run(GetRemoteStatusAsync).GetAwaiter().GetResult();
                     lock (_statusLock)
                     {
                         _statusMessage = string.Empty;
@@ -1192,7 +1202,7 @@ namespace BmwDeepObd
                 });
             };
 
-            _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
+            _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += async (s, success) =>
             {
                 if (_activityCommon == null)
                 {
@@ -1202,7 +1212,7 @@ namespace BmwDeepObd
                 TaskActive = false;
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
                     success);
-                GetRemoteStatus();
+                await GetRemoteStatusAsync().ConfigureAwait(false);
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
@@ -1214,7 +1224,7 @@ namespace BmwDeepObd
                 });
             };
 
-            _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += (s, success) =>
+            _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += async (s, success) =>
             {
                 if (_activityCommon == null)
                 {
@@ -1224,7 +1234,7 @@ namespace BmwDeepObd
                 TaskActive = false;
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
                     success);
-                GetRemoteStatus();
+                await GetRemoteStatusAsync().ConfigureAwait(false);
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
@@ -1236,7 +1246,7 @@ namespace BmwDeepObd
                 });
             };
 
-            _psdzRpcClient.CallbackHandler.ConnectVehicleCompleted += (s, connectArgs) =>
+            _psdzRpcClient.CallbackHandler.ConnectVehicleCompleted += async (s, connectArgs) =>
             {
                 if (_activityCommon == null)
                 {
@@ -1255,7 +1265,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                GetRemoteStatus();
+                await GetRemoteStatusAsync().ConfigureAwait(false);
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
@@ -1267,7 +1277,7 @@ namespace BmwDeepObd
                 });
             };
 
-            _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += (s, success) =>
+            _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += async (s, success) =>
             {
                 if (_activityCommon == null)
                 {
@@ -1282,7 +1292,7 @@ namespace BmwDeepObd
                     _instanceData.Vin = null;
                 }
 
-                GetRemoteStatus();
+                await GetRemoteStatusAsync().ConfigureAwait(false);
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
@@ -1294,7 +1304,7 @@ namespace BmwDeepObd
                 });
             };
 
-            _psdzRpcClient.CallbackHandler.VehicleFunctionsCompleted += (s, vehicleArgs) =>
+            _psdzRpcClient.CallbackHandler.VehicleFunctionsCompleted += async (s, vehicleArgs) =>
             {
                 if (_activityCommon == null)
                 {
@@ -1305,7 +1315,7 @@ namespace BmwDeepObd
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
                     vehicleArgs.Success, vehicleArgs.OperationType);
 
-                GetRemoteStatus();
+                await GetRemoteStatusAsync().ConfigureAwait(false);
                 RunOnUiThread(() =>
                 {
                     if (_activityCommon == null)
