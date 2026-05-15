@@ -1015,21 +1015,17 @@ namespace BmwDeepObd
         private async Task RpcClientTaskStarted()
         {
             TaskActive = true;
-            await GetRemoteStatusAsync().ConfigureAwait(false);
-            RunOnUiThread(() =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                UpdateDisplay();
-            });
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
         }
 
         private async Task RpcClientTaskCompleted()
         {
             TaskActive = false;
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
+        }
+
+        private async Task RpcClientUpdateDisplay()
+        {
             await GetRemoteStatusAsync().ConfigureAwait(false);
             RunOnUiThread(() =>
             {
@@ -1152,11 +1148,7 @@ namespace BmwDeepObd
                     {
                         _statusMessage = string.Empty;
                     }
-                    await RpcClientTaskCompleted().ConfigureAwait(false);
-                }
-                else
-                {
-                    TaskActive = false;
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
                 }
 
                 lock (_instanceLock)
@@ -1400,6 +1392,7 @@ namespace BmwDeepObd
                     }
                 }
 
+                TaskActive = false;
                 lock (_startLock)
                 {
                     _startCts = new CancellationTokenSource();
