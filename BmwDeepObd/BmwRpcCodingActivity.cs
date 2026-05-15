@@ -42,7 +42,6 @@ namespace BmwDeepObd
                 ValidSerial = string.Empty;
                 Url = string.Empty;
                 IstaFolder = string.Empty;
-                ServerConnected = false;
                 TraceDir = string.Empty;
                 TraceActive = true;
                 TraceAppend = false;
@@ -56,7 +55,6 @@ namespace BmwDeepObd
             public string Vin { get; set; }
             public string Url { get; set; }
             public string IstaFolder { get; set; }
-            public bool ServerConnected { get; set; }
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -103,13 +101,9 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
-        private bool _taskActive;
-        private bool _statusPsdzInitialized;
-        private bool _statusConnected;
-        private bool _statusTalPresent;
-        private bool _statusHasOptionsDict;
-        private bool _statusCancelPossible;
+        private PsdzRpcStatusInfo _statusInfo;
         private string _statusMessage;
+        private bool _rpcClientConnected;
 
         private Button _buttonCodingConnect;
         private Button _buttonCodingDisconnect;
@@ -120,6 +114,7 @@ namespace BmwDeepObd
         private TextView _textCodingStatus;
         private ProgressBar _progressBar;
 
+        private bool _taskActive;
         public bool TaskActive
         {
             get
@@ -188,7 +183,7 @@ namespace BmwDeepObd
                     bool result = await _psdzRpcClient.RpcService.ConnectVehicle(istaFolder, string.Empty, false).ConfigureAwait(false);
                     if (result)
                     {
-                        TaskActive = true;
+                        await RpcClientTaskStarted().ConfigureAwait(false);
                     }
                     else
                     {
@@ -220,7 +215,7 @@ namespace BmwDeepObd
                     bool result = await _psdzRpcClient.RpcService.DisconnectVehicle().ConfigureAwait(false);
                     if (result)
                     {
-                        TaskActive = true;
+                        await RpcClientTaskStarted().ConfigureAwait(false);
                     }
                     else
                     {
@@ -252,7 +247,7 @@ namespace BmwDeepObd
                     bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.CreateOptions).ConfigureAwait(false);
                     if (result)
                     {
-                        TaskActive = true;
+                        await RpcClientTaskStarted().ConfigureAwait(false);
                     }
                     else
                     {
@@ -284,7 +279,7 @@ namespace BmwDeepObd
                     bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa).ConfigureAwait(false);
                     if (result)
                     {
-                        TaskActive = true;
+                        await RpcClientTaskStarted().ConfigureAwait(false);
                     }
                     else
                     {
@@ -316,7 +311,7 @@ namespace BmwDeepObd
                     bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.ExecuteTal).ConfigureAwait(false);
                     if (result)
                     {
-                        TaskActive = true;
+                        await RpcClientTaskStarted().ConfigureAwait(false);
                     }
                     else
                     {
@@ -1016,7 +1011,33 @@ namespace BmwDeepObd
             }
         }
 
-        private bool GetRemoteStatus()
+        private async Task RpcClientTaskStarted()
+        {
+            TaskActive = true;
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
+        }
+
+        private async Task RpcClientTaskCompleted()
+        {
+            TaskActive = false;
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
+        }
+
+        private async Task RpcClientUpdateDisplay()
+        {
+            await GetRemoteStatusAsync().ConfigureAwait(false);
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                UpdateDisplay();
+            });
+        }
+
+        private async Task<bool> GetRemoteStatusAsync()
         {
             try
             {
@@ -1025,22 +1046,10 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Task<bool> psdzInitializedTask = Task.Run(() => _psdzRpcClient.RpcService.IsPsdzInitialized());
-                Task<bool> connectedTask       = Task.Run(() => _psdzRpcClient.RpcService.IsVehicleConnected());
-                Task<bool> talPresentTask      = Task.Run(() => _psdzRpcClient.RpcService.IsTalPresent());
-                Task<bool> hasOptionsDictTask  = Task.Run(() => _psdzRpcClient.RpcService.HasOptionsDict());
-                Task<bool> cancelPossibleTask  = Task.Run(() => _psdzRpcClient.RpcService.IsCancelPossible());
-
-                Task.WhenAll(psdzInitializedTask, connectedTask, talPresentTask, hasOptionsDictTask, cancelPossibleTask)
-                    .GetAwaiter().GetResult();
-
+                PsdzRpcStatusInfo statusInfo = await _psdzRpcClient.RpcService.GetStatusInfo().ConfigureAwait(false);
                 lock (_statusLock)
                 {
-                    _statusPsdzInitialized = psdzInitializedTask.Result;
-                    _statusConnected = connectedTask.Result;
-                    _statusTalPresent = talPresentTask.Result;
-                    _statusHasOptionsDict = hasOptionsDictTask.Result;
-                    _statusCancelPossible = cancelPossibleTask.Result;
+                    _statusInfo = statusInfo;
                 }
 
                 return true;
@@ -1058,31 +1067,28 @@ namespace BmwDeepObd
                 return;
             }
 
-            bool statusPsdzInitialized;
-            bool statusConnected;
-            bool statusTalPresent;
-            bool statusHasOptionsDict;
-            bool statusCancelPossible;
+            PsdzRpcStatusInfo statusInfo;
             string statusMessage;
 
             lock (_statusLock)
             {
-                statusPsdzInitialized = _statusPsdzInitialized;
-                statusConnected = _statusConnected;
-                statusTalPresent = _statusTalPresent;
-                statusHasOptionsDict = _statusHasOptionsDict;
-                statusCancelPossible = _statusCancelPossible;
+                statusInfo = _statusInfo;
                 statusMessage = _statusMessage;
             }
 
+            if (statusInfo == null)
+            {
+                return;
+            }
+
             bool active = TaskActive;
-            bool modifyTal = !active && statusPsdzInitialized && statusConnected && statusHasOptionsDict;
-            _buttonCodingConnect.Enabled = !active && !statusConnected;
-            _buttonCodingDisconnect.Enabled = !active && statusPsdzInitialized && statusConnected;
-            _buttonCodingOptions.Enabled = !active && statusPsdzInitialized && statusConnected && !statusHasOptionsDict;
+            bool modifyTal = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected && statusInfo.HasOptionsDict;
+            _buttonCodingConnect.Enabled = !active && !statusInfo.VehicleConnected;
+            _buttonCodingDisconnect.Enabled = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected;
+            _buttonCodingOptions.Enabled = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected && !statusInfo.HasOptionsDict;
             _buttonCodingGenerateTal.Enabled = modifyTal;
-            _buttonCodingExecuteTal.Enabled = modifyTal && statusTalPresent;
-            _buttonCodingAbort.Enabled = active && statusCancelPossible;
+            _buttonCodingExecuteTal.Enabled = modifyTal && statusInfo.TalPresent;
+            _buttonCodingAbort.Enabled = active && statusInfo.CancelPossible;
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;
 
@@ -1125,7 +1131,7 @@ namespace BmwDeepObd
         private bool CreateRpcClient()
         {
             _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(null, PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile);
-            _psdzRpcClient.ClientConnected += (sender, connected) =>
+            _psdzRpcClient.ClientConnected += async (sender, connected) =>
             {
                 if (_activityCommon == null)
                 {
@@ -1135,26 +1141,27 @@ namespace BmwDeepObd
                 _ediabasProxyClient.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
                     connected);
 
+                lock (_statusLock)
+                {
+                    _rpcClientConnected = connected;
+                }
+
                 if (connected)
                 {
-                    GetRemoteStatus();
                     lock (_statusLock)
                     {
                         _statusMessage = string.Empty;
                     }
-                }
-                else
-                {
-                    TaskActive = false;
-                }
-
-                lock (_instanceLock)
-                {
-                    _instanceData.ServerConnected = connected;
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
                 }
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
                     if (!connected)
                     {
                         ConnectionFailMessage();
@@ -1166,58 +1173,37 @@ namespace BmwDeepObd
                 });
             };
 
-            _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
+            _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += async (s, success) =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
 
-                TaskActive = false;
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
                     success);
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
+                await RpcClientTaskCompleted().ConfigureAwait(false);
             };
 
-            _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += (s, success) =>
+            _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += async (s, success) =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
 
-                TaskActive = false;
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
                     success);
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
+                await RpcClientTaskCompleted().ConfigureAwait(false);
             };
 
-            _psdzRpcClient.CallbackHandler.ConnectVehicleCompleted += (s, connectArgs) =>
+            _psdzRpcClient.CallbackHandler.ConnectVehicleCompleted += async (s, connectArgs) =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
 
-                TaskActive = false;
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}",
                     connectArgs.Success, connectArgs.Vin);
 
@@ -1229,26 +1215,16 @@ namespace BmwDeepObd
                     }
                 }
 
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
+                await RpcClientTaskCompleted().ConfigureAwait(false);
             };
 
-            _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += (s, success) =>
+            _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += async (s, success) =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
 
-                TaskActive = false;
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
                     success);
                 lock (_instanceLock)
@@ -1256,39 +1232,20 @@ namespace BmwDeepObd
                     _instanceData.Vin = null;
                 }
 
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
+                await RpcClientTaskCompleted().ConfigureAwait(false);
             };
 
-            _psdzRpcClient.CallbackHandler.VehicleFunctionsCompleted += (s, vehicleArgs) =>
+            _psdzRpcClient.CallbackHandler.VehicleFunctionsCompleted += async (s, vehicleArgs) =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
 
-                TaskActive = false;
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
                     vehicleArgs.Success, vehicleArgs.OperationType);
 
-                GetRemoteStatus();
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    UpdateDisplay();
-                });
+                await RpcClientTaskCompleted().ConfigureAwait(false);
             };
 
             _psdzRpcClient.CallbackHandler.UpdateStatus += (s, message) =>
@@ -1394,6 +1351,11 @@ namespace BmwDeepObd
                     _ediabasProxyClient = null;
                 }
 
+                lock (_statusLock)
+                {
+                    _rpcClientConnected = false;
+                }
+
                 lock (_startLock)
                 {
                     if (_startCts != null)
@@ -1420,9 +1382,12 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    if (_instanceData.ServerConnected)
+                    lock (_statusLock)
                     {
-                        return true;
+                        if (_rpcClientConnected)
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -1434,6 +1399,7 @@ namespace BmwDeepObd
                     }
                 }
 
+                TaskActive = false;
                 lock (_startLock)
                 {
                     _startCts = new CancellationTokenSource();
@@ -1442,9 +1408,9 @@ namespace BmwDeepObd
                     {
                         if (!t.Result)
                         {
-                            lock (_instanceLock)
+                            lock (_statusLock)
                             {
-                                _instanceData.ServerConnected = false;
+                                _rpcClientConnected = false;
                             }
                         }
 
