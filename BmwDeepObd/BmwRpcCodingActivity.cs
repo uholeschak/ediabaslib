@@ -217,6 +217,16 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
+                        GetRemoteStatus();
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            UpdateDisplay();
+                        });
                     }
                     else
                     {
@@ -249,6 +259,16 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
+                        GetRemoteStatus();
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            UpdateDisplay();
+                        });
                     }
                     else
                     {
@@ -281,6 +301,16 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
+                        GetRemoteStatus();
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            UpdateDisplay();
+                        });
                     }
                     else
                     {
@@ -313,6 +343,16 @@ namespace BmwDeepObd
                     if (result)
                     {
                         TaskActive = true;
+                        GetRemoteStatus();
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            UpdateDisplay();
+                        });
                     }
                     else
                     {
@@ -1136,6 +1176,11 @@ namespace BmwDeepObd
 
                 RunOnUiThread(() =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
                     if (!connected)
                     {
                         ConnectionFailMessage();
