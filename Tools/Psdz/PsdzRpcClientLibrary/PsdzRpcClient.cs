@@ -1,15 +1,16 @@
-﻿using PsdzRpcServer.Shared;
+﻿using EdiabasLib;
+using PsdzRpcServer.Shared;
 using StreamJsonRpc;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Authentication;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Reflection;
 
 namespace PsdzRpcClient
 {
@@ -175,53 +176,29 @@ namespace PsdzRpcClient
                 return false;
             }
 
-#if ANDROID
             try
             {
-                // Issuer des Serverzertifikats muss dem Subject des CA-Zertifikats entsprechen
-                if (!string.Equals(cert2.Issuer, _caCert.Subject, StringComparison.OrdinalIgnoreCase))
-                {
-                    _output?.WriteLine($"Certificate issuer mismatch: {cert2.Issuer} != {_caCert.Subject}");
-                    return false;
-                }
-
-                // Signatur des Serverzertifikats mit dem Public Key des CA-Zertifikats verifizieren
                 Org.BouncyCastle.X509.X509Certificate bcCaCert =
                         new Org.BouncyCastle.X509.X509CertificateParser().ReadCertificate(_caCert.RawData);
                 Org.BouncyCastle.X509.X509Certificate bcServerCert =
                     new Org.BouncyCastle.X509.X509CertificateParser().ReadCertificate(cert2.RawData);
 
-                bcServerCert.Verify(bcCaCert.GetPublicKey());
+                List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate> { bcCaCert };
+                List <Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate> { bcServerCert };
+
+                if (!EdBcTlsUtilities.ValidateCertChain(certChain, rootCerts))
+                {
+                    _output?.WriteLine("Certificate chain validation failed.");
+                    return false;
+                }
+
                 return true;
             }
             catch (Exception ex)
             {
-                _output?.WriteLine($"Android certificate validation failed: {ex.Message}");
+                _output?.WriteLine($"Certificate validation failed: {ex.Message}");
                 return false;
             }
-#else
-            // CA-Kette prüfen
-            X509Chain chain = new X509Chain();
-            chain.ChainPolicy.ExtraStore.Add(_caCert);
-            chain.ChainPolicy.RevocationMode    = X509RevocationMode.NoCheck;
-            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-
-            bool valid = chain.Build(cert2);
-            if (!valid)
-            {
-                _output?.WriteLine("Validate certificate chain failed.");
-                return false;
-            }
-
-            X509Certificate2 rootCert = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
-            bool validRoot = rootCert.Thumbprint == _caCert.Thumbprint;
-            if (!validRoot)
-            {
-                _output?.WriteLine($"Root certificate mismatch: {rootCert.Thumbprint}");
-            }
-
-            return validRoot;
-#endif
         }
 
         private void StartJsonRpc(SynchronizationContext synchronizationContext)

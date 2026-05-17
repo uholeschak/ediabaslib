@@ -21,9 +21,6 @@
   <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.8" />
   </ItemGroup>
-  <ItemGroup Condition="$(TargetFramework.Contains('android'))">
-     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" GeneratePathProperty="true" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
