@@ -1089,6 +1089,7 @@ namespace BmwDeepObd
             _buttonCodingGenerateTal.Enabled = modifyTal;
             _buttonCodingExecuteTal.Enabled = modifyTal && statusInfo.TalPresent;
             _buttonCodingAbort.Enabled = active && statusInfo.CancelPossible;
+            _progressBar.Visibility = active && statusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;
 
@@ -1467,6 +1468,7 @@ namespace BmwDeepObd
                             url = _instanceData.CodingUrl;
                         }
 
+                        url = @"http://vm-ista.local.holeschak.de:8000/";
                         _instanceData.Url = url;
                     }
 
