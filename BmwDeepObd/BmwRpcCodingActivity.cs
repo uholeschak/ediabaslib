@@ -652,6 +652,7 @@ namespace BmwDeepObd
                     if (!ignoreDismiss)
                     {
                         Finish();
+                        return;
                     }
 
                     StartRpcClient();
@@ -718,7 +719,10 @@ namespace BmwDeepObd
                                             .SetMessage(message)
                                             .SetTitle(Resource.String.alert_title_info)
                                             .Show();
+                                        return;
                                     }
+
+                                    StartRpcClient();
                                     return;
                                 }
 
@@ -747,7 +751,6 @@ namespace BmwDeepObd
 
                                         Finish();
                                     };
-
                                 }
                             });
                         });
@@ -776,6 +779,7 @@ namespace BmwDeepObd
                         if (!ignoreDismiss)
                         {
                             Finish();
+                            return;
                         }
                     };
 
@@ -1497,6 +1501,40 @@ namespace BmwDeepObd
                 }
 
                 string remoteHost = loadUri.Host;
+                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, _startCts.Token).ConfigureAwait(false);
+                if (!connected)
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
+                    return false;
+                }
+
+                int localVersion = PsdzRpcServiceConstants.InterfaceVersion;
+                int remoteVersion = await _psdzRpcClient.RpcService.GetInterfaceVersion().ConfigureAwait(false);
+                if (remoteVersion < localVersion)
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Interface version mismatch");
+                    return false;
+                }
+
+                string istaFolder = await _psdzRpcClient.RpcService.GetIstaInstallLocation().ConfigureAwait(false);
+                if (string.IsNullOrEmpty(istaFolder))
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Failed to get ISTA install location");
+                    return false;
+                }
+
+                lock (_instanceLock)
+                {
+                    _instanceData.IstaFolder = istaFolder;
+                }
+
+                bool licenseResult = await _psdzRpcClient.RpcService.SetLicenseValid(true).ConfigureAwait(false);
+                if (!licenseResult)
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLicenseValid failed");
+                    return false;
+                }
+
                 if (!_ediabasProxyClient.StartEdiabasThread())
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
@@ -1507,13 +1545,6 @@ namespace BmwDeepObd
                 if (!proxyResult)
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
-                    return false;
-                }
-
-                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, _startCts.Token).ConfigureAwait(false);
-                if (!connected)
-                {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
                     return false;
                 }
 
