@@ -173,8 +173,13 @@ namespace PsdzRpcClient
             chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
 
             bool valid = chain.Build(cert2);
-            return valid && chain.ChainElements[chain.ChainElements.Count - 1]
-                .Certificate.Thumbprint == _caCert.Thumbprint;
+            if (!valid)
+            {
+                return false;
+            }
+
+            X509Certificate2 rootCert = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
+            return rootCert.Thumbprint == _caCert.Thumbprint;
         }
 
         private void StartJsonRpc(SynchronizationContext synchronizationContext)
