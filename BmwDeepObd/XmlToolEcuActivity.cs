@@ -200,6 +200,7 @@ namespace BmwDeepObd
         {
             RequestBmwActuator,
             RequestBmwCoding,
+            RequestBmwRpcCoding,
             RequestVagCoding,
             RequestVagAdaption,
         }
@@ -974,6 +975,7 @@ namespace BmwDeepObd
             {
                 case ActivityRequest.RequestBmwActuator:
                 case ActivityRequest.RequestBmwCoding:
+                case ActivityRequest.RequestBmwRpcCoding:
                 case ActivityRequest.RequestVagCoding:
                 case ActivityRequest.RequestVagAdaption:
                     if (resultCode == Android.App.Result.Ok || _ecuFuncCall != XmlToolActivity.EcuFunctionCallType.None)
@@ -2632,6 +2634,30 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(BmwCodingActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
                 serverIntent.PutExtra(BmwCodingActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwCoding);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool StartBmwRpcCoding()
+        {
+            try
+            {
+                StoreResults();
+                EdiabasClose();
+
+                Intent serverIntent = new Intent(this, typeof(BmwRpcCodingActivity));
+                serverIntent.PutExtra(BmwRpcCodingActivity.ExtraAppDataDir, _appDataDir);
+                serverIntent.PutExtra(BmwRpcCodingActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(BmwRpcCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(BmwRpcCodingActivity.ExtraDeviceAddress, _deviceAddress);
+                serverIntent.PutExtra(BmwRpcCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                serverIntent.PutExtra(BmwRpcCodingActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+                serverIntent.PutExtra(BmwRpcCodingActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwRpcCoding);
                 return true;
             }
             catch (Exception)
