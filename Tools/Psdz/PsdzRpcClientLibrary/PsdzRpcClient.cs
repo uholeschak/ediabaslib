@@ -185,7 +185,7 @@ namespace PsdzRpcClient
             bool valid = chain.Build(cert2);
             if (!valid)
             {
-                _output?.WriteLine("Build certificate chain failed.");
+                _output?.WriteLine("Validate certificate chain failed.");
                 return false;
             }
 
