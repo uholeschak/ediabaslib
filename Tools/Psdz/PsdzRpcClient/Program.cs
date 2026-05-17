@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using EdiabasLib;
@@ -160,7 +161,7 @@ namespace PsdzRpcClient
             EdiabasProxyClient ediabasProxyClient = null;
             try
             {
-                client = new PsdzRpcClient(Console.Out, caCertPath, clientPfxPath);
+                client = new PsdzRpcClient(Console.Out, caCertPath, clientPfxPath, Assembly.GetEntryAssembly());
                 using CancellationTokenSource cts = new CancellationTokenSource();
                 CancellationTokenSource ctsLocal = cts;
                 Console.CancelKeyPress += (_, e) =>

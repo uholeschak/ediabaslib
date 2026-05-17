@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -1133,7 +1134,8 @@ namespace BmwDeepObd
         {
             try
             {
-                _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(null, PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile);
+                _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(null,
+                    PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, Assembly.GetExecutingAssembly());
                 _psdzRpcClient.ClientConnected += async (sender, connected) =>
                 {
                     if (_activityCommon == null)

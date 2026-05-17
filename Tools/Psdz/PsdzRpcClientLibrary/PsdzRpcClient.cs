@@ -28,11 +28,11 @@ namespace PsdzRpcClient
         public event EventHandler<bool> ClientConnected;
         public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
-        public PsdzRpcClient(TextWriter output = null, string caCertPath = null, string clientPfxPath = null)
+        public PsdzRpcClient(TextWriter output = null, string caCertPath = null, string clientPfxPath = null, Assembly resourceAssembly = null)
         {
             _output = output;
 
-            Assembly assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+            Assembly assembly = resourceAssembly ?? Assembly.GetExecutingAssembly();
             if (!string.IsNullOrEmpty(caCertPath))
             {
                 _caCert = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
