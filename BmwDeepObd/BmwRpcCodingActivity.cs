@@ -1321,6 +1321,36 @@ namespace BmwDeepObd
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
                 };
 
+                _psdzRpcClient.CallbackHandler.VehicleConnect += (s, id) =>
+                {
+                    EdiabasProxyClient proxy = _ediabasProxyClient;
+                    if (proxy == null || proxy.IsDisposed)
+                    {
+                        return;
+                    }
+                    proxy.VehicleConnect(id);
+                };
+
+                _psdzRpcClient.CallbackHandler.VehicleDisconnect += (s, id) =>
+                {
+                    EdiabasProxyClient proxy = _ediabasProxyClient;
+                    if (proxy == null || proxy.IsDisposed)
+                    {
+                        return;
+                    }
+                    proxy.VehicleDisconnect(id);
+                };
+
+                _psdzRpcClient.CallbackHandler.VehicleSend += (s, sendArgs) =>
+                {
+                    EdiabasProxyClient proxy = _ediabasProxyClient;
+                    if (proxy == null || proxy.IsDisposed)
+                    {
+                        return;
+                    }
+                    proxy.VehicleSend(sendArgs.Id, sendArgs.Data);
+                };
+
                 return true;
             }
             catch (Exception)
