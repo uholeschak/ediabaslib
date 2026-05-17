@@ -156,12 +156,12 @@ namespace PsdzRpcClient
             }
 
             ShowMessageEventArgs pendingMessage = null;
+            PsdzRpcClient client = null;
             EdiabasProxyClient ediabasProxyClient = null;
-            using CancellationTokenSource cts = new CancellationTokenSource();
-            PsdzRpcClient client = new PsdzRpcClient(Console.Out, caCertPath, clientPfxPath);
-
             try
             {
+                client = new PsdzRpcClient(Console.Out, caCertPath, clientPfxPath);
+                using CancellationTokenSource cts = new CancellationTokenSource();
                 CancellationTokenSource ctsLocal = cts;
                 Console.CancelKeyPress += (_, e) =>
                 {
