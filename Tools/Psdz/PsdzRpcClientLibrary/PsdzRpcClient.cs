@@ -1,5 +1,4 @@
-﻿using Org.BouncyCastle.Tls;
-using PsdzRpcServer.Shared;
+﻿using PsdzRpcServer.Shared;
 using StreamJsonRpc;
 using System;
 using System.IO;
@@ -150,7 +149,7 @@ namespace PsdzRpcClient
             }
         }
 
-            private bool ValidateServerCertificate(X509Certificate cert)
+        private bool ValidateServerCertificate(X509Certificate cert)
         {
             if (_caCert == null)
             {
@@ -176,6 +175,31 @@ namespace PsdzRpcClient
                 return false;
             }
 
+#if ANDROID
+            try
+            {
+                // Issuer des Serverzertifikats muss dem Subject des CA-Zertifikats entsprechen
+                if (!string.Equals(cert2.Issuer, _caCert.Subject, StringComparison.OrdinalIgnoreCase))
+                {
+                    _output?.WriteLine($"Certificate issuer mismatch: {cert2.Issuer} != {_caCert.Subject}");
+                    return false;
+                }
+
+                // Signatur des Serverzertifikats mit dem Public Key des CA-Zertifikats verifizieren
+                Org.BouncyCastle.X509.X509Certificate bcCaCert =
+                        new Org.BouncyCastle.X509.X509CertificateParser().ReadCertificate(_caCert.RawData);
+                Org.BouncyCastle.X509.X509Certificate bcServerCert =
+                    new Org.BouncyCastle.X509.X509CertificateParser().ReadCertificate(cert2.RawData);
+
+                bcServerCert.Verify(bcCaCert.GetPublicKey());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _output?.WriteLine($"Android certificate validation failed: {ex.Message}");
+                return false;
+            }
+#else
             // CA-Kette prüfen
             X509Chain chain = new X509Chain();
             chain.ChainPolicy.ExtraStore.Add(_caCert);
@@ -197,6 +221,7 @@ namespace PsdzRpcClient
             }
 
             return validRoot;
+#endif
         }
 
         private void StartJsonRpc(SynchronizationContext synchronizationContext)
