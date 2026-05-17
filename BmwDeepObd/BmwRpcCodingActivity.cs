@@ -75,7 +75,7 @@ namespace BmwDeepObd
 
         private const string InfoCodingUrl = @"https://www.holeschak.de/BmwDeepObd/BmwCoding.php";
 #if DEBUG
-        private static readonly string Tag = typeof(BmwCodingActivity).FullName;
+        private static readonly string Tag = typeof(BmwRpcCodingActivity).FullName;
 #endif
 
         private enum ActivityRequest
