@@ -152,11 +152,21 @@ namespace PsdzRpcClient
 
             private bool ValidateServerCertificate(X509Certificate cert)
         {
-            if (_caCert == null) return true;
-            if (cert == null)    return false;
+            if (_caCert == null)
+            {
+                return true;
+            }
+
+            if (cert == null)
+            {
+                return false;
+            }
 
             X509Certificate2 cert2 = cert as X509Certificate2;
-            if (cert2 == null) return false;
+            if (cert2 == null)
+            {
+                return false;
+            }
 
             // CN des Server-Zertifikats prüfen
             string cn = cert2.GetNameInfo(X509NameType.SimpleName, forIssuer: false);
@@ -175,11 +185,18 @@ namespace PsdzRpcClient
             bool valid = chain.Build(cert2);
             if (!valid)
             {
+                _output?.WriteLine("Build certificate chain failed.");
                 return false;
             }
 
             X509Certificate2 rootCert = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
-            return rootCert.Thumbprint == _caCert.Thumbprint;
+            bool validRoot = rootCert.Thumbprint == _caCert.Thumbprint;
+            if (!validRoot)
+            {
+                _output?.WriteLine($"Root certificate mismatch: {rootCert.Thumbprint}");
+            }
+
+            return validRoot;
         }
 
         private void StartJsonRpc(SynchronizationContext synchronizationContext)
