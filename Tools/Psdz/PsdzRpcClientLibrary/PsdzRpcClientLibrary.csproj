@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Nerdbank.MessagePack" Version="1.1.62" />
-    <PackageReference Include="StreamJsonRpc" Version="2.24.84" />
+    <PackageReference Include="StreamJsonRpc" Version="2.24.92" />
   </ItemGroup>
   <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.8" />
