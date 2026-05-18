@@ -1347,6 +1347,7 @@ namespace BmwDeepObd
                 {
                     if (_activityCommon == null)
                     {
+                        msgArgs.Result = false;
                         return;
                     }
 
@@ -1368,6 +1369,47 @@ namespace BmwDeepObd
                     });
 
                     msgArgs.Result = true;
+                };
+
+                _psdzRpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        msgArgs.SetResult(false);
+                        return;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            msgArgs.SetResult(false);
+                            return;
+                        }
+
+                        bool dialogResult = false;
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                dialogResult = true;
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                                dialogResult = false;
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(msgArgs.Message)
+                            .SetTitle(Resource.String.alert_title_info)
+                            .Show();
+
+                        if (alertDialog != null)
+                        {
+                            alertDialog.DismissEvent += (sender, args) =>
+                            {
+                                msgArgs.SetResult(dialogResult);
+                            };
+                        }
+                    });
                 };
 
                 _psdzRpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
