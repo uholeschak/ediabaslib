@@ -64,9 +64,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"/>
+                android:indeterminate="false" />
             <TextView
                 android:id="@+id/textViewCodingStatusTitle"
                 android:text="@string/bmw_rpc_coding_status_title"

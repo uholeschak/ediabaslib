@@ -1387,8 +1387,29 @@ namespace BmwDeepObd
                             return;
                         }
 
+                        if (msgArgs.OkBtn)
+                        {
+                            AlertDialog alertDialogOk = new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(msgArgs.Message)
+                                .SetTitle(Resource.String.alert_title_info)
+                                .Show();
+
+                            if (alertDialogOk != null)
+                            {
+                                alertDialogOk.DismissEvent += (sender, args) =>
+                                {
+                                    msgArgs.SetResult(true);
+                                };
+                            }
+                            return;
+                        }
+
                         bool dialogResult = false;
-                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        AlertDialog alertDialogYesNo = new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
                                 dialogResult = true;
@@ -1402,9 +1423,9 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_info)
                             .Show();
 
-                        if (alertDialog != null)
+                        if (alertDialogYesNo != null)
                         {
-                            alertDialog.DismissEvent += (sender, args) =>
+                            alertDialogYesNo.DismissEvent += (sender, args) =>
                             {
                                 msgArgs.SetResult(dialogResult);
                             };
