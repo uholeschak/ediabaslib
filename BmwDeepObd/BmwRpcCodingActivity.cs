@@ -1085,6 +1085,13 @@ namespace BmwDeepObd
 
             if (statusInfo == null)
             {
+                _buttonCodingConnect.Enabled = false;
+                _buttonCodingDisconnect.Enabled = false;
+                _buttonCodingOptions.Enabled = false;
+                _buttonCodingGenerateTal.Enabled = false;
+                _buttonCodingExecuteTal.Enabled = false;
+                _buttonCodingAbort.Enabled = false;
+                _progressBar.Visibility = ViewStates.Invisible;
                 return;
             }
 
