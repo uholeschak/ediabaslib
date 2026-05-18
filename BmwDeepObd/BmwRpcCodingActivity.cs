@@ -1301,6 +1301,11 @@ namespace BmwDeepObd
                     });
                 };
 
+                _psdzRpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
+                {
+                    queueArgs.Result = -1; // Simulate no queue
+                };
+
                 EdiabasNet ediabas = new EdiabasNet
                 {
                     EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
