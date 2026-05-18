@@ -1736,6 +1736,14 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                string language = _activityCommon.GetCurrentLanguage();
+                bool languageResult = await _psdzRpcClient.RpcService.SetLanguage(language).ConfigureAwait(false);
+                if (!languageResult)
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage failed");
+                    return false;
+                }
+
                 if (!_ediabasProxyClient.StartEdiabasThread())
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
