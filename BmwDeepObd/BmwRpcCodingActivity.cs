@@ -112,8 +112,8 @@ namespace BmwDeepObd
         private Button _buttonCodingGenerateTal;
         private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
-        private TextView _textCodingStatus;
         private ProgressBar _progressBar;
+        private TextView _textCodingStatus;
 
         private bool _taskActive;
         public bool TaskActive
@@ -345,11 +345,12 @@ namespace BmwDeepObd
                 }
             };
 
-            _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
             _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
             _progressBar.Max = 100;
             _progressBar.Progress = 0;
             _progressBar.Indeterminate = false;
+
+            _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
