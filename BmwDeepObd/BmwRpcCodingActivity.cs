@@ -1076,15 +1076,24 @@ namespace BmwDeepObd
 
             PsdzRpcStatusInfo statusInfo;
             string statusMessage;
+            bool rpcClientConnected;
 
             lock (_statusLock)
             {
                 statusInfo = _statusInfo;
                 statusMessage = _statusMessage;
+                rpcClientConnected = _rpcClientConnected;
             }
 
-            if (statusInfo == null)
+            if (statusInfo == null || !rpcClientConnected)
             {
+                _buttonCodingConnect.Enabled = false;
+                _buttonCodingDisconnect.Enabled = false;
+                _buttonCodingOptions.Enabled = false;
+                _buttonCodingGenerateTal.Enabled = false;
+                _buttonCodingExecuteTal.Enabled = false;
+                _buttonCodingAbort.Enabled = false;
+                _progressBar.Visibility = ViewStates.Invisible;
                 return;
             }
 
@@ -1173,8 +1182,13 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        if (!connected)
+                        if (connected)
                         {
+                            _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
+                        }
+                        else
+                        {
+                            _activityCommon.SetLock(ActivityCommon.LockType.None);
                             ConnectionFailMessage();
                         }
 
