@@ -103,6 +103,7 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
         private PsdzRpcStatusInfo _statusInfo;
+        private PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         private string _statusMessage;
         private bool _rpcClientConnected;
 
@@ -1324,6 +1325,11 @@ namespace BmwDeepObd
                     if (_activityCommon == null)
                     {
                         return;
+                    }
+
+                    lock (_statusLock)
+                    {
+                        _selectedSwiRegister = swiRegisterEnum;
                     }
 
                     RunOnUiThread(() =>
