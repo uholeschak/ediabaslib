@@ -19,6 +19,7 @@ namespace PsdzRpcClient
         public event EventHandler<ShowMessageEventArgs> ShowMessageWait;
         public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
         public event EventHandler<ServiceInitializedEventArgs> ServiceInitialized;
+        public event EventHandler<PsdzRpcAppInfo> GetAppInfo;
         public event EventHandler<ulong> VehicleConnect;
         public event EventHandler<ulong> VehicleDisconnect;
         public event EventHandler<VehicleSendEventArgs> VehicleSend;
@@ -119,6 +120,13 @@ namespace PsdzRpcClient
             ServiceInitializedEventArgs args = new ServiceInitializedEventArgs(hostLogDir, loggingInitialized);
             ServiceInitialized?.Invoke(this, args);
             return Task.CompletedTask;
+        }
+
+        public Task<PsdzRpcAppInfo> OnGetAppInfo()
+        {
+            PsdzRpcAppInfo args = new PsdzRpcAppInfo();
+            GetAppInfo?.Invoke(this, args);
+            return Task.FromResult(args);
         }
 
         public Task OnVehicleConnect(ulong id)

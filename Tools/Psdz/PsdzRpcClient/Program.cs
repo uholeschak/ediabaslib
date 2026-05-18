@@ -417,6 +417,13 @@ namespace PsdzRpcClient
                     });
                 };
 
+                client.CallbackHandler.GetAppInfo += (sender, appInfoArgs) =>
+                {
+                    appInfoArgs.AppId = string.Empty;
+                    appInfoArgs.AdapterSerial = string.Empty;
+                    appInfoArgs.AdapterSerialValid = false;
+                };
+
                 client.CallbackHandler.VehicleConnect += (sender, id) =>
                 {
                     EdiabasProxyClient proxy = ediabasProxyClient;
