@@ -1168,16 +1168,11 @@ namespace BmwDeepObd
 
                     if (connected)
                     {
-                        _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                         lock (_statusLock)
                         {
                             _statusMessage = string.Empty;
                         }
                         await RpcClientUpdateDisplay().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        _activityCommon.SetLock(ActivityCommon.LockType.None);
                     }
 
                     RunOnUiThread(() =>
@@ -1187,8 +1182,13 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        if (!connected)
+                        if (connected)
                         {
+                            _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
+                        }
+                        else
+                        {
+                            _activityCommon.SetLock(ActivityCommon.LockType.None);
                             ConnectionFailMessage();
                         }
 
