@@ -1343,6 +1343,33 @@ namespace BmwDeepObd
                     });
                 };
 
+                _psdzRpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(msgArgs.Message)
+                            .SetTitle(Resource.String.alert_title_info)
+                            .Show();
+                    });
+
+                    msgArgs.Result = true;
+                };
+
                 _psdzRpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
                 {
                     queueArgs.Result = -1; // Simulate no queue
