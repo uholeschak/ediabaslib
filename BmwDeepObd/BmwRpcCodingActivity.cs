@@ -1343,9 +1343,97 @@ namespace BmwDeepObd
                     });
                 };
 
+                _psdzRpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        msgArgs.Result = false;
+                        return;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(msgArgs.Message)
+                            .SetTitle(Resource.String.alert_title_info)
+                            .Show();
+                    });
+
+                    msgArgs.Result = true;
+                };
+
+                _psdzRpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        msgArgs.SetResult(false);
+                        return;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            msgArgs.SetResult(false);
+                            return;
+                        }
+
+                        bool dialogResult = false;
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                dialogResult = true;
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                                dialogResult = false;
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(msgArgs.Message)
+                            .SetTitle(Resource.String.alert_title_info)
+                            .Show();
+
+                        if (alertDialog != null)
+                        {
+                            alertDialog.DismissEvent += (sender, args) =>
+                            {
+                                msgArgs.SetResult(dialogResult);
+                            };
+                        }
+                    });
+                };
+
                 _psdzRpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
                 {
                     queueArgs.Result = -1; // Simulate no queue
+                };
+
+                _psdzRpcClient.CallbackHandler.ServiceInitialized += async (sender, serviceArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
+                    {
+                        string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzClient.log");
+
+                        bool result = await _psdzRpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
+
+                        bool resetResult = await _psdzRpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ResetStarterGuard result: {0}", resetResult);
+                    }
                 };
 
                 EdiabasNet ediabas = new EdiabasNet
