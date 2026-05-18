@@ -1301,6 +1301,42 @@ namespace BmwDeepObd
                     });
                 };
 
+                _psdzRpcClient.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        UpdateDisplay();
+                    });
+                };
+
+                _psdzRpcClient.CallbackHandler.UpdateOptionSelections += (sender, swiRegisterEnum) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        UpdateDisplay();
+                    });
+                };
+
                 _psdzRpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
                 {
                     queueArgs.Result = -1; // Simulate no queue
