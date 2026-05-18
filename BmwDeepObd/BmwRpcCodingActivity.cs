@@ -1076,14 +1076,16 @@ namespace BmwDeepObd
 
             PsdzRpcStatusInfo statusInfo;
             string statusMessage;
+            bool rpcClientConnected;
 
             lock (_statusLock)
             {
                 statusInfo = _statusInfo;
                 statusMessage = _statusMessage;
+                rpcClientConnected = _rpcClientConnected;
             }
 
-            if (statusInfo == null)
+            if (statusInfo == null || !rpcClientConnected)
             {
                 _buttonCodingConnect.Enabled = false;
                 _buttonCodingDisconnect.Enabled = false;
