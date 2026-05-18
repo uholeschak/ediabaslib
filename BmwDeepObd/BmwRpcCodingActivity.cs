@@ -103,6 +103,7 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
         private PsdzRpcStatusInfo _statusInfo;
+        private PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         private string _statusMessage;
         private bool _rpcClientConnected;
 
@@ -112,8 +113,8 @@ namespace BmwDeepObd
         private Button _buttonCodingGenerateTal;
         private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
-        private TextView _textCodingStatus;
         private ProgressBar _progressBar;
+        private TextView _textCodingStatus;
 
         private bool _taskActive;
         public bool TaskActive
@@ -345,11 +346,12 @@ namespace BmwDeepObd
                 }
             };
 
-            _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
             _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
             _progressBar.Max = 100;
             _progressBar.Progress = 0;
             _progressBar.Indeterminate = false;
+
+            _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
@@ -1298,6 +1300,52 @@ namespace BmwDeepObd
                         _progressBar.Progress = progressArgs.Percent;
                         UpdateDisplay();
                     });
+                };
+
+                _psdzRpcClient.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        UpdateDisplay();
+                    });
+                };
+
+                _psdzRpcClient.CallbackHandler.UpdateOptionSelections += (sender, swiRegisterEnum) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    lock (_statusLock)
+                    {
+                        _selectedSwiRegister = swiRegisterEnum;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        UpdateDisplay();
+                    });
+                };
+
+                _psdzRpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
+                {
+                    queueArgs.Result = -1; // Simulate no queue
                 };
 
                 EdiabasNet ediabas = new EdiabasNet
