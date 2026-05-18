@@ -1417,6 +1417,25 @@ namespace BmwDeepObd
                     queueArgs.Result = -1; // Simulate no queue
                 };
 
+                _psdzRpcClient.CallbackHandler.ServiceInitialized += async (sender, serviceArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
+                    {
+                        string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzClient.log");
+
+                        bool result = await _psdzRpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
+
+                        bool resetResult = await _psdzRpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ResetStarterGuard result: {0}", resetResult);
+                    }
+                };
+
                 EdiabasNet ediabas = new EdiabasNet
                 {
                     EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
