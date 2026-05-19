@@ -101,6 +101,7 @@ namespace BmwDeepObd
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
+        private PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         private PsdzRpcStatusInfo _statusInfo;
         private List<PsdzRpcOptionType> _statusOptionTypes;
         private List<PsdzRpcOptionItem> _rpcListItems;
@@ -361,11 +362,23 @@ namespace BmwDeepObd
             _spinnerOptionType = FindViewById<Spinner>(Resource.Id.spinnerOptionType);
             _spinnerOptionTypeAdapter = new StringObjAdapter(this);
             _spinnerOptionType.Adapter = _spinnerOptionTypeAdapter;
-            _spinnerOptionType.ItemSelected += (s, e) =>
+            _spinnerOptionType.ItemSelected += (s, args) =>
             {
                 if (_ignoreItemSelection)
                 {
                     return;
+                }
+
+                int pos = args.Position;
+                PsdzRpcSwiRegisterEnum? selectedSwiRegister = null;
+                if (pos >= 0 && pos < _spinnerOptionTypeAdapter.Items.Count)
+                {
+                    selectedSwiRegister = _spinnerOptionTypeAdapter.Items[pos].Data as PsdzRpcSwiRegisterEnum?;
+                }
+
+                lock (_statusLock)
+                {
+                    _selectedSwiRegister = selectedSwiRegister;
                 }
 
                 UpdateDisplay();
