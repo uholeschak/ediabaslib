@@ -15,7 +15,7 @@
     <Compile Remove="PsdzRpcServerStarter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Nerdbank.MessagePack" Version="1.1.62" />
+    <PackageReference Include="Nerdbank.MessagePack" Version="1.2.4" />
     <PackageReference Include="StreamJsonRpc" Version="2.24.92" />
   </ItemGroup>
   <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
