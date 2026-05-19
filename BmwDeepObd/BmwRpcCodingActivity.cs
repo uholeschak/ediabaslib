@@ -103,6 +103,7 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogConnectError;
         private PsdzRpcStatusInfo _statusInfo;
         private List<PsdzRpcOptionType> _statusOptionTypes;
+        private List<PsdzRpcOptionItem> _rpcListItems;
         private string _statusMessage;
         private bool _rpcClientConnected;
 
@@ -117,6 +118,8 @@ namespace BmwDeepObd
         private LinearLayout _layoutCodingStatus;
         private Spinner _spinnerOptionType;
         private StringObjAdapter _spinnerOptionTypeAdapter;
+        private ListView _listViewOptions;
+        private EdiabasToolActivity.ResultSelectListAdapter _listViewOptionsAdapter;
         private TextView _textCodingStatus;
 
         private bool _taskActive;
@@ -367,6 +370,20 @@ namespace BmwDeepObd
 
                 UpdateDisplay();
             };
+
+            _listViewOptions = FindViewById<ListView>(Resource.Id.listViewOptions);
+            _listViewOptionsAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
+            _listViewOptionsAdapter.CheckChanged += extraInfo =>
+            {
+                if (_ignoreItemSelection)
+                {
+                    return;
+                }
+
+                UpdateDisplay();
+            };
+
+            _listViewOptions.Adapter = _listViewOptionsAdapter;
 
             _layoutCodingStatus = FindViewById<LinearLayout>(Resource.Id.layoutCodingStatus);
             _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
@@ -1049,7 +1066,7 @@ namespace BmwDeepObd
 
         private async Task RpcClientUpdateDisplay(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
         {
-            await GetRemoteStatusAsync().ConfigureAwait(false);
+            await GetRemoteStatusAsync(selectedSwiRegister).ConfigureAwait(false);
             RunOnUiThread(() =>
             {
                 if (_activityCommon == null)
@@ -1061,7 +1078,7 @@ namespace BmwDeepObd
             });
         }
 
-        private async Task<bool> GetRemoteStatusAsync()
+        private async Task<bool> GetRemoteStatusAsync(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
         {
             try
             {
@@ -1073,11 +1090,14 @@ namespace BmwDeepObd
                 for (int retry = 0; retry < 2; retry++)
                 {
                     PsdzRpcStatusInfo statusInfo = await _psdzRpcClient.RpcService.GetStatusInfo().ConfigureAwait(false);
-                    List<PsdzRpcOptionType> optionTypes = await _psdzRpcClient.RpcService.GetOptionTypes().ConfigureAwait(false);
+                    List<PsdzRpcOptionType> statusOptionTypes = await _psdzRpcClient.RpcService.GetOptionTypes().ConfigureAwait(false);
+                    List<PsdzRpcOptionItem> rpcListItems = await _psdzRpcClient.RpcService.GetSelectedOptions(selectedSwiRegister).ConfigureAwait(false);
+
                     lock (_statusLock)
                     {
                         _statusInfo = statusInfo;
-                        _statusOptionTypes = optionTypes;
+                        _statusOptionTypes = statusOptionTypes;
+                        _rpcListItems = rpcListItems;
                     }
 
                     if (!statusInfo.VehicleConnected && statusInfo.HasOptionsDict)
@@ -1240,6 +1260,7 @@ namespace BmwDeepObd
                         {
                             _statusInfo = null;
                             _statusOptionTypes = null;
+                            _rpcListItems = null;
                         }
                     }
 
