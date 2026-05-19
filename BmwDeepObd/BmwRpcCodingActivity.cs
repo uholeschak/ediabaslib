@@ -385,6 +385,7 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             CreateRpcClient();
+            UpdateDisplay();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -1330,7 +1331,7 @@ namespace BmwDeepObd
                     await RpcClientTaskCompleted().ConfigureAwait(false);
                 };
 
-                _psdzRpcClient.CallbackHandler.UpdateStatus += (s, message) =>
+                _psdzRpcClient.CallbackHandler.UpdateStatus += async (s, message) =>
                 {
                     if (_activityCommon == null)
                     {
@@ -1342,15 +1343,7 @@ namespace BmwDeepObd
                         _statusMessage = message;
                     }
 
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-
-                        UpdateDisplay();
-                    });
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
                 };
 
                 _psdzRpcClient.CallbackHandler.UpdateProgress += (s, progressArgs) =>
