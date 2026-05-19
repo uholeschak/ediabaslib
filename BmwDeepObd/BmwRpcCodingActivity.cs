@@ -105,7 +105,6 @@ namespace BmwDeepObd
         public long _connectionUpdateTime;
         private PsdzRpcStatusInfo _statusInfo;
         private List<PsdzRpcOptionType> _statusOptionTypes;
-        private PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         private string _statusMessage;
         private bool _rpcClientConnected;
 
@@ -1035,19 +1034,19 @@ namespace BmwDeepObd
             }
         }
 
-        private async Task RpcClientTaskStarted()
+        private async Task RpcClientTaskStarted(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
         {
             TaskActive = true;
-            await RpcClientUpdateDisplay().ConfigureAwait(false);
+            await RpcClientUpdateDisplay(selectedSwiRegister).ConfigureAwait(false);
         }
 
-        private async Task RpcClientTaskCompleted()
+        private async Task RpcClientTaskCompleted(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
         {
             TaskActive = false;
-            await RpcClientUpdateDisplay().ConfigureAwait(false);
+            await RpcClientUpdateDisplay(selectedSwiRegister).ConfigureAwait(false);
         }
 
-        private async Task RpcClientUpdateDisplay()
+        private async Task RpcClientUpdateDisplay(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
         {
             await GetRemoteStatusAsync().ConfigureAwait(false);
             RunOnUiThread(() =>
@@ -1057,7 +1056,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateDisplay();
+                UpdateDisplay(selectedSwiRegister);
             });
         }
 
@@ -1086,7 +1085,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateDisplay()
+        private void UpdateDisplay(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
         {
             if (_activityCommon == null)
             {
@@ -1129,27 +1128,26 @@ namespace BmwDeepObd
             _progressBar.Visibility = active && statusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
 
             _ignoreItemSelection = true;
-            int optionSelection = -1;
+            int optionSelPos = _spinnerOptionType.SelectedItemPosition;
             _spinnerOptionTypeAdapter.Items.Clear();
             if (statusOptionTypes != null)
             {
                 foreach (PsdzRpcOptionType optionType in statusOptionTypes)
                 {
                     _spinnerOptionTypeAdapter.Items.Add(new StringObjType(optionType.Caption, optionType.SwiRegisterEnum));
-                    if (_selectedSwiRegister != null && _selectedSwiRegister.Equals(optionType.SwiRegisterEnum))
+                    if (selectedSwiRegister != null && selectedSwiRegister.Equals(optionType.SwiRegisterEnum))
                     {
-                        optionSelection = _spinnerOptionTypeAdapter.Items.Count - 1;
+                        optionSelPos = _spinnerOptionTypeAdapter.Items.Count - 1;
                     }
                 }
             }
 
             _spinnerOptionTypeAdapter.NotifyDataSetChanged();
-            if (optionSelection < 0)
+            if (optionSelPos < 0)
             {
-                optionSelection = 0;
+                optionSelPos = 0;
             }
-            _spinnerOptionType.SetSelection(optionSelection);
-
+            _spinnerOptionType.SetSelection(optionSelPos);
             _ignoreItemSelection = false;
             _spinnerOptionType.Enabled = statusInfo.HasOptionsDict && statusOptionTypes != null && statusOptionTypes.Count > 0;
 
@@ -1387,12 +1385,7 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    lock (_statusLock)
-                    {
-                        _selectedSwiRegister = swiRegisterEnum;
-                    }
-
-                    await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    await RpcClientUpdateDisplay(swiRegisterEnum).ConfigureAwait(false);
                 };
 
                 _psdzRpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
