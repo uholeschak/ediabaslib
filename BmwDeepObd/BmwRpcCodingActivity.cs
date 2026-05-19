@@ -98,6 +98,7 @@ namespace BmwDeepObd
         private object _instanceLock = new object();
         private object _statusLock = new object();
         private bool _activityActive;
+        private bool _ignoreItemSelection;
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
@@ -357,6 +358,15 @@ namespace BmwDeepObd
             _spinnerOptionType = FindViewById<Spinner>(Resource.Id.spinnerOptionType);
             _spinnerOptionTypeAdapter = new StringObjAdapter(this);
             _spinnerOptionType.Adapter = _spinnerOptionTypeAdapter;
+            _spinnerOptionType.ItemSelected += (s, e) =>
+            {
+                if (_ignoreItemSelection)
+                {
+                    return;
+                }
+
+                UpdateDisplay();
+            };
 
             _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
 
@@ -1117,6 +1127,31 @@ namespace BmwDeepObd
             _buttonCodingExecuteTal.Enabled = modifyTal && statusInfo.TalPresent;
             _buttonCodingAbort.Enabled = active && statusInfo.CancelPossible;
             _progressBar.Visibility = active && statusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
+
+            _ignoreItemSelection = true;
+            int optionSelection = -1;
+            _spinnerOptionTypeAdapter.Items.Clear();
+            if (statusOptionTypes != null)
+            {
+                foreach (PsdzRpcOptionType optionType in statusOptionTypes)
+                {
+                    _spinnerOptionTypeAdapter.Items.Add(new StringObjType(optionType.Caption, optionType.SwiRegisterEnum));
+                    if (_selectedSwiRegister != null && _selectedSwiRegister.Equals(optionType.SwiRegisterEnum))
+                    {
+                        optionSelection = _spinnerOptionTypeAdapter.Items.Count - 1;
+                    }
+                }
+            }
+
+            _spinnerOptionTypeAdapter.NotifyDataSetChanged();
+            if (optionSelection < 0)
+            {
+                optionSelection = 0;
+            }
+            _spinnerOptionType.SetSelection(optionSelection);
+
+            _ignoreItemSelection = false;
+            _spinnerOptionType.Enabled = statusInfo.HasOptionsDict && statusOptionTypes != null && statusOptionTypes.Count > 0;
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;
 
