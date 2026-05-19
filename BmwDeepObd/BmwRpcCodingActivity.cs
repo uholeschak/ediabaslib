@@ -1335,25 +1335,17 @@ namespace BmwDeepObd
                     });
                 };
 
-                _psdzRpcClient.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
+                _psdzRpcClient.CallbackHandler.UpdateOptions += async (sender, optionArgs) =>
                 {
                     if (_activityCommon == null)
                     {
                         return;
                     }
 
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-
-                        UpdateDisplay();
-                    });
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
                 };
 
-                _psdzRpcClient.CallbackHandler.UpdateOptionSelections += (sender, swiRegisterEnum) =>
+                _psdzRpcClient.CallbackHandler.UpdateOptionSelections += async (sender, swiRegisterEnum) =>
                 {
                     if (_activityCommon == null)
                     {
@@ -1365,15 +1357,7 @@ namespace BmwDeepObd
                         _selectedSwiRegister = swiRegisterEnum;
                     }
 
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-
-                        UpdateDisplay();
-                    });
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
                 };
 
                 _psdzRpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
