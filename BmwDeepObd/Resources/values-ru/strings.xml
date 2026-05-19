@@ -808,6 +808,7 @@
   <string name="bmw_rpc_coding_execute_tal">Выполнить</string>
   <string name="bmw_rpc_coding_abort">Прервать</string>
   <string name="bmw_rpc_coding_status_title">Статус</string>
+  <string name="bmw_rpc_coding_options_title">Опции</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>

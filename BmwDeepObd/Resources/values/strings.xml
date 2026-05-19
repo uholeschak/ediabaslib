@@ -799,6 +799,7 @@
   <string name="bmw_rpc_coding_execute_tal">Execute</string>
   <string name="bmw_rpc_coding_abort">Abort</string>
   <string name="bmw_rpc_coding_status_title">Status</string>
+  <string name="bmw_rpc_coding_options_title">Options</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>

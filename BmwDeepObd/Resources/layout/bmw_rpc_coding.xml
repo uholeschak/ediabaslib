@@ -54,17 +54,33 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/bmw_rpc_coding_abort" />
         </org.apmem.tools.layouts.FlowLayout>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="false" />
+        <LinearLayout
+            android:id="@+id/layoutCodingOptions"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewOptionTypeTitle"
+                android:text="@string/bmw_rpc_coding_options_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextViewInnerCaption" />
+            <Spinner
+                android:id="@+id/spinnerOptionType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/layoutCodingStatus"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminate="false" />
             <TextView
                 android:id="@+id/textViewCodingStatusTitle"
                 android:text="@string/bmw_rpc_coding_status_title"
