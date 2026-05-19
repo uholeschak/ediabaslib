@@ -115,6 +115,7 @@ namespace BmwDeepObd
         private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
         private ProgressBar _progressBar;
+        private LinearLayout _layoutCodingStatus;
         private Spinner _spinnerOptionType;
         private StringObjAdapter _spinnerOptionTypeAdapter;
         private TextView _textCodingStatus;
@@ -354,6 +355,7 @@ namespace BmwDeepObd
             _progressBar.Progress = 0;
             _progressBar.Indeterminate = false;
 
+            _layoutCodingStatus = FindViewById<LinearLayout>(Resource.Id.layoutCodingStatus);
             _spinnerOptionType = FindViewById<Spinner>(Resource.Id.spinnerOptionType);
             _spinnerOptionTypeAdapter = new StringObjAdapter(this);
             _spinnerOptionType.Adapter = _spinnerOptionTypeAdapter;
@@ -1114,6 +1116,7 @@ namespace BmwDeepObd
                 _buttonCodingExecuteTal.Enabled = false;
                 _buttonCodingAbort.Enabled = false;
                 _progressBar.Visibility = ViewStates.Invisible;
+                _layoutCodingStatus.Visibility = ViewStates.Gone;
                 return;
             }
 
@@ -1127,6 +1130,7 @@ namespace BmwDeepObd
             _buttonCodingAbort.Enabled = active && statusInfo.CancelPossible;
             _progressBar.Visibility = active && statusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
 
+            _layoutCodingStatus.Visibility = statusInfo.HasOptionsDict && statusOptionTypes != null && statusOptionTypes.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
             _ignoreItemSelection = true;
             int optionSelPos = _spinnerOptionType.SelectedItemPosition;
             _spinnerOptionTypeAdapter.Items.Clear();
@@ -1149,7 +1153,6 @@ namespace BmwDeepObd
             }
             _spinnerOptionType.SetSelection(optionSelPos);
             _ignoreItemSelection = false;
-            _spinnerOptionType.Enabled = statusInfo.HasOptionsDict && statusOptionTypes != null && statusOptionTypes.Count > 0;
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;
 
