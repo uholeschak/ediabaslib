@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-android36.1</TargetFramework>
-    <SupportedOSPlatformVersion>23.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
     <OutputType>Exe</OutputType>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -80,8 +80,8 @@
     <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.13.0" />
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.1.3" />
     <PackageReference Include="Xamarin.AndroidX.Car.App.App" Version="1.7.0.3" />
-    <PackageReference Include="Xamarin.AndroidX.Compose.Runtime.Annotation.Jvm" Version="1.11.0" ExcludeAssets="all" />
-    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="9.2.0" />
+    <PackageReference Include="Xamarin.AndroidX.Compose.Runtime.Annotation.Jvm" Version="1.11.1" ExcludeAssets="all" />
+    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="9.2.1" />
     <PackageReference Include="Xamarin.AndroidX.DocumentFile" Version="1.1.0.3" />
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.4.0.5" />
     <PackageReference Include="Xamarin.AndroidX.ViewPager2" Version="1.1.0.10" />
