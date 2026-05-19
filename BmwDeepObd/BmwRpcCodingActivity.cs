@@ -103,6 +103,7 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogConnectError;
         public long _connectionUpdateTime;
         private PsdzRpcStatusInfo _statusInfo;
+        private List<PsdzRpcOptionType> _statusOptionTypes;
         private PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         private string _statusMessage;
         private bool _rpcClientConnected;
@@ -114,6 +115,8 @@ namespace BmwDeepObd
         private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
         private ProgressBar _progressBar;
+        private Spinner _spinnerOptionType;
+        private StringObjAdapter _spinnerOptionTypeAdapter;
         private TextView _textCodingStatus;
 
         private bool _taskActive;
@@ -350,6 +353,10 @@ namespace BmwDeepObd
             _progressBar.Max = 100;
             _progressBar.Progress = 0;
             _progressBar.Indeterminate = false;
+
+            _spinnerOptionType = FindViewById<Spinner>(Resource.Id.spinnerOptionType);
+            _spinnerOptionTypeAdapter = new StringObjAdapter(this);
+            _spinnerOptionType.Adapter = _spinnerOptionTypeAdapter;
 
             _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
 
@@ -1054,9 +1061,11 @@ namespace BmwDeepObd
                 }
 
                 PsdzRpcStatusInfo statusInfo = await _psdzRpcClient.RpcService.GetStatusInfo().ConfigureAwait(false);
+                List<PsdzRpcOptionType> optionTypes = await _psdzRpcClient.RpcService.GetOptionTypes().ConfigureAwait(false);
                 lock (_statusLock)
                 {
                     _statusInfo = statusInfo;
+                    _statusOptionTypes = optionTypes;
                 }
 
                 return true;
@@ -1075,12 +1084,14 @@ namespace BmwDeepObd
             }
 
             PsdzRpcStatusInfo statusInfo;
+            List<PsdzRpcOptionType> statusOptionTypes;
             string statusMessage;
             bool rpcClientConnected;
 
             lock (_statusLock)
             {
                 statusInfo = _statusInfo;
+                statusOptionTypes = _statusOptionTypes;
                 statusMessage = _statusMessage;
                 rpcClientConnected = _rpcClientConnected;
             }
@@ -1173,6 +1184,14 @@ namespace BmwDeepObd
                             _statusMessage = string.Empty;
                         }
                         await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        lock (_statusLock)
+                        {
+                            _statusInfo = null;
+                            _statusOptionTypes = null;
+                        }
                     }
 
                     RunOnUiThread(() =>
