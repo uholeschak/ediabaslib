@@ -94,7 +94,6 @@ namespace BmwDeepObd
         private Task<bool> _startTask;
         private CancellationTokenSource _startCts;
         private object _startLock = new object();
-        private object _timeLock = new object();
         private object _instanceLock = new object();
         private object _statusLock = new object();
         private bool _activityActive;
@@ -102,7 +101,6 @@ namespace BmwDeepObd
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
-        public long _connectionUpdateTime;
         private PsdzRpcStatusInfo _statusInfo;
         private List<PsdzRpcOptionType> _statusOptionTypes;
         private string _statusMessage;
@@ -414,7 +412,6 @@ namespace BmwDeepObd
             _activityActive = true;
 
             StartRpcClient();
-            UpdateConnectTime();
         }
 
         protected override void OnPause()
@@ -671,7 +668,6 @@ namespace BmwDeepObd
                     }
 
                     _alertDialogConnectError = null;
-                    UpdateConnectTime();
                     if (!ignoreDismiss)
                     {
                         Finish();
@@ -1174,7 +1170,6 @@ namespace BmwDeepObd
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;
 
-            UpdateConnectTime();
             UpdateOptionsMenu();
         }
 
@@ -1974,37 +1969,5 @@ namespace BmwDeepObd
             }
             return true;
         }
-
-        private void ReportError(string msg)
-        {
-            RunOnUiThread(() =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                _instanceData.CommErrorsOccurred = true;
-
-                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ReportError: {0}", msg);
-            });
-        }
-
-        private void UpdateConnectTime(bool reset = false)
-        {
-            lock (_timeLock)
-            {
-                _connectionUpdateTime = reset ? DateTime.MinValue.Ticks : Stopwatch.GetTimestamp();
-            }
-        }
-
-        private long GetConnectTime()
-        {
-            lock (_timeLock)
-            {
-                return _connectionUpdateTime;
-            }
-        }
-
     }
 }
