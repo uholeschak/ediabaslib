@@ -1074,12 +1074,27 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                PsdzRpcStatusInfo statusInfo = await _psdzRpcClient.RpcService.GetStatusInfo().ConfigureAwait(false);
-                List<PsdzRpcOptionType> optionTypes = await _psdzRpcClient.RpcService.GetOptionTypes().ConfigureAwait(false);
-                lock (_statusLock)
+                for (int retry = 0; retry < 2; retry++)
                 {
-                    _statusInfo = statusInfo;
-                    _statusOptionTypes = optionTypes;
+                    PsdzRpcStatusInfo statusInfo = await _psdzRpcClient.RpcService.GetStatusInfo().ConfigureAwait(false);
+                    List<PsdzRpcOptionType> optionTypes = await _psdzRpcClient.RpcService.GetOptionTypes().ConfigureAwait(false);
+                    lock (_statusLock)
+                    {
+                        _statusInfo = statusInfo;
+                        _statusOptionTypes = optionTypes;
+                    }
+
+                    if (!statusInfo.VehicleConnected && statusInfo.HasOptionsDict)
+                    {
+                        bool cleared = await _psdzRpcClient.RpcService.ClearOptionsDict().ConfigureAwait(false);
+                        if (cleared)
+                        {
+                            // update status again
+                            continue;
+                        }
+                    }
+
+                    break;
                 }
 
                 return true;
