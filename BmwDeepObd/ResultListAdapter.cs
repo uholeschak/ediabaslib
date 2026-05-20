@@ -155,12 +155,14 @@ namespace BmwDeepObd
             if (!_ignoreCheckEvent)
             {
                 CheckBox checkBox = (CheckBox)sender;
-                TagInfo tagInfo = (TagInfo)checkBox.Tag;
-                if (tagInfo.Info.Selected != args.IsChecked)
+                if (checkBox.Tag is TagInfo tagInfo)
                 {
-                    tagInfo.Info.Selected = args.IsChecked;
-                    CheckChanged?.Invoke(tagInfo.Info);
-                    NotifyDataSetChanged();
+                    if (tagInfo.Info.Selected != args.IsChecked)
+                    {
+                        tagInfo.Info.Selected = args.IsChecked;
+                        CheckChanged?.Invoke(tagInfo.Info);
+                        NotifyDataSetChanged();
+                    }
                 }
             }
         }
