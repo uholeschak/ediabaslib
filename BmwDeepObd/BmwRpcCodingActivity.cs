@@ -1064,21 +1064,29 @@ namespace BmwDeepObd
             }
         }
 
-        private async Task RpcClientTaskStarted(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
+        private async Task RpcClientTaskStarted()
         {
             TaskActive = true;
-            await RpcClientUpdateDisplay(selectedSwiRegister).ConfigureAwait(false);
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
         }
 
-        private async Task RpcClientTaskCompleted(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
+        private async Task RpcClientTaskCompleted()
         {
             TaskActive = false;
-            await RpcClientUpdateDisplay(selectedSwiRegister).ConfigureAwait(false);
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
         }
 
         private async Task RpcClientUpdateDisplay(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
         {
-            await GetRemoteStatusAsync(selectedSwiRegister).ConfigureAwait(false);
+            if (selectedSwiRegister != null)
+            {
+                lock (_statusLock)
+                {
+                    _selectedSwiRegister = selectedSwiRegister;
+                }
+            }
+
+            await GetRemoteStatusAsync().ConfigureAwait(false);
             RunOnUiThread(() =>
             {
                 if (_activityCommon == null)
@@ -1086,17 +1094,23 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateDisplay(selectedSwiRegister);
+                UpdateDisplay();
             });
         }
 
-        private async Task<bool> GetRemoteStatusAsync(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
+        private async Task<bool> GetRemoteStatusAsync()
         {
             try
             {
                 if (_psdzRpcClient.RpcService == null)
                 {
                     return false;
+                }
+
+                PsdzRpcSwiRegisterEnum? selectedSwiRegister;
+                lock (_statusLock)
+                {
+                    selectedSwiRegister = _selectedSwiRegister;
                 }
 
                 for (int retry = 0; retry < 2; retry++)
@@ -1133,7 +1147,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateDisplay(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
+        private void UpdateDisplay()
         {
             if (_activityCommon == null)
             {
@@ -1145,6 +1159,7 @@ namespace BmwDeepObd
             List<PsdzRpcOptionItem> rpcListItems;
             string statusMessage;
             bool rpcClientConnected;
+            PsdzRpcSwiRegisterEnum? selectedSwiRegister;
 
             lock (_statusLock)
             {
@@ -1153,6 +1168,7 @@ namespace BmwDeepObd
                 rpcListItems = _rpcListItems;
                 statusMessage = _statusMessage;
                 rpcClientConnected = _rpcClientConnected;
+                selectedSwiRegister = _selectedSwiRegister;
             }
 
             if (statusInfo == null || !rpcClientConnected)
