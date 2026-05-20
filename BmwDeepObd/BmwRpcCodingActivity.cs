@@ -406,7 +406,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        await RpcClientUpdateDisplay().ConfigureAwait(false);
+                        await SelectOptionIdAsync(extraInfo.Type, extraInfo.Selected).ConfigureAwait(false);
                     }
                     catch (Exception)
                     {
@@ -1191,6 +1191,42 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        private async Task SelectOptionIdAsync(string optionId, bool select)
+        {
+            try
+            {
+                await GetRemoteStatusAsync().ConfigureAwait(false);
+                List<PsdzRpcOptionItem> rpcListItems;
+                lock (_statusLock)
+                {
+                    rpcListItems = _rpcListItems;
+                }
+
+                bool modified = false;
+                foreach (PsdzRpcOptionItem rpcListItem in rpcListItems)
+                {
+                    if (string.Compare(rpcListItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        bool result = await _psdzRpcClient.RpcService.SelectOption(rpcListItem, select).ConfigureAwait(false);
+                        if (result)
+                        {
+                            modified = true;
+                        }
+                        break;
+                    }
+                }
+
+                if (modified)
+                {
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
