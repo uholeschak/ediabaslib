@@ -380,7 +380,17 @@ namespace BmwDeepObd
                     _selectedSwiRegister = selectedSwiRegister;
                 }
 
-                UpdateDisplay();
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
             };
 
             _listViewOptions = FindViewById<ListView>(Resource.Id.listViewOptions);
@@ -392,7 +402,17 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateDisplay();
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
             };
 
             _listViewOptions.Adapter = _listViewOptionsAdapter;
@@ -1067,26 +1087,40 @@ namespace BmwDeepObd
         private async Task RpcClientTaskStarted()
         {
             TaskActive = true;
-            await RpcClientUpdateDisplay().ConfigureAwait(false);
+            try
+            {
+                await RpcClientUpdateDisplay().ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private async Task RpcClientTaskCompleted()
         {
             TaskActive = false;
-            await RpcClientUpdateDisplay().ConfigureAwait(false);
+            try
+            {
+                await RpcClientUpdateDisplay().ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
-        private async Task RpcClientUpdateDisplay(PsdzRpcSwiRegisterEnum? selectedSwiRegister = null)
+        private async Task RpcClientUpdateDisplay()
         {
-            if (selectedSwiRegister != null)
+            try
             {
-                lock (_statusLock)
-                {
-                    _selectedSwiRegister = selectedSwiRegister;
-                }
+                await GetRemoteStatusAsync().ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
-            await GetRemoteStatusAsync().ConfigureAwait(false);
             RunOnUiThread(() =>
             {
                 if (_activityCommon == null)
@@ -1118,10 +1152,18 @@ namespace BmwDeepObd
                         _statusInfo = statusInfo;
                         _statusOptionTypes = statusOptionTypes;
 
-                        if (!statusInfo.HasOptionsDict)
+                        if (statusInfo.HasOptionsDict)
+                        {
+                            if (_selectedSwiRegister == null)
+                            {
+                                _selectedSwiRegister = PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
+                            }
+                        }
+                        else
                         {
                             _selectedSwiRegister = null;
                         }
+
                         selectedSwiRegister = _selectedSwiRegister;
                     }
 
@@ -1466,7 +1508,15 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    await RpcClientUpdateDisplay(swiRegisterEnum).ConfigureAwait(false);
+                    if (swiRegisterEnum != null)
+                    {
+                        lock (_statusLock)
+                        {
+                            _selectedSwiRegister = swiRegisterEnum;
+                        }
+                    }
+
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
                 };
 
                 _psdzRpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
