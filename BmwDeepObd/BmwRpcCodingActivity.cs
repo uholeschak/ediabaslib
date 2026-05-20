@@ -36,8 +36,8 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
-                CodingUrl = string.Empty;
-                CodingUrlTest = string.Empty;
+                CodingRpcUrl = string.Empty;
+                CodingRpcUrlTest = string.Empty;
                 DayString = string.Empty;
                 ValidSerial = string.Empty;
                 Url = string.Empty;
@@ -48,8 +48,8 @@ namespace BmwDeepObd
                 CommErrorsOccurred = false;
             }
 
-            public string CodingUrl { get; set; }
-            public string CodingUrlTest { get; set; }
+            public string CodingRpcUrl { get; set; }
+            public string CodingRpcUrlTest { get; set; }
             public string DayString { get; set; }
             public string ValidSerial { get; set; }
             public string Vin { get; set; }
@@ -746,7 +746,7 @@ namespace BmwDeepObd
                 return true;
             }
 
-            if (!string.IsNullOrEmpty(_instanceData.CodingUrl))
+            if (!string.IsNullOrEmpty(_instanceData.CodingRpcUrl))
             {
                 return true;
             }
@@ -782,8 +782,8 @@ namespace BmwDeepObd
                                 {
                                     lock (_instanceLock)
                                     {
-                                        _instanceData.CodingUrl = url;
-                                        _instanceData.CodingUrlTest = urlTest;
+                                        _instanceData.CodingRpcUrl = url;
+                                        _instanceData.CodingRpcUrlTest = urlTest;
                                         _instanceData.DayString = dayString;
                                         _instanceData.ValidSerial = validSerial;
                                     }
@@ -1020,14 +1020,14 @@ namespace BmwDeepObd
                 XElement infoNode = xmlDoc.Root.Element("info");
                 if (infoNode != null)
                 {
-                    XAttribute urlAttr = infoNode.Attribute("url");
+                    XAttribute urlAttr = infoNode.Attribute("rpc_url");
                     if (urlAttr != null && !string.IsNullOrEmpty(urlAttr.Value))
                     {
                         codingUrl = urlAttr.Value;
                         success = true;
                     }
 
-                    XAttribute urlTestAttr = infoNode.Attribute("url_test");
+                    XAttribute urlTestAttr = infoNode.Attribute("rpc_url_test");
                     if (urlTestAttr != null && !string.IsNullOrEmpty(urlTestAttr.Value))
                     {
                         codingUrlTest = urlTestAttr.Value;
@@ -1830,7 +1830,7 @@ namespace BmwDeepObd
             {
                 lock (_instanceLock)
                 {
-                    if (string.IsNullOrEmpty(_instanceData.CodingUrl))
+                    if (string.IsNullOrEmpty(_instanceData.CodingRpcUrl))
                     {
                         return false;
                     }
@@ -1906,21 +1906,20 @@ namespace BmwDeepObd
                         string url;
                         if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
                         {
-                            if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
+                            if (!string.IsNullOrEmpty(_instanceData.CodingRpcUrlTest))
                             {
-                                url = _instanceData.CodingUrlTest;
+                                url = _instanceData.CodingRpcUrlTest;
                             }
                             else
                             {
-                                url = @"http://vm-ista.local.holeschak.de:8000/";
+                                url = @"vm-ista.local.holeschak.de:" + PsdzRpcServiceConstants.DefaultTcpPort;
                             }
                         }
                         else
                         {
-                            url = _instanceData.CodingUrl;
+                            url = _instanceData.CodingRpcUrl;
                         }
 
-                        url = @"http://vm-ista.local.holeschak.de:8000/";
                         _instanceData.Url = url;
                     }
 
