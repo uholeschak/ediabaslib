@@ -119,7 +119,7 @@ namespace BmwDeepObd
         private Spinner _spinnerOptionType;
         private StringObjAdapter _spinnerOptionTypeAdapter;
         private ListView _listViewOptions;
-        private EdiabasToolActivity.ResultSelectListAdapter _listViewOptionsAdapter;
+        private ResultListAdapter _listViewOptionsAdapter;
         private TextView _textCodingStatus;
 
         private bool _taskActive;
@@ -394,10 +394,16 @@ namespace BmwDeepObd
             };
 
             _listViewOptions = FindViewById<ListView>(Resource.Id.listViewOptions);
-            _listViewOptionsAdapter = new EdiabasToolActivity.ResultSelectListAdapter(this);
-            _listViewOptionsAdapter.CheckChanged += extraInfo =>
+            _listViewOptionsAdapter = new ResultListAdapter(this, -1, 0, true);
+            _listViewOptionsAdapter.CheckChanged += resultItem =>
             {
                 if (_ignoreItemSelection)
+                {
+                    return;
+                }
+
+                string optionId = resultItem.Tag as string;
+                if (string.IsNullOrEmpty(optionId))
                 {
                     return;
                 }
@@ -406,7 +412,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        await SelectOptionIdAsync(extraInfo.Type, extraInfo.Selected).ConfigureAwait(false);
+                        await SelectOptionIdAsync(optionId, resultItem.Selected).ConfigureAwait(false);
                     }
                     catch (Exception)
                     {
@@ -1198,6 +1204,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (string.IsNullOrEmpty(optionId))
+                {
+                    return;
+                }
+
                 await GetRemoteStatusAsync().ConfigureAwait(false);
                 List<PsdzRpcOptionItem> rpcListItems;
                 lock (_statusLock)
@@ -1308,10 +1319,11 @@ namespace BmwDeepObd
             {
                 foreach (PsdzRpcOptionItem optionItem in rpcListItems)
                 {
-                    EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(optionItem.Caption, optionItem.Id, new List<string>());
-                    extraInfo.Selected = optionItem.Selected;
-                    extraInfo.CheckVisible = optionItem.Enabled;
-                    _listViewOptionsAdapter.Items.Add(extraInfo);
+                    TableResultItem resultItem = new TableResultItem(optionItem.Caption, null, optionItem.Id, true, optionItem.Selected)
+                    {
+                        CheckEnable = optionItem.Enabled
+                    };
+                    _listViewOptionsAdapter.Items.Add(resultItem);
                 }
             }
 

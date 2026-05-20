@@ -1,13 +1,16 @@
-using System;
-using System.Collections.Generic;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using System;
+using System.Collections.Generic;
 
 namespace BmwDeepObd
 {
     public class ResultListAdapter : BaseAdapter<TableResultItem>
     {
+        public delegate void CheckChangedEventHandler(TableResultItem resultItem);
+        public event CheckChangedEventHandler CheckChanged;
+
         private readonly List<TableResultItem> _items;
         public List<TableResultItem> Items => _items;
         private readonly Android.App.Activity _context;
@@ -156,6 +159,7 @@ namespace BmwDeepObd
                 if (tagInfo.Info.Selected != args.IsChecked)
                 {
                     tagInfo.Info.Selected = args.IsChecked;
+                    CheckChanged?.Invoke(tagInfo.Info);
                     NotifyDataSetChanged();
                 }
             }
