@@ -1173,7 +1173,12 @@ namespace BmwDeepObd
                         selectedSwiRegister = _selectedSwiRegister;
                     }
 
-                    List<PsdzRpcOptionItem> rpcListItems = await _psdzRpcClient.RpcService.GetSelectedOptions(selectedSwiRegister).ConfigureAwait(false);
+                    List<PsdzRpcOptionItem> rpcListItems = null;
+                    if (selectedSwiRegister != null)
+                    {
+                        rpcListItems = await _psdzRpcClient.RpcService.GetSelectedOptions(selectedSwiRegister).ConfigureAwait(false);
+                    }
+
                     lock (_statusLock)
                     {
                         _rpcListItems = rpcListItems;
@@ -1209,13 +1214,18 @@ namespace BmwDeepObd
                     return;
                 }
 
-                await GetRemoteStatusAsync().ConfigureAwait(false);
-                List<PsdzRpcOptionItem> rpcListItems;
+                PsdzRpcSwiRegisterEnum? selectedSwiRegister;
                 lock (_statusLock)
                 {
-                    rpcListItems = _rpcListItems;
+                    selectedSwiRegister = _selectedSwiRegister;
                 }
 
+                if (selectedSwiRegister == null)
+                {
+                    return;
+                }
+
+                List<PsdzRpcOptionItem> rpcListItems = await _psdzRpcClient.RpcService.GetSelectedOptions(selectedSwiRegister).ConfigureAwait(false);
                 bool modified = false;
                 foreach (PsdzRpcOptionItem rpcListItem in rpcListItems)
                 {
