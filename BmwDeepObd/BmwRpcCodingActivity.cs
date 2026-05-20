@@ -1939,7 +1939,8 @@ namespace BmwDeepObd
                 }
 
                 string remoteHost = loadUri.Host;
-                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, _startCts.Token).ConfigureAwait(false);
+                int remotePort = loadUri.Port > 0 ? loadUri.Port : PsdzRpcServiceConstants.DefaultTcpPort;
+                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, null, _startCts.Token).ConfigureAwait(false);
                 if (!connected)
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
