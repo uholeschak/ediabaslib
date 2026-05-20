@@ -1305,45 +1305,58 @@ namespace BmwDeepObd
 
             _layoutCodingOptions.Visibility = statusInfo.HasOptionsDict && statusOptionTypes != null && statusOptionTypes.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
 
-            _ignoreItemSelection = true;
-            int optionSelPos = _spinnerOptionType.SelectedItemPosition;
-            _spinnerOptionTypeAdapter.Items.Clear();
-            if (statusOptionTypes != null)
+            try
             {
-                foreach (PsdzRpcOptionType optionType in statusOptionTypes)
+                _ignoreItemSelection = true;
+                int optionSelPos = _spinnerOptionType.SelectedItemPosition;
+                _spinnerOptionTypeAdapter.Items.Clear();
+                if (statusOptionTypes != null)
                 {
-                    _spinnerOptionTypeAdapter.Items.Add(new StringObjType(optionType.Caption, optionType.SwiRegisterEnum));
-                    if (selectedSwiRegister != null && selectedSwiRegister.Equals(optionType.SwiRegisterEnum))
+                    foreach (PsdzRpcOptionType optionType in statusOptionTypes)
                     {
-                        optionSelPos = _spinnerOptionTypeAdapter.Items.Count - 1;
+                        _spinnerOptionTypeAdapter.Items.Add(new StringObjType(optionType.Caption, optionType.SwiRegisterEnum));
+                        if (selectedSwiRegister != null && selectedSwiRegister.Equals(optionType.SwiRegisterEnum))
+                        {
+                            optionSelPos = _spinnerOptionTypeAdapter.Items.Count - 1;
+                        }
                     }
                 }
-            }
 
-            _spinnerOptionTypeAdapter.NotifyDataSetChanged();
-            if (optionSelPos < 0)
-            {
-                optionSelPos = 0;
-            }
-            _spinnerOptionType.SetSelection(optionSelPos);
-            _ignoreItemSelection = false;
-
-            _ignoreItemSelection = true;
-            _listViewOptionsAdapter.Items.Clear();
-            if (rpcListItems != null)
-            {
-                foreach (PsdzRpcOptionItem optionItem in rpcListItems)
+                _spinnerOptionTypeAdapter.NotifyDataSetChanged();
+                if (optionSelPos < 0)
                 {
-                    TableResultItem resultItem = new TableResultItem(optionItem.Caption, null, optionItem.Id, true, optionItem.Selected)
-                    {
-                        CheckEnable = optionItem.Enabled
-                    };
-                    _listViewOptionsAdapter.Items.Add(resultItem);
+                    optionSelPos = 0;
                 }
+                _spinnerOptionType.SetSelection(optionSelPos);
+            }
+            finally
+            {
+                _ignoreItemSelection = false;
             }
 
-            _listViewOptionsAdapter.NotifyDataSetChanged();
-            _ignoreItemSelection = false;
+            try
+            {
+                _ignoreItemSelection = true;
+                _listViewOptionsAdapter.Items.Clear();
+                if (rpcListItems != null)
+                {
+                    foreach (PsdzRpcOptionItem optionItem in rpcListItems)
+                    {
+                        TableResultItem resultItem = new TableResultItem(optionItem.Caption, null, optionItem.Id, true, optionItem.Selected)
+                        {
+                            CheckEnable = optionItem.Enabled
+                        };
+                        _listViewOptionsAdapter.Items.Add(resultItem);
+                    }
+                }
+
+                _listViewOptionsAdapter.NotifyDataSetChanged();
+                AndroidUtility.SetListViewHeightBasedOnChildren(_listViewOptions);
+            }
+            finally
+            {
+                _ignoreItemSelection = false;
+            }
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;
 
