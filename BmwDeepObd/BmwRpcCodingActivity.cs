@@ -13,7 +13,6 @@ using PsdzRpcClient;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
@@ -1143,6 +1142,7 @@ namespace BmwDeepObd
 
             PsdzRpcStatusInfo statusInfo;
             List<PsdzRpcOptionType> statusOptionTypes;
+            List<PsdzRpcOptionItem> rpcListItems;
             string statusMessage;
             bool rpcClientConnected;
 
@@ -1150,6 +1150,7 @@ namespace BmwDeepObd
             {
                 statusInfo = _statusInfo;
                 statusOptionTypes = _statusOptionTypes;
+                rpcListItems = _rpcListItems;
                 statusMessage = _statusMessage;
                 rpcClientConnected = _rpcClientConnected;
             }
@@ -1178,6 +1179,7 @@ namespace BmwDeepObd
             _progressBar.Visibility = active && statusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
 
             _layoutCodingOptions.Visibility = statusInfo.HasOptionsDict && statusOptionTypes != null && statusOptionTypes.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
+
             _ignoreItemSelection = true;
             int optionSelPos = _spinnerOptionType.SelectedItemPosition;
             _spinnerOptionTypeAdapter.Items.Clear();
@@ -1199,6 +1201,22 @@ namespace BmwDeepObd
                 optionSelPos = 0;
             }
             _spinnerOptionType.SetSelection(optionSelPos);
+            _ignoreItemSelection = false;
+
+            _ignoreItemSelection = true;
+            _listViewOptionsAdapter.Items.Clear();
+            if (rpcListItems != null)
+            {
+                foreach (PsdzRpcOptionItem optionItem in rpcListItems)
+                {
+                    EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(optionItem.Caption, optionItem.Id, new List<string>());
+                    extraInfo.Selected = optionItem.Selected;
+                    extraInfo.CheckVisible = optionItem.Enabled;
+                    _listViewOptionsAdapter.Items.Add(extraInfo);
+                }
+            }
+
+            _listViewOptionsAdapter.NotifyDataSetChanged();
             _ignoreItemSelection = false;
 
             _textCodingStatus.Text = statusMessage ?? string.Empty;
