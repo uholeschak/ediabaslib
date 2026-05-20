@@ -375,6 +375,11 @@ namespace BmwDeepObd
                     selectedSwiRegister = _spinnerOptionTypeAdapter.Items[pos].Data as PsdzRpcSwiRegisterEnum?;
                 }
 
+                if (selectedSwiRegister == null)
+                {
+                    return;
+                }
+
                 lock (_statusLock)
                 {
                     _selectedSwiRegister = selectedSwiRegister;
