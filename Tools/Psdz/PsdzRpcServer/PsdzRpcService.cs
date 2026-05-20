@@ -562,6 +562,7 @@ namespace PsdzRpcServer
                                     }
                                     else
                                     {
+                                        selected = true;
                                         enabled = false;
                                     }
                                 }
