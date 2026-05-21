@@ -1727,6 +1727,14 @@ namespace BmwDeepObd
 
                 _ediabasProxyClient.MessageEvent += (messageType, message) =>
                 {
+                    if (messageType == EdiabasProxyClient.MessageType.Error)
+                    {
+                        lock (_instanceLock)
+                        {
+                            _instanceData.CommErrorsOccurred = true;
+                        }
+                    }
+
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
                 };
 
