@@ -8,7 +8,63 @@ namespace PsdzRpcServer;
 
 public class PsdzSqlDataBase
 {
+    private const string SqlDataBase = ";Database=bmw_coding";
     private static readonly ILog log = LogManager.GetLogger(typeof(PsdzSqlDataBase));
+    private string _sqlServer;
+    private bool _testLicenses;
+
+    public PsdzSqlDataBase(string sqlServer, bool testLicenses = false)
+    {
+        _sqlServer = sqlServer;
+        _testLicenses = testLicenses;
+    }
+
+    public bool ProcessLicenseRequest(string vin, string adapterSerial, bool adapterSerialValid)
+    {
+        bool registerAll = _testLicenses;
+        log.InfoFormat("ProcessLicense RegisterAll={0}", registerAll);
+
+        bool licenseValid = false;
+        bool serialValid = adapterSerialValid;
+        string serial = serialValid ? adapterSerial : null;
+
+        try
+        {
+            if (string.IsNullOrEmpty(_sqlServer))
+            {
+                log.ErrorFormat("ProcessLicense No SqlServer");
+                return false;
+            }
+
+            string connectionString = _sqlServer + SqlDataBase;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                licenseValid = CheckLicense(connection, vin, out _);
+                if (!licenseValid && (serialValid || registerAll))
+                {
+                    log.InfoFormat("ProcessLicense Adding Vin={0}, Serial={1}", vin, serial);
+                    if (AddLicense(connection, vin, serial, registerAll))
+                    {
+                        licenseValid = true;
+                    }
+                    else
+                    {
+                        log.InfoFormat("ProcessLicense Adding failed Vin={0}, Serial={1}", vin, serial);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("ProcessLicense Exception: {0}", ex.Message);
+            licenseValid = false;
+        }
+
+        log.InfoFormat("ProcessLicense Valid={0}", licenseValid);
+        return licenseValid;
+    }
 
     public bool CheckLicense(MySqlConnection connection, string vin, out string serial)
     {
