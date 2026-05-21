@@ -1865,6 +1865,16 @@ namespace BmwDeepObd
                             {
                                 _rpcClientConnected = false;
                             }
+
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                ConnectionFailMessage();
+                            });
                         }
 
                         lock (_startLock)
