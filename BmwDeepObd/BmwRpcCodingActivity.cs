@@ -1932,7 +1932,13 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!Uri.TryCreate(loadUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
+                string normalizedUrl = loadUrl;
+                if (!normalizedUrl.Contains("://"))
+                {
+                    normalizedUrl = "http://" + normalizedUrl;
+                }
+
+                if (!Uri.TryCreate(normalizedUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Invalid loadUrl={0}", loadUrl);
                     return false;
