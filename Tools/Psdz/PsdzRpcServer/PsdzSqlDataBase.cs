@@ -23,6 +23,12 @@ public class PsdzSqlDataBase
         bool registerAll = _testLicenses;
         log.InfoFormat("ProcessLicense RegisterAll={0}", registerAll);
 
+        if (string.IsNullOrEmpty(vin))
+        {
+            log.ErrorFormat("ProcessLicense No VIN");
+            return false;
+        }
+
         bool licenseValid = false;
         bool serialValid = adapterSerialValid;
         string serial = serialValid ? adapterSerial : null;
@@ -70,6 +76,13 @@ public class PsdzSqlDataBase
         log.InfoFormat("CheckLicense VIN={0}", vin);
 
         serial = null;
+
+        if (string.IsNullOrEmpty(vin))
+        {
+            log.ErrorFormat("CheckLicense No VIN");
+            return false;
+        }
+
         string matchVin = null;
 
         try

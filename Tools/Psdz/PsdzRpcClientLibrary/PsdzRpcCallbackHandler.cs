@@ -124,6 +124,11 @@ namespace PsdzRpcClient
 
         public Task<PsdzRpcAppInfo> OnGetAppInfo()
         {
+            if (GetAppInfo == null)
+            {
+                return Task.FromResult<PsdzRpcAppInfo>(null);
+            }
+
             PsdzRpcAppInfo args = new PsdzRpcAppInfo();
             GetAppInfo?.Invoke(this, args);
             return Task.FromResult(args);
