@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using PsdzRpcServer.Shared;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -84,6 +85,27 @@ namespace PsdzRpcServer
 
             if (hasErrors)
             {
+                return 1;
+            }
+
+            string sqlServer = ConfigurationManager.AppSettings["SqlServer"];
+            if (string.IsNullOrEmpty(sqlServer))
+            {
+                Console.WriteLine("SQL Server configuration is missing.");
+                return 1;
+            }
+
+            string testLicenses = ConfigurationManager.AppSettings["TestLicenses"];
+            if (string.IsNullOrEmpty(testLicenses))
+            {
+                Console.WriteLine("Test licenses configuration is missing.");
+                return 1;
+            }
+
+            string displayOptions = ConfigurationManager.AppSettings["DisplayOptions"];
+            if (string.IsNullOrEmpty(displayOptions))
+            {
+                Console.WriteLine("Display options configuration is missing.");
                 return 1;
             }
 
