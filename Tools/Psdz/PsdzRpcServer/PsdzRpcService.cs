@@ -196,7 +196,7 @@ namespace PsdzRpcServer
 
             ProgrammingJobs.OperationType OperationTypeValue = MapOperationType(operationType);
             CancellationTokenSource cts = CreateCancellationToken();
-            VehicleFunctionsTask(OperationTypeValue).ContinueWith(task =>
+            VehicleFunctionsTask(OperationTypeValue).ContinueWith(async task =>
             {
                 try
                 {
@@ -205,7 +205,7 @@ namespace PsdzRpcServer
                     {
                         try
                         {
-                            PsdzRpcAppInfo appInfo = Task.Run(() => _callback.OnGetAppInfo()).GetAwaiter().GetResult();
+                            PsdzRpcAppInfo appInfo = await Task.Run(() => _callback.OnGetAppInfo()).ConfigureAwait(false);
                             if (appInfo != null && !string.IsNullOrEmpty(appInfo.AppId))
                             {
                                 string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
@@ -219,7 +219,7 @@ namespace PsdzRpcServer
                         }
                     }
 
-                    Task.Run(() => _callback.OnVehicleFunctionsCompleted(result, operationType)).GetAwaiter().GetResult();
+                    await Task.Run(() => _callback.OnVehicleFunctionsCompleted(result, operationType)).ConfigureAwait(false);
                 }
                 finally
                 {
