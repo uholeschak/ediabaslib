@@ -94,6 +94,7 @@ namespace PsdzRpcServer
                 Console.WriteLine("SQL Server configuration is missing.");
                 return 1;
             }
+            sqlServer = sqlServer.Trim();
 
             string testLicensesString = ConfigurationManager.AppSettings["TestLicenses"];
             if (string.IsNullOrEmpty(testLicensesString))
@@ -101,6 +102,7 @@ namespace PsdzRpcServer
                 Console.WriteLine("Test licenses configuration is missing.");
                 return 1;
             }
+            testLicensesString = testLicensesString.Trim();
 
             bool testLicenses = Int32.TryParse(testLicensesString, out Int32 testLicensesValueResult) && testLicensesValueResult != 0;
 
@@ -110,6 +112,7 @@ namespace PsdzRpcServer
                 Console.WriteLine("Display options configuration is missing.");
                 return 1;
             }
+            displayOptions = displayOptions.Trim();
 
             consoleAvailable = IsConsoleAvailable();
             Console.WriteLine($"Console available: {consoleAvailable}");
@@ -153,7 +156,8 @@ namespace PsdzRpcServer
             }
 
             using CancellationTokenSource cts = new CancellationTokenSource();
-            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, sqlDataBase, tcpPort, caCertPath, serverPfxPath);
+            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, sqlDataBase, displayOptions,
+                tcpPort, caCertPath, serverPfxPath);
             try
             {
                 CancellationTokenSource ctsLocal = cts;

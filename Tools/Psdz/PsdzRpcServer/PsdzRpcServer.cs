@@ -24,6 +24,7 @@ namespace PsdzRpcServer
         private readonly X509Certificate2 _caCert;
         private readonly X509Certificate2 _serverCert;
         private readonly PsdzSqlDataBase _sqlDataBase;
+        private readonly string _displayOptions;
         private int _clientCount;
         private bool _hadClients;
         private bool _disposed;
@@ -34,11 +35,13 @@ namespace PsdzRpcServer
         /// </summary>
         public Task AllClientsDisconnected => _allClientsDisconnected.Task;
 
-        public PsdzRpcServer(string dealerId, TextWriter output = null, PsdzSqlDataBase sqlDataBase = null, int? tcpPort = null, string caCertPath = null, string serverPfxPath = null)
+        public PsdzRpcServer(string dealerId, TextWriter output = null, PsdzSqlDataBase sqlDataBase = null, string displayOptions = null,
+            int? tcpPort = null, string caCertPath = null, string serverPfxPath = null)
         {
             _dealerId = dealerId;
             _output = output;
             _sqlDataBase = sqlDataBase;
+            _displayOptions = displayOptions;
             _tcpPort = tcpPort;
 
             Assembly assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
@@ -145,7 +148,7 @@ namespace PsdzRpcServer
             try
             {
                 using JsonRpc jsonRpc = new JsonRpc(stream);
-                using PsdzRpcService service = new PsdzRpcService(jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId, _sqlDataBase);
+                using PsdzRpcService service = new PsdzRpcService(jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId, _sqlDataBase, _displayOptions);
 
                 jsonRpc.AddLocalRpcTarget(service);
                 jsonRpc.StartListening();

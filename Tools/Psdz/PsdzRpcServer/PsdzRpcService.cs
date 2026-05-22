@@ -19,11 +19,13 @@ namespace PsdzRpcServer
         private PsdzVehicleProxy _vehicleProxy;
         private CancellationTokenSource _cts;
         private readonly object _ctsLock = new object();
+        private readonly string _displayOptions;
 
-        public PsdzRpcService(IPsdzRpcServiceCallback callback, string dealerId, PsdzSqlDataBase sqlDataBase = null)
+        public PsdzRpcService(IPsdzRpcServiceCallback callback, string dealerId, PsdzSqlDataBase sqlDataBase = null, string displayOptions = null)
         {
             _callback = callback;
             _sqlDataBase = sqlDataBase;
+            _displayOptions = displayOptions;
             _programmingJobs = new ProgrammingJobs(dealerId);
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
