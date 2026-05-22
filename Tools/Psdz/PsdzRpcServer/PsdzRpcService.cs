@@ -153,7 +153,7 @@ namespace PsdzRpcServer
                 {
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
                     string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
-                    if (result)
+                    if (result && _licenseCheck != null)
                     {
                         try
                         {
@@ -351,12 +351,20 @@ namespace PsdzRpcServer
             return Task.FromResult(hostLogDir);
         }
 
-        public Task<List<PsdzRpcOptionType>> GetOptionTypes()
+        public Task<List<PsdzRpcOptionType>> GetOptionTypes(bool checkDisplayOption)
         {
             List<PsdzRpcOptionType> optionTypes = new List<PsdzRpcOptionType>();
             foreach (ProgrammingJobs.OptionType optionTypeUpdate in _programmingJobs.OptionTypes)
             {
                 PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionTypeUpdate.SwiRegisterEnum);
+                if (swiRegisterGroup != PsdzDatabase.SwiRegisterGroup.Modification)
+                {
+                    if (checkDisplayOption && _licenseCheck != null && !_licenseCheck.HasDisplayOption(PsdzLicenseCheck.DisplayOptionHardware))
+                    {
+                        continue;
+                    }
+                }
+
                 PsdzRpcOptionType optionType = new PsdzRpcOptionType(MapSwiRegisterEnum(optionTypeUpdate.SwiRegisterEnum),
                     MapSwiRegisterGroupEnum(swiRegisterGroup), optionTypeUpdate.ToString());
                 optionTypes.Add(optionType);

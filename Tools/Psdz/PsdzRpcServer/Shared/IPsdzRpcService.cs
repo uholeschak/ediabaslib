@@ -40,7 +40,7 @@ namespace PsdzRpcServer.Shared
         Task<string> GetVehicleVin();
         Task<PsdzRpcStatusInfo> GetStatusInfo();
         Task<string> GetPsdzServiceHostLogDir();
-        Task<List<PsdzRpcOptionType>> GetOptionTypes();
+        Task<List<PsdzRpcOptionType>> GetOptionTypes(bool checkDisplayOption = false);
         Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzRpcSwiRegisterEnum? swiRegisterEnum);
         Task<PsdzSwiRegisterGroupEnum> GetSwiRegisterGroup(PsdzRpcSwiRegisterEnum swiRegisterEnum);
         Task<bool> SelectOption(PsdzRpcOptionItem optionItem, bool select);

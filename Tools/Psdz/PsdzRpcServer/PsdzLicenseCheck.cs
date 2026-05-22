@@ -7,7 +7,9 @@ namespace PsdzRpcServer;
 
 public class PsdzLicenseCheck
 {
-    private const string SqlDataBase = ";Database=bmw_coding";
+    public const string DisplayOptionHardware = "Hardware";
+    public const string SqlDataBase = ";Database=bmw_coding";
+
     private static readonly ILog log = LogManager.GetLogger(typeof(PsdzLicenseCheck));
     private string _sqlServer;
     private bool _testLicenses;
