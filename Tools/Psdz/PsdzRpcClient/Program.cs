@@ -879,7 +879,7 @@ namespace PsdzRpcClient
         private static async Task PrintOptionTypes(PsdzRpcClient client)
         {
             // No ConfigureAwait(false) here since we want to continue on the same context to print the options
-            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
+            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes(true);
             if (optionTypes != null)
             {
                 Console.WriteLine("Available option types:");
@@ -896,7 +896,7 @@ namespace PsdzRpcClient
 
         private static async Task<bool> SelectOptionType(PsdzRpcClient client, int index)
         {
-            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes().ConfigureAwait(false);
+            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes(true).ConfigureAwait(false);
             if (optionTypes == null)
             {
                 Console.WriteLine("No option types available.");
