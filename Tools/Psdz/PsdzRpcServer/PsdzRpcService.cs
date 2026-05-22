@@ -203,14 +203,22 @@ namespace PsdzRpcServer
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
                     if (result)
                     {
-                        PsdzRpcAppInfo appInfo = Task.Run(() => _callback.OnGetAppInfo()).GetAwaiter().GetResult();
-                        if (appInfo != null && !string.IsNullOrEmpty(appInfo.AppId))
+                        try
                         {
-                            string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
-                            bool licenseValid = _sqlDataBase.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
-                            _programmingJobs.LicenseValid = licenseValid;
+                            PsdzRpcAppInfo appInfo = Task.Run(() => _callback.OnGetAppInfo()).GetAwaiter().GetResult();
+                            if (appInfo != null && !string.IsNullOrEmpty(appInfo.AppId))
+                            {
+                                string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
+                                bool licenseValid = _sqlDataBase.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
+                                _programmingJobs.LicenseValid = licenseValid;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            result = false;
                         }
                     }
+
                     Task.Run(() => _callback.OnVehicleFunctionsCompleted(result, operationType)).GetAwaiter().GetResult();
                 }
                 finally
