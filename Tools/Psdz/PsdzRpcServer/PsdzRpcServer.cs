@@ -23,6 +23,7 @@ namespace PsdzRpcServer
         private readonly int? _tcpPort;
         private readonly X509Certificate2 _caCert;
         private readonly X509Certificate2 _serverCert;
+        private PsdzSqlDataBase _sqlDataBase;
         private int _clientCount;
         private bool _hadClients;
         private bool _disposed;
@@ -33,10 +34,11 @@ namespace PsdzRpcServer
         /// </summary>
         public Task AllClientsDisconnected => _allClientsDisconnected.Task;
 
-        public PsdzRpcServer(string dealerId, TextWriter output = null, int? tcpPort = null, string caCertPath = null, string serverPfxPath = null)
+        public PsdzRpcServer(string dealerId, TextWriter output = null, PsdzSqlDataBase sqlDataBase = null, int? tcpPort = null, string caCertPath = null, string serverPfxPath = null)
         {
             _dealerId = dealerId;
             _output = output;
+            _sqlDataBase = sqlDataBase;
             _tcpPort = tcpPort;
 
             Assembly assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();

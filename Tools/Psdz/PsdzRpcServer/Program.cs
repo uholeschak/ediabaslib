@@ -95,12 +95,14 @@ namespace PsdzRpcServer
                 return 1;
             }
 
-            string testLicenses = ConfigurationManager.AppSettings["TestLicenses"];
-            if (string.IsNullOrEmpty(testLicenses))
+            string testLicensesString = ConfigurationManager.AppSettings["TestLicenses"];
+            if (string.IsNullOrEmpty(testLicensesString))
             {
                 Console.WriteLine("Test licenses configuration is missing.");
                 return 1;
             }
+
+            bool testLicenses = Int32.TryParse(testLicensesString, out Int32 testLicensesValueResult) && testLicensesValueResult != 0;
 
             string displayOptions = ConfigurationManager.AppSettings["DisplayOptions"];
             if (string.IsNullOrEmpty(displayOptions))
@@ -144,8 +146,9 @@ namespace PsdzRpcServer
                 }
             }
 
+            PsdzSqlDataBase sqlDataBase = new PsdzSqlDataBase(sqlServer, testLicenses);
             using CancellationTokenSource cts = new CancellationTokenSource();
-            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, tcpPort, caCertPath, serverPfxPath);
+            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, sqlDataBase, tcpPort, caCertPath, serverPfxPath);
             try
             {
                 CancellationTokenSource ctsLocal = cts;

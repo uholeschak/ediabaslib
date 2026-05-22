@@ -1,5 +1,4 @@
 ﻿using log4net;
-using PsdzClient.Core;
 using System;
 using System.Globalization;
 using MySqlConnector;
