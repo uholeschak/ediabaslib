@@ -147,7 +147,7 @@ namespace PsdzRpcServer
             }
 
             PsdzSqlDataBase sqlDataBase = null;
-            if (!sqlServer.StartsWith("-"))
+            if (string.Compare(sqlServer, "-", StringComparison.OrdinalIgnoreCase) != 0)
             {
                 sqlDataBase = new PsdzSqlDataBase(sqlServer, testLicenses);
             }
