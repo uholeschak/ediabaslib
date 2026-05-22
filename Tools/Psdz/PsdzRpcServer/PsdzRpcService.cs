@@ -98,12 +98,12 @@ namespace PsdzRpcServer
             }
 
             CancellationTokenSource cts = CreateCancellationToken();
-            StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
+            StartProgrammingServiceTask(istaFolder).ContinueWith(async task =>
             {
                 try
                 {
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
-                    Task.Run(() => _callback.OnStartProgrammingCompleted(result)).GetAwaiter().GetResult();
+                    await Task.Run(() => _callback.OnStartProgrammingCompleted(result)).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -122,12 +122,12 @@ namespace PsdzRpcServer
             }
 
             CancellationTokenSource cts = CreateCancellationToken();
-            StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
+            StopProgrammingServiceTask(istaFolder, force).ContinueWith(async task =>
             {
                 try
                 {
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
-                    Task.Run(() => _callback.OnStopProgrammingCompleted(result)).GetAwaiter().GetResult();
+                    await Task.Run(() => _callback.OnStopProgrammingCompleted(result)).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -146,13 +146,29 @@ namespace PsdzRpcServer
             }
 
             CancellationTokenSource cts = CreateCancellationToken();
-            ConnectVehicleTask(istaFolder, remoteHost, useIcom, addTimeout).ContinueWith(task =>
+            ConnectVehicleTask(istaFolder, remoteHost, useIcom, addTimeout).ContinueWith(async task =>
             {
                 try
                 {
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
                     string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
-                    Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin)).GetAwaiter().GetResult();
+                    if (result)
+                    {
+                        try
+                        {
+                            PsdzRpcAppInfo appInfo = await Task.Run(() => _callback.OnGetAppInfo()).ConfigureAwait(false);
+                            if (appInfo != null && !string.IsNullOrEmpty(appInfo.AppId))
+                            {
+                                bool licenseValid = _sqlDataBase.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
+                                _programmingJobs.LicenseValid = licenseValid;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            result = false;
+                        }
+                    }
+                    await Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin)).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -171,12 +187,12 @@ namespace PsdzRpcServer
             }
 
             CancellationTokenSource cts = CreateCancellationToken();
-            DisconnectVehicleTask().ContinueWith(task =>
+            DisconnectVehicleTask().ContinueWith(async task =>
             {
                 try
                 {
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
-                    Task.Run(() => _callback.OnDisconnectVehicleCompleted(result)).GetAwaiter().GetResult();
+                    await Task.Run(() => _callback.OnDisconnectVehicleCompleted(result)).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -201,24 +217,6 @@ namespace PsdzRpcServer
                 try
                 {
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
-                    if (result)
-                    {
-                        try
-                        {
-                            PsdzRpcAppInfo appInfo = await Task.Run(() => _callback.OnGetAppInfo()).ConfigureAwait(false);
-                            if (appInfo != null && !string.IsNullOrEmpty(appInfo.AppId))
-                            {
-                                string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
-                                bool licenseValid = _sqlDataBase.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
-                                _programmingJobs.LicenseValid = licenseValid;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            result = false;
-                        }
-                    }
-
                     await Task.Run(() => _callback.OnVehicleFunctionsCompleted(result, operationType)).ConfigureAwait(false);
                 }
                 finally
