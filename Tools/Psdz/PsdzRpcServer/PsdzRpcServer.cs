@@ -23,7 +23,7 @@ namespace PsdzRpcServer
         private readonly int? _tcpPort;
         private readonly X509Certificate2 _caCert;
         private readonly X509Certificate2 _serverCert;
-        private PsdzSqlDataBase _sqlDataBase;
+        private readonly PsdzSqlDataBase _sqlDataBase;
         private int _clientCount;
         private bool _hadClients;
         private bool _disposed;
@@ -145,7 +145,7 @@ namespace PsdzRpcServer
             try
             {
                 using JsonRpc jsonRpc = new JsonRpc(stream);
-                using PsdzRpcService service = new PsdzRpcService(jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId);
+                using PsdzRpcService service = new PsdzRpcService(jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId, _sqlDataBase);
 
                 jsonRpc.AddLocalRpcTarget(service);
                 jsonRpc.StartListening();

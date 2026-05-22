@@ -14,14 +14,16 @@ namespace PsdzRpcServer
     public class PsdzRpcService : IPsdzRpcService
     {
         private readonly IPsdzRpcServiceCallback _callback;
+        private readonly PsdzSqlDataBase _sqlDataBase;
         private readonly ProgrammingJobs _programmingJobs;
         private PsdzVehicleProxy _vehicleProxy;
         private CancellationTokenSource _cts;
         private readonly object _ctsLock = new object();
 
-        public PsdzRpcService(IPsdzRpcServiceCallback callback, string dealerId)
+        public PsdzRpcService(IPsdzRpcServiceCallback callback, string dealerId, PsdzSqlDataBase sqlDataBase = null)
         {
             _callback = callback;
+            _sqlDataBase = sqlDataBase;
             _programmingJobs = new ProgrammingJobs(dealerId);
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
