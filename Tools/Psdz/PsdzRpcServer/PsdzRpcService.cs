@@ -168,7 +168,7 @@ namespace PsdzRpcServer
                             result = false;
                         }
                     }
-                    await Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin)).ConfigureAwait(false);
+                    await Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin, _programmingJobs.LicenseValid)).ConfigureAwait(false);
                 }
                 finally
                 {

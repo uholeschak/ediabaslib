@@ -36,9 +36,9 @@ namespace PsdzRpcClient
             return Task.CompletedTask;
         }
 
-        public Task OnConnectVehicleCompleted(bool success, string vin)
+        public Task OnConnectVehicleCompleted(bool success, string vin, bool licenseValid)
         {
-            ConnectVehicleCompleted?.Invoke(this, new ConnectVehicleEventArgs(success, vin));
+            ConnectVehicleCompleted?.Invoke(this, new ConnectVehicleEventArgs(success, vin, licenseValid));
             return Task.CompletedTask;
         }
 
