@@ -243,7 +243,7 @@ namespace PsdzRpcClient
                         {
                             if (_verbosity >= Options.VerbosityOption.Important)
                             {
-                                Console.WriteLine($"Vehicle connected, Vin: {connectArgs.Vin}");
+                                Console.WriteLine($"Vehicle connected, Vin: {connectArgs.Vin}, License Valid: {connectArgs.LicenseValid}");
                             }
                         }
                         else
