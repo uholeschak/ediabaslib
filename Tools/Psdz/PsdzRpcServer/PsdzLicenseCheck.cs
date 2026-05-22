@@ -5,17 +5,19 @@ using MySqlConnector;
 
 namespace PsdzRpcServer;
 
-public class PsdzSqlDataBase
+public class PsdzLicenseCheck
 {
     private const string SqlDataBase = ";Database=bmw_coding";
-    private static readonly ILog log = LogManager.GetLogger(typeof(PsdzSqlDataBase));
+    private static readonly ILog log = LogManager.GetLogger(typeof(PsdzLicenseCheck));
     private string _sqlServer;
     private bool _testLicenses;
+    private string _displayOptions;
 
-    public PsdzSqlDataBase(string sqlServer, bool testLicenses = false)
+    public PsdzLicenseCheck(string sqlServer, bool testLicenses = false, string displayOptions = null)
     {
         _sqlServer = sqlServer;
         _testLicenses = testLicenses;
+        _displayOptions = displayOptions;
     }
 
     public bool ProcessLicenseRequest(string vin, string adapterSerial, bool adapterSerialValid)
@@ -184,4 +186,29 @@ public class PsdzSqlDataBase
         log.InfoFormat("AddLicense VIN: {0} added", vin);
         return true;
     }
+
+    public bool HasDisplayOption(string option)
+    {
+        log.InfoFormat("HasDisplayOption Option={0}", option);
+        string displayOptions = _displayOptions;
+        if (string.IsNullOrEmpty(displayOptions))
+        {
+            log.InfoFormat("HasDisplayOption No options");
+            return false;
+        }
+
+        string[] optionList = displayOptions.Split(';');
+        foreach (string optionItem in optionList)
+        {
+            if (string.Compare(optionItem, option, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                log.InfoFormat("HasDisplayOption Option found: {0}", option);
+                return true;
+            }
+        }
+
+        log.InfoFormat("HasDisplayOption Option not found: {0}", option);
+        return false;
+    }
+
 }

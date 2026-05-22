@@ -149,14 +149,14 @@ namespace PsdzRpcServer
                 }
             }
 
-            PsdzSqlDataBase sqlDataBase = null;
+            PsdzLicenseCheck licenseCheck = null;
             if (string.Compare(sqlServer, "-", StringComparison.OrdinalIgnoreCase) != 0)
             {
-                sqlDataBase = new PsdzSqlDataBase(sqlServer, testLicenses);
+                licenseCheck = new PsdzLicenseCheck(sqlServer, testLicenses, displayOptions);
             }
 
             using CancellationTokenSource cts = new CancellationTokenSource();
-            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, sqlDataBase, displayOptions,
+            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, licenseCheck,
                 tcpPort, caCertPath, serverPfxPath);
             try
             {

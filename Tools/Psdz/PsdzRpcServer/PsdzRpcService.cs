@@ -1,5 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Client;
+using EdiabasLib;
 using PsdzClient;
+using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
@@ -7,25 +9,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EdiabasLib;
 
 namespace PsdzRpcServer
 {
     public class PsdzRpcService : IPsdzRpcService
     {
         private readonly IPsdzRpcServiceCallback _callback;
-        private readonly PsdzSqlDataBase _sqlDataBase;
+        private readonly PsdzLicenseCheck _licenseCheck;
         private readonly ProgrammingJobs _programmingJobs;
         private PsdzVehicleProxy _vehicleProxy;
         private CancellationTokenSource _cts;
         private readonly object _ctsLock = new object();
-        private readonly string _displayOptions;
 
-        public PsdzRpcService(IPsdzRpcServiceCallback callback, string dealerId, PsdzSqlDataBase sqlDataBase = null, string displayOptions = null)
+        public PsdzRpcService(IPsdzRpcServiceCallback callback, string dealerId, PsdzLicenseCheck licenseCheck = null)
         {
             _callback = callback;
-            _sqlDataBase = sqlDataBase;
-            _displayOptions = displayOptions;
+            _licenseCheck = licenseCheck;
             _programmingJobs = new ProgrammingJobs(dealerId);
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
@@ -161,7 +160,7 @@ namespace PsdzRpcServer
                             PsdzRpcAppInfo appInfo = await Task.Run(() => _callback.OnGetAppInfo()).ConfigureAwait(false);
                             if (appInfo != null && !string.IsNullOrEmpty(appInfo.AppId))
                             {
-                                bool licenseValid = _sqlDataBase.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
+                                bool licenseValid = _licenseCheck.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
                                 _programmingJobs.LicenseValid = licenseValid;
                             }
                         }
