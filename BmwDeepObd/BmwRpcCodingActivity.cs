@@ -1727,6 +1727,14 @@ namespace BmwDeepObd
 
                 _ediabasProxyClient.MessageEvent += (messageType, message) =>
                 {
+                    if (messageType == EdiabasProxyClient.MessageType.Error)
+                    {
+                        lock (_instanceLock)
+                        {
+                            _instanceData.CommErrorsOccurred = true;
+                        }
+                    }
+
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
                 };
 
@@ -1865,6 +1873,16 @@ namespace BmwDeepObd
                             {
                                 _rpcClientConnected = false;
                             }
+
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                ConnectionFailMessage();
+                            });
                         }
 
                         lock (_startLock)
@@ -1932,14 +1950,21 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!Uri.TryCreate(loadUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
+                string normalizedUrl = loadUrl;
+                if (!normalizedUrl.Contains("://"))
+                {
+                    normalizedUrl = "http://" + normalizedUrl;
+                }
+
+                if (!Uri.TryCreate(normalizedUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Invalid loadUrl={0}", loadUrl);
                     return false;
                 }
 
                 string remoteHost = loadUri.Host;
-                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, PsdzRpcServiceConstants.DefaultTcpPort, null, _startCts.Token).ConfigureAwait(false);
+                int remotePort = loadUri.Port > 0 ? loadUri.Port : PsdzRpcServiceConstants.DefaultTcpPort;
+                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, null, _startCts.Token).ConfigureAwait(false);
                 if (!connected)
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");

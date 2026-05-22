@@ -1709,7 +1709,10 @@ namespace BmwDeepObd
                     return;
                 }
 
-                _instanceData.CommErrorsOccurred = true;
+                lock (_instanceLock)
+                {
+                    _instanceData.CommErrorsOccurred = true;
+                }
 
                 lock (_ediabasLock)
                 {
