@@ -1155,7 +1155,7 @@ namespace BmwDeepObd
                 for (int retry = 0; retry < 2; retry++)
                 {
                     PsdzRpcStatusInfo statusInfo = await _psdzRpcClient.RpcService.GetStatusInfo().ConfigureAwait(false);
-                    List<PsdzRpcOptionType> statusOptionTypes = await _psdzRpcClient.RpcService.GetOptionTypes().ConfigureAwait(false);
+                    List<PsdzRpcOptionType> statusOptionTypes = await _psdzRpcClient.RpcService.GetOptionTypes(true).ConfigureAwait(false);
 
                     PsdzRpcSwiRegisterEnum? selectedSwiRegister;
                     lock (_statusLock)
