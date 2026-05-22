@@ -3868,7 +3868,7 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            bool licenseValid = Task.Run(() => RpcClient.RpcService.SetLicenseValid(true)).GetAwaiter().GetResult();
+            bool licenseValid = Task.Run(() => RpcClient.RpcService.SetLicenseValid(LicenseValid)).GetAwaiter().GetResult();
             if (!licenseValid)
             {
                 ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} SetLicense valid failed", operationType));
