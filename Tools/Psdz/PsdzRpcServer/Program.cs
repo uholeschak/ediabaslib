@@ -146,7 +146,12 @@ namespace PsdzRpcServer
                 }
             }
 
-            PsdzSqlDataBase sqlDataBase = new PsdzSqlDataBase(sqlServer, testLicenses);
+            PsdzSqlDataBase sqlDataBase = null;
+            if (!sqlServer.StartsWith("-"))
+            {
+                sqlDataBase = new PsdzSqlDataBase(sqlServer, testLicenses);
+            }
+
             using CancellationTokenSource cts = new CancellationTokenSource();
             using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, sqlDataBase, tcpPort, caCertPath, serverPfxPath);
             try
