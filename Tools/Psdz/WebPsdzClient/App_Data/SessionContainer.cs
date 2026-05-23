@@ -3984,7 +3984,11 @@ namespace WebPsdzClient.App_Data
                         DetectedVin = psdzContext?.DetectVehicle?.Vin;
                     }
                     ProcessLicense();
-                    AppendStatusTextLine(GetLicenseText());
+                    string licenseText = ProgrammingJobs.GetLicenseText(AdapterSerial, AdapterSerialValid);
+                    if (string.IsNullOrEmpty(licenseText))
+                    {
+                        AppendStatusTextLine(licenseText);
+                    }
                 }
 
                 TaskActive = false;
