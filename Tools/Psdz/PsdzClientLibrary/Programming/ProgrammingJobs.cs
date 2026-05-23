@@ -4373,6 +4373,55 @@ namespace PsdzClient.Programming
             return false;
         }
 
+        public string GetLicenseText(string adapterSerial, bool AdapterSerialValid)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                string adapterText;
+                if (!string.IsNullOrEmpty(adapterSerial) && AdapterSerialValid)
+                {
+                    adapterText = Strings.AdapterLicensed;
+                }
+                else
+                {
+                    adapterText = Strings.AdapterNotLicensed;
+                }
+
+                if (!string.IsNullOrEmpty(adapterText))
+                {
+                    sb.Append(adapterText);
+                }
+
+                string vehicleText;
+                if (LicenseValid)
+                {
+                    vehicleText = Strings.VehicleLicensed;
+                }
+                else
+                {
+                    vehicleText = Strings.VehicleNotLicensed;
+                }
+
+                if (!string.IsNullOrEmpty(vehicleText))
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.AppendLine();
+                    }
+                    sb.Append(vehicleText);
+                }
+
+                log.InfoFormat("GetLicenseText: '{0}'", sb);
+                return sb.ToString();
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetLicenseText Exception: {0}", e.Message);
+                return string.Empty;
+            }
+        }
+
         public static bool SetupLog4Net(string logFile)
         {
             try

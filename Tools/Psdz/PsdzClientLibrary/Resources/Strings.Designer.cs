@@ -61,6 +61,24 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Licensed OBD adapter detected. ähnelt.
+        /// </summary>
+        internal static string AdapterLicensed {
+            get {
+                return ResourceManager.GetString("AdapterLicensed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No licensed OBD adapter detected. ähnelt.
+        /// </summary>
+        internal static string AdapterNotLicensed {
+            get {
+                return ResourceManager.GetString("AdapterNotLicensed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Application restart required. ähnelt.
         /// </summary>
         internal static string AppRestartRequired {
@@ -977,6 +995,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle licensed. ähnelt.
+        /// </summary>
+        internal static string VehicleLicensed {
+            get {
+                return ResourceManager.GetString("VehicleLicensed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Target selector not detected. ähnelt.
         /// </summary>
         internal static string VehicleNoTargetSelector {
@@ -991,6 +1018,15 @@ namespace PsdzClientLibrary.Resources {
         internal static string VehicleNotConnected {
             get {
                 return ResourceManager.GetString("VehicleNotConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle not licensed. ähnelt.
+        /// </summary>
+        internal static string VehicleNotLicensed {
+            get {
+                return ResourceManager.GetString("VehicleNotLicensed", resourceCulture);
             }
         }
         
