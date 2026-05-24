@@ -21,6 +21,7 @@ namespace PsdzRpcServer
         private readonly ProgrammingJobs _programmingJobs;
         private PsdzVehicleProxy _vehicleProxy;
         private string _lastStatusMessage;
+        private readonly object _messageLock = new object();
         private CancellationTokenSource _cts;
         private readonly object _ctsLock = new object();
 
@@ -169,11 +170,15 @@ namespace PsdzRpcServer
                                 if (!string.IsNullOrEmpty(licenseText))
                                 {
                                     StringBuilder sbMessage = new StringBuilder();
-                                    if (!string.IsNullOrEmpty(_lastStatusMessage))
+                                    lock (_messageLock)
                                     {
-                                        sbMessage.Append(_lastStatusMessage);
+                                        if (!string.IsNullOrEmpty(_lastStatusMessage))
+                                        {
+                                            sbMessage.Append(_lastStatusMessage);
+                                        }
                                     }
-                                    sbMessage.Append(licenseText);
+
+                                    sbMessage.AppendLine(licenseText);
                                     await Task.Run(() => _callback.OnUpdateStatus(sbMessage.ToString())).ConfigureAwait(false);
                                 }
                             }
@@ -821,7 +826,10 @@ namespace PsdzRpcServer
         private void UpdateStatus(string message = null)
         {
             _callback.OnUpdateStatus(message);
-            _lastStatusMessage = message;
+            lock (_messageLock)
+            {
+                _lastStatusMessage = message;
+            }
         }
 
         private void UpdateProgress(int percent, bool marquee, string message = null)
