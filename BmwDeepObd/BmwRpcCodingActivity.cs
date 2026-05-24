@@ -40,6 +40,8 @@ namespace BmwDeepObd
                 CodingRpcUrlTest = string.Empty;
                 DayString = string.Empty;
                 ValidSerial = string.Empty;
+                Vin = string.Empty;
+                LicenseValid = false;
                 Url = string.Empty;
                 IstaFolder = string.Empty;
                 TraceDir = string.Empty;
@@ -53,6 +55,7 @@ namespace BmwDeepObd
             public string DayString { get; set; }
             public string ValidSerial { get; set; }
             public string Vin { get; set; }
+            public bool LicenseValid { get; set; }
             public string Url { get; set; }
             public string IstaFolder { get; set; }
             public string TraceDir { get; set; }
@@ -1488,14 +1491,15 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}",
-                        connectArgs.Success, connectArgs.Vin);
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}, LicenseValid={2}",
+                        connectArgs.Success, connectArgs.Vin, connectArgs.LicenseValid);
 
                     if (connectArgs.Success)
                     {
                         lock (_instanceLock)
                         {
                             _instanceData.Vin = connectArgs.Vin;
+                            _instanceData.LicenseValid = connectArgs.LicenseValid;
                         }
                     }
 
@@ -1514,6 +1518,7 @@ namespace BmwDeepObd
                     lock (_instanceLock)
                     {
                         _instanceData.Vin = null;
+                        _instanceData.LicenseValid = false;
                     }
 
                     await RpcClientTaskCompleted().ConfigureAwait(false);
