@@ -164,7 +164,7 @@ namespace PsdzRpcServer
                             PsdzRpcAppInfo appInfo = await Task.Run(() => _callback.OnGetAppInfo()).ConfigureAwait(false);
                             if (appInfo != null && !string.IsNullOrEmpty(appInfo.AppId))
                             {
-                                bool licenseValid = _licenseCheck.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
+                                bool licenseValid = _licenseCheck.ProcessLicenseRequest(appInfo.AppId, vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
                                 _programmingJobs.LicenseValid = licenseValid;
                                 string licenseText = await GetLicenseText(appInfo.AdapterSerial, appInfo.AdapterSerialValid).ConfigureAwait(false);
                                 if (!string.IsNullOrEmpty(licenseText))

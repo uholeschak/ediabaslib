@@ -22,10 +22,10 @@ public class PsdzLicenseCheck
         _displayOptions = displayOptions;
     }
 
-    public bool ProcessLicenseRequest(string vin, string adapterSerial, bool adapterSerialValid)
+    public bool ProcessLicenseRequest(string appId, string vin, string adapterSerial, bool adapterSerialValid)
     {
         bool registerAll = _testLicenses;
-        log.InfoFormat("ProcessLicenseRequest RegisterAll={0}", registerAll);
+        log.InfoFormat("ProcessLicenseRequest AppId={0}, VIN={1}, AdapterSerial={2}, AdapterSerialValid={3}, RegisterAll={4}", appId, vin, adapterSerial, adapterSerialValid, registerAll);
 
         if (string.IsNullOrEmpty(vin))
         {
@@ -117,7 +117,7 @@ public class PsdzLicenseCheck
             return false;
         }
 
-        log.InfoFormat("CheckLicense Valid");
+        log.InfoFormat("CheckLicense VIN={0}, Serial={1}", vin, serial);
         return true;
     }
 
@@ -212,5 +212,4 @@ public class PsdzLicenseCheck
         log.InfoFormat("HasDisplayOption Option not found: {0}", option);
         return false;
     }
-
 }
