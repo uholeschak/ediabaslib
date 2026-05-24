@@ -179,7 +179,7 @@ namespace PsdzRpcServer
                                     }
 
                                     sbMessage.AppendLine(licenseText);
-                                    await Task.Run(() => _callback.OnUpdateStatus(sbMessage.ToString())).ConfigureAwait(false);
+                                    await Task.Run(() => UpdateStatus(sbMessage.ToString())).ConfigureAwait(false);
                                 }
                             }
                         }
