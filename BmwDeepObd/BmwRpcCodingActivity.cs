@@ -1709,6 +1709,32 @@ namespace BmwDeepObd
                     }
                 };
 
+
+                _psdzRpcClient.CallbackHandler.GetAppInfo += (sender, infoArgs) =>
+                {
+                    if (infoArgs == null)
+                    {
+                        return;
+                    }
+
+                    string adapterSerial = ActivityCommon.LastAdapterSerial ?? string.Empty;
+                    string validSerial;
+                    lock (_instanceLock)
+                    {
+                        validSerial = _instanceData.ValidSerial ?? string.Empty;
+                    }
+
+                    bool adapterSerialValid = false;
+                    if (!string.IsNullOrEmpty(validSerial) && string.Compare(validSerial, adapterSerial, StringComparison.Ordinal) == 0)
+                    {
+                        adapterSerialValid = true;
+                    }
+
+                    infoArgs.AppId = ActivityCommon.AppId;
+                    infoArgs.AdapterSerial = adapterSerial;
+                    infoArgs.AdapterSerialValid = adapterSerialValid;
+                };
+
                 EdiabasNet ediabas = new EdiabasNet
                 {
                     EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
