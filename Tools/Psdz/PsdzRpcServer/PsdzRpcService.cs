@@ -7,6 +7,8 @@ using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Channels;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +20,7 @@ namespace PsdzRpcServer
         private readonly PsdzLicenseCheck _licenseCheck;
         private readonly ProgrammingJobs _programmingJobs;
         private PsdzVehicleProxy _vehicleProxy;
+        private string _lastStatusMessage;
         private CancellationTokenSource _cts;
         private readonly object _ctsLock = new object();
 
@@ -162,6 +165,17 @@ namespace PsdzRpcServer
                             {
                                 bool licenseValid = _licenseCheck.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
                                 _programmingJobs.LicenseValid = licenseValid;
+                                string licenseText = _programmingJobs?.GetLicenseText(appInfo.AdapterSerial, appInfo.AdapterSerialValid);
+                                if (!string.IsNullOrEmpty(licenseText))
+                                {
+                                    StringBuilder sbMessage = new StringBuilder();
+                                    if (!string.IsNullOrEmpty(_lastStatusMessage))
+                                    {
+                                        sbMessage.Append(_lastStatusMessage);
+                                    }
+                                    sbMessage.Append(licenseText);
+                                    await Task.Run(() => _callback.OnUpdateStatus(sbMessage.ToString())).ConfigureAwait(false);
+                                }
                             }
                         }
                         catch (Exception)
@@ -807,6 +821,7 @@ namespace PsdzRpcServer
         private void UpdateStatus(string message = null)
         {
             _callback.OnUpdateStatus(message);
+            _lastStatusMessage = message;
         }
 
         private void UpdateProgress(int percent, bool marquee, string message = null)
