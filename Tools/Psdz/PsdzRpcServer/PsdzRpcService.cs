@@ -166,7 +166,7 @@ namespace PsdzRpcServer
                             {
                                 bool licenseValid = _licenseCheck.ProcessLicenseRequest(vin, appInfo.AdapterSerial, appInfo.AdapterSerialValid);
                                 _programmingJobs.LicenseValid = licenseValid;
-                                string licenseText = _programmingJobs?.GetLicenseText(appInfo.AdapterSerial, appInfo.AdapterSerialValid);
+                                string licenseText = await GetLicenseText(appInfo.AdapterSerial, appInfo.AdapterSerialValid).ConfigureAwait(false);
                                 if (!string.IsNullOrEmpty(licenseText))
                                 {
                                     StringBuilder sbMessage = new StringBuilder();
@@ -295,6 +295,12 @@ namespace PsdzRpcServer
         {
             _programmingJobs.LicenseValid = licenseValid;
             return Task.FromResult(true);
+        }
+
+        public Task<string> GetLicenseText(string adapterSerial, bool adapterSerialValid)
+        {
+            string licenseText = _programmingJobs.GetLicenseText(adapterSerial, adapterSerialValid);
+            return Task.FromResult(licenseText);
         }
 
         public Task<bool> GetCacheClearRequired()

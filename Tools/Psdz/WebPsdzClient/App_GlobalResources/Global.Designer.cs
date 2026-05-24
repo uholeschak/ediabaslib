@@ -70,24 +70,6 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Licensed OBD adapter detected. ähnelt.
-        /// </summary>
-        internal static string AdapterLicensed {
-            get {
-                return ResourceManager.GetString("AdapterLicensed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die No licensed OBD adapter detected. ähnelt.
-        /// </summary>
-        internal static string AdapterNotLicensed {
-            get {
-                return ResourceManager.GetString("AdapterNotLicensed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die An update of the app is required to use this service. ähnelt.
         /// </summary>
         internal static string AppUpdateRequired {
@@ -156,24 +138,6 @@ namespace Resources {
         internal static string TryAgainLater {
             get {
                 return ResourceManager.GetString("TryAgainLater", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle licensed. ähnelt.
-        /// </summary>
-        internal static string VehicleLicensed {
-            get {
-                return ResourceManager.GetString("VehicleLicensed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle not licensed. ähnelt.
-        /// </summary>
-        internal static string VehicleNotLicensed {
-            get {
-                return ResourceManager.GetString("VehicleNotLicensed", resourceCulture);
             }
         }
         

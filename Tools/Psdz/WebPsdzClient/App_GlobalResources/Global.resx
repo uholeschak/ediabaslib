@@ -120,12 +120,6 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>Access denied.</value>
   </data>
-  <data name="AdapterLicensed" xml:space="preserve">
-    <value>Licensed OBD adapter detected.</value>
-  </data>
-  <data name="AdapterNotLicensed" xml:space="preserve">
-    <value>No licensed OBD adapter detected.</value>
-  </data>
   <data name="AppUpdateRequired" xml:space="preserve">
     <value>An update of the app is required to use this service.</value>
   </data>
@@ -149,12 +143,6 @@
   </data>
   <data name="TryAgainLater" xml:space="preserve">
     <value>Please try again later.</value>
-  </data>
-  <data name="VehicleLicensed" xml:space="preserve">
-    <value>Vehicle licensed.</value>
-  </data>
-  <data name="VehicleNotLicensed" xml:space="preserve">
-    <value>Vehicle not licensed.</value>
   </data>
   <data name="VinInstanceActive" xml:space="preserve">
     <value>Another instance with the same VIN is already active.

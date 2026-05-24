@@ -3330,7 +3330,8 @@ namespace WebPsdzClient.App_Data
                 {
                     DetectedVin = connectArgs.Vin;
                     ProcessLicense();
-                    AppendStatusTextLine(GetLicenseText());
+                    string licenseText = Task.Run(() => RpcClient.RpcService.GetLicenseText(AdapterSerial, AdapterSerialValid)).GetAwaiter().GetResult();
+                    AppendStatusTextLine(licenseText);
                 }
                 else
                 {
@@ -3635,58 +3636,6 @@ namespace WebPsdzClient.App_Data
             {
                 ProgressText = text;
                 UpdateDisplay();
-            }
-        }
-
-        public string GetLicenseText()
-        {
-            try
-            {
-                StringBuilder sb = new StringBuilder();
-                if (DeepObdVersion > 0)
-                {
-                    string adapterText;
-                    if (!string.IsNullOrEmpty(AdapterSerial) && AdapterSerialValid)
-                    {
-                        adapterText = HttpContext.GetGlobalResourceObject("Global", "AdapterLicensed") as string ?? string.Empty;
-                    }
-                    else
-                    {
-                        adapterText = HttpContext.GetGlobalResourceObject("Global", "AdapterNotLicensed") as string ?? string.Empty;
-                    }
-
-                    if (!string.IsNullOrEmpty(adapterText))
-                    {
-                        sb.Append(adapterText);
-                    }
-                }
-
-                string vehicleText;
-                if (LicenseValid)
-                {
-                    vehicleText = HttpContext.GetGlobalResourceObject("Global", "VehicleLicensed") as string ?? string.Empty;
-                }
-                else
-                {
-                    vehicleText = HttpContext.GetGlobalResourceObject("Global", "VehicleNotLicensed") as string ?? string.Empty;
-                }
-
-                if (!string.IsNullOrEmpty(vehicleText))
-                {
-                    if (sb.Length > 0)
-                    {
-                        sb.AppendLine();
-                    }
-                    sb.Append(vehicleText);
-                }
-
-                log.InfoFormat("GetLicenseText: '{0}'", sb);
-                return sb.ToString();
-            }
-            catch (Exception e)
-            {
-                log.ErrorFormat("GetLicenseText Exception: {0}", e.Message);
-                return string.Empty;
             }
         }
 

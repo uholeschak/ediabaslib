@@ -29,6 +29,7 @@ namespace PsdzRpcServer.Shared
         Task<bool> SetLanguage(string language, bool matchLanguage = false);
         Task<bool> GetLicenseValid();
         Task<bool> SetLicenseValid(bool licenseValid);
+        Task<string> GetLicenseText(string adapterSerial, bool adapterSerialValid);
         Task<bool> GetCacheClearRequired();
         Task<bool> SetCacheClearRequired(bool cacheClearRequired);
         Task<bool> GetGenServiceModules();
