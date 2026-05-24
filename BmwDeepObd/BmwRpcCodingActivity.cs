@@ -116,6 +116,7 @@ namespace BmwDeepObd
         private Button _buttonCodingGenerateTal;
         private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
+        private TextView _textViewPingStatus;
         private ProgressBar _progressBar;
         private LinearLayout _layoutCodingOptions;
         private LinearLayout _layoutCodingStatus;
@@ -359,6 +360,8 @@ namespace BmwDeepObd
             _progressBar.Max = 100;
             _progressBar.Progress = 0;
             _progressBar.Indeterminate = false;
+
+            _textViewPingStatus = FindViewById<TextView>(Resource.Id.textViewPingStatus);
 
             _layoutCodingOptions = FindViewById<LinearLayout>(Resource.Id.layoutCodingOptions);
             _spinnerOptionType = FindViewById<Spinner>(Resource.Id.spinnerOptionType);
@@ -1259,6 +1262,21 @@ namespace BmwDeepObd
             }
         }
 
+        private void UpdatePingStatus(DateTime? pingDateTime)
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            string statusText = string.Empty;
+            if (pingDateTime.HasValue)
+            {
+                statusText = pingDateTime.Value.ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+            }
+            _textViewPingStatus.Text = statusText;
+        }
+
         private void UpdateDisplay()
         {
             if (_activityCommon == null)
@@ -1457,6 +1475,19 @@ namespace BmwDeepObd
                         _progressBar.Progress = 0;
                         _progressBar.Indeterminate = false;
                         UpdateDisplay();
+                    });
+                };
+
+                _psdzRpcClient.PingUpdated += (sender, pingDateTime) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        UpdatePingStatus(pingDateTime);
                     });
                 };
 

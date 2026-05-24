@@ -28,6 +28,7 @@ namespace PsdzRpcClient
 
         public IPsdzRpcService RpcService { get; private set; }
         public event EventHandler<bool> ClientConnected;
+        public event EventHandler<DateTime?> PingUpdated;
         public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
         public DateTime? PingDateTime
@@ -260,6 +261,8 @@ namespace PsdzRpcClient
                     {
                         _pingDateTime = pingResult;
                     }
+
+                    PingUpdated?.Invoke(this, pingResult);
                 }
                 catch (OperationCanceledException)
                 {
