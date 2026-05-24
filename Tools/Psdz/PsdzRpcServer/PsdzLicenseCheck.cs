@@ -25,11 +25,11 @@ public class PsdzLicenseCheck
     public bool ProcessLicenseRequest(string vin, string adapterSerial, bool adapterSerialValid)
     {
         bool registerAll = _testLicenses;
-        log.InfoFormat("ProcessLicense RegisterAll={0}", registerAll);
+        log.InfoFormat("ProcessLicenseRequest RegisterAll={0}", registerAll);
 
         if (string.IsNullOrEmpty(vin))
         {
-            log.ErrorFormat("ProcessLicense No VIN");
+            log.ErrorFormat("ProcessLicenseRequest No VIN");
             return false;
         }
 
@@ -41,7 +41,7 @@ public class PsdzLicenseCheck
         {
             if (string.IsNullOrEmpty(_sqlServer))
             {
-                log.ErrorFormat("ProcessLicense No SqlServer");
+                log.ErrorFormat("ProcessLicenseRequest No SqlServer");
                 return false;
             }
 
@@ -53,25 +53,25 @@ public class PsdzLicenseCheck
                 licenseValid = CheckLicense(connection, vin, out _);
                 if (!licenseValid && (serialValid || registerAll))
                 {
-                    log.InfoFormat("ProcessLicense Adding Vin={0}, Serial={1}", vin, serial);
+                    log.InfoFormat("ProcessLicenseRequest Adding Vin={0}, Serial={1}", vin, serial);
                     if (AddLicense(connection, vin, serial, registerAll))
                     {
                         licenseValid = true;
                     }
                     else
                     {
-                        log.InfoFormat("ProcessLicense Adding failed Vin={0}, Serial={1}", vin, serial);
+                        log.InfoFormat("ProcessLicenseRequest Adding failed Vin={0}, Serial={1}", vin, serial);
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            log.ErrorFormat("ProcessLicense Exception: {0}", ex.Message);
+            log.ErrorFormat("ProcessLicenseRequest Exception: {0}", ex.Message);
             licenseValid = false;
         }
 
-        log.InfoFormat("ProcessLicense Valid={0}", licenseValid);
+        log.InfoFormat("ProcessLicenseRequest Valid={0}", licenseValid);
         return licenseValid;
     }
 
