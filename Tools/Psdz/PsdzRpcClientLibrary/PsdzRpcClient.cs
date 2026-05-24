@@ -22,11 +22,24 @@ namespace PsdzRpcClient
         private Stream _stream;
         private TcpClient _tcpClient;
         private JsonRpc _jsonRpc;
+        private int _keepAliveCounter;
+        private object _keepAliveLock = new object();
         private CancellationTokenSource _keepAliveCts;
 
         public IPsdzRpcService RpcService { get; private set; }
         public event EventHandler<bool> ClientConnected;
         public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
+
+        public int KeepAliveCounter
+        {
+            get
+            {
+                lock (_keepAliveLock)
+                {
+                    return _keepAliveCounter;
+                }
+            }
+        }
 
         public PsdzRpcClient(TextWriter output = null, string caCertPath = null, string clientPfxPath = null, Assembly resourceAssembly = null)
         {
@@ -72,7 +85,7 @@ namespace PsdzRpcClient
         }
 
         /// <summary>Verbindet via TCP (kein automatischer Serverstart erforderlich).</summary>
-        public async Task<bool> ConnectTcpAsync(string host, int port, SynchronizationContext synchronizationContext, CancellationToken ct)
+        public async Task<bool> ConnectTcpAsync(string host, int port, SynchronizationContext synchronizationContext, CancellationToken ct, int timeoutSeconds = 5)
         {
             try
             {
@@ -84,16 +97,18 @@ namespace PsdzRpcClient
                 _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 10); // Time between probes
                 _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 3);
 #endif
+                using CancellationTokenSource timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
+                using CancellationTokenSource linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);
 
                 _output?.WriteLine($"Connecting via TCP to {hostName}:{port}...");
 #if NET
-                await _tcpClient.ConnectAsync(hostName, port, ct).ConfigureAwait(false);
+                await _tcpClient.ConnectAsync(hostName, port, linkedCts.Token).ConfigureAwait(false);
 #else
                 Task connectTask = _tcpClient.ConnectAsync(hostName, port);
-                Task cancelTask = Task.Delay(Timeout.Infinite, ct);
+                Task cancelTask = Task.Delay(Timeout.Infinite, linkedCts.Token);
                 if (await Task.WhenAny(connectTask, cancelTask).ConfigureAwait(false) == cancelTask)
                 {
-                    ct.ThrowIfCancellationRequested();
+                    linkedCts.Token.ThrowIfCancellationRequested();
                 }
                 await connectTask.ConfigureAwait(false);
 #endif
@@ -239,8 +254,12 @@ namespace PsdzRpcClient
             {
                 try
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(10), ct).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(2), ct).ConfigureAwait(false);
                     await RpcService.PingAsync(ct).ConfigureAwait(false);
+                    lock (_keepAliveLock)
+                    {
+                        _keepAliveCounter++;
+                    }
                 }
                 catch (OperationCanceledException)
                 {
