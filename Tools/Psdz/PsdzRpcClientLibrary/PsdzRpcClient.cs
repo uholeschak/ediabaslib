@@ -22,21 +22,21 @@ namespace PsdzRpcClient
         private Stream _stream;
         private TcpClient _tcpClient;
         private JsonRpc _jsonRpc;
-        private int _keepAliveCounter;
-        private object _keepAliveLock = new object();
+        private DateTime? _pingDateTime;
+        private object _pingLock = new object();
         private CancellationTokenSource _keepAliveCts;
 
         public IPsdzRpcService RpcService { get; private set; }
         public event EventHandler<bool> ClientConnected;
         public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
-        public int KeepAliveCounter
+        public DateTime? PingDateTime
         {
             get
             {
-                lock (_keepAliveLock)
+                lock (_pingLock)
                 {
-                    return _keepAliveCounter;
+                    return _pingDateTime;
                 }
             }
         }
@@ -255,10 +255,10 @@ namespace PsdzRpcClient
                 try
                 {
                     await Task.Delay(TimeSpan.FromSeconds(2), ct).ConfigureAwait(false);
-                    await RpcService.PingAsync(ct).ConfigureAwait(false);
-                    lock (_keepAliveLock)
+                    DateTime pingResult = await RpcService.PingAsync(ct).ConfigureAwait(false);
+                    lock (_pingLock)
                     {
-                        _keepAliveCounter++;
+                        _pingDateTime = pingResult;
                     }
                 }
                 catch (OperationCanceledException)

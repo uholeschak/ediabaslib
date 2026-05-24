@@ -13,7 +13,7 @@ namespace PsdzRpcServer.Shared
         Task<int> GetInterfaceVersion();
         Task<string> GetInterfaceSignature();
         Task<string> GetCallbackInterfaceSignature();
-        Task PingAsync(CancellationToken ct = default);
+        Task<DateTime> PingAsync(CancellationToken ct = default);
         Task<bool> IsCancelPossible();
         Task CancelOperation();
         Task<bool> SetupLog4Net(string logFile);

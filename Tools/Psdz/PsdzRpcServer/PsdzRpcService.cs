@@ -55,9 +55,9 @@ namespace PsdzRpcServer
             return Task.FromResult(PsdzRpcServiceConstants.CallbackInterfaceSignature);
         }
 
-        public Task PingAsync(CancellationToken ct = default)
+        public Task<DateTime> PingAsync(CancellationToken ct = default)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(DateTime.UtcNow);
         }
 
         public Task<bool> IsCancelPossible()
