@@ -97,7 +97,8 @@ namespace PsdzRpcServer
 
         private async Task StartTcpAsync(int port, CancellationToken ct)
         {
-            TcpListener listener = new TcpListener(IPAddress.Any, port);
+            TcpListener listener = new TcpListener(IPAddress.IPv6Any, port);
+            listener.Server.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
             listener.Start();
             string connectionType = _serverCert != null ? "SSL/TLS" : "plain";
             _output?.WriteLine($"TCP server listening on port {port} ({connectionType})...");
