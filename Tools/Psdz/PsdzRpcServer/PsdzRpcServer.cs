@@ -144,20 +144,44 @@ namespace PsdzRpcServer
 
         private async Task HandleClientAsync(Stream stream, IDisposable owner = null)
         {
+            bool disconnected = false;
+            using CancellationTokenSource clientCts = new CancellationTokenSource();
             try
             {
                 using JsonRpc jsonRpc = new JsonRpc(stream);
                 using PsdzRpcService service = new PsdzRpcService(jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId, _licenseCheck);
 
                 jsonRpc.AddLocalRpcTarget(service);
-                jsonRpc.StartListening();
-                await jsonRpc.Completion.ConfigureAwait(false);
+                jsonRpc.Disconnected += (s, e) =>
+                {
+                    try
+                    {
+                        if (Volatile.Read(ref disconnected))
+                        {
+                            return;
+                        }
+
+                        clientCts.Cancel();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }; jsonRpc.StartListening();
+
+                // Keep-Alive parallel zu jsonRpc.Completion
+                Task completionTask = jsonRpc.Completion;
+                Task keepAliveTask = KeepAliveLoopAsync(service, clientCts.Token);
+
+                await Task.WhenAny(completionTask, keepAliveTask).ConfigureAwait(false);
 
                 _output?.WriteLine("Client disconnected.");
             }
             finally
             {
-                owner?.Dispose(); // TcpClient oder null
+                Volatile.Write(ref disconnected, true);
+                clientCts.Cancel();
+                owner?.Dispose();
                 stream.Dispose();
 
                 int count = Interlocked.Decrement(ref _clientCount);
@@ -170,6 +194,26 @@ namespace PsdzRpcServer
             }
         }
 
+        private async Task KeepAliveLoopAsync(PsdzRpcService service, CancellationToken ct)
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(2), ct).ConfigureAwait(false);
+                    await service.PingClient().ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _output?.WriteLine($"Keep-alive failed, client seems disconnected: {ex.Message}");
+                    break;
+                }
+            }
+        }
         private async Task AcceptTlsClientAsync(TcpClient tcpClient, X509Certificate2 caCert, X509Certificate2 serverCert)
         {
             SslStream sslStream = null;

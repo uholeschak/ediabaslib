@@ -60,6 +60,11 @@ namespace PsdzRpcServer
             return Task.FromResult(DateTime.UtcNow);
         }
 
+        public async Task<DateTime> PingClient()
+        {
+            return await Task.Run(() => _callback.OnPing()).ConfigureAwait(false);
+        }
+
         public Task<bool> IsCancelPossible()
         {
             bool cancelPossible = IsCancelPossibleInternal();

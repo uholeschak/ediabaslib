@@ -1,12 +1,15 @@
-﻿using System.Threading.Tasks;
-using PolyType;
+﻿using PolyType;
 using StreamJsonRpc;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PsdzRpcServer.Shared
 {
     [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
     public partial interface IPsdzRpcServiceCallback : IPsdzRpcVehicleCallback
     {
+        Task<DateTime> OnPing();
         Task OnStartProgrammingCompleted(bool success);
         Task OnStopProgrammingCompleted(bool success);
         Task OnConnectVehicleCompleted(bool success, string vin, bool licenseValid);

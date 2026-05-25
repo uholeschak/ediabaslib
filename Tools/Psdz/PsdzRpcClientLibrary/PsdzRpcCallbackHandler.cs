@@ -24,6 +24,11 @@ namespace PsdzRpcClient
         public event EventHandler<ulong> VehicleDisconnect;
         public event EventHandler<VehicleSendEventArgs> VehicleSend;
 
+        public Task<DateTime> OnPing()
+        {
+            return Task.FromResult(DateTime.UtcNow);
+        }
+
         public Task OnStartProgrammingCompleted(bool success)
         {
             StartProgrammingCompleted?.Invoke(this, success);
