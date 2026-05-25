@@ -3330,7 +3330,14 @@ namespace WebPsdzClient.App_Data
                 {
                     DetectedVin = connectArgs.Vin;
                     ProcessLicense();
+                    bool licenseValid = Task.Run(() => RpcClient.RpcService.SetLicenseValid(LicenseValid)).GetAwaiter().GetResult();
+                    if (!licenseValid)
+                    {
+                        log.ErrorFormat("RpcConnectVehicleCompleted SetLicenseValid failed");
+                    }
+
                     string licenseText = Task.Run(() => RpcClient.RpcService.GetLicenseText(AdapterSerial, AdapterSerialValid)).GetAwaiter().GetResult();
+                    log.InfoFormat("GetLicenseText: '{0}'", licenseText);
                     AppendStatusTextLine(licenseText);
                 }
                 else
