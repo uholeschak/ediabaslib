@@ -957,6 +957,7 @@ namespace BmwDeepObd
                         { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
                         { new StringContent(_activityCommon.SelectedInterface.ToDescriptionString()), "interface_type" },
                         { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" },
+                        { new StringContent(PsdzRpcServiceConstants.InterfaceVersion.ToString(CultureInfo.InvariantCulture)), "rpc_if_version" },
                     };
 
                     Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
