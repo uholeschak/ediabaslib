@@ -49,24 +49,32 @@ namespace PsdzRpcClient
             Assembly assembly = resourceAssembly ?? Assembly.GetExecutingAssembly();
             if (!string.IsNullOrEmpty(caCertPath))
             {
-                _output?.WriteLine($"CaCertPath = {caCertPath}");
                 _caCert = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
                           ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(caCertPath));
                 if (_caCert == null)
                 {
-                    throw new InvalidOperationException("Failed to load CA certificate.");
+                    _output?.WriteLine($"Failed to load CA certificate: {caCertPath}");
+                    throw new InvalidOperationException($"Failed to load CA certificate: {caCertPath}");
                 }
+            }
+            else
+            {
+                _output?.WriteLine("No CA certificate provided.");
             }
 
             if (!string.IsNullOrEmpty(clientPfxPath))
             {
-                _output?.WriteLine($"ClientPfxPath = {clientPfxPath}");
                 _clientCert = PsdzRpcCertificateHelper.LoadCertificate(clientPfxPath)
                               ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(clientPfxPath));
                 if (_clientCert == null)
                 {
-                    throw new InvalidOperationException("Failed to load client certificate.");
+                    _output?.WriteLine($"Failed to load client certificate: {clientPfxPath}");
+                    throw new InvalidOperationException($"Failed to load client certificate: {clientPfxPath}");
                 }
+            }
+            else
+            {
+                _output?.WriteLine("No client certificate provided.");
             }
         }
 
