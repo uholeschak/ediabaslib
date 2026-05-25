@@ -175,188 +175,206 @@ namespace BmwDeepObd
             _textViewUpdateTime = FindViewById<TextView>(Resource.Id.textViewUpdateTime);
 
             _buttonCodingConnect = FindViewById<Button>(Resource.Id.buttonCodingConnect);
-            _buttonCodingConnect.Click += async (s, e) =>
+            _buttonCodingConnect.Click += (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
                 }
 
-                try
+                if (TaskActive)
                 {
-                    if (TaskActive)
-                    {
-                        return;
-                    }
-
-                    string istaFolder;
-                    lock (_instanceLock)
-                    {
-                        istaFolder = _instanceData.IstaFolder;
-                    }
-
-                    bool result = await _psdzRpcClient.RpcService.ConnectVehicle(istaFolder, string.Empty, false).ConfigureAwait(false);
-                    if (result)
-                    {
-                        await RpcClientTaskStarted().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
-                    }
+                    return;
                 }
-                catch (Exception ex)
+
+                string istaFolder;
+                lock (_instanceLock)
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
-                        EdiabasNet.GetExceptionText(ex, false, false));
+                    istaFolder = _instanceData.IstaFolder;
                 }
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        bool result = await _psdzRpcClient.RpcService.ConnectVehicle(istaFolder, string.Empty, false).ConfigureAwait(false);
+                        if (result)
+                        {
+                            await RpcClientTaskStarted().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
+                });
             };
 
             _buttonCodingDisconnect = FindViewById<Button>(Resource.Id.buttonCodingDisconnect);
-            _buttonCodingDisconnect.Click += async (s, e) =>
+            _buttonCodingDisconnect.Click += (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
                 }
 
-                try
+                if (TaskActive)
                 {
-                    if (TaskActive)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    bool result = await _psdzRpcClient.RpcService.DisconnectVehicle().ConfigureAwait(false);
-                    if (result)
-                    {
-                        await RpcClientTaskStarted().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
-                    }
-                }
-                catch (Exception ex)
+                Task.Run(async () =>
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
-                        EdiabasNet.GetExceptionText(ex, false, false));
-                }
+                    try
+                    {
+                        bool result = await _psdzRpcClient.RpcService.DisconnectVehicle().ConfigureAwait(false);
+                        if (result)
+                        {
+                            await RpcClientTaskStarted().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
+                });
             };
 
             _buttonCodingOptions = FindViewById<Button>(Resource.Id.buttonCodingOptions);
-            _buttonCodingOptions.Click += async (s, e) =>
+            _buttonCodingOptions.Click += (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
                 }
 
-                try
+                if (TaskActive)
                 {
-                    if (TaskActive)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.CreateOptions).ConfigureAwait(false);
-                    if (result)
-                    {
-                        await RpcClientTaskStarted().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions failed");
-                    }
-                }
-                catch (Exception ex)
+                Task.Run(async () =>
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions: Exception={0}",
-                        EdiabasNet.GetExceptionText(ex, false, false));
-                }
+                    try
+                    {
+                        bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.CreateOptions).ConfigureAwait(false);
+                        if (result)
+                        {
+                            await RpcClientTaskStarted().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions failed");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
+                });
             };
 
             _buttonCodingGenerateTal = FindViewById<Button>(Resource.Id.buttonCodingGenerateTal);
-            _buttonCodingGenerateTal.Click += async (s, e) =>
+            _buttonCodingGenerateTal.Click += (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
                 }
 
-                try
+                if (TaskActive)
                 {
-                    if (TaskActive)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa).ConfigureAwait(false);
-                    if (result)
-                    {
-                        await RpcClientTaskStarted().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal failed");
-                    }
-                }
-                catch (Exception ex)
+                Task.Run(async () =>
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal: Exception={0}",
-                        EdiabasNet.GetExceptionText(ex, false, false));
-                }
+                    try
+                    {
+                        bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa).ConfigureAwait(false);
+                        if (result)
+                        {
+                            await RpcClientTaskStarted().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal failed");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
+                });
             };
 
             _buttonCodingExecuteTal = FindViewById<Button>(Resource.Id.buttonCodingExecuteTal);
-            _buttonCodingExecuteTal.Click += async (s, e) =>
+            _buttonCodingExecuteTal.Click += (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
                 }
 
-                try
+                if (TaskActive)
                 {
-                    if (TaskActive)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.ExecuteTal).ConfigureAwait(false);
-                    if (result)
-                    {
-                        await RpcClientTaskStarted().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal failed");
-                    }
-                }
-                catch (Exception ex)
+                Task.Run(async () =>
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal: Exception={0}",
-                        EdiabasNet.GetExceptionText(ex, false, false));
-                }
+                    try
+                    {
+                        bool result = await _psdzRpcClient.RpcService.VehicleFunctions(PsdzOperationType.ExecuteTal).ConfigureAwait(false);
+                        if (result)
+                        {
+                            await RpcClientTaskStarted().ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal failed");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
+                });
             };
 
             _buttonCodingAbort = FindViewById<Button>(Resource.Id.buttonCodingAbort);
-            _buttonCodingAbort.Click += async (s, e) =>
+            _buttonCodingAbort.Click += (s, e) =>
             {
                 if (!_activityActive)
                 {
                     return;
                 }
 
-                try
+                Task.Run(async () =>
                 {
-                    await _psdzRpcClient.RpcService.CancelOperation();
-                }
-                catch (Exception ex)
-                {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
-                        EdiabasNet.GetExceptionText(ex, false, false));
-                }
+                    try
+                    {
+                        await _psdzRpcClient.RpcService.CancelOperation().ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                    }
+                });
             };
 
             _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
