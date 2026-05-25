@@ -111,13 +111,13 @@ namespace BmwDeepObd
         private DateTime? _statusUpdateTime;
         private bool _rpcClientConnected;
 
+        private TextView _textViewUpdateTime;
         private Button _buttonCodingConnect;
         private Button _buttonCodingDisconnect;
         private Button _buttonCodingOptions;
         private Button _buttonCodingGenerateTal;
         private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
-        private TextView _textViewUpdateTime;
         private ProgressBar _progressBar;
         private LinearLayout _layoutCodingOptions;
         private LinearLayout _layoutCodingStatus;
@@ -171,6 +171,8 @@ namespace BmwDeepObd
                     UpdateOptionsMenu();
                 }
             }, BroadcastReceived);
+
+            _textViewUpdateTime = FindViewById<TextView>(Resource.Id.textViewUpdateTime);
 
             _buttonCodingConnect = FindViewById<Button>(Resource.Id.buttonCodingConnect);
             _buttonCodingConnect.Click += async (s, e) =>
@@ -356,8 +358,6 @@ namespace BmwDeepObd
                         EdiabasNet.GetExceptionText(ex, false, false));
                 }
             };
-
-            _textViewUpdateTime = FindViewById<TextView>(Resource.Id.textViewUpdateTime);
 
             _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
             _progressBar.Max = 100;

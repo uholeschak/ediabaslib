@@ -11,6 +11,11 @@
         android:layout_height="wrap_content"
         android:focusable="true"
         android:focusableInTouchMode="true">
+        <TextView
+            android:id="@+id/textViewUpdateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right" />
         <org.apmem.tools.layouts.FlowLayout
             android:id="@+id/layoutCodingFunctions"
             android:orientation="horizontal"
@@ -54,11 +59,6 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/bmw_rpc_coding_abort" />
         </org.apmem.tools.layouts.FlowLayout>
-        <TextView
-            android:id="@+id/textViewUpdateTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right" />
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
