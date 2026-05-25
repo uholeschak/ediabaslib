@@ -706,7 +706,10 @@ namespace BmwDeepObd
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    _instanceData.CommErrorsOccurred = true;
+                    lock (_instanceLock)
+                    {
+                        _instanceData.CommErrorsOccurred = true;
+                    }
                     handler(true);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
@@ -1515,6 +1518,10 @@ namespace BmwDeepObd
                             else
                             {
                                 _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                lock (_instanceLock)
+                                {
+                                    _instanceData.CommErrorsOccurred = true;
+                                }
                                 ConnectionFailMessage();
                             }
 
@@ -2099,6 +2106,10 @@ namespace BmwDeepObd
                             if (!t.Result)
                             {
                                 _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                lock (_instanceLock)
+                                {
+                                    _instanceData.CommErrorsOccurred = true;
+                                }
                                 ConnectionFailMessage();
                             }
                         });
@@ -2348,7 +2359,13 @@ namespace BmwDeepObd
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
         {
-            if (_instanceData.CommErrorsOccurred && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            bool commErrorsOccured;
+            lock (_instanceLock)
+            {
+                commErrorsOccured = _instanceData.CommErrorsOccurred;
+            }
+
+            if (commErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
                 return _activityCommon.RequestSendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
