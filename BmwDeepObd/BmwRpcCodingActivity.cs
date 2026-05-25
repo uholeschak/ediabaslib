@@ -1444,6 +1444,13 @@ namespace BmwDeepObd
                         }
                     }
                     break;
+
+                case ActivityCommon.CertificateAction:
+                    if (_activityActive)
+                    {
+                        _activityCommon?.ShowDoIpCertStatusMessage(intent);
+                    }
+                    break;
             }
         }
 
