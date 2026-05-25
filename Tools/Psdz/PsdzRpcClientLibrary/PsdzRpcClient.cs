@@ -91,16 +91,18 @@ namespace PsdzRpcClient
             try
             {
                 string hostName = string.IsNullOrEmpty(host) ? PsdzRpcServiceConstants.Localhost : host;
-                _tcpClient = new TcpClient(AddressFamily.InterNetworkV6)
-                {
-                    NoDelay = true
-                };
+#if false
+                _tcpClient = new TcpClient(AddressFamily.InterNetworkV6);
                 _tcpClient.Client.DualMode = true; // IPv4 + IPv6 über einen Socket
-                _tcpClient.Client.SendTimeout = 30000; // 30s
-                _tcpClient.Client.ReceiveTimeout = 30000; // 30s
-
+#else
+                _tcpClient = new TcpClient(AddressFamily.InterNetwork);
+#endif
+                _tcpClient.NoDelay = true;
                 _tcpClient.SendBufferSize = 65536;
                 _tcpClient.ReceiveBufferSize = 65536;
+
+                _tcpClient.Client.SendTimeout = 30000; // 30s
+                _tcpClient.Client.ReceiveTimeout = 30000; // 30s
                 _tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 #if NET
                 _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime,      60); // Erste Probe nach 60s Inaktivität
