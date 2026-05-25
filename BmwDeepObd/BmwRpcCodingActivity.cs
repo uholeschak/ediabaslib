@@ -1467,8 +1467,8 @@ namespace BmwDeepObd
             try
             {
                 AndroidLogWriter logWriter = null;
-#if DEBUG
-                logWriter = new AndroidLogWriter(Tag);
+#if true
+                logWriter = new AndroidLogWriter(typeof(BmwRpcCodingActivity).FullName);
 #endif
                 _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(logWriter,
                     PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, Assembly.GetExecutingAssembly());

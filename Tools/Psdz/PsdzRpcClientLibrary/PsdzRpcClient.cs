@@ -49,6 +49,7 @@ namespace PsdzRpcClient
             Assembly assembly = resourceAssembly ?? Assembly.GetExecutingAssembly();
             if (!string.IsNullOrEmpty(caCertPath))
             {
+                _output?.WriteLine($"CaCertPath = {caCertPath}");
                 _caCert = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
                           ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(caCertPath));
                 if (_caCert == null)
@@ -59,6 +60,7 @@ namespace PsdzRpcClient
 
             if (!string.IsNullOrEmpty(clientPfxPath))
             {
+                _output?.WriteLine($"ClientPfxPath = {clientPfxPath}");
                 _clientCert = PsdzRpcCertificateHelper.LoadCertificate(clientPfxPath)
                               ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(clientPfxPath));
                 if (_clientCert == null)
