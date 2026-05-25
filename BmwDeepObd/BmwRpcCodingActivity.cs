@@ -108,6 +108,7 @@ namespace BmwDeepObd
         private List<PsdzRpcOptionType> _statusOptionTypes;
         private List<PsdzRpcOptionItem> _rpcListItems;
         private string _statusMessage;
+        private DateTime? _statusUpdateTime;
         private bool _rpcClientConnected;
 
         private Button _buttonCodingConnect;
@@ -116,7 +117,7 @@ namespace BmwDeepObd
         private Button _buttonCodingGenerateTal;
         private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
-        private TextView _textViewPingStatus;
+        private TextView _textViewUpdateTime;
         private ProgressBar _progressBar;
         private LinearLayout _layoutCodingOptions;
         private LinearLayout _layoutCodingStatus;
@@ -356,12 +357,12 @@ namespace BmwDeepObd
                 }
             };
 
+            _textViewUpdateTime = FindViewById<TextView>(Resource.Id.textViewUpdateTime);
+
             _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
             _progressBar.Max = 100;
             _progressBar.Progress = 0;
             _progressBar.Indeterminate = false;
-
-            _textViewPingStatus = FindViewById<TextView>(Resource.Id.textViewPingStatus);
 
             _layoutCodingOptions = FindViewById<LinearLayout>(Resource.Id.layoutCodingOptions);
             _spinnerOptionType = FindViewById<Spinner>(Resource.Id.spinnerOptionType);
@@ -1168,6 +1169,7 @@ namespace BmwDeepObd
                     {
                         _statusInfo = statusInfo;
                         _statusOptionTypes = statusOptionTypes;
+                        _statusUpdateTime = statusInfo.LastUpdated;
 
                         if (statusInfo.HasOptionsDict)
                         {
@@ -1262,19 +1264,27 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdatePingStatus(DateTime? pingDateTime)
+        private void UpdateStatusTime()
         {
             if (_activityCommon == null)
             {
                 return;
             }
 
-            string statusText = string.Empty;
-            if (pingDateTime.HasValue)
+            DateTime? statusUpdateTime;
+            lock (_statusLock)
             {
-                statusText = pingDateTime.Value.ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+                statusUpdateTime = _statusUpdateTime;
             }
-            _textViewPingStatus.Text = statusText;
+
+            string timeText = "-";
+            if (statusUpdateTime.HasValue)
+            {
+                timeText = statusUpdateTime.Value.ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+            }
+
+            string statusText = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_rpc_coding_update_time), timeText);
+            _textViewUpdateTime.Text = statusText;
         }
 
         private void UpdateDisplay()
@@ -1300,6 +1310,8 @@ namespace BmwDeepObd
                 rpcClientConnected = _rpcClientConnected;
                 selectedSwiRegister = _selectedSwiRegister;
             }
+
+            UpdateStatusTime();
 
             if (statusInfo == null || !rpcClientConnected)
             {
@@ -1452,6 +1464,7 @@ namespace BmwDeepObd
                             _statusInfo = null;
                             _statusOptionTypes = null;
                             _rpcListItems = null;
+                            _statusUpdateTime = null;
                         }
                     }
 
@@ -1485,9 +1498,14 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    lock (_statusLock)
+                    {
+                        _statusUpdateTime = pingDateTime;
+                    }
+
                     RunOnUiThread(() =>
                     {
-                        UpdatePingStatus(pingDateTime);
+                        UpdateStatusTime();
                     });
                 };
 

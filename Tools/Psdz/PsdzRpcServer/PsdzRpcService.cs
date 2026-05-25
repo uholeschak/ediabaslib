@@ -364,7 +364,8 @@ namespace PsdzRpcServer
                 IsVehicleConnectedInternal(),
                 _programmingJobs.PsdzContext?.Tal != null,
                 _programmingJobs.OptionsDict != null,
-                IsCancelPossibleInternal()
+                IsCancelPossibleInternal(),
+                DateTime.UtcNow
             );
 
             return Task.FromResult(statusInfo);
