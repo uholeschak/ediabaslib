@@ -177,7 +177,7 @@ namespace BmwDeepObd
             _buttonCodingConnect = FindViewById<Button>(Resource.Id.buttonCodingConnect);
             _buttonCodingConnect.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -218,7 +218,7 @@ namespace BmwDeepObd
             _buttonCodingDisconnect = FindViewById<Button>(Resource.Id.buttonCodingDisconnect);
             _buttonCodingDisconnect.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -253,7 +253,7 @@ namespace BmwDeepObd
             _buttonCodingOptions = FindViewById<Button>(Resource.Id.buttonCodingOptions);
             _buttonCodingOptions.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -288,7 +288,7 @@ namespace BmwDeepObd
             _buttonCodingGenerateTal = FindViewById<Button>(Resource.Id.buttonCodingGenerateTal);
             _buttonCodingGenerateTal.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -323,7 +323,7 @@ namespace BmwDeepObd
             _buttonCodingExecuteTal = FindViewById<Button>(Resource.Id.buttonCodingExecuteTal);
             _buttonCodingExecuteTal.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -358,7 +358,7 @@ namespace BmwDeepObd
             _buttonCodingAbort = FindViewById<Button>(Resource.Id.buttonCodingAbort);
             _buttonCodingAbort.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -964,6 +964,11 @@ namespace BmwDeepObd
                     CustomProgressDialog progressLocal = progress;
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
                         if (progressLocal != null)
                         {
                             progressLocal.AbortClick = sender =>
@@ -1459,54 +1464,61 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    _ediabasProxyClient.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
-                        connected);
-
-                    lock (_statusLock)
+                    try
                     {
-                        _rpcClientConnected = connected;
-                    }
+                        _ediabasProxyClient.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
+                            connected);
 
-                    if (connected)
-                    {
                         lock (_statusLock)
                         {
-                            _statusMessage = string.Empty;
-                        }
-                        await RpcClientUpdateDisplay().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        lock (_statusLock)
-                        {
-                            _statusInfo = null;
-                            _statusOptionTypes = null;
-                            _rpcListItems = null;
-                            _statusUpdateTime = null;
-                        }
-                    }
-
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
+                            _rpcClientConnected = connected;
                         }
 
                         if (connected)
                         {
-                            _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
+                            lock (_statusLock)
+                            {
+                                _statusMessage = string.Empty;
+                            }
+                            await RpcClientUpdateDisplay().ConfigureAwait(false);
                         }
                         else
                         {
-                            _activityCommon.SetLock(ActivityCommon.LockType.None);
-                            ConnectionFailMessage();
+                            lock (_statusLock)
+                            {
+                                _statusInfo = null;
+                                _statusOptionTypes = null;
+                                _rpcListItems = null;
+                                _statusUpdateTime = null;
+                            }
                         }
 
-                        _progressBar.Progress = 0;
-                        _progressBar.Indeterminate = false;
-                        UpdateDisplay();
-                    });
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (connected)
+                            {
+                                _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
+                            }
+                            else
+                            {
+                                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                ConnectionFailMessage();
+                            }
+
+                            _progressBar.Progress = 0;
+                            _progressBar.Indeterminate = false;
+                            UpdateDisplay();
+                        });
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.PingUpdated += (sender, pingDateTime) =>
@@ -1534,9 +1546,16 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
-                        success);
-                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                    try
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
+                            success);
+                        await RpcClientTaskCompleted().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += async (s, success) =>
@@ -1546,9 +1565,16 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
-                        success);
-                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                    try
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
+                            success);
+                        await RpcClientTaskCompleted().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.CallbackHandler.ConnectVehicleCompleted += async (s, connectArgs) =>
@@ -1558,19 +1584,26 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}, LicenseValid={2}",
-                        connectArgs.Success, connectArgs.Vin, connectArgs.LicenseValid);
-
-                    if (connectArgs.Success)
+                    try
                     {
-                        lock (_instanceLock)
-                        {
-                            _instanceData.Vin = connectArgs.Vin;
-                            _instanceData.LicenseValid = connectArgs.LicenseValid;
-                        }
-                    }
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}, LicenseValid={2}",
+                            connectArgs.Success, connectArgs.Vin, connectArgs.LicenseValid);
 
-                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                        if (connectArgs.Success)
+                        {
+                            lock (_instanceLock)
+                            {
+                                _instanceData.Vin = connectArgs.Vin;
+                                _instanceData.LicenseValid = connectArgs.LicenseValid;
+                            }
+                        }
+
+                        await RpcClientTaskCompleted().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += async (s, success) =>
@@ -1580,15 +1613,22 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
-                        success);
-                    lock (_instanceLock)
+                    try
                     {
-                        _instanceData.Vin = null;
-                        _instanceData.LicenseValid = false;
-                    }
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
+                            success);
+                        lock (_instanceLock)
+                        {
+                            _instanceData.Vin = null;
+                            _instanceData.LicenseValid = false;
+                        }
 
-                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                        await RpcClientTaskCompleted().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.CallbackHandler.VehicleFunctionsCompleted += async (s, vehicleArgs) =>
@@ -1598,10 +1638,17 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
-                        vehicleArgs.Success, vehicleArgs.OperationType);
+                    try
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
+                            vehicleArgs.Success, vehicleArgs.OperationType);
 
-                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                        await RpcClientTaskCompleted().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.CallbackHandler.UpdateStatus += async (s, message) =>
@@ -1611,12 +1658,19 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    lock (_statusLock)
+                    try
                     {
-                        _statusMessage = message;
-                    }
+                        lock (_statusLock)
+                        {
+                            _statusMessage = message;
+                        }
 
-                    await RpcClientUpdateDisplay().ConfigureAwait(false);
+                        await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.CallbackHandler.UpdateProgress += (s, progressArgs) =>
@@ -1646,7 +1700,14 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    try
+                    {
+                        await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.CallbackHandler.UpdateOptionSelections += async (sender, swiRegisterEnum) =>
@@ -1656,15 +1717,22 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    if (swiRegisterEnum != null)
+                    try
                     {
-                        lock (_statusLock)
+                        if (swiRegisterEnum != null)
                         {
-                            _selectedSwiRegister = swiRegisterEnum;
+                            lock (_statusLock)
+                            {
+                                _selectedSwiRegister = swiRegisterEnum;
+                            }
                         }
-                    }
 
-                    await RpcClientUpdateDisplay().ConfigureAwait(false);
+                        await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 };
 
                 _psdzRpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
@@ -1769,15 +1837,22 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
+                    try
                     {
-                        string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzClient.log");
+                        if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
+                        {
+                            string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzClient.log");
 
-                        bool result = await _psdzRpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
+                            bool result = await _psdzRpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
+                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
 
-                        bool resetResult = await _psdzRpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ResetStarterGuard result: {0}", resetResult);
+                            bool resetResult = await _psdzRpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
+                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ResetStarterGuard result: {0}", resetResult);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
                 };
 
@@ -1962,6 +2037,26 @@ namespace BmwDeepObd
                 lock (_startLock)
                 {
                     _startCts = new CancellationTokenSource();
+                    CustomProgressDialog progress = new CustomProgressDialog(this);
+                    progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+                    progress.ButtonAbort.Enabled = true;
+                    progress.AbortClick = sender =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        lock (_startLock)
+                        {
+                            _startCts?.Cancel();
+                        }
+                    };
+                    progress.Show();
+
+                    _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+                    _activityCommon.SetPreferredNetworkInterface();
+
                     _startTask = RpcClientConnect();
                     _startTask.ContinueWith(t =>
                     {
@@ -1971,24 +2066,34 @@ namespace BmwDeepObd
                             {
                                 _rpcClientConnected = false;
                             }
-
-                            RunOnUiThread(() =>
-                            {
-                                if (_activityCommon == null)
-                                {
-                                    return;
-                                }
-
-                                ConnectionFailMessage();
-                            });
                         }
 
-                        lock (_startLock)
+                        RunOnUiThread(() =>
                         {
-                            _startTask = null;
-                            _startCts?.Dispose();
-                            _startCts = null;
-                        }
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (progress != null)
+                            {
+                                progress.Dismiss();
+                                progress = null;
+                                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                            }
+
+                            lock (_startLock)
+                            {
+                                _startTask = null;
+                                _startCts?.Dispose();
+                                _startCts = null;
+                            }
+
+                            if (!t.Result)
+                            {
+                                ConnectionFailMessage();
+                            }
+                        });
                     });
                 }
 

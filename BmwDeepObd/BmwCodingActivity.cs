@@ -836,6 +836,11 @@ namespace BmwDeepObd
                     CustomProgressDialog progressLocal = progress;
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
                         if (progressLocal != null)
                         {
                             progressLocal.AbortClick = sender =>
