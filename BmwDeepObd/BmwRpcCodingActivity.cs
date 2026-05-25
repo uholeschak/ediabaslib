@@ -177,7 +177,7 @@ namespace BmwDeepObd
             _buttonCodingConnect = FindViewById<Button>(Resource.Id.buttonCodingConnect);
             _buttonCodingConnect.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -218,7 +218,7 @@ namespace BmwDeepObd
             _buttonCodingDisconnect = FindViewById<Button>(Resource.Id.buttonCodingDisconnect);
             _buttonCodingDisconnect.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -253,7 +253,7 @@ namespace BmwDeepObd
             _buttonCodingOptions = FindViewById<Button>(Resource.Id.buttonCodingOptions);
             _buttonCodingOptions.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -288,7 +288,7 @@ namespace BmwDeepObd
             _buttonCodingGenerateTal = FindViewById<Button>(Resource.Id.buttonCodingGenerateTal);
             _buttonCodingGenerateTal.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -323,7 +323,7 @@ namespace BmwDeepObd
             _buttonCodingExecuteTal = FindViewById<Button>(Resource.Id.buttonCodingExecuteTal);
             _buttonCodingExecuteTal.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -358,7 +358,7 @@ namespace BmwDeepObd
             _buttonCodingAbort = FindViewById<Button>(Resource.Id.buttonCodingAbort);
             _buttonCodingAbort.Click += (s, e) =>
             {
-                if (!_activityActive)
+                if (_activityCommon == null)
                 {
                     return;
                 }
@@ -964,6 +964,11 @@ namespace BmwDeepObd
                     CustomProgressDialog progressLocal = progress;
                     RunOnUiThread(() =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
                         if (progressLocal != null)
                         {
                             progressLocal.AbortClick = sender =>
@@ -2032,6 +2037,26 @@ namespace BmwDeepObd
                 lock (_startLock)
                 {
                     _startCts = new CancellationTokenSource();
+                    CustomProgressDialog progress = new CustomProgressDialog(this);
+                    progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+                    progress.ButtonAbort.Enabled = true;
+                    progress.AbortClick = sender =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        lock (_startLock)
+                        {
+                            _startCts?.Cancel();
+                        }
+                    };
+                    progress.Show();
+
+                    _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+                    _activityCommon.SetPreferredNetworkInterface();
+
                     _startTask = RpcClientConnect();
                     _startTask.ContinueWith(t =>
                     {
@@ -2041,24 +2066,34 @@ namespace BmwDeepObd
                             {
                                 _rpcClientConnected = false;
                             }
-
-                            RunOnUiThread(() =>
-                            {
-                                if (_activityCommon == null)
-                                {
-                                    return;
-                                }
-
-                                ConnectionFailMessage();
-                            });
                         }
 
-                        lock (_startLock)
+                        RunOnUiThread(() =>
                         {
-                            _startTask = null;
-                            _startCts?.Dispose();
-                            _startCts = null;
-                        }
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (progress != null)
+                            {
+                                progress.Dismiss();
+                                progress = null;
+                                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                            }
+
+                            lock (_startLock)
+                            {
+                                _startTask = null;
+                                _startCts?.Dispose();
+                                _startCts = null;
+                            }
+
+                            if (!t.Result)
+                            {
+                                ConnectionFailMessage();
+                            }
+                        });
                     });
                 }
 
