@@ -942,7 +942,7 @@ namespace BmwDeepObd
             progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
             progress.ButtonAbort.Enabled = false;
             progress.Show();
-            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+            _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
             _activityCommon.SetPreferredNetworkInterface();
 
             Thread sendThread = new Thread(() =>
@@ -1841,7 +1841,7 @@ namespace BmwDeepObd
                     {
                         if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
                         {
-                            string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzClient.log");
+                            string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzAppClient.log");
 
                             bool result = await _psdzRpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
                             _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
@@ -2054,7 +2054,7 @@ namespace BmwDeepObd
                     };
                     progress.Show();
 
-                    _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+                    _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                     _activityCommon.SetPreferredNetworkInterface();
 
                     _startTask = RpcClientConnect();
@@ -2079,7 +2079,6 @@ namespace BmwDeepObd
                             {
                                 progress.Dismiss();
                                 progress = null;
-                                _activityCommon.SetLock(ActivityCommon.LockType.None);
                             }
 
                             lock (_startLock)
@@ -2091,6 +2090,7 @@ namespace BmwDeepObd
 
                             if (!t.Result)
                             {
+                                _activityCommon.SetLock(ActivityCommon.LockType.None);
                                 ConnectionFailMessage();
                             }
                         });
