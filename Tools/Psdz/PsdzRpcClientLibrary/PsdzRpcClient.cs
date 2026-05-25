@@ -91,7 +91,11 @@ namespace PsdzRpcClient
             try
             {
                 string hostName = string.IsNullOrEmpty(host) ? PsdzRpcServiceConstants.Localhost : host;
-                _tcpClient = new TcpClient { NoDelay = true };
+                _tcpClient = new TcpClient(AddressFamily.InterNetworkV6)
+                {
+                    NoDelay = true
+                };
+                _tcpClient.Client.DualMode = true; // IPv4 + IPv6 über einen Socket
                 _tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 #if NET
                 _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime,     10); // First probe
