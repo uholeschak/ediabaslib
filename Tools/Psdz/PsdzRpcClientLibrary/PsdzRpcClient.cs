@@ -86,7 +86,7 @@ namespace PsdzRpcClient
         }
 
         /// <summary>Verbindet via TCP (kein automatischer Serverstart erforderlich).</summary>
-        public async Task<bool> ConnectTcpAsync(string host, int port, SynchronizationContext synchronizationContext, CancellationToken ct, int timeoutSeconds = 5)
+        public async Task<bool> ConnectTcpAsync(string host, int port, SynchronizationContext synchronizationContext, CancellationToken ct, int timeoutSeconds = 10)
         {
             try
             {
