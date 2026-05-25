@@ -1466,7 +1466,11 @@ namespace BmwDeepObd
         {
             try
             {
-                _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(null,
+                AndroidLogWriter logWriter = null;
+#if DEBUG
+                logWriter = new AndroidLogWriter(Tag);
+#endif
+                _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(logWriter,
                     PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, Assembly.GetExecutingAssembly());
                 _psdzRpcClient.ClientConnected += async (sender, connected) =>
                 {
@@ -2419,6 +2423,28 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        private class AndroidLogWriter : TextWriter
+        {
+            private readonly string _tag;
+
+            public AndroidLogWriter(string tag)
+            {
+                _tag = tag;
+            }
+
+            public override System.Text.Encoding Encoding => System.Text.Encoding.UTF8;
+
+            public override void WriteLine(string value)
+            {
+                Android.Util.Log.Info(_tag, value ?? string.Empty);
+            }
+
+            public override void Write(string value)
+            {
+                Android.Util.Log.Info(_tag, value ?? string.Empty);
+            }
         }
     }
 }
