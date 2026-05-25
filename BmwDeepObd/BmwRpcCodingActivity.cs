@@ -758,7 +758,7 @@ namespace BmwDeepObd
                     _alertDialogConnectError = null;
                     if (!ignoreDismiss)
                     {
-                        Finish();
+                        FinishContinue();
                         return;
                     }
 
