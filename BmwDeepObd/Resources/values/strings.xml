@@ -800,6 +800,7 @@
   <string name="bmw_rpc_coding_abort">Abort</string>
   <string name="bmw_rpc_coding_status_title">Status</string>
   <string name="bmw_rpc_coding_options_title">Options</string>
+  <string name="bmw_rpc_coding_update_time">Last update: {0}</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>
