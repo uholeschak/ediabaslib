@@ -3939,11 +3939,12 @@ namespace WebPsdzClient.App_Data
                     {
                         DetectedVin = psdzContext?.DetectVehicle?.Vin;
                     }
-                    ProcessLicense();
 
-                    string licenseText = ProgrammingJobs?.GetLicenseText(AdapterSerial, AdapterSerialValid);
-                    if (string.IsNullOrEmpty(licenseText))
+                    ProcessLicense();
+                    if (ProgrammingJobs != null)
                     {
+                        ProgrammingJobs.LicenseValid = LicenseValid;
+                        string licenseText = ProgrammingJobs.GetLicenseText(AdapterSerial, AdapterSerialValid);
                         AppendStatusTextLine(licenseText);
                     }
                 }
