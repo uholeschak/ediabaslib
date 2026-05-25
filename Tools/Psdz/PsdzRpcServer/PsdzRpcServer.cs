@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.AccessControl;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Threading;
@@ -117,7 +116,16 @@ namespace PsdzRpcServer
 
                     TcpClient tcpClient = await acceptTask.ConfigureAwait(false);
                     tcpClient.NoDelay = true;
-
+                    tcpClient.SendBufferSize = 65536;
+                    tcpClient.ReceiveBufferSize = 65536;
+                    tcpClient.Client.SendTimeout = 30000; // 30s
+                    tcpClient.Client.ReceiveTimeout = 30000; // 30s
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+#if NET
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 60); // Erste Probe nach 60s Inaktivität
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 15); // Proben alle 15s
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 5); // 5 Versuche
+#endif
                     if (_serverCert != null)
                     {
                         // TLS-Handshake als fire-and-forget

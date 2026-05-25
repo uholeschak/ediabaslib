@@ -96,11 +96,16 @@ namespace PsdzRpcClient
                     NoDelay = true
                 };
                 _tcpClient.Client.DualMode = true; // IPv4 + IPv6 über einen Socket
+                _tcpClient.Client.SendTimeout = 30000; // 30s
+                _tcpClient.Client.ReceiveTimeout = 30000; // 30s
+
+                _tcpClient.SendBufferSize = 65536;
+                _tcpClient.ReceiveBufferSize = 65536;
                 _tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 #if NET
-                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime,     10); // First probe
-                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 10); // Time between probes
-                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 3);
+                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime,      60); // Erste Probe nach 60s Inaktivität
+                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval,  15); // Proben alle 15s
+                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount,  5); // 5 Versuche
 #endif
                 using CancellationTokenSource timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
                 using CancellationTokenSource linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);
