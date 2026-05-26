@@ -131,6 +131,32 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
         return true;
     }
 
+    public bool CloseEdiabasLog()
+    {
+        try
+        {
+            lock (_ediabasLock)
+            {
+                if (_ediabas == null)
+                {
+                    return false;
+                }
+
+                if (_ediabas.EdInterfaceClass.Connected)
+                {
+                    return false;
+                }
+
+                _ediabas.CloseLog();
+            }
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     private bool IsEdiabasThreadRunning()
     {
         lock (_ediabasThreadLock)
