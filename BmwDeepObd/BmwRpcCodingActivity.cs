@@ -2225,7 +2225,7 @@ namespace BmwDeepObd
                 }
 
                 string language = _activityCommon.GetCurrentLanguage();
-                bool matched = await _psdzRpcClient.RpcService.SetLanguage(language).ConfigureAwait(false);
+                bool matched = await _psdzRpcClient.RpcService.SetLanguage(language, true).ConfigureAwait(false);
                 if (matched)
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage matched: {0}", language);

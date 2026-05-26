@@ -1,13 +1,12 @@
 ﻿using BMW.Rheingold.Psdz.Client;
 using EdiabasLib;
 using PsdzClient;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -286,6 +285,21 @@ namespace PsdzRpcServer
                 _programmingJobs.ClientContext.Language = language;
                 matched = true;
             }
+
+            if (!string.IsNullOrEmpty(language))
+            {
+                try
+                {
+                    CultureInfo culture = CultureInfo.CreateSpecificCulture(language.ToLowerInvariant());
+                    Thread.CurrentThread.CurrentCulture = culture;
+                    Thread.CurrentThread.CurrentUICulture = culture;
+                }
+                catch (Exception)
+                {
+                    matched = false;
+                }
+            }
+
 
             return Task.FromResult(matched);
         }
