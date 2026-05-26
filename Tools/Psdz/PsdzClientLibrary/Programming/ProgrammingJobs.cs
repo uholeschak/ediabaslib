@@ -4582,9 +4582,34 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        public bool SetThreadLanguage()
+        {
+            string currentLanguage = ClientContext.Language;
+            if (string.IsNullOrEmpty(currentLanguage))
+            {
+                log.ErrorFormat("SetThreadLanguage No language configured");
+                return false;
+            }
+
+            try
+            {
+                CultureInfo culture = CultureInfo.CreateSpecificCulture(currentLanguage.ToLowerInvariant());
+                Thread.CurrentThread.CurrentCulture = culture;
+                Thread.CurrentThread.CurrentUICulture = culture;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("SetThreadLanguage Exception: {0}", ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
         public void SetThreadContextId()
         {
             PsdzWebserviceRegistrar.SetThreadData(ThreadContextId);
+            SetThreadLanguage();
         }
 
         public void Dispose()

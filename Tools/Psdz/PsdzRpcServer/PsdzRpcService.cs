@@ -286,22 +286,6 @@ namespace PsdzRpcServer
                 matched = true;
             }
 
-            string currentLanguage = _programmingJobs.ClientContext.Language;
-            if (matched && !string.IsNullOrEmpty(currentLanguage))
-            {
-                try
-                {
-                    CultureInfo culture = CultureInfo.CreateSpecificCulture(currentLanguage.ToLowerInvariant());
-                    Thread.CurrentThread.CurrentCulture = culture;
-                    Thread.CurrentThread.CurrentUICulture = culture;
-                }
-                catch (Exception)
-                {
-                    matched = false;
-                }
-            }
-
-
             return Task.FromResult(matched);
         }
 
