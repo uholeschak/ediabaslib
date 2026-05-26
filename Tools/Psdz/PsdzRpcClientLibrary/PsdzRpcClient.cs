@@ -57,10 +57,6 @@ namespace PsdzRpcClient
                     throw new InvalidOperationException($"Failed to load CA certificate: {caCertPath}");
                 }
             }
-            else
-            {
-                _output?.WriteLine("No CA certificate provided.");
-            }
 
             if (!string.IsNullOrEmpty(clientPfxPath))
             {
@@ -74,7 +70,10 @@ namespace PsdzRpcClient
             }
             else
             {
-                _output?.WriteLine("No client certificate provided.");
+                if (_caCert != null)
+                {
+                    _output?.WriteLine("No client certificate provided for CA certificate.");
+                }
             }
         }
 
