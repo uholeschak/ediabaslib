@@ -1459,8 +1459,30 @@ namespace BmwDeepObd
 
         public bool IsEdiabasConnected()
         {
+            if (_ediabasProxyClient == null)
+            {
+                return false;
+            }
             return _ediabasProxyClient.IsEdiabasConnected();
         }
+
+        private bool CloseEdiabasLog()
+        {
+            try
+            {
+                if (_ediabasProxyClient == null)
+                {
+                    return true;
+                }
+
+                return _ediabasProxyClient.CloseEdiabasLog();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
 
         private bool CreateRpcClient()
         {
@@ -1909,9 +1931,9 @@ namespace BmwDeepObd
                 ediabas.EdInterfaceClass.EnableTransmitCache = false;
                 _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress, _appDataDir);
 
+                _ediabasProxyClient = new EdiabasProxyClient(ediabas);
                 UpdateLogInfo();
 
-                _ediabasProxyClient = new EdiabasProxyClient(ediabas);
                 _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
                 {
                     return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
@@ -2265,7 +2287,7 @@ namespace BmwDeepObd
             {
                 if (!string.IsNullOrEmpty(_appDataDir))
                 {
-                    logDir = Path.Combine(_appDataDir, "LogBmwCoding");
+                    logDir = Path.Combine(_appDataDir, "LogBmwRpcCoding");
                     Directory.CreateDirectory(logDir);
                 }
             }
@@ -2371,6 +2393,11 @@ namespace BmwDeepObd
 
             if (commErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
+                if (!CloseEdiabasLog())
+                {
+                    return false;
+                }
+
                 return _activityCommon.RequestSendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
@@ -2386,6 +2413,11 @@ namespace BmwDeepObd
             if (ActivityCommon.CollectDebugInfo ||
                 (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir)))
             {
+                if (!CloseEdiabasLog())
+                {
+                    return false;
+                }
+
                 return _activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
@@ -2400,6 +2432,11 @@ namespace BmwDeepObd
 
             string baseDir = _instanceData.TraceDir;
             if (string.IsNullOrEmpty(baseDir))
+            {
+                return false;
+            }
+
+            if (!CloseEdiabasLog())
             {
                 return false;
             }

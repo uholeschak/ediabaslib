@@ -6708,7 +6708,7 @@ namespace EdiabasLib
             LogString(logLevel, " (" + info + "): " + stringBuilder);
         }
 
-        private void CloseLog()
+        public void CloseLog()
         {
             if (!AcquireLogMutex(-1))
             {
