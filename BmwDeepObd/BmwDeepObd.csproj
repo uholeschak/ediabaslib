@@ -41,7 +41,9 @@
     <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
     <TrimmerRootAssembly Include="System.Collections" RootMode="visible" />
     <TrimmerRootAssembly Include="Xamarin.AndroidX.Core" RootMode="visible" />
-    <TrimmerRootAssembly Include="PsdzRpcClientLibrary" RootMode="visible" />
+    <TrimmerRootAssembly Include="PsdzRpcClientLibrary" RootMode="all" />
+    <TrimmerRootAssembly Include="StreamJsonRpc" RootMode="all" />
+    <TrimmerRootAssembly Include="Newtonsoft.Json" RootMode="all" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\EdiabasLib\BmwFileReader\DetectVehicleBmw.cs" Link="DetectVehicleBmw.cs" />
