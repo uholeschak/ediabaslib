@@ -730,7 +730,7 @@ namespace BmwDeepObd
             _buttonBmwCoding.Enabled = bmwCodingEnabled;
             _buttonBmwCoding.Click += (sender, args) =>
             {
-                if (ActivityCommon.CollectDebugInfo)
+                if (ActivityCommon.UseBmwDatabase)
                 {
                     StartBmwRpcCoding();
                 }
