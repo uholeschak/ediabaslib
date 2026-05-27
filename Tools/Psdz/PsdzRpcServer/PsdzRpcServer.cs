@@ -17,6 +17,7 @@ namespace PsdzRpcServer
 {
     public class PsdzRpcServer : IDisposable
     {
+        public const int TslHandshakeTimeoutSeconds = 15;
         private readonly string _dealerId;
         private readonly TextWriter _output;
         private readonly int? _tcpPort;
@@ -233,23 +234,37 @@ namespace PsdzRpcServer
                     userCertificateValidationCallback: (sender, cert, chain, errors) =>
                         ValidateClientCertificate(cert, caCert));
 #if NET
+                using CancellationTokenSource tlsTimeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(TslHandshakeTimeoutSeconds));
                 await sslStream.AuthenticateAsServerAsync(new SslServerAuthenticationOptions
                 {
                     ServerCertificate              = serverCert,
                     ClientCertificateRequired      = caCert != null,
                     EnabledSslProtocols            = PsdzRpcServiceConstants.DefaultSslProtocols,
                     CertificateRevocationCheckMode = X509RevocationMode.NoCheck
-                }).ConfigureAwait(false);
+                }, tlsTimeoutCts.Token).ConfigureAwait(false);
 #else
-                await sslStream.AuthenticateAsServerAsync(
+                // .NET Framework: kein CancellationToken-Overload, daher Task.WhenAny mit Timeout
+                Task authTask = sslStream.AuthenticateAsServerAsync(
                     serverCertificate:          serverCert,
                     clientCertificateRequired:  caCert != null,
-                    enabledSslProtocols: PsdzRpcServiceConstants.DefaultSslProtocols,
-                    checkCertificateRevocation: false).ConfigureAwait(false);
-#endif
+                    enabledSslProtocols:        PsdzRpcServiceConstants.DefaultSslProtocols,
+                    checkCertificateRevocation: false);
 
+                if (await Task.WhenAny(authTask, Task.Delay(TimeSpan.FromSeconds(TslHandshakeTimeoutSeconds))).ConfigureAwait(false) != authTask)
+                {
+                    throw new TimeoutException("TLS handshake timed out.");
+                }
+
+                await authTask.ConfigureAwait(false); // Exception weiterwerfen falls fehlgeschlagen
+#endif
                 _output?.WriteLine("TLS handshake successful.");
                 OnClientAccepted(sslStream, tcpClient);
+            }
+            catch (OperationCanceledException)
+            {
+                _output?.WriteLine("TLS handshake timed out.");
+                sslStream?.Dispose();
+                tcpClient.Dispose();
             }
             catch (Exception ex)
             {
