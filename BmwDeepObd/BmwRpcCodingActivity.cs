@@ -110,6 +110,7 @@ namespace BmwDeepObd
         private DateTime? _statusUpdateTime;
         private bool _rpcClientConnected;
 
+        private ScrollView _scrollBmwRpcCoding;
         private TextView _textViewUpdateTime;
         private Button _buttonCodingConnect;
         private Button _buttonCodingDisconnect;
@@ -171,6 +172,7 @@ namespace BmwDeepObd
                 }
             }, BroadcastReceived);
 
+            _scrollBmwRpcCoding = FindViewById<ScrollView>(Resource.Id.scrollBmwRpcCoding);
             _textViewUpdateTime = FindViewById<TextView>(Resource.Id.textViewUpdateTime);
 
             _buttonCodingConnect = FindViewById<Button>(Resource.Id.buttonCodingConnect);
@@ -454,6 +456,7 @@ namespace BmwDeepObd
 
             _layoutCodingStatus = FindViewById<LinearLayout>(Resource.Id.layoutCodingStatus);
             _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
+            _textCodingStatus.MovementMethod = new ScrollingMovementMethod();
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
@@ -1417,7 +1420,20 @@ namespace BmwDeepObd
                 _ignoreItemSelection = false;
             }
 
+            string lastMessage = _textCodingStatus.Text;
             _textCodingStatus.Text = statusMessage ?? string.Empty;
+            if (!string.IsNullOrEmpty(statusMessage) && !string.IsNullOrEmpty(lastMessage) &&
+                statusMessage.Length > lastMessage.Length)
+            {
+                _scrollBmwRpcCoding.Post(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    _scrollBmwRpcCoding.FullScroll(FocusSearchDirection.Down);
+                });
+            }
 
             UpdateOptionsMenu();
         }
