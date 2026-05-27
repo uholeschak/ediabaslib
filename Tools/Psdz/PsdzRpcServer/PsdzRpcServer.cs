@@ -255,7 +255,7 @@ namespace PsdzRpcServer
                     throw new TimeoutException("TLS handshake timed out.");
                 }
 
-                await authTask.ConfigureAwait(false); // Exception weiterwerfen falls fehlgeschlagen
+                await authTask.ConfigureAwait(false);
 #endif
                 _output?.WriteLine("TLS handshake successful.");
                 OnClientAccepted(sslStream, tcpClient);
