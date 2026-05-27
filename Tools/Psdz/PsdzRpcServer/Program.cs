@@ -11,6 +11,26 @@ namespace PsdzRpcServer
 {
     internal class Program
     {
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GetStdHandle(int nStdHandle);
+
+        const uint ENABLE_QUICK_EDIT = 0x0040;
+        static void DisableQuickEdit()
+        {
+            IntPtr handle = GetStdHandle(-10); // STD_INPUT_HANDLE
+            if (GetConsoleMode(handle, out uint mode))
+            {
+                mode &= ~ENABLE_QUICK_EDIT; // ENABLE_QUICK_EDIT_MODE entfernen
+                SetConsoleMode(handle, mode);
+            }
+        }
+
         public class Options
         {
             public Options()
@@ -38,7 +58,8 @@ namespace PsdzRpcServer
             [Option('s', "ssl", Required = false, HelpText = "Enable SSL for TCP server.")]
             public bool Ssl { get; set; }
 
-            [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
+            [Option('v', "verbosity", Required = false,
+                HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
             public VerbosityOption Verbosity { get; set; }
         }
 
@@ -50,6 +71,7 @@ namespace PsdzRpcServer
 #if NET
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
+            DisableQuickEdit();
             bool keepRunning = false;
             int? tcpPort = null;
             bool ssl = false;
@@ -77,7 +99,8 @@ namespace PsdzRpcServer
                     Console.WriteLine("Option parsing errors:\n{0}", string.Join("\n", errors));
                     if (errors.IndexOf("BadFormatConversion", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        Console.WriteLine("Valid verbosity options are: {0}", string.Join(", ", Enum.GetNames(typeof(Options.VerbosityOption)).ToList()));
+                        Console.WriteLine("Valid verbosity options are: {0}",
+                            string.Join(", ", Enum.GetNames(typeof(Options.VerbosityOption)).ToList()));
                     }
 
                     hasErrors = true;
@@ -94,6 +117,7 @@ namespace PsdzRpcServer
                 Console.WriteLine("SQL Server configuration is missing.");
                 return 1;
             }
+
             sqlServer = sqlServer.Trim();
 
             string testLicensesString = ConfigurationManager.AppSettings["TestLicenses"];
@@ -102,9 +126,11 @@ namespace PsdzRpcServer
                 Console.WriteLine("Test licenses configuration is missing.");
                 return 1;
             }
+
             testLicensesString = testLicensesString.Trim();
 
-            bool testLicenses = Int32.TryParse(testLicensesString, out Int32 testLicensesValueResult) && testLicensesValueResult != 0;
+            bool testLicenses = Int32.TryParse(testLicensesString, out Int32 testLicensesValueResult) &&
+                                testLicensesValueResult != 0;
 
             string displayOptions = ConfigurationManager.AppSettings["DisplayOptions"];
             if (string.IsNullOrEmpty(displayOptions))
@@ -112,6 +138,7 @@ namespace PsdzRpcServer
                 Console.WriteLine("Display options configuration is missing.");
                 return 1;
             }
+
             displayOptions = displayOptions.Trim();
 
             consoleAvailable = IsConsoleAvailable();
@@ -135,7 +162,7 @@ namespace PsdzRpcServer
                 Console.WriteLine("SSL enabled");
 
                 string certsPath = Path.Combine(appDir, PsdzRpcServiceConstants.CertDir);
-                caCertPath    = Path.Combine(certsPath, PsdzRpcServiceConstants.CaCertFile);
+                caCertPath = Path.Combine(certsPath, PsdzRpcServiceConstants.CaCertFile);
                 serverPfxPath = Path.Combine(certsPath, PsdzRpcServiceConstants.ServerPfxFile);
 
                 if (File.Exists(caCertPath))
@@ -208,7 +235,8 @@ namespace PsdzRpcServer
 
                 cts.Cancel();
 
-                await Task.WhenAll(serverTask.ContinueWith(_ => { }), keyTask.ContinueWith(_ => { })).ConfigureAwait(false);
+                await Task.WhenAll(serverTask.ContinueWith(_ => { }), keyTask.ContinueWith(_ => { }))
+                    .ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -224,6 +252,7 @@ namespace PsdzRpcServer
             {
                 Console.WriteLine("PsdzJsonRpcServer stopped.");
             }
+
             return 0;
         }
 
@@ -257,6 +286,7 @@ namespace PsdzRpcServer
                                 {
                                     Console.WriteLine("ESC pressed, stopping server...");
                                 }
+
                                 return;
                             }
                         }
