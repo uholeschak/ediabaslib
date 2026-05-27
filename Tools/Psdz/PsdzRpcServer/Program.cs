@@ -72,6 +72,7 @@ namespace PsdzRpcServer
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
             DisableQuickEdit();
+
             bool keepRunning = false;
             int? tcpPort = null;
             bool ssl = false;
