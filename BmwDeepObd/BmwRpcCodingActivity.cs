@@ -107,9 +107,11 @@ namespace BmwDeepObd
         private List<PsdzRpcOptionType> _statusOptionTypes;
         private List<PsdzRpcOptionItem> _rpcListItems;
         private string _statusMessage;
+        private string _lastStatusMessage;
         private DateTime? _statusUpdateTime;
         private bool _rpcClientConnected;
 
+        private LinearLayout _layoutBmwRpcCoding;
         private ScrollView _scrollBmwRpcCoding;
         private TextView _textViewUpdateTime;
         private Button _buttonCodingConnect;
@@ -172,6 +174,7 @@ namespace BmwDeepObd
                 }
             }, BroadcastReceived);
 
+            _layoutBmwRpcCoding = FindViewById<LinearLayout>(Resource.Id.layoutBmwRpcCoding);
             _scrollBmwRpcCoding = FindViewById<ScrollView>(Resource.Id.scrollBmwRpcCoding);
             _textViewUpdateTime = FindViewById<TextView>(Resource.Id.textViewUpdateTime);
 
@@ -1420,10 +1423,16 @@ namespace BmwDeepObd
                 _ignoreItemSelection = false;
             }
 
-            string lastMessage = _textCodingStatus.Text;
+            string lastStatusMessage;
+            lock (_statusLock)
+            {
+                lastStatusMessage = _lastStatusMessage;
+                _lastStatusMessage = statusMessage;
+            }
+
             _textCodingStatus.Text = statusMessage ?? string.Empty;
-            if (!string.IsNullOrEmpty(statusMessage) && !string.IsNullOrEmpty(lastMessage) &&
-                statusMessage.Length > lastMessage.Length)
+            if (!string.IsNullOrEmpty(statusMessage) && !string.IsNullOrEmpty(lastStatusMessage) &&
+                statusMessage.Length > lastStatusMessage.Length)
             {
                 _scrollBmwRpcCoding.Post(() =>
                 {
@@ -1431,7 +1440,8 @@ namespace BmwDeepObd
                     {
                         return;
                     }
-                    _scrollBmwRpcCoding.FullScroll(FocusSearchDirection.Down);
+
+                    _scrollBmwRpcCoding.SmoothScrollTo(0, _layoutBmwRpcCoding.Height);
                 });
             }
 
