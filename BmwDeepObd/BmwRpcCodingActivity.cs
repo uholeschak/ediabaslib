@@ -27,7 +27,6 @@ namespace BmwDeepObd
     [Android.App.Activity(Label = "@string/bmw_rpc_coding_title",
         Name = ActivityCommon.AppNameSpace + "." + nameof(BmwRpcCodingActivity),
         LaunchMode = LaunchMode.SingleInstance,
-        AlwaysRetainTaskState = true,
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class BmwRpcCodingActivity : BaseActivity

@@ -55,6 +55,7 @@ namespace BmwDeepObd
         DirectBootAware = true,
         Name = ActivityCommon.AppNameSpace + "." + nameof(ActivityMain),
         LaunchMode = LaunchMode.SingleTask,
+        AlwaysRetainTaskState = true,
         UiOptions = UiOptions.SplitActionBarWhenNarrow,
         ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
