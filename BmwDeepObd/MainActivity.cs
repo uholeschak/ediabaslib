@@ -1768,7 +1768,7 @@ namespace BmwDeepObd
                         return true;
                     }
 
-                    if (ActivityCommon.CollectDebugInfo)
+                    if (ActivityCommon.UseBmwDatabase)
                     {
                         StartBmwRpcCoding();
                     }
