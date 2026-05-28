@@ -1,6 +1,7 @@
 ﻿using PsdzRpcServer.Shared;
 using StreamJsonRpc;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Pipes;
 using System.Net;
@@ -28,6 +29,7 @@ namespace PsdzRpcServer
         private bool _hadClients;
         private bool _disposed;
         private readonly TaskCompletionSource<bool> _allClientsDisconnected = new TaskCompletionSource<bool>();
+        private readonly ConcurrentDictionary<PsdzRpcService, bool> _activeServices = new ConcurrentDictionary<PsdzRpcService, bool>();
 
         /// <summary>
         /// Wird ausgelöst wenn der letzte Client die Verbindung trennt.
@@ -335,6 +337,33 @@ namespace PsdzRpcServer
         }
 
         public int ClientCount => _clientCount;
+
+        /// <summary>
+        /// Prüft ob eine VIN bereits von einem anderen Client verwendet wird.
+        /// </summary>
+        public bool IsVinDuplicated(string vin, PsdzRpcService excludeService = null)
+        {
+            if (string.IsNullOrEmpty(vin))
+            {
+                return false;
+            }
+
+            foreach (PsdzRpcService service in _activeServices.Keys)
+            {
+                if (service == excludeService)
+                {
+                    continue;
+                }
+
+                string activeVin = service.GetActiveVin();
+                if (string.Equals(activeVin, vin, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         public void Dispose()
         {

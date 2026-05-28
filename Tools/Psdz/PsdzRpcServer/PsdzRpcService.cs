@@ -834,6 +834,11 @@ namespace PsdzRpcServer
             return await Task.Run(() => _programmingJobs.VehicleFunctions(_cts, operationType)).ConfigureAwait(false);
         }
 
+        public string GetActiveVin()
+        {
+            return _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
+        }
+
         private void UpdateStatus(string message = null)
         {
             _callback.OnUpdateStatus(message);
