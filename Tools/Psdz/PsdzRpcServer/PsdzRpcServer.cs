@@ -146,9 +146,6 @@ namespace PsdzRpcServer
         }
         private void OnClientAccepted(Stream stream, IDisposable owner = null)
         {
-            int count = _activeServices.Count;
-            _hadClients = true;
-            _output?.WriteLine($"Client connected. Active clients: {count}");
             _ = HandleClientAsync(stream, owner);
         }
 
@@ -162,6 +159,13 @@ namespace PsdzRpcServer
             try
             {
                 _activeServices.TryAdd(service, true);
+                int clientCount = _activeServices.Count;
+                _output?.WriteLine($"Client connected. Active clients: {clientCount}");
+                if (clientCount > 0)
+                {
+                    _hadClients = true;
+                }
+
                 jsonRpc.AddLocalRpcTarget(service);
                 jsonRpc.Disconnected += (s, e) =>
                 {
@@ -196,10 +200,10 @@ namespace PsdzRpcServer
                 owner?.Dispose();
                 stream.Dispose();
 
-                int count = _activeServices.Count;
-                _output?.WriteLine($"Active clients: {count}");
+                int clientCount = _activeServices.Count;
+                _output?.WriteLine($"Active clients: {clientCount}");
 
-                if (count == 0 && _hadClients)
+                if (clientCount == 0 && _hadClients)
                 {
                     _allClientsDisconnected.TrySetResult(true);
                 }
