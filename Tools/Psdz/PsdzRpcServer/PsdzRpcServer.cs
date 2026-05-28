@@ -157,11 +157,12 @@ namespace PsdzRpcServer
         {
             bool disconnected = false;
             using CancellationTokenSource clientCts = new CancellationTokenSource();
+            using JsonRpc jsonRpc = new JsonRpc(stream);
+            using PsdzRpcService service = new PsdzRpcService(jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId, _licenseCheck);
+
             try
             {
-                using JsonRpc jsonRpc = new JsonRpc(stream);
-                using PsdzRpcService service = new PsdzRpcService(jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId, _licenseCheck);
-
+                _activeServices.TryAdd(service, true);
                 jsonRpc.AddLocalRpcTarget(service);
                 jsonRpc.Disconnected += (s, e) =>
                 {
@@ -191,6 +192,7 @@ namespace PsdzRpcServer
             finally
             {
                 Volatile.Write(ref disconnected, true);
+                _activeServices.TryRemove(service, out _);
                 clientCts.Cancel();
                 owner?.Dispose();
                 stream.Dispose();
