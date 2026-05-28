@@ -162,7 +162,7 @@ namespace PsdzRpcServer
                 try
                 {
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
-                    string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
+                    string vin = GetActiveVin();
                     if (result && _licenseCheck != null)
                     {
                         try
@@ -232,6 +232,12 @@ namespace PsdzRpcServer
         public Task<bool> VehicleFunctions(PsdzOperationType operationType)
         {
             if (IsOperationActive())
+            {
+                return Task.FromResult(false);
+            }
+
+            string vin = GetActiveVin();
+            if (!string.IsNullOrEmpty(vin) && _server != null && _server.IsVinDuplicated(vin, this))
             {
                 return Task.FromResult(false);
             }
@@ -359,7 +365,7 @@ namespace PsdzRpcServer
 
         public Task<string> GetVehicleVin()
         {
-            string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
+            string vin = GetActiveVin();
             return Task.FromResult(vin);
         }
 
