@@ -239,6 +239,7 @@ namespace PsdzRpcServer
             string vin = GetActiveVin();
             if (!string.IsNullOrEmpty(vin) && _server != null && _server.IsVinDuplicated(vin, this))
             {
+                _callback.OnUpdateStatus("Duplicate VIN detected.");
                 return Task.FromResult(false);
             }
 
