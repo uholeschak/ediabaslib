@@ -15,6 +15,7 @@ namespace PsdzRpcServer
 {
     public class PsdzRpcService : IPsdzRpcService
     {
+        private readonly PsdzRpcServer _server;
         private readonly IPsdzRpcServiceCallback _callback;
         private readonly PsdzLicenseCheck _licenseCheck;
         private readonly ProgrammingJobs _programmingJobs;
@@ -24,8 +25,9 @@ namespace PsdzRpcServer
         private CancellationTokenSource _cts;
         private readonly object _ctsLock = new object();
 
-        public PsdzRpcService(IPsdzRpcServiceCallback callback, string dealerId, PsdzLicenseCheck licenseCheck = null)
+        public PsdzRpcService(PsdzRpcServer server, IPsdzRpcServiceCallback callback, string dealerId, PsdzLicenseCheck licenseCheck = null)
         {
+            _server = server;
             _callback = callback;
             _licenseCheck = licenseCheck;
             _programmingJobs = new ProgrammingJobs(dealerId);

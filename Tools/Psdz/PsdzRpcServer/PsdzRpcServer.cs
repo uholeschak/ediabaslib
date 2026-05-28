@@ -25,7 +25,6 @@ namespace PsdzRpcServer
         private readonly X509Certificate2 _caCert;
         private readonly X509Certificate2 _serverCert;
         private readonly PsdzLicenseCheck _licenseCheck;
-        private int _clientCount;
         private bool _hadClients;
         private bool _disposed;
         private readonly TaskCompletionSource<bool> _allClientsDisconnected = new TaskCompletionSource<bool>();
@@ -147,7 +146,7 @@ namespace PsdzRpcServer
         }
         private void OnClientAccepted(Stream stream, IDisposable owner = null)
         {
-            int count = Interlocked.Increment(ref _clientCount);
+            int count = _activeServices.Count;
             _hadClients = true;
             _output?.WriteLine($"Client connected. Active clients: {count}");
             _ = HandleClientAsync(stream, owner);
@@ -158,7 +157,7 @@ namespace PsdzRpcServer
             bool disconnected = false;
             using CancellationTokenSource clientCts = new CancellationTokenSource();
             using JsonRpc jsonRpc = new JsonRpc(stream);
-            using PsdzRpcService service = new PsdzRpcService(jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId, _licenseCheck);
+            using PsdzRpcService service = new PsdzRpcService(this, jsonRpc.Attach<IPsdzRpcServiceCallback>(), _dealerId, _licenseCheck);
 
             try
             {
@@ -197,7 +196,7 @@ namespace PsdzRpcServer
                 owner?.Dispose();
                 stream.Dispose();
 
-                int count = Interlocked.Decrement(ref _clientCount);
+                int count = _activeServices.Count;
                 _output?.WriteLine($"Active clients: {count}");
 
                 if (count == 0 && _hadClients)
@@ -338,7 +337,7 @@ namespace PsdzRpcServer
 #endif
         }
 
-        public int ClientCount => _clientCount;
+        public int ClientCount => _activeServices.Count;
 
         /// <summary>
         /// Prüft ob eine VIN bereits von einem anderen Client verwendet wird.
