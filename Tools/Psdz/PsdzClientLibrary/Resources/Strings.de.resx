@@ -464,4 +464,8 @@ Kodieren ist nur verfügbar für F Modelle oder höher.</value>
   <data name="VehicleNotLicensed" xml:space="preserve">
     <value>Fahrzeug nicht lizensiert.</value>
   </data>
+  <data name="DuplicateVinDetected" xml:space="preserve">
+    <value>Eine andere Instanz mit der gleichen FG-NR ist bereits aktiv.
+Versuchen Sie es später noch einmal.</value>
+  </data>
 </root>

@@ -4270,6 +4270,13 @@ namespace PsdzClient.Programming
             }
         }
 
+        public void PrintDuplicateVinMessage()
+        {
+            SetThreadContextId();
+            string message = Strings.DuplicateVinDetected;
+            UpdateStatus(message);
+        }
+
         public void UpdateStatus(string message = null)
         {
             UpdateStatusEvent?.Invoke(message);

@@ -224,6 +224,16 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Another instance with the same VIN is already active.
+        ///Please try again later. ähnelt.
+        /// </summary>
+        internal static string DuplicateVinDetected {
+            get {
+                return ResourceManager.GetString("DuplicateVinDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Error: {0} ähnelt.
         /// </summary>
         internal static string ExceptionMsg {

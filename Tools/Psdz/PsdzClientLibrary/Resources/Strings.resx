@@ -464,4 +464,8 @@ Coding is available only for F series or higher.</value>
   <data name="VehicleNotLicensed" xml:space="preserve">
     <value>Vehicle not licensed.</value>
   </data>
+  <data name="DuplicateVinDetected" xml:space="preserve">
+    <value>Another instance with the same VIN is already active.
+Please try again later.</value>
+  </data>
 </root>
