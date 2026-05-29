@@ -3808,22 +3808,6 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            string vin = null;
-            if (RpcClient.RpcService != null)
-            {
-                vin = Task.Run(() => RpcClient.RpcService.GetVehicleVin()).GetAwaiter().GetResult();
-            }
-
-            if (!string.IsNullOrEmpty(vin))
-            {
-                if (IsVinActive(vin, this))
-                {
-                    StatusText = HttpContext.GetGlobalResourceObject("Global", "VinInstanceActive") as string ?? string.Empty;
-                    UpdateDisplay();
-                    return;
-                }
-            }
-
             bool licenseValid = Task.Run(() => RpcClient.RpcService.SetLicenseValid(LicenseValid)).GetAwaiter().GetResult();
             if (!licenseValid)
             {
