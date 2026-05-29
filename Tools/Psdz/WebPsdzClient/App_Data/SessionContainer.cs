@@ -4024,8 +4024,7 @@ namespace WebPsdzClient.App_Data
             {
                 if (IsVinActive(vin, this))
                 {
-                    StatusText = HttpContext.GetGlobalResourceObject("Global", "VinInstanceActive") as string ?? string.Empty;
-                    UpdateDisplay();
+                    ProgrammingJobs?.PrintDuplicateVinMessage();
                     return;
                 }
             }
