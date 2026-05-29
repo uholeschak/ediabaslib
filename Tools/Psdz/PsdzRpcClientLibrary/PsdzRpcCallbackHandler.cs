@@ -1,5 +1,6 @@
 ﻿using PsdzRpcServer.Shared;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PsdzRpcClient
@@ -23,6 +24,9 @@ namespace PsdzRpcClient
         public event EventHandler<ulong> VehicleConnect;
         public event EventHandler<ulong> VehicleDisconnect;
         public event EventHandler<VehicleSendEventArgs> VehicleSend;
+
+        // CancellationToken der Verbindung – wird gesetzt wenn die Verbindung getrennt wird
+        public CancellationToken DisconnectToken { get; set; }
 
         public Task<DateTime> OnPing()
         {
@@ -100,10 +104,10 @@ namespace PsdzRpcClient
                         args.SetResult(false);
                     }
 
-                    bool result = args.WaitForResult();
+                    bool result = args.WaitForResult(DisconnectToken);
                     args.Dispose();
                     return result;
-                }).ConfigureAwait(false);
+                }, DisconnectToken).ConfigureAwait(false);
             }
             else
             {

@@ -25,6 +25,7 @@ namespace PsdzRpcClient
         private DateTime? _pingDateTime;
         private object _pingLock = new object();
         private CancellationTokenSource _keepAliveCts;
+        private CancellationTokenSource _clientCts;
 
         public IPsdzRpcService RpcService { get; private set; }
         public event EventHandler<bool> ClientConnected;
@@ -45,6 +46,9 @@ namespace PsdzRpcClient
         public PsdzRpcClient(TextWriter output = null, string caCertPath = null, string clientPfxPath = null, Assembly resourceAssembly = null)
         {
             _output = output;
+
+            _clientCts = new CancellationTokenSource();
+            CallbackHandler.DisconnectToken = _clientCts.Token;
 
             Assembly assembly = resourceAssembly ?? Assembly.GetExecutingAssembly();
             if (!string.IsNullOrEmpty(caCertPath))
@@ -265,6 +269,7 @@ namespace PsdzRpcClient
             }
 
             _keepAliveCts?.Cancel();
+            _clientCts?.Cancel();
             ClientConnected?.Invoke(this, false);
         }
 
@@ -300,9 +305,13 @@ namespace PsdzRpcClient
 
         public void Dispose()
         {
-            _keepAliveCts?.Cancel(); // Loop abbrechen
+            _keepAliveCts?.Cancel();
             _keepAliveCts?.Dispose();
             _keepAliveCts = null;
+
+            _clientCts?.Cancel();
+            _clientCts?.Dispose();
+            _clientCts = null;
 
             _jsonRpc?.Dispose();
             _jsonRpc = null;
