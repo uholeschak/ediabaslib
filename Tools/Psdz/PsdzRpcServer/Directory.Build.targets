@@ -18,4 +18,13 @@
         <Exec Command="&quot;$(CodegenCsExe)&quot; template run &quot;$(MSBuildProjectDirectory)\User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;$(CodegenOutputDir)&quot;" 
               WorkingDirectory="$(MSBuildProjectDirectory)" />
     </Target>
+
+    <Target Name="CleanPublishDir"
+            BeforeTargets="PrepareForPublish"
+            Condition="'$(PublishDir)' != '' AND '$(DeployOnBuild)' != 'false'">
+        <Message Importance="High" Text="Cleaning publish directory: $(PublishDir)" />
+        <RemoveDir Directories="$(PublishDir)" />
+        <MakeDir Directories="$(PublishDir)" />
+        <Message Importance="High" Text="Publish directory cleaned." />
+    </Target>
 </Project>
