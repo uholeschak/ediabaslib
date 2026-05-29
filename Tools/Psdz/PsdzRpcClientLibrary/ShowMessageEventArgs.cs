@@ -29,15 +29,30 @@ namespace PsdzRpcClient
         }
 
         /// <summary>
-        /// Blockiert bis <see cref="SetResult"/> aufgerufen wird.
+        /// Blockiert bis <see cref="SetResult"/> aufgerufen wird, oder Abbruch/Timeout.
+        /// Gibt <c>false</c> zurück wenn abgebrochen oder Timeout.
         /// </summary>
-        internal bool WaitForResult()
+        internal bool WaitForResult(CancellationToken ct = default, int timeoutMs = Timeout.Infinite)
         {
             if (_completionEvent != null)
             {
-                _completionEvent.Wait();
-                _completionEvent.Dispose();
-                _completionEvent = null;
+                try
+                {
+                    bool signaled = _completionEvent.Wait(timeoutMs, ct);
+                    if (!signaled)
+                    {
+                        Result = false; // Timeout
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Result = false;
+                }
+                finally
+                {
+                    _completionEvent.Dispose();
+                    _completionEvent = null;
+                }
             }
             return Result;
         }
