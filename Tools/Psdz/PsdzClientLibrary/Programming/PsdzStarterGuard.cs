@@ -14,14 +14,12 @@ namespace PsdzClient.Programming
 
         private PsdzStarterGuard()
         {
-            //[+] _isExecutable = CheckIsExecutable();
-            _isExecutable = CheckIsExecutable();
         }
 
         public bool IsInitializationAlreadyAttempted()
         {
-            //[+] if (!_isExecutable)
-            if (!_isExecutable)
+            //[+] if (ConfigSettings.GetActivateSdpOnlinePatch())
+            if (ConfigSettings.GetActivateSdpOnlinePatch())
             //[+] {
             {
                 //[+] Log.Info(Log.CurrentMethod(), "IsInitializationAlreadyAttempted ignoring");
@@ -77,29 +75,6 @@ namespace PsdzClient.Programming
                 Log.Info(Log.CurrentMethod(), $"Initialization result: {_isInitialized}");
                 return _isInitialized;
             }
-        }
-
-        [PreserveSource(Added = true)]
-        private bool _isExecutable;
-        [PreserveSource(Added = true)]
-        private bool CheckIsExecutable()
-        {
-            try
-            {
-                Assembly entryAssembly = Assembly.GetEntryAssembly();
-                if (entryAssembly != null)
-                {
-                    Log.Info(Log.CurrentMethod(), "IsExecutable true");
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                Log.ErrorException(Log.CurrentMethod(), "IsExecutable", e);
-            }
-
-            Log.Info(Log.CurrentMethod(), "IsExecutable false");
-            return false;
         }
     }
 }
