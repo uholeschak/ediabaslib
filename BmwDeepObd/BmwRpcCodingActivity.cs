@@ -1673,6 +1673,14 @@ namespace BmwDeepObd
                                 _instanceData.LicenseValid = connectArgs.LicenseValid;
                             }
                         }
+                        else
+                        {
+                            lock (_instanceLock)
+                            {
+                                _instanceData.Vin = null;
+                                _instanceData.LicenseValid = false;
+                            }
+                        }
 
                         await RpcClientTaskCompleted().ConfigureAwait(false);
                     }
