@@ -167,8 +167,8 @@ namespace PsdzRpcServer
                     {
                         if (!string.IsNullOrEmpty(vin) && _server != null && _server.IsVinDuplicated(vin, this))
                         {
-                            _programmingJobs.PrintDuplicateVinMessage();
                             await Task.Run(() => DisconnectVehicleTask()).ConfigureAwait(false);
+                            _programmingJobs.PrintDuplicateVinMessage();
                             result = false;
                         }
 
