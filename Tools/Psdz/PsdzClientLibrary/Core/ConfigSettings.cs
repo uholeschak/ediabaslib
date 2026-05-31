@@ -1296,14 +1296,12 @@ namespace PsdzClient.Core
 
         public static bool GetActivateSdpOnlinePatch()
         {
-            //[-] if (IsOssModeActive)
-            //[-] {
-            //[-] Log.Info(Log.CurrentMethod(), "SDP patch not enabled in AOS mode.");
-            //[-] return false;
-            //[-] }
-            //[-] return GetFeatureEnabledStatus("SdpOnlinePatchAndMultisession").IsActive;
-            //[+] return ClientContext.EnablePsdzMultiSession();
-            return ClientContext.EnablePsdzMultiSession();
+            if (IsOssModeActive)
+            {
+                Log.Info(Log.CurrentMethod(), "SDP patch not enabled in AOS mode.");
+                return false;
+            }
+            return GetFeatureEnabledStatus("SdpOnlinePatchAndMultisession").IsActive;
         }
 
         public static string GetWebEAMNextStage()
