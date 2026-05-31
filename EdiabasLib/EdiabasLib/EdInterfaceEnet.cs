@@ -1582,7 +1582,7 @@ namespace EdiabasLib
             }
         }
 
-#if NETFRAMEWORK || WINDOWS
+#if NETFRAMEWORK
         // Side-effect-free ignition (clamp 15) read for the ENET voltage bridge: queries the
         // HSFZ control channel like IgnitionVoltage, but never sets an error and returns null
         // when the state cannot be determined. Uses a local buffer because the publisher runs
