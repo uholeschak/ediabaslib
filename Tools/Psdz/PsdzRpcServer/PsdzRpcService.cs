@@ -5,7 +5,6 @@ using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -163,9 +162,17 @@ namespace PsdzRpcServer
                 {
                     bool result = TaskCompletedSuccessfully(task) && task.Result;
                     string vin = GetActiveVin();
-                    if (result && _licenseCheck != null)
+
+                    try
                     {
-                        try
+                        if (!string.IsNullOrEmpty(vin) && _server != null && _server.IsVinDuplicated(vin, this))
+                        {
+                            _programmingJobs.PrintDuplicateVinMessage();
+                            await Task.Run(() => DisconnectVehicleTask()).ConfigureAwait(false);
+                            result = false;
+                        }
+
+                        if (result && _licenseCheck != null)
                         {
                             PsdzRpcAppInfo appInfo = await Task.Run(() => _callback.OnGetAppInfo()).ConfigureAwait(false);
                             if (appInfo != null && !string.IsNullOrEmpty(appInfo.AppId))
@@ -189,11 +196,12 @@ namespace PsdzRpcServer
                                 }
                             }
                         }
-                        catch (Exception)
-                        {
-                            result = false;
-                        }
                     }
+                    catch (Exception)
+                    {
+                        result = false;
+                    }
+
                     await Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin, _programmingJobs.LicenseValid)).ConfigureAwait(false);
                 }
                 finally
