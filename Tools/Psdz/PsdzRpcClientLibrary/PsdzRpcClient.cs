@@ -99,17 +99,21 @@ namespace PsdzRpcClient
         }
 
         /// <summary>Verbindet via TCP (kein automatischer Serverstart erforderlich).</summary>
-        public async Task<bool> ConnectTcpAsync(string host, int port, SynchronizationContext synchronizationContext, CancellationToken ct, int timeoutSeconds = 10)
+        public async Task<bool> ConnectTcpAsync(string host, int port, bool enableIpv6, SynchronizationContext synchronizationContext, CancellationToken ct, int timeoutSeconds = 10)
         {
             try
             {
                 string hostName = string.IsNullOrEmpty(host) ? PsdzRpcServiceConstants.Localhost : host;
-#if false
-                _tcpClient = new TcpClient(AddressFamily.InterNetworkV6);
-                _tcpClient.Client.DualMode = true; // IPv4 + IPv6 über einen Socket
-#else
-                _tcpClient = new TcpClient(AddressFamily.InterNetwork);
-#endif
+                if (enableIpv6)
+                {
+                    _tcpClient = new TcpClient(AddressFamily.InterNetworkV6);
+                    _tcpClient.Client.DualMode = true; // IPv4 + IPv6 über einen Socket
+                }
+                else
+                {
+                    _tcpClient = new TcpClient(AddressFamily.InterNetwork);
+                }
+
                 _tcpClient.NoDelay = true;
                 _tcpClient.SendBufferSize = 65536;
                 _tcpClient.ReceiveBufferSize = 65536;

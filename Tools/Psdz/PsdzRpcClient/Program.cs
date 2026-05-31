@@ -483,7 +483,7 @@ namespace PsdzRpcClient
 
                 if (tcpPort.HasValue)
                 {
-                    bool connected = await client.ConnectTcpAsync(tcpHost, tcpPort.Value, null, cts.Token).ConfigureAwait(false);
+                    bool connected = await client.ConnectTcpAsync(tcpHost, tcpPort.Value, true, null, cts.Token).ConfigureAwait(false);
                     if (!connected)
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
