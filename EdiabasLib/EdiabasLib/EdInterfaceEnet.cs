@@ -1582,6 +1582,65 @@ namespace EdiabasLib
             }
         }
 
+#if NETFRAMEWORK
+        // Side-effect-free ignition (clamp 15) read for the ENET voltage bridge: queries the
+        // HSFZ control channel like IgnitionVoltage, but never sets an error and returns null
+        // when the state cannot be determined. Uses a local buffer because the publisher runs
+        // on its own timer thread and must not touch the shared RecBuffer.
+        private bool? ReadIgnitionForPublish()
+        {
+            try
+            {
+                if (SharedDataActive.DiagRplus)
+                {
+                    // ICOM/RPLUS: ignition is read over the diagnostic (NMP) channel; do not
+                    // poll it passively to avoid interfering with the diagnostic session.
+                    return null;
+                }
+                if (IsSimulationMode())
+                {
+                    return null;
+                }
+                if (!Connected)
+                {
+                    return null;
+                }
+
+                lock (SharedDataActive.TcpControlTimerLock)
+                {
+                    TcpControlTimerStop(SharedDataActive);
+                }
+                if (!TcpControlConnect())
+                {
+                    return null;
+                }
+                try
+                {
+                    byte[] recBuffer = new byte[7];
+                    WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
+                    int recLen = SharedDataActive.TcpControlStream.ReadBytesAsync(recBuffer, 0, 7, SharedDataActive.TransmitCancelEvent, 1000);
+                    if (recLen < 7)
+                    {
+                        return null;
+                    }
+                    if (recBuffer[5] != 0x10)
+                    {   // no clamp state response
+                        return null;
+                    }
+                    return (recBuffer[6] & 0x0C) == 0x04; // ignition on
+                }
+                finally
+                {
+                    TcpControlTimerStart(SharedDataActive);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+#endif
+
         public override int? AdapterVersion
         {
             get
@@ -1752,6 +1811,11 @@ namespace EdiabasLib
             {
                 return true;
             }
+
+#if NETFRAMEWORK
+            // ENET voltage bridge: passive publication of the clamp state (ignition via the HSFZ control channel).
+            EdiabasVoltagePublisher.Start(() => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+#endif
 
             return InterfaceConnect(false);
         }
@@ -2294,6 +2358,10 @@ namespace EdiabasLib
 
         public override bool InterfaceDisconnect()
         {
+#if NETFRAMEWORK
+            EdiabasVoltagePublisher.Stop();
+#endif
+
             if (!base.InterfaceDisconnect())
             {
                 return false;
