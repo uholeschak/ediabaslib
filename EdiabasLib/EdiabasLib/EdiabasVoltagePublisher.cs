@@ -1,4 +1,4 @@
-#if NETFRAMEWORK || WINDOWS
+#if NETFRAMEWORK
 using System;
 using System.IO.MemoryMappedFiles;
 using System.Threading;

@@ -1360,7 +1360,7 @@ namespace EdiabasLib
                 return true;
             }
 
-#if NETFRAMEWORK || WINDOWS
+#if NETFRAMEWORK
             // OBD voltage bridge: passive publication of the clamp state (ignition via DSR).
             EdiabasVoltagePublisher.Start(() => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
 #endif
@@ -1553,7 +1553,7 @@ namespace EdiabasLib
         {
             StopCommThread();
 
-#if NETFRAMEWORK || WINDOWS
+#if NETFRAMEWORK
             EdiabasVoltagePublisher.Stop();
 #endif
 
