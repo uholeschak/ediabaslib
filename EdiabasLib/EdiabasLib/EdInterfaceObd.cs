@@ -1360,6 +1360,11 @@ namespace EdiabasLib
                 return true;
             }
 
+#if NETFRAMEWORK || WINDOWS
+            // OBD voltage bridge: passive publication of the clamp state (ignition via DSR).
+            EdiabasVoltagePublisher.Start(() => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+#endif
+
             if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
                 EdBluetoothInterface.Ediabas = Ediabas;
@@ -1547,6 +1552,10 @@ namespace EdiabasLib
         public override bool InterfaceDisconnect()
         {
             StopCommThread();
+
+#if NETFRAMEWORK || WINDOWS
+            EdiabasVoltagePublisher.Stop();
+#endif
 
             if (!base.InterfaceDisconnect())
             {
@@ -2821,6 +2830,44 @@ namespace EdiabasLib
             }
             return dsrState;
         }
+
+#if NETFRAMEWORK || WINDOWS
+        // Side-effect-free DSR read (no SetError) for the OBD voltage bridge.
+        // Returns null if the state cannot be read. No traffic on the bus.
+        private bool? ReadDsrForPublish()
+        {
+            try
+            {
+                if (IsSimulationMode())
+                {
+                    return null;
+                }
+                if (!UseExtInterfaceFunc)
+                {
+#if USE_SERIAL_PORT
+                    if (SerialPort == null || !SerialPort.IsOpen)
+                    {
+                        return null;
+                    }
+                    return SerialPort.DsrHolding;
+#else
+                    return null;
+#endif
+                }
+                InterfaceGetDsrDelegate f = InterfaceGetDsrFuncUse;
+                bool dsrStatePub;
+                if (f != null && f(out dsrStatePub))
+                {
+                    return dsrStatePub;
+                }
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+#endif
 
 #if USE_SERIAL_PORT
         private static void SerialDataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
