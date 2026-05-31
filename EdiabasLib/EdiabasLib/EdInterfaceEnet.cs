@@ -1813,8 +1813,8 @@ namespace EdiabasLib
             }
 
 #if NETFRAMEWORK
-            // ENET voltage bridge: passive publication of the clamp state (ignition via the HSFZ control channel).
-            EdiabasVoltagePublisher.Start(() => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            // ENET voltage bridge: passive sampling of the clamp state (ignition via the HSFZ control channel).
+            EdiabasVoltageSampler.Start(RemoteHostProtected, () => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
 #endif
 
             return InterfaceConnect(false);
@@ -2359,7 +2359,7 @@ namespace EdiabasLib
         public override bool InterfaceDisconnect()
         {
 #if NETFRAMEWORK
-            EdiabasVoltagePublisher.Stop();
+            EdiabasVoltageSampler.Stop(RemoteHostProtected);
 #endif
 
             if (!base.InterfaceDisconnect())
