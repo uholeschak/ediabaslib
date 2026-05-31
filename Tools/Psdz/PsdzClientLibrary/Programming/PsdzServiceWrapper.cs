@@ -61,7 +61,7 @@ namespace BMW.Rheingold.Programming
             psdzServiceHostLogDir = psdzConfig.PsdzServiceHostLogDir;
             psdzServiceHostLogFilePath = psdzConfig.PsdzServiceHostLogFilePath;
             psdzLogFilePath = psdzConfig.PsdzLogFilePath;
-            if (ConfigSettings.GetActivateSdpOnlinePatch())
+            if (ClientContext.EnablePsdzMultiSession())
             {
                 psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath, Process.GetCurrentProcess().Id);
             }
@@ -78,7 +78,7 @@ namespace BMW.Rheingold.Programming
             {
                 if (PsdzStarterGuard.Instance.CanCheckAvailability())
                 {
-                    if (!ConfigSettings.GetActivateSdpOnlinePatch())
+                    if (!ClientContext.EnablePsdzMultiSession())
                     {
                         return PsdzServiceStarter.IsServerInstanceRunning();
                     }
@@ -218,7 +218,7 @@ namespace BMW.Rheingold.Programming
                 }
                 Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Initialize PSdZ ...");
                 PsdzServiceStarter psdzServiceStarter = new PsdzServiceStarter(psdzHostPath, psdzServiceHostLogDir, psdzServiceArgs);
-                PsdzServiceStartResult psdzServiceStartResult = (ConfigSettings.GetActivateSdpOnlinePatch() ? psdzServiceStarter.StartIfNotRunning(Process.GetCurrentProcess().Id) : psdzServiceStarter.StartIfNotRunning());
+                PsdzServiceStartResult psdzServiceStartResult = (ClientContext.EnablePsdzMultiSession() ? psdzServiceStarter.StartIfNotRunning(Process.GetCurrentProcess().Id) : psdzServiceStarter.StartIfNotRunning());
                 Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Result: {0}", psdzServiceStartResult);
                 switch (psdzServiceStartResult)
                 {

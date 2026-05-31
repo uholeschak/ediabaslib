@@ -37,8 +37,8 @@ namespace BMW.Rheingold.Psdz
             {
                 List<SessionData> list = ReadSessionsFromFile(lockFileStream);
                 //[-]SessionData sessionData = (ConfigSettings.GetActivateSdpOnlinePatch() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(process.Id)) : list.FirstOrDefault());
-                //[+]SessionData sessionData = (ConfigSettings.GetActivateSdpOnlinePatch() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(processId)) : list.FirstOrDefault());
-                SessionData sessionData = (ConfigSettings.GetActivateSdpOnlinePatch() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(processId)) : list.FirstOrDefault());
+                //[+]SessionData sessionData = (ClientContext.EnablePsdzMultiSession() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(processId)) : list.FirstOrDefault());
+                SessionData sessionData = (ClientContext.EnablePsdzMultiSession() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(processId)) : list.FirstOrDefault());
                 if (sessionData == null)
                 {
                     Log.Debug(Log.CurrentMethod(), "No appropriate session was found, so creating a new one.");
