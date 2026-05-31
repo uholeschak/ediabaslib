@@ -37,6 +37,7 @@ namespace BmwDeepObd
             {
                 CodingRpcUrl = string.Empty;
                 CodingRpcUrlTest = string.Empty;
+                CodingRpcEnableIpv6 = false;
                 DayString = string.Empty;
                 ValidSerial = string.Empty;
                 Vin = string.Empty;
@@ -51,6 +52,7 @@ namespace BmwDeepObd
 
             public string CodingRpcUrl { get; set; }
             public string CodingRpcUrlTest { get; set; }
+            public bool CodingRpcEnableIpv6 { get; set; }
             public string DayString { get; set; }
             public string ValidSerial { get; set; }
             public string Vin { get; set; }
@@ -64,7 +66,7 @@ namespace BmwDeepObd
         }
 
         public delegate void AcceptDelegate(bool accepted);
-        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, string message = null, string dayString = null, string validSerial = null);
+        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, bool enableIpv6 = false, string message = null, string dayString = null, string validSerial = null);
 
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
@@ -797,7 +799,7 @@ namespace BmwDeepObd
                         }
 
                         ignoreDismiss = true;
-                        bool infoResult = GetConnectionInfo((success, cancelled, url, urlTest, message, dayString, validSerial) =>
+                        bool infoResult = GetConnectionInfo((success, cancelled, url, urlTest, enableIpv6, message, dayString, validSerial) =>
                         {
                             RunOnUiThread(() =>
                             {
@@ -817,6 +819,7 @@ namespace BmwDeepObd
                                     {
                                         _instanceData.CodingRpcUrl = url;
                                         _instanceData.CodingRpcUrlTest = urlTest;
+                                        _instanceData.CodingRpcEnableIpv6 = enableIpv6;
                                         _instanceData.DayString = dayString;
                                         _instanceData.ValidSerial = validSerial;
                                     }
@@ -921,7 +924,7 @@ namespace BmwDeepObd
                 if (_activityCommon.MtcBtService)
                 {
                     string message = GetString(Resource.String.bmw_coding_mtc_reject);
-                    handler.Invoke(false, false, null, null, message);
+                    handler.Invoke(false, false, null, null, false, message);
                     return true;
                 }
             }
@@ -929,7 +932,7 @@ namespace BmwDeepObd
             if (_activityCommon.IsElmDevice(_deviceAddress))
             {
                 string message = GetString(Resource.String.bmw_coding_elm_reject);
-                handler.Invoke(false, false, null, null, message);
+                handler.Invoke(false, false, null, null, false, message);
                 return true;
             }
 
@@ -998,8 +1001,8 @@ namespace BmwDeepObd
                     HttpResponseMessage responseUpload = taskDownload.Result;
                     responseUpload.EnsureSuccessStatusCode();
                     string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
-                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out string message, out string dayString, out string validSerial);
-                    handler?.Invoke(success, false, codingUrl, codingUrlTest, message, dayString, validSerial);
+                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out bool enableIpv6, out string message, out string dayString, out string validSerial);
+                    handler?.Invoke(success, false, codingUrl, codingUrlTest, enableIpv6, message, dayString, validSerial);
 
                     if (progress != null)
                     {
@@ -1034,10 +1037,11 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out string message, out string dayString, out string validSerial)
+        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out bool enableIpv6, out string message, out string dayString, out string validSerial)
         {
             codingUrl = null;
             codingUrlTest = null;
+            enableIpv6 = false;
             message = null;
             dayString = null;
             validSerial = null;
@@ -1070,6 +1074,12 @@ namespace BmwDeepObd
                     if (urlTestAttr != null && !string.IsNullOrEmpty(urlTestAttr.Value))
                     {
                         codingUrlTest = urlTestAttr.Value;
+                    }
+
+                    XAttribute enableIpv6Attr = infoNode.Attribute("rpc_enable_ipv6");
+                    if (enableIpv6Attr != null && !string.IsNullOrEmpty(enableIpv6Attr.Value))
+                    {
+                        enableIpv6 = XmlConvert.ToBoolean(enableIpv6Attr.Value);
                     }
 
                     XAttribute messageAttr = infoNode.Attribute("message");
@@ -2190,6 +2200,7 @@ namespace BmwDeepObd
                 }
 
                 string loadUrl;
+                bool enableIpV6 = false;
                 lock (_instanceLock)
                 {
                     if (string.IsNullOrEmpty(_instanceData.Url))
@@ -2215,6 +2226,7 @@ namespace BmwDeepObd
                     }
 
                     loadUrl = _instanceData.Url;
+                    enableIpV6 = _instanceData.CodingRpcEnableIpv6;
                 }
 
                 if (string.IsNullOrEmpty(loadUrl))
@@ -2237,7 +2249,7 @@ namespace BmwDeepObd
 
                 string remoteHost = loadUri.Host;
                 int remotePort = loadUri.Port > 0 ? loadUri.Port : PsdzRpcServiceConstants.DefaultTcpPort;
-                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, false, null, _startCts.Token).ConfigureAwait(false);
+                bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, enableIpV6, null, _startCts.Token).ConfigureAwait(false);
                 if (!connected)
                 {
                     _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
