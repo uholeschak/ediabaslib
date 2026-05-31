@@ -18,8 +18,8 @@ namespace PsdzClient.Programming
 
         public bool IsInitializationAlreadyAttempted()
         {
-            //[+] if (ConfigSettings.GetActivateSdpOnlinePatch())
-            if (ConfigSettings.GetActivateSdpOnlinePatch())
+            //[+] if (ClientContext.EnablePsdzMultiSession())
+            if (ClientContext.EnablePsdzMultiSession())
             //[+] {
             {
                 //[+] Log.Info(Log.CurrentMethod(), "IsInitializationAlreadyAttempted ignoring");

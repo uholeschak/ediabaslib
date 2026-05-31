@@ -125,8 +125,8 @@ namespace PsdzClient.Programming
             if (_psdzServiceHostWrapper != null)
             //[+] {
             {
-                //[+] if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
-                if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
+                //[+] if (ClientContext.EnablePsdzMultiSession() || _psdzServiceHostStarter == null)
+                if (ClientContext.EnablePsdzMultiSession() || _psdzServiceHostStarter == null)
                 //[+] {
                 {
                     //[+] started = PsdzStarterGuard.Instance.TryInitialize(delegate
@@ -189,8 +189,8 @@ namespace PsdzClient.Programming
                 if (_psdzServiceHostWrapper != null)
                 //[+] {
                 {
-                    //[+] if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
-                    if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
+                    //[+] if (ClientContext.EnablePsdzMultiSession() || force)
+                    if (ClientContext.EnablePsdzMultiSession() || force)
                     //[+] {
                     {
                         //[+] _psdzServiceHostWrapper.Shutdown();

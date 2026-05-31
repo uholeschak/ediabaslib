@@ -517,7 +517,7 @@ namespace PsdzClient.Programming
                 }
                 else
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ConfigSettings.GetActivateSdpOnlinePatch());
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ClientContext.EnablePsdzMultiSession());
                     ProgrammingService = new ProgrammingService2(istaFolder, _dealerId);
                     ProgrammingService.PsdzDatabase.AllowDbGeneration = AllowDbGeneration;
                     if (!EdiabasNet.IsDirectoryWritable(ProgrammingService.BackupDataPath))
