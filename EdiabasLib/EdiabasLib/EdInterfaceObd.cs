@@ -1361,8 +1361,8 @@ namespace EdiabasLib
             }
 
 #if NETFRAMEWORK
-            // OBD voltage bridge: passive publication of the clamp state (ignition via DSR).
-            EdiabasVoltagePublisher.Start(() => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            // OBD voltage bridge: passive sampling of the clamp state (ignition via DSR).
+            EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
 #endif
 
             if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
@@ -1554,7 +1554,7 @@ namespace EdiabasLib
             StopCommThread();
 
 #if NETFRAMEWORK
-            EdiabasVoltagePublisher.Stop();
+            EdiabasVoltageSampler.Stop(ComPortProtected);
 #endif
 
             if (!base.InterfaceDisconnect())
