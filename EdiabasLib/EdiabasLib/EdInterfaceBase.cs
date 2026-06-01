@@ -704,6 +704,17 @@ namespace EdiabasLib
             get { return "IFH-STD Version 7.6.0"; }
         }
 
+#if NETFRAMEWORK
+        // Strictly passive hook: invoked by EdiabasNet at the end of a user ExecuteJob with the
+        // job name, its string arguments, and the result sets it just produced. Default no-op.
+        // Concrete interfaces may opportunistically surface side-information (e.g. clamp state from
+        // an observed STEUERN_KLEMMEN command) WITHOUT generating any extra bus traffic. Must never
+        // throw and must never touch interface I/O.
+        public virtual void OnJobCompleted(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+        }
+#endif
+
         public abstract byte[] KeyBytes { get; }
 
         public abstract byte[] State { get; }

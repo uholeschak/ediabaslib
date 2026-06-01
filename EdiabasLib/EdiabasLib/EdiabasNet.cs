@@ -5728,6 +5728,15 @@ namespace EdiabasLib
             }
             finally
             {
+#if NETFRAMEWORK
+                // Passive, never-throwing post-job hook (ENET snoops STEUERN_KLEMMEN / STEUERN_ROUTINE
+                // to mirror ISTA's KLwechsel commands to the voltage bridge - no extra bus traffic).
+                // Capture args BEFORE the BinData reset below so the hook still sees them.
+                List<string> capturedArgStrings = null;
+                try { capturedArgStrings = GetActiveArgStrings(); } catch { }
+                try { EdInterfaceClass?.OnJobCompleted(jobName, capturedArgStrings, ResultSets); }
+                catch { }
+#endif
                 _argInfo.BinData = null;
                 _argInfoStd.BinData = null;
                 _jobStd = false;

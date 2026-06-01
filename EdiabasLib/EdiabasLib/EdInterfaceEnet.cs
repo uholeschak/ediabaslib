@@ -1560,10 +1560,9 @@ namespace EdiabasLib
             }
         }
 
-        // Serialized HSFZ control-channel ignition (clamp 15) read shared by the public
-        // IgnitionVoltage getter and the voltage sampler's ReadIgnitionForPublish. The whole
-        // connect/write/read transaction runs under TcpControlReadLock so a background sampler
-        // read on the timer thread cannot interleave with a foreground read on TcpControlStream.
+        // Serialized HSFZ control-channel ignition (clamp 15) read used by the public
+        // IgnitionVoltage getter. The whole connect/write/read transaction runs under
+        // TcpControlReadLock so concurrent reads cannot interleave on TcpControlStream.
         // Uses a local buffer (never the shared RecBuffer).
         //   return: true = ignition on, false = off, null = could not determine
         //   errorCode: EDIABAS_ERR_NONE on a clean read; EDIABAS_IFH_0003 on a transaction failure
@@ -1611,26 +1610,101 @@ namespace EdiabasLib
         }
 
 #if NETFRAMEWORK
-        // Side-effect-free ignition (clamp 15) read for the ENET voltage bridge: shares the
-        // serialized control-channel transaction with IgnitionVoltage, but never sets an error
-        // and returns null when the state cannot be determined.
-        private bool? ReadIgnitionForPublish()
+        // ENET clamp following is command-snoop based, NOT a live read: the vehicle exposes no KL15
+        // over the diagnostic bus (on a genuine setup it is an ICOM/SLP hardware signal, cf. ISTA
+        // VCIDevice.GetClamp15 <- SLP advertisement). So instead of polling the control channel
+        // (unreliable: it is never queried for ignition and the connection churns), we passively
+        // mirror ISTA's own explicit clamp-control commands as they cross the wire. Invoked by
+        // EdiabasNet at the end of each user ExecuteJob - no extra bus traffic, no thread, no I/O.
+        // Recognized commands (observed in live ISTA traces):
+        //   * STEUERN_KLEMMEN arg KL15_EIN                 -> KL15 on  (restore)
+        //   * STEUERN_KLEMMEN arg KL30B_EIN / KL15_AUS     -> KL15 off (service / KLwechsel)
+        //   * STEUERN_ROUTINE arg STEUERN_KL15_ABSCHALTUNG -> KL15 off (post-DTC-clear cycle)
+        // Every other job leaves the held state untouched. We deliberately do NOT infer "on" from
+        // arbitrary successful jobs (that masks a real off within milliseconds) and never read fault
+        // freeze-frames (their KLEMMEN fields are historical, not the live state). The consumer
+        // holds the last state and restores ON on KL15_EIN (or via its own safety timeout).
+        public override void OnJobCompleted(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
-            if (SharedDataActive.DiagRplus)
+            if (!EnableVoltageSamplerProtected)
+            {   // EnetEnableVoltageSampler=0: do not feed the bridge at all
+                return;
+            }
+            if (!EdiabasVoltageBridge.HasSink || string.IsNullOrEmpty(jobName))
             {
-                // ICOM/RPLUS: ignition is read over the diagnostic (NMP) channel; do not
-                // poll it passively to avoid interfering with the diagnostic session.
+                return;
+            }
+            // An explicit command takes priority (immediate reaction); otherwise an authoritative
+            // STATUS_KLEMMEN read gives the live state, including the session-start baseline.
+            bool? clampOn = InferClampFromCommand(jobName, argStrings)
+                            ?? InferClampFromStatus(jobName, argStrings, resultSets);
+            if (!clampOn.HasValue)
+            {   // neither a clamp command nor a clamp status read: hold the last published state
+                return;
+            }
+            EdiabasVoltageBridge.Sample(true, clampOn, IgnitionVoltageValue, BatteryVoltageValue, RemoteHostProtected);
+        }
+
+        private static bool? InferClampFromCommand(string jobName, List<string> argStrings)
+        {
+            if (string.Equals(jobName, "STEUERN_KLEMMEN", StringComparison.OrdinalIgnoreCase))
+            {
+                if (ArgContains(argStrings, "KL15_EIN")) return true;
+                if (ArgContains(argStrings, "KL30B_EIN")) return false;
+                if (ArgContains(argStrings, "KL15_AUS")) return false;
+            }
+            if (string.Equals(jobName, "STEUERN_ROUTINE", StringComparison.OrdinalIgnoreCase))
+            {
+                if (ArgContains(argStrings, "STEUERN_KL15_ABSCHALTUNG")) return false;
+            }
+            return null;
+        }
+
+        // Live clamp state from the targeted STATUS_LESEN / STATUS_KLEMMEN read (BDC/CAS). The result
+        // STAT_KLEMMENSTATUS_TEXT is the decoded table entry: "KL15" => clamp on, "KL30B" => off.
+        // We decode by text (a code, not a bit field: 0x0A=KL15, 0x06=KL30B, so a & 0x01 test is
+        // wrong). Strictly scoped to this job+arg so it never reads a fault freeze-frame's KLEMMEN
+        // field (which is historical, not the live state).
+        private static bool? InferClampFromStatus(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            if (!string.Equals(jobName, "STATUS_LESEN", StringComparison.OrdinalIgnoreCase))
+            {
                 return null;
             }
-            if (IsSimulationMode())
+            if (!ArgContains(argStrings, "STATUS_KLEMMEN") || resultSets == null)
             {
                 return null;
             }
-            if (!Connected)
+            for (int i = 1; i < resultSets.Count; i++)
             {
-                return null;
+                Dictionary<string, EdiabasNet.ResultData> set = resultSets[i];
+                if (set == null)
+                {
+                    continue;
+                }
+                if (set.TryGetValue("STAT_KLEMMENSTATUS_TEXT", out EdiabasNet.ResultData rd) && rd?.OpData is string text)
+                {
+                    if (text.StartsWith("KL15", StringComparison.OrdinalIgnoreCase)) return true;
+                    if (text.StartsWith("KL30", StringComparison.OrdinalIgnoreCase)) return false;
+                }
             }
-            return ReadIgnitionControlState(out _);
+            return null;
+        }
+
+        private static bool ArgContains(List<string> argStrings, string needle)
+        {
+            if (argStrings == null)
+            {
+                return false;
+            }
+            for (int i = 0; i < argStrings.Count; i++)
+            {
+                if (string.Equals(argStrings[i], needle, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 #endif
 
@@ -1808,7 +1882,10 @@ namespace EdiabasLib
 #if NETFRAMEWORK
             if (EnableVoltageSampler)
             {
-                EdiabasVoltageSampler.Start(RemoteHostProtected, () => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+                // No timer/control-channel poll for ENET (no reliable live KL15 - see OnJobCompleted).
+                // Publish a default ON snapshot so the consumer shows the nominal immediately;
+                // OnJobCompleted then mirrors ISTA's explicit KLwechsel commands.
+                EdiabasVoltageBridge.Sample(true, true, IgnitionVoltageValue, BatteryVoltageValue, RemoteHostProtected);
             }
 #endif
             return InterfaceConnect(false);
@@ -2355,7 +2432,7 @@ namespace EdiabasLib
 #if NETFRAMEWORK
             if (EnableVoltageSampler)
             {
-                EdiabasVoltageSampler.Stop(RemoteHostProtected);
+                EdiabasVoltageBridge.Detached(RemoteHostProtected);
             }
 #endif
             if (!base.InterfaceDisconnect())
