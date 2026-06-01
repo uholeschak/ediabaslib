@@ -1142,7 +1142,7 @@ namespace EdiabasLib
                     KeepIcomAllocated = EdiabasNet.StringToValue(prop) != 0;
                 }
 
-                prop = EdiabasProtected?.GetConfigProperty("EnetVoltageSampler");
+                prop = EdiabasProtected?.GetConfigProperty("EnetEnableVoltageSampler");
                 if (!string.IsNullOrEmpty(prop))
                 {
                     EnableVoltageSampler = EdiabasNet.StringToValue(prop) != 0;
