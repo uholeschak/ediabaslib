@@ -2824,49 +2824,13 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncUse != null;
         }
 
-        protected bool GetDsrState()
-        {
-            if (!UseExtInterfaceFunc)
-            {
-#if USE_SERIAL_PORT
-                try
-                {
-                    if (!SerialPort.IsOpen)
-                    {
-                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
-                        return false;
-                    }
-                    return SerialPort.DsrHolding;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-#else
-                return false;
-#endif
-            }
-
-            bool dsrState;
-            if (!InterfaceGetDsrFuncUse(out dsrState))
-            {
-                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
-                return false;
-            }
-            return dsrState;
-        }
-
-#if NETFRAMEWORK || WINDOWS
-        // Side-effect-free DSR read (no SetError) for the OBD voltage bridge.
-        // Returns null if the state cannot be read. No traffic on the bus.
-        private bool? ReadDsrForPublish()
+        // Raw DSR line read with no side effects (no SetError, no bus traffic): true/false = line
+        // state, null = cannot read. Shared by GetDsrState (public, maps null -> IFH_0019) and
+        // ReadDsrForPublish (voltage bridge, maps null -> unknown).
+        private bool? ReadDsrRaw()
         {
             try
             {
-                if (IsSimulationMode())
-                {
-                    return null;
-                }
                 if (!UseExtInterfaceFunc)
                 {
 #if USE_SERIAL_PORT
@@ -2880,17 +2844,40 @@ namespace EdiabasLib
 #endif
                 }
                 InterfaceGetDsrDelegate f = InterfaceGetDsrFuncUse;
-                bool dsrStatePub;
-                if (f != null && f(out dsrStatePub))
+                bool dsrState;
+                if (f != null && f(out dsrState))
                 {
-                    return dsrStatePub;
+                    return dsrState;
                 }
                 return null;
             }
-            catch
+            catch (Exception)
             {
                 return null;
             }
+        }
+
+        protected bool GetDsrState()
+        {
+            bool? dsrState = ReadDsrRaw();
+            if (dsrState.HasValue)
+            {
+                return dsrState.Value;
+            }
+            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
+            return false;
+        }
+
+#if NETFRAMEWORK || WINDOWS
+        // Side-effect-free DSR read (no SetError) for the OBD voltage bridge.
+        // Returns null if the state cannot be read. No traffic on the bus.
+        private bool? ReadDsrForPublish()
+        {
+            if (IsSimulationMode())
+            {
+                return null;
+            }
+            return ReadDsrRaw();
         }
 #endif
 
