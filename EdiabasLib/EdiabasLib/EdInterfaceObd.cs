@@ -129,8 +129,9 @@ namespace EdiabasLib
         protected bool EnableVoltageSamplerProtected = false;
         // Snapshot of the last DSR read performed on the CommThread for the voltage bridge.
         // 0 = unknown, 1 = asserted (true), 2 = deasserted (false). Interlocked to avoid a lock
-        // on the timer-thread read path.
-        protected int SampledDsrState;
+        // on the timer-thread read path. Static so the last known value survives the per-
+        // reconnect EdInterfaceObd instance churn driven by ISTA (ECUKom.End/InitVCI).
+        protected static int SampledDsrState;
         protected List<int> DisabledConceptsListProtected = null;
         protected double DtrTimeCorrCom = 0.3;
         protected double DtrTimeCorrFtdi = 0.3;
