@@ -62,6 +62,7 @@ namespace EdiabasLib
             SingleTransmit,     // single data transmission
             FrequentMode,       // frequent mode setting
             IdleTransmit,       // idle data transmission
+            SampleClamp,        // out-of-band passive DSR read for the voltage bridge
             Exit,               // exit thread
         }
 
@@ -126,6 +127,10 @@ namespace EdiabasLib
         protected int UdsEcuCanIdOverrideProtected = -1;
         protected int UdsTesterCanIdOverrideProtected = -1;
         protected bool EnableVoltageSamplerProtected = false;
+        // Snapshot of the last DSR read performed on the CommThread for the voltage bridge.
+        // 0 = unknown, 1 = asserted (true), 2 = deasserted (false). Interlocked to avoid a lock
+        // on the timer-thread read path.
+        protected int SampledDsrState;
         protected List<int> DisabledConceptsListProtected = null;
         protected double DtrTimeCorrCom = 0.3;
         protected double DtrTimeCorrFtdi = 0.3;
@@ -1369,18 +1374,15 @@ namespace EdiabasLib
 
 #if NETFRAMEWORK
             // OBD voltage bridge: passive sampling of the clamp state (ignition via DSR).
-            // Gated to raw COM only: on extension interfaces (BT/USB/ELM) the InterfaceGetDsr
-            // delegate may share state with the data TX/RX delegates that the CommThread uses,
-            // and the sampler runs on its own Timer thread -> race with normal communication.
-            // A future change can move the sampler read into the CommThread context (see
-            // case SampleClamp in CommThreadFunc) and lift this restriction.
-            if (EnableVoltageSampler && !UseExtInterfaceFunc)
+            // The actual DSR read is performed on the CommThread (case SampleClamp) so it never
+            // races with normal communication, even on extension interfaces (BT/USB/ELM) whose
+            // InterfaceGetDsr delegate may share state with the TX/RX delegates. The sampler's
+            // timer thread only posts a request and reads the latest snapshot (1 s of latency
+            // is acceptable for a slow-changing clamp signal).
+            if (EnableVoltageSampler)
             {
-                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
-            }
-            else if (EnableVoltageSampler)
-            {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Voltage sampler disabled on extended interface (unsafe with foreign comm thread)");
+                SampledDsrState = 0;
+                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadSampledDsr, () => IgnitionVoltageValue, () => BatteryVoltageValue, RequestDsrSample);
             }
 #endif
 
@@ -1573,7 +1575,7 @@ namespace EdiabasLib
             StopCommThread();
 
 #if NETFRAMEWORK
-            if (EnableVoltageSampler && !UseExtInterfaceFunc)
+            if (EnableVoltageSampler)
             {
                 EdiabasVoltageSampler.Stop(ComPortProtected);
             }
@@ -2880,6 +2882,7 @@ namespace EdiabasLib
 #if NETFRAMEWORK || WINDOWS
         // Side-effect-free DSR read (no SetError) for the OBD voltage bridge.
         // Returns null if the state cannot be read. No traffic on the bus.
+        // Kept for callers that don't go through the CommThread (e.g. raw probes).
         private bool? ReadDsrForPublish()
         {
             if (IsSimulationMode())
@@ -2887,6 +2890,38 @@ namespace EdiabasLib
                 return null;
             }
             return ReadDsrRaw();
+        }
+#endif
+
+#if NETFRAMEWORK
+        // Posts an out-of-band SampleClamp request onto the CommThread queue. The actual
+        // ReadDsrRaw() then runs in the CommThread context, never racing with TX/RX.
+        // Idle-only: if the CommThread is busy with a user transmission, the sample is
+        // simply skipped this tick and re-posted on the next sampler timer tick.
+        private void RequestDsrSample()
+        {
+            if (IsSimulationMode())
+            {
+                return;
+            }
+            lock (CommThreadLock)
+            {
+                if (CommThreadCommand == CommThreadCommands.Idle)
+                {
+                    CommThreadCommand = CommThreadCommands.SampleClamp;
+                }
+            }
+            CommThreadReqEvent.Set();
+        }
+
+        // Snapshot read of the latest DSR value sampled by the CommThread. Safe to call from
+        // any thread (Interlocked-published int). Returns null if no sample is available yet.
+        private bool? ReadSampledDsr()
+        {
+            int v = Interlocked.CompareExchange(ref SampledDsrState, 0, 0);
+            if (v == 1) return true;
+            if (v == 2) return false;
+            return null;
         }
 #endif
 
@@ -2998,6 +3033,24 @@ namespace EdiabasLib
                                     {
                                         CommThreadCommand = CommThreadCommands.Idle;
                                     }
+                                }
+                            }
+                            break;
+                        }
+
+                    case CommThreadCommands.SampleClamp:
+                        {
+                            // Out-of-band passive read posted by EdiabasVoltageSampler.
+                            // Runs on the CommThread so the InterfaceGetDsr delegate is never
+                            // touched concurrently with TX/RX. No SetError, no bus traffic.
+                            bool? dsr = ReadDsrRaw();
+                            int newState = dsr.HasValue ? (dsr.Value ? 1 : 2) : 0;
+                            Interlocked.Exchange(ref SampledDsrState, newState);
+                            lock (CommThreadLock)
+                            {
+                                if (CommThreadCommand == CommThreadCommands.SampleClamp)
+                                {
+                                    CommThreadCommand = CommThreadCommands.Idle;
                                 }
                             }
                             break;
