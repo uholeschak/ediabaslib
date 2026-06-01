@@ -1616,10 +1616,13 @@ namespace EdiabasLib
         // (unreliable: it is never queried for ignition and the connection churns), we passively
         // mirror ISTA's own explicit clamp-control commands as they cross the wire. Invoked by
         // EdiabasNet at the end of each user ExecuteJob - no extra bus traffic, no thread, no I/O.
-        // Recognized commands (observed in live ISTA traces):
-        //   * STEUERN_KLEMMEN arg KL15_EIN                 -> KL15 on  (restore)
-        //   * STEUERN_KLEMMEN arg KL30B_EIN / KL15_AUS     -> KL15 off (service / KLwechsel)
-        //   * STEUERN_ROUTINE arg STEUERN_KL15_ABSCHALTUNG -> KL15 off (post-DTC-clear cycle)
+        // Recognized signals (per ISTA 4.59.20 variant analysis + live traces):
+        //   * STEUERN_KLEMMEN arg KL15_EIN                       -> KL15 on  (restore)
+        //   * STEUERN_KLEMMEN arg KL30B/KL30F/..._VERK/KLR/AUS   -> KL15 off (non-ignition clamp)
+        //   * STEUERN_ROUTINE arg STEUERN_KL15_ABSCHALTUNG /     -> KL15 off (shutdown; also the
+        //       KLEMME15 fallback spelling, or routine id 0xAC51 used by CAS4_2)
+        //   * STEUERN_KL15_ABSCHALTUNG as a direct job (BN2000)  -> KL15 off
+        //   * STATUS_LESEN/STATUS_KLEMMEN STAT_KLEMMENSTATUS_TEXT -> live state + session baseline
         // Every other job leaves the held state untouched. We deliberately do NOT infer "on" from
         // arbitrary successful jobs (that masks a real off within milliseconds) and never read fault
         // freeze-frames (their KLEMMEN fields are historical, not the live state). The consumer
@@ -1647,15 +1650,31 @@ namespace EdiabasLib
 
         private static bool? InferClampFromCommand(string jobName, List<string> argStrings)
         {
+            // Direct shutdown job (BN2000 / d_cas): the routine is the job itself, not a ROUTINE arg.
+            if (string.Equals(jobName, "STEUERN_KL15_ABSCHALTUNG", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+            // Direct clamp switch. KL15_EIN = ignition on; every other target clamp (KL30B/KL30F/
+            // shortened-nachlauf VERK / KLR / explicit AUS) means KL15 off.
             if (string.Equals(jobName, "STEUERN_KLEMMEN", StringComparison.OrdinalIgnoreCase))
             {
                 if (ArgContains(argStrings, "KL15_EIN")) return true;
                 if (ArgContains(argStrings, "KL30B_EIN")) return false;
+                if (ArgContains(argStrings, "KL30F_EIN")) return false;
+                if (ArgContains(argStrings, "KL30B_EIN_VERK")) return false;
+                if (ArgContains(argStrings, "KLR_EIN")) return false;
                 if (ArgContains(argStrings, "KL15_AUS")) return false;
             }
+            // Generic UDS RoutineControl used for the KL15 shutdown across BDC/FEM/ZGW/CAS4 variants.
+            // Identified either by routine name (STEUERN_KL15_ABSCHALTUNG, or the KLEMME15 fallback
+            // spelling) or by routine id 0xAC51 (CAS4_2 uses ID;0xAC51 with no name). The STR/value
+            // suffix varies (STR;3 / STR;30) and is irrelevant here.
             if (string.Equals(jobName, "STEUERN_ROUTINE", StringComparison.OrdinalIgnoreCase))
             {
                 if (ArgContains(argStrings, "STEUERN_KL15_ABSCHALTUNG")) return false;
+                if (ArgContains(argStrings, "STEUERN_KLEMME15_ABSCHALTUNG")) return false;
+                if (ArgContains(argStrings, "0xAC51")) return false;
             }
             return null;
         }
@@ -1684,8 +1703,10 @@ namespace EdiabasLib
                 }
                 if (set.TryGetValue("STAT_KLEMMENSTATUS_TEXT", out EdiabasNet.ResultData rd) && rd?.OpData is string text)
                 {
+                    // Documented values: KL15 | KL30B[_EIN] | KL30F_EIN | KLR_EIN. Only KL15 = on.
                     if (text.StartsWith("KL15", StringComparison.OrdinalIgnoreCase)) return true;
                     if (text.StartsWith("KL30", StringComparison.OrdinalIgnoreCase)) return false;
+                    if (text.StartsWith("KLR", StringComparison.OrdinalIgnoreCase)) return false;
                 }
             }
             return null;
