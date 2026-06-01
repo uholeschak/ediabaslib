@@ -62,7 +62,6 @@ namespace EdiabasLib
             SingleTransmit,     // single data transmission
             FrequentMode,       // frequent mode setting
             IdleTransmit,       // idle data transmission
-            SampleClamp,        // out-of-band passive DSR read for the voltage bridge
             Exit,               // exit thread
         }
 
@@ -132,6 +131,11 @@ namespace EdiabasLib
         // on the timer-thread read path. Static so the last known value survives the per-
         // reconnect EdInterfaceObd instance churn driven by ISTA (ECUKom.End/InitVCI).
         protected static int SampledDsrState;
+        // Set by the voltage sampler timer thread to request a clamp read; serviced by the
+        // CommThread on its next Idle/IdleTransmit iteration, so the read is never concurrent
+        // with TX/RX yet still fires during an active session (where the thread sits in
+        // IdleTransmit running the keep-alive) — unlike an Idle-only trigger.
+        protected volatile bool SampleClampPending;
         protected List<int> DisabledConceptsListProtected = null;
         protected double DtrTimeCorrCom = 0.3;
         protected double DtrTimeCorrFtdi = 0.3;
@@ -1375,7 +1379,7 @@ namespace EdiabasLib
 
 #if NETFRAMEWORK
             // OBD voltage bridge: passive sampling of the clamp state (ignition via DSR).
-            // The actual DSR read is performed on the CommThread (case SampleClamp) so it never
+            // The actual DSR read is performed on the CommThread (see SampleClampPending) so it never
             // races with normal communication, even on extension interfaces (BT/USB/ELM) whose
             // InterfaceGetDsr delegate may share state with the TX/RX delegates. The sampler's
             // timer thread only posts a request and reads the latest snapshot (1 s of latency
@@ -1384,7 +1388,7 @@ namespace EdiabasLib
             {
                 // Do NOT reset SampledDsrState here: ISTA often re-connects every few seconds,
                 // and the clamp physically doesn't change across a reconnect. Keeping the last
-                // known value avoids a "null" burst until the first SampleClamp completes in
+                // known value avoids a "null" burst until the first clamp sample completes in
                 // the new connection window (which may not happen at all on very short windows).
                 EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadSampledDsr, () => IgnitionVoltageValue, () => BatteryVoltageValue, RequestDsrSample);
             }
@@ -2898,23 +2902,18 @@ namespace EdiabasLib
 #endif
 
 #if NETFRAMEWORK
-        // Posts an out-of-band SampleClamp request onto the CommThread queue. The actual
-        // ReadDsrRaw() then runs in the CommThread context, never racing with TX/RX.
-        // Idle-only: if the CommThread is busy with a user transmission, the sample is
-        // simply skipped this tick and re-posted on the next sampler timer tick.
+        // Requests a clamp (DSR) read from the voltage sampler's timer thread. Only sets a flag;
+        // the CommThread performs the actual ReadDsrRaw() on its next Idle/IdleTransmit iteration,
+        // so the InterfaceGetDsr delegate is never touched concurrently with TX/RX. The flag
+        // persists until serviced, so it also fires during an active session (where the thread
+        // sits in IdleTransmit running the keep-alive), not only when fully idle.
         private void RequestDsrSample()
         {
             if (IsSimulationMode())
             {
                 return;
             }
-            lock (CommThreadLock)
-            {
-                if (CommThreadCommand == CommThreadCommands.Idle)
-                {
-                    CommThreadCommand = CommThreadCommands.SampleClamp;
-                }
-            }
+            SampleClampPending = true;
             CommThreadReqEvent.Set();
         }
 
@@ -3042,24 +3041,21 @@ namespace EdiabasLib
                             break;
                         }
 
-                    case CommThreadCommands.SampleClamp:
-                        {
-                            // Out-of-band passive read posted by EdiabasVoltageSampler.
-                            // Runs on the CommThread so the InterfaceGetDsr delegate is never
-                            // touched concurrently with TX/RX. No SetError, no bus traffic.
-                            bool? dsr = ReadDsrRaw();
-                            int newState = dsr.HasValue ? (dsr.Value ? 1 : 2) : 0;
-                            Interlocked.Exchange(ref SampledDsrState, newState);
-                            lock (CommThreadLock)
-                            {
-                                if (CommThreadCommand == CommThreadCommands.SampleClamp)
-                                {
-                                    CommThreadCommand = CommThreadCommands.Idle;
-                                }
-                            }
-                            break;
-                        }
                 }
+
+#if NETFRAMEWORK
+                // Voltage bridge: service a pending passive clamp (DSR) read on the CommThread,
+                // but only while idle or running the keep-alive (never mid user transmission), and
+                // after the keep-alive cycle so it isn't delayed. ReadDsrRaw() touches the
+                // InterfaceGetDsr delegate on this thread only, so it never races with TX/RX.
+                if (SampleClampPending &&
+                    (command == CommThreadCommands.Idle || command == CommThreadCommands.IdleTransmit))
+                {
+                    SampleClampPending = false;
+                    bool? dsr = ReadDsrRaw();
+                    Interlocked.Exchange(ref SampledDsrState, dsr.HasValue ? (dsr.Value ? 1 : 2) : 0);
+                }
+#endif
 
                 if (!newRequest)
                 {
