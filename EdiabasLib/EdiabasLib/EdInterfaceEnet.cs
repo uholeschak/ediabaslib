@@ -1610,23 +1610,24 @@ namespace EdiabasLib
         }
 
 #if NETFRAMEWORK
-        // ENET clamp following is command-snoop based, NOT a live read: the vehicle exposes no KL15
-        // over the diagnostic bus (on a genuine setup it is an ICOM/SLP hardware signal, cf. ISTA
-        // VCIDevice.GetClamp15 <- SLP advertisement). So instead of polling the control channel
-        // (unreliable: it is never queried for ignition and the connection churns), we passively
-        // mirror ISTA's own explicit clamp-control commands as they cross the wire. Invoked by
-        // EdiabasNet at the end of each user ExecuteJob - no extra bus traffic, no thread, no I/O.
-        // Recognized signals (per ISTA 4.59.20 variant analysis + live traces):
-        //   * STEUERN_KLEMMEN arg KL15_EIN                       -> KL15 on  (restore)
-        //   * STEUERN_KLEMMEN arg KL30B/KL30F/..._VERK/KLR/AUS   -> KL15 off (non-ignition clamp)
-        //   * STEUERN_ROUTINE arg STEUERN_KL15_ABSCHALTUNG /     -> KL15 off (shutdown; also the
-        //       KLEMME15 fallback spelling, or routine id 0xAC51 used by CAS4_2)
-        //   * STEUERN_KL15_ABSCHALTUNG as a direct job (BN2000)  -> KL15 off
-        //   * STATUS_LESEN/STATUS_KLEMMEN STAT_KLEMMENSTATUS_TEXT -> live state + session baseline
-        // Every other job leaves the held state untouched. We deliberately do NOT infer "on" from
-        // arbitrary successful jobs (that masks a real off within milliseconds) and never read fault
-        // freeze-frames (their KLEMMEN fields are historical, not the live state). The consumer
-        // holds the last state and restores ON on KL15_EIN (or via its own safety timeout).
+        // ENET clamp following without a live bus read: the vehicle exposes no KL15 of its own over
+        // diagnostics (on a genuine setup it is an ICOM/SLP hardware signal, cf. ISTA
+        // VCIDevice.GetClamp15 <- SLP) and the HSFZ control channel is never reliably queried for
+        // ignition (it also churns). Instead we read the clamp state the vehicle itself REPORTS, by
+        // passively inspecting jobs ISTA already runs. Invoked by EdiabasNet at the end of each user
+        // ExecuteJob - no extra bus traffic, no thread, no I/O. Two confirmed sources + one intent:
+        //   1. CONFIRMED - the ECU's reported clamp-status text:
+        //        * STEUERN_KLEMMEN  -> result STAT_CAS_KLEMMEN_STATUS_TEXT (post-switch state)
+        //        * STATUS_LESEN/STATUS_KLEMMEN -> result STAT_KLEMMENSTATUS_TEXT (live read + baseline)
+        //      "KL15" => on; "KL30..."/"KLR..." => off. This is the byte the BDC/CAS returns
+        //      (0x0A=KL15, 0x06=KL30B; decoded by text, not a & 0x01 bit test).
+        //   2. INTENT (only for the shutdown routine, which has no status-text result):
+        //        * STEUERN_ROUTINE STEUERN_KL15_ABSCHALTUNG (or KLEMME15 fallback, or routine id
+        //          0xAC51 on CAS4_2), and STEUERN_KL15_ABSCHALTUNG as a direct job (BN2000) => off.
+        // Every other job leaves the held state untouched. We never infer "on" from arbitrary jobs
+        // and never read fault freeze-frames (their KLEMMEN fields are historical, not live). If a
+        // STEUERN_KLEMMEN command produced no status text (rejected/failed), we hold rather than
+        // trust the requested arg - the consumer keeps the last confirmed state.
         public override void OnJobCompleted(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
             if (!EnableVoltageSamplerProtected)
@@ -1637,77 +1638,66 @@ namespace EdiabasLib
             {
                 return;
             }
-            // An explicit command takes priority (immediate reaction); otherwise an authoritative
-            // STATUS_KLEMMEN read gives the live state, including the session-start baseline.
-            bool? clampOn = InferClampFromCommand(jobName, argStrings)
-                            ?? InferClampFromStatus(jobName, argStrings, resultSets);
+            // Prefer the vehicle-confirmed status text; fall back to the shutdown-routine intent
+            // (those jobs carry no clamp-status result, only a positive ACK).
+            bool? clampOn = InferClampFromConfirmedStatus(jobName, argStrings, resultSets)
+                            ?? InferClampFromShutdownCommand(jobName, argStrings);
             if (!clampOn.HasValue)
-            {   // neither a clamp command nor a clamp status read: hold the last published state
+            {   // nothing authoritative this job: hold the last published state
                 return;
             }
             EdiabasVoltageBridge.Sample(true, clampOn, IgnitionVoltageValue, BatteryVoltageValue, RemoteHostProtected);
         }
 
-        private static bool? InferClampFromCommand(string jobName, List<string> argStrings)
+        // The clamp state the ECU actually reports, from the result set of the job ISTA just ran:
+        //   * STEUERN_KLEMMEN          -> STAT_CAS_KLEMMEN_STATUS_TEXT (state confirmed after the switch)
+        //   * STATUS_LESEN/STATUS_KLEMMEN -> STAT_KLEMMENSTATUS_TEXT   (live read, incl. session baseline)
+        // Strictly scoped to those job+result names so it never reads a fault freeze-frame's KLEMMEN
+        // field (which is historical, not the live state).
+        private static bool? InferClampFromConfirmedStatus(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
-            // Direct shutdown job (BN2000 / d_cas): the routine is the job itself, not a ROUTINE arg.
-            if (string.Equals(jobName, "STEUERN_KL15_ABSCHALTUNG", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-            // Direct clamp switch. KL15_EIN = ignition on; every other target clamp (KL30B/KL30F/
-            // shortened-nachlauf VERK / KLR / explicit AUS) means KL15 off.
+            string resultName = null;
             if (string.Equals(jobName, "STEUERN_KLEMMEN", StringComparison.OrdinalIgnoreCase))
             {
-                if (ArgContains(argStrings, "KL15_EIN")) return true;
-                if (ArgContains(argStrings, "KL30B_EIN")) return false;
-                if (ArgContains(argStrings, "KL30F_EIN")) return false;
-                if (ArgContains(argStrings, "KL30B_EIN_VERK")) return false;
-                if (ArgContains(argStrings, "KLR_EIN")) return false;
-                if (ArgContains(argStrings, "KL15_AUS")) return false;
+                resultName = "STAT_CAS_KLEMMEN_STATUS_TEXT";
             }
-            // Generic UDS RoutineControl used for the KL15 shutdown across BDC/FEM/ZGW/CAS4 variants.
-            // Identified either by routine name (STEUERN_KL15_ABSCHALTUNG, or the KLEMME15 fallback
-            // spelling) or by routine id 0xAC51 (CAS4_2 uses ID;0xAC51 with no name). The STR/value
-            // suffix varies (STR;3 / STR;30) and is irrelevant here.
-            if (string.Equals(jobName, "STEUERN_ROUTINE", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(jobName, "STATUS_LESEN", StringComparison.OrdinalIgnoreCase) && ArgContains(argStrings, "STATUS_KLEMMEN"))
             {
-                if (ArgContains(argStrings, "STEUERN_KL15_ABSCHALTUNG")) return false;
-                if (ArgContains(argStrings, "STEUERN_KLEMME15_ABSCHALTUNG")) return false;
-                if (ArgContains(argStrings, "0xAC51")) return false;
+                resultName = "STAT_KLEMMENSTATUS_TEXT";
             }
-            return null;
-        }
-
-        // Live clamp state from the targeted STATUS_LESEN / STATUS_KLEMMEN read (BDC/CAS). The result
-        // STAT_KLEMMENSTATUS_TEXT is the decoded table entry: "KL15" => clamp on, "KL30B" => off.
-        // We decode by text (a code, not a bit field: 0x0A=KL15, 0x06=KL30B, so a & 0x01 test is
-        // wrong). Strictly scoped to this job+arg so it never reads a fault freeze-frame's KLEMMEN
-        // field (which is historical, not the live state).
-        private static bool? InferClampFromStatus(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
-        {
-            if (!string.Equals(jobName, "STATUS_LESEN", StringComparison.OrdinalIgnoreCase))
-            {
-                return null;
-            }
-            if (!ArgContains(argStrings, "STATUS_KLEMMEN") || resultSets == null)
+            if (resultName == null || resultSets == null)
             {
                 return null;
             }
             for (int i = 1; i < resultSets.Count; i++)
             {
                 Dictionary<string, EdiabasNet.ResultData> set = resultSets[i];
-                if (set == null)
-                {
-                    continue;
-                }
-                if (set.TryGetValue("STAT_KLEMMENSTATUS_TEXT", out EdiabasNet.ResultData rd) && rd?.OpData is string text)
+                if (set != null && set.TryGetValue(resultName, out EdiabasNet.ResultData rd) && rd?.OpData is string text)
                 {
                     // Documented values: KL15 | KL30B[_EIN] | KL30F_EIN | KLR_EIN. Only KL15 = on.
                     if (text.StartsWith("KL15", StringComparison.OrdinalIgnoreCase)) return true;
                     if (text.StartsWith("KL30", StringComparison.OrdinalIgnoreCase)) return false;
                     if (text.StartsWith("KLR", StringComparison.OrdinalIgnoreCase)) return false;
                 }
+            }
+            return null;
+        }
+
+        // The KL15 shutdown routine carries no clamp-status result (only a positive UDS ACK), so it
+        // is recognized by intent. Identified by routine name (STEUERN_KL15_ABSCHALTUNG, or the
+        // KLEMME15 fallback spelling), by routine id 0xAC51 (CAS4_2 uses ID;0xAC51 with no name), or
+        // as a direct job (BN2000 / d_cas). Always means KL15 off.
+        private static bool? InferClampFromShutdownCommand(string jobName, List<string> argStrings)
+        {
+            if (string.Equals(jobName, "STEUERN_KL15_ABSCHALTUNG", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+            if (string.Equals(jobName, "STEUERN_ROUTINE", StringComparison.OrdinalIgnoreCase))
+            {
+                if (ArgContains(argStrings, "STEUERN_KL15_ABSCHALTUNG")) return false;
+                if (ArgContains(argStrings, "STEUERN_KLEMME15_ABSCHALTUNG")) return false;
+                if (ArgContains(argStrings, "0xAC51")) return false;
             }
             return null;
         }
