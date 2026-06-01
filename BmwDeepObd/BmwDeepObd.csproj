@@ -96,8 +96,10 @@
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\DragListViewNetBinding\DragListViewNetBinding.csproj" />
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\SkydovesBalloonBinding\SkydovesBalloonBinding.csproj" />
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\UsbSerialNetBinding\UsbSerialNetBinding.csproj" />
-    <ProjectReference Include="..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
-    <ProjectReference Include="..\Tools\Psdz\PsdzRpcClientLibrary\PsdzRpcClientLibrary.csproj" />
+    <ProjectReference Include="..\EdiabasLib\EdiabasLib\EdiabasLib.csproj"
+                    AdditionalProperties="EnableAndroidTargets=true" />
+    <ProjectReference Include="..\Tools\Psdz\PsdzRpcClientLibrary\PsdzRpcClientLibrary.csproj"
+                    AdditionalProperties="EnableAndroidTargets=true" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HexFiles\Type9\" />
