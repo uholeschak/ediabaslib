@@ -21,6 +21,13 @@ namespace EdiabasLib
     {
         public const int Version = 1;
 
+        // EdiabasLib's nominal voltages when no measurement / per-interface config override exists.
+        // Exposed so the in-process consumer can seed a sensible "auto" display value BEFORE the
+        // first sample, without hardcoding the same number on its side. Matches EdInterfaceEnet's
+        // protected defaults (12000 mV).
+        public static int NominalIgnitionMv = 12000;
+        public static int NominalBatteryMv = 12000;
+
         // onSample(connected, clampOn, ignitionNominalMv, batteryNominalMv, connectionId)
         //   clampOn: true = KL15 on, false = off, null = unknown (consumer decides hold-last)
         //   *NominalMv: configured nominal (EnetIgnitionVoltage / OBD equivalent), not a measurement
