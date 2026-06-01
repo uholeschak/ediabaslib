@@ -125,6 +125,7 @@ namespace EdiabasLib
         protected int UdsDtcStatusOverrideProtected = -1;
         protected int UdsEcuCanIdOverrideProtected = -1;
         protected int UdsTesterCanIdOverrideProtected = -1;
+        protected bool EnableVoltageSamplerProtected = false;
         protected List<int> DisabledConceptsListProtected = null;
         protected double DtrTimeCorrCom = 0.3;
         protected double DtrTimeCorrFtdi = 0.3;
@@ -350,6 +351,12 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     IgnitionVoltageValue = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected.GetConfigProperty("ObdEnableVoltageSampler");
+                if (prop != null)
+                {
+                    EnableVoltageSampler = EdiabasNet.StringToValue(prop) != 0;
                 }
             }
         }
@@ -1362,7 +1369,10 @@ namespace EdiabasLib
 
 #if NETFRAMEWORK
             // OBD voltage bridge: passive sampling of the clamp state (ignition via DSR).
-            EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            if (EnableVoltageSampler)
+            {
+                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            }
 #endif
 
             if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
@@ -1554,7 +1564,10 @@ namespace EdiabasLib
             StopCommThread();
 
 #if NETFRAMEWORK
-            EdiabasVoltageSampler.Stop(ComPortProtected);
+            if (EnableVoltageSampler)
+            {
+                EdiabasVoltageSampler.Stop(ComPortProtected);
+            }
 #endif
 
             if (!base.InterfaceDisconnect())
@@ -2258,6 +2271,18 @@ namespace EdiabasLib
             set
             {
                 UdsTesterCanIdOverrideProtected = value;
+            }
+        }
+
+        public bool EnableVoltageSampler
+        {
+            get
+            {
+                return EnableVoltageSamplerProtected;
+            }
+            set
+            {
+                EnableVoltageSamplerProtected = value;
             }
         }
 

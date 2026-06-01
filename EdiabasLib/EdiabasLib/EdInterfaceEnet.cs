@@ -533,6 +533,7 @@ namespace EdiabasLib
                 ExternalKeyPair = null;
                 S29SelectCert = null;
                 TcpControlTimerLock = new object();
+                TcpControlReadLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -689,6 +690,7 @@ namespace EdiabasLib
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
             public object TcpControlTimerLock;
+            public object TcpControlReadLock;
             public byte[] TcpDiagBuffer;
             public int TcpDiagRecLen;
             public long LastTcpDiagRecTime;
@@ -813,6 +815,7 @@ namespace EdiabasLib
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
         protected bool KeepIcomAllocatedProtected = false;
+        protected bool EnableVoltageSamplerProtected = false;
         protected bool RplusIcomEnetRedirectProtected = false;
         protected HttpClient IcomAllocateDeviceHttpClient;
 
@@ -1139,6 +1142,12 @@ namespace EdiabasLib
                 if (!string.IsNullOrEmpty(prop))
                 {
                     KeepIcomAllocated = EdiabasNet.StringToValue(prop) != 0;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetEnableVoltageSampler");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    EnableVoltageSampler = EdiabasNet.StringToValue(prop) != 0;
                 }
 
                 if (string.IsNullOrEmpty(RplusSectionProtected) && !IsIpv4Address(RemoteHostProtected))
@@ -1541,6 +1550,28 @@ namespace EdiabasLib
                     return Int64.MinValue;
                 }
 
+                bool? ignitionOn = ReadIgnitionControlState(out EdiabasNet.ErrorCodes errorCode);
+                if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCode);
+                    return Int64.MinValue;
+                }
+                return ignitionOn == true ? IgnitionVoltageValue : 0;
+            }
+        }
+
+        // Serialized HSFZ control-channel ignition (clamp 15) read shared by the public
+        // IgnitionVoltage getter and the voltage sampler's ReadIgnitionForPublish. The whole
+        // connect/write/read transaction runs under TcpControlReadLock so a background sampler
+        // read on the timer thread cannot interleave with a foreground read on TcpControlStream.
+        // Uses a local buffer (never the shared RecBuffer).
+        //   return: true = ignition on, false = off, null = could not determine
+        //   errorCode: EDIABAS_ERR_NONE on a clean read; EDIABAS_IFH_0003 on a transaction failure
+        private bool? ReadIgnitionControlState(out EdiabasNet.ErrorCodes errorCode)
+        {
+            errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            lock (SharedDataActive.TcpControlReadLock)
+            {
                 try
                 {
                     lock (SharedDataActive.TcpControlTimerLock)
@@ -1549,95 +1580,57 @@ namespace EdiabasLib
                     }
                     if (!TcpControlConnect())
                     {
-                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
-                        return Int64.MinValue;
+                        errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                        return null;
                     }
-                    WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
-                    int recLen = SharedDataActive.TcpControlStream.ReadBytesAsync(RecBuffer, 0, 7, SharedDataActive.TransmitCancelEvent, 1000);
-                    if (recLen < 7)
-                    {
-                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
-                        return Int64.MinValue;
-                    }
-                    if (RecBuffer[5] != 0x10)
-                    {   // no clamp state response
-                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
-                        return Int64.MinValue;
-                    }
-                    if ((RecBuffer[6] & 0x0C) == 0x04)
-                    {   // ignition on
-                        return IgnitionVoltageValue;
-                    }
-                }
-                catch (Exception)
-                {
-                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
-                    return Int64.MinValue;
-                }
-                finally
-                {
-                    TcpControlTimerStart(SharedDataActive);
-                }
-                return 0;
-            }
-        }
-
-#if NETFRAMEWORK
-        // Side-effect-free ignition (clamp 15) read for the ENET voltage bridge: queries the
-        // HSFZ control channel like IgnitionVoltage, but never sets an error and returns null
-        // when the state cannot be determined. Uses a local buffer because the publisher runs
-        // on its own timer thread and must not touch the shared RecBuffer.
-        private bool? ReadIgnitionForPublish()
-        {
-            try
-            {
-                if (SharedDataActive.DiagRplus)
-                {
-                    // ICOM/RPLUS: ignition is read over the diagnostic (NMP) channel; do not
-                    // poll it passively to avoid interfering with the diagnostic session.
-                    return null;
-                }
-                if (IsSimulationMode())
-                {
-                    return null;
-                }
-                if (!Connected)
-                {
-                    return null;
-                }
-
-                lock (SharedDataActive.TcpControlTimerLock)
-                {
-                    TcpControlTimerStop(SharedDataActive);
-                }
-                if (!TcpControlConnect())
-                {
-                    return null;
-                }
-                try
-                {
                     byte[] recBuffer = new byte[7];
                     WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
                     int recLen = SharedDataActive.TcpControlStream.ReadBytesAsync(recBuffer, 0, 7, SharedDataActive.TransmitCancelEvent, 1000);
                     if (recLen < 7)
                     {
+                        errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                         return null;
                     }
                     if (recBuffer[5] != 0x10)
                     {   // no clamp state response
+                        errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                         return null;
                     }
                     return (recBuffer[6] & 0x0C) == 0x04; // ignition on
+                }
+                catch (Exception)
+                {
+                    errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    return null;
                 }
                 finally
                 {
                     TcpControlTimerStart(SharedDataActive);
                 }
             }
-            catch (Exception)
+        }
+
+#if NETFRAMEWORK
+        // Side-effect-free ignition (clamp 15) read for the ENET voltage bridge: shares the
+        // serialized control-channel transaction with IgnitionVoltage, but never sets an error
+        // and returns null when the state cannot be determined.
+        private bool? ReadIgnitionForPublish()
+        {
+            if (SharedDataActive.DiagRplus)
+            {
+                // ICOM/RPLUS: ignition is read over the diagnostic (NMP) channel; do not
+                // poll it passively to avoid interfering with the diagnostic session.
+                return null;
+            }
+            if (IsSimulationMode())
             {
                 return null;
             }
+            if (!Connected)
+            {
+                return null;
+            }
+            return ReadIgnitionControlState(out _);
         }
 #endif
 
@@ -1813,10 +1806,11 @@ namespace EdiabasLib
             }
 
 #if NETFRAMEWORK
-            // ENET voltage bridge: passive sampling of the clamp state (ignition via the HSFZ control channel).
-            EdiabasVoltageSampler.Start(RemoteHostProtected, () => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            if (EnableVoltageSampler)
+            {
+                EdiabasVoltageSampler.Start(RemoteHostProtected, () => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            }
 #endif
-
             return InterfaceConnect(false);
         }
 
@@ -2359,9 +2353,11 @@ namespace EdiabasLib
         public override bool InterfaceDisconnect()
         {
 #if NETFRAMEWORK
-            EdiabasVoltageSampler.Stop(RemoteHostProtected);
+            if (EnableVoltageSampler)
+            {
+                EdiabasVoltageSampler.Stop(RemoteHostProtected);
+            }
 #endif
-
             if (!base.InterfaceDisconnect())
             {
                 return false;
@@ -2815,6 +2811,18 @@ namespace EdiabasLib
             set
             {
                 KeepIcomAllocatedProtected = value;
+            }
+        }
+
+        public bool EnableVoltageSampler
+        {
+            get
+            {
+                return EnableVoltageSamplerProtected;
+            }
+            set
+            {
+                EnableVoltageSamplerProtected = value;
             }
         }
 
