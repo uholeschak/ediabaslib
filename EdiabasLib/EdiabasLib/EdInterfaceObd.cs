@@ -1381,7 +1381,10 @@ namespace EdiabasLib
             // is acceptable for a slow-changing clamp signal).
             if (EnableVoltageSampler)
             {
-                SampledDsrState = 0;
+                // Do NOT reset SampledDsrState here: ISTA often re-connects every few seconds,
+                // and the clamp physically doesn't change across a reconnect. Keeping the last
+                // known value avoids a "null" burst until the first SampleClamp completes in
+                // the new connection window (which may not happen at all on very short windows).
                 EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadSampledDsr, () => IgnitionVoltageValue, () => BatteryVoltageValue, RequestDsrSample);
             }
 #endif
