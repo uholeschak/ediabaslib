@@ -5728,6 +5728,17 @@ namespace EdiabasLib
             }
             finally
             {
+#if NETFRAMEWORK
+                try
+                {
+                    List<string> capturedArgStrings = GetActiveArgStrings();
+                    EdInterfaceClass?.OnJobCompleted(jobName, capturedArgStrings, ResultSets);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+#endif
                 _argInfo.BinData = null;
                 _argInfoStd.BinData = null;
                 _jobStd = false;
