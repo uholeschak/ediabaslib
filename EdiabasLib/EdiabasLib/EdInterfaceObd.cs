@@ -1369,9 +1369,18 @@ namespace EdiabasLib
 
 #if NETFRAMEWORK
             // OBD voltage bridge: passive sampling of the clamp state (ignition via DSR).
-            if (EnableVoltageSampler)
+            // Gated to raw COM only: on extension interfaces (BT/USB/ELM) the InterfaceGetDsr
+            // delegate may share state with the data TX/RX delegates that the CommThread uses,
+            // and the sampler runs on its own Timer thread -> race with normal communication.
+            // A future change can move the sampler read into the CommThread context (see
+            // case SampleClamp in CommThreadFunc) and lift this restriction.
+            if (EnableVoltageSampler && !UseExtInterfaceFunc)
             {
                 EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            }
+            else if (EnableVoltageSampler)
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Voltage sampler disabled on extended interface (unsafe with foreign comm thread)");
             }
 #endif
 
@@ -1564,7 +1573,7 @@ namespace EdiabasLib
             StopCommThread();
 
 #if NETFRAMEWORK
-            if (EnableVoltageSampler)
+            if (EnableVoltageSampler && !UseExtInterfaceFunc)
             {
                 EdiabasVoltageSampler.Stop(ComPortProtected);
             }
