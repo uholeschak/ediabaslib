@@ -813,6 +813,7 @@ namespace EdiabasLib
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
         protected bool KeepIcomAllocatedProtected = false;
+        protected bool EnableVoltageSamplerProtected = false;
         protected bool RplusIcomEnetRedirectProtected = false;
         protected HttpClient IcomAllocateDeviceHttpClient;
 
@@ -1139,6 +1140,12 @@ namespace EdiabasLib
                 if (!string.IsNullOrEmpty(prop))
                 {
                     KeepIcomAllocated = EdiabasNet.StringToValue(prop) != 0;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetVoltageSampler");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    EnableVoltageSampler = EdiabasNet.StringToValue(prop) != 0;
                 }
 
                 if (string.IsNullOrEmpty(RplusSectionProtected) && !IsIpv4Address(RemoteHostProtected))
@@ -1813,10 +1820,11 @@ namespace EdiabasLib
             }
 
 #if NETFRAMEWORK
-            // ENET voltage bridge: passive sampling of the clamp state (ignition via the HSFZ control channel).
-            EdiabasVoltageSampler.Start(RemoteHostProtected, () => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            if (EnableVoltageSampler)
+            {
+                EdiabasVoltageSampler.Start(RemoteHostProtected, () => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            }
 #endif
-
             return InterfaceConnect(false);
         }
 
@@ -2359,9 +2367,11 @@ namespace EdiabasLib
         public override bool InterfaceDisconnect()
         {
 #if NETFRAMEWORK
-            EdiabasVoltageSampler.Stop(RemoteHostProtected);
+            if (EnableVoltageSampler)
+            {
+                EdiabasVoltageSampler.Stop(RemoteHostProtected);
+            }
 #endif
-
             if (!base.InterfaceDisconnect())
             {
                 return false;
@@ -2815,6 +2825,18 @@ namespace EdiabasLib
             set
             {
                 KeepIcomAllocatedProtected = value;
+            }
+        }
+
+        public bool EnableVoltageSampler
+        {
+            get
+            {
+                return EnableVoltageSamplerProtected;
+            }
+            set
+            {
+                EnableVoltageSamplerProtected = value;
             }
         }
 
