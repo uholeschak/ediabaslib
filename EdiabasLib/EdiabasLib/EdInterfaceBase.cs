@@ -704,6 +704,12 @@ namespace EdiabasLib
             get { return "IFH-STD Version 7.6.0"; }
         }
 
+#if NETFRAMEWORK
+        public virtual void OnJobCompleted(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+        }
+#endif
+
         public abstract byte[] KeyBytes { get; }
 
         public abstract byte[] State { get; }

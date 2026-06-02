@@ -72,6 +72,13 @@ namespace EdiabasLib
             DeviceTypeError,
         }
 
+        protected enum DsrSampleState
+        {
+            Unknown = 0,
+            Asserted = 1,   // DSR true  (KL15 on)
+            Deasserted = 2,   // DSR false (KL15 off)
+        }
+
         public delegate bool InterfaceConnectDelegate(string port, object parameter);
         public delegate bool InterfaceDisconnectDelegate();
         public delegate bool InterfaceTransmitCancelDelegate(bool cancel);
@@ -120,12 +127,24 @@ namespace EdiabasLib
         protected static volatile CommThreadCommands CommThreadCommand;
         protected static volatile uint CommThreadReqCount;
         protected static volatile uint CommThreadResCount;
+        protected static volatile DsrSampleState SampledDsrState;
 
         protected string ComPortProtected = string.Empty;
         protected int UdsDtcStatusOverrideProtected = -1;
         protected int UdsEcuCanIdOverrideProtected = -1;
         protected int UdsTesterCanIdOverrideProtected = -1;
         protected bool EnableVoltageSamplerProtected = false;
+        // Whether the active transport has a real ignition-bearing DSR line. True on wired adapters
+        // (raw serial / FTDI cable, e.g. K+DCAN): DSR is the authoritative real-time clamp source and
+        // the passive job snoop stays off (avoids DSR-vs-snoop noise). False on wireless dongles
+        // (BT/ELM/WiFi): their InterfaceGetDsr carries no usable ignition (it reads a constant), so
+        // DSR must NOT be trusted and the snoop takes over. Set per InterfaceConnect from the transport.
+        protected bool DsrLineTrusted = true;
+        // Set by the voltage sampler timer thread to request a clamp read; serviced by the
+        // CommThread on its next Idle/IdleTransmit iteration, so the read is never concurrent
+        // with TX/RX yet still fires during an active session (where the thread sits in
+        // IdleTransmit running the keep-alive) — unlike an Idle-only trigger.
+        protected volatile bool SampleClampPending;
         protected List<int> DisabledConceptsListProtected = null;
         protected double DtrTimeCorrCom = 0.3;
         protected double DtrTimeCorrFtdi = 0.3;
@@ -1368,10 +1387,27 @@ namespace EdiabasLib
             }
 
 #if NETFRAMEWORK
-            // OBD voltage bridge: passive sampling of the clamp state (ignition via DSR).
-            if (EnableVoltageSampler)
+            // OBD voltage bridge. Wired adapters (raw serial / FTDI cable, e.g. K+DCAN) expose the
+            // ignition on the DSR line -> sample it. Wireless dongles (BT/ELM/WiFi) carry no usable
+            // ignition on DSR, so we do NOT run the DSR sampler there; the clamp state then comes from
+            // the passive job snoop (OnJobCompleted). This keeps a single clamp source per transport.
+            string portUpper = ComPortProtected.ToUpper(Culture);
+            DsrLineTrusted = !(portUpper.StartsWith(EdBluetoothInterface.PortId)
+                               || portUpper.StartsWith(EdElmWifiInterface.PortId)
+                               || portUpper.StartsWith(EdCustomWiFiInterface.PortId));
+            if (EnableVoltageSampler && DsrLineTrusted)
             {
-                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadDsrForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+                // The DSR read runs on the CommThread (see SampleClampPending) so it never races with
+                // TX/RX. Do NOT reset SampledDsrState here: ISTA re-connects every few seconds and the
+                // clamp doesn't change across a reconnect; keeping the last value avoids a null burst.
+                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadSampledDsr, () => IgnitionVoltageValue, () => BatteryVoltageValue, RequestDsrSample);
+            }
+            else if (EnableVoltageSampler && EdiabasVoltageBridge.HasSink)
+            {
+                // Wireless (snoop mode): no DSR timer, so publish a default ON snapshot now - same as
+                // ENET - so the consumer shows the nominal immediately instead of falling back to its
+                // config value. OnJobCompleted then updates the clamp from the snooped jobs.
+                EdiabasVoltageBridge.Sample(true, true, IgnitionVoltageValue, BatteryVoltageValue, ComPortProtected);
             }
 #endif
 
@@ -2824,49 +2860,13 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncUse != null;
         }
 
-        protected bool GetDsrState()
-        {
-            if (!UseExtInterfaceFunc)
-            {
-#if USE_SERIAL_PORT
-                try
-                {
-                    if (!SerialPort.IsOpen)
-                    {
-                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
-                        return false;
-                    }
-                    return SerialPort.DsrHolding;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-#else
-                return false;
-#endif
-            }
-
-            bool dsrState;
-            if (!InterfaceGetDsrFuncUse(out dsrState))
-            {
-                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
-                return false;
-            }
-            return dsrState;
-        }
-
-#if NETFRAMEWORK || WINDOWS
-        // Side-effect-free DSR read (no SetError) for the OBD voltage bridge.
-        // Returns null if the state cannot be read. No traffic on the bus.
-        private bool? ReadDsrForPublish()
+        // Raw DSR line read with no side effects (no SetError, no bus traffic): true/false = line
+        // state, null = cannot read. Used by GetDsrState (public, maps null -> IFH_0019) and the
+        // CommThread voltage-bridge sampling path (see SampleClampPending).
+        private bool? ReadDsrRaw()
         {
             try
             {
-                if (IsSimulationMode())
-                {
-                    return null;
-                }
                 if (!UseExtInterfaceFunc)
                 {
 #if USE_SERIAL_PORT
@@ -2879,18 +2879,93 @@ namespace EdiabasLib
                     return null;
 #endif
                 }
-                InterfaceGetDsrDelegate f = InterfaceGetDsrFuncUse;
-                bool dsrStatePub;
-                if (f != null && f(out dsrStatePub))
+
+                if (InterfaceGetDsrFuncUse(out bool dsrState))
                 {
-                    return dsrStatePub;
+                    return dsrState;
                 }
+
                 return null;
             }
-            catch
+            catch (Exception)
             {
                 return null;
             }
+        }
+
+        protected bool GetDsrState()
+        {
+            bool? dsrState = ReadDsrRaw();
+            if (dsrState.HasValue)
+            {
+                return dsrState.Value;
+            }
+            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0019);
+            return false;
+        }
+
+#if NETFRAMEWORK
+        // Requests a clamp (DSR) read from the voltage sampler's timer thread. Only sets a flag;
+        // the CommThread performs the actual ReadDsrRaw() on its next Idle/IdleTransmit iteration,
+        // so the InterfaceGetDsr delegate is never touched concurrently with TX/RX. The flag
+        // persists until serviced, so it also fires during an active session (where the thread
+        // sits in IdleTransmit running the keep-alive), not only when fully idle.
+        private void RequestDsrSample()
+        {
+            if (IsSimulationMode())
+            {
+                return;
+            }
+
+            SampleClampPending = true;
+            CommThreadReqEvent.Set();
+        }
+
+        // Snapshot read of the latest DSR value sampled by the CommThread. Safe to call from
+        // any thread (Interlocked-published int). Returns null if no sample is available yet.
+        private bool? ReadSampledDsr()
+        {
+            switch (SampledDsrState)
+            {
+                case DsrSampleState.Asserted:
+                    return true;
+
+                case DsrSampleState.Deasserted:
+                    return false;
+
+                default:
+                    return null;
+            }
+        }
+
+        // Passive clamp snoop, identical mechanism to ENET (see EdiabasClampSnoop), as a DSR FALLBACK
+        // only: the DSR line is the authoritative real-time source on a genuine cable and tracks the
+        // KL15 cut cleanly by itself, so this snoop is gated off (DsrLineTrusted) on wired adapters -
+        // running both just stacks command+physical+reconnect noise. It activates only on transports
+        // with no usable DSR line (BT/ELM/WiFi dongles, where DSR reads a useless constant), providing
+        // the clamp state from the diagnostic jobs. Invoked by EdiabasNet at the end of each user
+        // ExecuteJob - no extra bus traffic.
+        public override void OnJobCompleted(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            if (!EnableVoltageSampler || !EdiabasVoltageBridge.HasSink)
+            {
+                return;
+            }
+
+            if (DsrLineTrusted)
+            {   // wired adapter: DSR is the authoritative real-time source -> snoop stays silent
+                return;
+            }
+
+            bool? clampOn = EdiabasClampSnoop.InferClampFromJob(jobName, argStrings, resultSets);
+            if (!clampOn.HasValue)
+            {
+                return;
+            }
+
+            // On wireless the snoop is the only clamp source (the DSR sampler is not started), so
+            // publish under the plain connection id.
+            EdiabasVoltageBridge.Sample(true, clampOn, IgnitionVoltageValue, BatteryVoltageValue, ComPortProtected);
         }
 #endif
 
@@ -3008,6 +3083,22 @@ namespace EdiabasLib
                         }
                 }
 
+#if NETFRAMEWORK
+                // Voltage bridge: service a pending passive clamp (DSR) read on the CommThread,
+                // but only while idle or running the keep-alive (never mid user transmission), and
+                // after the keep-alive cycle so it isn't delayed. ReadDsrRaw() touches the
+                // InterfaceGetDsr delegate on this thread only, so it never races with TX/RX.
+                if (SampleClampPending &&
+                    (command == CommThreadCommands.Idle || command == CommThreadCommands.IdleTransmit))
+                {
+                    SampleClampPending = false;
+                    bool? dsr = ReadDsrRaw();
+
+                    SampledDsrState = dsr.HasValue
+                        ? (dsr.Value ? DsrSampleState.Asserted : DsrSampleState.Deasserted)
+                        : DsrSampleState.Unknown;
+                }
+#endif
                 if (!newRequest)
                 {
                     continue;
