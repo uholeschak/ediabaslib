@@ -1550,25 +1550,20 @@ namespace EdiabasLib
                     return Int64.MinValue;
                 }
 
-                bool? ignitionOn = ReadIgnitionControlState(out EdiabasNet.ErrorCodes errorCode);
+                EdiabasNet.ErrorCodes errorCode = ReadIgnitionControlState(out bool ignitionOn);
                 if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     EdiabasProtected?.SetError(errorCode);
                     return Int64.MinValue;
                 }
-                return ignitionOn == true ? IgnitionVoltageValue : 0;
+
+                return ignitionOn ? IgnitionVoltageValue : 0;
             }
         }
 
-        // Serialized HSFZ control-channel ignition (clamp 15) read used by the public
-        // IgnitionVoltage getter. The whole connect/write/read transaction runs under
-        // TcpControlReadLock so concurrent reads cannot interleave on TcpControlStream.
-        // Uses a local buffer (never the shared RecBuffer).
-        //   return: true = ignition on, false = off, null = could not determine
-        //   errorCode: EDIABAS_ERR_NONE on a clean read; EDIABAS_IFH_0003 on a transaction failure
-        private bool? ReadIgnitionControlState(out EdiabasNet.ErrorCodes errorCode)
+        private EdiabasNet.ErrorCodes ReadIgnitionControlState(out bool ignitionOn)
         {
-            errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            ignitionOn = false;
             lock (SharedDataActive.TcpControlReadLock)
             {
                 try
@@ -1577,30 +1572,30 @@ namespace EdiabasLib
                     {
                         TcpControlTimerStop(SharedDataActive);
                     }
+
                     if (!TcpControlConnect())
                     {
-                        errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                        return null;
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                     }
+
                     byte[] recBuffer = new byte[7];
                     WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
                     int recLen = SharedDataActive.TcpControlStream.ReadBytesAsync(recBuffer, 0, 7, SharedDataActive.TransmitCancelEvent, 1000);
                     if (recLen < 7)
                     {
-                        errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                        return null;
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                     }
                     if (recBuffer[5] != 0x10)
                     {   // no clamp state response
-                        errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                        return null;
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                     }
-                    return (recBuffer[6] & 0x0C) == 0x04; // ignition on
+
+                    ignitionOn = (recBuffer[6] & 0x0C) == 0x04; // ignition on
+                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
                 }
                 catch (Exception)
                 {
-                    errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                    return null;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
                 finally
                 {
