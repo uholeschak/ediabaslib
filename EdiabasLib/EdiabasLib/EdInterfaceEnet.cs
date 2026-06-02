@@ -1560,10 +1560,9 @@ namespace EdiabasLib
             }
         }
 
-        // Serialized HSFZ control-channel ignition (clamp 15) read shared by the public
-        // IgnitionVoltage getter and the voltage sampler's ReadIgnitionForPublish. The whole
-        // connect/write/read transaction runs under TcpControlReadLock so a background sampler
-        // read on the timer thread cannot interleave with a foreground read on TcpControlStream.
+        // Serialized HSFZ control-channel ignition (clamp 15) read used by the public
+        // IgnitionVoltage getter. The whole connect/write/read transaction runs under
+        // TcpControlReadLock so concurrent reads cannot interleave on TcpControlStream.
         // Uses a local buffer (never the shared RecBuffer).
         //   return: true = ignition on, false = off, null = could not determine
         //   errorCode: EDIABAS_ERR_NONE on a clean read; EDIABAS_IFH_0003 on a transaction failure
@@ -1611,26 +1610,26 @@ namespace EdiabasLib
         }
 
 #if NETFRAMEWORK
-        // Side-effect-free ignition (clamp 15) read for the ENET voltage bridge: shares the
-        // serialized control-channel transaction with IgnitionVoltage, but never sets an error
-        // and returns null when the state cannot be determined.
-        private bool? ReadIgnitionForPublish()
+        // ENET clamp following without a live bus read: the vehicle exposes no KL15 of its own over
+        // diagnostics (on a genuine setup it is an ICOM/SLP hardware signal, cf. ISTA
+        // VCIDevice.GetClamp15 <- SLP) and the HSFZ control channel is never reliably queried for
+        // ignition. Instead we read the clamp state the vehicle REPORTS, by passively inspecting the
+        // jobs ISTA already runs (see EdiabasClampSnoop - transport-agnostic). Invoked by EdiabasNet
+        // at the end of each user ExecuteJob - no extra bus traffic, no thread, no I/O.
+        public override void OnJobCompleted(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
-            if (SharedDataActive.DiagRplus)
-            {
-                // ICOM/RPLUS: ignition is read over the diagnostic (NMP) channel; do not
-                // poll it passively to avoid interfering with the diagnostic session.
-                return null;
+            if (!EnableVoltageSampler || !EdiabasVoltageBridge.HasSink)
+            {   // disabled or no consumer: do not feed the bridge
+                return;
             }
-            if (IsSimulationMode())
-            {
-                return null;
+
+            bool? clampOn = EdiabasClampSnoop.InferClampFromJob(jobName, argStrings, resultSets);
+            if (!clampOn.HasValue)
+            {   // nothing authoritative this job: hold the last published state
+                return;
             }
-            if (!Connected)
-            {
-                return null;
-            }
-            return ReadIgnitionControlState(out _);
+
+            EdiabasVoltageBridge.Sample(true, clampOn, IgnitionVoltageValue, BatteryVoltageValue, RemoteHostProtected);
         }
 #endif
 
@@ -1806,9 +1805,12 @@ namespace EdiabasLib
             }
 
 #if NETFRAMEWORK
-            if (EnableVoltageSampler)
+            if (EnableVoltageSampler && EdiabasVoltageBridge.HasSink)
             {
-                EdiabasVoltageSampler.Start(RemoteHostProtected, () => Connected, ReadIgnitionForPublish, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+                // No timer/control-channel poll for ENET (no reliable live KL15 - see OnJobCompleted).
+                // Publish a default ON snapshot so the consumer shows the nominal immediately;
+                // OnJobCompleted then mirrors ISTA's explicit KLwechsel commands.
+                EdiabasVoltageBridge.Sample(true, true, IgnitionVoltageValue, BatteryVoltageValue, RemoteHostProtected);
             }
 #endif
             return InterfaceConnect(false);
@@ -2355,7 +2357,7 @@ namespace EdiabasLib
 #if NETFRAMEWORK
             if (EnableVoltageSampler)
             {
-                EdiabasVoltageSampler.Stop(RemoteHostProtected);
+                EdiabasVoltageBridge.Detached(RemoteHostProtected);
             }
 #endif
             if (!base.InterfaceDisconnect())
