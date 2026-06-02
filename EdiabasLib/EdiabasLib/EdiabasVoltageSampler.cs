@@ -46,6 +46,7 @@ namespace EdiabasLib
                 _clamp = clamp;
                 _ignNom = ignNomMv;
                 _battNom = battNomMv;
+
                 if (EdiabasVoltageBridge.HasSink)
                 {
                     _timer = new Timer(OnTick, null, 0, 1000);
@@ -66,6 +67,7 @@ namespace EdiabasLib
                 _ignNom = null;
                 _battNom = null;
             }
+
             EdiabasVoltageBridge.Detached(connectionId);
         }
 
@@ -83,7 +85,15 @@ namespace EdiabasLib
 
         private static void StopTimer()
         {
-            try { _timer?.Dispose(); } catch { }
+            try
+            {
+                _timer?.Dispose();
+            }
+            catch
+            {
+                // ignored
+            }
+
             _timer = null;
         }
 
@@ -120,8 +130,16 @@ namespace EdiabasLib
                 // The 1 s latency is acceptable for a slow-changing clamp signal.
                 if (requestSample != null)
                 {
-                    try { requestSample(); } catch { }
+                    try
+                    {
+                        requestSample();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
+
                 bool? clampOn = clamp != null ? clamp() : (bool?)null;
                 EdiabasVoltageBridge.Sample(true, clampOn, Safe(ignNom), Safe(battNom), connectionId);
             }
@@ -133,8 +151,14 @@ namespace EdiabasLib
 
         private static int Safe(Func<int> f)
         {
-            try { return f != null ? f() : 0; }
-            catch { return 0; }
+            try
+            {
+                return f != null ? f() : 0;
+            }
+            catch
+            {
+                return 0;
+            }
         }
     }
 }

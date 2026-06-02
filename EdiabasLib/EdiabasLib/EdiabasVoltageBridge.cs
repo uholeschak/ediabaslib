@@ -22,9 +22,11 @@ namespace EdiabasLib
         public const int Version = 1;
 
         // EdiabasLib's nominal voltages when no measurement / per-interface config override exists.
-        // Exposed so the in-process consumer can seed a sensible "auto" display value BEFORE the
+        // Exposed so an in-process consumer could seed a sensible "auto" display value BEFORE the
         // first sample, without hardcoding the same number on its side. Matches EdInterfaceEnet's
         // protected defaults (12000 mV).
+        // NOTE: not currently read by the external DLL (it takes the nominals from each Sample call
+        // instead); kept as the public default for any future consumer.
         public static int NominalIgnitionMv = 12000;
         public static int NominalBatteryMv = 12000;
 
@@ -42,6 +44,7 @@ namespace EdiabasLib
             {
                 return false;
             }
+
             _onSample = onSample;
             _onDetached = onDetached;
             EdiabasVoltageSampler.OnSinkRegistered();
@@ -61,14 +64,26 @@ namespace EdiabasLib
 
         internal static void Sample(bool connected, bool? clampOn, int ignNomMv, int battNomMv, string connectionId)
         {
-            try { _onSample?.Invoke(connected, clampOn, ignNomMv, battNomMv, connectionId); }
-            catch { /* a consumer fault must never affect diagnostics */ }
+            try
+            {
+                _onSample?.Invoke(connected, clampOn, ignNomMv, battNomMv, connectionId);
+            }
+            catch
+            {
+                // a consumer fault must never affect diagnostics
+            }
         }
 
         internal static void Detached(string connectionId)
         {
-            try { _onDetached?.Invoke(connectionId); }
-            catch { }
+            try
+            {
+                _onDetached?.Invoke(connectionId);
+            }
+            catch
+            {
+                // ignored
+            }
         }
     }
 }
