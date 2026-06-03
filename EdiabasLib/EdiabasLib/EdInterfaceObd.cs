@@ -1395,19 +1395,22 @@ namespace EdiabasLib
             DsrLineTrusted = !(portUpper.StartsWith(EdBluetoothInterface.PortId)
                                || portUpper.StartsWith(EdElmWifiInterface.PortId)
                                || portUpper.StartsWith(EdCustomWiFiInterface.PortId));
-            if (EnableVoltageSampler && DsrLineTrusted)
+            if (EnableVoltageSampler)
             {
-                // The DSR read runs on the CommThread (see SampleClampPending) so it never races with
-                // TX/RX. Do NOT reset SampledDsrState here: ISTA re-connects every few seconds and the
-                // clamp doesn't change across a reconnect; keeping the last value avoids a null burst.
-                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadSampledDsr, () => IgnitionVoltageValue, () => BatteryVoltageValue, RequestDsrSample);
-            }
-            else if (EnableVoltageSampler && EdiabasVoltageBridge.HasSink)
-            {
-                // Wireless (snoop mode): no DSR timer, so publish a default ON snapshot now - same as
-                // ENET - so the consumer shows the nominal immediately instead of falling back to its
-                // config value. OnJobCompleted then updates the clamp from the snooped jobs.
-                EdiabasVoltageBridge.Sample(true, true, IgnitionVoltageValue, BatteryVoltageValue, ComPortProtected);
+                if (DsrLineTrusted)
+                {
+                    // The DSR read runs on the CommThread (see SampleClampPending) so it never races with
+                    // TX/RX. Do NOT reset SampledDsrState here: ISTA re-connects every few seconds and the
+                    // clamp doesn't change across a reconnect; keeping the last value avoids a null burst.
+                    EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadSampledDsr, () => IgnitionVoltageValue, () => BatteryVoltageValue, RequestDsrSample);
+                }
+                else if (EdiabasVoltageBridge.HasSink)
+                {
+                    // Wireless (snoop mode): no DSR timer, so publish a default ON snapshot now - same as
+                    // ENET - so the consumer shows the nominal immediately instead of falling back to its
+                    // config value. OnJobCompleted then updates the clamp from the snooped jobs.
+                    EdiabasVoltageBridge.Sample(true, true, IgnitionVoltageValue, BatteryVoltageValue, ComPortProtected);
+                }
             }
 #endif
 
