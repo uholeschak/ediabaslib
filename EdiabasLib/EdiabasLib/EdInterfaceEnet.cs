@@ -533,7 +533,6 @@ namespace EdiabasLib
                 ExternalKeyPair = null;
                 S29SelectCert = null;
                 TcpControlTimerLock = new object();
-                TcpControlReadLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
@@ -690,7 +689,6 @@ namespace EdiabasLib
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
             public object TcpControlTimerLock;
-            public object TcpControlReadLock;
             public byte[] TcpDiagBuffer;
             public int TcpDiagRecLen;
             public long LastTcpDiagRecTime;
@@ -1564,40 +1562,40 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes ReadIgnitionControlState(out bool ignitionOn)
         {
             ignitionOn = false;
-            lock (SharedDataActive.TcpControlReadLock)
+            try
             {
-                try
+                lock (SharedDataActive.TcpControlTimerLock)
                 {
-                    lock (SharedDataActive.TcpControlTimerLock)
-                    {
-                        TcpControlTimerStop(SharedDataActive);
-                    }
-
-                    if (!TcpControlConnect())
-                    {
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                    }
-
-                    byte[] recBuffer = new byte[7];
-                    WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
-                    int recLen = SharedDataActive.TcpControlStream.ReadBytesAsync(recBuffer, 0, 7, SharedDataActive.TransmitCancelEvent, 1000);
-                    if (recLen < 7)
-                    {
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                    }
-                    if (recBuffer[5] != 0x10)
-                    {   // no clamp state response
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                    }
-
-                    ignitionOn = (recBuffer[6] & 0x0C) == 0x04; // ignition on
-                    return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                    TcpControlTimerStop(SharedDataActive);
                 }
-                catch (Exception)
+
+                if (!TcpControlConnect())
                 {
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
-                finally
+
+                byte[] recBuffer = new byte[7];
+                WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
+                int recLen = SharedDataActive.TcpControlStream.ReadBytesAsync(recBuffer, 0, 7, SharedDataActive.TransmitCancelEvent, 1000);
+                if (recLen < 7)
+                {
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+                if (recBuffer[5] != 0x10)
+                {   // no clamp state response
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
+
+                ignitionOn = (recBuffer[6] & 0x0C) == 0x04; // ignition on
+                return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+            }
+            catch (Exception)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+            }
+            finally
+            {
+                lock (SharedDataActive.TcpControlTimerLock)
                 {
                     TcpControlTimerStart(SharedDataActive);
                 }
