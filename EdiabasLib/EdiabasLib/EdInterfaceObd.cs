@@ -128,6 +128,13 @@ namespace EdiabasLib
         protected static volatile uint CommThreadReqCount;
         protected static volatile uint CommThreadResCount;
         protected static volatile DsrSampleState SampledDsrState;
+        // Latest clamp (KL15) state inferred from snooped jobs, used on wireless adapters
+        // (BT/ELM/WiFi) that have no usable DSR line. Written by OnJobCompleted on the job thread,
+        // read by the voltage sampler timer thread -> volatile. Static + seeded ON so the sampler
+        // shows the nominal immediately on connect (matching the former one-shot ON publish) and so
+        // the last snooped value survives ISTA's frequent reconnects without a flip burst (same
+        // rationale as SampledDsrState not being reset on connect). true = KL15 on.
+        protected static volatile bool SnoopClampOn = true;
 
         protected string ComPortProtected = string.Empty;
         protected int UdsDtcStatusOverrideProtected = -1;
@@ -1391,24 +1398,14 @@ namespace EdiabasLib
             // ignition on the DSR line -> sample it. Wireless dongles (BT/ELM/WiFi) carry no usable
             // ignition on DSR, so we do NOT run the DSR sampler there; the clamp state then comes from
             // the passive job snoop (OnJobCompleted). This keeps a single clamp source per transport.
+            // Detect the transport here (OnJobCompleted needs DsrLineTrusted), but ARM the sampler only
+            // once the connection actually succeeds (see ArmVoltageSampler at the connect-success exits),
+            // so the sampler's first tick reads Connected==true and never publishes a spurious
+            // disconnected (false) sample during the connect window.
             string portUpper = ComPortProtected.ToUpper(Culture);
             DsrLineTrusted = !(portUpper.StartsWith(EdBluetoothInterface.PortId)
                                || portUpper.StartsWith(EdElmWifiInterface.PortId)
                                || portUpper.StartsWith(EdCustomWiFiInterface.PortId));
-            if (EnableVoltageSampler && DsrLineTrusted)
-            {
-                // The DSR read runs on the CommThread (see SampleClampPending) so it never races with
-                // TX/RX. Do NOT reset SampledDsrState here: ISTA re-connects every few seconds and the
-                // clamp doesn't change across a reconnect; keeping the last value avoids a null burst.
-                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadSampledDsr, () => IgnitionVoltageValue, () => BatteryVoltageValue, RequestDsrSample);
-            }
-            else if (EnableVoltageSampler && EdiabasVoltageBridge.HasSink)
-            {
-                // Wireless (snoop mode): no DSR timer, so publish a default ON snapshot now - same as
-                // ENET - so the consumer shows the nominal immediately instead of falling back to its
-                // config value. OnJobCompleted then updates the clamp from the snooped jobs.
-                EdiabasVoltageBridge.Sample(true, true, IgnitionVoltageValue, BatteryVoltageValue, ComPortProtected);
-            }
 #endif
 
             if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
@@ -1556,6 +1553,12 @@ namespace EdiabasLib
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
                 }
+#if NETFRAMEWORK
+                else
+                {
+                    ArmVoltageSampler();
+                }
+#endif
                 return ConnectedProtected;
             }
 
@@ -1567,6 +1570,9 @@ namespace EdiabasLib
             }
             if (SerialPort.IsOpen)
             {
+#if NETFRAMEWORK
+                ArmVoltageSampler();
+#endif
                 return true;
             }
             try
@@ -1589,6 +1595,9 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
                 return false;
             }
+#if NETFRAMEWORK
+            ArmVoltageSampler();
+#endif
             return true;
 #else
             return false;
@@ -2905,6 +2914,32 @@ namespace EdiabasLib
         }
 
 #if NETFRAMEWORK
+        // Arms the voltage sampler for the active transport, called only once InterfaceConnect has
+        // actually established the connection (so the sampler's first tick reads Connected==true and
+        // does not publish a spurious disconnected sample during the connect window). Wired adapters
+        // (DsrLineTrusted) sample the real DSR line via the CommThread (RequestDsrSample/ReadSampledDsr);
+        // wireless ones have no usable DSR, so the clamp comes from the snoop cache (SnoopClampOn),
+        // refreshed by OnJobCompleted. No HasSink gate: arming is "connected + enabled"; the sampler
+        // starts ticking when a consumer is present (OnSinkRegistered handles late registration).
+        private void ArmVoltageSampler()
+        {
+            if (!EnableVoltageSampler)
+            {
+                return;
+            }
+
+            if (DsrLineTrusted)
+            {
+                // Do NOT reset SampledDsrState: ISTA re-connects every few seconds and the clamp
+                // doesn't change across a reconnect; keeping the last value avoids a null burst.
+                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, ReadSampledDsr, () => IgnitionVoltageValue, () => BatteryVoltageValue, RequestDsrSample);
+            }
+            else
+            {
+                EdiabasVoltageSampler.Start(ComPortProtected, () => Connected, () => (bool?)SnoopClampOn, () => IgnitionVoltageValue, () => BatteryVoltageValue);
+            }
+        }
+
         // Requests a clamp (DSR) read from the voltage sampler's timer thread. Only sets a flag;
         // the CommThread performs the actual ReadDsrRaw() on its next Idle/IdleTransmit iteration,
         // so the InterfaceGetDsr delegate is never touched concurrently with TX/RX. The flag
@@ -2947,8 +2982,9 @@ namespace EdiabasLib
         // ExecuteJob - no extra bus traffic.
         public override void OnJobCompleted(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
-            if (!EnableVoltageSampler || !EdiabasVoltageBridge.HasSink)
-            {
+            if (!EnableVoltageSampler)
+            {   // sampler disabled: nothing to feed. No HasSink gate - keeping the cache warm lets a
+                // consumer that registers later pick up the right clamp on the sampler's first tick.
                 return;
             }
 
@@ -2957,15 +2993,13 @@ namespace EdiabasLib
                 return;
             }
 
+            // Wireless: the snoop is the only clamp source. Update the cache; the voltage sampler
+            // timer republishes it to the bridge (a null result carries no clamp info -> hold last).
             bool? clampOn = EdiabasClampSnoop.InferClampFromJob(jobName, argStrings, resultSets);
-            if (!clampOn.HasValue)
+            if (clampOn.HasValue)
             {
-                return;
+                SnoopClampOn = clampOn.Value;
             }
-
-            // On wireless the snoop is the only clamp source (the DSR sampler is not started), so
-            // publish under the plain connection id.
-            EdiabasVoltageBridge.Sample(true, clampOn, IgnitionVoltageValue, BatteryVoltageValue, ComPortProtected);
         }
 #endif
 

@@ -767,6 +767,12 @@ namespace EdiabasLib
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
         protected static SharedData SharedDataStatic;
+        // Latest clamp (KL15) state inferred from snooped jobs. ENET has no live KL15 source, so this
+        // is the only clamp source. Written by OnJobCompleted on the job thread, read by the voltage
+        // sampler timer thread -> volatile. Static + seeded ON so the sampler shows the nominal
+        // immediately on connect and the last snooped value survives ISTA's frequent reconnects
+        // without a flip burst. true = KL15 on.
+        protected static volatile bool SnoopClampOn = true;
 
         protected SharedData NonSharedData;
         protected Socket UdpSocket;
@@ -1611,18 +1617,19 @@ namespace EdiabasLib
         // at the end of each user ExecuteJob - no extra bus traffic, no thread, no I/O.
         public override void OnJobCompleted(string jobName, List<string> argStrings, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
-            if (!EnableVoltageSampler || !EdiabasVoltageBridge.HasSink)
-            {   // disabled or no consumer: do not feed the bridge
+            if (!EnableVoltageSampler)
+            {   // sampler disabled: nothing to feed. No HasSink gate - keeping the cache warm lets a
+                // consumer that registers later pick up the right clamp on the sampler's first tick.
                 return;
             }
 
+            // Update the snoop cache; the voltage sampler timer republishes it to the bridge.
+            // A null result carries no authoritative clamp info -> hold the last cached state.
             bool? clampOn = EdiabasClampSnoop.InferClampFromJob(jobName, argStrings, resultSets);
-            if (!clampOn.HasValue)
-            {   // nothing authoritative this job: hold the last published state
-                return;
+            if (clampOn.HasValue)
+            {
+                SnoopClampOn = clampOn.Value;
             }
-
-            EdiabasVoltageBridge.Sample(true, clampOn, IgnitionVoltageValue, BatteryVoltageValue, RemoteHostProtected);
         }
 #endif
 
@@ -1797,16 +1804,23 @@ namespace EdiabasLib
                 return true;
             }
 
+            bool connectResult = InterfaceConnect(false);
+
 #if NETFRAMEWORK
-            if (EnableVoltageSampler && EdiabasVoltageBridge.HasSink)
+            if (connectResult && EnableVoltageSampler)
             {
-                // No timer/control-channel poll for ENET (no reliable live KL15 - see OnJobCompleted).
-                // Publish a default ON snapshot so the consumer shows the nominal immediately;
-                // OnJobCompleted then mirrors ISTA's explicit KLwechsel commands.
-                EdiabasVoltageBridge.Sample(true, true, IgnitionVoltageValue, BatteryVoltageValue, RemoteHostProtected);
+                // No DSR / control-channel poll for ENET (no reliable live KL15 - see OnJobCompleted):
+                // the clamp source is the snoop cache (SnoopClampOn), with no owner-thread read
+                // (requestSample is null). Its 1 s timer republishes the cached clamp (showing the
+                // nominal immediately on connect and tolerating a consumer that registers later), and
+                // OnJobCompleted refreshes the cache. No HasSink gate: arming is about "connected +
+                // enabled". Arm only AFTER a successful connect so the ENET auto-detect probe
+                // (RemoteHost "auto:all"), which never reaches a vehicle in OBD mode, does not feed the
+                // shared, process-wide voltage bridge and fight the active OBD sampler over it.
+                EdiabasVoltageSampler.Start(RemoteHostProtected, () => Connected, () => (bool?)SnoopClampOn, () => IgnitionVoltageValue, () => BatteryVoltageValue);
             }
 #endif
-            return InterfaceConnect(false);
+            return connectResult;
         }
 
         public bool InterfaceConnect(bool reconnect)
@@ -2349,8 +2363,9 @@ namespace EdiabasLib
         {
 #if NETFRAMEWORK
             if (EnableVoltageSampler)
-            {
-                EdiabasVoltageBridge.Detached(RemoteHostProtected);
+            {   // Stop disarms the sampler (stops the timer) and notifies the consumer via Detached -
+                // uniform teardown with the OBD path.
+                EdiabasVoltageSampler.Stop(RemoteHostProtected);
             }
 #endif
             if (!base.InterfaceDisconnect())
