@@ -1486,15 +1486,14 @@ namespace AssemblyPatcher
                                 {
                                     List<Instruction> insertInstructions = new List<Instruction>();
 
-                                    // insert process.StartInfo.WorkingDirectory = Path.GetDirectoryName(exePath);
+                                    // process.StartInfo.WorkingDirectory = Path.GetTempPath();
                                     insertInstructions.Add(new Instruction(OpCodes.Ldloc_0));   // process
                                     insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
                                         patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
                                             typeof(System.Diagnostics.ProcessStartInfo), null)));
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldarg_1));   // exePath
                                     insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                        patcher.BuildCall(typeof(System.IO.Path), "GetDirectoryName",
-                                            typeof(string), new[] { typeof(string) })));
+                                        patcher.BuildCall(typeof(System.IO.Path), "GetTempPath",
+                                            typeof(string), null)));
                                     insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
                                         patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo), "set_WorkingDirectory",
                                             typeof(void), new[] { typeof(string) })));
