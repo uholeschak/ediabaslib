@@ -1562,6 +1562,58 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Authoring.API.Implementation.SeamLM2Demand",
+                                Class = "SeamLM2BatteryDataHandler",
+                                Method = "GetBatteryDataFromBackend",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("SeamLM2BatteryDataHandler.GetBatteryDataFromBackend found");
+
+                                int apiResultIndex = -1;
+                                int seamLm2Index = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Newobj &&
+                                        instruction.Operand?.ToString()?.Contains("ApiResult") == true)
+                                    {
+                                        Console.WriteLine(
+                                            "SeamLM2BatteryDataHandler.GetBatteryDataFromBackend ApiResult constructor found at index: {0}",
+                                            index);
+                                        apiResultIndex = index;
+                                    }
+
+                                    if (instruction.OpCode == OpCodes.Newobj &&
+                                        instruction.Operand?.ToString()?.Contains("SeamLM2BatteryData") == true)
+                                    {
+                                        Console.WriteLine(
+                                            "SeamLM2BatteryDataHandler.GetBatteryDataFromBackend SeamLM2BatteryData constructor found at index: {0}",
+                                            index);
+                                        seamLm2Index = index;
+                                    }
+                                }
+
+                                if (apiResultIndex >= 0 && seamLm2Index >= 0)
+                                {
+                                    Console.WriteLine("SeamLM2BatteryDataHandler.GetBatteryDataFromBackend constructors found");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("*** SeamLM2BatteryDataHandler.GetBatteryDataFromBackend constructors not found");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** checkForPsdzInstancesLogFile Exception: {0}", ex.Message);
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.Diagnostics",
                                 Class = "VehicleIdent",
                                 Method = "doVehicleShortTest",
