@@ -1458,26 +1458,21 @@ namespace AssemblyPatcher
                             {
                                 Namespace = "RheingoldPsdzWebApi.Adapter",
                                 Class = "PsdzWebService",
-                                Method = "CreateBaseProcess",
+                                Method = "CreateMonitoredProcess",
                             };
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
                             if (instructions != null)
                             {
-                                Console.WriteLine("PsdzWebService.CreateBaseProcess found");
+                                Console.WriteLine("PsdzWebService.CreateMonitoredProcess found");
                                 int insertIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
-                                    if (instruction.OpCode == OpCodes.Ldloc_0 &&
-                                        index + 1 < instructions.Count)
+                                    if (instruction.OpCode == OpCodes.Call &&
+                                        instruction.Operand?.ToString()?.Contains("CreateBaseProcess") == true)
                                     {
-                                        if (instructions[index + 1].OpCode != OpCodes.Ret)
-                                        {
-                                            continue;
-                                        }
-
-                                        Console.WriteLine("PsdzWebService.CreateBaseProcess return found at index: {0}", index);
-                                        insertIndex = index;
+                                        Console.WriteLine("PsdzWebService.CreateMonitoredProcess return found at index: {0}", index);
+                                        insertIndex = index + 1;
                                         break;
                                     }
                                 }
@@ -1486,32 +1481,31 @@ namespace AssemblyPatcher
                                 {
                                     List<Instruction> insertInstructions = new List<Instruction>();
 
-                                    // string workDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                                    // Directory.CreateDirectory(workDir);
-                                    // process.StartInfo.WorkingDirectory = workDir;
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldloc_0));   // process
+                                    // Stack vor Insert: [process]
+                                    // process.StartInfo.WorkingDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+                                    insertInstructions.Add(new Instruction(OpCodes.Dup));       // [process, process]
                                     insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
                                         patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
-                                            typeof(System.Diagnostics.ProcessStartInfo), null)));
+                                            typeof(System.Diagnostics.ProcessStartInfo), null)));   // [process, startInfo]
                                     insertInstructions.Add(Instruction.Create(OpCodes.Call,
                                         patcher.BuildCall(typeof(System.IO.Path), "GetTempPath",
-                                            typeof(string), null)));
+                                            typeof(string), null)));                                 // [process, startInfo, tempPath]
                                     insertInstructions.Add(Instruction.Create(OpCodes.Call,
                                         patcher.BuildCall(typeof(System.IO.Path), "GetRandomFileName",
-                                            typeof(string), null)));
+                                            typeof(string), null)));                                 // [process, startInfo, tempPath, randomName]
                                     insertInstructions.Add(Instruction.Create(OpCodes.Call,
                                         patcher.BuildCall(typeof(System.IO.Path), "Combine",
-                                            typeof(string), new[] { typeof(string), typeof(string) })));
-                                    // Stack: [startInfo, workDir] – workDir duplizieren für CreateDirectory
-                                    insertInstructions.Add(new Instruction(OpCodes.Dup));
+                                            typeof(string), new[] { typeof(string), typeof(string) })));  // [process, startInfo, workDir]
+                                    insertInstructions.Add(new Instruction(OpCodes.Dup));       // [process, startInfo, workDir, workDir]
                                     insertInstructions.Add(Instruction.Create(OpCodes.Call,
                                         patcher.BuildCall(typeof(System.IO.Directory), "CreateDirectory",
-                                            typeof(System.IO.DirectoryInfo), new[] { typeof(string) })));
-                                    insertInstructions.Add(new Instruction(OpCodes.Pop));       // DirectoryInfo wegwerfen
-                                    // Stack: [startInfo, workDir]
+                                            typeof(System.IO.DirectoryInfo), new[] { typeof(string) })));  // [process, startInfo, workDir, DirectoryInfo]
+                                    insertInstructions.Add(new Instruction(OpCodes.Pop));       // [process, startInfo, workDir]
                                     insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
                                         patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo), "set_WorkingDirectory",
-                                            typeof(void), new[] { typeof(string) })));
+                                            typeof(void), new[] { typeof(string) })));           // [process]
+                                                                                                 // Stack nach Insert: [process] – identisch zum Original
 
                                     int offset = 0;
                                     foreach (Instruction insertInstruction in insertInstructions)
