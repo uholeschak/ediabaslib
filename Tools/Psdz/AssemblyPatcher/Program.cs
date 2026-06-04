@@ -1577,7 +1577,7 @@ namespace AssemblyPatcher
                                 {
                                     Instruction instruction = instructions[index];
                                     if (instruction.OpCode == OpCodes.Newobj &&
-                                        instruction.Operand?.ToString()?.Contains("ApiResult") == true)
+                                        instruction.Operand?.ToString()?.Contains("ApiResult::.ctor") == true)
                                     {
                                         Console.WriteLine(
                                             "SeamLM2BatteryDataHandler.GetBatteryDataFromBackend ApiResult constructor found at index: {0}",
@@ -1586,7 +1586,7 @@ namespace AssemblyPatcher
                                     }
 
                                     if (instruction.OpCode == OpCodes.Newobj &&
-                                        instruction.Operand?.ToString()?.Contains("SeamLM2BatteryData") == true)
+                                        instruction.Operand?.ToString()?.Contains("SeamLM2BatteryData::.ctor") == true)
                                     {
                                         Console.WriteLine(
                                             "SeamLM2BatteryDataHandler.GetBatteryDataFromBackend SeamLM2BatteryData constructor found at index: {0}",
@@ -1598,6 +1598,20 @@ namespace AssemblyPatcher
                                 if (apiResultIndex >= 0 && seamLm2Index >= 0)
                                 {
                                     Console.WriteLine("SeamLM2BatteryDataHandler.GetBatteryDataFromBackend constructors found");
+                                    List<Instruction> insertInstructions = new List<Instruction>();
+
+                                    insertInstructions.Add(instructions[apiResultIndex].Clone());
+                                    insertInstructions.Add(instructions[seamLm2Index].Clone());
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Ret));
+
+                                    instructions.Clear();
+                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    {
+                                        instructions.Add(insertInstruction);
+                                    }
+
+                                    patched = true;
+                                    Console.WriteLine("SeamLM2BatteryDataHandler.GetBatteryDataFromBackend patched");
                                 }
                                 else
                                 {
@@ -1607,7 +1621,7 @@ namespace AssemblyPatcher
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("*** checkForPsdzInstancesLogFile Exception: {0}", ex.Message);
+                            Console.WriteLine("*** SeamLM2BatteryDataHandler.GetBatteryDataFromBackend Exception: {0}", ex.Message);
                         }
 
                         try
