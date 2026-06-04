@@ -1486,7 +1486,9 @@ namespace AssemblyPatcher
                                 {
                                     List<Instruction> insertInstructions = new List<Instruction>();
 
-                                    // process.StartInfo.WorkingDirectory = Path.GetTempPath();
+                                    // string workDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                                    // Directory.CreateDirectory(workDir);
+                                    // process.StartInfo.WorkingDirectory = workDir;
                                     insertInstructions.Add(new Instruction(OpCodes.Ldloc_0));   // process
                                     insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
                                         patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
@@ -1494,6 +1496,19 @@ namespace AssemblyPatcher
                                     insertInstructions.Add(Instruction.Create(OpCodes.Call,
                                         patcher.BuildCall(typeof(System.IO.Path), "GetTempPath",
                                             typeof(string), null)));
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Call,
+                                        patcher.BuildCall(typeof(System.IO.Path), "GetRandomFileName",
+                                            typeof(string), null)));
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Call,
+                                        patcher.BuildCall(typeof(System.IO.Path), "Combine",
+                                            typeof(string), new[] { typeof(string), typeof(string) })));
+                                    // Stack: [startInfo, workDir] – workDir duplizieren für CreateDirectory
+                                    insertInstructions.Add(new Instruction(OpCodes.Dup));
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Call,
+                                        patcher.BuildCall(typeof(System.IO.Directory), "CreateDirectory",
+                                            typeof(System.IO.DirectoryInfo), new[] { typeof(string) })));
+                                    insertInstructions.Add(new Instruction(OpCodes.Pop));       // DirectoryInfo wegwerfen
+                                    // Stack: [startInfo, workDir]
                                     insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
                                         patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo), "set_WorkingDirectory",
                                             typeof(void), new[] { typeof(string) })));
