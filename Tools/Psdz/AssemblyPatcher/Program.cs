@@ -1580,7 +1580,7 @@ namespace AssemblyPatcher
                                         instruction.Operand?.ToString()?.Contains("ApiResult::.ctor") == true)
                                     {
                                         Console.WriteLine(
-                                            "SeamLM2BatteryDataHandler.GetBatteryDataFromBackend ApiResult constructor found at index: {0}",
+                                            "ApiResult constructor found at index: {0}",
                                             index);
                                         apiResultIndex = index;
                                     }
@@ -1589,7 +1589,7 @@ namespace AssemblyPatcher
                                         instruction.Operand?.ToString()?.Contains("SeamLM2BatteryData::.ctor") == true)
                                     {
                                         Console.WriteLine(
-                                            "SeamLM2BatteryDataHandler.GetBatteryDataFromBackend SeamLM2BatteryData constructor found at index: {0}",
+                                            "SeamLM2BatteryData constructor found at index: {0}",
                                             index);
                                         seamLm2Index = index;
                                     }
