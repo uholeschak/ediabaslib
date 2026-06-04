@@ -1456,6 +1456,54 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "RheingoldPsdzWebApi.Adapter",
+                                Class = "PsdzWebService",
+                                Method = "CreateBaseProcess",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("PsdzWebService.CreateBaseProcess found");
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldloc_0 &&
+                                        index + 1 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Ret)
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("PsdzWebService.CreateBaseProcess return found at index: {0}", index);
+                                        patchIndex = index;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    //instructions[patchIndex] = Instruction.Create(OpCodes.Callvirt,
+                                    //    patcher.BuildCall(typeof(System.IO.Stream), "Close", typeof(void), null));
+                                    patched = true;
+                                    Console.WriteLine("PsdzWebService.CreateBaseProcess patched");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("*** Patching CreateBaseProcess failed");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** checkForPsdzInstancesLogFile Exception: {0}", ex.Message);
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.Diagnostics",
                                 Class = "VehicleIdent",
                                 Method = "doVehicleShortTest",
