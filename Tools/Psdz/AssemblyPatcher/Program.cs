@@ -1464,62 +1464,92 @@ namespace AssemblyPatcher
                             if (instructions != null)
                             {
                                 Console.WriteLine("PsdzWebService.CreateMonitoredProcess found");
-                                int insertIndex = -1;
+
+                                bool alreadyPatched = false;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
                                     if (instruction.OpCode == OpCodes.Call &&
-                                        instruction.Operand?.ToString()?.Contains("CreateBaseProcess") == true)
+                                        instruction.Operand?.ToString()?.Contains("GetTempPath") == true)
                                     {
-                                        Console.WriteLine("PsdzWebService.CreateMonitoredProcess return found at index: {0}", index);
-                                        insertIndex = index + 1;
+                                        alreadyPatched = true;
                                         break;
                                     }
                                 }
 
-                                if (insertIndex >= 0)
+                                if (!alreadyPatched)
                                 {
-                                    List<Instruction> insertInstructions = new List<Instruction>();
-
-                                    // Stack vor Insert: [process]
-                                    // process.StartInfo.WorkingDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-
-                                    insertInstructions.Add(new Instruction(OpCodes.Dup));       // [process, process]
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
-                                        patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
-                                            typeof(System.Diagnostics.ProcessStartInfo), null)));   // [process, startInfo]
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                        patcher.BuildCall(typeof(System.IO.Path), "GetTempPath",
-                                            typeof(string), null)));                                 // [process, startInfo, tempPath]
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                        patcher.BuildCall(typeof(System.IO.Path), "GetRandomFileName",
-                                            typeof(string), null)));                                 // [process, startInfo, tempPath, randomName]
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                        patcher.BuildCall(typeof(System.IO.Path), "Combine",
-                                            typeof(string), new[] { typeof(string), typeof(string) })));  // [process, startInfo, workDir]
-                                    insertInstructions.Add(new Instruction(OpCodes.Dup));       // [process, startInfo, workDir, workDir]
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                        patcher.BuildCall(typeof(System.IO.Directory), "CreateDirectory",
-                                            typeof(System.IO.DirectoryInfo), new[] { typeof(string) })));  // [process, startInfo, workDir, DirectoryInfo]
-                                    insertInstructions.Add(new Instruction(OpCodes.Pop));       // [process, startInfo, workDir]
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
-                                        patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo), "set_WorkingDirectory",
-                                            typeof(void), new[] { typeof(string) })));           // [process]
-                                                                                                 // Stack nach Insert: [process] – identisch zum Original
-
-                                    int offset = 0;
-                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    int insertIndex = -1;
+                                    for (int index = 0; index < instructions.Count; index++)
                                     {
-                                        instructions.Insert(insertIndex + offset, insertInstruction);
-                                        offset++;
+                                        Instruction instruction = instructions[index];
+                                        if (instruction.OpCode == OpCodes.Call &&
+                                            instruction.Operand?.ToString()?.Contains("CreateBaseProcess") == true)
+                                        {
+                                            Console.WriteLine(
+                                                "PsdzWebService.CreateMonitoredProcess return found at index: {0}",
+                                                index);
+                                            insertIndex = index + 1;
+                                            break;
+                                        }
                                     }
 
-                                    patched = true;
-                                    Console.WriteLine("PsdzWebService.CreateBaseProcess patched");
+                                    if (insertIndex >= 0)
+                                    {
+                                        List<Instruction> insertInstructions = new List<Instruction>();
+
+                                        // Stack vor Insert: [process]
+                                        // process.StartInfo.WorkingDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+                                        insertInstructions.Add(new Instruction(OpCodes.Dup)); // [process, process]
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
+                                            patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
+                                                typeof(System.Diagnostics.ProcessStartInfo),
+                                                null))); // [process, startInfo]
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Call,
+                                            patcher.BuildCall(typeof(System.IO.Path), "GetTempPath",
+                                                typeof(string), null))); // [process, startInfo, tempPath]
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Call,
+                                            patcher.BuildCall(typeof(System.IO.Path), "GetRandomFileName",
+                                                typeof(string), null))); // [process, startInfo, tempPath, randomName]
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Call,
+                                            patcher.BuildCall(typeof(System.IO.Path), "Combine",
+                                                typeof(string),
+                                                new[]
+                                                {
+                                                    typeof(string), typeof(string)
+                                                }))); // [process, startInfo, workDir]
+                                        insertInstructions.Add(
+                                            new Instruction(OpCodes.Dup)); // [process, startInfo, workDir, workDir]
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Call,
+                                            patcher.BuildCall(typeof(System.IO.Directory), "CreateDirectory",
+                                                typeof(System.IO.DirectoryInfo),
+                                                new[]
+                                                {
+                                                    typeof(string)
+                                                }))); // [process, startInfo, workDir, DirectoryInfo]
+                                        insertInstructions.Add(
+                                            new Instruction(OpCodes.Pop)); // [process, startInfo, workDir]
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
+                                            patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo),
+                                                "set_WorkingDirectory",
+                                                typeof(void), new[] { typeof(string) }))); // [process]
+                                        // Stack nach Insert: [process] – identisch zum Original
+
+                                        int offset = 0;
+                                        foreach (Instruction insertInstruction in insertInstructions)
+                                        {
+                                            instructions.Insert(insertIndex + offset, insertInstruction);
+                                            offset++;
+                                        }
+
+                                        patched = true;
+                                        Console.WriteLine("PsdzWebService.CreateBaseProcess patched");
+                                    }
                                 }
                                 else
                                 {
-                                    Console.WriteLine("*** Patching CreateBaseProcess failed");
+                                    Console.WriteLine("PsdzWebService.CreateMonitoredProcess already patched");
                                 }
                             }
                         }
