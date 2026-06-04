@@ -1464,7 +1464,7 @@ namespace AssemblyPatcher
                             if (instructions != null)
                             {
                                 Console.WriteLine("PsdzWebService.CreateBaseProcess found");
-                                int patchIndex = -1;
+                                int insertIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
@@ -1477,15 +1477,24 @@ namespace AssemblyPatcher
                                         }
 
                                         Console.WriteLine("PsdzWebService.CreateBaseProcess return found at index: {0}", index);
-                                        patchIndex = index;
+                                        insertIndex = index;
                                         break;
                                     }
                                 }
 
-                                if (patchIndex >= 0)
+                                if (insertIndex >= 0)
                                 {
                                     //instructions[patchIndex] = Instruction.Create(OpCodes.Callvirt,
                                     //    patcher.BuildCall(typeof(System.IO.Stream), "Close", typeof(void), null));
+                                    List<Instruction> insertInstructions = new List<Instruction>();
+
+                                    int offset = 0;
+                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    {
+                                        instructions.Insert(insertIndex + offset, insertInstruction);
+                                        offset++;
+                                    }
+
                                     patched = true;
                                     Console.WriteLine("PsdzWebService.CreateBaseProcess patched");
                                 }
