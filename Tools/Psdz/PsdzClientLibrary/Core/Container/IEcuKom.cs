@@ -22,7 +22,7 @@ namespace PsdzClient.Core.Container
 
         VCIDevice VCI { get; set; }
 
-        List<IEcuJob> JobList { get; }
+        IReadOnlyList<IEcuJob> JobList { get; }
 
         bool FromFastaConfig { get; set; }
 

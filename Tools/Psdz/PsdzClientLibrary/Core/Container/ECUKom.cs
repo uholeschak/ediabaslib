@@ -70,7 +70,7 @@ namespace PsdzClient.Core.Container
         public uint EdiabasHandle { get; }
 
         [XmlIgnore]
-        public List<IEcuJob> JobList => ((IEnumerable<IEcuJob>)jobList).ToList();
+        public IReadOnlyList<IEcuJob> JobList => ((IEnumerable<IEcuJob>)jobList).ToList();
         public List<ECUJob> jobList { get; set; }
 
         public string APP
