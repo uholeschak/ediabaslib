@@ -80,8 +80,7 @@ namespace PsdzClient.Utility
             }
 
             string[] array = ECU_SGBD.Split('|');
-            string[] array2 = array;
-            foreach (string b in array2)
+            foreach (string b in array)
             {
                 foreach (IIdentEcu item in vehicle.ECU)
                 {
@@ -111,11 +110,10 @@ namespace PsdzClient.Utility
 
                 string[] array = ECU_GRUPPE.Split('|');
                 string[] array2 = item.ECU_GRUPPE.Split('|');
-                string[] array3 = array2;
-                foreach (string a in array3)
+                foreach (string a in array2)
                 {
-                    string[] array4 = array;
-                    foreach (string b in array4)
+                    string[] array3 = array;
+                    foreach (string b in array3)
                     {
                         if (string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
                         {
