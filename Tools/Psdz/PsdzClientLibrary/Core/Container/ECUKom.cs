@@ -22,10 +22,11 @@ using PsdzClient.Psdz;
 #pragma warning disable CS0169, CS0649
 namespace PsdzClient.Core.Container
 {
-    public class ECUKom : IEcuKom, IEcuKomApi
+    public class ECUKom : ECUKomBase
     {
+        [PreserveSource(Hint = "api modified", SuppressWarning = true)]
+        private ApiInternal api;
         private const string ERROR_ECU_ZDF_REJECT = "ERROR_ECU_ZDF_REJECT";
-        private const int STANDARD_EDIABAS_LOGLEVEL = 0;
         private const int DEFAULT_EDIABAS_TRACELEVEL = 6;
         private const int DEFAULT_IFH_TRACELEVEL = 3;
         private const int DEFAULT_SYSTEM_IFH_TRACELEVEL = 6;
@@ -44,16 +45,6 @@ namespace PsdzClient.Core.Container
             "SWFK-0000CED0",
             "SWFK-0000CFBC"
         };
-        [PreserveSource(Hint = "api modified", SuppressWarning = true)]
-        private ApiInternal api;
-        private string _APP;
-        private CommMode communicationMode;
-        private bool isProblemHandlingTraceRunning;
-        private List<string> apiJobNamesToBeCached = CachedApiJobConfigParser.Parse();
-        private DateTime lastJobExecution;
-        private VCIDevice vci;
-        private Dictionary<string, List<IEcuJob>> ecuJobDictionary = new Dictionary<string, List<IEcuJob>>();
-        private bool m_FromFastaConfig;
         [PreserveSource(Hint = "ServiceController sc", Placeholder = true)]
         private PlaceholderType sc;
         [PreserveSource(Hint = "ServiceControllerPermission scp", Placeholder = true)]
@@ -63,132 +54,8 @@ namespace PsdzClient.Core.Container
         private bool useSpecialEdiabasVersion;
         private SpecialSecurityCases detectedSpecialSecurityCase;
         private readonly IInteractionService interactionService;
-        private readonly IBackendCallsWatchDog backendCallsWatchDog;
         private readonly ISec4DiagHandler sec4DiagHandler;
         private readonly IFasta2Service fasta2Service;
-        private IList<string> lang = new List<string>();
-        public uint EdiabasHandle { get; }
-
-        [XmlIgnore]
-        public IReadOnlyList<IEcuJob> JobList => ((IEnumerable<IEcuJob>)jobList).ToList();
-        public List<ECUJob> jobList { get; set; }
-
-        public string APP
-        {
-            get
-            {
-                return _APP;
-            }
-
-            set
-            {
-                _APP = value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool FromFastaConfig
-        {
-            get
-            {
-                return m_FromFastaConfig;
-            }
-
-            set
-            {
-                if (value != m_FromFastaConfig)
-                {
-                    Log.Info(Log.CurrentMethod(), "Stack: " + GetStack());
-                    Log.Info(Log.CurrentMethod(), $"Setting new value to {value}");
-                    m_FromFastaConfig = value;
-                }
-            }
-        }
-
-        [XmlIgnore]
-        public int CacheHitCounter { get; set; }
-
-        [XmlIgnore]
-        public int CacheMissCounter { get; set; }
-
-        [XmlIgnore]
-        public CommMode CommunicationMode
-        {
-            get
-            {
-                return communicationMode;
-            }
-
-            set
-            {
-                if (value != communicationMode)
-                {
-                    communicationMode = value;
-                }
-            }
-        }
-
-        [XmlIgnore]
-        public VCIDevice VCI
-        {
-            get
-            {
-                return vci;
-            }
-
-            set
-            {
-                if (vci != value)
-                {
-                    vci = value;
-                }
-            }
-        }
-
-        [XmlIgnore]
-        public bool IsInSimulationMode => CommunicationMode == CommMode.Simulation;
-
-        public bool IsProblemHandlingTraceRunning
-        {
-            get
-            {
-                return isProblemHandlingTraceRunning;
-            }
-
-            set
-            {
-                if (isProblemHandlingTraceRunning != value)
-                {
-                    isProblemHandlingTraceRunning = value;
-                }
-            }
-        }
-
-        public string VciIpAddress => VCI?.IPAddress;
-
-        public VCIDeviceType VCIDeviceType
-        {
-            get
-            {
-                if (VCI == null)
-                {
-                    return VCIDeviceType.UNKNOWN;
-                }
-
-                return VCI.VCIType;
-            }
-        }
-
-        public IEcuJob DefaultApiJob(string ecu, string job, string param, string resultFilter)
-        {
-            return apiJob(ecu, job, param, resultFilter);
-        }
-
-        public IEcuJob ApiJobWithRetries(string variant, string job, string param, string resultFilter, int retries)
-        {
-            return apiJob(variant, job, param, resultFilter, retries, null, null, "ApiJobWithRetries");
-        }
-
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public ECUKom() : this(null, new List<string>())
         {
@@ -201,13 +68,12 @@ namespace PsdzClient.Core.Container
             //[+] api = CreateApi(ediabas);
             api = CreateApi(ediabas);
             communicationMode = CommMode.Normal;
-            jobList = new List<ECUJob>();
-            APP = app;
-            FromFastaConfig = false;
-            CacheHitCounter = 0;
-            this.lang = lang;
+            base.jobList = new List<ECUJob>();
+            base.APP = app;
+            base.FromFastaConfig = false;
+            base.CacheHitCounter = 0;
+            base.lang = lang;
             ServiceLocator.Current.TryGetService<IInteractionService>(out interactionService);
-            ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out backendCallsWatchDog);
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
             ServiceLocator.Current.TryGetService<IFasta2Service>(out fasta2Service);
             IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient();
@@ -252,11 +118,11 @@ namespace PsdzClient.Core.Container
             return new ApiInternal(ediabas);
         }
 
-        public void End()
+        public override void End()
         {
             try
             {
-                if (VCIDeviceType != VCIDeviceType.PTT)
+                if (base.VCIDeviceType != VCIDeviceType.PTT)
                 {
                     api.apiSetConfig("EDIABASUnload", "1");
                 }
@@ -269,13 +135,13 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        public string GetEdiabasIniFilePath(string iniFilename)
+        public override string GetEdiabasIniFilePath(string iniFilename)
         {
             return EdiabasIniFilePath(iniFilename);
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP)
+        public override BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP)
         {
             BoolResultObject result = InitVCI(vciDevice, logging: true, isDoIP);
             if (isProblemHandlingTraceRunning)
@@ -286,38 +152,13 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        public int GetCacheHitCounter()
-        {
-            return CacheHitCounter;
-        }
-
-        public int GetCacheMissCounter()
-        {
-            return CacheMissCounter;
-        }
-
-        public int GetCacheListNumberOfJobs()
-        {
-            return jobList.Count;
-        }
-
-        public int GetCacheListNumberOfJobsToBeRetrieved()
-        {
-            return apiJobNamesToBeCached.Count;
-        }
-
-        public void SetLogLevelToMax()
-        {
-            isProblemHandlingTraceRunning = true;
-        }
-
-        public bool Refresh(bool isDoIP)
+        public override bool Refresh(bool isDoIP)
         {
             End();
             bool result = false;
             try
             {
-                result = InitVCI(VCI, isDoIP).Result;
+                result = InitVCI(base.VCI, isDoIP).Result;
             }
             catch (Exception exception)
             {
@@ -327,12 +168,12 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        public bool ApiInitExt(string ifh, string unit, string app, string reserved)
+        public override bool ApiInitExt(string ifh, string unit, string app, string reserved)
         {
             return api.apiInitExt(ifh, unit, app, reserved);
         }
 
-        public void SetEcuPath(bool logging)
+        public override void SetEcuPath(bool logging)
         {
             try
             {
@@ -412,7 +253,7 @@ namespace PsdzClient.Core.Container
         }
 
         [PreserveSource(Hint = "ediabas added", SignatureModified = true)]
-        public static ECUKom DeSerialize(string filename, EdiabasNet ediabas = null)
+        public static ECUKomBase DeSerialize(string filename, EdiabasNet ediabas = null)
         {
             Log.Info("ECUKom.DeSerialize()", "called");
             if (!VehicleCommunication.validLicense)
@@ -420,14 +261,12 @@ namespace PsdzClient.Core.Container
                 throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
             }
 
-            ECUKom eCUKom;
+            ECUKomBase eCUKomBase;
             try
             {
                 XmlTextReader xmlTextReader = new XmlTextReader(filename);
-                eCUKom = (ECUKom)new XmlSerializer(typeof(ECUKom)).Deserialize(xmlTextReader);
-                //[+] eCUKom.api = eCUKom.CreateApi(ediabas);
-                eCUKom.api = eCUKom.CreateApi(ediabas);
-                eCUKom.jobList.ForEach(delegate (ECUJob job)
+                eCUKomBase = (ECUKomBase)new XmlSerializer(typeof(ECUKom)).Deserialize(xmlTextReader);
+                eCUKomBase.jobList.ForEach(delegate (ECUJob job)
                 {
                     if (job?.JobResultsForSerialization != null)
                     {
@@ -440,22 +279,20 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUKom.DeSerialize()", exception);
-                //[-] eCUKom = new ECUKom("Rheingold", new List<string>());
-                //[+] eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);
-                eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);
+                eCUKomBase = new ECUKom("Rheingold", new List<string>());
             }
 
             VCIDevice vCIDevice = new VCIDevice(VCIDeviceType.SIM, "SIM", filename);
             vCIDevice.Serial = filename;
             vCIDevice.IPAddress = "127.0.0.1";
-            eCUKom.VCI = vCIDevice;
-            eCUKom.CommunicationMode = CommMode.Simulation;
+            eCUKomBase.VCI = vCIDevice;
+            eCUKomBase.CommunicationMode = CommMode.Simulation;
             try
             {
-                if (eCUKom.jobList != null)
+                if (eCUKomBase.jobList != null)
                 {
-                    Log.Info("ECUKom.DeSerialize()", "got {0} jobs from simulation container", eCUKom.jobList.Count);
-                    foreach (ECUJob job in eCUKom.jobList)
+                    Log.Info("ECUKom.DeSerialize()", "got {0} jobs from simulation container", eCUKomBase.jobList.Count);
+                    foreach (ECUJob job in eCUKomBase.jobList)
                     {
                         job.JobName = job.JobName.ToUpper(CultureInfo.InvariantCulture);
                         job.EcuName = job.EcuName.ToUpper(CultureInfo.InvariantCulture);
@@ -468,7 +305,7 @@ namespace PsdzClient.Core.Container
             }
 
             Log.Info("ECUKom.DeSerialize()", "successfully done");
-            return eCUKom;
+            return eCUKomBase;
         }
 
         public static string EdiabasBinPath()
@@ -549,7 +386,7 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        public string GetLogPath()
+        public override string GetLogPath()
         {
             string result = null;
             try
@@ -572,7 +409,8 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP)
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        public override BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
             BoolResultObject boolResultObject2 = new BoolResultObject();
@@ -601,14 +439,15 @@ namespace PsdzClient.Core.Container
                     CreateEdiabasPublicKeyIfNotExist(device);
                     if (isDoIP2 || isDoIP)
                     {
-                        //[-]int id = Process.GetCurrentProcess().Id;
-                        //[-]if (!flag && interactionService.RegisterAsync(new InteractionDoIpCheckModel(id)).Result.Action == InteractionButton.Yes)
-                        //[-]{
-                        //[-]boolResultObject.ErrorCodeInt = 7;
-                        //[-]boolResultObject.ErrorMessage = "Only one NCAR session is possible at a time.";
-                        //[-]boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.DoIpIsUsedByOtherOperationError.ToString();
-                        //[-]return boolResultObject;
-                        //[-]}
+                        //[-] int id = Process.GetCurrentProcess().Id;
+                        //[-] if (!flag && interactionService.RegisterAsync(new InteractionDoIpCheckModel(id)).Result.Action == InteractionButton.Yes)
+                        //[-] {
+                        //[-] boolResultObject.ErrorCodeInt = 7;
+                        //[-] boolResultObject.ErrorMessage = "Only one NCAR session is possible at a time.";
+                        //[-] boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.DoIpIsUsedByOtherOperationError.ToString();
+                        //[-] return boolResultObject;
+                        //[-] }
+
                         if (!device.IsSimulation)
                         {
                             boolResultObject2 = HandleS29Authentication(device);
@@ -1052,138 +891,147 @@ namespace PsdzClient.Core.Container
             {
                 if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service) && ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out var service2) && ServiceLocator.Current.TryGetService<IFasta2Service>(out var service3))
                 {
-                    service.EdiabasPublicKey = service.GetPublicKeyFromEdiabas();
-                    string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
-                    string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
-                    if (ConfigSettings.IsOssModeActive)
+                    if (service.CheckIfEdiabasPublicKeyExists())
                     {
-                        WebCallResponse<Sec4DiagResponseData> webCallResponse = RequestCertificate(device, service, service2);
-                        if (webCallResponse.IsSuccessful)
+                        service.EdiabasPublicKey = service.GetPublicKeyFromEdiabas();
+                        string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
+                        string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
+                        if (ConfigSettings.IsOssModeActive)
                         {
-                            boolResultObject.Result = webCallResponse.IsSuccessful;
-                        }
-                        else
-                        {
-                            boolResultObject.Result = false;
-                            boolResultObject.StatusCode = (int)webCallResponse.HttpStatus.Value;
-                            boolResultObject.ErrorMessage = webCallResponse.Error;
-                            boolResultObject.ErrorCodeInt = 1;
-                        }
-
-                        return boolResultObject;
-                    }
-
-                    if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
-                    {
-                        if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection())
-                        {
-                            ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_004", TYPES.Sec4Diag);
-                            service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_004", LayoutGroup.D);
-                            boolResultObject.ErrorCodeInt = 3;
-                            return boolResultObject;
-                        }
-
-                        ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_001", TYPES.Sec4Diag);
-                        service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "ErrorCode: SEC4DIAG_001", LayoutGroup.D);
-                        WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
-                        if (webCallResponse2.IsSuccessful)
-                        {
-                            ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
-                            service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "ErrorCode: SEC4DIAG_003", LayoutGroup.D);
-                            boolResultObject.Result = webCallResponse2.IsSuccessful;
-                        }
-                        else
-                        {
-                            ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
-                            service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_001", LayoutGroup.D);
-                            boolResultObject.Result = webCallResponse2.IsSuccessful;
-                            boolResultObject.StatusCode = (int)(webCallResponse2.HttpStatus.HasValue ? webCallResponse2.HttpStatus.Value : ((HttpStatusCode)0));
-                            boolResultObject.ErrorCodeInt = 1;
-                            boolResultObject.ErrorMessage = webCallResponse2.Error;
-                        }
-
-                        return boolResultObject;
-                    }
-
-                    ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
-                    service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_003", LayoutGroup.D);
-                    X509Certificate2Collection subCaCertificate = new X509Certificate2Collection();
-                    X509Certificate2Collection caCertificate = new X509Certificate2Collection();
-                    Sec4DiagCertificateState sec4DiagCertificateState = service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate);
-                    if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
-                    {
-                        TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
-                        interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
-                        ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_007", TYPES.Sec4Diag);
-                        service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_007", LayoutGroup.D);
-                        boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
-                        return boolResultObject;
-                    }
-
-                    if (sec4DiagCertificateState == Sec4DiagCertificateState.Valid && subCaCertificate.Count == 1 && caCertificate.Count == 1)
-                    {
-                        ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_004", TYPES.Sec4Diag);
-                        service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_004", LayoutGroup.D);
-                        boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
-                        return boolResultObject;
-                    }
-
-                    switch (sec4DiagCertificateState)
-                    {
-                        case Sec4DiagCertificateState.NotYetExpired:
-                        {
-                            ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_004", TYPES.Sec4Diag);
-                            service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_004", LayoutGroup.D);
-                            WebCallResponse<Sec4DiagResponseData> webCallResponse4 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
-                            if (webCallResponse4.IsSuccessful)
+                            WebCallResponse<Sec4DiagResponseData> webCallResponse = RequestCertificate(device, service, service2);
+                            if (webCallResponse.IsSuccessful)
                             {
-                                ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_005", TYPES.Sec4Diag);
-                                service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_005", LayoutGroup.D);
-                                boolResultObject.Result = webCallResponse4.IsSuccessful;
+                                boolResultObject.Result = webCallResponse.IsSuccessful;
                             }
                             else
                             {
-                                TimeSpan subCAZertifikateRemainingTime2 = GetSubCAZertifikateRemainingTime();
-                                interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
-                                ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_006", TYPES.Sec4Diag);
-                                service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_006", LayoutGroup.D);
-                                boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
+                                boolResultObject.Result = false;
+                                boolResultObject.StatusCode = (int)webCallResponse.HttpStatus.Value;
+                                boolResultObject.ErrorMessage = webCallResponse.Error;
+                                boolResultObject.ErrorCodeInt = 1;
                             }
 
                             return boolResultObject;
                         }
 
-                        case Sec4DiagCertificateState.Expired:
-                        case Sec4DiagCertificateState.NotFound:
+                        if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
                         {
-                            ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_002", TYPES.Sec4Diag);
-                            service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_002", LayoutGroup.D);
-                            WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
-                            if (webCallResponse3.IsSuccessful)
+                            if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection())
+                            {
+                                ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_004", TYPES.Sec4Diag);
+                                service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_004", LayoutGroup.D);
+                                boolResultObject.ErrorCodeInt = 3;
+                                return boolResultObject;
+                            }
+
+                            ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_001", TYPES.Sec4Diag);
+                            service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "ErrorCode: SEC4DIAG_001", LayoutGroup.D);
+                            WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                            if (webCallResponse2.IsSuccessful)
                             {
                                 ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
-                                service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_003", LayoutGroup.D);
-                                boolResultObject.Result = webCallResponse3.IsSuccessful;
+                                service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "ErrorCode: SEC4DIAG_003", LayoutGroup.D);
+                                boolResultObject.Result = webCallResponse2.IsSuccessful;
                             }
                             else
                             {
                                 ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
                                 service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_001", LayoutGroup.D);
-                                boolResultObject.Result = webCallResponse3.IsSuccessful;
-                                boolResultObject.StatusCode = (int)(webCallResponse3.HttpStatus.HasValue ? webCallResponse3.HttpStatus.Value : ((HttpStatusCode)0));
+                                boolResultObject.Result = webCallResponse2.IsSuccessful;
+                                boolResultObject.StatusCode = (int)(webCallResponse2.HttpStatus.HasValue ? webCallResponse2.HttpStatus.Value : ((HttpStatusCode)0));
                                 boolResultObject.ErrorCodeInt = 1;
-                                boolResultObject.ErrorMessage = webCallResponse3.Error;
+                                boolResultObject.ErrorMessage = webCallResponse2.Error;
                             }
 
                             return boolResultObject;
                         }
 
-                        default:
-                            ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_003", TYPES.Sec4Diag);
-                            service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_003", LayoutGroup.D);
-                            boolResultObject.Result = false;
+                        ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
+                        service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_003", LayoutGroup.D);
+                        X509Certificate2Collection subCaCertificate = new X509Certificate2Collection();
+                        X509Certificate2Collection caCertificate = new X509Certificate2Collection();
+                        Sec4DiagCertificateState sec4DiagCertificateState = service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate);
+                        if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
+                        {
+                            TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
+                            interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
+                            ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_007", TYPES.Sec4Diag);
+                            service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_007", LayoutGroup.D);
+                            boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
                             return boolResultObject;
+                        }
+
+                        if (sec4DiagCertificateState == Sec4DiagCertificateState.Valid && subCaCertificate.Count == 1 && caCertificate.Count == 1)
+                        {
+                            ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_004", TYPES.Sec4Diag);
+                            service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_004", LayoutGroup.D);
+                            boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
+                            return boolResultObject;
+                        }
+
+                        switch (sec4DiagCertificateState)
+                        {
+                            case Sec4DiagCertificateState.NotYetExpired:
+                            {
+                                ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_004", TYPES.Sec4Diag);
+                                service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_004", LayoutGroup.D);
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse4 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                                if (webCallResponse4.IsSuccessful)
+                                {
+                                    ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_005", TYPES.Sec4Diag);
+                                    service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_005", LayoutGroup.D);
+                                    boolResultObject.Result = webCallResponse4.IsSuccessful;
+                                }
+                                else
+                                {
+                                    TimeSpan subCAZertifikateRemainingTime2 = GetSubCAZertifikateRemainingTime();
+                                    interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
+                                    ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_006", TYPES.Sec4Diag);
+                                    service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_006", LayoutGroup.D);
+                                    boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
+                                }
+
+                                return boolResultObject;
+                            }
+
+                            case Sec4DiagCertificateState.Expired:
+                            case Sec4DiagCertificateState.NotFound:
+                            {
+                                ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_002", TYPES.Sec4Diag);
+                                service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_002", LayoutGroup.D);
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                                if (webCallResponse3.IsSuccessful)
+                                {
+                                    ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
+                                    service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_003", LayoutGroup.D);
+                                    boolResultObject.Result = webCallResponse3.IsSuccessful;
+                                }
+                                else
+                                {
+                                    ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
+                                    service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_001", LayoutGroup.D);
+                                    boolResultObject.Result = webCallResponse3.IsSuccessful;
+                                    boolResultObject.StatusCode = (int)(webCallResponse3.HttpStatus.HasValue ? webCallResponse3.HttpStatus.Value : ((HttpStatusCode)0));
+                                    boolResultObject.ErrorCodeInt = 1;
+                                    boolResultObject.ErrorMessage = webCallResponse3.Error;
+                                }
+
+                                return boolResultObject;
+                            }
+
+                            default:
+                                ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_003", TYPES.Sec4Diag);
+                                service3.AddServiceCode(ServiceCodes.S4D03_ErrorCode_nu_LF, "ErrorCode: SEC4DIAG_Error_003", LayoutGroup.D);
+                                boolResultObject.Result = false;
+                                return boolResultObject;
+                        }
                     }
+
+                    boolResultObject.Result = false;
+                    boolResultObject.ErrorMessage = "EDIABAS PEM File not found.";
+                    boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.EdiabasPemFileNotFound.ToString();
+                    boolResultObject.ErrorCodeInt = 9;
+                    return boolResultObject;
                 }
 
                 ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_005", TYPES.Sec4Diag);
@@ -1378,441 +1226,7 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, bool cacheAdding)
-        {
-            return apiJob(ecu, job, param, resultFilter, cacheAdding);
-        }
-
-        public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, int retries, bool fastaActive)
-        {
-            return ApiJob(ecu, job, param, resultFilter, retries, null, fastaActive);
-        }
-
-        public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter = "", int retries = 0, IProtocolBasic fastaprotocoller = null, bool fastaActive = true)
-        {
-            if (retries != 0)
-            {
-                return apiJob(ecu, job, param, resultFilter, retries, 0, fastaprotocoller);
-            }
-
-            return apiJob(ecu, job, param, resultFilter, fastaprotocoller);
-        }
-
-        public IEcuJob ApiJob(string ecu, string job, string param, int retries, int millisecondsTimeout)
-        {
-            if (retries != 0)
-            {
-                return apiJob(ecu, job, param, string.Empty, retries, millisecondsTimeout);
-            }
-
-            return apiJob(ecu, job, param, string.Empty);
-        }
-
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public IEcuJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", IProtocolBasic fastaprotocoller = null, [CallerMemberName] string callerMember = "")
-        {
-            if (FromFastaConfig && !string.IsNullOrEmpty(sgbd) && apiJobNamesToBeCached.Contains(job))
-            {
-                IEcuJob jobFromCache = GetJobFromCache(sgbd, job, param, resultFilter);
-                if (jobFromCache != null && (CommunicationMode == CommMode.Simulation || (jobFromCache.JobErrorCode != 0 && jobFromCache.JobResult != null && jobFromCache.JobResult.Count > 0)))
-                {
-                    return jobFromCache;
-                }
-            }
-
-            return apiJob(variant, job, param, resultFilter, retries, 0, fastaprotocoller, callerMember);
-        }
-
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, IProtocolBasic fastaprotocoller = null, string callerMember = "")
-        {
-            if (!VehicleCommunication.validLicense)
-            {
-                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-            }
-
-            if (retries > 5)
-            {
-                Log.Warning("ECUKom.apiJob()", "Number of retries is set to {0}.", retries);
-            }
-
-            try
-            {
-                IEcuJob ecuJob = apiJob(ecu, jobName, param, resultFilter, fastaprotocoller, callerMember);
-                if (ecuJob.JobErrorCode == 98)
-                {
-                    return ecuJob;
-                }
-
-                ushort num = 1;
-                while (num < retries && !ecuJob.IsDone())
-                {
-                    SleepUtility.ThreadSleep(millisecondsTimeout, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
-                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, jobName, num);
-                    ecuJob = apiJob(ecu, jobName, param, resultFilter, fastaprotocoller, callerMember);
-                    num++;
-                }
-
-                return ecuJob;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ECUKom.apiJob()", exception);
-                IEcuJob ecuJob = new ECUJob(fastaprotocoller);
-                ecuJob.EcuName = ecu;
-                ecuJob.ExecutionStartTime = DateTime.Now;
-                ecuJob.ExecutionEndTime = ecuJob.ExecutionStartTime;
-                ecuJob.JobName = jobName;
-                ecuJob.JobParam = param;
-                ecuJob.JobResultFilter = resultFilter;
-                ecuJob.JobErrorCode = 90;
-                ecuJob.JobErrorText = "SYS-0000: INTERNAL ERROR";
-                ecuJob.JobResult = new List<IEcuResult>();
-                AddJobInCache(ecuJob);
-                return ecuJob;
-            }
-        }
-
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public IEcuJob apiJob(string ecu, string job, string param, string resultFilter, IProtocolBasic fastaprotocoller = null, string callerMember = "")
-        {
-            try
-            {
-                IEcuJob ecuJob = null;
-                if (string.Compare(ecu, "FA", StringComparison.OrdinalIgnoreCase) == 0 && string.Compare(job, "FA_STREAM2STRUCT", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    int len;
-                    byte[] param2 = FormatConverter.Ascii2ByteArray(param, out len);
-                    ecuJob = apiJobData("FA", "FA_STREAM2STRUCT", param2, len, string.Empty, callerMember);
-                }
-                else
-                {
-                    ecuJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true, isRetry: false, fastaprotocoller, callerMember);
-                }
-
-                if (ecuJob != null && VehicleCommunication.DebugLevel > 2)
-                {
-                    ECUJob.Dump(ecuJob);
-                }
-
-                return ecuJob;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ECUKom.apiJob()", exception);
-            }
-
-            ECUJob eCUJob = new ECUJob(fastaprotocoller);
-            eCUJob.EcuName = ecu;
-            eCUJob.JobName = job;
-            eCUJob.JobParam = param;
-            eCUJob.ExecutionStartTime = DateTime.Now;
-            eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
-            eCUJob.JobErrorCode = 91;
-            eCUJob.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
-            eCUJob.JobResult = new List<IEcuResult>();
-            if (VehicleCommunication.DebugLevel > 2)
-            {
-                ECUJob.Dump(eCUJob);
-            }
-
-            return eCUJob;
-        }
-
-        [PreserveSource(Hint = "serviceIsRunning removed", SignatureModified = true)]
-        public IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, bool isRetry = false, IProtocolBasic fastaprotocoller = null, string callerMember = "")
-        {
-            TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
-            try
-            {
-                if (!VehicleCommunication.validLicense)
-                {
-                    throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-                }
-
-                if (string.IsNullOrEmpty(ecu))
-                {
-                    ECUJob obj = new ECUJob(fastaprotocoller)
-                    {
-                        EcuName = string.Empty,
-                        JobName = jobName,
-                        JobParam = param,
-                        ExecutionStartTime = DateTime.Now
-                    };
-                    obj.ExecutionEndTime = obj.ExecutionStartTime;
-                    obj.JobErrorCode = 91;
-                    obj.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
-                    obj.JobResult = new List<IEcuResult>();
-                    return obj;
-                }
-
-                if (param == null)
-                {
-                    param = string.Empty;
-                }
-
-                if (resultFilter == null)
-                {
-                    resultFilter = string.Empty;
-                }
-
-                if (communicationMode == CommMode.Simulation)
-                {
-                    IEcuJob ecuJob = ApiJobSim(ecu, jobName, param, resultFilter);
-                    if (ecuJob != null)
-                    {
-                        return ecuJob;
-                    }
-
-                    ECUJob obj2 = new ECUJob(fastaprotocoller)
-                    {
-                        EcuName = ecu,
-                        JobName = jobName,
-                        JobParam = param,
-                        JobResultFilter = resultFilter,
-                        ExecutionStartTime = DateTime.Now
-                    };
-                    obj2.ExecutionEndTime = obj2.ExecutionStartTime;
-                    obj2.JobErrorCode = 19;
-                    obj2.JobErrorText = "IFH-0009: NO RESPONSE FROM CONTROLUNIT";
-                    obj2.JobResult = new List<IEcuResult>();
-                    return obj2;
-                }
-
-                if (communicationMode == CommMode.CacheFirst && cacheAdding)
-                {
-                    lastJobExecution = DateTime.MinValue;
-                    IEcuJob ecuJob2 = ApiJobSim(ecu, jobName, param, resultFilter);
-                    if (ecuJob2 != null && ecuJob2.JobErrorCode == 0 && ecuJob2.JobResult != null && ecuJob2.JobResult.Count > 0)
-                    {
-                        return ecuJob2;
-                    }
-                }
-
-                DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
-                int num = 0;
-                string empty = string.Empty;
-                ECUJob eCUJob = new ECUJob(fastaprotocoller);
-                eCUJob.EcuName = ecu;
-                eCUJob.ExecutionStartTime = dateTimePrecise.Now;
-                eCUJob.JobName = jobName;
-                eCUJob.JobParam = param;
-                eCUJob.JobResultFilter = resultFilter;
-                eCUJob.JobResult = new List<IEcuResult>();
-                try
-                {
-                    SetTraceLevelToMax(callerMember);
-                    if (serviceIsRunning)
-                    {
-                        try
-                        {
-                        //[-] sc.ExecuteCommand(150);
-                        }
-                        catch
-                        {
-                        //[-] Log.Error("ECUKom.apiJob()", $"Ediabas monitor executeCommand failed for Command {EdiabasMonitorTrigger.apijob}");
-                        }
-                    }
-
-                    api.apiJob(ecu, jobName, param, resultFilter);
-                    while (api.apiStateExt(1000) == 0)
-                    {
-                        SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
-                    }
-
-                    if (serviceIsRunning)
-                    {
-                        try
-                        {
-                        //[-] sc.ExecuteCommand(151);
-                        }
-                        catch
-                        {
-                        }
-                    }
-
-                    RemoveTraceLevel(callerMember);
-                    if (api.apiStateExt(1000) == 3)
-                    {
-                        num = api.apiErrorCode();
-                        empty = api.apiErrorText();
-                        eCUJob.JobErrorCode = num;
-                        eCUJob.JobErrorText = empty;
-                    }
-
-                    api.apiResultSets(out var rsets);
-                    if (serviceIsRunning)
-                    {
-                        try
-                        {
-                        //[-] sc.ExecuteCommand(152);
-                        }
-                        catch
-                        {
-                        }
-                    }
-
-                    eCUJob.JobResultSets = rsets;
-                    if (rsets > 0)
-                    {
-                        Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5} RSets: {6}", ecu, jobName, param, resultFilter, eCUJob.JobErrorCode, eCUJob.JobErrorText, rsets);
-                        for (ushort num2 = 0; num2 <= rsets; num2++)
-                        {
-                            if (api.apiResultNumber(out var buffer, num2))
-                            {
-                                for (ushort num3 = 1; num3 <= buffer; num3++)
-                                {
-                                    ECUResult eCUResult = new ECUResult();
-                                    string buffer2 = string.Empty;
-                                    eCUResult.Set = num2;
-                                    if (api.apiResultName(out buffer2, num3, num2))
-                                    {
-                                        eCUResult.Name = buffer2;
-                                        if (api.apiResultFormat(out var buffer3, buffer2, num2))
-                                        {
-                                            eCUResult.Format = buffer3;
-                                            switch (buffer3)
-                                            {
-                                                case 1:
-                                                {
-                                                    api.apiResultByte(out var buffer10, buffer2, num2);
-                                                    eCUResult.Value = buffer10;
-                                                    break;
-                                                }
-
-                                                case 0:
-                                                {
-                                                    api.apiResultChar(out var buffer11, buffer2, num2);
-                                                    eCUResult.Value = buffer11;
-                                                    break;
-                                                }
-
-                                                case 5:
-                                                {
-                                                    api.apiResultDWord(out var buffer12, buffer2, num2);
-                                                    eCUResult.Value = buffer12;
-                                                    break;
-                                                }
-
-                                                case 2:
-                                                {
-                                                    api.apiResultInt(out var buffer9, buffer2, num2);
-                                                    eCUResult.Value = buffer9;
-                                                    break;
-                                                }
-
-                                                case 4:
-                                                {
-                                                    api.apiResultLong(out var buffer6, buffer2, num2);
-                                                    eCUResult.Value = buffer6;
-                                                    break;
-                                                }
-
-                                                case 8:
-                                                {
-                                                    api.apiResultReal(out var buffer7, buffer2, num2);
-                                                    eCUResult.Value = buffer7;
-                                                    break;
-                                                }
-
-                                                case 6:
-                                                {
-                                                    api.apiResultText(out var buffer8, buffer2, num2, string.Empty);
-                                                    eCUResult.Value = buffer8;
-                                                    break;
-                                                }
-
-                                                case 3:
-                                                {
-                                                    api.apiResultWord(out var buffer5, buffer2, num2);
-                                                    eCUResult.Value = buffer5;
-                                                    break;
-                                                }
-
-                                                case 7:
-                                                {
-                                                    uint bufferLen2;
-                                                    if (api.apiResultBinary(out var buffer4, out var bufferLen, buffer2, num2))
-                                                    {
-                                                        if (buffer4 != null)
-                                                        {
-                                                            Array.Resize(ref buffer4, bufferLen);
-                                                        }
-
-                                                        eCUResult.Value = buffer4;
-                                                        eCUResult.Length = bufferLen;
-                                                    }
-                                                    else if (api.apiResultBinaryExt(out buffer4, out bufferLen2, 65536u, buffer2, num2))
-                                                    {
-                                                        if (buffer4 != null)
-                                                        {
-                                                            Array.Resize(ref buffer4, (int)bufferLen2);
-                                                        }
-
-                                                        eCUResult.Value = buffer4;
-                                                        eCUResult.Length = bufferLen2;
-                                                    }
-                                                    else
-                                                    {
-                                                        eCUResult.Value = new byte[0];
-                                                        eCUResult.Length = 0u;
-                                                    }
-
-                                                    break;
-                                                }
-
-                                                default:
-                                                {
-                                                    api.apiResultVar(out var var);
-                                                    eCUResult.Value = var;
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        eCUJob.JobResult.Add(eCUResult);
-                                    }
-                                    else
-                                    {
-                                        buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", jobName, num3, num2);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (num != 0)
-                    {
-                        Log.Info("ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with apiError: {4}:{5}", ecu, jobName, param, resultFilter, eCUJob.JobErrorCode, eCUJob.JobErrorText);
-                    }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    Log.Warning("ECUKom.apiJob()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, jobName, param, resultFilter, eCUJob.JobErrorText);
-                }
-                catch (Exception exception)
-                {
-                    Log.WarningException("ECUKom.apiJob()", exception);
-                }
-
-                eCUJob.ExecutionEndTime = dateTimePrecise.Now;
-                AddJobInCache(eCUJob, cacheAdding);
-                string stringResult = eCUJob.getStringResult(1, "JOB_STATUS");
-                (bool, ECUJob) tuple = HandleEcuAuthorizationRejection(ecu, jobName, param, resultFilter, (stringResult == null) ? string.Empty : stringResult, isRetry);
-                if (tuple.Item1)
-                {
-                    eCUJob = tuple.Item2;
-                }
-
-                return eCUJob;
-            }
-            finally
-            {
-                TimeMetricsUtility.Instance.ApiJobEnd(ecu, jobName, param, -1);
-            }
-        }
-
-        private (bool, ECUJob) HandleEcuAuthorizationRejection(string ecu, string jobName, string param, string resultFilter, string jobStatus, bool isRetry)
+        public override (bool, ECUJob) HandleEcuAuthorizationRejection(string ecu, string jobName, string param, string resultFilter, string jobStatus, bool isRetry)
         {
             string method = Log.CurrentMethod();
             IEcuJob ecuJob = null;
@@ -1823,13 +1237,13 @@ namespace PsdzClient.Core.Container
             bool flag2 = useSpecialEdiabasVersion && num2 == num;
             if (!isRetry && (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase) || flag2))
             {
-                bool flag3 = CheckAuthentificationState(VCI);
+                bool flag3 = CheckAuthentificationState(base.VCI);
                 if (!flag3)
                 {
                     Log.Info(method, "ERROR_ECU_ZDF_REJECT where sent by the ZDF");
                     item = true;
                     End();
-                    flag = InitializeDevice(VCI, logging: true, isDoIP: true, slpDoIpFromIcom: true);
+                    flag = InitializeDevice(base.VCI, logging: true, isDoIP: true, slpDoIpFromIcom: true);
                     SetEcuPath(logging: true);
                     Log.Info(method, "Ediabas is reinitialized with status {0}", flag);
                 }
@@ -1862,7 +1276,7 @@ namespace PsdzClient.Core.Container
             return (item, ecuJob as ECUJob);
         }
 
-        public void RemoveTraceLevel(string callerMember)
+        public override void RemoveTraceLevel(string callerMember)
         {
             if (!UseConfigFileTraces())
             {
@@ -1875,7 +1289,7 @@ namespace PsdzClient.Core.Container
             isProblemHandlingTraceRunning = false;
         }
 
-        public void SetTraceLevelToMax(string callerMember)
+        public override void SetTraceLevelToMax(string callerMember)
         {
             if (!(callerMember == "run") && !UseConfigFileTraces())
             {
@@ -1894,7 +1308,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        public SpecialSecurityCases DetectedSpecialSecurityCase()
+        public override SpecialSecurityCases DetectedSpecialSecurityCase()
         {
             return detectedSpecialSecurityCase;
         }
@@ -1921,311 +1335,12 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        public IEcuJob ApiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter = "", int retries = 0)
-        {
-            if (retries == 0)
-            {
-                return apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
-            }
-
-            return apiJobData(ecu, job, param, paramlen, resultFilter, retries);
-        }
-
-        public IEcuJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter, int retries)
-        {
-            if (!VehicleCommunication.validLicense)
-            {
-                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-            }
-
-            try
-            {
-                IEcuJob ecuJob = apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
-                if (ecuJob.JobErrorCode == 98)
-                {
-                    return ecuJob;
-                }
-
-                ushort num = 0;
-                while (num < retries && !ecuJob.IsDone())
-                {
-                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, job, num);
-                    ecuJob = apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
-                    num++;
-                }
-
-                return ecuJob;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ECUKom.apiJobData()", exception);
-                IEcuJob ecuJob = new ECUJob();
-                ecuJob.EcuName = ecu;
-                ecuJob.JobName = job;
-                ecuJob.JobParam = FormatConverter.ByteArray2String(param, (uint)paramlen);
-                ecuJob.JobResultFilter = resultFilter;
-                ecuJob.ExecutionStartTime = DateTime.Now;
-                ecuJob.ExecutionEndTime = ecuJob.ExecutionStartTime;
-                ecuJob.JobErrorCode = 90;
-                ecuJob.JobErrorText = "SYS-0000: INTERNAL ERROR";
-                ecuJob.JobResult = new List<IEcuResult>();
-                AddJobInCache(ecuJob);
-                return ecuJob;
-            }
-        }
-
-        public IEcuJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter, string callerMember)
-        {
-            TimeMetricsUtility.Instance.ApiJobStart(ecu, job, string.Empty, paramlen);
-            try
-            {
-                if (string.IsNullOrEmpty(ecu))
-                {
-                    ECUJob obj = new ECUJob
-                    {
-                        JobName = string.Empty,
-                        ExecutionStartTime = DateTime.Now
-                    };
-                    obj.ExecutionEndTime = obj.ExecutionStartTime;
-                    obj.JobErrorCode = 91;
-                    obj.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
-                    obj.JobResult = new List<IEcuResult>();
-                    return obj;
-                }
-
-                if (!VehicleCommunication.validLicense)
-                {
-                    throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-                }
-
-                if (param == null)
-                {
-                    param = new byte[0];
-                }
-
-                if (resultFilter == null)
-                {
-                    resultFilter = string.Empty;
-                }
-
-                if (paramlen == -1)
-                {
-                    paramlen = param.Length;
-                }
-
-                if (communicationMode == CommMode.Simulation)
-                {
-                    try
-                    {
-                        string param2 = FormatConverter.ByteArray2String(param, (uint)paramlen);
-                        IEcuJob ecuJob = ApiJobSim(ecu, job, param2, resultFilter);
-                        if (ecuJob != null)
-                        {
-                            return ecuJob;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex.ToString());
-                    }
-
-                    ECUJob obj2 = new ECUJob
-                    {
-                        EcuName = ecu,
-                        JobName = job,
-                        JobParam = FormatConverter.ByteArray2String(param, (uint)paramlen),
-                        JobResultFilter = resultFilter,
-                        ExecutionStartTime = DateTime.Now
-                    };
-                    obj2.ExecutionEndTime = obj2.ExecutionStartTime;
-                    obj2.JobErrorCode = 19;
-                    obj2.JobErrorText = "IFH-0009: NO RESPONSE FROM CONTROLUNIT";
-                    obj2.JobResult = new List<IEcuResult>();
-                    return obj2;
-                }
-
-                DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
-                int num = 0;
-                ECUJob eCUJob = new ECUJob();
-                eCUJob.EcuName = ecu;
-                eCUJob.JobName = job;
-                eCUJob.ExecutionStartTime = dateTimePrecise.Now;
-                eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
-                eCUJob.JobResultFilter = resultFilter;
-                eCUJob.JobResult = new List<IEcuResult>();
-                try
-                {
-                    eCUJob.JobParam = FormatConverter.ByteArray2String(param, (uint)paramlen);
-                    SetTraceLevelToMax(callerMember);
-                    api.apiJobData(ecu, job, param, paramlen, resultFilter);
-                    while (api.apiStateExt(1000) == 0)
-                    {
-                        SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + job + ", byte[]");
-                    }
-
-                    RemoveTraceLevel(callerMember);
-                    num = (eCUJob.JobErrorCode = api.apiErrorCode());
-                    eCUJob.JobErrorText = api.apiErrorText();
-                    if (num == 0)
-                    {
-                        Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5}", ecu, job, param, resultFilter, eCUJob.JobErrorCode, eCUJob.JobErrorText);
-                        if (api.apiResultSets(out var rsets))
-                        {
-                            eCUJob.JobResultSets = rsets;
-                            for (ushort num3 = 0; num3 <= rsets; num3++)
-                            {
-                                if (api.apiResultNumber(out var buffer, num3))
-                                {
-                                    for (ushort num4 = 1; num4 <= buffer; num4++)
-                                    {
-                                        ECUResult eCUResult = new ECUResult();
-                                        eCUResult.Set = num3;
-                                        if (api.apiResultName(out var buffer2, num4, num3))
-                                        {
-                                            eCUResult.Name = buffer2;
-                                            if (api.apiResultFormat(out var buffer3, buffer2, num3))
-                                            {
-                                                eCUResult.Format = buffer3;
-                                                switch (buffer3)
-                                                {
-                                                    case 1:
-                                                    {
-                                                        api.apiResultByte(out var buffer10, buffer2, num3);
-                                                        eCUResult.Value = buffer10;
-                                                        break;
-                                                    }
-
-                                                    case 0:
-                                                    {
-                                                        api.apiResultChar(out var buffer11, buffer2, num3);
-                                                        eCUResult.Value = buffer11;
-                                                        break;
-                                                    }
-
-                                                    case 5:
-                                                    {
-                                                        api.apiResultDWord(out var buffer12, buffer2, num3);
-                                                        eCUResult.Value = buffer12;
-                                                        break;
-                                                    }
-
-                                                    case 2:
-                                                    {
-                                                        api.apiResultInt(out var buffer9, buffer2, num3);
-                                                        eCUResult.Value = buffer9;
-                                                        break;
-                                                    }
-
-                                                    case 4:
-                                                    {
-                                                        api.apiResultLong(out var buffer6, buffer2, num3);
-                                                        eCUResult.Value = buffer6;
-                                                        break;
-                                                    }
-
-                                                    case 8:
-                                                    {
-                                                        api.apiResultReal(out var buffer7, buffer2, num3);
-                                                        eCUResult.Value = buffer7;
-                                                        break;
-                                                    }
-
-                                                    case 6:
-                                                    {
-                                                        api.apiResultText(out var buffer8, buffer2, num3, string.Empty);
-                                                        eCUResult.Value = buffer8;
-                                                        break;
-                                                    }
-
-                                                    case 3:
-                                                    {
-                                                        api.apiResultWord(out var buffer5, buffer2, num3);
-                                                        eCUResult.Value = buffer5;
-                                                        break;
-                                                    }
-
-                                                    case 7:
-                                                    {
-                                                        uint bufferLen2;
-                                                        if (api.apiResultBinary(out var buffer4, out var bufferLen, buffer2, num3))
-                                                        {
-                                                            if (buffer4 != null)
-                                                            {
-                                                                Array.Resize(ref buffer4, bufferLen);
-                                                            }
-
-                                                            eCUResult.Value = buffer4;
-                                                            eCUResult.Length = bufferLen;
-                                                        }
-                                                        else if (api.apiResultBinaryExt(out buffer4, out bufferLen2, 65536u, buffer2, num3))
-                                                        {
-                                                            if (buffer4 != null)
-                                                            {
-                                                                Array.Resize(ref buffer4, (int)bufferLen2);
-                                                            }
-
-                                                            eCUResult.Value = buffer4;
-                                                            eCUResult.Length = bufferLen2;
-                                                        }
-                                                        else
-                                                        {
-                                                            eCUResult.Value = new byte[0];
-                                                            eCUResult.Length = 0u;
-                                                        }
-
-                                                        break;
-                                                    }
-
-                                                    default:
-                                                    {
-                                                        api.apiResultVar(out var var);
-                                                        eCUResult.Value = var;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-
-                                            eCUJob.JobResult.Add(eCUResult);
-                                        }
-                                        else
-                                        {
-                                            buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", job, num4, num3);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with apiError: {4}:{5}", ecu, job, param, resultFilter, eCUJob.JobErrorCode, eCUJob.JobErrorText);
-                    }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    Log.Warning("ECUKom.apiJobData()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, job, param, resultFilter, eCUJob.JobErrorText);
-                }
-                catch (Exception ex3)
-                {
-                    Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex3.ToString());
-                }
-
-                eCUJob.ExecutionEndTime = dateTimePrecise.Now;
-                AddJobInCache(eCUJob);
-                return eCUJob;
-            }
-            finally
-            {
-                TimeMetricsUtility.Instance.ApiJobEnd(ecu, job, string.Empty, paramlen);
-            }
-        }
-
-        public int getErrorCode()
+        public override int getErrorCode()
         {
             return api.apiErrorCode();
         }
 
-        public string getErrorText()
+        public override string getErrorText()
         {
             return api.apiErrorText();
         }
@@ -2235,84 +1350,12 @@ namespace PsdzClient.Core.Container
             return api.apiStateExt(suspendTime);
         }
 
-        public bool setConfig(string cfgName, string cfgValue)
+        public override bool setConfig(string cfgName, string cfgValue)
         {
             return api.apiSetConfig(cfgName, cfgValue);
         }
 
-        public IEcuJob GetJobFromCache(string ecuName, string jobName, string jobParam, string jobResultFilter)
-        {
-            Log.Info("ECUKom.GetJobFromCache()", "Try retrieve from Cache: EcuName:{0}, JobName:{1}, JobParam:{2})", ecuName, jobName, jobParam);
-            if (!VehicleCommunication.validLicense)
-            {
-                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-            }
-
-            if (!ecuJobDictionary.ContainsKey(ecuName + "-" + jobName))
-            {
-                ecuJobDictionary.Add(ecuName + "-" + jobName, new List<IEcuJob>());
-            }
-
-            try
-            {
-                IEnumerable<ECUJob> enumerable = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobResultFilter, jobResultFilter, StringComparison.OrdinalIgnoreCase) && job.ExecutionStartTime > lastJobExecution);
-                if (enumerable != null && ((IEnumerable<IEcuJob>)enumerable).Count() > 0)
-                {
-                    return RetrieveEcuJob(enumerable, ecuName, jobName);
-                }
-
-                IEnumerable<ECUJob> enumerable2 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && job.ExecutionStartTime > lastJobExecution);
-                if (enumerable2 != null && ((IEnumerable<IEcuJob>)enumerable2).Count() > 0)
-                {
-                    return RetrieveEcuJob(enumerable2, ecuName, jobName);
-                }
-
-                IEnumerable<ECUJob> enumerable3 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobResultFilter, jobResultFilter, StringComparison.OrdinalIgnoreCase));
-                if (enumerable3 != null && ((IEnumerable<IEcuJob>)enumerable3).Count() > 0)
-                {
-                    return RetrieveEcuJobNoExecTime(enumerable3, ecuName, jobName);
-                }
-
-                IEnumerable<ECUJob> enumerable4 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase));
-                if (enumerable4 != null && ((IEnumerable<IEcuJob>)enumerable4).Count() > 0)
-                {
-                    return RetrieveEcuJobNoExecTime(enumerable4, ecuName, jobName);
-                }
-
-                CacheMissCounter++;
-            }
-            catch (Exception ex)
-            {
-                Log.Warning("ECUKom.GetJobFromCache()", "job {0},{1}) - failed with exception {2}", ecuName, jobName, ex.ToString());
-            }
-
-            Log.Info("ECUKom.GetJobFromCache()", "No result! EcuName:{0}, JobName:{1}, JobParam:{2})", ecuName, jobName, jobParam);
-            return null;
-        }
-
-        public IEcuJob ExecuteJobOverEnet(string icomAddress, string ecu, string job, string param, bool isDoIP, string resultFilter = "", int retries = 0)
-        {
-            string method = "ExecuteJobOverEnet";
-            Log.Info(method, "Before End");
-            End();
-            Log.Info(method, "After End");
-            IEcuJob result = ExecuteJobOverEnetWrapper(icomAddress, ecu, job, param, isDoIP, method, resultFilter, retries);
-            RefreshEdiabasConnection(isDoIP);
-            Log.Info(method, "After valid Refresh");
-            return result;
-        }
-
-        public IEcuJob ExecuteJobOverEnetActivateDHCP(string icomAddress, string ecu, string job, string param, bool isDoIP, string resultFilter = "", int retries = 0)
-        {
-            string method = "ExecuteJobOverEnet";
-            End();
-            IEcuJob result = ExecuteJobOverEnetWrapper(icomAddress, ecu, job, param, isDoIP, method, resultFilter, retries);
-            End();
-            Log.Info(method, "After API End");
-            return result;
-        }
-
-        private IEcuJob ExecuteJobOverEnetWrapper(string icomAddress, string ecu, string job, string param, bool isDoIP, string method, string resultFilter = "", int retries = 0)
+        public override IEcuJob ExecuteJobOverEnetWrapper(string icomAddress, string ecu, string job, string param, bool isDoIP, string method, string resultFilter = "", int retries = 0)
         {
             string istaLogPath = GetIstaLogPath();
             if (string.IsNullOrEmpty(istaLogPath))
@@ -2321,7 +1364,7 @@ namespace PsdzClient.Core.Container
                 return null;
             }
 
-            string cfgValue = (IsProblemHandlingTraceRunning ? "5" : "0");
+            string cfgValue = (base.IsProblemHandlingTraceRunning ? "5" : "0");
             Log.Info(method, "Before ApiInitExt");
             string reserved = $"RemoteHost={icomAddress};DiagnosticPort={51560};ControlPort={51561};PortDoIP={51562};";
             bool num = ApiInitExt("ENET", "_", "Rheingold", reserved);
@@ -2345,18 +1388,6 @@ namespace PsdzClient.Core.Container
             return ecuJob;
         }
 
-        private void RefreshEdiabasConnection(bool isDoIp)
-        {
-            if (Refresh(isDoIp))
-            {
-                Log.Info("EdiabasUtils.RefreshEdiabasConnection()", "Successfully connected to current VCI device.");
-            }
-            else
-            {
-                Log.Error("EdiabasUtils.RefreshEdiabasConnection()", "Failed to connect to current VCI device!");
-            }
-        }
-
         private static string GetIstaLogPath()
         {
             string result = string.Empty;
@@ -2370,109 +1401,6 @@ namespace PsdzClient.Core.Container
             }
 
             return result;
-        }
-
-        private IEcuJob RetrieveEcuJobNoExecTime(IEnumerable<IEcuJob> query, string ecuName, string jobName)
-        {
-            foreach (IEcuJob item in query)
-            {
-                if (!ecuJobDictionary[ecuName + "-" + jobName].Contains(item))
-                {
-                    if (item.ExecutionStartTime > lastJobExecution)
-                    {
-                        lastJobExecution = GetLastExecutionTime(item.ExecutionStartTime);
-                    }
-
-                    ecuJobDictionary[ecuName + "-" + jobName].Add(item);
-                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
-                    CacheHitCounter++;
-                    return item;
-                }
-            }
-
-            ecuJobDictionary[ecuName + "-" + jobName].Clear();
-            ecuJobDictionary[ecuName + "-" + jobName].Add(query.First());
-            if (query.First().ExecutionStartTime > lastJobExecution)
-            {
-                lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
-            }
-
-            Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
-            CacheHitCounter++;
-            return query.First();
-        }
-
-        private IEcuJob RetrieveEcuJob(IEnumerable<IEcuJob> query, string ecuName, string jobName)
-        {
-            foreach (IEcuJob item in query)
-            {
-                if (!ecuJobDictionary[ecuName + "-" + jobName].Contains(item))
-                {
-                    ecuJobDictionary[ecuName + "-" + jobName].Add(item);
-                    lastJobExecution = GetLastExecutionTime(item.ExecutionStartTime);
-                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
-                    CacheHitCounter++;
-                    return item;
-                }
-            }
-
-            ecuJobDictionary[ecuName + "-" + jobName].Clear();
-            ecuJobDictionary[ecuName + "-" + jobName].Add(query.First());
-            lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
-            Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
-            CacheHitCounter++;
-            return query.First();
-        }
-
-        private IEcuJob ApiJobSim(string ecu, string job, string param, string result)
-        {
-            if (!VehicleCommunication.validLicense)
-            {
-                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-            }
-
-            IEcuJob ecuJob = null;
-            if (!FromFastaConfig)
-            {
-                Log.Info(Log.CurrentMethod(), "Retrieving ECU " + ecu + " job " + job + " from cache.");
-                ecuJob = GetJobFromCache(ecu, job, param, result);
-            }
-
-            if (ecuJob != null)
-            {
-                ecuJob.FASTARelevant = false;
-                foreach (ECUResult item in ecuJob.JobResult)
-                {
-                    item.FASTARelevant = false;
-                }
-            }
-
-            return ecuJob;
-        }
-
-        private DateTime GetLastExecutionTime(DateTime executionStartTime)
-        {
-            IOrderedEnumerable<ECUJob> source =
-                from job in jobList
-                where job.ExecutionStartTime > lastJobExecution
-                orderby job.ExecutionStartTime
-                select job;
-            if (source.FirstOrDefault().ExecutionStartTime < executionStartTime)
-            {
-                return source.FirstOrDefault().ExecutionStartTime;
-            }
-
-            return executionStartTime;
-        }
-
-        private void AddJobInCache(IEcuJob job, bool cacheCondition = true)
-        {
-            if (!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.JobResultsCachingDisabled", defaultValue: false) && jobList != null && cacheCondition)
-            {
-                string msg = "Store in Cache: EcuName:" + job.EcuName + ", JobName:" + job.JobName + ", JobParam:" + job.JobParam;
-                Log.Info("ECUKom.AddJobInCache()", msg);
-                jobList.Add(job as ECUJob);
-            }
         }
 
         private static string GetStack()
@@ -2552,6 +1480,365 @@ namespace PsdzClient.Core.Container
         public int waitJobDone(int suspendTime)
         {
             return getState(suspendTime);
+        }
+
+        public override void ExecuteEdiabasJobAndGetResults(ECUJob ecuJob, string callerMember)
+        {
+            string ecuName = ecuJob.EcuName;
+            string jobName = ecuJob.JobName;
+            string jobParam = ecuJob.JobParam;
+            string jobResultFilter = ecuJob.JobResultFilter;
+            int num = 0;
+            string empty = string.Empty;
+            SetTraceLevelToMax(callerMember);
+            if (serviceIsRunning)
+            {
+                try
+                {
+                //[-] sc.ExecuteCommand(150);
+                }
+                catch
+                {
+                //[-] Log.Error("ECUKom.apiJob()", $"Ediabas monitor executeCommand failed for Command {EdiabasMonitorTrigger.apijob}");
+                }
+            }
+
+            api.apiJob(ecuName, jobName, jobParam, jobResultFilter);
+            while (api.apiStateExt(1000) == 0)
+            {
+                SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecuName + ", " + jobName + ", " + jobParam);
+            }
+
+            if (serviceIsRunning)
+            {
+                try
+                {
+                //[-] sc.ExecuteCommand(151);
+                }
+                catch
+                {
+                }
+            }
+
+            RemoveTraceLevel(callerMember);
+            if (api.apiStateExt(1000) == 3)
+            {
+                num = api.apiErrorCode();
+                empty = api.apiErrorText();
+                ecuJob.JobErrorCode = num;
+                ecuJob.JobErrorText = empty;
+            }
+
+            api.apiResultSets(out var rsets);
+            if (serviceIsRunning)
+            {
+                try
+                {
+                //[-] sc.ExecuteCommand(152);
+                }
+                catch
+                {
+                }
+            }
+
+            ecuJob.JobResultSets = rsets;
+            if (rsets > 0)
+            {
+                Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5} RSets: {6}", ecuName, jobName, jobParam, jobResultFilter, ecuJob.JobErrorCode, ecuJob.JobErrorText, rsets);
+                for (ushort num2 = 0; num2 <= rsets; num2++)
+                {
+                    if (api.apiResultNumber(out var buffer, num2))
+                    {
+                        for (ushort num3 = 1; num3 <= buffer; num3++)
+                        {
+                            ECUResult eCUResult = new ECUResult();
+                            string buffer2 = string.Empty;
+                            eCUResult.Set = num2;
+                            if (api.apiResultName(out buffer2, num3, num2))
+                            {
+                                eCUResult.Name = buffer2;
+                                if (api.apiResultFormat(out var buffer3, buffer2, num2))
+                                {
+                                    eCUResult.Format = buffer3;
+                                    switch (buffer3)
+                                    {
+                                        case 1:
+                                        {
+                                            api.apiResultByte(out var buffer10, buffer2, num2);
+                                            eCUResult.Value = buffer10;
+                                            break;
+                                        }
+
+                                        case 0:
+                                        {
+                                            api.apiResultChar(out var buffer11, buffer2, num2);
+                                            eCUResult.Value = buffer11;
+                                            break;
+                                        }
+
+                                        case 5:
+                                        {
+                                            api.apiResultDWord(out var buffer12, buffer2, num2);
+                                            eCUResult.Value = buffer12;
+                                            break;
+                                        }
+
+                                        case 2:
+                                        {
+                                            api.apiResultInt(out var buffer9, buffer2, num2);
+                                            eCUResult.Value = buffer9;
+                                            break;
+                                        }
+
+                                        case 4:
+                                        {
+                                            api.apiResultLong(out var buffer6, buffer2, num2);
+                                            eCUResult.Value = buffer6;
+                                            break;
+                                        }
+
+                                        case 8:
+                                        {
+                                            api.apiResultReal(out var buffer7, buffer2, num2);
+                                            eCUResult.Value = buffer7;
+                                            break;
+                                        }
+
+                                        case 6:
+                                        {
+                                            api.apiResultText(out var buffer8, buffer2, num2, string.Empty);
+                                            eCUResult.Value = buffer8;
+                                            break;
+                                        }
+
+                                        case 3:
+                                        {
+                                            api.apiResultWord(out var buffer5, buffer2, num2);
+                                            eCUResult.Value = buffer5;
+                                            break;
+                                        }
+
+                                        case 7:
+                                        {
+                                            uint bufferLen2;
+                                            if (api.apiResultBinary(out var buffer4, out var bufferLen, buffer2, num2))
+                                            {
+                                                if (buffer4 != null)
+                                                {
+                                                    Array.Resize(ref buffer4, bufferLen);
+                                                }
+
+                                                eCUResult.Value = buffer4;
+                                                eCUResult.Length = bufferLen;
+                                            }
+                                            else if (api.apiResultBinaryExt(out buffer4, out bufferLen2, 65536u, buffer2, num2))
+                                            {
+                                                if (buffer4 != null)
+                                                {
+                                                    Array.Resize(ref buffer4, (int)bufferLen2);
+                                                }
+
+                                                eCUResult.Value = buffer4;
+                                                eCUResult.Length = bufferLen2;
+                                            }
+                                            else
+                                            {
+                                                eCUResult.Value = new byte[0];
+                                                eCUResult.Length = 0u;
+                                            }
+
+                                            break;
+                                        }
+
+                                        default:
+                                        {
+                                            api.apiResultVar(out var var);
+                                            eCUResult.Value = var;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                ecuJob.JobResult.Add(eCUResult);
+                            }
+                            else
+                            {
+                                buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", jobName, num3, num2);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (num != 0)
+            {
+                Log.Info("ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with apiError: {4}:{5}", ecuName, jobName, jobParam, jobResultFilter, ecuJob.JobErrorCode, ecuJob.JobErrorText);
+            }
+        }
+
+        public override void ExecuteEdiabasJobAndGetResultsWithByteParams(ECUJob ecuJob, byte[] param, int paramlen, string callerMember)
+        {
+            string ecuName = ecuJob.EcuName;
+            string jobName = ecuJob.JobName;
+            string jobResultFilter = ecuJob.JobResultFilter;
+            int num = 0;
+            ecuJob.JobParam = FormatConverter.ByteArray2String(param, (uint)paramlen);
+            SetTraceLevelToMax(callerMember);
+            api.apiJobData(ecuName, jobName, param, paramlen, jobResultFilter);
+            while (api.apiStateExt(1000) == 0)
+            {
+                SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecuName + ", " + jobName + ", byte[]");
+            }
+
+            RemoveTraceLevel(callerMember);
+            num = (ecuJob.JobErrorCode = api.apiErrorCode());
+            ecuJob.JobErrorText = api.apiErrorText();
+            if (num == 0)
+            {
+                Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5}", ecuName, jobName, param, jobResultFilter, ecuJob.JobErrorCode, ecuJob.JobErrorText);
+                if (!api.apiResultSets(out var rsets))
+                {
+                    return;
+                }
+
+                ecuJob.JobResultSets = rsets;
+                for (ushort num3 = 0; num3 <= rsets; num3++)
+                {
+                    if (api.apiResultNumber(out var buffer, num3))
+                    {
+                        for (ushort num4 = 1; num4 <= buffer; num4++)
+                        {
+                            ECUResult eCUResult = new ECUResult();
+                            eCUResult.Set = num3;
+                            if (api.apiResultName(out var buffer2, num4, num3))
+                            {
+                                eCUResult.Name = buffer2;
+                                if (api.apiResultFormat(out var buffer3, buffer2, num3))
+                                {
+                                    eCUResult.Format = buffer3;
+                                    switch (buffer3)
+                                    {
+                                        case 1:
+                                        {
+                                            api.apiResultByte(out var buffer10, buffer2, num3);
+                                            eCUResult.Value = buffer10;
+                                            break;
+                                        }
+
+                                        case 0:
+                                        {
+                                            api.apiResultChar(out var buffer11, buffer2, num3);
+                                            eCUResult.Value = buffer11;
+                                            break;
+                                        }
+
+                                        case 5:
+                                        {
+                                            api.apiResultDWord(out var buffer12, buffer2, num3);
+                                            eCUResult.Value = buffer12;
+                                            break;
+                                        }
+
+                                        case 2:
+                                        {
+                                            api.apiResultInt(out var buffer9, buffer2, num3);
+                                            eCUResult.Value = buffer9;
+                                            break;
+                                        }
+
+                                        case 4:
+                                        {
+                                            api.apiResultLong(out var buffer6, buffer2, num3);
+                                            eCUResult.Value = buffer6;
+                                            break;
+                                        }
+
+                                        case 8:
+                                        {
+                                            api.apiResultReal(out var buffer7, buffer2, num3);
+                                            eCUResult.Value = buffer7;
+                                            break;
+                                        }
+
+                                        case 6:
+                                        {
+                                            api.apiResultText(out var buffer8, buffer2, num3, string.Empty);
+                                            eCUResult.Value = buffer8;
+                                            break;
+                                        }
+
+                                        case 3:
+                                        {
+                                            api.apiResultWord(out var buffer5, buffer2, num3);
+                                            eCUResult.Value = buffer5;
+                                            break;
+                                        }
+
+                                        case 7:
+                                        {
+                                            uint bufferLen2;
+                                            if (api.apiResultBinary(out var buffer4, out var bufferLen, buffer2, num3))
+                                            {
+                                                if (buffer4 != null)
+                                                {
+                                                    Array.Resize(ref buffer4, bufferLen);
+                                                }
+
+                                                eCUResult.Value = buffer4;
+                                                eCUResult.Length = bufferLen;
+                                            }
+                                            else if (api.apiResultBinaryExt(out buffer4, out bufferLen2, 65536u, buffer2, num3))
+                                            {
+                                                if (buffer4 != null)
+                                                {
+                                                    Array.Resize(ref buffer4, (int)bufferLen2);
+                                                }
+
+                                                eCUResult.Value = buffer4;
+                                                eCUResult.Length = bufferLen2;
+                                            }
+                                            else
+                                            {
+                                                eCUResult.Value = new byte[0];
+                                                eCUResult.Length = 0u;
+                                            }
+
+                                            break;
+                                        }
+
+                                        default:
+                                        {
+                                            api.apiResultVar(out var var);
+                                            eCUResult.Value = var;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                ecuJob.JobResult.Add(eCUResult);
+                            }
+                            else
+                            {
+                                buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", jobName, num4, num3);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with apiError: {4}:{5}", ecuName, jobName, param, jobResultFilter, ecuJob.JobErrorCode, ecuJob.JobErrorText);
+            }
+        }
+
+        public override void EndTimeMetric(string ecu, string jobName, string param, int argsLength = -1)
+        {
+            TimeMetricsUtility.Instance.ApiJobEnd(ecu, jobName, param, argsLength);
+        }
+
+        public override void StartTimeMetric(string ecu, string jobName, string param, int argsLength = -1)
+        {
+            TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, argsLength);
         }
     }
 }

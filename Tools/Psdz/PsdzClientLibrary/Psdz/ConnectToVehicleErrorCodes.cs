@@ -11,6 +11,7 @@
         MissmatchVinOperationCancelledError = 6,
         DoIpIsUsedByOtherOperationError = 7,
         NewEdiabasVersionWithoutNcarVehicle = 8,
+        EdiabasPemFileNotFound = 9,
         Undefined = -1,
         IcomNetworkFailure = -2
     }
