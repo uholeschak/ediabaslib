@@ -156,7 +156,7 @@ namespace PsdzClient.Utility
             AddMiscItem("ISTA Version: " + Assembly.GetEntryAssembly()?.GetName().Version.ToString());
             AddMiscItem("VIN: " + vehicle.VIN17);
             AddMiscItem("Online status: " + (IsNetworkAvailable() ? "online/true" : "offline/false"));
-            AddMiscItem("New VehicleIdent " + (vehicle.IsNewIdentActive ? "active." : "inactive."));
+            //[-]AddMiscItem("New VehicleIdent " + (SessionInfoAccessor.SessionInfo.IsNewIdentActive ? "active." : "inactive."));
             AddMiscItem("New FaultCode model " + (vehicle.Classification.IsNewFaultMemoryActive ? "active" : "inactive"));
             TimeSpan timeSpan = endOfFasta - startOfIdent;
             AddItemToList($"Ident started at: {startOfIdent}, Fasta readout finished at: {endOfFasta}. Total time elapsed: {timeSpan}", TYPES.TOTAL_IDENT_TIME);
