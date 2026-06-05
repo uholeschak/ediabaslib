@@ -69,12 +69,13 @@ namespace PsdzClient.Contracts
             };
         }
 
-        public static BoolResultObject<T> Fail(T ResultObject, string ErrorMessage)
+        public static BoolResultObject<T> Fail(T ResultObject, IBoolResultObject<string> errorObject)
         {
             return new BoolResultObject<T>
             {
                 Result = false,
-                ErrorMessage = ErrorMessage,
+                ErrorMessage = errorObject.ErrorMessage,
+                ErrorCode = errorObject.ErrorCode,
                 ResultObject = ResultObject
             };
         }
