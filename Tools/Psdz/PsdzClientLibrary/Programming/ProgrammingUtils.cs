@@ -19,6 +19,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+#pragma warning disable CS0612
 namespace BMW.Rheingold.Programming.Common
 {
     public class ProgrammingUtils

@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-#pragma warning disable CS0618, CS0169, CS0649
+#pragma warning disable CS0618, CS0169, CS0649, CS0612
 namespace PsdzClient.Core
 {
     public abstract class typeVehicle : INotifyPropertyChanged

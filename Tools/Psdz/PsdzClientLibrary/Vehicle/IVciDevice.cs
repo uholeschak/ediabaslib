@@ -19,8 +19,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool CommunicationDisturbanceRecognized { get; set; }
 
-        bool ConnectionLossRecognized { get; set; }
-
         bool IsDoIP { get; set; }
 
         int? ControlPort { get; set; }

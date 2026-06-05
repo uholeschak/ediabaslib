@@ -15,7 +15,7 @@ using BMW.Rheingold.Programming.Common;
 using PsdzClient.Contracts;
 using PsdzClient.Programming;
 
-#pragma warning disable CS0169, CS0649, CS0618
+#pragma warning disable CS0169, CS0649, CS0618, CS0612
 namespace PsdzClient.Core
 {
     public class Vehicle : typeVehicle, IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle, IEcuTreeVehicle

@@ -11,7 +11,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169, CS0612
 namespace PsdzClient.Psdz
 {
     public class ConnectionManager : ProgrammingMessageListener, IPsdzProg
