@@ -89,9 +89,9 @@ namespace PsdzClient.Core
         public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
         {
             RuleExpression[] array = operands;
-            foreach (RuleExpression ruleExpression in array)
+            for (int i = 0; i < array.Length; i++)
             {
-                EEvaluationResult eEvaluationResult = ruleExpression.EvaluateEmpiricalRule(premises);
+                EEvaluationResult eEvaluationResult = array[i].EvaluateEmpiricalRule(premises);
                 if (eEvaluationResult != EEvaluationResult.VALID)
                 {
                     return eEvaluationResult;
@@ -104,9 +104,9 @@ namespace PsdzClient.Core
         public override EEvaluationResult EvaluateFaultClassRule(Dictionary<string, List<double>> variables)
         {
             RuleExpression[] array = operands;
-            foreach (RuleExpression ruleExpression in array)
+            for (int i = 0; i < array.Length; i++)
             {
-                EEvaluationResult eEvaluationResult = ruleExpression.EvaluateFaultClassRule(variables);
+                EEvaluationResult eEvaluationResult = array[i].EvaluateFaultClassRule(variables);
                 if (eEvaluationResult != EEvaluationResult.VALID)
                 {
                     return eEvaluationResult;
@@ -236,9 +236,9 @@ namespace PsdzClient.Core
             byte[] bytes = BitConverter.GetBytes(operands.Length);
             ms.Write(bytes, 0, bytes.Length);
             RuleExpression[] array = operands;
-            foreach (RuleExpression ruleExpression in array)
+            for (int i = 0; i < array.Length; i++)
             {
-                ruleExpression.Serialize(ms);
+                array[i].Serialize(ms);
             }
         }
 
