@@ -45,20 +45,15 @@ namespace PsdzClient.Core
 
         public override bool HasBus(BusType busType, IEcuTreeVehicle vecInfo, IEcuTreeEcu ecu)
         {
-            if (ecu != null && ecu.Svk != null && ecu.Svk.XWE_SGBMID != null && xgbdTable != null)
+            if (ecu != null && ecu.Svk != null && ecu.Svk.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
             {
-                long iD_SG_ADR = ecu.ID_SG_ADR;
-                long num = iD_SG_ADR;
-                if (num == 96 && busType == BusType.MOST)
+                foreach (string item in ecu.Svk.XWE_SGBMID)
                 {
-                    foreach (string item in ecu.Svk.XWE_SGBMID)
+                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
                     {
-                        foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
                         {
-                            if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return item2.Bus.Contains(busType);
-                            }
+                            return item2.Bus.Contains(busType);
                         }
                     }
                 }
