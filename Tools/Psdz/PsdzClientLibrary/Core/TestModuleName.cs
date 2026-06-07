@@ -8,6 +8,8 @@
         RsuStop,
         RsuStart,
         ClampSwitch,
-        CcmIdToDtcId
+        CcmIdToDtcId,
+        CheckPwfState,
+        SwitchPwfState
     }
 }
