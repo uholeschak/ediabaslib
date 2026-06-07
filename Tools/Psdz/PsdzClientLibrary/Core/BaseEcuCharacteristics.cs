@@ -120,14 +120,34 @@ namespace PsdzClient.Core
                 ISGBDBusLogisticsEntry iSGBDBusLogisticsEntry = variantTable.FirstOrDefault((ISGBDBusLogisticsEntry x) => string.Equals(x.Variant, ecu.VARIANT, StringComparison.OrdinalIgnoreCase));
                 if (iSGBDBusLogisticsEntry != null)
                 {
-                    return busType == iSGBDBusLogisticsEntry.Bus || (iSGBDBusLogisticsEntry.SubBusList != null && iSGBDBusLogisticsEntry.SubBusList.Contains(busType));
+                    if (busType != iSGBDBusLogisticsEntry.Bus)
+                    {
+                        if (iSGBDBusLogisticsEntry.SubBusList != null)
+                        {
+                            return iSGBDBusLogisticsEntry.SubBusList.Contains(busType);
+                        }
+
+                        return false;
+                    }
+
+                    return true;
                 }
             }
 
             IEcuLogisticsEntry ecuLogisticsEntry = GetEcuLogisticsEntry(vecInfo, ecu);
             if (ecuLogisticsEntry != null)
             {
-                return ecuLogisticsEntry.Bus == busType || (ecuLogisticsEntry.SubBusList != null && ecuLogisticsEntry.SubBusList.Contains(busType));
+                if (ecuLogisticsEntry.Bus != busType)
+                {
+                    if (ecuLogisticsEntry.SubBusList != null)
+                    {
+                        return ecuLogisticsEntry.SubBusList.Contains(busType);
+                    }
+
+                    return false;
+                }
+
+                return true;
             }
 
             return false;
@@ -489,20 +509,17 @@ namespace PsdzClient.Core
             if (!string.IsNullOrEmpty(compatibilityInfo) && !string.IsNullOrEmpty(typeKey))
             {
                 string[] array = compatibilityInfo.Split('\n');
-                string[] array2 = array;
-                foreach (string text in array2)
+                foreach (string text in array)
                 {
                     try
                     {
-                        if (!string.IsNullOrEmpty(text) && text.Length >= 10)
+                        if (string.IsNullOrEmpty(text) || text.Length < 10 || !text.Trim().Split(';')[2].Contains(typeKey))
                         {
-                            string[] array3 = text.Trim().Split(';');
-                            if (array3[2].Contains(typeKey))
-                            {
-                                EcuTreeLogger.Instance.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} found", typeKey);
-                                return true;
-                            }
+                            continue;
                         }
+
+                        EcuTreeLogger.Instance.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} found", typeKey);
+                        return true;
                     }
                     catch (Exception exception)
                     {
@@ -533,13 +550,14 @@ namespace PsdzClient.Core
 
         protected IEcuTreeEcu CreateECU(long adr, string group)
         {
-            EcuTreeEcu ecuTreeEcu = new EcuTreeEcu();
-            ecuTreeEcu.ID_SG_ADR = adr;
-            ecuTreeEcu.IDENT_SUCCESSFULLY = false;
-            ecuTreeEcu.BUS = GetBus(adr, group);
-            ecuTreeEcu.ECU_GRUPPE = group;
-            ecuTreeEcu.ECU_GROBNAME = GetECU_GROBNAME(adr);
-            return ecuTreeEcu;
+            return new EcuTreeEcu
+            {
+                ID_SG_ADR = adr,
+                IDENT_SUCCESSFULLY = false,
+                BUS = GetBus(adr, group),
+                ECU_GRUPPE = group,
+                ECU_GROBNAME = GetECU_GROBNAME(adr)
+            };
         }
 
         protected IEcuTreeEcu CreateECU(long adr)
@@ -656,7 +674,7 @@ namespace PsdzClient.Core
                     {
                         if (string.IsNullOrEmpty(vecInfo.ILevelWerk) || string.IsNullOrEmpty(array3[4]) || array3[4].Contains(vecInfo.ILevelWerk))
                         {
-                            goto IL_0299;
+                            goto IL_0223;
                         }
 
                         continue;
@@ -664,7 +682,7 @@ namespace PsdzClient.Core
 
                     if (array3.Length != 7)
                     {
-                        goto IL_0299;
+                        goto IL_0223;
                     }
 
                     if (!string.IsNullOrEmpty(vecInfo.ILevelWerk) && !string.IsNullOrEmpty(array3[4]) && !array3[4].Contains(vecInfo.ILevelWerk))
@@ -676,17 +694,17 @@ namespace PsdzClient.Core
                     EcuTreeLogger.Instance.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking production date from: '{0}' to '{1}'", array3[5], array3[6]);
                     if (string.IsNullOrEmpty(array3[5]) || array3[5].Length != 6)
                     {
-                        goto IL_0235;
+                        goto IL_01d5;
                     }
 
                     DateTime dateTime = DateTime.ParseExact(array3[5], "MMyyyy", CultureInfo.InvariantCulture);
                     if (!vecInfo.ProductionDateSpecified || !(vecInfo.ProductionDate < dateTime))
                     {
-                        goto IL_0235;
+                        goto IL_01d5;
                     }
 
-                    goto end_IL_003f;
-                    IL_0299:
+                    goto end_IL_0039;
+                    IL_0223:
                         string[] array4 = array3[3].Split('&');
                     bool flag = true;
                     string[] array5 = array4;
@@ -704,20 +722,20 @@ namespace PsdzClient.Core
                         vecInfo.AddEcu(ecu);
                     }
 
-                    goto end_IL_003f;
-                    IL_0235:
+                    goto end_IL_0039;
+                    IL_01d5:
                         if (string.IsNullOrEmpty(array3[6]) || array3[6].Length != 6)
                         {
-                            goto IL_0299;
+                            goto IL_0223;
                         }
 
                     DateTime dateTime2 = DateTime.ParseExact(array3[6], "MMyyyy", CultureInfo.InvariantCulture);
                     if (!vecInfo.ProductionDateSpecified || !(vecInfo.ProductionDate > dateTime2.AddMonths(1)))
                     {
-                        goto IL_0299;
+                        goto IL_0223;
                     }
 
-                    end_IL_003f:
+                    end_IL_0039:
                         ;
                 }
                 catch (Exception exception)
