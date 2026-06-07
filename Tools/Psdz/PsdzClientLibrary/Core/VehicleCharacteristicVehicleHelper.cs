@@ -12,7 +12,6 @@ namespace PsdzClient.Core
         private string characteristicValue;
         [PreserveSource(Hint = "changed to string", SuppressWarning = true)]
         private string characteristicRootsNodeClass;
-        private decimal characteristicId;
         private IVehicleRuleEvaluation vehicle;
         private long datavalueId;
         private ValidationRuleInternalResults internalResult;
@@ -29,7 +28,6 @@ namespace PsdzClient.Core
         public bool GetISTACharacteristics(string characteristicRootsNodeClass, out string value, decimal id, IVehicleRuleEvaluation vehicle, long dataValueId, ValidationRuleInternalResults internalResult)
         {
             this.characteristicRootsNodeClass = characteristicRootsNodeClass;
-            characteristicId = id;
             this.vehicle = vehicle;
             datavalueId = dataValueId;
             this.internalResult = internalResult;
@@ -333,7 +331,12 @@ namespace PsdzClient.Core
             if (vehicle.BrandName == BrandName.TOYOTA)
             {
                 decimal num = dataProvider.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L);
-                return (num != 0m) ? (num == (decimal)datavalueId) : (dataProvider.LookupVehicleCharIdByName("MINI", 40039952514L) == (decimal)datavalueId);
+                if (!(num != 0m))
+                {
+                    return dataProvider.LookupVehicleCharIdByName("MINI", 40039952514L) == (decimal)datavalueId;
+                }
+
+                return num == (decimal)datavalueId;
             }
 
             return dataProvider.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L) == (decimal)datavalueId;
@@ -416,8 +419,7 @@ namespace PsdzClient.Core
                 //[-] ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm.DriveId && r.Type == CharacteristicType.HeatMotor && r.CharacteristicId == rootNodeClass.Value);
                 //[+] ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm.DriveId && r.Type == CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
                 ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm.DriveId && r.Type == CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
-                decimal num = dataProvider.LookupVehicleCharIdByName(getProperty(hm), characteristicNodeclass);
-                bool flag = num == (decimal)datavalueId;
+                bool flag = dataProvider.LookupVehicleCharIdByName(getProperty(hm), characteristicNodeclass) == (decimal)datavalueId;
                 if (validationRuleInternalResult == null)
                 {
                     validationRuleInternalResult = new ValidationRuleInternalResult
@@ -437,12 +439,11 @@ namespace PsdzClient.Core
                 }
 
                 IRuleExpression ruleExpression = internalResult.RuleExpression;
-                IRuleExpression ruleExpression2 = ruleExpression;
-                if (!(ruleExpression2 is AndExpression))
+                if (!(ruleExpression is AndExpression))
                 {
-                    if (!(ruleExpression2 is OrExpression))
+                    if (!(ruleExpression is OrExpression))
                     {
-                        if (ruleExpression2 is NotExpression)
+                        if (ruleExpression is NotExpression)
                         {
                             validationRuleInternalResult.IsValid &= !flag;
                         }
@@ -462,7 +463,12 @@ namespace PsdzClient.Core
             bool flag2 = (
                 from r in internalResult
                 group r by r.Id).Any((IGrouping<string, ValidationRuleInternalResult> g) => g.All((ValidationRuleInternalResult c) => c.IsValid));
-            return (internalResult.RuleExpression is NotExpression) ? (!flag2) : flag2;
+            if (!(internalResult.RuleExpression is NotExpression))
+            {
+                return flag2;
+            }
+
+            return !flag2;
         }
     }
 }
