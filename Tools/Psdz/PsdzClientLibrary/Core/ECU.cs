@@ -535,6 +535,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [XmlIgnore]
         public int ECUTreeColumn
         {
             get
@@ -552,6 +553,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [XmlIgnore]
         public int ECUTreeRow
         {
             get

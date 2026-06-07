@@ -179,20 +179,21 @@ namespace PsdzClient.Core
 
         public object Clone()
         {
-            EcuConfiguration ecuConfiguration = new EcuConfiguration();
-            ecuConfiguration.EcuGroups = new List<long>(EcuGroups);
-            ecuConfiguration.EcuVariants = new List<long>(EcuVariants);
-            ecuConfiguration.EcuCliques = new List<long>(EcuCliques);
-            ecuConfiguration.EcuRepresentatives = new List<long>(EcuRepresentatives);
-            ecuConfiguration.Equipments = new List<long>(Equipments);
-            ecuConfiguration.SaLaPas = new List<long>(SaLaPas);
-            ecuConfiguration.IStufe = IStufe;
-            ecuConfiguration.UnknownEcuGroups = new List<long>(UnknownEcuGroups);
-            ecuConfiguration.UnknownEcuVariants = new List<long>(UnknownEcuVariants);
-            ecuConfiguration.UnknownEcuCliques = new List<long>(UnknownEcuCliques);
-            ecuConfiguration.UnknownEcuRepresentatives = new List<long>(UnknownEcuRepresentatives);
-            ecuConfiguration.UnknownEquipments = new List<long>(UnknownEquipments);
-            return ecuConfiguration;
+            return new EcuConfiguration
+            {
+                EcuGroups = new List<long>(EcuGroups),
+                EcuVariants = new List<long>(EcuVariants),
+                EcuCliques = new List<long>(EcuCliques),
+                EcuRepresentatives = new List<long>(EcuRepresentatives),
+                Equipments = new List<long>(Equipments),
+                SaLaPas = new List<long>(SaLaPas),
+                IStufe = IStufe,
+                UnknownEcuGroups = new List<long>(UnknownEcuGroups),
+                UnknownEcuVariants = new List<long>(UnknownEcuVariants),
+                UnknownEcuCliques = new List<long>(UnknownEcuCliques),
+                UnknownEcuRepresentatives = new List<long>(UnknownEcuRepresentatives),
+                UnknownEquipments = new List<long>(UnknownEquipments)
+            };
         }
     }
 }
