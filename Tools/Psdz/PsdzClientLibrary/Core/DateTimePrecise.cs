@@ -8,8 +8,6 @@ namespace PsdzClient.Core
         private const long ClockTickFrequency = 10000000L;
         private Stopwatch stopwatch;
         private long synchronizePeriodStopwatchTicks;
-        private long synchronizePeriodSeconds;
-        private long synchronizePeriodClockTicks;
         private DateTimePreciseSafeImmutable immutable;
         public DateTime UtcNow
         {
@@ -50,9 +48,7 @@ namespace PsdzClient.Core
             stopwatch.Start();
             DateTime utcNow = DateTime.UtcNow;
             immutable = new DateTimePreciseSafeImmutable(utcNow, utcNow, stopwatch.ElapsedTicks, Stopwatch.Frequency);
-            this.synchronizePeriodSeconds = synchronizePeriodSeconds;
             synchronizePeriodStopwatchTicks = synchronizePeriodSeconds * Stopwatch.Frequency;
-            synchronizePeriodClockTicks = synchronizePeriodSeconds * 10000000;
         }
     }
 }
