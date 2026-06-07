@@ -39,10 +39,11 @@ namespace PsdzClient.Core
 
         public object Clone()
         {
-            CharacteristicSet characteristicSet = new CharacteristicSet();
-            characteristicSet.characteristics = new Dictionary<long, long>(characteristics);
-            characteristicSet.prodDates = new List<long>(prodDates);
-            return characteristicSet;
+            return new CharacteristicSet
+            {
+                characteristics = new Dictionary<long, long>(characteristics),
+                prodDates = new List<long>(prodDates)
+            };
         }
     }
 }
