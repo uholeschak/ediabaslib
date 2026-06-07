@@ -66,7 +66,7 @@ namespace PsdzClient.Core
 
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
         {
-            if (client.CountryId == value || client.CountryId == 0)
+            if (client.CountryId == value || client.CountryId == 0L)
             {
                 return EEvaluationResult.VALID;
             }
