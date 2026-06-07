@@ -1335,24 +1335,6 @@ namespace PsdzClient.Core
         }
 
         [DefaultValue(false)]
-        public bool ConnectionLossRecognized
-        {
-            get
-            {
-                return connectionLossRecognizedField;
-            }
-
-            set
-            {
-                if (!connectionLossRecognizedField.Equals(value))
-                {
-                    connectionLossRecognizedField = value;
-                    OnPropertyChanged("ConnectionLossRecognized");
-                }
-            }
-        }
-
-        [DefaultValue(false)]
         public bool ReconnectFailed
         {
             get
@@ -1449,7 +1431,6 @@ namespace PsdzClient.Core
             DevId = devid;
             Description = description;
             Imagename = null;
-            Color = "#73B2F5";
             VCIType = vciType;
         }
 
@@ -1798,7 +1779,6 @@ namespace PsdzClient.Core
             //[+] VCIDevice vCIDevice = new VCIDevice(_clientContext);
             VCIDevice vCIDevice = new VCIDevice(_clientContext);
             vCIDevice.CommunicationDisturbanceRecognized = CommunicationDisturbanceRecognized;
-            vCIDevice.ConnectionLossRecognized = ConnectionLossRecognized;
             vCIDevice.ControlPort = ControlPort;
             vCIDevice.Counter = Counter;
             vCIDevice.Description = Description;
@@ -1832,7 +1812,6 @@ namespace PsdzClient.Core
             vCIDevice.ReconnectFailed = ReconnectFailed;
             vCIDevice.ReserveHandle = ReserveHandle;
             vCIDevice.CommunicationDisturbanceRecognized = CommunicationDisturbanceRecognized;
-            vCIDevice.ConnectionLossRecognized = ConnectionLossRecognized;
             vCIDevice.ScanDate = ScanDate;
             vCIDevice.Service = Service;
             vCIDevice.UnderVoltageRecognized = UnderVoltageRecognized;
