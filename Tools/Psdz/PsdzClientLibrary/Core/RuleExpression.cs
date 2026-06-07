@@ -7,15 +7,14 @@ namespace PsdzClient.Core
     [Serializable]
     public abstract class RuleExpression : IRuleExpression
     {
-        public static IList<string> RuleEvaluationProtocol;
+        public static readonly IList<string> RuleEvaluationProtocol;
         public const long MISSING_DATE_EXPRESSION = -1L;
         protected const long MEMORYSIZE_OBJECT = 8L;
         protected const long MEMORYSIZE_REFERENCE = 8L;
         [PreserveSource(Hint = "dataProvider replaced by vec", SignatureModified = true)]
         public static RuleExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
-            byte b = (byte)ms.ReadByte();
-            EExpressionType eExpressionType = (EExpressionType)b;
+            EExpressionType eExpressionType = (EExpressionType)(byte)ms.ReadByte();
             switch (eExpressionType)
             {
                 case EExpressionType.COMP:
@@ -102,10 +101,9 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public static string ParseAndSerializeVariantRule(string rule)
         {
-            //[-] RuleExpression expression = VariantRuleParser.Parse(rule, dataProvider);
-            //[+] RuleExpression expression = VariantRuleParser.Parse(rule);
-            RuleExpression expression = VariantRuleParser.Parse(rule);
-            return SerializeToString(expression);
+            //[-] return SerializeToString(VariantRuleParser.Parse(rule, dataProvider));
+            //[+] return SerializeToString(VariantRuleParser.Parse(rule));
+            return SerializeToString(VariantRuleParser.Parse(rule));
         }
 
         [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
