@@ -26,8 +26,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "vec added", SignatureModified = true)]
         public new static ManufactoringDateExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
-            byte b = (byte)ms.ReadByte();
-            ECompareOperator eCompareOperator = (ECompareOperator)b;
+            ECompareOperator eCompareOperator = (ECompareOperator)(byte)ms.ReadByte();
             byte[] array = new byte[8];
             ms.Read(array, 0, 8);
             long ticks = BitConverter.ToInt64(array, 0);
@@ -45,7 +44,7 @@ namespace PsdzClient.Core
             }
 
             bool flag = false;
-            string empty = string.Empty;
+            _ = string.Empty;
             long ticks;
             try
             {
@@ -73,27 +72,21 @@ namespace PsdzClient.Core
             {
                 case ECompareOperator.EQUAL:
                     flag = ticks == datevalue;
-                    empty = "==";
                     break;
                 case ECompareOperator.NOT_EQUAL:
                     flag = ticks != datevalue;
-                    empty = "!=";
                     break;
                 case ECompareOperator.GREATER:
                     flag = ticks > datevalue;
-                    empty = ">";
                     break;
                 case ECompareOperator.GREATER_EQUAL:
                     flag = ticks >= datevalue;
-                    empty = ">=";
                     break;
                 case ECompareOperator.LESS:
                     flag = ticks < datevalue;
-                    empty = "<";
                     break;
                 case ECompareOperator.LESS_EQUAL:
                     flag = ticks <= datevalue;
-                    empty = "<=";
                     break;
                 default:
                     logger.Warning("ManufactoringDateExpression.Evaluate", "unknown logical operator: {0}", compareOperator);
@@ -116,9 +109,19 @@ namespace PsdzClient.Core
             switch (compareOperator)
             {
                 case ECompareOperator.EQUAL:
-                    return (num < 0) ? EEvaluationResult.INVALID : EEvaluationResult.VALID;
+                    if (num < 0)
+                    {
+                        return EEvaluationResult.INVALID;
+                    }
+
+                    return EEvaluationResult.VALID;
                 case ECompareOperator.NOT_EQUAL:
-                    return (num >= 0) ? EEvaluationResult.INVALID : EEvaluationResult.VALID;
+                    if (num >= 0)
+                    {
+                        return EEvaluationResult.INVALID;
+                    }
+
+                    return EEvaluationResult.VALID;
                 case ECompareOperator.GREATER:
                     if (num >= 0 && num < baseConfiguration.ProdDates.Count - 1)
                     {
