@@ -41,6 +41,9 @@ namespace PsdzRpcServer
             [Option('v', "verbosity", Required = false,
                 HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
             public VerbosityOption Verbosity { get; set; }
+
+            [Option('l', "logfile", Required = false, HelpText = "Logfile for additional console output logging.")]
+            public string LogFile { get; set; }
         }
 
         static Options.VerbosityOption _verbosity = Options.VerbosityOption.Important;
@@ -57,6 +60,7 @@ namespace PsdzRpcServer
             int? tcpPort = null;
             bool ssl = false;
             bool hasErrors = false;
+            string logFile = null;
 
             Parser parser = new Parser(with =>
             {
@@ -73,6 +77,7 @@ namespace PsdzRpcServer
                     tcpPort = o.TcpPort;
                     ssl = o.Ssl;
                     _verbosity = o.Verbosity;
+                    logFile = o.LogFile;
                 })
                 .WithNotParsed(errs =>
                 {
