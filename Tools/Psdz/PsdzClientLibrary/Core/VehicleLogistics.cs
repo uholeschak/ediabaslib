@@ -137,8 +137,7 @@ namespace PsdzClient.Core
 
         public static string getBrSgbd(IEcuTreeVehicle vecInfo)
         {
-            DiagnosticsBusinessDataCore diagnosticsBusinessDataCore = new DiagnosticsBusinessDataCore();
-            string text = diagnosticsBusinessDataCore.GetMainSeriesSgbd(vecInfo.Prodart, vecInfo.BordnetType, vecInfo.Produktlinie, vecInfo.Ereihe, vecInfo.Baureihenverbund);
+            string text = new DiagnosticsBusinessDataCore().GetMainSeriesSgbd(vecInfo.Prodart, vecInfo.BordnetType, vecInfo.Produktlinie, vecInfo.Ereihe, vecInfo.Baureihenverbund);
             if (string.IsNullOrEmpty(text))
             {
                 text = GetCharacteristics(vecInfo)?.brSgbd;
@@ -196,10 +195,9 @@ namespace PsdzClient.Core
             }
 
             string text = produktart.ToUpper();
-            string text2 = text;
-            if (!(text2 == "M"))
+            if (!(text == "M"))
             {
-                if (text2 == "P")
+                if (text == "P")
                 {
                     return "fasta6_pkw.cfg";
                 }
