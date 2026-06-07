@@ -6,13 +6,9 @@ namespace PsdzClient.Core
     public class TransmissionDataType : IEquatable<TransmissionDataType>, ICloneable
     {
         public string TransmissionClassValue { get; set; }
-
         public string TransmissionClassVersion { get; set; }
-
         public bool IsDataFromVehicle { get; set; }
-
         public string VtgSerialNumber { get; set; }
-
         public int VtgCalculatedCharacteristicCurve { get; set; }
 
         public TransmissionDataType()
@@ -39,12 +35,22 @@ namespace PsdzClient.Core
 
         public bool IsAnyValueEmpty()
         {
-            return string.IsNullOrEmpty(TransmissionClassValue) || string.IsNullOrEmpty(TransmissionClassVersion);
+            if (!string.IsNullOrEmpty(TransmissionClassValue))
+            {
+                return string.IsNullOrEmpty(TransmissionClassVersion);
+            }
+
+            return true;
         }
 
         public bool Equals(TransmissionDataType other)
         {
-            return other != null && string.Equals(TransmissionClassValue, other.TransmissionClassValue, StringComparison.InvariantCultureIgnoreCase) && string.Equals(TransmissionClassVersion, other.TransmissionClassVersion, StringComparison.InvariantCultureIgnoreCase) && VtgCalculatedCharacteristicCurve == other.VtgCalculatedCharacteristicCurve && string.Equals(VtgSerialNumber, other.VtgSerialNumber, StringComparison.InvariantCultureIgnoreCase) && IsDataFromVehicle == other.IsDataFromVehicle;
+            if (other != null && string.Equals(TransmissionClassValue, other.TransmissionClassValue, StringComparison.InvariantCultureIgnoreCase) && string.Equals(TransmissionClassVersion, other.TransmissionClassVersion, StringComparison.InvariantCultureIgnoreCase) && VtgCalculatedCharacteristicCurve == other.VtgCalculatedCharacteristicCurve && string.Equals(VtgSerialNumber, other.VtgSerialNumber, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return IsDataFromVehicle == other.IsDataFromVehicle;
+            }
+
+            return false;
         }
 
         public object Clone()

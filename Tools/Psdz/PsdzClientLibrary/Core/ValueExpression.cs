@@ -27,8 +27,7 @@ namespace PsdzClient.Core
             ms.ReadByte();
             byte[] buffer = new byte[8];
             ms.Read(buffer, 0, 8);
-            long num = BitConverter.ToInt64(buffer, 0);
-            return new ValueExpression(num);
+            return new ValueExpression(BitConverter.ToInt64(buffer, 0));
         }
 
         public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
