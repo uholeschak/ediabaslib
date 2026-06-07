@@ -239,7 +239,11 @@ namespace PsdzClient.Core
             "IPB_APP1",
             "IPB_APP2",
             "ZIM_H",
-            "EVSV_V01"
+            "EVSV_V01",
+            "D95BX7A0",
+            "DME9X2",
+            "DME982_L",
+            "DME982_R"
         };
         private readonly List<string> specificModelsNoPopUp = new List<string>
         {
@@ -582,6 +586,8 @@ namespace PsdzClient.Core
         private const string ServiceHistoryActionModuleName = "ABL-WAR-AS6100_SERVICEHISTORIE_AIR";
         private const string ClampSwitchModuleName = "ABL-LIF-KLEMMENSTEUERUNG";
         private const string CcmIdToDtcIdModuleName = "ABL-LIF-CCM_ANALYZER";
+        private const string CheckPwfStateModuleName = "ABL-LIF-PWF__ABFRAGE";
+        private const string SwitchPwfStateModuleName = "ABL-LIF-PWF__PAD";
         private static IDictionary<string, string> Mapping = new Dictionary<string, string>
         {
             {
@@ -1603,7 +1609,7 @@ namespace PsdzClient.Core
                     continue;
                 }
 
-                IEcuJob ecuJob = ecuKom.ApiJob(eCU.VARIANTE, "STATUS_LESEN", "ID;0xD019", string.Empty, 3, fastaActive: true);
+                IEcuJob ecuJob = ecuKom.ApiJob(eCU.VARIANTE, "STATUS_LESEN", "ID;0xD019", string.Empty, 3, true);
                 if (ecuJob.IsOkay())
                 {
                     string sERIENNUMMER = eCU.SERIENNUMMER;
@@ -1721,6 +1727,10 @@ namespace PsdzClient.Core
                     return "ABL-LIF-KLEMMENSTEUERUNG";
                 case TestModuleName.CcmIdToDtcId:
                     return "ABL-LIF-CCM_ANALYZER";
+                case TestModuleName.SwitchPwfState:
+                    return "ABL-LIF-PWF__PAD";
+                case TestModuleName.CheckPwfState:
+                    return "ABL-LIF-PWF__ABFRAGE";
                 default:
                     return null;
             }
@@ -1893,16 +1903,33 @@ namespace PsdzClient.Core
         {
             string job = "STATUS_LESEN";
             string param = "ARG;BMW_CC_DATENSAETZE";
-            IEcu ecu = vecInfo.getECUbyECU_GRUPPE("G_KOMBI") ?? vecInfo.getECUbyECU_GRUPPE("G_MMI");
-            if (ecu == null)
+            IEcu ecu = null;
+            IEcu kombiEcu = vecInfo.getECUbyECU_GRUPPE("G_KOMBI");
+            if (kombiEcu != null)
             {
-                Log.Info(Log.CurrentMethod(), "No G_KOMBI and G_MMI ecu group exists in the vehicle. CCM readout will be skipped.");
-                return null;
+                if (new List<string>
+                {
+                    "komb_g11",
+                    "kombsp21",
+                    "kombsp18"
+                }.Any((string variant) => variant.Equals(kombiEcu.VARIANT, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    ecu = kombiEcu;
+                }
+            }
+            else
+            {
+                ecu = vecInfo.getECUbyECU_GRUPPE("G_MMI");
+                if (ecu?.VARIANTE == "IDCEVO25")
+                {
+                    param = "ARG;BMW_CC_DATA_RECORD";
+                }
             }
 
-            if (ecu.VARIANTE == "IDCEVO25")
+            if (ecu == null)
             {
-                param = "ARG;BMW_CC_DATA_RECORD";
+                Log.Info(Log.CurrentMethod(), "No G_KOMBI (compatible variant) or G_MMI ecu group exists in the vehicle. CCM readout will be skipped.");
+                return null;
             }
 
             Log.Info(Log.CurrentMethod(), "CCM readout will use '" + ecu.VARIANTE + "' ecu.");
