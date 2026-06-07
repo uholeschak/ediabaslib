@@ -39,7 +39,7 @@ namespace PsdzClient.Core
         {
             if (client.AccessSiFa)
             {
-                if (value == 0)
+                if (value == 0L)
                 {
                     return EEvaluationResult.INVALID;
                 }
@@ -47,7 +47,7 @@ namespace PsdzClient.Core
                 return EEvaluationResult.VALID;
             }
 
-            if (value == 0)
+            if (value == 0L)
             {
                 return EEvaluationResult.VALID;
             }
@@ -63,7 +63,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            return "SiFa=" + ((value != 0L) ? true : false);
+            return "SiFa=" + (value != 0);
         }
 
         [PreserveSource(Added = true)]

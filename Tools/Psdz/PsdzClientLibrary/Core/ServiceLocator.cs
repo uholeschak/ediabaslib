@@ -17,6 +17,12 @@ namespace PsdzClient.Core
         public T GetService<T>()
             where T : class
         {
+            return __getService<T>();
+        }
+
+        private T __getService<T>()
+            where T : class
+        {
             Type typeFromHandle = typeof(T);
             if (!services.ContainsKey(typeFromHandle))
             {
@@ -28,6 +34,12 @@ namespace PsdzClient.Core
         }
 
         public void AddService<T>(T service)
+            where T : class
+        {
+            __addService(service);
+        }
+
+        private void __addService<T>(T service)
             where T : class
         {
             if (service == null)
@@ -45,6 +57,12 @@ namespace PsdzClient.Core
         }
 
         public void TryAddService<T>(T service)
+            where T : class
+        {
+            __tryAddService(service);
+        }
+
+        private void __tryAddService<T>(T service)
             where T : class
         {
             if (service == null)
@@ -67,6 +85,12 @@ namespace PsdzClient.Core
         public void RemoveService<T>()
             where T : class
         {
+            __removeService<T>();
+        }
+
+        private void __removeService<T>()
+            where T : class
+        {
             Type typeFromHandle = typeof(T);
             if (services.ContainsKey(typeFromHandle))
             {
@@ -75,6 +99,12 @@ namespace PsdzClient.Core
         }
 
         public bool TryGetService<T>(out T service)
+            where T : class
+        {
+            return __tryGetService<T>(out service);
+        }
+
+        private bool __tryGetService<T>(out T service)
             where T : class
         {
             Type typeFromHandle = typeof(T);
