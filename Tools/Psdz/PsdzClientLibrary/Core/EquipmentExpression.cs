@@ -20,6 +20,7 @@ namespace PsdzClient.Core
                 logger.Error("EquipmentExpression.Evaluate()", "vec was null");
                 return false;
             }
+
             if (vec.VehicleIdentLevel == IdentificationLevel.None)
             {
                 return false;
@@ -57,8 +58,7 @@ namespace PsdzClient.Core
                     return flag.Value;
                 }
 
-                //[-] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, dataProvider, dealer);
-                //[-] bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value, ffmResolver);
+                //[-] bool flag2 = new RuleEvaluationUtill(ruleEvaluationServices, dataProvider, dealer).EvaluateSingleRuleExpression(vec, value, ffmResolver);
                 //[-] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.NAME, value, flag2);
                 //[+] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
                 RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
