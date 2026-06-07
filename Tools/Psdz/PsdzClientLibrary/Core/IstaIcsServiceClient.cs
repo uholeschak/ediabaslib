@@ -295,7 +295,13 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Cleaned = true)]
-        public string GetNVIWhitelisteEReihe()
+        public string GetNviEreiheBlacklist()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string GetNviBrvBlacklist()
         {
             return string.Empty;
         }
@@ -325,9 +331,81 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Cleaned = true)]
+        public string GetTricIstaEdgeUrlForAOS()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string GetTricCentralUrlForAOS()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string GetTricCloudUrlForAOS()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string GetSermiUrlForAOS()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string GetEcuValidationUrlForAOS()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string GetService29UrlForAOS()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool GetFdlGateOverTricCloudActivateForAOS()
+        {
+            return false;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool GetMidaOverTricCloudActivateForAOS()
+        {
+            return false;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool GetSFAOverTricCloudActivateForAOS()
+        {
+            return false;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool GetSCBOverTricCloudActivateForAOS()
+        {
+            return false;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool GetIstaAosConsumesLbpsActivateForAOS()
+        {
+            return false;
+        }
+
+        [PreserveSource(Cleaned = true)]
         public string GetCallAirInAwpUrl()
         {
             return null;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string GetNVIWhitelisteEReihe()
+        {
+            return string.Empty;
         }
 
         [PreserveSource(Cleaned = true)]
