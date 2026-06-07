@@ -195,6 +195,15 @@ namespace PsdzClient.Core
             }
         }
 
+        public virtual object GetApiResponse()
+        {
+            return new
+            {
+                text = "Not implemented interaction model type for API response",
+                type = GetType()
+            };
+        }
+
         internal virtual void OnRegistered()
         {
         }

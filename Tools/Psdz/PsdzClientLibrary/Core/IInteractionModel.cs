@@ -24,5 +24,6 @@ namespace PsdzClient.Core
         int DialogOffset { get; }
 
         event EventHandler ModelClosedByUser;
+        object GetApiResponse();
     }
 }
