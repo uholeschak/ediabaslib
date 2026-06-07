@@ -6,7 +6,7 @@
     },
     "PsdzRpcServerTcp": {
       "commandName": "Project",
-      "commandLineArgs": "-p 0 -s"
+      "commandLineArgs": "-p 0 -s -l \"C:\\Users\\Ulrich\\PsdcRpcServer.log\""
     },
     "PsdzRpcServerTcpVM-WIN11": {
       "commandName": "Project",

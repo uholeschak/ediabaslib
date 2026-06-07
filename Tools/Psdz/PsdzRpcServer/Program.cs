@@ -97,6 +97,24 @@ namespace PsdzRpcServer
                 return 1;
             }
 
+            if (!string.IsNullOrEmpty(logFile))
+            {
+                try
+                {
+                    StreamWriter fileWriter = new StreamWriter(logFile, append: true, encoding: System.Text.Encoding.UTF8)
+                    {
+                        AutoFlush = true
+                    };
+                    Console.SetOut(new TeeTextWriter(Console.Out, fileWriter));
+                    Console.SetError(new TeeTextWriter(Console.Error, fileWriter));
+                    Console.WriteLine($"Logging to: {logFile}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to open log file '{logFile}': {ex.Message}");
+                }
+            }
+
             string sqlServer = ConfigurationManager.AppSettings["SqlServer"];
             if (string.IsNullOrEmpty(sqlServer))
             {
@@ -298,6 +316,56 @@ namespace PsdzRpcServer
             catch (InvalidOperationException)
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Schreibt gleichzeitig in zwei TextWriter (z.B. Konsole + Datei).
+        /// </summary>
+        private class TeeTextWriter : TextWriter
+        {
+            private readonly TextWriter _first;
+            private readonly TextWriter _second;
+
+            public TeeTextWriter(TextWriter first, TextWriter second)
+            {
+                _first = first;
+                _second = second;
+            }
+
+            public override System.Text.Encoding Encoding => _first.Encoding;
+
+            public override void Write(char value)
+            {
+                _first.Write(value);
+                _second.Write(value);
+            }
+
+            public override void Write(string value)
+            {
+                _first.Write(value);
+                _second.Write(value);
+            }
+
+            public override void WriteLine(string value)
+            {
+                _first.WriteLine(value);
+                _second.WriteLine(value);
+            }
+
+            public override void Flush()
+            {
+                _first.Flush();
+                _second.Flush();
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    _second.Dispose(); // nur Datei-Writer schließen, Console nicht
+                }
+                base.Dispose(disposing);
             }
         }
     }
