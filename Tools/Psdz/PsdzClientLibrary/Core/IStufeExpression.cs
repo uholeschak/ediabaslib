@@ -1,11 +1,6 @@
-﻿using PsdzClient;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Core
@@ -34,7 +29,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public IStufeExpression()
         {
-            //[-] this.dataProvider = dataProvider;
+        //[-] this.dataProvider = dataProvider;
         }
 
         [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
@@ -71,7 +66,7 @@ namespace PsdzClient.Core
 
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
         {
-            if (ecus.IStufe == value || ecus.IStufe == 0)
+            if (ecus.IStufe == value || ecus.IStufe == 0L)
             {
                 return EEvaluationResult.VALID;
             }

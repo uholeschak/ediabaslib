@@ -40,16 +40,14 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "dataProvider removed, vec added", SignatureModified = true)]
         public static IStufeXExpression Deserialize(Stream ms, Vehicle vec)
         {
-            byte b = (byte)ms.ReadByte();
-            ECompareOperator eCompareOperator = (ECompareOperator)b;
-            byte b2 = (byte)ms.ReadByte();
-            ILevelyType levelyType = (ILevelyType)b2;
+            byte num = (byte)ms.ReadByte();
+            ILevelyType levelyType = (ILevelyType)ms.ReadByte();
             byte[] array = new byte[8];
             ms.Read(array, 0, 8);
             long ilevelid = BitConverter.ToInt64(array, 0);
-            //[-] return new IStufeXExpression(eCompareOperator, ilevelid, levelyType, dataProvider);
-            //[+] return new IStufeXExpression(eCompareOperator, ilevelid, levelyType, vec);
-            return new IStufeXExpression(eCompareOperator, ilevelid, levelyType, vec);
+            //[-] return new IStufeXExpression((ECompareOperator)num, ilevelid, levelyType, dataProvider);
+            //[+] return new IStufeXExpression((ECompareOperator)num, ilevelid, levelyType, vec);
+            return new IStufeXExpression((ECompareOperator)num, ilevelid, levelyType, vec);
         }
 
         [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
@@ -72,10 +70,12 @@ namespace PsdzClient.Core
                 ruleEvaluationUtils.Logger.Warning("IStufeXExpression.Evaluate()", "IStufe id: {0} not found in database", iLevelId);
                 return false;
             }
+
             if (string.IsNullOrEmpty(iLevelOperand) || "0".Equals(iLevelOperand))
             {
                 return true;
             }
+
             string[] iLevelParts = GetILevelParts(iStufeById);
             if (iLevelParts.Length > 1 && string.Compare(iLevelParts[0], 0, iLevelOperand, 0, iLevelParts[0].Length, StringComparison.OrdinalIgnoreCase) != 0)
             {
@@ -83,6 +83,7 @@ namespace PsdzClient.Core
                 ruleEvaluationUtils.Logger.Info("IStufeXExpression.Evaluate()", "IStufe : {0} operator: {1} type: {2} result: {3} by not fitting product line", iStufeById, compareOperator, GetILevelTypeDescription(), flag);
                 return flag;
             }
+
             switch (compareOperator)
             {
                 case ECompareOperator.EQUAL:
@@ -108,6 +109,7 @@ namespace PsdzClient.Core
                     flag = false;
                     break;
             }
+
             ruleEvaluationUtils.Logger.Debug("IStufeXExpression.Evaluate()", "IStufe : {0} operator: {1} type: {2} result: {3} vehicle: {4}", iStufeById, compareOperator, GetILevelTypeDescription(), flag, iLevelOperand);
             return flag;
         }
@@ -154,8 +156,7 @@ namespace PsdzClient.Core
 
             try
             {
-                string text = iLevel.Replace("-", string.Empty);
-                return Convert.ToInt32(text.Substring(4), CultureInfo.InvariantCulture);
+                return Convert.ToInt32(iLevel.Replace("-", string.Empty).Substring(4), CultureInfo.InvariantCulture);
             }
             catch (Exception exception)
             {
@@ -182,7 +183,7 @@ namespace PsdzClient.Core
 
         private string[] GetILevelParts(string iLevel)
         {
-            string[] array = new string[0];
+            _ = new string[0];
             string text = iLevel;
             if (iLevel.Contains("|"))
             {
