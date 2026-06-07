@@ -1279,19 +1279,12 @@ namespace PsdzClient.Core
                 Log.Warning(Log.CurrentMethod(), string.Format("Original parameter {0} is longer than 7 characters - {1}, it is shortened to {2}", "dataBaseVersion", dataBaseVersion, text));
             }
 
-            bool useConwoyStorage = GetUseConwoyStorage();
-            bool flag = text.Length == 7 && Regex.IsMatch(text, "(\\d+\\-)+(\\d+)") && text[1] == '-' && text[4] == '-';
-            if (useConwoyStorage && flag)
+            if (text.Length == 7 && Regex.IsMatch(text, "(\\d+\\-)+(\\d+)") && text[1] == '-' && text[4] == '-')
             {
                 text = text.Substring(0, 6) + "0";
             }
 
             return text;
-        }
-
-        public static bool GetUseConwoyStorage()
-        {
-            return GetFeatureEnabledStatus("ConwoyStorage").IsActive;
         }
 
         public static bool GetActivateSdpOnlinePatch()
@@ -1301,6 +1294,7 @@ namespace PsdzClient.Core
                 Log.Info(Log.CurrentMethod(), "SDP patch not enabled in AOS mode.");
                 return false;
             }
+
             return GetFeatureEnabledStatus("SdpOnlinePatchAndMultisession").IsActive;
         }
 
