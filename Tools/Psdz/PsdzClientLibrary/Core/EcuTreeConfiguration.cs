@@ -403,7 +403,7 @@ namespace PsdzClient.Core
 
         private static void xmlSettings_ValidationEventHandler(object sender, ValidationEventArgs e)
         {
-            string message = e.Message;
+            _ = e.Message;
         }
 
         public virtual string Serialize()

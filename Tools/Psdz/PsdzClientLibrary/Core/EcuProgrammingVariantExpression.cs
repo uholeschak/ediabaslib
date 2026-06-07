@@ -12,10 +12,8 @@ namespace PsdzClient.Core
     {
         [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private PsdzDatabase.EcuPrgVar programmingVariant;
-
         [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private PsdzDatabase.EcuVar ecuVariant;
-
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
@@ -46,11 +44,11 @@ namespace PsdzClient.Core
                     return false;
                 }
 
-                IEnumerable<IIdentEcu> source = vec.ECU.Where((IIdentEcu c) => c.ProgrammingVariantName != null && c.VARIANTE != null && c.ProgrammingVariantName.Equals(programmingVariant.Name, StringComparison.OrdinalIgnoreCase) && c.VARIANTE.Equals(ecuVariant.Name, StringComparison.OrdinalIgnoreCase));
-                if (source.Any())
+                if (vec.ECU.Where((IIdentEcu c) => c.ProgrammingVariantName != null && c.VARIANTE != null && c.ProgrammingVariantName.Equals(programmingVariant.Name, StringComparison.OrdinalIgnoreCase) && c.VARIANTE.Equals(ecuVariant.Name, StringComparison.OrdinalIgnoreCase)).Any())
                 {
                     return true;
                 }
+
                 return false;
             }
             catch (Exception exception)
