@@ -24,12 +24,11 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "vec added", SignatureModified = true)]
         public static DateExpression Deserialize(Stream ms, Vehicle vec)
         {
-            byte b = (byte)ms.ReadByte();
-            ECompareOperator eCompareOperator = (ECompareOperator)b;
+            byte num = (byte)ms.ReadByte();
             byte[] array = new byte[8];
             ms.Read(array, 0, 8);
-            long num = BitConverter.ToInt64(array, 0);
-            return new DateExpression(eCompareOperator, num);
+            long num2 = BitConverter.ToInt64(array, 0);
+            return new DateExpression((ECompareOperator)num, num2);
         }
 
         [PreserveSource(Hint = "dataprovider removed", SignatureModified = true)]
@@ -93,9 +92,19 @@ namespace PsdzClient.Core
             switch (compareOperator)
             {
                 case ECompareOperator.EQUAL:
-                    return (num < 0) ? EEvaluationResult.INVALID : EEvaluationResult.VALID;
+                    if (num < 0)
+                    {
+                        return EEvaluationResult.INVALID;
+                    }
+
+                    return EEvaluationResult.VALID;
                 case ECompareOperator.NOT_EQUAL:
-                    return (num >= 0) ? EEvaluationResult.INVALID : EEvaluationResult.VALID;
+                    if (num >= 0)
+                    {
+                        return EEvaluationResult.INVALID;
+                    }
+
+                    return EEvaluationResult.VALID;
                 case ECompareOperator.GREATER:
                     if (num >= 0 && num < baseConfiguration.ProdDates.Count - 1)
                     {
