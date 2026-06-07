@@ -19,6 +19,7 @@ namespace PsdzRpcServer
     public class PsdzRpcServer : IDisposable
     {
         public const int TslHandshakeTimeoutSeconds = 15;
+        public const int MaxConnections = 10;
         private readonly string _dealerId;
         private readonly TextWriter _output;
         private readonly int? _tcpPort;
@@ -108,29 +109,61 @@ namespace PsdzRpcServer
             {
                 while (!ct.IsCancellationRequested)
                 {
-                    Task<TcpClient> acceptTask = listener.AcceptTcpClientAsync();
-                    Task cancelTask = Task.Delay(Timeout.Infinite, ct);
-                    Task completed = await Task.WhenAny(acceptTask, cancelTask).ConfigureAwait(false);
-                    if (completed == cancelTask)
+                    TcpClient tcpClient;
+                    try
+                    {
+                        Task<TcpClient> acceptTask = listener.AcceptTcpClientAsync();
+                        Task cancelTask = Task.Delay(Timeout.Infinite, ct);
+                        Task completed = await Task.WhenAny(acceptTask, cancelTask).ConfigureAwait(false);
+                        if (completed == cancelTask)
+                        {
+                            break;
+                        }
+
+                        tcpClient = await acceptTask.ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
                     {
                         break;
                     }
+                    catch (Exception ex)
+                    {
+                        // Accept-Fehler: loggen und weitermachen – nicht den Server beenden
+                        _output?.WriteLine($"Accept error (continuing): {ex.Message}");
+                        continue;
+                    }
 
-                    TcpClient tcpClient = await acceptTask.ConfigureAwait(false);
-                    tcpClient.NoDelay = true;
-                    tcpClient.SendBufferSize = 65536;
-                    tcpClient.ReceiveBufferSize = 65536;
-                    tcpClient.Client.SendTimeout = 30000; // 30s
-                    tcpClient.Client.ReceiveTimeout = 30000; // 30s
-                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                    // Verbindungslimit prüfen
+                    if (_activeServices.Count >= MaxConnections)
+                    {
+                        _output?.WriteLine($"Connection limit ({MaxConnections}) reached, rejecting client.");
+                        tcpClient.Dispose();
+                        continue;
+                    }
+
+                    try
+                    {
+                        tcpClient.NoDelay = true;
+                        tcpClient.SendBufferSize = 65536;
+                        tcpClient.ReceiveBufferSize = 65536;
+                        tcpClient.Client.SendTimeout = 30000;
+                        tcpClient.Client.ReceiveTimeout = 30000;
+                        tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 #if NET
-                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 60); // Erste Probe nach 60s Inaktivität
-                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 15); // Proben alle 15s
-                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 5); // 5 Versuche
+                        tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 60); // Erste Probe nach 60s Inaktivität
+                        tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 15); // Proben alle 15s
+                        tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 5); // 5 Versuche
 #endif
+                    }
+                    catch (Exception ex)
+                    {
+                        _output?.WriteLine($"Socket option error: {ex.Message}");
+                        tcpClient.Dispose();
+                        continue;
+                    }
+
                     if (_serverCert != null)
                     {
-                        // TLS-Handshake als fire-and-forget
                         _ = AcceptTlsClientAsync(tcpClient, _caCert, _serverCert);
                     }
                     else
