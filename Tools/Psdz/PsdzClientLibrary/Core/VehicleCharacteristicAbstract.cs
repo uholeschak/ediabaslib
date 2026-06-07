@@ -8,11 +8,9 @@ namespace PsdzClient.Core
         {
             if (Enum.TryParse<VehicleCharacteristic>(vehicleCode, out var result))
             {
-                VehicleCharacteristic vehicleCharacteristic = result;
-                VehicleCharacteristic vehicleCharacteristic2 = vehicleCharacteristic;
-                if (vehicleCharacteristic2 <= VehicleCharacteristic.Tueren)
+                if (result <= VehicleCharacteristic.Tueren)
                 {
-                    switch (vehicleCharacteristic2)
+                    switch (result)
                     {
                         case VehicleCharacteristic.Motor:
                             return ComputeMotor(param);
@@ -48,9 +46,9 @@ namespace PsdzClient.Core
                             return ComputeTypeKeyBasic(param);
                     }
                 }
-                else if (vehicleCharacteristic2 <= VehicleCharacteristic.Hybridkennzeichen)
+                else if (result <= VehicleCharacteristic.Hybridkennzeichen)
                 {
-                    switch (vehicleCharacteristic2)
+                    switch (result)
                     {
                         case VehicleCharacteristic.Karosserie:
                             return ComputeKarosserie(param);
@@ -70,11 +68,11 @@ namespace PsdzClient.Core
                             return ComputeKraftstoffartEinbaulage(param);
                     }
                 }
-                else if (vehicleCharacteristic2 <= VehicleCharacteristic.ESeriesLifeCycle)
+                else if (result <= VehicleCharacteristic.ESeriesLifeCycle)
                 {
-                    if (vehicleCharacteristic2 <= VehicleCharacteristic.Drehmoment)
+                    if (result <= VehicleCharacteristic.Drehmoment)
                     {
-                        switch (vehicleCharacteristic2)
+                        switch (result)
                         {
                             case VehicleCharacteristic.Motorarbeitsverfahren:
                                 return ComputeMotorarbeitsverfahren(param);
@@ -84,117 +82,118 @@ namespace PsdzClient.Core
                     }
                     else
                     {
-                        VehicleCharacteristic num = vehicleCharacteristic2 - 99999999701L;
+                        VehicleCharacteristic num = result - 99999999701L;
                         if ((ulong)num <= 7uL)
                         {
-                            switch (num)
+                            switch ((int)num)
                             {
-                                case (VehicleCharacteristic)0L:
+                                case 0:
                                     return ComputeEngineLabel2(param);
-                                case (VehicleCharacteristic)1L:
+                                case 1:
                                     return ComputeEngine2(param);
-                                case (VehicleCharacteristic)2L:
+                                case 2:
                                     return ComputeHeatMOTPlatzhalter1(param);
-                                case (VehicleCharacteristic)3L:
+                                case 3:
                                     return ComputeHeatMOTPlatzhalter2(param);
-                                case (VehicleCharacteristic)4L:
+                                case 4:
                                     return ComputeHeatMOTFortlaufendeNum(param);
-                                case (VehicleCharacteristic)5L:
+                                case 5:
                                     return ComputeHeatMOTLeistungsklasse(param);
-                                case (VehicleCharacteristic)6L:
+                                case 6:
                                     return ComputeHeatMOTLebenszyklus(param);
-                                case (VehicleCharacteristic)7L:
+                                case 7:
                                     return ComputeHeatMOTKraftstoffart(param);
                             }
                         }
 
-                        VehicleCharacteristic num2 = vehicleCharacteristic2 - 99999999846L;
+                        VehicleCharacteristic num2 = result - 99999999846L;
                         if ((ulong)num2 <= 12uL)
                         {
-                            switch (num2)
+                            switch ((int)num2)
                             {
-                                case (VehicleCharacteristic)5L:
+                                case 5:
                                     return ComputeCountryOfAssembly(param);
-                                case (VehicleCharacteristic)4L:
+                                case 4:
                                     return ComputeBaseVersion(param);
-                                case (VehicleCharacteristic)8L:
+                                case 8:
                                     return ComputeElektrischeReichweite(param);
-                                case (VehicleCharacteristic)2L:
+                                case 2:
                                     return ComputeAEBezeichnung(param);
-                                case (VehicleCharacteristic)12L:
+                                case 12:
                                     return ComputeESeriesLifeCycle(param);
-                                case (VehicleCharacteristic)10L:
+                                case 10:
                                     return ComputeLifeCycle(param);
-                                case (VehicleCharacteristic)0L:
+                                case 0:
                                     return ComputeSportausfuehrung(param);
                             }
                         }
                     }
                 }
-                else if (vehicleCharacteristic2 <= VehicleCharacteristic.MOTEinbaulage)
+                else if (result <= VehicleCharacteristic.MOTEinbaulage)
                 {
-                    VehicleCharacteristic num3 = vehicleCharacteristic2 - 99999999866L;
+                    VehicleCharacteristic num3 = result - 99999999866L;
                     if ((ulong)num3 <= 14uL)
                     {
-                        switch (num3)
+                        switch ((int)num3)
                         {
-                            case (VehicleCharacteristic)14L:
+                            case 14:
                                 return ComputeEMOTBaureihe(param);
-                            case (VehicleCharacteristic)12L:
+                            case 12:
                                 return ComputeEMOTArbeitsverfahren(param);
-                            case (VehicleCharacteristic)10L:
+                            case 10:
                                 return ComputeEMOTDrehmoment(param);
-                            case (VehicleCharacteristic)8L:
+                            case 8:
                                 return ComputeEMOTLeistungsklasse(param);
-                            case (VehicleCharacteristic)6L:
+                            case 6:
                                 return ComputeEMOTUeberarbeitung(param);
-                            case (VehicleCharacteristic)4L:
+                            case 4:
                                 return ComputeEMOTBezeichnung(param);
-                            case (VehicleCharacteristic)2L:
+                            case 2:
                                 return ComputeEMOTKraftstoffart(param);
-                            case (VehicleCharacteristic)0L:
+                            case 0:
                                 return ComputeEMOTEinbaulage(param);
-                            case (VehicleCharacteristic)1L:
-                            case (VehicleCharacteristic)3L:
-                            case (VehicleCharacteristic)5L:
-                            case (VehicleCharacteristic)7L:
-                            case (VehicleCharacteristic)9L:
-                            case (VehicleCharacteristic)11L:
-                            case (VehicleCharacteristic)13L:
-                                goto IL_0702;
+                            case 1:
+                            case 3:
+                            case 5:
+                            case 7:
+                            case 9:
+                            case 11:
+                            case 13:
+                                goto IL_0566;
                         }
                     }
 
-                    VehicleCharacteristic num4 = vehicleCharacteristic2 - 99999999905L;
+                    VehicleCharacteristic num4 = result - 99999999905L;
                     if ((ulong)num4 <= 5uL)
                     {
-                        switch (num4)
+                        switch ((int)num4)
                         {
-                            case (VehicleCharacteristic)4L:
+                            case 4:
                                 return ComputeMOTKraftstoffart(param);
-                            case (VehicleCharacteristic)0L:
+                            case 0:
                                 //[-] if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is IXepCharacteristics xepCharacteristics)
                                 //[+] if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
                                 if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
                                 {
                                     identVehicle.TempTypeKeyLeadFromDb = xepCharacteristics.Name;
                                 }
+
                                 ComputeTypeKeyLead(param);
                                 return ComputeBasicType(param);
-                            case (VehicleCharacteristic)5L:
+                            case 5:
                                 return ComputeMOTEinbaulage(param);
-                            case (VehicleCharacteristic)2L:
+                            case 2:
                                 return ComputeAELeistungsklasse(param);
-                            case (VehicleCharacteristic)3L:
+                            case 3:
                                 return ComputeAEUeberarbeitung(param);
-                            case (VehicleCharacteristic)1L:
+                            case 1:
                                 return ComputeAEKurzbezeichnung(param);
                         }
                     }
                 }
                 else
                 {
-                    switch (vehicleCharacteristic2)
+                    switch (result)
                     {
                         case VehicleCharacteristic.Baureihenverbund:
                             return ComputeBaureihenverbund(param);
@@ -203,11 +202,11 @@ namespace PsdzClient.Core
                     }
                 }
 
-                goto IL_0702;
+                goto IL_0566;
             }
 
             return false;
-            IL_0702:
+            IL_0566:
                 return ComputeDefault(param);
         }
 
