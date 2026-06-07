@@ -10,7 +10,7 @@
     },
     "PsdzRpcServerTcpVM-WIN11": {
       "commandName": "Project",
-      "commandLineArgs": "-p 0 -s",
+      "commandLineArgs": "-p 0 -s -l \"C:\\Users\\Ulrich\\PsdcRpcServer.log\"",
       "remoteDebugEnabled": true,
       "remoteDebugMachine": "VM-WIN11",
       "authenticationMode": "Windows",
