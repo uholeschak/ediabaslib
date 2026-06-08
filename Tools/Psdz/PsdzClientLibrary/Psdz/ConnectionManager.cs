@@ -40,7 +40,7 @@ namespace PsdzClient.Psdz
         protected virtual IVehicle Vehicle { get; }
         protected virtual string Vin17 => Vehicle?.VIN17;
         protected virtual string EReihe => Vehicle?.Ereihe;
-        [PreserveSource(Hint = "Modified using VCI")]
+        [PreserveSource(Hint = "Modified using VCI", SuppressWarning = true)]
         protected virtual bool? IsDoIP => Vehicle?.VCI?.IsDoIP;
 
         protected virtual bool IsEES25Vehicle
