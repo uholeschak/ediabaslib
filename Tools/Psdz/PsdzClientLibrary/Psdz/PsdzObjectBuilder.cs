@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Mapper;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
@@ -546,13 +547,13 @@ Vin = vin17,
 
         public IPsdzTalFilter DefineSFAFilterForAllEcus(ISfaPerEcuOptions ecuOptions, IPsdzTalFilter filter)
         {
-            IPsdzSfaPerEcuOptions ecuOptions2 = BMW.Rheingold.Psdz.Mapper.SfaPerEcuOptionsMapper.Map(ecuOptions);
+            IPsdzSfaPerEcuOptions ecuOptions2 = SfaPerEcuOptionsMapper.Map(ecuOptions);
             return objectBuilderService.DefineSFAFilterForAllEcus(ecuOptions2, filter);
         }
 
         public IPsdzTalFilter DefineSFAFilterForSelectedEcus(IDictionary<int, ISfaPerEcuOptions> ecuOptions, IPsdzTalFilter filter)
         {
-            Dictionary<int, IPsdzSfaPerEcuOptions> ecuOptions2 = ecuOptions.Where((KeyValuePair<int, ISfaPerEcuOptions> x) => x.Value != null).ToDictionary((KeyValuePair<int, ISfaPerEcuOptions> x) => x.Key, (KeyValuePair<int, ISfaPerEcuOptions> y) => BMW.Rheingold.Psdz.Mapper.SfaPerEcuOptionsMapper.Map(y.Value));
+            Dictionary<int, IPsdzSfaPerEcuOptions> ecuOptions2 = ecuOptions.Where((KeyValuePair<int, ISfaPerEcuOptions> x) => x.Value != null).ToDictionary((KeyValuePair<int, ISfaPerEcuOptions> x) => x.Key, (KeyValuePair<int, ISfaPerEcuOptions> y) => SfaPerEcuOptionsMapper.Map(y.Value));
             return objectBuilderService.DefineSFAFilterForSelectedEcus(ecuOptions2, filter);
         }
 

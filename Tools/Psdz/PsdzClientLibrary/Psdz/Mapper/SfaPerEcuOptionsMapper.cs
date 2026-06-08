@@ -1,6 +1,7 @@
-﻿using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
+﻿using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class SfaPerEcuOptionsMapper
     {

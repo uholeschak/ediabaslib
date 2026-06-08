@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using BMW.Rheingold.Psdz.Model.Communications;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
 namespace BMW.Rheingold.Psdz
 {
