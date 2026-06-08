@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
@@ -18,7 +19,7 @@ using PsdzClient.Programming;
 #pragma warning disable CS0169, CS0649, CS0618, CS0612
 namespace PsdzClient.Core
 {
-    public class Vehicle : typeVehicle, IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle, IEcuTreeVehicle
+    public class Vehicle : IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle, IEcuTreeVehicle
     {
         public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
         [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
@@ -27,7 +28,6 @@ namespace PsdzClient.Core
         private string vinRangeType;
         private string vinRangeTypeLastResolvedType;
         private FA targetFA;
-        private bool isBusy;
         private string productLine;
         private string doorNumber;
         private string securityRelevant;
@@ -35,31 +35,18 @@ namespace PsdzClient.Core
         private HashSet<int> validPWFStates;
         private double clamp15MinValue;
         private double clamp30MinValue;
-        private bool withLfpBattery;
-        private bool withLfpNCarBattery;
         [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         private BatteryEnum batteryType;
-        private CentralErrorMemoryStatus centralErrorMemoryStatus;
-        private bool isClosingOperationActive;
         private string verkaufsBezeichnungField;
-        private bool powerSafeModeByOldEcus;
-        private bool powerSafeModeByNewEcus;
-        private bool vehicleTestDone;
-        private bool isReadingFastaDataFinished = true;
-        private bool vinNotReadbleFromCarAbort;
-        private int? faultCodeSum;
-        private int? nonSignalErrorFaultCodeSum;
         private string targetILevel;
         private readonly ObservableCollection<string> diagCodesProgramming;
         [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
         private PlaceholderType faultList;
         [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
         private PlaceholderType checkControlMessages;
-        private bool noVehicleCommunicationRunning;
         private string salesDesignationBadgeUIText;
         private string eBezeichnungUIText;
         private const int indexOfFirsHDDAboUpdateInDecimal = 54;
-        private bool isNewIdentActiveField;
         [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
         private PlaceholderType virtualFaultInfoList;
         private string hmiVersion;
@@ -76,30 +63,1948 @@ namespace PsdzClient.Core
         private VehicleClassification classification;
         private IVehicleProfileChecksum vpc;
         private CcmReadoutState ccmReadoutState;
-        [XmlIgnore]
-        public List<IEcu> SvtECU { get; set; } = new List<IEcu>();
+        private string vIN17Field;
+        private string serialBodyShellField;
+        private string serialGearBoxField;
+        private string serialEngineField;
+        private BrandName? brandNameField;
+        private ObservableCollection<ECU> eCUField;
+        [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Placeholder = true)]
+        private PlaceholderType zFSField;
+        private List<CEMResult> cemField;
+        private ECU selectedECUField;
+        [PreserveSource(Hint = "ObservableCollection<typeCBSInfo>", Placeholder = true)]
+        private PlaceholderType cBSField;
+        private string typField;
+        private string basicTypeField;
+        private string driveTypeField;
+        private string warrentyTypeField;
+        private string markeField;
+        private string ueberarbeitungField;
+        private string prodartField;
+        private string ereiheField;
+        private string mainSeriesSgbdField;
+        private string mainSeriesSgbdAdditionalField;
+        private BNType bNTypeField;
+        private string baureiheField;
+        private string roadMapField;
+        private ChassisType chassisTypeField;
+        private string karosserieField;
+        private EMotor eMotorField;
+        private List<HeatMotor> heatMotorsField;
+        private GenericMotor genericMotorField;
+        private string motorField;
+        private string hubraumField;
+        private string landField;
+        private string lenkungField;
+        private string getriebeField;
+        private string countryOfAssemblyField;
+        private string baseVersionField;
+        private string antriebField;
+        private DateTime? firstRegistrationField;
+        private string baustandsJahrField;
+        private string baustandsMonatField;
+        private string elektrischeReichweiteField;
+        private string aeBezeichnungField;
+        private string iLevelField;
+        private decimal? gwszField;
+        private GwszUnitType? gwszUnitField;
+        private ObservableCollection<FFMResult> fFMField;
+        private string iLevelWerkField;
+        private string iLevelBackupField;
+        private FA faField;
+        private string zCSField;
+        [PreserveSource(Hint = "ObservableCollection<InfoObject>", Placeholder = true)]
+        private PlaceholderType historyInfoObjectsField;
+        [PreserveSource(Hint = "TestPlanType", Placeholder = true)]
+        private PlaceholderType testplanField;
+        [PreserveSource(Hint = "TestPlanCache", Placeholder = true)]
+        private PlaceholderType testPlanCache;
+        private VCIDevice vCIField;
+        private VCIDevice mIBField;
+        [PreserveSource(Hint = "ObservableCollection<technicalCampaignType>", Placeholder = true)]
+        private PlaceholderType technicalCampaignsField;
+        private string leistungsklasseField;
+        private string kraftstoffartField;
+        private string eCTypeApprovalField;
+        private DateTime lastSaveDateField;
+        private DateTime lastChangeDateField;
+        [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
+        private PlaceholderType serviceHistoryField;
+        [PreserveSource(Hint = "ObservableCollection<typeDiagCode>", Placeholder = true)]
+        private PlaceholderType diagCodesField;
+        private string motorarbeitsverfahrenField;
+        private string drehmomentField;
+        private string hybridkennzeichenField;
+        [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
+        private PlaceholderType combinedFaultsField;
+        private ObservableCollection<decimal> installedAdaptersField;
+        private string vIN17_OEMField;
+        private string mOTKraftstoffartField;
+        private string mOTEinbaulageField;
+        private string mOTBezeichnungField;
+        private string baureihenverbundField;
+        private string aEKurzbezeichnungField;
+        private string aELeistungsklasseField;
+        private string aEUeberarbeitungField;
+        [PreserveSource(Hint = "ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
+        private PlaceholderType perceivedSymptomsField;
+        private string progmanVersionField;
+        private StateType status_FunctionStateField;
+        private string kl15VoltageField;
+        private string kl30VoltageField;
+        private bool pADVehicleField;
+        private int pwfStateField;
+        private DateTime klVoltageLastMessageTimeField;
+        private bool klVoltageLastMessageTimeFieldSpecified;
+        private string applicationVersionField;
+        private bool fASTAAlreadyDoneField;
+        private IdentificationLevel vehicleIdentLevelField;
+        private bool vehicleShortTestAsSessionEntryField;
+        private bool pannenfallField;
+        private int selectedDiagBUSField;
+        private bool gWSZReadoutSuccessField;
+        private DateTime vehicleLifeStartDate;
+        private double vehicleSystemTime;
+        private List<DealerSessionProperty> dealerSessionProperties;
+        private DateTime productionDate;
+        private string modelljahr;
+        private string modellmonat;
+        private string modelltag;
+        private string chassisCode;
+        [PreserveSource(Hint = "BackendsAvailabilityIndicator", Placeholder = true)]
+        private PlaceholderType backendsAvailabilityIndicator;
+        public string F2Date { get; set; }
+        public string SoftwareId { get; set; }
 
-        [XmlIgnore]
-        public bool IsDoIP { get; set; }
-
-        [XmlIgnore]
-        public DateTime? LastProgramDate { get; set; }
-
-        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
-        [XmlIgnore]
-        public PsdzDatabase.BordnetsData BordnetsData
+        public VCIDevice VCI
         {
             get
             {
-                return bordnetsData;
+                return vCIField;
             }
 
             set
             {
-                if (bordnetsData != value)
+                if (vCIField != null)
                 {
-                    bordnetsData = value;
-                    OnPropertyChanged("BordnetsData");
+                    if (!vCIField.Equals(value))
+                    {
+                        vCIField = value;
+                        OnPropertyChanged("VCI");
+                    }
+                }
+                else
+                {
+                    vCIField = value;
+                    OnPropertyChanged("VCI");
+                }
+            }
+        }
+
+        public string VIN17
+        {
+            get
+            {
+                return vIN17Field;
+            }
+
+            set
+            {
+                if (vIN17Field != value)
+                {
+                    vIN17Field = value;
+                    OnPropertyChanged("VIN17");
+                }
+            }
+        }
+
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.IsSendFastaDataForbidden")]
+        public bool IsSendFastaDataForbidden { get; set; }
+
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.IsSendOBFCMDataForbidden")]
+        public bool IsSendOBFCMDataForbidden { get; set; }
+
+        public string ChassisCode
+        {
+            get
+            {
+                return chassisCode;
+            }
+
+            set
+            {
+                if (chassisCode != value)
+                {
+                    chassisCode = value;
+                    OnPropertyChanged("ChassisCode");
+                }
+            }
+        }
+
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.OrderDataRequestFailed")]
+        public bool OrderDataRequestFailed { get; set; }
+
+        public string SerialBodyShell
+        {
+            get
+            {
+                return serialBodyShellField;
+            }
+
+            set
+            {
+                if (serialBodyShellField != value)
+                {
+                    serialBodyShellField = value;
+                    OnPropertyChanged("SerialBodyShell");
+                }
+            }
+        }
+
+        public string SerialGearBox
+        {
+            get
+            {
+                return serialGearBoxField;
+            }
+
+            set
+            {
+                if (serialGearBoxField != value)
+                {
+                    serialGearBoxField = value;
+                    OnPropertyChanged("SerialGearBox");
+                    OnPropertyChanged("SerialGearBox7");
+                }
+            }
+        }
+
+        public string SerialEngine
+        {
+            get
+            {
+                return serialEngineField;
+            }
+
+            set
+            {
+                if (serialEngineField != value)
+                {
+                    serialEngineField = value;
+                    OnPropertyChanged("SerialEngine");
+                }
+            }
+        }
+
+        public List<DealerSessionProperty> DealerSessionProperties
+        {
+            get
+            {
+                return dealerSessionProperties;
+            }
+
+            set
+            {
+                if (dealerSessionProperties != null)
+                {
+                    if (!dealerSessionProperties.Equals(value))
+                    {
+                        dealerSessionProperties = value;
+                    }
+                }
+                else
+                {
+                    dealerSessionProperties = value;
+                }
+            }
+        }
+
+        public BrandName? BrandName
+        {
+            get
+            {
+                return brandNameField;
+            }
+
+            set
+            {
+                if (brandNameField != value)
+                {
+                    brandNameField = value;
+                    OnPropertyChanged("BrandName");
+                }
+            }
+        }
+
+        public ObservableCollection<ECU> ECU
+        {
+            get
+            {
+                return eCUField;
+            }
+
+            set
+            {
+                if (eCUField != null)
+                {
+                    if (!eCUField.Equals(value))
+                    {
+                        eCUField = value;
+                        OnPropertyChanged("ECU");
+                    }
+                }
+                else
+                {
+                    eCUField = value;
+                    OnPropertyChanged("ECU");
+                }
+            }
+        }
+
+        [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Placeholder = true)]
+        public PlaceholderType ZFS;
+
+        public List<CEMResult> CEM
+        {
+            get
+            {
+                return cemField;
+            }
+
+            set
+            {
+                if (cemField != null)
+                {
+                    if (!cemField.Equals(value))
+                    {
+                        cemField = value;
+                    }
+                }
+                else
+                {
+                    cemField = value;
+                }
+            }
+        }
+
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.ZfsSuccessfull")]
+        public bool ZFS_SUCCESSFULLY { get; }
+
+        public ECU SelectedECU
+        {
+            get
+            {
+                return selectedECUField;
+            }
+
+            set
+            {
+                if (selectedECUField != null)
+                {
+                    if (!selectedECUField.Equals(value))
+                    {
+                        selectedECUField = value;
+                        OnPropertyChanged("SelectedECU");
+                    }
+                }
+                else
+                {
+                    selectedECUField = value;
+                    OnPropertyChanged("SelectedECU");
+                }
+            }
+        }
+
+        [PreserveSource(Hint = "ObservableCollection<typeCBSInfo>", Placeholder = true)]
+        public PlaceholderType CBS;
+
+        public string Typ
+        {
+            get
+            {
+                AddServiceCodeAndLogsForTypeKeys(typField, "Typ");
+                return typField;
+            }
+
+            set
+            {
+                if (typField != value)
+                {
+                    typField = value;
+                    OnPropertyChanged("Typ");
+                }
+            }
+        }
+
+        public string BasicType
+        {
+            get
+            {
+                return basicTypeField;
+            }
+
+            set
+            {
+                if (basicTypeField != value)
+                {
+                    basicTypeField = value;
+                    OnPropertyChanged("BasicType");
+                }
+            }
+        }
+
+        public string DriveType
+        {
+            get
+            {
+                return driveTypeField;
+            }
+
+            set
+            {
+                if (driveTypeField != null)
+                {
+                    if (!driveTypeField.Equals(value))
+                    {
+                        driveTypeField = value;
+                        OnPropertyChanged("DriveType");
+                    }
+                }
+                else
+                {
+                    driveTypeField = value;
+                    OnPropertyChanged("DriveType");
+                }
+            }
+        }
+
+        public string WarrentyType
+        {
+            get
+            {
+                return warrentyTypeField;
+            }
+
+            set
+            {
+                if (warrentyTypeField != null)
+                {
+                    if (!warrentyTypeField.Equals(value))
+                    {
+                        warrentyTypeField = value;
+                        OnPropertyChanged("WarrentyType");
+                    }
+                }
+                else
+                {
+                    warrentyTypeField = value;
+                    OnPropertyChanged("WarrentyType");
+                }
+            }
+        }
+
+        public string Marke
+        {
+            get
+            {
+                return markeField;
+            }
+
+            set
+            {
+                if (markeField != value)
+                {
+                    markeField = value;
+                    OnPropertyChanged("Marke");
+                }
+            }
+        }
+
+        public string Ueberarbeitung
+        {
+            get
+            {
+                return ueberarbeitungField;
+            }
+
+            set
+            {
+                if (ueberarbeitungField != value)
+                {
+                    ueberarbeitungField = value;
+                    OnPropertyChanged("Ueberarbeitung");
+                }
+            }
+        }
+
+        [DefaultValue("P")]
+        public string Prodart
+        {
+            get
+            {
+                return prodartField;
+            }
+
+            set
+            {
+                if (prodartField != value)
+                {
+                    prodartField = value;
+                    OnPropertyChanged("Prodart");
+                }
+            }
+        }
+
+        public string Ereihe
+        {
+            get
+            {
+                return ereiheField;
+            }
+
+            set
+            {
+                if (ereiheField != value)
+                {
+                    ereiheField = value;
+                    OnPropertyChanged("Ereihe");
+                }
+            }
+        }
+
+        public string MainSeriesSgbd
+        {
+            get
+            {
+                return mainSeriesSgbdField;
+            }
+
+            set
+            {
+                if (mainSeriesSgbdField != null)
+                {
+                    if (!mainSeriesSgbdField.Equals(value))
+                    {
+                        mainSeriesSgbdField = value;
+                        OnPropertyChanged("MainSeriesSgbd");
+                    }
+                }
+                else
+                {
+                    mainSeriesSgbdField = value;
+                    OnPropertyChanged("MainSeriesSgbd");
+                }
+            }
+        }
+
+        public string MainSeriesSgbdAdditional
+        {
+            get
+            {
+                return mainSeriesSgbdAdditionalField;
+            }
+
+            set
+            {
+                if (mainSeriesSgbdAdditionalField != null)
+                {
+                    if (!mainSeriesSgbdAdditionalField.Equals(value))
+                    {
+                        mainSeriesSgbdAdditionalField = value;
+                        OnPropertyChanged("MainSeriesSgbdAdditional");
+                    }
+                }
+                else
+                {
+                    mainSeriesSgbdAdditionalField = value;
+                    OnPropertyChanged("MainSeriesSgbdAdditional");
+                }
+            }
+        }
+
+        [DefaultValue(BNType.UNKNOWN)]
+        public BNType BNType
+        {
+            get
+            {
+                return bNTypeField;
+            }
+
+            set
+            {
+                if (!bNTypeField.Equals(value))
+                {
+                    bNTypeField = value;
+                    OnPropertyChanged("BNType");
+                }
+            }
+        }
+
+        public string Baureihe
+        {
+            get
+            {
+                return baureiheField;
+            }
+
+            set
+            {
+                if (baureiheField != value)
+                {
+                    baureiheField = value;
+                    OnPropertyChanged("Baureihe");
+                }
+            }
+        }
+
+        public string RoadMap
+        {
+            get
+            {
+                return roadMapField;
+            }
+
+            set
+            {
+                if (roadMapField != null)
+                {
+                    if (!roadMapField.Equals(value))
+                    {
+                        roadMapField = value;
+                        OnPropertyChanged("RoadMap");
+                    }
+                }
+                else
+                {
+                    roadMapField = value;
+                    OnPropertyChanged("RoadMap");
+                }
+            }
+        }
+
+        public ChassisType ChassisType
+        {
+            get
+            {
+                return chassisTypeField;
+            }
+
+            set
+            {
+                if (!chassisTypeField.Equals(value))
+                {
+                    chassisTypeField = value;
+                    OnPropertyChanged("ChassisType");
+                }
+            }
+        }
+
+        public string Karosserie
+        {
+            get
+            {
+                return karosserieField;
+            }
+
+            set
+            {
+                if (karosserieField != value)
+                {
+                    karosserieField = value;
+                    OnPropertyChanged("Karosserie");
+                }
+            }
+        }
+
+        public EMotor EMotor
+        {
+            get
+            {
+                return eMotorField;
+            }
+
+            set
+            {
+                if (eMotorField != value)
+                {
+                    eMotorField = value;
+                    OnPropertyChanged("EMotor");
+                }
+            }
+        }
+
+        public List<HeatMotor> HeatMotors
+        {
+            get
+            {
+                return heatMotorsField;
+            }
+
+            set
+            {
+                if (heatMotorsField != value)
+                {
+                    heatMotorsField = value;
+                    OnPropertyChanged("HeatMotors");
+                }
+            }
+        }
+
+        public GenericMotor GenericMotor
+        {
+            get
+            {
+                return genericMotorField;
+            }
+
+            set
+            {
+                if (genericMotorField != null)
+                {
+                    if (!genericMotorField.Equals(value))
+                    {
+                        genericMotorField = value;
+                        OnPropertyChanged("GenericMotor");
+                    }
+                }
+                else
+                {
+                    genericMotorField = value;
+                    OnPropertyChanged("GenericMotor");
+                }
+            }
+        }
+
+        public string Motor
+        {
+            get
+            {
+                return motorField;
+            }
+
+            set
+            {
+                if (motorField != value)
+                {
+                    motorField = value;
+                    GenericMotor.Engine1 = value;
+                    OnPropertyChanged("Motor");
+                }
+            }
+        }
+
+        public string Hubraum
+        {
+            get
+            {
+                return hubraumField;
+            }
+
+            set
+            {
+                if (hubraumField != value)
+                {
+                    hubraumField = value;
+                    OnPropertyChanged("Hubraum");
+                }
+            }
+        }
+
+        public string Land
+        {
+            get
+            {
+                return landField;
+            }
+
+            set
+            {
+                if (landField != value)
+                {
+                    landField = value;
+                    OnPropertyChanged("Land");
+                }
+            }
+        }
+
+        public string Lenkung
+        {
+            get
+            {
+                return lenkungField;
+            }
+
+            set
+            {
+                if (lenkungField != value)
+                {
+                    lenkungField = value;
+                    OnPropertyChanged("Lenkung");
+                }
+            }
+        }
+
+        public string Getriebe
+        {
+            get
+            {
+                return getriebeField;
+            }
+
+            set
+            {
+                if (getriebeField != value)
+                {
+                    getriebeField = value;
+                    OnPropertyChanged("Getriebe");
+                }
+            }
+        }
+
+        public string CountryOfAssembly
+        {
+            get
+            {
+                return countryOfAssemblyField;
+            }
+
+            set
+            {
+                if (countryOfAssemblyField != value)
+                {
+                    countryOfAssemblyField = value;
+                    OnPropertyChanged("CountryOfAssembly");
+                }
+            }
+        }
+
+        public string BaseVersion
+        {
+            get
+            {
+                return baseVersionField;
+            }
+
+            set
+            {
+                if (baseVersionField != value)
+                {
+                    baseVersionField = value;
+                    OnPropertyChanged("BaseVersion");
+                }
+            }
+        }
+
+        public string Antrieb
+        {
+            get
+            {
+                return antriebField;
+            }
+
+            set
+            {
+                if (antriebField != value)
+                {
+                    antriebField = value;
+                    OnPropertyChanged("Antrieb");
+                }
+            }
+        }
+
+        public DateTime ProductionDate
+        {
+            get
+            {
+                return productionDate;
+            }
+
+            set
+            {
+                if (productionDate != value)
+                {
+                    productionDate = value;
+                    OnPropertyChanged("ProductionDate");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public bool ProductionDateSpecified => productionDate != default(DateTime);
+
+        public DateTime? FirstRegistration
+        {
+            get
+            {
+                return firstRegistrationField;
+            }
+
+            set
+            {
+                if (firstRegistrationField != value)
+                {
+                    firstRegistrationField = value;
+                    OnPropertyChanged("FirstRegistration");
+                }
+            }
+        }
+
+        public string Modelljahr
+        {
+            get
+            {
+                return modelljahr;
+            }
+
+            set
+            {
+                if (modelljahr != value)
+                {
+                    modelljahr = value;
+                    OnPropertyChanged("Modelljahr");
+                }
+            }
+        }
+
+        public string Modellmonat
+        {
+            get
+            {
+                return modellmonat;
+            }
+
+            set
+            {
+                if (modellmonat != value)
+                {
+                    modellmonat = value;
+                    OnPropertyChanged("Modellmonat");
+                }
+            }
+        }
+
+        public string Modelltag
+        {
+            get
+            {
+                return modelltag;
+            }
+
+            set
+            {
+                if (modelltag != value)
+                {
+                    modelltag = value;
+                    OnPropertyChanged("Modelltag");
+                }
+            }
+        }
+
+        public string BaustandsJahr
+        {
+            get
+            {
+                return baustandsJahrField;
+            }
+
+            set
+            {
+                if (baustandsJahrField != value)
+                {
+                    baustandsJahrField = value;
+                    OnPropertyChanged("BaustandsJahr");
+                }
+            }
+        }
+
+        public string BaustandsMonat
+        {
+            get
+            {
+                return baustandsMonatField;
+            }
+
+            set
+            {
+                if (baustandsMonatField != value)
+                {
+                    baustandsMonatField = value;
+                    OnPropertyChanged("BaustandsMonat");
+                }
+            }
+        }
+
+        public string ILevel
+        {
+            get
+            {
+                return iLevelField;
+            }
+
+            set
+            {
+                if (iLevelField != value)
+                {
+                    iLevelField = value;
+                    OnPropertyChanged("ILevel");
+                }
+            }
+        }
+
+        public decimal? Gwsz
+        {
+            get
+            {
+                return gwszField;
+            }
+
+            set
+            {
+                if (!(gwszField == value))
+                {
+                    gwszField = value;
+                    OnPropertyChanged("Gwsz");
+                    OnPropertyChanged("DisplayGwsz");
+                }
+            }
+        }
+
+        public GwszUnitType? GwszUnit
+        {
+            get
+            {
+                return gwszUnitField;
+            }
+
+            set
+            {
+                if (gwszUnitField.HasValue)
+                {
+                    if (!gwszUnitField.Equals(value))
+                    {
+                        gwszUnitField = value;
+                        OnPropertyChanged("GwszUnit");
+                    }
+                }
+                else
+                {
+                    gwszUnitField = value;
+                    OnPropertyChanged("GwszUnit");
+                }
+            }
+        }
+
+        public ObservableCollection<FFMResult> FFM
+        {
+            get
+            {
+                return fFMField;
+            }
+
+            set
+            {
+                if (fFMField != null)
+                {
+                    if (!fFMField.Equals(value))
+                    {
+                        fFMField = value;
+                        OnPropertyChanged("FFM");
+                    }
+                }
+                else
+                {
+                    fFMField = value;
+                    OnPropertyChanged("FFM");
+                }
+            }
+        }
+
+        public string ILevelWerk
+        {
+            get
+            {
+                return iLevelWerkField;
+            }
+
+            set
+            {
+                if (iLevelWerkField != value)
+                {
+                    iLevelWerkField = value;
+                    OnPropertyChanged("ILevelWerk");
+                }
+            }
+        }
+
+        public string ILevelBackup
+        {
+            get
+            {
+                return iLevelBackupField;
+            }
+
+            set
+            {
+                if (iLevelBackupField != null)
+                {
+                    if (!iLevelBackupField.Equals(value))
+                    {
+                        iLevelBackupField = value;
+                        OnPropertyChanged("ILevelBackup");
+                    }
+                }
+                else
+                {
+                    iLevelBackupField = value;
+                    OnPropertyChanged("ILevelBackup");
+                }
+            }
+        }
+
+        public FA FA
+        {
+            get
+            {
+                return faField;
+            }
+
+            set
+            {
+                if (faField != value)
+                {
+                    faField = value;
+                    OnPropertyChanged("FA");
+                }
+            }
+        }
+
+        public string ZCS
+        {
+            get
+            {
+                return zCSField;
+            }
+
+            set
+            {
+                if (zCSField != null)
+                {
+                    if (!zCSField.Equals(value))
+                    {
+                        zCSField = value;
+                        OnPropertyChanged("ZCS");
+                    }
+                }
+                else
+                {
+                    zCSField = value;
+                    OnPropertyChanged("ZCS");
+                }
+            }
+        }
+
+        [PreserveSource(Hint = "public ObservableCollection<InfoObject>", Placeholder = true)]
+        public PlaceholderType HistoryInfoObjects;
+
+        [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
+        public PlaceholderType TestPlanType;
+
+        [PreserveSource(Hint = "public TestPlanCache", Placeholder = true)]
+        [IgnoreDataMember]
+        [XmlIgnore]
+        public PlaceholderType TestPlanCache => testPlanCache;
+
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.SimulatedParts")]
+        public bool SimulatedParts { get; }
+
+        public VCIDevice MIB
+        {
+            get
+            {
+                return mIBField;
+            }
+
+            set
+            {
+                if (mIBField != null)
+                {
+                    if (!mIBField.Equals(value))
+                    {
+                        mIBField = value;
+                        OnPropertyChanged("MIB");
+                    }
+                }
+                else
+                {
+                    mIBField = value;
+                    OnPropertyChanged("MIB");
+                }
+            }
+        }
+
+        [PreserveSource(Hint = "public ObservableCollection<technicalCampaignType>", Placeholder = true)]
+        public PlaceholderType TechnicalCampaigns;
+
+        public string Leistungsklasse
+        {
+            get
+            {
+                return leistungsklasseField;
+            }
+
+            set
+            {
+                if (leistungsklasseField != value)
+                {
+                    leistungsklasseField = value;
+                    OnPropertyChanged("Leistungsklasse");
+                }
+            }
+        }
+
+        public string Kraftstoffart
+        {
+            get
+            {
+                return kraftstoffartField;
+            }
+
+            set
+            {
+                if (kraftstoffartField != value)
+                {
+                    kraftstoffartField = value;
+                    OnPropertyChanged("Kraftstoffart");
+                }
+            }
+        }
+
+        public string ECTypeApproval
+        {
+            get
+            {
+                return eCTypeApprovalField;
+            }
+
+            set
+            {
+                if (eCTypeApprovalField != value)
+                {
+                    eCTypeApprovalField = value;
+                    OnPropertyChanged("ECTypeApproval");
+                }
+            }
+        }
+
+        public DateTime LastSaveDate
+        {
+            get
+            {
+                return lastSaveDateField;
+            }
+
+            set
+            {
+                if (!lastSaveDateField.Equals(value))
+                {
+                    lastSaveDateField = value;
+                    OnPropertyChanged("LastSaveDate");
+                }
+            }
+        }
+
+        public DateTime LastChangeDate
+        {
+            get
+            {
+                return lastChangeDateField;
+            }
+
+            set
+            {
+                if (!lastChangeDateField.Equals(value))
+                {
+                    lastChangeDateField = value;
+                    OnPropertyChanged("LastChangeDate");
+                }
+            }
+        }
+
+        [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
+        public PlaceholderType ServiceHistory;
+
+        [PreserveSource(Hint = "ObservableCollection<typeDiagCode>", Placeholder = true)]
+        public PlaceholderType DiagCodes;
+
+        public string Motorarbeitsverfahren
+        {
+            get
+            {
+                return motorarbeitsverfahrenField;
+            }
+
+            set
+            {
+                if (motorarbeitsverfahrenField != value)
+                {
+                    motorarbeitsverfahrenField = value;
+                    OnPropertyChanged("Motorarbeitsverfahren");
+                }
+            }
+        }
+
+        public string Drehmoment
+        {
+            get
+            {
+                return drehmomentField;
+            }
+
+            set
+            {
+                if (drehmomentField != value)
+                {
+                    drehmomentField = value;
+                    OnPropertyChanged("Drehmoment");
+                }
+            }
+        }
+
+        public string Hybridkennzeichen
+        {
+            get
+            {
+                return hybridkennzeichenField ?? string.Empty;
+            }
+
+            set
+            {
+                if (hybridkennzeichenField != value)
+                {
+                    hybridkennzeichenField = value;
+                    OnPropertyChanged("Hybridkennzeichen");
+                }
+            }
+        }
+
+        [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
+        public PlaceholderType CombinedFaults;
+
+        public ObservableCollection<decimal> InstalledAdapters
+        {
+            get
+            {
+                return installedAdaptersField;
+            }
+
+            set
+            {
+                if (installedAdaptersField != null)
+                {
+                    if (!installedAdaptersField.Equals(value))
+                    {
+                        installedAdaptersField = value;
+                        OnPropertyChanged("InstalledAdapters");
+                    }
+                }
+                else
+                {
+                    installedAdaptersField = value;
+                    OnPropertyChanged("InstalledAdapters");
+                }
+            }
+        }
+
+        public string VIN17_OEM
+        {
+            get
+            {
+                return vIN17_OEMField;
+            }
+
+            set
+            {
+                if (vIN17_OEMField != null)
+                {
+                    if (!vIN17_OEMField.Equals(value))
+                    {
+                        vIN17_OEMField = value;
+                        OnPropertyChanged("VIN17_OEM");
+                    }
+                }
+                else
+                {
+                    vIN17_OEMField = value;
+                    OnPropertyChanged("VIN17_OEM");
+                }
+            }
+        }
+
+        public string MOTKraftstoffart
+        {
+            get
+            {
+                return mOTKraftstoffartField;
+            }
+
+            set
+            {
+                if (mOTKraftstoffartField != null)
+                {
+                    if (!mOTKraftstoffartField.Equals(value))
+                    {
+                        mOTKraftstoffartField = value;
+                        OnPropertyChanged("MOTKraftstoffart");
+                    }
+                }
+                else
+                {
+                    mOTKraftstoffartField = value;
+                    OnPropertyChanged("MOTKraftstoffart");
+                }
+            }
+        }
+
+        public string MOTEinbaulage
+        {
+            get
+            {
+                return mOTEinbaulageField;
+            }
+
+            set
+            {
+                if (mOTEinbaulageField != value)
+                {
+                    mOTEinbaulageField = value;
+                    OnPropertyChanged("MOTEinbaulage");
+                }
+            }
+        }
+
+        public string MOTBezeichnung
+        {
+            get
+            {
+                return mOTBezeichnungField;
+            }
+
+            set
+            {
+                if (mOTBezeichnungField != value)
+                {
+                    mOTBezeichnungField = value;
+                    GenericMotor.EngineLabel1 = value;
+                    OnPropertyChanged("MOTBezeichnung");
+                }
+            }
+        }
+
+        public string Baureihenverbund
+        {
+            get
+            {
+                return baureihenverbundField;
+            }
+
+            set
+            {
+                if (baureihenverbundField != value)
+                {
+                    baureihenverbundField = value;
+                    OnPropertyChanged("Baureihenverbund");
+                }
+            }
+        }
+
+        public string AEKurzbezeichnung
+        {
+            get
+            {
+                return aEKurzbezeichnungField;
+            }
+
+            set
+            {
+                if (aEKurzbezeichnungField != value)
+                {
+                    aEKurzbezeichnungField = value;
+                    OnPropertyChanged("AEKurzbezeichnung");
+                }
+            }
+        }
+
+        public string AELeistungsklasse
+        {
+            get
+            {
+                return aELeistungsklasseField;
+            }
+
+            set
+            {
+                if (aELeistungsklasseField != value)
+                {
+                    aELeistungsklasseField = value;
+                    OnPropertyChanged("AELeistungsklasse");
+                }
+            }
+        }
+
+        public string AEUeberarbeitung
+        {
+            get
+            {
+                return aEUeberarbeitungField;
+            }
+
+            set
+            {
+                if (aEUeberarbeitungField != value)
+                {
+                    aEUeberarbeitungField = value;
+                    OnPropertyChanged("AEUeberarbeitung");
+                }
+            }
+        }
+
+        [PreserveSource(Hint = "ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
+        public PlaceholderType PerceivedSymptoms;
+
+        public string ProgmanVersion
+        {
+            get
+            {
+                return progmanVersionField;
+            }
+
+            set
+            {
+                if (progmanVersionField != value)
+                {
+                    progmanVersionField = value;
+                    OnPropertyChanged("ProgmanVersion");
+                }
+            }
+        }
+
+        [DefaultValue("grafik/gif/icon_offl_ACTIV.gif")]
+        [Obsolete]
+        public string ConnectImage { get; }
+
+        [DefaultValue("grafik/gif/icon_imib_INACTIV.gif")]
+        [Obsolete]
+        public string ConnectIMIBImage { get; }
+
+        [DefaultValue(VisibilityType.Visible)]
+        [Obsolete]
+        public VisibilityType ConnectIPState { get; }
+
+        [Obsolete]
+        [DefaultValue(VisibilityType.Visible)]
+        public VisibilityType ConnectIMIBIPState { get; }
+
+        [Obsolete]
+        [DefaultValue(VisibilityType.Visible)]
+        public VisibilityType ConnectState { get; }
+
+        [DefaultValue(VisibilityType.Visible)]
+        [Obsolete]
+        public VisibilityType ConnectIMIBState { get; }
+
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.Status_FunctionName")]
+        public string Status_FunctionName { get; }
+
+        [DefaultValue(StateType.idle)]
+        public StateType Status_FunctionState
+        {
+            get
+            {
+                return status_FunctionStateField;
+            }
+
+            set
+            {
+                if (!status_FunctionStateField.Equals(value))
+                {
+                    status_FunctionStateField = value;
+                    OnPropertyChanged("Status_FunctionState");
+                }
+            }
+        }
+
+        [Obsolete]
+        public DateTime Status_FunctionStateLastChangeTime { get; }
+
+        [XmlIgnore]
+        [Obsolete]
+        public bool Status_FunctionStateLastChangeTimeSpecified { get; }
+
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.Status_FunctionProgress")]
+        public double Status_FunctionProgress { get; }
+
+        public string Kl15Voltage
+        {
+            get
+            {
+                return kl15VoltageField;
+            }
+
+            set
+            {
+                if (kl15VoltageField != null)
+                {
+                    if (!kl15VoltageField.Equals(value))
+                    {
+                        kl15VoltageField = value;
+                        OnPropertyChanged("Kl15Voltage");
+                    }
+                }
+                else
+                {
+                    kl15VoltageField = value;
+                    OnPropertyChanged("Kl15Voltage");
+                }
+            }
+        }
+
+        public string Kl30Voltage
+        {
+            get
+            {
+                return kl30VoltageField;
+            }
+
+            set
+            {
+                if (kl30VoltageField != null)
+                {
+                    if (!kl30VoltageField.Equals(value))
+                    {
+                        kl30VoltageField = value;
+                        OnPropertyChanged("Kl30Voltage");
+                    }
+                }
+                else
+                {
+                    kl30VoltageField = value;
+                    OnPropertyChanged("Kl30Voltage");
+                }
+            }
+        }
+
+        [DefaultValue(false)]
+        public bool PADVehicle
+        {
+            get
+            {
+                return pADVehicleField;
+            }
+
+            set
+            {
+                if (!pADVehicleField.Equals(value))
+                {
+                    pADVehicleField = value;
+                    OnPropertyChanged("PADVehicle");
+                }
+            }
+        }
+
+        [DefaultValue(-1)]
+        public int PwfState
+        {
+            get
+            {
+                return pwfStateField;
+            }
+
+            set
+            {
+                if (!pwfStateField.Equals(value))
+                {
+                    pwfStateField = value;
+                    OnPropertyChanged("PwfState");
+                }
+            }
+        }
+
+        public DateTime KlVoltageLastMessageTime
+        {
+            get
+            {
+                return klVoltageLastMessageTimeField;
+            }
+
+            set
+            {
+                if (!klVoltageLastMessageTimeField.Equals(value))
+                {
+                    klVoltageLastMessageTimeField = value;
+                    OnPropertyChanged("KlVoltageLastMessageTime");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public bool KlVoltageLastMessageTimeSpecified
+        {
+            get
+            {
+                return klVoltageLastMessageTimeFieldSpecified;
+            }
+
+            set
+            {
+                if (!klVoltageLastMessageTimeFieldSpecified.Equals(value))
+                {
+                    klVoltageLastMessageTimeFieldSpecified = value;
+                    OnPropertyChanged("KlVoltageLastMessageTimeSpecified");
+                }
+            }
+        }
+
+        [DefaultValue("0.0.1")]
+        public string ApplicationVersion
+        {
+            get
+            {
+                return applicationVersionField;
+            }
+
+            set
+            {
+                if (applicationVersionField != null)
+                {
+                    if (!applicationVersionField.Equals(value))
+                    {
+                        applicationVersionField = value;
+                        OnPropertyChanged("ApplicationVersion");
+                    }
+                }
+                else
+                {
+                    applicationVersionField = value;
+                    OnPropertyChanged("ApplicationVersion");
+                }
+            }
+        }
+
+        [Obsolete]
+        [DefaultValue(false)]
+        public bool FASTAAlreadyDone
+        {
+            get
+            {
+                return fASTAAlreadyDoneField;
+            }
+
+            set
+            {
+                if (!fASTAAlreadyDoneField.Equals(value))
+                {
+                    fASTAAlreadyDoneField = value;
+                    OnPropertyChanged("FASTAAlreadyDone");
+                }
+            }
+        }
+
+        [DefaultValue(IdentificationLevel.None)]
+        public IdentificationLevel VehicleIdentLevel
+        {
+            get
+            {
+                return vehicleIdentLevelField;
+            }
+
+            set
+            {
+                if (!vehicleIdentLevelField.Equals(value))
+                {
+                    vehicleIdentLevelField = value;
+                    OnPropertyChanged("VehicleIdentLevel");
+                }
+            }
+        }
+
+        [DefaultValue(false)]
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.VehicleIdentAlreadyDone")]
+        public bool VehicleIdentAlreadyDone { get; set; }
+
+        [DefaultValue(false)]
+        public bool VehicleShortTestAsSessionEntry
+        {
+            get
+            {
+                return vehicleShortTestAsSessionEntryField;
+            }
+
+            set
+            {
+                if (!vehicleShortTestAsSessionEntryField.Equals(value))
+                {
+                    vehicleShortTestAsSessionEntryField = value;
+                    OnPropertyChanged("VehicleShortTestAsSessionEntry");
+                }
+            }
+        }
+
+        [DefaultValue(false)]
+        public bool Pannenfall
+        {
+            get
+            {
+                return pannenfallField;
+            }
+
+            set
+            {
+                if (!pannenfallField.Equals(value))
+                {
+                    pannenfallField = value;
+                    OnPropertyChanged("Pannenfall");
+                }
+            }
+        }
+
+        [DefaultValue(0)]
+        public int SelectedDiagBUS
+        {
+            get
+            {
+                return selectedDiagBUSField;
+            }
+
+            set
+            {
+                if (!selectedDiagBUSField.Equals(value))
+                {
+                    selectedDiagBUSField = value;
+                    OnPropertyChanged("SelectedDiagBUS");
+                }
+            }
+        }
+
+        [PreserveSource(Hint = "BackendsAvailabilityIndicator", Placeholder = true)]
+        public PlaceholderType BackendsAvailabilityIndicator;
+
+        [DefaultValue(false)]
+        [XmlIgnore]
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.DOMRequestFailed")]
+        public bool DOMRequestFailed { get; set; }
+
+        [DefaultValue(false)]
+        [XmlIgnore]
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.Ssl2RequestFailed")]
+        public bool Ssl2RequestFailed { get; set; }
+
+        [DefaultValue(false)]
+        [XmlIgnore]
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.TecCampaignsRequestFailed")]
+        public bool TecCampaignsRequestFailed { get; set; }
+
+        [DefaultValue(false)]
+        [XmlIgnore]
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.RepHistoryRequestFailed")]
+        public bool RepHistoryRequestFailed { get; set; }
+
+        [DefaultValue(false)]
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.KL15OverrideVoltageCheck")]
+        public bool KL15OverrideVoltageCheck { get; set; }
+
+        [DefaultValue(false)]
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.KL15FaultILevelAlreadyAlerted")]
+        public bool KL15FaultILevelAlreadyAlerted { get; set; }
+
+        [DefaultValue(false)]
+        public bool GWSZReadoutSuccess
+        {
+            get
+            {
+                return gWSZReadoutSuccessField;
+            }
+
+            set
+            {
+                if (!gWSZReadoutSuccessField.Equals(value))
+                {
+                    gWSZReadoutSuccessField = value;
+                    OnPropertyChanged("GWSZReadoutSuccess");
+                }
+            }
+        }
+
+        [Obsolete]
+        public string RefSchema { get; }
+
+        [Obsolete]
+        public string Version { get; }
+
+        public DateTime VehicleLifeStartDate
+        {
+            get
+            {
+                return vehicleLifeStartDate;
+            }
+
+            set
+            {
+                if (!vehicleLifeStartDate.Equals(value))
+                {
+                    vehicleLifeStartDate = value;
+                    OnPropertyChanged("VehicleLifeStartDate");
+                }
+            }
+        }
+
+        public double VehicleSystemTime
+        {
+            get
+            {
+                return vehicleSystemTime;
+            }
+
+            set
+            {
+                if (!vehicleSystemTime.Equals(value))
+                {
+                    vehicleSystemTime = value;
+                    OnPropertyChanged("VehicleSystemTime");
+                }
+            }
+        }
+
+        public string ElektrischeReichweite
+        {
+            get
+            {
+                return elektrischeReichweiteField;
+            }
+
+            set
+            {
+                if (elektrischeReichweiteField != value)
+                {
+                    elektrischeReichweiteField = value;
+                    OnPropertyChanged("ElektrischeReichweite");
+                }
+            }
+        }
+
+        public string AEBezeichnung
+        {
+            get
+            {
+                return aeBezeichnungField;
+            }
+
+            set
+            {
+                if (aeBezeichnungField != value)
+                {
+                    aeBezeichnungField = value;
+                    OnPropertyChanged("AEBezeichnung");
                 }
             }
         }
@@ -123,6 +2028,7 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
+        [Obsolete]
         public bool IsEcuIdentSuccessfull { get; set; }
 
         public string HmiVersion
@@ -229,18 +2135,18 @@ namespace PsdzClient.Core
         {
             get
             {
-                if (!string.IsNullOrEmpty(base.SerialGearBox) && base.SerialGearBox.Length >= 7)
+                if (!string.IsNullOrEmpty(SerialGearBox) && SerialGearBox.Length >= 7)
                 {
-                    return base.SerialGearBox.Substring(0, 7);
+                    return SerialGearBox.Substring(0, 7);
                 }
 
-                return base.SerialGearBox;
+                return SerialGearBox;
             }
         }
 
         [XmlIgnore]
         [IgnoreDataMember]
-        public string DisplayGwsz => base.Gwsz.ToMileageDisplayFormat(Classification.IsNewFaultMemoryActive);
+        public string DisplayGwsz => Gwsz.ToMileageDisplayFormat(Classification.IsNewFaultMemoryActive);
 
         [XmlIgnore]
         public string VINRangeType
@@ -258,20 +2164,6 @@ namespace PsdzClient.Core
                     vinRangeType = value;
                     OnPropertyChanged("VINRangeType");
                 }
-            }
-        }
-
-        [XmlIgnore]
-        public bool IsClosingOperationActive
-        {
-            get
-            {
-                return isClosingOperationActive;
-            }
-
-            set
-            {
-                isClosingOperationActive = value;
             }
         }
 
@@ -302,12 +2194,12 @@ namespace PsdzClient.Core
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(base.VIN17))
+                    if (string.IsNullOrEmpty(VIN17))
                     {
                         return null;
                     }
 
-                    return base.VIN17.Substring(0, 10);
+                    return VIN17.Substring(0, 10);
                 }
                 catch (Exception exception)
                 {
@@ -321,12 +2213,12 @@ namespace PsdzClient.Core
         {
             get
             {
-                if (!string.IsNullOrEmpty(base.MainSeriesSgbd) && base.MainSeriesSgbd.Length >= 3 && !base.MainSeriesSgbd.Equals("zcs_all"))
+                if (!string.IsNullOrEmpty(MainSeriesSgbd) && MainSeriesSgbd.Length >= 3 && !MainSeriesSgbd.Equals("zcs_all"))
                 {
-                    return base.MainSeriesSgbd.Substring(0, 3);
+                    return MainSeriesSgbd.Substring(0, 3);
                 }
 
-                return base.Ereihe;
+                return Ereihe;
             }
         }
 
@@ -336,12 +2228,12 @@ namespace PsdzClient.Core
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(base.VIN17))
+                    if (string.IsNullOrEmpty(VIN17))
                     {
                         return null;
                     }
 
-                    return base.VIN17.Substring(10, 7);
+                    return VIN17.Substring(10, 7);
                 }
                 catch (Exception exception)
                 {
@@ -358,13 +2250,13 @@ namespace PsdzClient.Core
             {
                 try
                 {
-                    if (base.FA != null && !string.IsNullOrEmpty(base.FA.TYPE) && base.FA.TYPE.Length == 4)
+                    if (FA != null && !string.IsNullOrEmpty(FA.TYPE) && FA.TYPE.Length == 4)
                     {
-                        AddServiceCodeAndLogsForTypeKeys(base.FA.TYPE, "GMType.FA.TYPE");
-                        return base.FA.TYPE;
+                        AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.FA.TYPE");
+                        return FA.TYPE;
                     }
 
-                    if (string.IsNullOrEmpty(base.VIN17))
+                    if (string.IsNullOrEmpty(VIN17))
                     {
                         return null;
                     }
@@ -408,17 +2300,17 @@ namespace PsdzClient.Core
                                 text += "9";
                                 break;
                             default:
-                                AddServiceCodeAndLogsForTypeKeys(base.FA.TYPE, "GMType.VINType");
+                                AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.VINType");
                                 return VINType;
                         }
 
-                        AddServiceCodeAndLogsForTypeKeys(base.FA.TYPE, "GMType.VINType");
+                        AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.VINType");
                         return text;
                     }
                 }
                 catch (Exception exception)
                 {
-                    Log.WarningException("Vehicle.get_VINType", exception);
+                    Log.WarningException("Vehicle.get_GMType", exception);
                 }
 
                 return null;
@@ -431,13 +2323,13 @@ namespace PsdzClient.Core
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(base.VIN17) || base.VIN17.Length < 17)
+                    if (string.IsNullOrEmpty(VIN17) || VIN17.Length < 17)
                     {
                         return null;
                     }
 
-                    AddServiceCodeAndLogsForTypeKeys(base.VIN17.Substring(3, 4), "VINType");
-                    return base.VIN17.Substring(3, 4);
+                    AddServiceCodeAndLogsForTypeKeys(VIN17.Substring(3, 4), "VINType");
+                    return VIN17.Substring(3, 4);
                 }
                 catch (Exception exception)
                 {
@@ -448,21 +2340,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public bool IsBusy
-        {
-            get
-            {
-                return isBusy;
-            }
-
-            set
-            {
-                isBusy = value;
-                OnPropertyChanged("IsBusy");
-            }
-        }
-
-        public string EMotBaureihe => base.EMotor.EMOTBaureihe;
+        public string EMotBaureihe => EMotor.EMOTBaureihe;
 
         public string Produktlinie
         {
@@ -624,160 +2502,59 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
         public PlaceholderType CheckControlMessages;
-        [XmlIgnore]
-        public bool IsCcmReadoutDone { get; set; }
-
         [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
         [XmlIgnore]
         public PlaceholderType FaultList;
         [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
         [XmlIgnore]
         public PlaceholderType VirtualFaultInfoList;
+        [XmlIgnore]
+        public List<IEcu> SvtECU { get; set; } = new List<IEcu>();
+
+        [XmlIgnore]
+        [Obsolete]
+        public bool IsDoIP { get; set; }
+
+        [XmlIgnore]
+        public DateTime? LastProgramDate { get; set; }
+
+        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
+        [XmlIgnore]
+        public PsdzDatabase.BordnetsData BordnetsData
+        {
+            get
+            {
+                return bordnetsData;
+            }
+
+            set
+            {
+                if (bordnetsData != value)
+                {
+                    bordnetsData = value;
+                    OnPropertyChanged("BordnetsData");
+                }
+            }
+        }
+
         [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
         public PlaceholderType PKodeList => pKodeList;
 
         [XmlIgnore]
-        public bool IsFastaReadDone { get; set; }
-
-        [XmlIgnore]
-        public bool IsProgrammingSessionStartable { get; set; }
-
-        [XmlIgnore]
-        public bool IsVehicleTestDone
-        {
-            get
-            {
-                return vehicleTestDone;
-            }
-
-            set
-            {
-                if (vehicleTestDone != value)
-                {
-                    vehicleTestDone = value;
-                    OnPropertyChanged("IsVehicleTestDone");
-                }
-            }
-        }
-
-        public bool IsReadingFastaDataFinished
-        {
-            get
-            {
-                return isReadingFastaDataFinished;
-            }
-
-            set
-            {
-                isReadingFastaDataFinished = value;
-                OnPropertyChanged("IsReadingFastaDataFinished");
-            }
-        }
-
-        public bool IsNewIdentActive
-        {
-            get
-            {
-                return isNewIdentActiveField;
-            }
-
-            set
-            {
-                isNewIdentActiveField = value;
-                OnPropertyChanged("IsNewIdentActive");
-            }
-        }
-
-        [XmlIgnore]
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.IsVehicleBreakdownAlreadyShown")]
         public bool IsVehicleBreakdownAlreadyShown { get; set; }
 
         [XmlIgnore]
-        public bool IsPowerSafeModeActive
-        {
-            get
-            {
-                if (!powerSafeModeByOldEcus)
-                {
-                    return powerSafeModeByNewEcus;
-                }
-
-                return true;
-            }
-        }
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.IsPowerSafeModeActive")]
+        public bool IsPowerSafeModeActive { get; }
 
         [XmlIgnore]
-        public bool IsPowerSafeModeActiveByOldEcus
-        {
-            get
-            {
-                return powerSafeModeByOldEcus;
-            }
-
-            set
-            {
-                Log.Info("Vehicle.IsPowerSafeModeActiveByOldEcus_set", "Setting vehicle power safe modus from \"{0}\" to \"{1}\".", powerSafeModeByOldEcus, value);
-                powerSafeModeByOldEcus = value;
-            }
-        }
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.IsPowerSafeModeActiveByOldEcus")]
+        public bool IsPowerSafeModeActiveByOldEcus { get; set; }
 
         [XmlIgnore]
-        public bool VinNotReadbleFromCarAbort
-        {
-            get
-            {
-                return vinNotReadbleFromCarAbort;
-            }
-
-            set
-            {
-                vinNotReadbleFromCarAbort = value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool IsPowerSafeModeActiveByNewEcus
-        {
-            get
-            {
-                return powerSafeModeByNewEcus;
-            }
-
-            set
-            {
-                Log.Info("Vehicle.IsPowerSafeModeActiveByNewEcus_set", "Setting vehicle power safe modus from \"{0}\" to \"{1}\".", powerSafeModeByNewEcus, value);
-                powerSafeModeByNewEcus = value;
-            }
-        }
-
-        [XmlIgnore]
-        public int? FaultCodeSum
-        {
-            get
-            {
-                return faultCodeSum;
-            }
-
-            set
-            {
-                faultCodeSum = value;
-                OnPropertyChanged("FaultCodeSum");
-            }
-        }
-
-        [XmlIgnore]
-        public int? NonSignalErrorFaultCodeSum
-        {
-            get
-            {
-                return nonSignalErrorFaultCodeSum;
-            }
-
-            set
-            {
-                nonSignalErrorFaultCodeSum = value;
-                OnPropertyChanged("NonSignalErrorFaultCodeSum");
-            }
-        }
+        [Obsolete("Use SessionInfoAccessor.SessionInfo.IsPowerSafeModeActiveByNewEcus")]
+        public bool IsPowerSafeModeActiveByNewEcus { get; set; }
 
         [XmlIgnore]
         public DateTime? C_DATETIME
@@ -786,16 +2563,16 @@ namespace PsdzClient.Core
             {
                 try
                 {
-                    if (base.FA != null && base.FA.C_DATETIME.HasValue && base.FA.C_DATETIME > DateTime.MinValue)
+                    if (FA != null && FA.C_DATETIME.HasValue && FA.C_DATETIME > DateTime.MinValue)
                     {
-                        return base.FA.C_DATETIME;
+                        return FA.C_DATETIME;
                     }
 
-                    if (!string.IsNullOrEmpty(base.Modelljahr) && !string.IsNullOrEmpty(base.Modellmonat))
+                    if (!string.IsNullOrEmpty(Modelljahr) && !string.IsNullOrEmpty(Modellmonat))
                     {
                         if (!cDatetimeByModelYearMonth.HasValue)
                         {
-                            cDatetimeByModelYearMonth = DateTime.Parse(string.Format(CultureInfo.InvariantCulture, "{0}-{1}-01", base.Modelljahr, base.Modellmonat), CultureInfo.InvariantCulture);
+                            cDatetimeByModelYearMonth = DateTime.Parse(string.Format(CultureInfo.InvariantCulture, "{0}-{1}-01", Modelljahr, Modellmonat), CultureInfo.InvariantCulture);
                         }
 
                         return cDatetimeByModelYearMonth;
@@ -812,68 +2589,51 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "IEnumerable<ICbsInfo>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.CBS => base.CBS;
+        PlaceholderType IVehicle.CBS => CBS;
 
         [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.CombinedFaults => base.CombinedFaults;
+        PlaceholderType IVehicle.CombinedFaults => CombinedFaults;
 
         [PreserveSource(Hint = "IEnumerable<IDiagCode>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.DiagCodes => base.DiagCodes;
+        PlaceholderType IVehicle.DiagCodes => DiagCodes;
 
         [XmlIgnore]
-        IEnumerable<IEcu> IVehicle.ECU => base.ECU;
+        IEnumerable<IEcu> IVehicle.ECU => ECU;
 
         [XmlIgnore]
-        BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa IVehicle.FA => base.FA;
+        BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa IVehicle.FA => FA;
 
         [XmlIgnore]
-        IEnumerable<IFfmResult> IVehicle.FFM => base.FFM;
+        IEnumerable<IFfmResult> IVehicle.FFM => FFM;
 
         [XmlIgnore]
-        IEnumerable<decimal> IVehicle.InstalledAdapters => base.InstalledAdapters;
+        IEnumerable<decimal> IVehicle.InstalledAdapters => InstalledAdapters;
 
         [XmlIgnore]
-        IEcu IVehicle.SelectedECU => base.SelectedECU;
+        IEcu IVehicle.SelectedECU => SelectedECU;
 
         [XmlIgnore]
-        IVciDevice IVehicle.MIB => base.MIB;
+        IVciDevice IVehicle.MIB => MIB;
 
         [PreserveSource(Hint = "IEnumerable<IServiceHistoryEntry>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.ServiceHistory => base.ServiceHistory;
+        PlaceholderType IVehicle.ServiceHistory => ServiceHistory;
 
         [PreserveSource(Hint = "IEnumerable<ITechnicalCampaign>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.TechnicalCampaigns => base.TechnicalCampaigns;
+        PlaceholderType IVehicle.TechnicalCampaigns => TechnicalCampaigns;
 
         [XmlIgnore]
-        IVciDevice IVehicle.VCI => base.VCI;
+        IVciDevice IVehicle.VCI => VCI;
 
         [PreserveSource(Hint = "IEnumerable<IZfsResult>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.ZFS => base.ZFS;
+        PlaceholderType IVehicle.ZFS => ZFS;
 
         [XmlIgnore]
-        IEnumerable<ICemResult> IVehicle.CEM => base.CEM;
-
-        [XmlIgnore]
-        public CentralErrorMemoryStatus CentralErrorMemoryStatus
-        {
-            get
-            {
-                return centralErrorMemoryStatus;
-            }
-
-            set
-            {
-                if (centralErrorMemoryStatus != value)
-                {
-                    centralErrorMemoryStatus = value;
-                }
-            }
-        }
+        IEnumerable<ICemResult> IVehicle.CEM => CEM;
 
         [XmlIgnore]
         public double Clamp15MinValue
@@ -889,40 +2649,6 @@ namespace PsdzClient.Core
                 {
                     clamp15MinValue = value;
                     OnPropertyChanged("Clamp15MinValue");
-                }
-            }
-        }
-
-        public bool WithLfpBattery
-        {
-            get
-            {
-                return withLfpBattery;
-            }
-
-            set
-            {
-                if (withLfpBattery != value)
-                {
-                    withLfpBattery = value;
-                    OnPropertyChanged("WithLfpBattery");
-                }
-            }
-        }
-
-        public bool WithLfpNCarBattery
-        {
-            get
-            {
-                return withLfpNCarBattery;
-            }
-
-            set
-            {
-                if (withLfpNCarBattery != value)
-                {
-                    withLfpNCarBattery = value;
-                    OnPropertyChanged("WithLfpNCarBattery");
                 }
             }
         }
@@ -1006,33 +2732,6 @@ namespace PsdzClient.Core
             }
         }
 
-        [XmlIgnore]
-        public bool IsNoVehicleCommunicationRunning
-        {
-            get
-            {
-                return noVehicleCommunicationRunning;
-            }
-
-            set
-            {
-                noVehicleCommunicationRunning = value;
-                OnPropertyChanged("IsNoVehicleCommunicationRunning");
-            }
-        }
-
-        [XmlIgnore]
-        IVciDeviceRuleEvaluation IVehicleRuleEvaluation.VCI => base.VCI;
-
-        [XmlIgnore]
-        IList<IIdentEcu> IVehicleRuleEvaluation.ECU => GetEcusAsIIdentEcu();
-
-        [XmlIgnore]
-        IFARuleEvaluation IVehicleRuleEvaluation.FA => base.FA;
-
-        [XmlIgnore]
-        IFARuleEvaluation IVehicleRuleEvaluation.TargetFA => TargetFA;
-
         [Obsolete("Is not used anymore in Testmodules. Will be removed in 4.48!")]
         [XmlIgnore]
         public BNMixed BNMixed { get; set; }
@@ -1042,14 +2741,14 @@ namespace PsdzClient.Core
         {
             get
             {
-                return base.FA;
+                return FA;
             }
 
             set
             {
-                if (base.FA != value)
+                if (FA != value)
                 {
-                    base.FA = (FA)value;
+                    FA = (FA)value;
                 }
             }
         }
@@ -1059,12 +2758,12 @@ namespace PsdzClient.Core
         {
             get
             {
-                return (BordnetType)base.BNType;
+                return (BordnetType)BNType;
             }
 
             set
             {
-                base.BNType = (BNType)value;
+                BNType = (BNType)value;
             }
         }
 
@@ -1120,36 +2819,26 @@ namespace PsdzClient.Core
         public string TempTypeKeyBasicFromFbm { get; set; }
 
         [XmlIgnore]
-        IEnumerable<IEcuTreeEcu> IEcuTreeVehicle.ECU => base.ECU.Cast<IEcuTreeEcu>();
+        IVciDeviceRuleEvaluation IVehicleRuleEvaluation.VCI => VCI;
 
-        [PreserveSource(Hint = "clientContext added", SignatureModified = true)]
-        public Vehicle(ClientContext clientContext) : base(clientContext)
-        {
-            base.ConnectState = VisibilityType.Collapsed;
-            //[-]  pKodeList = new ObservableCollectionEx<Fault>();
-            //[-] FaultList = new List<Fault>();
-            //[-] VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
-            sessionDataStore = new ParameterContainer();
-            //[-] base.Testplan = new TestPlanType(this);
-            diagCodesProgramming = new ObservableCollection<string>();
-            IsClosingOperationActive = false;
-            validPWFStates = new HashSet<int>(new int[17] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
-            clamp15MinValue = ConfigSettings.GetConfigDouble("BMW.Rheingold.ISTAGUI.Clamp15MinVoltage", 0.0);
-            clamp30MinValue = new VoltageThreshold(BatteryEnum.Pb).MinError;
-            //[-] RxSwin = new RxSwinData();
-            //[-] checkControlMessages = new ObservableCollection<CheckControlMessage>();
-            Classification = new VehicleClassification(this);
-            //[+] Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
-            Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
-        }
+        [XmlIgnore]
+        IList<IIdentEcu> IVehicleRuleEvaluation.ECU => GetEcusAsIIdentEcu();
 
-        [PreserveSource(Cleaned = true)]
-        public List<string> PermanentSAEFehlercodesInFaultList()
-        {
-            List<string> list = new List<string>();
-            return list;
-        }
+        [XmlIgnore]
+        IFARuleEvaluation IVehicleRuleEvaluation.FA => FA;
 
+        [XmlIgnore]
+        IFARuleEvaluation IVehicleRuleEvaluation.TargetFA => TargetFA;
+
+        [XmlIgnore]
+        IEnumerable<IEcuTreeEcu> IEcuTreeVehicle.ECU => ECU.Cast<IEcuTreeEcu>();
+
+        [PreserveSource(Hint = "public SessionInfo", Placeholder = true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlElement("SessionInfo")]
+        public PlaceholderType SessionInfoForSerializationOnly { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public string SetVINRangeTypeFromVINRanges()
         {
@@ -1173,6 +2862,96 @@ namespace PsdzClient.Core
             }
 
             return null;
+        }
+
+        [PreserveSource(Hint = "clientContext added", SignatureModified = true)]
+        public Vehicle(ClientContext clientContext)
+        {
+            //[+] _clientContext = clientContext;
+            _clientContext = clientContext;
+            //[-] perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
+            //[-] installedAdaptersField = new ObservableCollection<decimal>();
+            //[-] combinedFaultsField = new ObservableCollection<DTC>();
+            //[-] diagCodesField = new ObservableCollection<typeDiagCode>();
+            //[-] serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
+            //[-] technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
+            //[-] mIBField = new VCIDevice();
+            //[-] vCIField = new VCIDevice();
+            //[+] mIBField = new VCIDevice(clientContext);
+            mIBField = new VCIDevice(clientContext);
+            //[+] vCIField = new VCIDevice(clientContext);
+            vCIField = new VCIDevice(clientContext);
+            //[-] testplanField = new TestPlanType();
+            //[-] testPlanCache = new TestPlanCache();
+            //[-] historyInfoObjectsField = new ObservableCollection<InfoObject>();
+            faField = new FA();
+            fFMField = new ObservableCollection<FFMResult>();
+            eMotorField = new EMotor();
+            heatMotorsField = new List<HeatMotor>();
+            genericMotorField = new GenericMotor();
+            //[-] cBSField = new ObservableCollection<typeCBSInfo>();
+            selectedECUField = new ECU();
+            //[-] zFSField = new ObservableCollection<ZFSResult>();
+            eCUField = new ObservableCollection<ECU>();
+            prodartField = "P";
+            bNTypeField = BNType.UNKNOWN;
+            chassisTypeField = ChassisType.UNKNOWN;
+            gwszField = null;
+            gwszUnitField = GwszUnitType.km;
+            leistungsklasseField = "-";
+            status_FunctionStateField = StateType.idle;
+            pADVehicleField = false;
+            pwfStateField = -1;
+            applicationVersionField = "0.0.1";
+            fASTAAlreadyDoneField = false;
+            vehicleIdentLevelField = IdentificationLevel.None;
+            vehicleShortTestAsSessionEntryField = false;
+            pannenfallField = false;
+            selectedDiagBUSField = 0;
+            gWSZReadoutSuccessField = false;
+            dealerSessionProperties = new List<DealerSessionProperty>();
+            //[-] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
+            //[-]  pKodeList = new ObservableCollectionEx<Fault>();
+            //[-] FaultList = new List<Fault>();
+            //[-] VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
+            sessionDataStore = new ParameterContainer();
+            //[-] Testplan = new TestPlanType(this);
+            diagCodesProgramming = new ObservableCollection<string>();
+            validPWFStates = new HashSet<int>(new int[17] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            clamp15MinValue = ConfigSettings.GetConfigDouble("BMW.Rheingold.ISTAGUI.Clamp15MinVoltage", 0.0);
+            clamp30MinValue = new VoltageThreshold(BatteryEnum.Pb).MinError;
+            //[-] RxSwin = new RxSwinData();
+            //[-] checkControlMessages = new ObservableCollection<CheckControlMessage>();
+            Classification = new VehicleClassification(this);
+            //[+] Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
+            Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
+            //[-] SessionInfoForSerializationOnly = new SessionInfo();
+        }
+
+        protected void AddServiceCodeAndLogsForTypeKeys(string currentValue, string propertyName)
+        {
+            if (Environment.StackTrace.Contains("System.Runtime.Serialization") || Environment.StackTrace.Contains("BMW.Rheingold.ISTAGUI") || Environment.StackTrace.Contains("PropertyChangedEventHandler"))
+            {
+                return;
+            }
+
+            IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
+            if (service != null)
+            {
+                //[-] string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
+                //[-] service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
+                //[-] if (ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive)
+                //[-] {
+                //[-] Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
+                //[-] }
+            }
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public List<string> PermanentSAEFehlercodesInFaultList()
+        {
+            List<string> list = new List<string>();
+            return list;
         }
 
         [PreserveSource(Cleaned = true)]
@@ -1305,7 +3084,7 @@ namespace PsdzClient.Core
 
         public bool IsVINLessEReihe()
         {
-            string ereihe = base.Ereihe;
+            string ereihe = Ereihe;
             if (ereihe != null)
             {
                 int length = ereihe.Length;
@@ -1432,7 +3211,7 @@ namespace PsdzClient.Core
 
         public bool IsEreiheValid()
         {
-            if (string.IsNullOrEmpty(base.Ereihe) || base.Ereihe == "UNBEK")
+            if (string.IsNullOrEmpty(Ereihe) || Ereihe == "UNBEK")
             {
                 return false;
             }
@@ -1502,9 +3281,9 @@ namespace PsdzClient.Core
                 throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
             }
 
-            if (base.ECU != null)
+            if (ECU != null)
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (item.BUS == bus)
                     {
@@ -1529,12 +3308,12 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            if (base.FA == null)
+            if (FA == null)
             {
                 return false;
             }
 
-            FA fA = ((targetFA != null) ? targetFA : base.FA);
+            FA fA = ((targetFA != null) ? targetFA : FA);
             if (fA.SA != null)
             {
                 foreach (string item in fA.SA)
@@ -1579,9 +3358,9 @@ namespace PsdzClient.Core
         public bool HasUnidentifiedECU()
         {
             bool flag = false;
-            if (base.ECU != null)
+            if (ECU != null)
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (string.IsNullOrEmpty(item.VARIANTE) || !item.COMMUNICATION_SUCCESSFULLY)
                     {
@@ -1608,9 +3387,9 @@ namespace PsdzClient.Core
                 return true;
             }
 
-            if (base.FFM != null)
+            if (FFM != null)
             {
-                foreach (FFMResult item in base.FFM)
+                foreach (FFMResult item in FFM)
                 {
                     if (string.Compare(item.Name, checkFFM, StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -1624,12 +3403,12 @@ namespace PsdzClient.Core
 
         public void AddOrUpdateFFM(IFfmResultRuleEvaluation ffm)
         {
-            if (base.FFM == null || ffm == null)
+            if (FFM == null || ffm == null)
             {
                 return;
             }
 
-            foreach (FFMResult item in base.FFM)
+            foreach (FFMResult item in FFM)
             {
                 if (string.Compare(item.Name, ffm.Name, StringComparison.OrdinalIgnoreCase) == 0)
                 {
@@ -1641,7 +3420,7 @@ namespace PsdzClient.Core
                 }
             }
 
-            base.FFM.Add(new FFMResult(ffm));
+            FFM.Add(new FFMResult(ffm));
         }
 
         public ECU getECU(long? sgAdr)
@@ -1653,7 +3432,7 @@ namespace PsdzClient.Core
 
             try
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (item.ID_SG_ADR == sgAdr)
                     {
@@ -1697,7 +3476,7 @@ namespace PsdzClient.Core
 
             try
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (item.ID_SG_ADR == sgAdr && item.ID_LIN_SLAVE_ADR == subAddress)
                     {
@@ -1716,12 +3495,12 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public bool AddEcu(IEcu ecu)
         {
-            return base.ECU.AddIfNotContains(ecu as ECU);
+            return ECU.AddIfNotContains(ecu as ECU);
         }
 
         public bool RemoveEcu(IEcu ecu)
         {
-            return base.ECU.Remove(ecu as ECU);
+            return ECU.Remove(ecu as ECU);
         }
 
         public IEcu getECUbyECU_SGBD(string ECU_SGBD)
@@ -1741,7 +3520,7 @@ namespace PsdzClient.Core
                 string[] array = ECU_SGBD.Split('|');
                 foreach (string b in array)
                 {
-                    foreach (ECU item in base.ECU)
+                    foreach (ECU item in ECU)
                     {
                         if (string.Equals(item.ECU_SGBD, b, StringComparison.OrdinalIgnoreCase) || string.Equals(item.VARIANTE, b, StringComparison.OrdinalIgnoreCase))
                         {
@@ -1772,7 +3551,7 @@ namespace PsdzClient.Core
 
             try
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (string.Compare(item.TITLE_ECUTREE, grobName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -1801,7 +3580,7 @@ namespace PsdzClient.Core
                 return null;
             }
 
-            if (base.ECU == null)
+            if (ECU == null)
             {
                 Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "ECU was null");
                 return null;
@@ -1809,7 +3588,7 @@ namespace PsdzClient.Core
 
             try
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (string.IsNullOrEmpty(item.ECU_GRUPPE))
                     {
@@ -1849,7 +3628,7 @@ namespace PsdzClient.Core
             uint num = 0u;
             try
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (item.DiagProtocoll == ecuDiag)
                     {
@@ -1886,7 +3665,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public void AddEcu(ECU ecu)
         {
-            base.ECU.Add(ecu);
+            ECU.Add(ecu);
         }
 
         [PreserveSource(Hint = "XEP_ECUCLIQUES removed", SignatureModified = true)]
@@ -1921,6 +3700,7 @@ namespace PsdzClient.Core
             //[-] {
             //[-] eCU.XepEcuClique = new InvalidEcuClique();
             //[-] }
+
             //[-] if (ecu.XepEcuVariant != null)
             //[-] {
             //[-] if (ecu.XepEcuVariant is XEP_ECUVARIANTS xepEcuVariant)
@@ -1932,7 +3712,8 @@ namespace PsdzClient.Core
             //[-] eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
             //[-] }
             //[-] }
-            base.ECU.AddIfNotContains(eCU);
+
+            ECU.AddIfNotContains(eCU);
         }
 
         public bool AddOrUpdateECU(ECU nECU)
@@ -1945,26 +3726,26 @@ namespace PsdzClient.Core
                     return false;
                 }
 
-                if (base.ECU == null)
+                if (ECU == null)
                 {
-                    base.ECU = new ObservableCollection<ECU>();
+                    ECU = new ObservableCollection<ECU>();
                 }
 
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (item.ID_SG_ADR == nECU.ID_SG_ADR)
                     {
-                        int num = base.ECU.IndexOf(item);
-                        if (num >= 0 && num < base.ECU.Count)
+                        int num = ECU.IndexOf(item);
+                        if (num >= 0 && num < ECU.Count)
                         {
-                            base.ECU[num] = nECU;
+                            ECU[num] = nECU;
                             Log.Info("Vehicle.AddOrUpdateECU()", "updating ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
                             return true;
                         }
                     }
                 }
 
-                base.ECU.Add(nECU);
+                ECU.Add(nECU);
                 Log.Info("Vehicle.AddOrUpdateECU()", "adding ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
                 return true;
             }
@@ -1995,27 +3776,9 @@ namespace PsdzClient.Core
             return false;
         }
 
+        [PreserveSource(Cleaned = true)]
         public void UpdateStatus(string name, StateType type, double? progress)
         {
-            try
-            {
-                string status_FunctionName = base.Status_FunctionName;
-                StateType status_FunctionState = base.Status_FunctionState;
-                Log.Info("Vehicle.UpdateStatus()", "Change state from '{0}/{1}' to '{2}/{3}'", status_FunctionName, status_FunctionState, name, type);
-                base.Status_FunctionName = name;
-                base.Status_FunctionState = type;
-                base.Status_FunctionStateLastChangeTime = DateTime.Now;
-                if (progress.HasValue)
-                {
-                    base.Status_FunctionProgress = progress.Value;
-                }
-
-                IsNoVehicleCommunicationRunning = base.Status_FunctionState != StateType.running;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.UpdateStatus()", exception);
-            }
         }
 
         public bool IsVehicleWithOnlyVin7()
@@ -2034,7 +3797,7 @@ namespace PsdzClient.Core
                     return true;
                 }
 
-                if (string.IsNullOrEmpty(base.ILevel))
+                if (string.IsNullOrEmpty(ILevel))
                 {
                     Log.Info("Vehicle.evaILevelExpression()", "ILevel unknown; result will be true; expression was: {0}", iLevelExpressions);
                     return true;
@@ -2048,7 +3811,7 @@ namespace PsdzClient.Core
 
                 if (CoreFramework.DebugLevel > 0)
                 {
-                    Log.Info("Vehicle.evalILevelExpression()", "expression:{0} vehicle iLEVEL:{1}", iLevelExpressions, base.ILevel);
+                    Log.Info("Vehicle.evalILevelExpression()", "expression:{0} vehicle iLEVEL:{1}", iLevelExpressions, ILevel);
                 }
 
                 string[] separator = new string[2]
@@ -2069,59 +3832,59 @@ namespace PsdzClient.Core
                         continue;
                     }
 
-                    Log.Info("Vehicle.evalILevelExpression()", "expression {0} {1}", base.ILevel, text);
-                    if (string.Compare(base.ILevel, 0, array2[1], 0, 4, StringComparison.OrdinalIgnoreCase) == 0)
+                    Log.Info("Vehicle.evalILevelExpression()", "expression {0} {1}", ILevel, text);
+                    if (string.Compare(ILevel, 0, array2[1], 0, 4, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         switch (array2[0])
                         {
                             case ">":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "> was true");
                                 }
 
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "<":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "< was true");
                                 }
 
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "=":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "= was true");
                                 }
 
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case ">=":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", ">= was true");
                                 }
 
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "<=":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "<= was true");
                                 }
 
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "!=":
                             case "<>":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "!= was true");
                                 }
 
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                         }
                     }
@@ -2144,7 +3907,7 @@ namespace PsdzClient.Core
         {
             try
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     if (item.ID_SG_ADR == checkSG.ID_SG_ADR)
                     {
@@ -2179,16 +3942,16 @@ namespace PsdzClient.Core
                             obj = BasisEReihe;
                             break;
                         case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/IStufe":
-                            obj = base.ILevel;
+                            obj = ILevel;
                             break;
                         case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/Fahrzeugauftrag":
-                            obj = base.FA.STANDARD_FA;
+                            obj = FA.STANDARD_FA;
                             break;
                         case "/Result/DList":
                         case "/Result/GruppenListe":
                         {
                             string text4 = string.Empty;
-                            foreach (ECU item in base.ECU)
+                            foreach (ECU item in ECU)
                             {
                                 text4 = text4 + item.ECU_GRUPPE + ",";
                             }
@@ -2201,7 +3964,7 @@ namespace PsdzClient.Core
                         case "/Result/SonderAusstattungsListe":
                         {
                             string text3 = string.Empty;
-                            foreach (string item2 in base.FA.SA)
+                            foreach (string item2 in FA.SA)
                             {
                                 text3 = text3 + item2 + ",";
                             }
@@ -2214,7 +3977,7 @@ namespace PsdzClient.Core
                         case "/Result/EWortListe":
                         {
                             string text2 = string.Empty;
-                            foreach (string item3 in base.FA.E_WORT)
+                            foreach (string item3 in FA.E_WORT)
                             {
                                 text2 = text2 + item3 + ",";
                             }
@@ -2227,7 +3990,7 @@ namespace PsdzClient.Core
                         case "/Result/HOWortListe":
                         {
                             string text = string.Empty;
-                            foreach (string item4 in base.FA.HO_WORT)
+                            foreach (string item4 in FA.HO_WORT)
                             {
                                 text = text + item4 + ",";
                             }
@@ -2238,7 +4001,7 @@ namespace PsdzClient.Core
                         }
 
                         case "/Result/Baustand":
-                            obj = base.FA.C_DATE;
+                            obj = FA.C_DATE;
                             break;
                         default:
                             Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
@@ -2286,7 +4049,7 @@ namespace PsdzClient.Core
 
         public bool? IsABSVehicle()
         {
-            if (base.ECU != null && base.ECU.Count > 0)
+            if (ECU != null && ECU.Count > 0)
             {
                 string[] array = new string[16]
                 {
@@ -2375,7 +4138,7 @@ namespace PsdzClient.Core
 
         public bool GetProgrammingEnabledForBn(string bn)
         {
-            return GetBnTypes(bn).Contains(base.BNType);
+            return GetBnTypes(bn).Contains(BNType);
         }
 
         public bool IsProgrammingSupported(bool considerLogisticBase)
@@ -2416,16 +4179,16 @@ namespace PsdzClient.Core
             int num = 37;
             int num2 = 327;
             num *= GetHashCode();
-            if (!string.IsNullOrWhiteSpace(base.VIN17))
+            if (!string.IsNullOrWhiteSpace(VIN17))
             {
-                num += base.VIN17.GetHashCode();
+                num += VIN17.GetHashCode();
                 num *= num2;
             }
 
-            ObservableCollection<ECU> eCU = base.ECU;
+            ObservableCollection<ECU> eCU = ECU;
             if (eCU != null && eCU.Any())
             {
-                foreach (ECU item in base.ECU)
+                foreach (ECU item in ECU)
                 {
                     num += item.GetHashCode();
                     num *= num2;
@@ -2437,15 +4200,15 @@ namespace PsdzClient.Core
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(base.Ereihe))
+            if (!string.IsNullOrWhiteSpace(Ereihe))
             {
-                num += base.Ereihe.GetHashCode();
+                num += Ereihe.GetHashCode();
                 num *= num2;
             }
 
-            if (!string.IsNullOrWhiteSpace(base.Baureihenverbund))
+            if (!string.IsNullOrWhiteSpace(Baureihenverbund))
             {
-                num += base.Baureihenverbund.GetHashCode();
+                num += Baureihenverbund.GetHashCode();
                 num *= num2;
             }
 
@@ -2486,7 +4249,7 @@ namespace PsdzClient.Core
 
         private List<IIdentEcu> GetEcusAsIIdentEcu()
         {
-            return base.ECU.Cast<IIdentEcu>().ToList();
+            return ECU.Cast<IIdentEcu>().ToList();
         }
 
         IEcuTreeEcu IEcuTreeVehicle.getECU(long? sgAdr)
@@ -2508,11 +4271,11 @@ namespace PsdzClient.Core
 
             if (ecu is ECU item)
             {
-                return base.ECU.AddIfNotContains(item);
+                return ECU.AddIfNotContains(item);
             }
 
             ECU item2 = new ECU(ecu);
-            return base.ECU.AddIfNotContains(item2);
+            return ECU.AddIfNotContains(item2);
         }
 
         bool IEcuTreeVehicle.RemoveEcu(IEcuTreeEcu ecu)
@@ -2524,11 +4287,16 @@ namespace PsdzClient.Core
 
             if (ecu is ECU item)
             {
-                return base.ECU.Remove(item);
+                return ECU.Remove(item);
             }
 
             ECU item2 = new ECU(ecu);
-            return base.ECU.Remove(item2);
+            return ECU.Remove(item2);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         [PreserveSource(Hint = "SessionStart", Placeholder = true)]
@@ -2537,5 +4305,15 @@ namespace PsdzClient.Core
 
         [PreserveSource(Added = true)]
         public Reactor Reactor { get; private set; }
+        [PreserveSource(Added = true)]
+        private ClientContext _clientContext;
+        [PreserveSource(Added = true)]
+        public ClientContext ClientContext
+        {
+            get
+            {
+                return _clientContext;
+            }
+        }
     }
 }

@@ -3686,8 +3686,8 @@ namespace PsdzClient.Programming
                     failCount = 0;
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
 
-                    bool lfpBattery = PsdzContext.VecInfo.WithLfpBattery;
-                    bool lfpNCarBattery = PsdzContext.VecInfo.WithLfpNCarBattery;
+                    bool lfpBattery = PsdzContext.VecInfo.BatteryType == BatteryEnum.LFP;
+                    bool lfpNCarBattery = PsdzContext.VecInfo.BatteryType == BatteryEnum.LFP_NCAR;
                     bool isLpf = lfpBattery || lfpNCarBattery;
                     double minVoltageError = isLpf ? MinBatteryVoltageErrorLfp : MinBatteryVoltageErrorPb;
                     double minVoltageWarn = isLpf ? MinBatteryVoltageWarnLfp : MinBatteryVoltageWarnPb;
