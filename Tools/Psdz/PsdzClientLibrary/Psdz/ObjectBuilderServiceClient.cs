@@ -1,13 +1,14 @@
 ﻿using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Communications;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model.Communications;
 
 namespace BMW.Rheingold.Psdz.Client
 {
@@ -72,6 +73,18 @@ namespace BMW.Rheingold.Psdz.Client
         public IPsdzTal UpdateTalEcus(IPsdzTal psdzTal, IEnumerable<IPsdzEcuIdentifier> installedEcuListIst, IEnumerable<IPsdzEcuIdentifier> installedEcuListSoll)
         {
             return CallFunction((IObjectBuilderService service) => service.UpdateTalEcus(psdzTal, installedEcuListIst, installedEcuListSoll));
+        }
+
+        [PreserveSource(Hint = "Dummy")]
+        public IPsdzTalFilter DefineSFAFilterForAllEcus(IPsdzSfaPerEcuOptions ecuOptions, IPsdzTalFilter filter)
+        {
+            return CallFunction((IObjectBuilderService service) => service.DefineSFAFilterForAllEcus(ecuOptions, filter));
+        }
+
+        [PreserveSource(Hint = "Dummy")]
+        public IPsdzTalFilter DefineSFAFilterForSelectedEcus(IDictionary<int, IPsdzSfaPerEcuOptions> ecuOptions, IPsdzTalFilter filter)
+        {
+            return CallFunction((IObjectBuilderService service) => service.DefineSFAFilterForSelectedEcus(ecuOptions, filter));
         }
     }
 }
