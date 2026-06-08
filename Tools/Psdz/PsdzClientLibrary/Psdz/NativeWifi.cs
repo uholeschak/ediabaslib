@@ -13,21 +13,16 @@ namespace BMW.Rheingold.Psdz
         public struct WLAN_INTERFACE_INFO
         {
             public Guid InterfaceGuid;
-
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string strInterfaceDescription;
-
             public WLAN_INTERFACE_STATE isState;
         }
 
         public struct WLAN_INTERFACE_INFO_LIST
         {
             public uint dwNumberOfItems;
-
             public uint dwIndex;
-
             public WLAN_INTERFACE_INFO[] InterfaceInfo;
-
             public WLAN_INTERFACE_INFO_LIST(IntPtr ppInterfaceList)
             {
                 dwNumberOfItems = (uint)Marshal.ReadInt32(ppInterfaceList, 0);
@@ -46,45 +41,28 @@ namespace BMW.Rheingold.Psdz
         {
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string strProfileName;
-
             public DOT11_SSID dot11Ssid;
-
             public DOT11_BSS_TYPE dot11BssType;
-
             public uint uNumberOfBssids;
-
             public bool bNetworkConnectable;
-
             public uint wlanNotConnectableReason;
-
             public uint uNumberOfPhyTypes;
-
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public DOT11_PHY_TYPE[] dot11PhyTypes;
-
             public bool bMorePhyTypes;
-
             public uint wlanSignalQuality;
-
             public bool bSecurityEnabled;
-
             public DOT11_AUTH_ALGORITHM dot11DefaultAuthAlgorithm;
-
             public DOT11_CIPHER_ALGORITHM dot11DefaultCipherAlgorithm;
-
             public uint dwFlags;
-
             public uint dwReserved;
         }
 
         public struct WLAN_AVAILABLE_NETWORK_LIST
         {
             public uint dwNumberOfItems;
-
             public uint dwIndex;
-
             public WLAN_AVAILABLE_NETWORK[] Network;
-
             public WLAN_AVAILABLE_NETWORK_LIST(IntPtr ppAvailableNetworkList)
             {
                 dwNumberOfItems = (uint)Marshal.ReadInt32(ppAvailableNetworkList, 0);
@@ -101,12 +79,9 @@ namespace BMW.Rheingold.Psdz
         public struct DOT11_SSID
         {
             public uint uSSIDLength;
-
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public byte[] ucSSID;
-
             private static Encoding _encoding = Encoding.GetEncoding(65001, EncoderFallback.ReplacementFallback, DecoderFallback.ExceptionFallback);
-
             public byte[] ToBytes()
             {
                 return ucSSID?.Take((int)uSSIDLength).ToArray();
@@ -117,7 +92,6 @@ namespace BMW.Rheingold.Psdz
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
             public byte[] ucDot11MacAddress;
-
             public byte[] ToBytes()
             {
                 return ucDot11MacAddress?.ToArray();
@@ -129,6 +103,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     return null;
                 }
+
                 return BitConverter.ToString(ucDot11MacAddress).Replace('-', ':');
             }
         }
@@ -137,33 +112,22 @@ namespace BMW.Rheingold.Psdz
         public struct WLAN_CONNECTION_ATTRIBUTES
         {
             public WLAN_INTERFACE_STATE isState;
-
             public WLAN_CONNECTION_MODE wlanConnectionMode;
-
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string strProfileName;
-
             public WLAN_ASSOCIATION_ATTRIBUTES wlanAssociationAttributes;
-
             public WLAN_SECURITY_ATTRIBUTES wlanSecurityAttributes;
         }
 
         public struct WLAN_ASSOCIATION_ATTRIBUTES
         {
             public DOT11_SSID dot11Ssid;
-
             public DOT11_BSS_TYPE dot11BssType;
-
             public DOT11_MAC_ADDRESS dot11Bssid;
-
             public DOT11_PHY_TYPE dot11PhyType;
-
             public uint uDot11PhyIndex;
-
             public uint wlanSignalQuality;
-
             public uint ulRxRate;
-
             public uint ulTxRate;
         }
 
@@ -171,12 +135,9 @@ namespace BMW.Rheingold.Psdz
         {
             [MarshalAs(UnmanagedType.Bool)]
             public bool bSecurityEnabled;
-
             [MarshalAs(UnmanagedType.Bool)]
             public bool bOneXEnabled;
-
             public DOT11_AUTH_ALGORITHM dot11AuthAlgorithm;
-
             public DOT11_CIPHER_ALGORITHM dot11CipherAlgorithm;
         }
 
@@ -283,30 +244,19 @@ namespace BMW.Rheingold.Psdz
         }
 
         public const uint WLAN_AVAILABLE_NETWORK_INCLUDE_ALL_ADHOC_PROFILES = 1u;
-
         public const uint WLAN_AVAILABLE_NETWORK_INCLUDE_ALL_MANUAL_HIDDEN_PROFILES = 2u;
-
         public const uint ERROR_SUCCESS = 0u;
-
-        public static string WLANSignalStrength = string.Empty;
-
         public const string NO_WLAN_SIGNAL = "No signal for WLAN connection";
-
         [DllImport("Wlanapi.dll")]
         public static extern uint WlanOpenHandle(uint dwClientVersion, IntPtr pReserved, out uint pdwNegotiatedVersion, out IntPtr phClientHandle);
-
         [DllImport("Wlanapi.dll")]
         public static extern uint WlanCloseHandle(IntPtr hClientHandle, IntPtr pReserved);
-
         [DllImport("Wlanapi.dll")]
         public static extern void WlanFreeMemory(IntPtr pMemory);
-
         [DllImport("Wlanapi.dll")]
         public static extern uint WlanEnumInterfaces(IntPtr hClientHandle, IntPtr pReserved, out IntPtr ppInterfaceList);
-
         [DllImport("Wlanapi.dll")]
         public static extern uint WlanQueryInterface(IntPtr hClientHandle, [MarshalAs(UnmanagedType.LPStruct)] Guid pInterfaceGuid, WLAN_INTF_OPCODE OpCode, IntPtr pReserved, out uint pdwDataSize, ref IntPtr ppData, IntPtr pWlanOpcodeValueType);
-
         public static string GetConnectedSignalStrength()
         {
             List<string> list = new List<string>();
@@ -319,11 +269,13 @@ namespace BMW.Rheingold.Psdz
                 {
                     return null;
                 }
+
                 Log.Info("GetConnectedNetworkSsids()", "More than one connection: ", list);
                 if (WlanEnumInterfaces(phClientHandle, IntPtr.Zero, out ppInterfaceList) != 0)
                 {
                     return null;
                 }
+
                 Log.Info("GetConnectedNetworkSsids()", "More than one connection: ", list);
                 WLAN_INTERFACE_INFO[] interfaceInfo = new WLAN_INTERFACE_INFO_LIST(ppInterfaceList).InterfaceInfo;
                 for (int i = 0; i < interfaceInfo.Length; i++)
@@ -346,15 +298,18 @@ namespace BMW.Rheingold.Psdz
                 {
                     WlanFreeMemory(ppData);
                 }
+
                 if (ppInterfaceList != IntPtr.Zero)
                 {
                     WlanFreeMemory(ppInterfaceList);
                 }
+
                 if (phClientHandle != IntPtr.Zero)
                 {
                     WlanCloseHandle(phClientHandle, IntPtr.Zero);
                 }
             }
+
             if (list.Count > 1)
             {
                 Log.Info("GetConnectedNetworkSsids()", "More than one connection: ", list);
@@ -363,6 +318,7 @@ namespace BMW.Rheingold.Psdz
             {
                 Log.Info("GetConnectedNetworkSsids()", "No internet connection: ", list);
             }
+
             return list.FirstOrDefault();
         }
     }
