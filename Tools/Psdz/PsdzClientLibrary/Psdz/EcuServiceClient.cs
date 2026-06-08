@@ -44,5 +44,11 @@ namespace BMW.Rheingold.Psdz.Client
         {
             return CallFunction((IEcuService m) => m.UpdatePiaPortierungsmaster(connection, svt));
         }
+
+        [PreserveSource(Hint = "Dummy")]
+        public IPsdzSvt RequestSVTReference(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus)
+        {
+            return CallFunction((IEcuService m) => m.RequestSVTReference(connection, installedEcus));
+        }
     }
 }
