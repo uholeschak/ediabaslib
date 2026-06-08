@@ -9,7 +9,6 @@ namespace PsdzClient.Core
             public const string AutomaticTestPlanCalculation = "AutomaticTestPlanCalculation";
             public const string CheckRemoteUserDbStatusJob = "CheckRemoteUserDbStatusJob";
             public const string CollectLauncherLogs = "CollectLauncherLogs";
-            public const string ConwoyStorage = "ConwoyStorage";
             public const string DownloadAllSdpPatches = "DownloadAllSdpPatches";
             public const string DumpOutOfMemoryException = "DumpOutOfMemoryException";
             public const string DumpStackOverflowException = "DumpStackOverflowException";
@@ -18,9 +17,9 @@ namespace PsdzClient.Core
             public const string FastaSlowApiJobsSerivceCode = "FastaSlowApiJobsSerivceCode";
             public const string FdlGateOverTricCloud = "FdlGateOverTricCloud";
             public const string FillFunctionalJobsInFstdatIsActive = "FillFunctionalJobsInFstdatIsActive";
-            public const string ForceUsingJava64Bit = "ForceUsingJava64Bit";
             public const string FscOverTricCloud = "FscOverTricCloud";
             public const string FsLesenExpertOldCode = "FsLesenExpertOldCode";
+            public const string IcomNextPCapReadout = "IcomNextPCapReadout";
             public const string JumpAirInAwp = "JumpAirInAwp";
             public const string KaiServiceHistory = "KaiServiceHistory";
             public const string Login = "Login";
@@ -38,6 +37,7 @@ namespace PsdzClient.Core
             public const string SessionStateDialog = "SessionStateDialog";
             public const string SFAOverTricCloud = "SFAOverTricCloud";
             public const string ShowCCMTab = "ShowCCMTab";
+            public const string ShowImibDisconnectPopUp = "ShowImibDisconnectPopUp";
             public const string ShowNewSessionEnterTab = "ShowNewSessionEnterTab";
             public const string ShowTabFluids = "ShowTabFluids";
             public const string SpecialEdiabasVersionForNcar = "SpecialEdiabasVersionForNcar";
@@ -52,8 +52,10 @@ namespace PsdzClient.Core
             public const string VcmComparison = "VcmComparison";
             public const string VinRangesOverConWoy = "VinRangesOverConWoy";
             public const string VinRangeUsagesLogging = "VinRangeUsagesLogging";
+            public const string VirtualKeyboardTool = "VirtualKeyboardTool";
             public const string Vps25OverTricCloud = "Vps25OverTricCloud";
             public const string VpsOverTricCloud = "VpsOverTricCloud";
+            public const string ZgwRepOverstForIpbBoot = "ZgwRepOverstForIpbBoot";
             public static bool DefaultValue(string featureName, IstaMode mode)
             {
                 switch (mode)
@@ -73,21 +75,25 @@ namespace PsdzClient.Core
             {
                 switch (featureName)
                 {
+                    case "AutomaticTestPlanCalculation":
+                    case "RenewConnectionAfterEcuReset":
+                    case "SynchronizeLoginDatabasesJob":
+                    case "UseReducedPortRangeForMirror":
+                    case "ShowTabFluids":
+                    case "UseAlphaRealm":
+                    case "VcmComparison":
                     case "CheckRemoteUserDbStatusJob":
-                    case "ConwoyStorage":
+                    case "CollectLauncherLogs":
+                    case "DownloadAllSdpPatches":
                     case "ExecuteServiceCallCertreqprofiles":
                     case "FastaSlowApiJobsSerivceCode":
-                    case "EarlyStartPsdzWebService":
                     case "KaiServiceHistory":
                     case "Login":
-                    case "RenewConnectionAfterEcuReset":
                     case "ScheduleLoginUserHousekeepingJob":
                     case "SdpOnlinePatchAndMultisession":
-                    case "ShowTabFluids":
-                    case "SynchronizeLoginDatabasesJob":
                     case "UseQaBackendForSfaAndFsc":
-                    case "UseReducedPortRangeForMirror":
-                    case "VcmComparison":
+                    case "ShowImibDisconnectPopUp":
+                    case "ZgwRepOverstForIpbBoot":
                         return true;
                     default:
                         return false;
@@ -98,16 +104,18 @@ namespace PsdzClient.Core
             {
                 switch (featureName)
                 {
-                    case "ConwoyStorage":
+                    case "CollectLauncherLogs":
+                    case "VinRangesOverConWoy":
+                    case "RenewConnectionAfterEcuReset":
+                    case "UseReducedPortRangeForMirror":
+                    case "ShowTabFluids":
+                    case "VcmComparison":
                     case "ExecuteServiceCallCertreqprofiles":
                     case "FastaSlowApiJobsSerivceCode":
                     case "KaiServiceHistory":
-                    case "RenewConnectionAfterEcuReset":
-                    case "SdpOnlinePatchAndMultisession":
-                    case "ShowTabFluids":
                     case "UseQaBackendForSfaAndFsc":
-                    case "UseReducedPortRangeForMirror":
-                    case "VcmComparison":
+                    case "ShowImibDisconnectPopUp":
+                    case "ZgwRepOverstForIpbBoot":
                         return true;
                     default:
                         return false;
@@ -118,13 +126,12 @@ namespace PsdzClient.Core
             {
                 switch (featureName)
                 {
-                    case "ConwoyStorage":
                     case "ExecuteServiceCallCertreqprofiles":
                     case "FastaSlowApiJobsSerivceCode":
                     case "RenewConnectionAfterEcuReset":
-                    case "SdpOnlinePatchAndMultisession":
                     case "ShowTabFluids":
                     case "UseQaBackendForSfaAndFsc":
+                    case "ShowImibDisconnectPopUp":
                         return true;
                     default:
                         return false;

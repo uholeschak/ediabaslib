@@ -84,6 +84,7 @@ namespace SourceCodeSync
         [
             "BMW.ISPI.TRIC.ISTA.Common",
             "BMW.ISPI.TRIC.ISTA.Contracts",
+            "BMW.ISPI.TRIC.ISTA.Configuration",
             "BMW.ISPI.TRIC.ISTA.DiagnosticsBusinessDataCore",
             "BMW.ISPI.TRIC.ISTA.EcuTree",
             "BMW.ISPI.TRIC.ISTA.FusionReactor",
