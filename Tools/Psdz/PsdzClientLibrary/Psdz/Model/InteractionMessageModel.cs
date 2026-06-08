@@ -9,15 +9,10 @@ namespace BMW.Rheingold.Psdz
     public class InteractionMessageModel : InteractionRequestModel<InteractionButtonResponse>, IInteractionMessageModel, IInteractionModel, INotifyPropertyChanged
     {
         private string messageText;
-
         private string detailsText;
-
         private string buttonText;
-
         private bool isDetailButtonVisible;
-
         private bool isbtnRightVisible;
-
         [DataMember]
         public string MessageText
         {
@@ -25,6 +20,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return messageText;
             }
+
             set
             {
                 messageText = value;
@@ -39,6 +35,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return detailsText;
             }
+
             set
             {
                 detailsText = value;
@@ -53,6 +50,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return buttonText;
             }
+
             set
             {
                 buttonText = value;
@@ -67,6 +65,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return isDetailButtonVisible;
             }
+
             set
             {
                 isDetailButtonVisible = value;
@@ -81,6 +80,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return isbtnRightVisible;
             }
+
             set
             {
                 isbtnRightVisible = value;
@@ -88,18 +88,15 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public InteractionMessageModel()
-            : this("", "", "")
+        public InteractionMessageModel() : this("", "", "")
         {
         }
 
-        public InteractionMessageModel(string messageText)
-            : this("", messageText, "")
+        public InteractionMessageModel(string messageText) : this("", messageText, "")
         {
         }
 
-        public InteractionMessageModel(string title, string messageText)
-            : this(title, messageText, "")
+        public InteractionMessageModel(string title, string messageText) : this(title, messageText, "")
         {
         }
 
@@ -111,6 +108,26 @@ namespace BMW.Rheingold.Psdz
             IsDetailButtonVisible = true;
             IsbtnRightVisible = true;
             ButtonText = FormatedData.Localize("#Button.OK");
+        }
+
+        public new object GetApiResponse()
+        {
+            return new
+            {
+                guid = base.Guid.ToString(),
+                title = base.Title,
+                messageText = MessageText,
+                detailsText = DetailText,
+                type = GetType(),
+                response = new[]
+                {
+                    new
+                    {
+                        key = Enum.GetName(typeof(InteractionButton), InteractionButton.Continue),
+                        label = ButtonText
+                    }
+                }
+            };
         }
 
         public override void OnResponseReceived(InteractionButtonResponse response)
