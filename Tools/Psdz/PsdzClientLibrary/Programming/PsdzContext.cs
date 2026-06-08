@@ -784,7 +784,9 @@ namespace PsdzClient.Programming
             VecInfo.FA.AlreadyDone = true;
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
-                //VecInfo.VehicleIdentAlreadyDone = true;
+#pragma warning disable CS0618 // Type or member is obsolete
+                VecInfo.VehicleIdentAlreadyDone = true;
+#pragma warning restore CS0618 // Type or member is obsolete
             }
             else
             {
@@ -1111,7 +1113,9 @@ namespace PsdzClient.Programming
                     VehicleLogistics.CalculateECUConfiguration(VecInfo);
                     if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
                     {
-                        //VecInfo.VehicleIdentAlreadyDone = true;
+#pragma warning disable CS0618 // Type or member is obsolete
+                        VecInfo.VehicleIdentAlreadyDone = true;
+#pragma warning restore CS0618 // Type or member is obsolete
                     }
                 }
 
@@ -1121,7 +1125,9 @@ namespace PsdzClient.Programming
             VehicleLogistics.CalculateECUConfiguration(VecInfo);
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
-                //VecInfo.VehicleIdentAlreadyDone = true;
+#pragma warning disable CS0618 // Type or member is obsolete
+                VecInfo.VehicleIdentAlreadyDone = true;
+#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 
