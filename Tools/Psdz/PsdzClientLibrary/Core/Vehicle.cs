@@ -364,7 +364,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Placeholder = true)]
         public PlaceholderType ZFS;
-
         public List<CEMResult> CEM
         {
             get
@@ -418,7 +417,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<typeCBSInfo>", Placeholder = true)]
         public PlaceholderType CBS;
-
         public string Typ
         {
             get
@@ -1208,7 +1206,7 @@ namespace PsdzClient.Core
         public PlaceholderType HistoryInfoObjects;
 
         [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
-        public PlaceholderType TestPlanType;
+        public PlaceholderType Testplan;
 
         [PreserveSource(Hint = "public TestPlanCache", Placeholder = true)]
         [IgnoreDataMember]
@@ -1245,7 +1243,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public ObservableCollection<technicalCampaignType>", Placeholder = true)]
         public PlaceholderType TechnicalCampaigns;
-
         public string Leistungsklasse
         {
             get
@@ -1333,10 +1330,8 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         public PlaceholderType ServiceHistory;
-
         [PreserveSource(Hint = "ObservableCollection<typeDiagCode>", Placeholder = true)]
         public PlaceholderType DiagCodes;
-
         public string Motorarbeitsverfahren
         {
             get
@@ -1390,7 +1385,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
         public PlaceholderType CombinedFaults;
-
         public ObservableCollection<decimal> InstalledAdapters
         {
             get
@@ -1571,7 +1565,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
         public PlaceholderType PerceivedSymptoms;
-
         public string ProgmanVersion
         {
             get
@@ -1888,7 +1881,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "BackendsAvailabilityIndicator", Placeholder = true)]
         public PlaceholderType BackendsAvailabilityIndicator;
-
         [DefaultValue(false)]
         [XmlIgnore]
         [Obsolete("Use SessionInfoAccessor.SessionInfo.DOMRequestFailed")]
@@ -2925,7 +2917,7 @@ namespace PsdzClient.Core
             Classification = new VehicleClassification(this);
             //[+] Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
             Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
-            //[-] SessionInfoForSerializationOnly = new SessionInfo();
+        //[-] SessionInfoForSerializationOnly = new SessionInfo();
         }
 
         protected void AddServiceCodeAndLogsForTypeKeys(string currentValue, string propertyName)
@@ -2938,12 +2930,12 @@ namespace PsdzClient.Core
             IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
             if (service != null)
             {
-                //[-] string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
-                //[-] service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
-                //[-] if (ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive)
-                //[-] {
-                //[-] Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
-                //[-] }
+            //[-] string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
+            //[-] service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
+            //[-] if (ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive)
+            //[-] {
+            //[-] Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
+            //[-] }
             }
         }
 
@@ -3700,7 +3692,6 @@ namespace PsdzClient.Core
             //[-] {
             //[-] eCU.XepEcuClique = new InvalidEcuClique();
             //[-] }
-
             //[-] if (ecu.XepEcuVariant != null)
             //[-] {
             //[-] if (ecu.XepEcuVariant is XEP_ECUVARIANTS xepEcuVariant)
@@ -3712,7 +3703,6 @@ namespace PsdzClient.Core
             //[-] eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
             //[-] }
             //[-] }
-
             ECU.AddIfNotContains(eCU);
         }
 
@@ -4299,12 +4289,15 @@ namespace PsdzClient.Core
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
+        public PlaceholderType TestPlanType;
         [PreserveSource(Hint = "SessionStart", Placeholder = true)]
         [XmlIgnore]
         public PlaceholderType SessionStart { get; set; }
 
         [PreserveSource(Added = true)]
         public Reactor Reactor { get; private set; }
+
         [PreserveSource(Added = true)]
         private ClientContext _clientContext;
         [PreserveSource(Added = true)]
