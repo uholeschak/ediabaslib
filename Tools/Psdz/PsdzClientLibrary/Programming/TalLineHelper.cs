@@ -10,7 +10,6 @@ namespace PsdzClient.Programming
     internal class TalLineHelper
     {
         private const string Smac_Identifier = "SMAC";
-
         public IDictionary<IPsdzEcuIdentifier, IList<IPsdzTalLine>> TalLines { get; private set; }
 
         public TalLineHelper(IPsdzTal tal)
@@ -52,6 +51,7 @@ namespace PsdzClient.Programming
                 {
                     continue;
                 }
+
                 foreach (KeyValuePair<string, IList<IPsdzSgbmId>> smartActuatorDatum in psdzSmacTransferStartTA.SmartActuatorData)
                 {
                     PsdzEcuIdentifier identifier = new PsdzEcuIdentifier
@@ -72,6 +72,7 @@ namespace PsdzClient.Programming
                 {
                     continue;
                 }
+
                 foreach (string smartActuatorID in psdzSmacTransferStatusTA.SmartActuatorIDs)
                 {
                     PsdzEcuIdentifier identifier = new PsdzEcuIdentifier
@@ -91,10 +92,11 @@ namespace PsdzClient.Programming
                 TalLines[identifier].Add(talLine);
                 return;
             }
+
             TalLines.Add(identifier, new List<IPsdzTalLine> { talLine });
         }
 
-        public PsdzDiagAddress CalculateSmacDiagAddress(IPsdzDiagAddress master, string smacID)
+        public static PsdzDiagAddress CalculateSmacDiagAddress(IPsdzDiagAddress master, string smacID)
         {
             int offset = int.Parse(master.Offset.ToString("X") + smacID, NumberStyles.HexNumber);
             return new PsdzDiagAddress

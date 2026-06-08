@@ -289,13 +289,19 @@ namespace PsdzClient.Programming
 
         internal void UpdateProgrammingActions(IPsdzTal tal, int escalationStep)
         {
+            UpdateNonSmartActuators(tal, escalationStep);
+            UpdateSmartActuators(tal);
+        }
+
+        private void UpdateNonSmartActuators(IPsdzTal tal, int escalationStep)
+        {
             foreach (IPsdzEcuIdentifier affectedEcu in tal.AffectedEcus)
             {
                 EcuProgrammingInfo itemFromProgrammingInfos = GetItemFromProgrammingInfos(affectedEcu.DiagAddrAsInt);
                 if (itemFromProgrammingInfos != null)
                 {
                     IPsdzEcuIdentifier id = affectedEcu;
-                    IEnumerable<IPsdzTalLine> talLines = tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(id));
+                    IEnumerable<IPsdzTalLine> talLines = tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(id) && talLine.TaCategories != PsdzTaCategories.SmacTransferStart && talLine.TaCategories != PsdzTaCategories.SmacTransferStatus);
                     itemFromProgrammingInfos.UpdateProgrammingActions(talLines, isTalExecuted: true, escalationStep);
                 }
                 else
@@ -303,39 +309,61 @@ namespace PsdzClient.Programming
                     Log.Warning("EcuProgrammingInfos.UpdateProgrammingActions", "Could not find ecu programming object for 0x{0:X2}", affectedEcu.DiagAddrAsInt);
                 }
             }
-
-            UpdateSmartActuators(tal);
         }
 
         private void UpdateSmartActuators(IPsdzTal tal)
         {
             try
             {
-                IEnumerable<IPsdzTalLine> enumerable = tal.TalLines.Where((IPsdzTalLine x) => !x.SmacTransferStart.IsEmpty || !x.SmacTransferStatus.IsEmpty);
-                TalLineHelper talLineHelper = new TalLineHelper(tal);
+                IEnumerable<IPsdzTalLine> enumerable = tal.TalLines.Where((IPsdzTalLine x) => x.TaCategories == PsdzTaCategories.SmacTransferStart || x.TaCategories == PsdzTaCategories.SmacTransferStatus);
+                new TalLineHelper(tal);
+                Dictionary<int, PsdzTaExecutionState?> dictionary = new Dictionary<int, PsdzTaExecutionState?>();
                 foreach (IPsdzTalLine item in enumerable)
                 {
                     foreach (IPsdzTa ta in item.TaCategory.Tas)
                     {
-                        List<string> list = new List<string>();
                         if (ta is PsdzSmacTransferStartTA psdzSmacTransferStartTA)
                         {
-                            list.AddRange(psdzSmacTransferStartTA.SmartActuatorData.Keys);
+                            foreach (string key in psdzSmacTransferStartTA.SmartActuatorData.Keys)
+                            {
+                                int offset = TalLineHelper.CalculateSmacDiagAddress(item.EcuIdentifier.DiagnosisAddress, key).Offset;
+                                if (!dictionary.ContainsKey(offset))
+                                {
+                                    dictionary.Add(offset, ta.ExecutionState);
+                                }
+                                else if (dictionary[offset].HasValue && dictionary[offset].Value != PsdzTaExecutionState.Finished && ta.ExecutionState != PsdzTaExecutionState.Finished)
+                                {
+                                    dictionary[offset] = ta.ExecutionState;
+                                }
+                            }
                         }
 
-                        if (ta is PsdzSmacTransferStatusTA psdzSmacTransferStatusTA)
+                        if (!(ta is PsdzSmacTransferStatusTA psdzSmacTransferStatusTA))
                         {
-                            list.AddRange(psdzSmacTransferStatusTA.SmartActuatorIDs);
+                            continue;
                         }
 
-                        foreach (string item2 in list)
+                        foreach (PsdzSmartActuatorFlashStatusResult item2 in psdzSmacTransferStatusTA.SmartActuatorFlashStatusResult)
                         {
-                            PsdzDiagAddress psdzDiagAddress = talLineHelper.CalculateSmacDiagAddress(item.EcuIdentifier.DiagnosisAddress, item2);
-                            EcuProgrammingInfo itemFromProgrammingInfos = GetItemFromProgrammingInfos(psdzDiagAddress.Offset);
-                            ProgrammingActionState state = MapState(ta.ExecutionState);
-                            itemFromProgrammingInfos?.UpdateSingleProgrammingAction(ProgrammingActionType.Programming, state, executed: false);
+                            int offset2 = TalLineHelper.CalculateSmacDiagAddress(smacID: item2.SmartActuatorId, master: item.EcuIdentifier.DiagnosisAddress).Offset;
+                            PsdzTaExecutionState? psdzTaExecutionState = ParsePsdzTaExecutionState(item2.ProgrammingStatus);
+                            if (!dictionary.ContainsKey(offset2))
+                            {
+                                dictionary.Add(offset2, psdzTaExecutionState);
+                            }
+                            else if (dictionary[offset2].HasValue && dictionary[offset2].Value != PsdzTaExecutionState.Finished && psdzTaExecutionState != PsdzTaExecutionState.Finished)
+                            {
+                                dictionary[offset2] = psdzTaExecutionState;
+                            }
                         }
                     }
+                }
+
+                foreach (KeyValuePair<int, PsdzTaExecutionState?> item3 in dictionary)
+                {
+                    EcuProgrammingInfo itemFromProgrammingInfos = GetItemFromProgrammingInfos(item3.Key);
+                    ProgrammingActionState state = MapState(item3.Value);
+                    itemFromProgrammingInfos?.UpdateSingleProgrammingAction(ProgrammingActionType.Programming, state, executed: false);
                 }
             }
             catch (Exception exception)
@@ -577,6 +605,21 @@ namespace PsdzClient.Programming
                     itemFromProgrammingInfos.SvkCurrent = ecu.StandardSvk;
                 }
             }
+        }
+
+        private static PsdzTaExecutionState? ParsePsdzTaExecutionState(string status)
+        {
+            if (string.IsNullOrEmpty(status))
+            {
+                return null;
+            }
+
+            if (Enum.TryParse<PsdzTaExecutionState>(status, ignoreCase: true, out var result))
+            {
+                return result;
+            }
+
+            return null;
         }
     }
 }

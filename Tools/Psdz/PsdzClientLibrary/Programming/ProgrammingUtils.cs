@@ -24,12 +24,13 @@ namespace BMW.Rheingold.Programming.Common
 {
     public class ProgrammingUtils
     {
-        private static TaCategories[] DisabledTaCategories = new TaCategories[1] { TaCategories.Unknown };
-
-        public static readonly TaCategories[] EnabledTaCategories = (from TaCategories x in Enum.GetValues(typeof(TaCategories))
-            where !DisabledTaCategories.Contains(x)
-            select x).ToArray();
-
+        private static TaCategories[] DisabledTaCategories = new TaCategories[1]
+        {
+            TaCategories.Unknown
+        };
+        public static readonly TaCategories[] EnabledTaCategories = (
+            from TaCategories x in Enum.GetValues(typeof(TaCategories))
+            where !DisabledTaCategories.Contains(x)select x).ToArray();
         internal static bool IsExpertModeEnabled => ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.ExpertMode", defaultValue: false);
 
         internal static bool IsFastaEnabled
@@ -40,6 +41,7 @@ namespace BMW.Rheingold.Programming.Common
                 {
                     return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.FASTAEnabled", defaultValue: false);
                 }
+
                 return false;
             }
         }
@@ -50,6 +52,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 return true;
             }
+
             return false;
         }
 
@@ -61,6 +64,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 return !ecu.IsVirtualOrVirtualBusCheck();
             }
+
             return false;
         }
 
@@ -88,28 +92,34 @@ namespace BMW.Rheingold.Programming.Common
             {
                 throw new ArgumentNullException("ecuKom");
             }
+
             if (groupSgbd == null)
             {
                 throw new ArgumentNullException("groupSgbd");
             }
+
             if (iStufeWerk == null)
             {
                 throw new ArgumentNullException("iStufeWerk");
             }
+
             if (iStufeHo == null)
             {
                 throw new ArgumentNullException("iStufeHo");
             }
+
             if (iStufeHoBackup == null)
             {
                 throw new ArgumentNullException("iStufeHoBackup");
             }
+
             string text = string.Format(CultureInfo.InvariantCulture, "{0};{1};{2}", iStufeWerk, iStufeHo, iStufeHoBackup);
             if (ecuKom.ApiJob(groupSgbd, "I_STUFE_SCHREIBEN", text, string.Empty).IsOkay())
             {
                 Log.Info("ProgrammingUtils.WriteBn2000Istufen()", "Integration level ({0}) successfully written! (SGBD: '{1}')", text, groupSgbd);
                 return true;
             }
+
             Log.Error("ProgrammingUtils.WriteBn2000Istufen()", "Failed to write integration level ({0})! (SGBD: '{1}')", text, groupSgbd);
             return false;
         }
@@ -199,21 +209,25 @@ namespace BMW.Rheingold.Programming.Common
             {
                 set.Add(TaCategories.CdDeploy);
             }
+
             IPsdzTalFilter inputTalFilter = objectBuilder.DefineFilterForAllEcus(set.ToArray(), TalFilterOptions.Must, null);
             ISet<TaCategories> set2 = new HashSet<TaCategories>();
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Mount))
             {
                 set2.Add(TaCategories.HwInstall);
             }
+
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Unmount))
             {
                 set2.Add(TaCategories.HwDeinstall);
             }
+
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Replace))
             {
                 set2.Add(TaCategories.HwInstall);
                 set2.Add(TaCategories.HwDeinstall);
             }
+
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Flash))
             {
                 set2.Add(TaCategories.BlFlash);
@@ -223,21 +237,25 @@ namespace BMW.Rheingold.Programming.Common
                 set2.Add(TaCategories.EcuActivate);
                 set2.Add(TaCategories.EcuPoll);
             }
+
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Code))
             {
                 set2.Add(TaCategories.CdDeploy);
             }
+
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.DataRecovery))
             {
                 set2.Add(TaCategories.IdBackup);
                 set2.Add(TaCategories.IdRestore);
                 set2.Add(TaCategories.FscBackup);
             }
+
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Fsc))
             {
                 set2.Add(TaCategories.FscDeploy);
                 set2.Add(TaCategories.FscDeployPrehwd);
             }
+
             ISet<TaCategories> set3 = new HashSet<TaCategories>(EnabledTaCategories);
             set3.ExceptWith(set);
             set3.ExceptWith(set2);
@@ -258,6 +276,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 Log.Warning("ProgrammingUtils.ExecuteFinalizeJob()", msg);
             }
+
             return ecuJob;
         }
 
@@ -267,14 +286,17 @@ namespace BMW.Rheingold.Programming.Common
             {
                 throw new ArgumentNullException("logicService");
             }
+
             if (ecuProgrammingInfos == null)
             {
                 throw new ArgumentNullException("ecuProgrammingInfos");
             }
+
             if (srcTal == null)
             {
                 throw new ArgumentNullException("srcTal");
             }
+
             IPsdzTalFilter psdzTalFilter = objectBuilder.BuildTalFilter();
             foreach (IPsdzEcuIdentifier affectedEcu in srcTal.AffectedEcus)
             {
@@ -283,6 +305,7 @@ namespace BMW.Rheingold.Programming.Common
                 {
                     continue;
                 }
+
                 if (itemFromProgrammingInfos != null)
                 {
                     ISet<TaCategories> set = new HashSet<TaCategories>();
@@ -320,9 +343,11 @@ namespace BMW.Rheingold.Programming.Common
                                     Log.Warning("ProgrammingUtils.FilterTalByBn2020ProgrammingActions()", "Type '{0}' not yet supported!", programmingAction.Type);
                                     break;
                             }
+
                             num++;
                         }
                     }
+
                     if (object.Equals(num, itemFromProgrammingInfos.ProgrammingActions.Count()))
                     {
                         psdzTalFilter = objectBuilder.DefineFilterForSelectedEcus(EnabledTaCategories, new int[1] { affectedEcu.DiagAddrAsInt }, TalFilterOptions.MustNot, psdzTalFilter, smartActuatorFilter);
@@ -341,6 +366,7 @@ namespace BMW.Rheingold.Programming.Common
                     Log.Warning("ProgrammingUtils.FilterTalByBn2020ProgrammingActions()", "ECU for identifier '{0}' could not be found!", affectedEcu.ToString());
                 }
             }
+
             return logicService.FilterTal(srcTal, psdzTalFilter);
         }
 
@@ -369,6 +395,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 Log.Error(Log.CurrentMethod(), $"Error when trying to filter TAL on swe level - {arg}");
             }
+
             return result;
         }
 
@@ -391,9 +418,11 @@ namespace BMW.Rheingold.Programming.Common
                             sweFilter.Ta = psdzTa;
                         }
                     }
+
                     talFilter = objectBuilder.DefineFilterForSWEs(item, talFilter);
                 }
             }
+
             return talFilter;
         }
 
@@ -424,6 +453,7 @@ namespace BMW.Rheingold.Programming.Common
                     dictionary.Add(smartActuatorECU.SmacID, TalFilterOptions.MustNot);
                 }
             }
+
             return dictionary;
         }
 
@@ -433,6 +463,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 throw new ArgumentNullException("kmmProgrammingActionMap");
             }
+
             List<IKmmPlanElement> list = new List<IKmmPlanElement>();
             foreach (KeyValuePair<IProgrammingAction, IKmmPlanElement> item in kmmProgrammingActionMap)
             {
@@ -445,6 +476,7 @@ namespace BMW.Rheingold.Programming.Common
                     }
                 }
             }
+
             list.Sort();
             return list;
         }
@@ -457,11 +489,13 @@ namespace BMW.Rheingold.Programming.Common
                 {
                     return ProgrammingActionType.BootloaderProgramming;
                 }
+
                 if (Regex.IsMatch(datafile, "\\.(daf|0da)$", RegexOptions.IgnoreCase))
                 {
                     return ProgrammingActionType.DataProgramming;
                 }
             }
+
             return ProgrammingActionType.Programming;
         }
 
@@ -487,39 +521,49 @@ namespace BMW.Rheingold.Programming.Common
                         return false;
                 }
             }
+
             return false;
         }
 
         internal static bool PerformFlashPostconditionsExxe(IEcu ecu, IEcuKom ecuKom, IVehicle vehicle, IProgressMonitor progressMonitor)
         {
-            if (!ecuKom.Refresh(vehicle.IsDoIP))
+            //[-] if (!ecuKom.Refresh(SessionInfoAccessor.SessionInfo.IsDoIP))
+            //[+] if (!ecuKom.Refresh(vehicle?.VCI?.IsDoIP ?? false))
+            if (!ecuKom.Refresh(vehicle?.VCI?.IsDoIP ?? false))
             {
                 Log.Error("ProgramBn2000EcusExxeState.PerformFlashPostconditions()", "Connection to EDIABAS could not be established!");
                 return false;
             }
+
             if (!ActiveGatewayUtils.WriteRoutingTable(ecuKom, vehicle, null))
             {
                 return false;
             }
+
             return RequestClamp15State(progressMonitor, ecuKom, vehicle);
         }
 
         internal static bool PerformFlashPreconditionsExxe(IEcu ecu, IEcuKom ecuKom, IVehicle vehicle, IProgressMonitor progressMonitor)
         {
-            if (!ecuKom.Refresh(vehicle.IsDoIP))
+            //[-] if (!ecuKom.Refresh(SessionInfoAccessor.SessionInfo.IsDoIP))
+            //[+] if (!ecuKom.Refresh(vehicle?.VCI?.IsDoIP ?? false))
+            if (!ecuKom.Refresh(vehicle?.VCI?.IsDoIP ?? false))
             {
                 Log.Error("ProgrammingUtils.PerformFlashPreconditionsExxe()", "Connection to EDIABAS could not be established!");
                 return false;
             }
+
             if (!ActiveGatewayUtils.WriteRoutingTable(ecuKom, vehicle, null))
             {
                 return false;
             }
+
             bool flag = ((ecu.ID_SG_ADR != 64) ? RequestClamp15State(progressMonitor, ecuKom, vehicle) : RequestClamp30State(progressMonitor, ecuKom));
             if (flag && IsUsedSpecificRoutingTable(ecu))
             {
                 flag = ActiveGatewayUtils.WriteRoutingTable(ecuKom, vehicle, ecu.ID_SG_ADR);
             }
+
             return flag;
         }
 
@@ -533,6 +577,7 @@ namespace BMW.Rheingold.Programming.Common
                     programmingTaskFlags |= programmingTask.Flags;
                 }
             }
+
             return programmingTaskFlags;
         }
 
@@ -551,30 +596,37 @@ namespace BMW.Rheingold.Programming.Common
             {
                 list.Add("K-LINE");
             }
+
             if ((kmmFlashFlags & KmmFlashFlags.FlashCAN) == KmmFlashFlags.FlashCAN)
             {
                 list.Add("D-CAN");
             }
+
             if ((kmmFlashFlags & KmmFlashFlags.FlashMOSTControl) == KmmFlashFlags.FlashMOSTControl)
             {
                 list.Add("MOST-CONTROL");
             }
+
             if ((kmmFlashFlags & KmmFlashFlags.FlashMOSTAsync) == KmmFlashFlags.FlashMOSTAsync)
             {
                 list.Add("MOST-ASYNC");
             }
+
             if ((kmmFlashFlags & KmmFlashFlags.FlashMOSTSync) == KmmFlashFlags.FlashMOSTSync)
             {
                 list.Add("MOST-SYNC");
             }
+
             if ((kmmFlashFlags & KmmFlashFlags.FlashCD) == KmmFlashFlags.FlashCD)
             {
                 list.Add("CD");
             }
+
             if ((kmmFlashFlags & KmmFlashFlags.FlashDVD) == KmmFlashFlags.FlashDVD)
             {
                 list.Add("DVD");
             }
+
             return list;
         }
 
@@ -584,6 +636,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 return xmlText;
             }
+
             return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
         }
 
@@ -594,6 +647,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 return null;
             }
+
             FA fa = new FA();
             fa.VERSION = faInput.FaVersion.ToString(CultureInfo.InvariantCulture);
             fa.BR = br;
@@ -614,6 +668,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 return null;
             }
+
             return new VehicleOrder
             {
                 FaVersion = faInput.FaVersion,
@@ -647,11 +702,9 @@ namespace BMW.Rheingold.Programming.Common
                     case '-':
                         faList = fa.EWords;
                         break;
-
                     case '+':
                         faList = fa.HOWords;
                         break;
-
                     case '$':
                         faList = fa.Salapas;
                         break;
@@ -689,26 +742,25 @@ namespace BMW.Rheingold.Programming.Common
                 List<string> faElementAdded = new List<string>();
                 List<string> faElementRemoved = new List<string>();
                 faElementAdded.Clear();
-                faElementAdded.AddRange(from item in faTarget.EWords
-                    where !faCurrent.EWords.Contains(item)
-                    select item);
-                faElementAdded.AddRange(from item in faTarget.HOWords
-                    where !faCurrent.HOWords.Contains(item)
-                    select item);
-                faElementAdded.AddRange(from item in faTarget.Salapas
-                    where !faCurrent.Salapas.Contains(item)
-                    select item);
+                faElementAdded.AddRange(
+                    from item in faTarget.EWords
+                    where !faCurrent.EWords.Contains(item)select item);
+                faElementAdded.AddRange(
+                    from item in faTarget.HOWords
+                    where !faCurrent.HOWords.Contains(item)select item);
+                faElementAdded.AddRange(
+                    from item in faTarget.Salapas
+                    where !faCurrent.Salapas.Contains(item)select item);
                 faElementRemoved.Clear();
-                faElementRemoved.AddRange(from item in faCurrent.EWords
-                    where !faTarget.EWords.Contains(item)
-                    select item);
-                faElementRemoved.AddRange(from item in faCurrent.HOWords
-                    where !faTarget.HOWords.Contains(item)
-                    select item);
-                faElementRemoved.AddRange(from item in faCurrent.Salapas
-                    where !faTarget.Salapas.Contains(item)
-                    select item);
-
+                faElementRemoved.AddRange(
+                    from item in faCurrent.EWords
+                    where !faTarget.EWords.Contains(item)select item);
+                faElementRemoved.AddRange(
+                    from item in faCurrent.HOWords
+                    where !faTarget.HOWords.Contains(item)select item);
+                faElementRemoved.AddRange(
+                    from item in faCurrent.Salapas
+                    where !faTarget.Salapas.Contains(item)select item);
                 if (faElementAdded.Any() || faElementRemoved.Any())
                 {
                     return string.Format(CultureInfo.InvariantCulture, "Added: {0}; Removed: {1}", faElementAdded.ToStringItems(), faElementRemoved.ToStringItems());
@@ -726,6 +778,7 @@ namespace BMW.Rheingold.Programming.Common
             {
                 return sweList;
             }
+
             IEnumerable<IPsdzSgbmId> enumerable2 = sweList.Where(x => !"CAFD".Equals(x.ProcessClass) && !list.Contains(x.Id));
             return enumerable2;
         }
@@ -752,6 +805,7 @@ namespace BMW.Rheingold.Programming.Common
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -764,6 +818,7 @@ namespace BMW.Rheingold.Programming.Common
                 // [UH] [IGNORE] For backward compatibility with old request JSON format
                 ecuData = jsonContentObj.ecuData;
             }
+
             if (ecuData != null)
             {
                 return ecuData.SelectMany((EcuData a) => a.GetCafdId());
@@ -778,13 +833,8 @@ namespace BMW.Rheingold.Programming.Common
             List<IPsdzRequestNcdEto> requestNcdEtos = new List<IPsdzRequestNcdEto>();
             psdzCheckNcdResultEto.DetailedNcdStatus.ForEach(delegate (IPsdzDetailedNcdInfoEto f)
             {
-                requestNcdEtos.Add(new PsdzRequestNcdEto
-                {
-                    Btld = f.Btld,
-                    Cafd = f.Cafd
-                });
+                requestNcdEtos.Add(new PsdzRequestNcdEto { Btld = f.Btld, Cafd = f.Cafd });
             });
-
             return requestNcdEtos;
         }
 
