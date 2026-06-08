@@ -189,8 +189,8 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Cleaned = true)]
-        public bool ExecuteEarlyEcuValidationUsingPsdz()
+        [PreserveSource(Hint = "Arguments removed", Cleaned = true)]
+        public bool ExecuteIPBEcuValidation()
         {
             throw new NotImplementedException();
         }
@@ -320,9 +320,14 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Cleaned = true)]
+        public bool ExecuteEarlyEcuValidationUsingPsdz()
+        {
+            throw new NotImplementedException();
+        }
+
         [PreserveSource(Added = true)]
         private readonly PsdzServiceGateway psdzServiceGateway;
-
         [PreserveSource(Added = true)]
         private readonly PsdzConfig psdzConfig;
         [PreserveSource(Added = true)]
