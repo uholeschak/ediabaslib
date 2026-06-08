@@ -1,5 +1,4 @@
 ﻿using System;
-using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Swt;
@@ -10,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using BMW.Rheingold.Psdz.Model.Communications;
-using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -178,6 +177,34 @@ namespace BMW.Rheingold.Psdz
                 Log.ErrorException(Log.CurrentMethod(), exception);
                 throw;
             }
+        }
+
+        public IPsdzTalFilter DefineSFAFilterForAllEcus(IPsdzSfaPerEcuOptions ecuOptions, IPsdzTalFilter inputTalFilter)
+        {
+            try
+            {
+                DefineSFAFilterForAllEcusRequestModel requestBodyObject = new DefineSFAFilterForAllEcusRequestModel
+                {
+                    EcuOptions = SfaPerEcuOptionsMapper.Map(ecuOptions),
+                    InputTalFilter = TalFilterMapper.Map(inputTalFilter)
+                };
+                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "definesfaforallecus", HttpMethod.Post, requestBodyObject).Data);
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException(Log.CurrentMethod(), exception);
+                throw;
+            }
+        }
+
+        public IPsdzTalFilter DefineSFAFilterForSelectedEcus(IDictionary<int, IPsdzSfaPerEcuOptions> ecuOptions, IPsdzTalFilter inputTalFilter)
+        {
+            DefineSFAFilterForSelectedEcusRequestModel requestBodyObject = new DefineSFAFilterForSelectedEcusRequestModel
+            {
+                EcuOptions = ecuOptions.ToDictionary((KeyValuePair<int, IPsdzSfaPerEcuOptions> x) => x.Key, (KeyValuePair<int, IPsdzSfaPerEcuOptions> y) => SfaPerEcuOptionsMapper.Map(y.Value)),
+                InputTalFilter = TalFilterMapper.Map(inputTalFilter)
+            };
+            return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "definesfaforselectedecus", HttpMethod.Post, requestBodyObject).Data);
         }
 
         public IPsdzTalFilter DefineFilterForSelectedEcus(PsdzTaCategories[] psdzTaCategories, int[] diagAddress, PsdzTalFilterAction talFilterAction, IPsdzTalFilter filter, IDictionary<string, PsdzTalFilterAction> smacFilter = null)
