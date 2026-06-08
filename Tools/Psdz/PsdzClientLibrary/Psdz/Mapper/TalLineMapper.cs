@@ -4,7 +4,7 @@ namespace BMW.Rheingold.Psdz
 {
     internal static class TalLineMapper
     {
-        public static TaCategoryTypeMapper _taCategoryTypeMapper = new TaCategoryTypeMapper();
+        public static readonly TaCategoryTypeMapper _taCategoryTypeMapper = new TaCategoryTypeMapper();
         public static IPsdzTalLine Map(TalLineModel talLineModel)
         {
             if (talLineModel == null)
