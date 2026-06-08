@@ -45,8 +45,10 @@ namespace BMW.Rheingold.Psdz
         IPsdzTal BuildEmptyTal();
         IPsdzVin BuildVin(string vin17);
         IPsdzTalFilter DefineFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter);
+        IPsdzTalFilter DefineSFAFilterForAllEcus(ISfaPerEcuOptions ecuOptions, IPsdzTalFilter filter);
         IPsdzTalFilter DefineFilterForSWEs(IEcuFilterOnSweLevel ecuFilter, IPsdzTalFilter talFilter);
         IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter, IDictionary<string, TalFilterOptions> smacFilter = null);
+        IPsdzTalFilter DefineSFAFilterForSelectedEcus(IDictionary<int, ISfaPerEcuOptions> ecuOptions, IPsdzTalFilter filter);
         PsdzFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(IFetchEcuCertCheckingResult ecuCertCheckingResult);
         IList<IPsdzFeatureSpecificFieldCto> BuildFeatureSpecificFieldsCto(IList<IFeatureSpecificField> featureSpecificFields);
         IList<IPsdzValidityConditionCto> BuildValidityConditionsCto(IList<IValidityCondition> validityConditions);

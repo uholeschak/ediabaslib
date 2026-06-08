@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using BMW.Rheingold.Psdz.Mapper;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -537,20 +539,32 @@ Vin = vin17,
         public IPsdzTalFilter DefineFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions, IPsdzTalFilter filter)
         {
             taCategories = RemoveIdDeleteAndLogOccurence(taCategories);
-            PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
+            PsdzTalFilterAction talFilterAction = TalFilterOptionMapper.Map(talFilterOptions);
             PsdzTaCategories[] psdzTaCategories = taCategories?.Select(taCategoriesEnumMapper.GetValue).ToArray();
             return objectBuilderService.DefineFilterForAllEcus(psdzTaCategories, talFilterAction, filter);
+        }
+
+        public IPsdzTalFilter DefineSFAFilterForAllEcus(ISfaPerEcuOptions ecuOptions, IPsdzTalFilter filter)
+        {
+            IPsdzSfaPerEcuOptions ecuOptions2 = BMW.Rheingold.Psdz.Mapper.SfaPerEcuOptionsMapper.Map(ecuOptions);
+            return objectBuilderService.DefineSFAFilterForAllEcus(ecuOptions2, filter);
+        }
+
+        public IPsdzTalFilter DefineSFAFilterForSelectedEcus(IDictionary<int, ISfaPerEcuOptions> ecuOptions, IPsdzTalFilter filter)
+        {
+            Dictionary<int, IPsdzSfaPerEcuOptions> ecuOptions2 = ecuOptions.Where((KeyValuePair<int, ISfaPerEcuOptions> x) => x.Value != null).ToDictionary((KeyValuePair<int, ISfaPerEcuOptions> x) => x.Key, (KeyValuePair<int, ISfaPerEcuOptions> y) => BMW.Rheingold.Psdz.Mapper.SfaPerEcuOptionsMapper.Map(y.Value));
+            return objectBuilderService.DefineSFAFilterForSelectedEcus(ecuOptions2, filter);
         }
 
         public IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter, IDictionary<string, TalFilterOptions> smacFilter = null)
         {
             taCategories = RemoveIdDeleteAndLogOccurence(taCategories);
-            PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
+            PsdzTalFilterAction talFilterAction = TalFilterOptionMapper.Map(talFilterOptions);
             PsdzTaCategories[] psdzTaCategories = taCategories?.Select(taCategoriesEnumMapper.GetValue).ToArray();
             Dictionary<string, PsdzTalFilterAction> smacFilter2 = null;
             if (smacFilter != null)
             {
-                smacFilter2 = smacFilter.Select((KeyValuePair<string, TalFilterOptions> x) => new KeyValuePair<string, PsdzTalFilterAction>(x.Key, ConvertTalFilterOptionToTalFilterAction(x.Value))).ToDictionary((KeyValuePair<string, PsdzTalFilterAction> x) => x.Key, (KeyValuePair<string, PsdzTalFilterAction> y) => y.Value);
+                smacFilter2 = smacFilter.Select((KeyValuePair<string, TalFilterOptions> x) => new KeyValuePair<string, PsdzTalFilterAction>(x.Key, TalFilterOptionMapper.Map(x.Value))).ToDictionary((KeyValuePair<string, PsdzTalFilterAction> x) => x.Key, (KeyValuePair<string, PsdzTalFilterAction> y) => y.Value);
             }
 
             return objectBuilderService.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, inputTalFilter, smacFilter2);
@@ -566,7 +580,7 @@ Vin = vin17,
                     Dictionary<string, PsdzTalFilterAction> dictionary = new Dictionary<string, PsdzTalFilterAction>();
                     for (int i = 0; i < sweTalFilterOption.SgbmIds.Count; i++)
                     {
-                        dictionary.Add(sweTalFilterOption.SgbmIds[i], ConvertTalFilterOptionToTalFilterAction(sweTalFilterOption.SweFilter[i]));
+                        dictionary.Add(sweTalFilterOption.SgbmIds[i], TalFilterOptionMapper.Map(sweTalFilterOption.SweFilter[i]));
                     }
 
                     list.Add(new PsdzSweTalFilterOptions { ProcessClass = sweTalFilterOption.ProcessClass, SweFilter = dictionary, Ta = sweTalFilterOption.Ta });
@@ -574,25 +588,8 @@ Vin = vin17,
             }
 
             PsdzTaCategories value = taCategoriesEnumMapper.GetValue(ecuFilter.TaCategory);
-            PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(ecuFilter.TalFilterOptions);
+            PsdzTalFilterAction talFilterAction = TalFilterOptionMapper.Map(ecuFilter.TalFilterOptions);
             return objectBuilderService.DefineFilterForSwes(ecuFilter.DiagAddress, talFilterAction, value, list, talFilter);
-        }
-
-        private static PsdzTalFilterAction ConvertTalFilterOptionToTalFilterAction(TalFilterOptions talFilterOptions)
-        {
-            switch (talFilterOptions)
-            {
-                case TalFilterOptions.Allowed:
-                    return PsdzTalFilterAction.AllowedToBeTreated;
-                case TalFilterOptions.Must:
-                    return PsdzTalFilterAction.MustBeTreated;
-                case TalFilterOptions.MustNot:
-                    return PsdzTalFilterAction.MustNotBeTreated;
-                case TalFilterOptions.Only:
-                    return PsdzTalFilterAction.OnlyToBeTreatedAndBlockCategoryInAllEcu;
-                default:
-                    return PsdzTalFilterAction.Empty;
-            }
         }
 
         private TaCategories[] RemoveIdDeleteAndLogOccurence(TaCategories[] taCategories)
