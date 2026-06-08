@@ -21,27 +21,23 @@ namespace BMW.Rheingold.Psdz
         [OperationContract(Name = "RequestSvtFunctional")]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzStandardSvt RequestSvt(IPsdzConnection connection);
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract(Name = "RequestSvtFunctionalWithPhysicalRequest")]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzStandardSvt RequestSvt(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus);
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract(Name = "RequestSvtFunctionalWithSmacs")]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzSvt RequestSvtWithSmacs(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus);
-
+        IPsdzSvt RequestSVTReference(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus);
         [PreserveSource(KeepAttribute = true)]
         [OperationContract(Name = "RequestSVTwithSmAcAndMirror")]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzSvt RequestSVTwithSmAcAndMirror(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus);
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzEcuContextInfo> RequestEcuContextInfos(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus);
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]

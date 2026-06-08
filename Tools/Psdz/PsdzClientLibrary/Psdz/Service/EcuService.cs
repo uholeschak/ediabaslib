@@ -91,6 +91,23 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
+        public IPsdzSvt RequestSVTReference(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus)
+        {
+            try
+            {
+                RequestSvtRequestModel requestBodyObject = new RequestSvtRequestModel
+                {
+                    InstalledEcus = installedEcus.Select(EcuIdentifierMapper.Map).ToList()
+                };
+                return SvtMapper.Map(_webCallHandler.ExecuteRequest<SvtModel>(_endpointService, $"requestsvtrsvtreference\u200b/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException(Log.CurrentMethod(), exception);
+                throw;
+            }
+        }
+
         public IPsdzSvt RequestSVTwithSmAcAndMirror(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus)
         {
             try
