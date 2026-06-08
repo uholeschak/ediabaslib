@@ -18,30 +18,18 @@ namespace BMW.Rheingold.Psdz
     public class TalExecutionService : ITalExecutionService, ILifeCycleDependencyProvider
     {
         private static readonly DateTime Jan1st1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        private readonly IWebCallHandler _webCallHandler;
-
         private readonly IProgrammingService _programmingService;
-
         private readonly IObjectBuilderService _objectBuilderService;
-
         private readonly IEventManagerService eventManagerService;
-
         private readonly IPsdzProgressListener progressListener;
-
         private int _activeTalExecutions;
-
         private bool _ignoreTalRelease = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Psdz.IgnoreTalRelease", defaultValue: true);
-
         public string Description { get; }
-
         public string Name { get; }
 
         public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged;
-
-        public TalExecutionService(IWebCallHandler webCallHandler, IProgrammingService programmingService, IObjectBuilderService objectBuilderService, IEventManagerService eventManagerService, IPsdzProgressListener progressListener)
+        public TalExecutionService(IProgrammingService programmingService, IObjectBuilderService objectBuilderService, IEventManagerService eventManagerService, IPsdzProgressListener progressListener)
         {
-            _webCallHandler = webCallHandler;
             _programmingService = programmingService;
             _objectBuilderService = objectBuilderService;
             this.eventManagerService = eventManagerService;
@@ -61,6 +49,7 @@ namespace BMW.Rheingold.Psdz
             {
                 throw new ArgumentException("connection");
             }
+
             PsdzHelper.CheckString("pathToTal", pathToTal);
             PsdzHelper.CheckString("vin", vin);
             string fullPath = Path.GetFullPath(pathToTal);
@@ -68,6 +57,7 @@ namespace BMW.Rheingold.Psdz
             {
                 throw new FileNotFoundException("Path to TAL ('" + fullPath + "') could not be found!");
             }
+
             string xml = File.ReadAllText(fullPath, Encoding.UTF8);
             IPsdzTal tal = _objectBuilderService.BuildTalFromXml(xml);
             IPsdzFa fa = null;
@@ -78,13 +68,12 @@ namespace BMW.Rheingold.Psdz
                 {
                     throw new FileNotFoundException($"Path to FA ('{fullPath2}') could not be found!");
                 }
+
                 string xml2 = File.ReadAllText(fullPath2, Encoding.UTF8);
                 fa = _objectBuilderService.BuildFaFromXml(xml2);
             }
-            return ExecuteTalInternal(connection, tal, null, new PsdzVin
-            {
-                Value = vin
-            }, fa, talExecutionSettings, null, ct, "ExecuteTalFile");
+
+            return ExecuteTalInternal(connection, tal, null, new PsdzVin { Value = vin }, fa, talExecutionSettings, null, ct, "ExecuteTalFile");
         }
 
         public IPsdzTal ExecuteHDDUpdate(IPsdzConnection connection, IPsdzTal tal, IPsdzFa fa, IPsdzVin vin, TalExecutionSettings configs)
@@ -116,6 +105,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     _programmingService.Release(text);
                 }
+
                 DecrementTalExecutions();
                 NotifyListenerAboutFinished(listener);
             }
@@ -149,6 +139,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Info(Log.CurrentMethod(), "TAL execution cancellation requested.");
                     psdzTal = _programmingService.Cancel(text);
                 }
+
                 if (!string.IsNullOrEmpty(backupDataPath) && Directory.Exists(backupDataPath) && ContainsProcessedBackupTas(psdzTal))
                 {
                     try
@@ -161,6 +152,7 @@ namespace BMW.Rheingold.Psdz
                         Log.WarningException(Log.CurrentMethod(), exception);
                     }
                 }
+
                 return psdzTal;
             }
             finally
@@ -169,6 +161,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     _programmingService.Release(text);
                 }
+
                 DecrementTalExecutions();
                 NotifyListenerAboutFinished(listener);
                 eventManagerService.RemovePsdzEventListenerForConnectionLoss();
@@ -210,12 +203,14 @@ namespace BMW.Rheingold.Psdz
                     Log.Info(Log.CurrentMethod(), "Status TAL is null.");
                     return;
                 }
+
                 IPsdzTalLine hddTalLine = GetHddTalLine(statusTal);
                 if (hddTalLine == null)
                 {
                     Log.Info(Log.CurrentMethod(), "Hdd TALLine is null.");
                     return;
                 }
+
                 PsdzHddUpdate hddUpdate = hddTalLine.HddUpdate;
                 long secondsToCompletion = GetSecondsToCompletion(hddUpdate);
                 if (secondsToCompletion > maxSecToCompletion)
@@ -223,6 +218,7 @@ namespace BMW.Rheingold.Psdz
                     maxSecToCompletion = secondsToCompletion;
                     Log.Info(Log.CurrentMethod(), "New maxSecToCompletion is " + maxSecToCompletion + ".");
                 }
+
                 if (secondsToCompletion > 0)
                 {
                     long num = JavaCurrentTimeMillis();
@@ -239,11 +235,13 @@ namespace BMW.Rheingold.Psdz
                         Log.WarningException(Log.CurrentMethod(), exception);
                     }
                 }
+
                 int progress = 0;
                 if (maxSecToCompletion > 0)
                 {
                     progress = (int)((maxSecToCompletion - secondsToCompletion) * 100 / maxSecToCompletion);
                 }
+
                 IPsdzEvent psdzEvent = new PsdzTransactionProgressEvent
                 {
                     EcuId = hddTalLine.EcuIdentifier,
@@ -270,14 +268,15 @@ namespace BMW.Rheingold.Psdz
             {
                 return false;
             }
+
             foreach (IPsdzTalLine talLine in tal.TalLines)
             {
-                PsdzTaCategory psdzTaCategory = (PsdzTaCategory)(((object)talLine.IdBackup) ?? ((object)talLine.FscBackup));
-                if (psdzTaCategory?.Tas?.Any() == true && (psdzTaCategory.ExecutionState == PsdzTaExecutionState.Finished || psdzTaCategory.ExecutionState == PsdzTaExecutionState.FinishedWithWarnings))
+                if (((PsdzTaCategory)(((object)talLine.IdBackup) ?? ((object)talLine.FscBackup)))?.Tas?.Any() == true)
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -290,6 +289,7 @@ namespace BMW.Rheingold.Psdz
                     return enumerator.Current.SecondsToCompletion;
                 }
             }
+
             return -1L;
         }
 
@@ -316,6 +316,7 @@ namespace BMW.Rheingold.Psdz
             for (num = end; num - current < 10000; num += 10000)
             {
             }
+
             return num;
         }
 
@@ -325,6 +326,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return int.MaxValue;
             }
+
             return (int)(end - start);
         }
 
@@ -339,6 +341,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return talExecutionStatus != PsdzTalExecutionState.Running;
             }
+
             return false;
         }
 

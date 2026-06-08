@@ -53,7 +53,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public void SetLogLevel(PsdzLoglevel psdzLogLevel = PsdzLoglevel.FINE)
+        public void SetLogLevel(PsdzLoglevel psdzLogLevel)
         {
             try
             {

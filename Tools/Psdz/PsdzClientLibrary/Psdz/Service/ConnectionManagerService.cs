@@ -77,7 +77,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe, bool tlsAllowed)
+        public IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe, bool tlsAllowed = false)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe, bool tlsAllowed)
+        public IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe, bool tlsAllowed = false)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan, bool tlsAllowed)
+        public IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan, bool tlsAllowed = false)
         {
             try
             {
@@ -162,7 +162,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe, bool tlsAllowed)
+        public IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe, bool tlsAllowed = false)
         {
             try
             {
@@ -198,7 +198,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe, bool tlsAllowed)
+        public IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe, bool tlsAllowed = false)
         {
             try
             {
