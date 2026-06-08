@@ -784,7 +784,7 @@ namespace PsdzClient.Programming
             VecInfo.FA.AlreadyDone = true;
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
-                VecInfo.VehicleIdentAlreadyDone = true;
+                //VecInfo.VehicleIdentAlreadyDone = true;
             }
             else
             {
@@ -792,8 +792,6 @@ namespace PsdzClient.Programming
             }
 
             VecInfo.BatteryType = PsdzDatabase.ResolveBatteryType(VecInfo);
-            VecInfo.WithLfpBattery = VecInfo.BatteryType == BatteryEnum.LFP;
-            VecInfo.WithLfpNCarBattery = VecInfo.BatteryType == BatteryEnum.LFP_NCAR;
             VecInfo.MainSeriesSgbd = DetectVehicle.GroupSgbd;
             // [IGNORE] DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
@@ -1113,7 +1111,7 @@ namespace PsdzClient.Programming
                     VehicleLogistics.CalculateECUConfiguration(VecInfo);
                     if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
                     {
-                        VecInfo.VehicleIdentAlreadyDone = true;
+                        //VecInfo.VehicleIdentAlreadyDone = true;
                     }
                 }
 
@@ -1123,7 +1121,7 @@ namespace PsdzClient.Programming
             VehicleLogistics.CalculateECUConfiguration(VecInfo);
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
-                VecInfo.VehicleIdentAlreadyDone = true;
+                //VecInfo.VehicleIdentAlreadyDone = true;
             }
         }
 
