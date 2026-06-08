@@ -113,15 +113,15 @@ namespace BMW.Rheingold.Psdz
                 },
                 {
                     "SmacSwDeployOnMasterTaModel",
-                    BuildSmacMasterTaModel
+                    BuildPsdzSmacMasterTa
                 },
                 {
                     "SmacTransferStartTaModel",
-                    BuildSmacTransferStartTaModel
+                    BuildPsdzSmacTransferStartTa
                 },
                 {
                     "SmacTransferStatusTaModel",
-                    BuildSmacTransferStatusTaModel
+                    BuildPsdzSmacTransferStatusTa
                 },
                 {
                     "EcuMirrorDeployTaModel",
@@ -335,7 +335,7 @@ namespace BMW.Rheingold.Psdz
             return psdzSwDeployTa;
         }
 
-        private static PsdzSmacSwDeployOnMasterTA BuildSmacMasterTaModel(TaModel ta)
+        private static PsdzSmacSwDeployOnMasterTA BuildPsdzSmacMasterTa(TaModel ta)
         {
             SmacSwDeployOnMasterTaModel smacSwDeployOnMasterTaModel = (SmacSwDeployOnMasterTaModel)ta;
             PsdzSmacSwDeployOnMasterTA psdzSmacSwDeployOnMasterTA = BuildPsdzTa<PsdzSmacSwDeployOnMasterTA>(smacSwDeployOnMasterTaModel);
@@ -343,22 +343,6 @@ namespace BMW.Rheingold.Psdz
             psdzSmacSwDeployOnMasterTA.PreferredProtocol = protocolMapper.GetValue(smacSwDeployOnMasterTaModel.PreferredProtocol);
             psdzSmacSwDeployOnMasterTA.SmacIds = smacSwDeployOnMasterTaModel.SmacIds.ToList();
             return psdzSmacSwDeployOnMasterTA;
-        }
-
-        private static PsdzSmacTransferStartTA BuildSmacTransferStartTaModel(TaModel ta)
-        {
-            SmacTransferStartTaModel smacTransferStartTaModel = (SmacTransferStartTaModel)ta;
-            PsdzSmacTransferStartTA psdzSmacTransferStartTA = BuildPsdzTa<PsdzSmacTransferStartTA>(smacTransferStartTaModel);
-            psdzSmacTransferStartTA.SmartActuatorData = ((IEnumerable<KeyValuePair<string, ICollection<SgbmIdModel>>>)smacTransferStartTaModel.SmartActuatorData).ToDictionary((Func<KeyValuePair<string, ICollection<SgbmIdModel>>, string>)((KeyValuePair<string, ICollection<SgbmIdModel>> x) => x.Key), (Func<KeyValuePair<string, ICollection<SgbmIdModel>>, IList<IPsdzSgbmId>>)((KeyValuePair<string, ICollection<SgbmIdModel>> y) => y.Value.Select((SgbmIdModel x) => SgbmIdMapper.Map(x)).ToList()));
-            return psdzSmacTransferStartTA;
-        }
-
-        private static PsdzSmacTransferStatusTA BuildSmacTransferStatusTaModel(TaModel ta)
-        {
-            SmacTransferStatusTaModel smacTransferStatusTaModel = (SmacTransferStatusTaModel)ta;
-            PsdzSmacTransferStatusTA psdzSmacTransferStatusTA = BuildPsdzTa<PsdzSmacTransferStatusTA>(smacTransferStatusTaModel);
-            psdzSmacTransferStatusTA.SmartActuatorIDs = smacTransferStatusTaModel.SmartActuatorIDs.ToList();
-            return psdzSmacTransferStatusTA;
         }
 
         private static PsdzEcuMirrorDeployTa BuildPsdzEcuMirrorDeployTa(TaModel ta)
@@ -529,12 +513,30 @@ namespace BMW.Rheingold.Psdz
             return smacTransferStartTaModel;
         }
 
+        private static PsdzSmacTransferStartTA BuildPsdzSmacTransferStartTa(TaModel ta)
+        {
+            SmacTransferStartTaModel smacTransferStartTaModel = (SmacTransferStartTaModel)ta;
+            PsdzSmacTransferStartTA psdzSmacTransferStartTA = BuildPsdzTa<PsdzSmacTransferStartTA>(smacTransferStartTaModel);
+            psdzSmacTransferStartTA.SmartActuatorData = ((IEnumerable<KeyValuePair<string, ICollection<SgbmIdModel>>>)smacTransferStartTaModel.SmartActuatorData).ToDictionary((Func<KeyValuePair<string, ICollection<SgbmIdModel>>, string>)((KeyValuePair<string, ICollection<SgbmIdModel>> x) => x.Key), (Func<KeyValuePair<string, ICollection<SgbmIdModel>>, IList<IPsdzSgbmId>>)((KeyValuePair<string, ICollection<SgbmIdModel>> y) => y.Value.Select((SgbmIdModel x) => SgbmIdMapper.Map(x)).ToList()));
+            return psdzSmacTransferStartTA;
+        }
+
         private static SmacTransferStatusTaModel BuildSmacTransferStatusTaModel(IPsdzTa ta)
         {
             PsdzSmacTransferStatusTA psdzSmacTransferStatusTA = (PsdzSmacTransferStatusTA)ta;
             SmacTransferStatusTaModel smacTransferStatusTaModel = BuildTaModel<SmacTransferStatusTaModel>(psdzSmacTransferStatusTA);
             smacTransferStatusTaModel.SmartActuatorIDs = psdzSmacTransferStatusTA.SmartActuatorIDs;
+            smacTransferStatusTaModel.SmartActuatorFlashStatus = SmartActuatorFlashStatusMapper.Map(psdzSmacTransferStatusTA.SmartActuatorFlashStatusResult);
             return smacTransferStatusTaModel;
+        }
+
+        private static PsdzSmacTransferStatusTA BuildPsdzSmacTransferStatusTa(TaModel ta)
+        {
+            SmacTransferStatusTaModel smacTransferStatusTaModel = (SmacTransferStatusTaModel)ta;
+            PsdzSmacTransferStatusTA psdzSmacTransferStatusTA = BuildPsdzTa<PsdzSmacTransferStatusTA>(smacTransferStatusTaModel);
+            psdzSmacTransferStatusTA.SmartActuatorIDs = smacTransferStatusTaModel.SmartActuatorIDs.ToList();
+            psdzSmacTransferStatusTA.SmartActuatorFlashStatusResult = SmartActuatorFlashStatusMapper.Map(smacTransferStatusTaModel.SmartActuatorFlashStatus);
+            return psdzSmacTransferStatusTA;
         }
 
         private static EcuMirrorDeployTaModel BuildEcuMirrorDeployTaModel(IPsdzTa ta)
