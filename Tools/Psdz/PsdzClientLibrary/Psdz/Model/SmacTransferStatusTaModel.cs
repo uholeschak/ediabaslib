@@ -8,5 +8,8 @@ namespace BMW.Rheingold.Psdz
     {
         [JsonProperty("smartActuatorIDs", NullValueHandling = NullValueHandling.Ignore)]
         public ICollection<string> SmartActuatorIDs { get; set; }
+
+        [JsonProperty("smartActuatorFlashStatus", NullValueHandling = NullValueHandling.Ignore)]
+        public ICollection<SmartActuatorFlashStatusModel> SmartActuatorFlashStatus { get; set; }
     }
 }
