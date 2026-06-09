@@ -19,6 +19,7 @@ namespace PsdzClient
 
         public PsdzDatabase Database { get; set; }
         public UiBrand SelectedBrand { get; set; }
+        public SessionInfo SessionInfo { get; private set; }
         public string OutletCountry { get; set; }
         public string Language { get; set; }
         public bool ProtectionVehicleService { get; set; }
@@ -56,6 +57,7 @@ namespace PsdzClient
         {
             Database = null;
             SelectedBrand = UiBrand.BMWBMWiMINI;
+            SessionInfo = new SessionInfo();
             OutletCountry = string.Empty;
             Language = "En";
             ProtectionVehicleService = true;

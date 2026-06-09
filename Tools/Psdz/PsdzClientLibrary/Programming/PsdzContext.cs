@@ -784,9 +784,7 @@ namespace PsdzClient.Programming
             VecInfo.FA.AlreadyDone = true;
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
-#pragma warning disable CS0618
-                VecInfo.VehicleIdentAlreadyDone = true;
-#pragma warning restore CS0618
+                VecInfo.ClientContext.SessionInfo.VehicleIdentAlreadyDone = true;
             }
             else
             {
@@ -1111,9 +1109,7 @@ namespace PsdzClient.Programming
                 VehicleLogistics.CalculateECUConfiguration(VecInfo);
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
                 {
-#pragma warning disable CS0618
-                    VecInfo.VehicleIdentAlreadyDone = true;
-#pragma warning restore CS0618
+                    VecInfo.ClientContext.SessionInfo.VehicleIdentAlreadyDone = true;
                 }
             }
             else if (VecInfo.BNType == BNType.IBUS)
@@ -1121,9 +1117,7 @@ namespace PsdzClient.Programming
                 VehicleLogistics.CalculateECUConfiguration(VecInfo);
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
                 {
-#pragma warning disable CS0618
-                    VecInfo.VehicleIdentAlreadyDone = true;
-#pragma warning restore CS0618
+                    VecInfo.ClientContext.SessionInfo.VehicleIdentAlreadyDone = true;
                 }
             }
         }
