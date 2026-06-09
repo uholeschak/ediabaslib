@@ -2825,10 +2825,9 @@ namespace PsdzClient.Core
         [XmlIgnore]
         IEnumerable<IEcuTreeEcu> IEcuTreeVehicle.ECU => ECU.Cast<IEcuTreeEcu>();
 
-        [PreserveSource(Hint = "public SessionInfo", Placeholder = true)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("SessionInfo")]
-        public PlaceholderType SessionInfoForSerializationOnly { get; set; }
+        public SessionInfo SessionInfoForSerializationOnly { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
@@ -2917,7 +2916,7 @@ namespace PsdzClient.Core
             Classification = new VehicleClassification(this);
             //[+] Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
             Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
-        //[-] SessionInfoForSerializationOnly = new SessionInfo();
+            SessionInfoForSerializationOnly = new SessionInfo();
         }
 
         protected void AddServiceCodeAndLogsForTypeKeys(string currentValue, string propertyName)
