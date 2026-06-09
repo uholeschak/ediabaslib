@@ -4290,9 +4290,8 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
         public PlaceholderType TestPlanType;
-        [PreserveSource(Hint = "SessionStart", Placeholder = true)]
         [XmlIgnore]
-        public PlaceholderType SessionStart { get; set; }
+        public SessionStart SessionStart { get; set; }
 
         [PreserveSource(Added = true)]
         public Reactor Reactor { get; private set; }

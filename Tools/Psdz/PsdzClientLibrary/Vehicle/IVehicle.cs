@@ -264,7 +264,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool IsEreiheValid();
         bool hasBusType(BusType bus);
         bool HasSA(string checkSA);
-        [PreserveSource(Hint = "SessionStart", Placeholder = true)]
-        PlaceholderType SessionStart { get; set; }
+        SessionStart SessionStart { get; set; }
     }
 }
