@@ -528,8 +528,8 @@ namespace BMW.Rheingold.Programming.Common
         internal static bool PerformFlashPostconditionsExxe(IEcu ecu, IEcuKom ecuKom, IVehicle vehicle, IProgressMonitor progressMonitor)
         {
             //[-] if (!ecuKom.Refresh(SessionInfoAccessor.SessionInfo.IsDoIP))
-            //[+] if (!ecuKom.Refresh(vehicle?.VCI?.IsDoIP ?? false))
-            if (!ecuKom.Refresh(vehicle?.VCI?.IsDoIP ?? false))
+            //[+] if (!ecuKom.Refresh(ClientContext.GetClientContext((Vehicle)vehicle)?.SessionInfo?.IsDoIP ?? false))
+            if (!ecuKom.Refresh(ClientContext.GetClientContext((Vehicle)vehicle)?.SessionInfo?.IsDoIP ?? false))
             {
                 Log.Error("ProgramBn2000EcusExxeState.PerformFlashPostconditions()", "Connection to EDIABAS could not be established!");
                 return false;
@@ -546,8 +546,8 @@ namespace BMW.Rheingold.Programming.Common
         internal static bool PerformFlashPreconditionsExxe(IEcu ecu, IEcuKom ecuKom, IVehicle vehicle, IProgressMonitor progressMonitor)
         {
             //[-] if (!ecuKom.Refresh(SessionInfoAccessor.SessionInfo.IsDoIP))
-            //[+] if (!ecuKom.Refresh(vehicle?.VCI?.IsDoIP ?? false))
-            if (!ecuKom.Refresh(vehicle?.VCI?.IsDoIP ?? false))
+            //[+] if (!ecuKom.Refresh(ClientContext.GetClientContext((Vehicle)vehicle)?.SessionInfo?.IsDoIP ?? false))
+            if (!ecuKom.Refresh(ClientContext.GetClientContext((Vehicle)vehicle)?.SessionInfo?.IsDoIP ?? false))
             {
                 Log.Error("ProgrammingUtils.PerformFlashPreconditionsExxe()", "Connection to EDIABAS could not be established!");
                 return false;
