@@ -1103,31 +1103,28 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Added = true)]
+        [PreserveSource(Hint = "From BMW.Rheingold.RheingoldSessionController.Logic.CalculateECUConfiguration", Added = true)]
         private void CalculateECUConfiguration()
         {
-            if (VecInfo.BNType != BNType.BN2020_MOTORBIKE && VecInfo.BNType != BNType.BNK01X_MOTORBIKE && VecInfo.BNType != BNType.BN2000_MOTORBIKE)
+            if (VecInfo.BNType == BNType.BN2020_MOTORBIKE || VecInfo.BNType == BNType.BNK01X_MOTORBIKE || VecInfo.BNType == BNType.BN2000_MOTORBIKE)
             {
-                if (VecInfo.BNType == BNType.IBUS)
+                VehicleLogistics.CalculateECUConfiguration(VecInfo);
+                if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
                 {
-                    VehicleLogistics.CalculateECUConfiguration(VecInfo);
-                    if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
-                    {
 #pragma warning disable CS0618
-                        VecInfo.VehicleIdentAlreadyDone = true;
+                    VecInfo.VehicleIdentAlreadyDone = true;
 #pragma warning restore CS0618
-                    }
                 }
-
-                return;
             }
-
-            VehicleLogistics.CalculateECUConfiguration(VecInfo);
-            if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
+            else if (VecInfo.BNType == BNType.IBUS)
             {
+                VehicleLogistics.CalculateECUConfiguration(VecInfo);
+                if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
+                {
 #pragma warning disable CS0618
-                VecInfo.VehicleIdentAlreadyDone = true;
+                    VecInfo.VehicleIdentAlreadyDone = true;
 #pragma warning restore CS0618
+                }
             }
         }
 
