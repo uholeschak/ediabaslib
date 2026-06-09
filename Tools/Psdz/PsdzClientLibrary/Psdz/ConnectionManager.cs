@@ -41,7 +41,7 @@ namespace PsdzClient.Psdz
         protected virtual string Vin17 => Vehicle?.VIN17;
         protected virtual string EReihe => Vehicle?.Ereihe;
         [PreserveSource(Hint = "Modified using ClientContext", SuppressWarning = true)]
-        protected virtual bool? IsDoIP => ((Vehicle) Vehicle).ClientContext.SessionInfo.IsDoIP;
+        protected virtual bool? IsDoIP => ClientContext.GetClientContext((Vehicle)Vehicle)?.SessionInfo?.IsDoIP;
 
         protected virtual bool IsEES25Vehicle
         {
