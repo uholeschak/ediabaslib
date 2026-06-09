@@ -1204,10 +1204,8 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public ObservableCollection<InfoObject>", Placeholder = true)]
         public PlaceholderType HistoryInfoObjects;
-
         [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
         public PlaceholderType Testplan;
-
         [PreserveSource(Hint = "public TestPlanCache", Placeholder = true)]
         [IgnoreDataMember]
         [XmlIgnore]
@@ -4290,9 +4288,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
         public PlaceholderType TestPlanType;
-        [XmlIgnore]
-        public SessionStart SessionStart { get; set; }
-
         [PreserveSource(Added = true)]
         public Reactor Reactor { get; private set; }
 
