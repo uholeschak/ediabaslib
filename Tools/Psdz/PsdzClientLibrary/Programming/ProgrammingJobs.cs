@@ -1245,6 +1245,7 @@ namespace PsdzClient.Programming
                 vehicle.VCI.VIN = PsdzContext.DetectVehicle.Vin;
                 vehicle.VCI.IsDoIP = isDoIp;
                 vehicle.VIN17 = PsdzContext.DetectVehicle.Vin;
+                ClientContext.SessionInfo.IsDoIP = isDoIp;
 
                 PsdzContext.DetectVehicle.Disconnect();
                 if (!OpenPsdzConnection(sbResult, vehicle))
