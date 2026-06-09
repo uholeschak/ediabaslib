@@ -784,7 +784,10 @@ namespace PsdzClient.Programming
             VecInfo.FA.AlreadyDone = true;
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
-                VecInfo.ClientContext.SessionInfo.VehicleIdentAlreadyDone = true;
+                if (clientContext != null)
+                {
+                    clientContext.SessionInfo.VehicleIdentAlreadyDone = true;
+                }
             }
             else
             {
@@ -1104,12 +1107,16 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "From BMW.Rheingold.RheingoldSessionController.Logic.CalculateECUConfiguration", Added = true)]
         private void CalculateECUConfiguration()
         {
+            ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
             if (VecInfo.BNType == BNType.BN2020_MOTORBIKE || VecInfo.BNType == BNType.BNK01X_MOTORBIKE || VecInfo.BNType == BNType.BN2000_MOTORBIKE)
             {
                 VehicleLogistics.CalculateECUConfiguration(VecInfo);
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
                 {
-                    VecInfo.ClientContext.SessionInfo.VehicleIdentAlreadyDone = true;
+                    if (clientContext != null)
+                    {
+                        clientContext.SessionInfo.VehicleIdentAlreadyDone = true;
+                    }
                 }
             }
             else if (VecInfo.BNType == BNType.IBUS)
@@ -1117,7 +1124,10 @@ namespace PsdzClient.Programming
                 VehicleLogistics.CalculateECUConfiguration(VecInfo);
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
                 {
-                    VecInfo.ClientContext.SessionInfo.VehicleIdentAlreadyDone = true;
+                    if (clientContext != null)
+                    {
+                        clientContext.SessionInfo.VehicleIdentAlreadyDone = true;
+                    }
                 }
             }
         }
