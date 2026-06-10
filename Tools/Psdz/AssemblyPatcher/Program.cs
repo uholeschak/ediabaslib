@@ -1458,19 +1458,22 @@ namespace AssemblyPatcher
                             {
                                 Namespace = "RheingoldPsdzWebApi.Adapter",
                                 Class = "PsdzWebService",
-                                Method = "CreateMonitoredProcess",
+                                Method = "StartPsdzWebserviceProcess",
                             };
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
                             if (instructions != null)
                             {
-                                Console.WriteLine("PsdzWebService.CreateMonitoredProcess found");
-
+                                Console.WriteLine("PsdzWebService.StartPsdzWebserviceProcess found");
                                 bool alreadyPatched = false;
-                                for (int index = 0; index < instructions.Count; index++)
+                                object psdzWebserviceProcessField = null;
+                                object psdzWebApiLogDirField = null;
+                                int insertIndex = -1;
+
+                                // Bereits gepatcht?
+                                foreach (Instruction inst in instructions)
                                 {
-                                    Instruction instruction = instructions[index];
-                                    if (instruction.OpCode == OpCodes.Call &&
-                                        instruction.Operand?.ToString()?.Contains("GetTempPath") == true)
+                                    if (inst.OpCode == OpCodes.Callvirt &&
+                                        inst.Operand?.ToString()?.Contains("set_WorkingDirectory") == true)
                                     {
                                         alreadyPatched = true;
                                         break;
@@ -1479,83 +1482,85 @@ namespace AssemblyPatcher
 
                                 if (!alreadyPatched)
                                 {
-                                    int insertIndex = -1;
-                                    for (int index = 0; index < instructions.Count; index++)
+                                    // psdzWebserviceProcess-Feld: ldfld direkt vor call StartAndRegisterWebserviceProcess
+                                    for (int index = 2; index < instructions.Count; index++)
                                     {
-                                        Instruction instruction = instructions[index];
-                                        if (instruction.OpCode == OpCodes.Call &&
-                                            instruction.Operand?.ToString()?.Contains("CreateBaseProcess") == true)
+                                        if (instructions[index].OpCode == OpCodes.Call &&
+                                            instructions[index].Operand?.ToString()?.Contains("StartAndRegisterWebserviceProcess") == true &&
+                                            instructions[index - 1].OpCode == OpCodes.Ldfld &&
+                                            instructions[index - 2].OpCode == OpCodes.Ldarg_0)
                                         {
-                                            Console.WriteLine(
-                                                "PsdzWebService.CreateMonitoredProcess return found at index: {0}",
-                                                index);
-                                            insertIndex = index + 1;
+                                            psdzWebserviceProcessField = instructions[index - 1].Operand;
+                                            insertIndex = index - 2; // ldarg.0 vor ldfld psdzWebserviceProcess
+                                            Console.WriteLine("psdzWebserviceProcess field found at index: {0}", index - 1);
                                             break;
                                         }
                                     }
 
-                                    if (insertIndex >= 0)
+                                    // _psdzWebApiLogDir-Feld: im Konstruktor aus stfld nach ldarg.0, ldarg.1
+                                    Target targetCtor = new Target
                                     {
-                                        List<Instruction> insertInstructions = new List<Instruction>();
-
-                                        // Stack vor Insert: [process]
-                                        // process.StartInfo.WorkingDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-
-                                        insertInstructions.Add(new Instruction(OpCodes.Dup)); // [process, process]
-                                        insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
-                                            patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
-                                                typeof(System.Diagnostics.ProcessStartInfo),
-                                                null))); // [process, startInfo]
-                                        insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                            patcher.BuildCall(typeof(System.IO.Path), "GetTempPath",
-                                                typeof(string), null))); // [process, startInfo, tempPath]
-                                        insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                            patcher.BuildCall(typeof(System.IO.Path), "GetRandomFileName",
-                                                typeof(string), null))); // [process, startInfo, tempPath, randomName]
-                                        insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                            patcher.BuildCall(typeof(System.IO.Path), "Combine",
-                                                typeof(string),
-                                                new[]
-                                                {
-                                                    typeof(string), typeof(string)
-                                                }))); // [process, startInfo, workDir]
-                                        insertInstructions.Add(
-                                            new Instruction(OpCodes.Dup)); // [process, startInfo, workDir, workDir]
-                                        insertInstructions.Add(Instruction.Create(OpCodes.Call,
-                                            patcher.BuildCall(typeof(System.IO.Directory), "CreateDirectory",
-                                                typeof(System.IO.DirectoryInfo),
-                                                new[]
-                                                {
-                                                    typeof(string)
-                                                }))); // [process, startInfo, workDir, DirectoryInfo]
-                                        insertInstructions.Add(
-                                            new Instruction(OpCodes.Pop)); // [process, startInfo, workDir]
-                                        insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
-                                            patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo),
-                                                "set_WorkingDirectory",
-                                                typeof(void), new[] { typeof(string) }))); // [process]
-                                        // Stack nach Insert: [process] – identisch zum Original
-
-                                        int offset = 0;
-                                        foreach (Instruction insertInstruction in insertInstructions)
+                                        Namespace = "RheingoldPsdzWebApi.Adapter",
+                                        Class = "PsdzWebService",
+                                        Method = ".ctor",
+                                    };
+                                    IList<Instruction> ctorInstructions = patcher.GetInstructionList(targetCtor);
+                                    if (ctorInstructions != null)
+                                    {
+                                        for (int index = 2; index < ctorInstructions.Count; index++)
                                         {
-                                            instructions.Insert(insertIndex + offset, insertInstruction);
-                                            offset++;
+                                            if (ctorInstructions[index].OpCode == OpCodes.Stfld &&
+                                                ctorInstructions[index - 1].OpCode == OpCodes.Ldarg_1 &&
+                                                ctorInstructions[index - 2].OpCode == OpCodes.Ldarg_0)
+                                            {
+                                                psdzWebApiLogDirField = ctorInstructions[index].Operand;
+                                                Console.WriteLine("_psdzWebApiLogDir field found in .ctor at index: {0}", index);
+                                                break;
+                                            }
                                         }
-
-                                        patched = true;
-                                        Console.WriteLine("PsdzWebService.CreateBaseProcess patched");
                                     }
+                                }
+
+                                if (alreadyPatched)
+                                {
+                                    Console.WriteLine("StartPsdzWebserviceProcess already patched");
+                                }
+                                else if (insertIndex >= 0 && psdzWebserviceProcessField != null && psdzWebApiLogDirField != null)
+                                {
+                                    List<Instruction> insertInstructions = new List<Instruction>();
+
+                                    // psdzWebserviceProcess.StartInfo.WorkingDirectory = _psdzWebApiLogDir;
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldarg_0));
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Ldfld, (dnlib.DotNet.IField)psdzWebserviceProcessField));
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
+                                        patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
+                                            typeof(System.Diagnostics.ProcessStartInfo), null)));
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldarg_0));
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Ldfld, (dnlib.DotNet.IField)psdzWebApiLogDirField));
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
+                                        patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo), "set_WorkingDirectory",
+                                            typeof(void), new[] { typeof(string) })));
+
+                                    int offset = 0;
+                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    {
+                                        instructions.Insert(insertIndex + offset, insertInstruction);
+                                        offset++;
+                                    }
+
+                                    patched = true;
+                                    Console.WriteLine("PsdzWebService.StartPsdzWebserviceProcess patched");
                                 }
                                 else
                                 {
-                                    Console.WriteLine("PsdzWebService.CreateMonitoredProcess already patched");
+                                    Console.WriteLine("*** Patching StartPsdzWebserviceProcess failed - " +
+                                        $"insertIndex={insertIndex}, processField={psdzWebserviceProcessField != null}, logDirField={psdzWebApiLogDirField != null}");
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("*** checkForPsdzInstancesLogFile Exception: {0}", ex.Message);
+                            Console.WriteLine("*** StartPsdzWebserviceProcess Exception: {0}", ex.Message);
                         }
 
                         try
