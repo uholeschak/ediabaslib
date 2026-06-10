@@ -89,17 +89,15 @@
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.4.0.5" />
     <PackageReference Include="Xamarin.AndroidX.ViewPager2" Version="1.1.0.10" />
     <PackageReference Include="Xamarin.AndroidX.WebKit" Version="1.16.0" />
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.14.0" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.14.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\CustomGaugeNetBinding\CustomGaugeNetBinding.csproj" />
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\DragListViewNetBinding\DragListViewNetBinding.csproj" />
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\SkydovesBalloonBinding\SkydovesBalloonBinding.csproj" />
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\UsbSerialNetBinding\UsbSerialNetBinding.csproj" />
-    <ProjectReference Include="..\EdiabasLib\EdiabasLib\EdiabasLib.csproj"
-                    AdditionalProperties="EnableAndroidTargets=true" />
-    <ProjectReference Include="..\Tools\Psdz\PsdzRpcClientLibrary\PsdzRpcClientLibrary.csproj"
-                    AdditionalProperties="EnableAndroidTargets=true" />
+    <ProjectReference Include="..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" AdditionalProperties="EnableAndroidTargets=true" />
+    <ProjectReference Include="..\Tools\Psdz\PsdzRpcClientLibrary\PsdzRpcClientLibrary.csproj" AdditionalProperties="EnableAndroidTargets=true" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HexFiles\Type9\" />
