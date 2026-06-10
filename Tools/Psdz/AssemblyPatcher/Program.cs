@@ -2122,6 +2122,7 @@ namespace AssemblyPatcher
                     ("\"DebugLevel\"", "    <add key=\"DebugLevel\" value=\"5\" />"),
                     ("\"BMW.Rheingold.Programming.Prodias.LogLevel\"", "    <add key=\"BMW.Rheingold.Programming.Prodias.LogLevel\" value=\"TRACE\" />"),
                     ("\"BMW.Rheingold.RheingoldSessionController.FASTATransferMode\"", "    <add key=\"BMW.Rheingold.RheingoldSessionController.FASTATransferMode\" value=\"None\" />"),
+                    ("\"BMW.Rheingold.RheingoldSessionController.CircumventProgramingProhibitionPlus\"", "    <add key=\"BMW.Rheingold.RheingoldSessionController.CircumventProgramingProhibitionPlus\" value=\"true\" />"),
                     ("\"BMW.Rheingold.Diagnostics.VehicleIdent.ReadFASTAData\"", "    <add key=\"BMW.Rheingold.Diagnostics.VehicleIdent.ReadFASTAData\" value=\"false\" />"),
                     ("\"BMW.Rheingold.OperationalMode\"", "    <add key=\"BMW.Rheingold.OperationalMode\" value=\"ISTA_PLUS\" />"),
                     ("\"BMW.Rheingold.ISTAGUI.Pages.StartPage.ShowDisclaimer\"", "    <add key=\"BMW.Rheingold.ISTAGUI.Pages.StartPage.ShowDisclaimer\" value=\"false\" />"),
