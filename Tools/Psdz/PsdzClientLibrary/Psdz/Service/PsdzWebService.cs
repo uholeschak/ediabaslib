@@ -261,10 +261,6 @@ namespace BMW.Rheingold.Psdz
         internal Process CreateMonitoredProcess(string javaExePath, string arguments)
         {
             Process process = CreateBaseProcess(javaExePath, arguments);
-            ProcessStartInfo startInfo = process.StartInfo;
-            string text = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            Directory.CreateDirectory(text);
-            startInfo.WorkingDirectory = text;
             process.OutputDataReceived += delegate (object s, DataReceivedEventArgs a)
             {
                 HandleProcessStartupLine(a.Data, DataType.Output);
@@ -351,6 +347,7 @@ namespace BMW.Rheingold.Psdz
 
         private void StartPsdzWebserviceProcess()
         {
+            psdzWebserviceProcess.StartInfo.WorkingDirectory = _psdzWebApiLogDir;
             try
             {
                 if (PsdzWebserviceRegistrar.StartAndRegisterWebserviceProcess(psdzWebserviceProcess))
