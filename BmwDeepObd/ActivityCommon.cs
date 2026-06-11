@@ -829,6 +829,7 @@ namespace BmwDeepObd
         public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string ModBmwAdapterIp = "169.254.128.7";
         public const string MhdAdapterIp = "169.254.255.1";
+        public const string ScanDocAdapterIp = "192.168.12.3";
         public const string DefaultPwdDeepObd = "root";
         public const string DefaultPwdModBmw = "admin";
         public const string SettingsFile = "Settings.xml";
@@ -4112,6 +4113,11 @@ namespace BmwDeepObd
                     defaultPassword = string.Empty;
                     return adapterIp;
                 }
+                if (string.Compare(adapterIp, ScanDocAdapterIp, StringComparison.Ordinal) == 0)
+                {
+                    defaultPassword = string.Empty;
+                    return adapterIp;
+                }
             }
             return null;
         }
@@ -4828,6 +4834,7 @@ namespace BmwDeepObd
                 bool validEnetLink = false;
                 bool validModBmw = false;
                 bool validMhd = false;
+                bool validScanDoc = false;
 
                 if (IsValidWifiConnection(out _, out _, out string dhcpServerAddress, out string ssid))
                 {
@@ -4855,6 +4862,10 @@ namespace BmwDeepObd
                         {
                             validMhd = true;
                         }
+                        if (string.Compare(adapterIp, ScanDocAdapterIp, StringComparison.Ordinal) == 0)
+                        {
+                            validScanDoc = true;
+                        }
                     }
                 }
 
@@ -4874,7 +4885,7 @@ namespace BmwDeepObd
                 bool validEthernet = IsValidEthernetConnection();
                 bool ipSelected = !string.IsNullOrEmpty(SelectedEnetIp);
 
-                if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw && !validMhd &&
+                if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw && !validMhd && !validScanDoc &&
                     string.Compare(lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     if (_baseActivity != null)
