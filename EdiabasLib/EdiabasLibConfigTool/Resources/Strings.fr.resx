@@ -247,8 +247,7 @@
     <value>Aucun adaptateur Wi-Fi adapter trouvé.</value>
   </data>
   <data name="WifiUrlOk" xml:space="preserve">
-    <value>La page de configuration de l'adaptateur va s'ouvrir dans le navigateur web.
-Le mot de passe root par défaut est {0}.</value>
+    <value>La page de configuration de l'adaptateur va s'ouvrir dans le navigateur web.</value>
   </data>
   <data name="PatchApiVersion" xml:space="preserve">
     <value>Version API : {0}</value>
@@ -365,5 +364,8 @@ Installez d'abord le runtime VC++
   </data>
   <data name="BtConfirmPairRequest" xml:space="preserve">
     <value>Confirmez d’abord la demande d’appairage Bluetooth.</value>
+  </data>
+  <data name="WifiAdapterRootPwd" xml:space="preserve">
+    <value>Le mot de passe root par défaut est {0}.</value>
   </data>
 </root>

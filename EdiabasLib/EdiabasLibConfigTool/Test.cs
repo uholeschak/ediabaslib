@@ -130,6 +130,7 @@ namespace EdiabasLibConfigTool
                 AuthRequest authRequest = new AuthRequest(ap);
                 if (authRequest.IsPasswordRequired)
                 {
+                    Match scanDocNanoMatch = Patch.AdapterSsidScanDocNanoRegEx.Match(ap.Name);
                     if (ap.Name.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase))
                     {
                         authRequest.Password = Patch.PasswordWifiEnetLink;
@@ -145,6 +146,11 @@ namespace EdiabasLibConfigTool
                     else if (ap.Name.StartsWith(Patch.AdapterSsidMhd, StringComparison.OrdinalIgnoreCase))
                     {
                         authRequest.Password = Patch.PasswordWifiMhd;
+                    }
+                    else if (scanDocNanoMatch.Success && scanDocNanoMatch.Groups.Count == 2)
+                    {
+                        string scanDocNanoPassword = "scandoc" + scanDocNanoMatch.Groups[1].Value;
+                        authRequest.Password = scanDocNanoPassword;
                     }
                     else
                     {
@@ -200,7 +206,11 @@ namespace EdiabasLibConfigTool
                     {
                         if (configure)
                         {
-                            string rootPwd = isModBmw || isUniCar ? "admin" : "root";
+                            string rootPwd = string.Empty;
+                            if (!isScanDocNano)
+                            {
+                                rootPwd = isModBmw || isUniCar ? "admin" : "root";
+                            }
                             string url = string.Format("http://{0}", ipAddr);
 
                             try
@@ -216,7 +226,15 @@ namespace EdiabasLibConfigTool
                                 // ignored
                             }
 
-                            _form.UpdateStatusText(string.Format(Resources.Strings.WifiUrlOk, rootPwd));
+                            StringBuilder sbMessage = new StringBuilder();
+                            sbMessage.Append(Resources.Strings.WifiUrlOk);
+                            if (!string.IsNullOrEmpty(rootPwd))
+                            {
+                                sbMessage.Append("\r\n");
+                                sbMessage.Append(string.Format(Resources.Strings.WifiAdapterRootPwd, rootPwd));
+                            }
+
+                            _form.UpdateStatusText(sbMessage.ToString());
                             TestOk = true;
                             ConfigPossible = true;
                             return true;
@@ -228,7 +246,7 @@ namespace EdiabasLibConfigTool
                         {
                             Thread.CurrentThread.CurrentCulture = cultureInfo;
                             Thread.CurrentThread.CurrentUICulture = cultureInfo;
-                            if (isEnet || isEnetLink || isModBmw || isUniCar || isMhd)
+                            if (isEnet || isEnetLink || isModBmw || isUniCar || isMhd || isScanDocNano)
                             {
                                 TestOk = RunWifiTestEnetRetry(ipAddr, out bool configRequired);
                                 if (TestOk && configRequired)
@@ -424,7 +442,8 @@ namespace EdiabasLibConfigTool
                 }
 
                 sr.Append(Resources.Strings.Connected);
-                if (!responseFromServer.Contains(@"LuCI - Lua Configuration Interface"))
+                if (!responseFromServer.Contains(@"LuCI - Lua Configuration Interface") &&
+                    !responseFromServer.Contains(@"Quantex"))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.HttpResponseIncorrect);

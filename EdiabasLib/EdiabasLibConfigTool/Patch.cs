@@ -29,7 +29,7 @@ namespace EdiabasLibConfigTool
         public const string AdapterSsidModBmw = @"modBMW ENET";
         public const string PasswordWifiModBmw = @"12345678";
         public const string AdapterSsidUniCar = @"UniCarScan";
-        public static Regex AdapterSsidScanDocNanoRegEx = new Regex(@"^\s*N\d+\s*$", RegexOptions.Compiled);
+        public static Regex AdapterSsidScanDocNanoRegEx = new Regex(@"^\s*N(\d+)\s*$", RegexOptions.Compiled);
         public const string PasswordWifiUniCar = @"12345678";
         public const string AdapterSsidMhd = @"MHD ENET";
         public const string PasswordWifiMhd = @"123456789";

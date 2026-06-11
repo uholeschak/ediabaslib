@@ -247,8 +247,7 @@
     <value>Wi-Fi устройство не найдено.</value>
   </data>
   <data name="WifiUrlOk" xml:space="preserve">
-    <value>Страница конфигурации адаптера открывается в браузере.
-Пароль по умолчанию - {0}.</value>
+    <value>Страница конфигурации адаптера открывается в браузере.</value>
   </data>
   <data name="PatchApiVersion" xml:space="preserve">
     <value>API версия: {0}</value>
@@ -363,5 +362,8 @@
   </data>
   <data name="BtConfirmPairRequest" xml:space="preserve">
     <value>Сначала подтвердите запрос на сопряжение по Bluetooth.</value>
+  </data>
+  <data name="WifiAdapterRootPwd" xml:space="preserve">
+    <value>Пароль по умолчанию - {0}.</value>
   </data>
 </root>
