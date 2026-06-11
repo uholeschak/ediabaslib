@@ -1483,9 +1483,10 @@ namespace AssemblyPatcher
                                 if (!alreadyPatched)
                                 {
                                     // psdzWebserviceProcess-Feld: ldfld direkt vor call StartAndRegisterWebserviceProcess
-                                    for (int index = 2; index < instructions.Count; index++)
+                                    for (int index = 0; index < instructions.Count; index++)
                                     {
-                                        if (instructions[index].OpCode == OpCodes.Call &&
+                                        if (index >= 2 &&
+                                            instructions[index].OpCode == OpCodes.Call &&
                                             instructions[index].Operand?.ToString()?.Contains("StartAndRegisterWebserviceProcess") == true &&
                                             instructions[index - 1].OpCode == OpCodes.Ldfld &&
                                             instructions[index - 2].OpCode == OpCodes.Ldarg_0)
@@ -1507,9 +1508,10 @@ namespace AssemblyPatcher
                                     IList<Instruction> ctorInstructions = patcher.GetInstructionList(targetCtor);
                                     if (ctorInstructions != null)
                                     {
-                                        for (int index = 2; index < ctorInstructions.Count; index++)
+                                        for (int index = 0; index < ctorInstructions.Count; index++)
                                         {
-                                            if (ctorInstructions[index].OpCode == OpCodes.Stfld &&
+                                            if (index >= 2 &&
+                                                ctorInstructions[index].OpCode == OpCodes.Stfld &&
                                                 ctorInstructions[index - 1].OpCode == OpCodes.Ldarg_1 &&
                                                 ctorInstructions[index - 2].OpCode == OpCodes.Ldarg_0)
                                             {
