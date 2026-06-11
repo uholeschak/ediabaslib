@@ -824,13 +824,13 @@ namespace BmwDeepObd
         public const string AdapterSsidModBmw = "modBMW ENET";
         public const string AdapterSsidUniCar = "UniCarScan";
         public const string AdapterSsidMhd = @"MHD ENET";
-        public static Regex AdapterSsidScanDocRegEx = new Regex(@"^\s*N\d+\s*$", RegexOptions.Compiled);
+        public static Regex AdapterSsidScanDocNanoRegEx = new Regex(@"^\s*N\d+\s*$", RegexOptions.Compiled);
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string ModBmwAdapterIp = "169.254.128.7";
         public const string MhdAdapterIp = "169.254.255.1";
-        public const string ScanDocAdapterIp = "192.168.12.3";
+        public const string ScanDocNanoAdapterIp = "192.168.12.3";
         public const string DefaultPwdDeepObd = "root";
         public const string DefaultPwdModBmw = "admin";
         public const string SettingsFile = "Settings.xml";
@@ -4092,7 +4092,7 @@ namespace BmwDeepObd
                         defaultPassword = string.Empty;
                         return adapterIp;
                     }
-                    if (AdapterSsidScanDocRegEx.IsMatch(ssid))
+                    if (AdapterSsidScanDocNanoRegEx.IsMatch(ssid))
                     {
                         defaultPassword = string.Empty;
                         return adapterIp;
@@ -4119,7 +4119,7 @@ namespace BmwDeepObd
                     defaultPassword = string.Empty;
                     return adapterIp;
                 }
-                if (string.Compare(adapterIp, ScanDocAdapterIp, StringComparison.Ordinal) == 0)
+                if (string.Compare(adapterIp, ScanDocNanoAdapterIp, StringComparison.Ordinal) == 0)
                 {
                     defaultPassword = string.Empty;
                     return adapterIp;
@@ -4840,7 +4840,7 @@ namespace BmwDeepObd
                 bool validEnetLink = false;
                 bool validModBmw = false;
                 bool validMhd = false;
-                bool validScanDoc = false;
+                bool validScanDocNano = false;
 
                 if (IsValidWifiConnection(out _, out _, out string dhcpServerAddress, out string ssid))
                 {
@@ -4868,9 +4868,9 @@ namespace BmwDeepObd
                         {
                             validMhd = true;
                         }
-                        if (string.Compare(adapterIp, ScanDocAdapterIp, StringComparison.Ordinal) == 0)
+                        if (string.Compare(adapterIp, ScanDocNanoAdapterIp, StringComparison.Ordinal) == 0)
                         {
-                            validScanDoc = true;
+                            validScanDocNano = true;
                         }
                     }
                 }
@@ -4891,7 +4891,7 @@ namespace BmwDeepObd
                 bool validEthernet = IsValidEthernetConnection();
                 bool ipSelected = !string.IsNullOrEmpty(SelectedEnetIp);
 
-                if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw && !validMhd && !validScanDoc &&
+                if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw && !validMhd && !validScanDocNano &&
                     string.Compare(lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     if (_baseActivity != null)

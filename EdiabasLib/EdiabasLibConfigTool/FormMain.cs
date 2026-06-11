@@ -577,7 +577,8 @@ namespace EdiabasLibConfigTool
                                 ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
                                 ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
                                 ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase) ||
-                                ssidString.StartsWith(Patch.AdapterSsidMhd, StringComparison.OrdinalIgnoreCase)
+                                ssidString.StartsWith(Patch.AdapterSsidMhd, StringComparison.OrdinalIgnoreCase) ||
+                                Patch.AdapterSsidScanDocNanoRegEx.IsMatch(ssidString)
                                )
                             {
                                 string bssString = conn.wlanAssociationAttributes.Dot11Bssid.ToString();
@@ -612,7 +613,8 @@ namespace EdiabasLibConfigTool
                                 ap.Name.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
                                 ap.Name.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
                                 ap.Name.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase) ||
-                                ap.Name.StartsWith(Patch.AdapterSsidMhd, StringComparison.OrdinalIgnoreCase)
+                                ap.Name.StartsWith(Patch.AdapterSsidMhd, StringComparison.OrdinalIgnoreCase) ||
+                                Patch.AdapterSsidScanDocNanoRegEx.IsMatch(ap.Name)
                                )
                             {
                                 ListViewItem listViewItem =
