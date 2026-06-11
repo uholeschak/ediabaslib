@@ -824,6 +824,7 @@ namespace BmwDeepObd
         public const string AdapterSsidModBmw = "modBMW ENET";
         public const string AdapterSsidUniCar = "UniCarScan";
         public const string AdapterSsidMhd = @"MHD ENET";
+        public static Regex AdapterSsidScanDocRegEx = new Regex(@"^N[0-9]+", RegexOptions.Compiled);
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
@@ -4087,6 +4088,11 @@ namespace BmwDeepObd
                         return adapterIp;
                     }
                     if (ssid.Contains(AdapterSsidMhd))
+                    {
+                        defaultPassword = string.Empty;
+                        return adapterIp;
+                    }
+                    if (AdapterSsidScanDocRegEx.IsMatch(ssid))
                     {
                         defaultPassword = string.Empty;
                         return adapterIp;
