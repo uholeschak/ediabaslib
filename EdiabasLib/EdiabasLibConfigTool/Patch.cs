@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace EdiabasLibConfigTool
@@ -28,6 +29,7 @@ namespace EdiabasLibConfigTool
         public const string AdapterSsidModBmw = @"modBMW ENET";
         public const string PasswordWifiModBmw = @"12345678";
         public const string AdapterSsidUniCar = @"UniCarScan";
+        public static Regex AdapterSsidScanDocNanoRegEx = new Regex(@"^\s*N\d+\s*$", RegexOptions.Compiled);
         public const string PasswordWifiUniCar = @"12345678";
         public const string AdapterSsidMhd = @"MHD ENET";
         public const string PasswordWifiMhd = @"123456789";
@@ -436,7 +438,8 @@ namespace EdiabasLibConfigTool
                         ssidString.StartsWith(AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
                         ssidString.StartsWith(AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
                         ssidString.StartsWith(AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase) ||
-                        ssidString.StartsWith(AdapterSsidMhd, StringComparison.OrdinalIgnoreCase))
+                        ssidString.StartsWith(AdapterSsidMhd, StringComparison.OrdinalIgnoreCase) ||
+                        AdapterSsidScanDocNanoRegEx.IsMatch(ssidString))
                     {
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIpAllCombined);
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", enetVehicleProtocol);

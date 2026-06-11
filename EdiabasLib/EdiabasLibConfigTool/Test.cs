@@ -181,6 +181,7 @@ namespace EdiabasLibConfigTool
                     bool isModBmw = ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase);
                     bool isUniCar = ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase);
                     bool isMhd = ssidString.StartsWith(Patch.AdapterSsidMhd, StringComparison.OrdinalIgnoreCase);
+                    bool isScanDocNano = Patch.AdapterSsidScanDocNanoRegEx.IsMatch(ssidString);
 
                     IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                     if (ipProp == null)
@@ -195,7 +196,7 @@ namespace EdiabasLibConfigTool
                         return false;
                     }
 
-                    if (isEnet || isEnetLink || isModBmw || isUniCar || isMhd)
+                    if (isEnet || isEnetLink || isModBmw || isUniCar || isMhd || isScanDocNano)
                     {
                         if (configure)
                         {
