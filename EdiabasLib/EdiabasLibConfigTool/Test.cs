@@ -226,7 +226,15 @@ namespace EdiabasLibConfigTool
                                 // ignored
                             }
 
-                            _form.UpdateStatusText(string.Format(Resources.Strings.WifiUrlOk, rootPwd));
+                            StringBuilder sbMessage = new StringBuilder();
+                            sbMessage.Append(Resources.Strings.WifiUrlOk);
+                            if (!string.IsNullOrEmpty(rootPwd))
+                            {
+                                sbMessage.Append("\r\n");
+                                sbMessage.Append(string.Format(Resources.Strings.WifiAdapterRootPwd, rootPwd));
+                            }
+
+                            _form.UpdateStatusText(sbMessage.ToString());
                             TestOk = true;
                             ConfigPossible = true;
                             return true;
