@@ -18,7 +18,7 @@
       <Version>1.74.0.4165</Version>
     </PackageReference>
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Management" Version="10.0.8" />
+    <PackageReference Include="System.Management" Version="10.0.9" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
