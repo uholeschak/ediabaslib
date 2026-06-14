@@ -18,9 +18,6 @@ public class BmwRpcCoding : IDisposable
         public StatusData()
         {
             TaskActive = false;
-            CodingRpcUrl = string.Empty;
-            CodingRpcUrlTest = string.Empty;
-            CodingRpcEnableIpv6 = false;
             DayString = string.Empty;
             ValidSerial = string.Empty;
             Vin = string.Empty;
@@ -45,9 +42,6 @@ public class BmwRpcCoding : IDisposable
         }
 
         public bool TaskActive { get; set; }
-        public string CodingRpcUrl { get; set; }
-        public string CodingRpcUrlTest { get; set; }
-        public bool CodingRpcEnableIpv6 { get; set; }
         public string DayString { get; set; }
         public string ValidSerial { get; set; }
         public string Vin { get; set; }
