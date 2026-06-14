@@ -560,53 +560,12 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
-    public async Task<bool> RpcClientConnect()
+    public async Task<bool> RpcClientConnect(string loadUrl, bool enableIpV6)
     {
         try
         {
             if (_ediabasProxyClient == null)
             {
-                return false;
-            }
-
-            if (!_activityCommon.IsNetworkPresent(out string domains))
-            {
-                return false;
-            }
-
-            string loadUrl;
-            bool enableIpV6 = false;
-            lock (StatusLock)
-            {
-                if (string.IsNullOrEmpty(_statusData.Url))
-                {
-                    string url;
-                    if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (!string.IsNullOrEmpty(_statusData.CodingRpcUrlTest))
-                        {
-                            url = _statusData.CodingRpcUrlTest;
-                        }
-                        else
-                        {
-                            url = @"vm-ista.local.holeschak.de:" + PsdzRpcServiceConstants.DefaultTcpPort;
-                        }
-                    }
-                    else
-                    {
-                        url = _statusData.CodingRpcUrl;
-                    }
-
-                    _statusData.Url = url;
-                }
-
-                loadUrl = _statusData.Url;
-                enableIpV6 = _statusData.CodingRpcEnableIpv6;
-            }
-
-            if (string.IsNullOrEmpty(loadUrl))
-            {
-                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
                 return false;
             }
 
