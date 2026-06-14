@@ -30,6 +30,7 @@ public class BmwRpcCoding : IDisposable
             TraceActive = true;
             TraceAppend = false;
             CommErrorsOccurred = false;
+            StatusMessage = string.Empty;
         }
 
         public bool TaskActive { get; set; }
@@ -46,7 +47,12 @@ public class BmwRpcCoding : IDisposable
         public bool TraceActive { get; set; }
         public bool TraceAppend { get; set; }
         public bool CommErrorsOccurred { get; set; }
+        public string StatusMessage { get; set; }
     }
+
+#if DEBUG
+    private static readonly string Tag = typeof(BmwRpcCoding).FullName;
+#endif
 
     private bool _disposed;
     private ActivityCommon _activityCommon;
@@ -56,24 +62,20 @@ public class BmwRpcCoding : IDisposable
     private Task<bool> _startTask;
     private CancellationTokenSource _startCts;
     private object _startLock = new object();
-    private object _statusLock = new object();
-
-#if DEBUG
-    private static readonly string Tag = typeof(BmwRpcCoding).FullName;
-#endif
+    public object StatusLock { get; private set; } = new object();
 
     public PsdzRpcClient.PsdzRpcClient PsdzRpcClient
     {
         get
         {
-            lock (_statusLock)
+            lock (StatusLock)
             {
                 return _psdzRpcClient;
             }
         }
         private set
         {
-            lock (_statusLock)
+            lock (StatusLock)
             {
                 _psdzRpcClient = value;
             }
@@ -190,6 +192,12 @@ public class BmwRpcCoding : IDisposable
                 {
                     return;
                 }
+
+                lock (StatusLock)
+                {
+                    _statusData.StatusMessage = msgArgs.Message;
+                }
+                msgArgs.Result = true;
             };
 
             _psdzRpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
@@ -211,6 +219,24 @@ public class BmwRpcCoding : IDisposable
                 {
                     return;
                 }
+
+                try
+                {
+                    if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
+                    {
+                        string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzAppClient.log");
+
+                        bool result = await _psdzRpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
+
+                        bool resetResult = await _psdzRpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ResetStarterGuard result: {0}", resetResult);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             };
 
 
@@ -223,7 +249,7 @@ public class BmwRpcCoding : IDisposable
 
                 string adapterSerial = ActivityCommon.LastAdapterSerial ?? string.Empty;
                 string validSerial;
-                lock (_statusLock)
+                lock (StatusLock)
                 {
                     validSerial = _statusData.ValidSerial ?? string.Empty;
                 }
@@ -249,6 +275,10 @@ public class BmwRpcCoding : IDisposable
             {
                 if (messageType == EdiabasProxyClient.MessageType.Error)
                 {
+                    lock (StatusLock)
+                    {
+                        _statusData.CommErrorsOccurred = true;
+                    }
                 }
 
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
