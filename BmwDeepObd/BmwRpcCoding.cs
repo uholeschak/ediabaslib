@@ -36,6 +36,8 @@ public class BmwRpcCoding : IDisposable
             StatusOptionTypes = null;
             RpcListItems = null;
             StatusMessage = string.Empty;
+            ShowMessage = null;
+            ShowMessageWait = null;
             StatusUpdateTime = null;
             RpcClientConnected = false;
             ProgressIndeterminate = false;
@@ -61,6 +63,8 @@ public class BmwRpcCoding : IDisposable
         public List<PsdzRpcOptionType> StatusOptionTypes { get; set; }
         public List<PsdzRpcOptionItem> RpcListItems { get; set; }
         public string StatusMessage { get; set; }
+        public string ShowMessage { get; set; }
+        public ShowMessageEventArgs ShowMessageWait { get; set; }
         public DateTime? StatusUpdateTime { get; set; }
         public bool RpcClientConnected { get; set; }
         public bool ProgressIndeterminate { get; set; }
@@ -140,6 +144,8 @@ public class BmwRpcCoding : IDisposable
                         lock (StatusLock)
                         {
                             _statusData.StatusMessage = string.Empty;
+                            _statusData.ShowMessage = null;
+                            _statusData.ShowMessageWait = null;
                         }
                         await RpcClientUpdateDisplay().ConfigureAwait(false);
                     }
@@ -151,6 +157,8 @@ public class BmwRpcCoding : IDisposable
                             _statusData.StatusOptionTypes = null;
                             _statusData.RpcListItems = null;
                             _statusData.StatusUpdateTime = null;
+                            _statusData.ShowMessage = null;
+                            _statusData.ShowMessageWait = null;
                         }
                     }
                 }
@@ -265,6 +273,8 @@ public class BmwRpcCoding : IDisposable
                     {
                         _statusData.Vin = null;
                         _statusData.LicenseValid = false;
+                        _statusData.ShowMessage = null;
+                        _statusData.ShowMessageWait = null;
                     }
 
                     await RpcClientTaskCompleted().ConfigureAwait(false);
@@ -386,21 +396,49 @@ public class BmwRpcCoding : IDisposable
             {
                 if (_disposed)
                 {
+                    msgArgs.Result = false;
                     return;
                 }
 
-                lock (StatusLock)
+                try
                 {
-                    _statusData.StatusMessage = msgArgs.Message;
+                    lock (StatusLock)
+                    {
+                        lock (StatusLock)
+                        {
+                            _statusData.ShowMessage = msgArgs.Message;
+                        }
+                    }
+
+                    UpdateDisplayEvent?.Invoke();
+                    msgArgs.Result = true;
                 }
-                msgArgs.Result = true;
+                catch (Exception)
+                {
+                    msgArgs.Result = false;
+                }
             };
 
             _psdzRpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
             {
                 if (_disposed)
                 {
+                    msgArgs.SetResult(false);
                     return;
+                }
+
+                try
+                {
+                    lock (StatusLock)
+                    {
+                        _statusData.ShowMessageWait = msgArgs;
+                    }
+
+                    UpdateDisplayEvent?.Invoke();
+                }
+                catch (Exception)
+                {
+                    msgArgs.SetResult(false);
                 }
             };
 
