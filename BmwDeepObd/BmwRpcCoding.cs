@@ -72,7 +72,11 @@ public class BmwRpcCoding : IDisposable
     }
 
     public delegate void UpdateDisplayDelegate();
+    public delegate void UpdateProgressDelegate();
+    public delegate void UpdateTimeDelegate();
     public event UpdateDisplayDelegate UpdateDisplayEvent;
+    public event UpdateProgressDelegate UpdateProgressEvent;
+    public event UpdateTimeDelegate UpdateTimeEvent;
 
 #if DEBUG
     private static readonly string Tag = typeof(BmwRpcCoding).FullName;
@@ -180,7 +184,7 @@ public class BmwRpcCoding : IDisposable
                     _statusData.StatusUpdateTime = pingDateTime;
                 }
 
-                UpdateDisplayEvent?.Invoke();
+                UpdateTimeEvent?.Invoke();
             };
 
             _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += async (s, success) =>
@@ -342,7 +346,7 @@ public class BmwRpcCoding : IDisposable
                         _statusData.ProgressPercent = progressArgs.Percent;
                     }
 
-                    UpdateDisplayEvent?.Invoke();
+                    UpdateProgressEvent?.Invoke();
                 }
                 catch (Exception)
                 {
