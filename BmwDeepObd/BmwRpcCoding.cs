@@ -116,7 +116,7 @@ public class BmwRpcCoding : IDisposable
         _activityCommon = new ActivityCommon(appContext);
     }
 
-    private bool CreateRpcClient(EdiabasNet ediabas)
+    public bool CreateRpcClient(EdiabasNet ediabas)
     {
         try
         {
@@ -556,6 +556,138 @@ public class BmwRpcCoding : IDisposable
         }
         catch (Exception)
         {
+            return false;
+        }
+    }
+
+    public async Task<bool> RpcClientConnect()
+    {
+        try
+        {
+            if (_ediabasProxyClient == null)
+            {
+                return false;
+            }
+
+            if (!_activityCommon.IsNetworkPresent(out string domains))
+            {
+                return false;
+            }
+
+            string loadUrl;
+            bool enableIpV6 = false;
+            lock (StatusLock)
+            {
+                if (string.IsNullOrEmpty(_statusData.Url))
+                {
+                    string url;
+                    if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!string.IsNullOrEmpty(_statusData.CodingRpcUrlTest))
+                        {
+                            url = _statusData.CodingRpcUrlTest;
+                        }
+                        else
+                        {
+                            url = @"vm-ista.local.holeschak.de:" + PsdzRpcServiceConstants.DefaultTcpPort;
+                        }
+                    }
+                    else
+                    {
+                        url = _statusData.CodingRpcUrl;
+                    }
+
+                    _statusData.Url = url;
+                }
+
+                loadUrl = _statusData.Url;
+                enableIpV6 = _statusData.CodingRpcEnableIpv6;
+            }
+
+            if (string.IsNullOrEmpty(loadUrl))
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
+                return false;
+            }
+
+            string normalizedUrl = loadUrl;
+            if (!normalizedUrl.Contains("://"))
+            {
+                normalizedUrl = "http://" + normalizedUrl;
+            }
+
+            if (!Uri.TryCreate(normalizedUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Invalid loadUrl={0}", loadUrl);
+                return false;
+            }
+
+            string remoteHost = loadUri.Host;
+            int remotePort = loadUri.Port > 0 ? loadUri.Port : PsdzRpcServiceConstants.DefaultTcpPort;
+            bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, enableIpV6, null, _startCts.Token).ConfigureAwait(false);
+            if (!connected)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
+                return false;
+            }
+
+            int localVersion = PsdzRpcServiceConstants.InterfaceVersion;
+            int remoteVersion = await _psdzRpcClient.RpcService.GetInterfaceVersion().ConfigureAwait(false);
+            if (remoteVersion < localVersion)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Interface version mismatch");
+                return false;
+            }
+
+            string istaFolder = await _psdzRpcClient.RpcService.GetIstaInstallLocation().ConfigureAwait(false);
+            if (string.IsNullOrEmpty(istaFolder))
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Failed to get ISTA install location");
+                return false;
+            }
+
+            lock (StatusLock)
+            {
+                _statusData.IstaFolder = istaFolder;
+            }
+
+            bool licenseResult = await _psdzRpcClient.RpcService.SetLicenseValid(true).ConfigureAwait(false);
+            if (!licenseResult)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLicenseValid failed");
+                return false;
+            }
+
+            string language = _activityCommon.GetCurrentLanguage();
+            bool matched = await _psdzRpcClient.RpcService.SetLanguage(language, true).ConfigureAwait(false);
+            if (matched)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage matched: {0}", language);
+            }
+            else
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage mismatch: {0}", language);
+            }
+
+            if (!_ediabasProxyClient.StartEdiabasThread())
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
+                return false;
+            }
+
+            bool proxyResult = await _psdzRpcClient.RpcService.EnableVehicleProxy().ConfigureAwait(false);
+            if (!proxyResult)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Exception={0}",
+                EdiabasNet.GetExceptionText(ex, false, false));
             return false;
         }
     }

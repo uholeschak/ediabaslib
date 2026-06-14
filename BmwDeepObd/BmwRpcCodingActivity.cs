@@ -2033,7 +2033,7 @@ namespace BmwDeepObd
             }
         }
 
-        async Task DisposeRpcClient()
+        private async Task DisposeRpcClient()
         {
             try
             {
