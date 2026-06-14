@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Android.Widget;
 using EdiabasLib;
 using PsdzRpcClient;
 using PsdzRpcServer.Shared;
@@ -38,6 +39,8 @@ public class BmwRpcCoding : IDisposable
             StatusMessage = string.Empty;
             StatusUpdateTime = null;
             RpcClientConnected = false;
+            ProgressIndeterminate = false;
+            ProgressPercent = 0;
         }
 
         public bool TaskActive { get; set; }
@@ -61,6 +64,8 @@ public class BmwRpcCoding : IDisposable
         public string StatusMessage { get; set; }
         public DateTime? StatusUpdateTime { get; set; }
         public bool RpcClientConnected { get; set; }
+        public bool ProgressIndeterminate { get; set; }
+        public int ProgressPercent { get; set; }
     }
 
 #if DEBUG
@@ -117,6 +122,40 @@ public class BmwRpcCoding : IDisposable
                 {
                     return;
                 }
+
+                try
+                {
+                    _ediabasProxyClient.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
+                        connected);
+
+                    lock (StatusLock)
+                    {
+                        _statusData.RpcClientConnected = connected;
+                    }
+
+                    if (connected)
+                    {
+                        lock (StatusLock)
+                        {
+                            _statusData.StatusMessage = string.Empty;
+                        }
+                        await RpcClientUpdateDisplay().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        lock (StatusLock)
+                        {
+                            _statusData.StatusInfo = null;
+                            _statusData.StatusOptionTypes = null;
+                            _statusData.RpcListItems = null;
+                            _statusData.StatusUpdateTime = null;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             };
 
             _psdzRpcClient.PingUpdated += (sender, pingDateTime) =>
@@ -124,6 +163,11 @@ public class BmwRpcCoding : IDisposable
                 if (_disposed)
                 {
                     return;
+                }
+
+                lock (StatusLock)
+                {
+                    _statusData.StatusUpdateTime = pingDateTime;
                 }
             };
 
@@ -133,6 +177,17 @@ public class BmwRpcCoding : IDisposable
                 {
                     return;
                 }
+
+                try
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
+                        success);
+                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             };
 
             _psdzRpcClient.CallbackHandler.StopProgrammingCompleted += async (s, success) =>
@@ -140,6 +195,17 @@ public class BmwRpcCoding : IDisposable
                 if (_disposed)
                 {
                     return;
+                }
+
+                try
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
+                        success);
+                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             };
 
@@ -149,6 +215,35 @@ public class BmwRpcCoding : IDisposable
                 {
                     return;
                 }
+
+                try
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}, LicenseValid={2}",
+                        connectArgs.Success, connectArgs.Vin, connectArgs.LicenseValid);
+
+                    if (connectArgs.Success)
+                    {
+                        lock (StatusLock)
+                        {
+                            _statusData.Vin = connectArgs.Vin;
+                            _statusData.LicenseValid = connectArgs.LicenseValid;
+                        }
+                    }
+                    else
+                    {
+                        lock (StatusLock)
+                        {
+                            _statusData.Vin = null;
+                            _statusData.LicenseValid = false;
+                        }
+                    }
+
+                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             };
 
             _psdzRpcClient.CallbackHandler.DisconnectVehicleCompleted += async (s, success) =>
@@ -156,6 +251,23 @@ public class BmwRpcCoding : IDisposable
                 if (_disposed)
                 {
                     return;
+                }
+
+                try
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
+                        success);
+                    lock (StatusLock)
+                    {
+                        _statusData.Vin = null;
+                        _statusData.LicenseValid = false;
+                    }
+
+                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             };
 
@@ -165,6 +277,18 @@ public class BmwRpcCoding : IDisposable
                 {
                     return;
                 }
+
+                try
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
+                        vehicleArgs.Success, vehicleArgs.OperationType);
+
+                    await RpcClientTaskCompleted().ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             };
 
             _psdzRpcClient.CallbackHandler.UpdateStatus += async (s, message) =>
@@ -172,6 +296,20 @@ public class BmwRpcCoding : IDisposable
                 if (_disposed)
                 {
                     return;
+                }
+
+                try
+                {
+                    lock (StatusLock)
+                    {
+                        _statusData.StatusMessage = message;
+                    }
+
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             };
 
@@ -181,6 +319,13 @@ public class BmwRpcCoding : IDisposable
                 {
                     return;
                 }
+
+                lock (StatusLock)
+                {
+                    _statusData.ProgressIndeterminate = progressArgs.Marquee;
+                    _statusData.ProgressPercent = progressArgs.Percent;
+                }
+                // Update display
             };
 
             _psdzRpcClient.CallbackHandler.UpdateOptions += async (sender, optionArgs) =>
@@ -358,6 +503,40 @@ public class BmwRpcCoding : IDisposable
         catch (Exception)
         {
             return false;
+        }
+    }
+
+    private async Task RpcClientTaskStarted()
+    {
+        lock (StatusLock)
+        {
+            _statusData.TaskActive = true;
+        }
+
+        try
+        {
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+
+    private async Task RpcClientTaskCompleted()
+    {
+        lock (StatusLock)
+        {
+            _statusData.TaskActive = false;
+        }
+
+        try
+        {
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // ignored
         }
     }
 
