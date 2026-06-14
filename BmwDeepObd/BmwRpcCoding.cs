@@ -12,78 +12,77 @@ namespace BmwDeepObd;
 
 public class BmwRpcCoding : IDisposable
 {
+    public class StatusData
+    {
+        public StatusData()
+        {
+            TaskActive = false;
+            CodingRpcUrl = string.Empty;
+            CodingRpcUrlTest = string.Empty;
+            CodingRpcEnableIpv6 = false;
+            DayString = string.Empty;
+            ValidSerial = string.Empty;
+            Vin = string.Empty;
+            LicenseValid = false;
+            Url = string.Empty;
+            IstaFolder = string.Empty;
+            TraceDir = string.Empty;
+            TraceActive = true;
+            TraceAppend = false;
+            CommErrorsOccurred = false;
+        }
+
+        public bool TaskActive { get; set; }
+        public string CodingRpcUrl { get; set; }
+        public string CodingRpcUrlTest { get; set; }
+        public bool CodingRpcEnableIpv6 { get; set; }
+        public string DayString { get; set; }
+        public string ValidSerial { get; set; }
+        public string Vin { get; set; }
+        public bool LicenseValid { get; set; }
+        public string Url { get; set; }
+        public string IstaFolder { get; set; }
+        public string TraceDir { get; set; }
+        public bool TraceActive { get; set; }
+        public bool TraceAppend { get; set; }
+        public bool CommErrorsOccurred { get; set; }
+    }
+
     private bool _disposed;
     private ActivityCommon _activityCommon;
     private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
     private EdiabasProxyClient _ediabasProxyClient;
+    private StatusData _statusData;
     private Task<bool> _startTask;
     private CancellationTokenSource _startCts;
     private object _startLock = new object();
     private object _statusLock = new object();
-    private object _dataLock = new object();
 
 #if DEBUG
     private static readonly string Tag = typeof(BmwRpcCoding).FullName;
 #endif
 
-    private bool _taskActive;
-    public bool TaskActive
-    {
-        get
-        {
-            lock (_statusLock)
-            {
-                return _taskActive;
-            }
-        }
-        private set
-        {
-            lock (_statusLock)
-            {
-                _taskActive = value;
-            }
-        }
-    }
-
     public PsdzRpcClient.PsdzRpcClient PsdzRpcClient
     {
         get
         {
-            lock (_dataLock)
+            lock (_statusLock)
             {
                 return _psdzRpcClient;
             }
         }
         private set
         {
-            lock (_dataLock)
+            lock (_statusLock)
             {
                 _psdzRpcClient = value;
             }
         }
     }
 
-    string _adapterSerialValid;
-    public string AdapterSerialValid
-    {
-        get
-        {
-            lock (_dataLock)
-            {
-                return _adapterSerialValid;
-            }
-        }
-        private set
-        {
-            lock (_dataLock)
-            {
-                _adapterSerialValid = value;
-            }
-        }
-    }
-
     public BmwRpcCoding(Context context)
     {
+        _statusData = new StatusData();
         _activityCommon = new ActivityCommon(context);
     }
 
@@ -224,9 +223,9 @@ public class BmwRpcCoding : IDisposable
 
                 string adapterSerial = ActivityCommon.LastAdapterSerial ?? string.Empty;
                 string validSerial;
-                lock (_dataLock)
+                lock (_statusLock)
                 {
-                    validSerial = AdapterSerialValid ?? string.Empty;
+                    validSerial = _statusData.ValidSerial ?? string.Empty;
                 }
 
                 bool adapterSerialValid = false;
