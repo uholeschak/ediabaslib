@@ -24,9 +24,6 @@ public class BmwRpcCoding : IDisposable
             LicenseValid = false;
             Url = string.Empty;
             IstaFolder = string.Empty;
-            TraceDir = string.Empty;
-            TraceActive = true;
-            TraceAppend = false;
             CommErrorsOccurred = false;
             SelectedSwiRegister = null;
             StatusInfo = null;
@@ -48,9 +45,6 @@ public class BmwRpcCoding : IDisposable
         public bool LicenseValid { get; set; }
         public string Url { get; set; }
         public string IstaFolder { get; set; }
-        public string TraceDir { get; set; }
-        public bool TraceActive { get; set; }
-        public bool TraceAppend { get; set; }
         public bool CommErrorsOccurred { get; set; }
         public PsdzRpcSwiRegisterEnum? SelectedSwiRegister { get; set; }
         public PsdzRpcStatusInfo StatusInfo { get; set; }
@@ -82,27 +76,7 @@ public class BmwRpcCoding : IDisposable
     private EdiabasProxyClient _ediabasProxyClient;
     private StatusData _statusData;
     private Task<bool> _startTask;
-    private CancellationTokenSource _startCts;
-    private object _startLock = new object();
-    public object StatusLock { get; private set; } = new object();
-
-    public PsdzRpcClient.PsdzRpcClient PsdzRpcClient
-    {
-        get
-        {
-            lock (StatusLock)
-            {
-                return _psdzRpcClient;
-            }
-        }
-        private set
-        {
-            lock (StatusLock)
-            {
-                _psdzRpcClient = value;
-            }
-        }
-    }
+    public object StatusLock { get; } = new object();
 
     public BmwRpcCoding(Context appContext)
     {
@@ -554,7 +528,7 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
-    public async Task<bool> RpcClientConnect(string loadUrl, bool enableIpV6)
+    public async Task<bool> RpcClientConnect(string loadUrl, bool enableIpV6, CancellationTokenSource startCts)
     {
         try
         {
@@ -577,7 +551,7 @@ public class BmwRpcCoding : IDisposable
 
             string remoteHost = loadUri.Host;
             int remotePort = loadUri.Port > 0 ? loadUri.Port : PsdzRpcServiceConstants.DefaultTcpPort;
-            bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, enableIpV6, null, _startCts.Token).ConfigureAwait(false);
+            bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, enableIpV6, null, startCts.Token).ConfigureAwait(false);
             if (!connected)
             {
                 _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
