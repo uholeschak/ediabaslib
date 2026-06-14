@@ -75,7 +75,6 @@ public class BmwRpcCoding : IDisposable
     private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
     private EdiabasProxyClient _ediabasProxyClient;
     private StatusData _statusData;
-    private Task<bool> _startTask;
     public object StatusLock { get; } = new object();
 
     public BmwRpcCoding(Context appContext)
@@ -616,6 +615,34 @@ public class BmwRpcCoding : IDisposable
             _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Exception={0}",
                 EdiabasNet.GetExceptionText(ex, false, false));
             return false;
+        }
+    }
+
+    public async Task DisposeRpcClient()
+    {
+        try
+        {
+            if (_psdzRpcClient != null)
+            {
+                _psdzRpcClient.Dispose();
+                _psdzRpcClient = null;
+            }
+
+            if (_ediabasProxyClient != null)
+            {
+                await _ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
+                await _ediabasProxyClient.DisposeAsync().ConfigureAwait(false);
+                _ediabasProxyClient = null;
+            }
+
+            lock (StatusLock)
+            {
+                _statusData.RpcClientConnected = false;
+            }
+        }
+        catch (Exception)
+        {
+            // ignored
         }
     }
 
