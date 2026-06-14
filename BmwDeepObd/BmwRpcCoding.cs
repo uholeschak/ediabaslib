@@ -803,7 +803,13 @@ public class BmwRpcCoding : IDisposable
             // and unmanaged resources.
             if (disposing)
             {
-                _activityCommon.Dispose();
+                Task.Run(DisposeRpcClient).GetAwaiter().GetResult();
+
+                if (_activityCommon != null)
+                {
+                    _activityCommon.Dispose();
+                    _activityCommon = null;
+                }
             }
         }
 
