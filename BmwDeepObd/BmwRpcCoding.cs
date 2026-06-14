@@ -1,5 +1,4 @@
 ﻿using Android.Content;
-using Android.Widget;
 using EdiabasLib;
 using PsdzRpcClient;
 using PsdzRpcServer.Shared;
@@ -68,6 +67,9 @@ public class BmwRpcCoding : IDisposable
         public int ProgressPercent { get; set; }
     }
 
+    public delegate void UpdateDisplayDelegate();
+    public event UpdateDisplayDelegate UpdateDisplayEvent;
+
 #if DEBUG
     private static readonly string Tag = typeof(BmwRpcCoding).FullName;
 #endif
@@ -106,7 +108,7 @@ public class BmwRpcCoding : IDisposable
         _activityCommon = new ActivityCommon(appContext);
     }
 
-    private bool CreateRpcClient(ActivityCommon activityCommon, EdiabasNet ediabas)
+    private bool CreateRpcClient(EdiabasNet ediabas)
     {
         try
         {
@@ -169,6 +171,8 @@ public class BmwRpcCoding : IDisposable
                 {
                     _statusData.StatusUpdateTime = pingDateTime;
                 }
+
+                UpdateDisplayEvent?.Invoke();
             };
 
             _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += async (s, success) =>
@@ -320,12 +324,20 @@ public class BmwRpcCoding : IDisposable
                     return;
                 }
 
-                lock (StatusLock)
+                try
                 {
-                    _statusData.ProgressIndeterminate = progressArgs.Marquee;
-                    _statusData.ProgressPercent = progressArgs.Percent;
+                    lock (StatusLock)
+                    {
+                        _statusData.ProgressIndeterminate = progressArgs.Marquee;
+                        _statusData.ProgressPercent = progressArgs.Percent;
+                    }
+
+                    UpdateDisplayEvent?.Invoke();
                 }
-                // Update display
+                catch (Exception)
+                {
+                    // ignored
+                }
             };
 
             _psdzRpcClient.CallbackHandler.UpdateOptions += async (sender, optionArgs) =>
@@ -545,6 +557,7 @@ public class BmwRpcCoding : IDisposable
         try
         {
             await GetRemoteStatusAsync().ConfigureAwait(false);
+            UpdateDisplayEvent?.Invoke();
         }
         catch (Exception)
         {
