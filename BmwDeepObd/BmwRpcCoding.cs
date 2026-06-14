@@ -3,6 +3,7 @@ using EdiabasLib;
 using PsdzRpcClient;
 using PsdzRpcServer.Shared;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -30,7 +31,13 @@ public class BmwRpcCoding : IDisposable
             TraceActive = true;
             TraceAppend = false;
             CommErrorsOccurred = false;
+            SelectedSwiRegister = null;
+            StatusInfo = null;
+            StatusOptionTypes = null;
+            RpcListItems = null;
             StatusMessage = string.Empty;
+            StatusUpdateTime = null;
+            RpcClientConnected = false;
         }
 
         public bool TaskActive { get; set; }
@@ -47,7 +54,13 @@ public class BmwRpcCoding : IDisposable
         public bool TraceActive { get; set; }
         public bool TraceAppend { get; set; }
         public bool CommErrorsOccurred { get; set; }
+        public PsdzRpcSwiRegisterEnum? SelectedSwiRegister { get; set; }
+        public PsdzRpcStatusInfo StatusInfo { get; set; }
+        public List<PsdzRpcOptionType> StatusOptionTypes { get; set; }
+        public List<PsdzRpcOptionItem> RpcListItems { get; set; }
         public string StatusMessage { get; set; }
+        public DateTime? StatusUpdateTime { get; set; }
+        public bool RpcClientConnected { get; set; }
     }
 
 #if DEBUG
@@ -82,10 +95,10 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
-    public BmwRpcCoding(Context context)
+    public BmwRpcCoding(Context appContext)
     {
         _statusData = new StatusData();
-        _activityCommon = new ActivityCommon(context);
+        _activityCommon = new ActivityCommon(appContext);
     }
 
     private bool CreateRpcClient(ActivityCommon activityCommon, EdiabasNet ediabas)
@@ -176,6 +189,15 @@ public class BmwRpcCoding : IDisposable
                 {
                     return;
                 }
+
+                try
+                {
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             };
 
             _psdzRpcClient.CallbackHandler.UpdateOptionSelections += async (sender, swiRegisterEnum) =>
@@ -183,6 +205,23 @@ public class BmwRpcCoding : IDisposable
                 if (_disposed)
                 {
                     return;
+                }
+                try
+
+                {
+                    if (swiRegisterEnum != null)
+                    {
+                        lock (StatusLock)
+                        {
+                            _statusData.SelectedSwiRegister = swiRegisterEnum;
+                        }
+                    }
+
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             };
 
@@ -322,6 +361,86 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    private async Task RpcClientUpdateDisplay()
+    {
+        try
+        {
+            await GetRemoteStatusAsync().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+
+    private async Task<bool> GetRemoteStatusAsync()
+    {
+        try
+        {
+            if (_psdzRpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            for (int retry = 0; retry < 2; retry++)
+            {
+                PsdzRpcStatusInfo statusInfo = await _psdzRpcClient.RpcService.GetStatusInfo().ConfigureAwait(false);
+                List<PsdzRpcOptionType> statusOptionTypes = await _psdzRpcClient.RpcService.GetOptionTypes(true).ConfigureAwait(false);
+
+                PsdzRpcSwiRegisterEnum? selectedSwiRegister;
+                lock (StatusLock)
+                {
+                    _statusData.StatusInfo = statusInfo;
+                    _statusData.StatusOptionTypes = statusOptionTypes;
+                    _statusData.StatusUpdateTime = statusInfo.LastUpdated;
+
+                    if (statusInfo.HasOptionsDict)
+                    {
+                        if (_statusData.SelectedSwiRegister == null)
+                        {
+                            _statusData.SelectedSwiRegister = PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
+                        }
+                    }
+                    else
+                    {
+                        _statusData.SelectedSwiRegister = null;
+                    }
+
+                    selectedSwiRegister = _statusData.SelectedSwiRegister;
+                }
+
+                List<PsdzRpcOptionItem> rpcListItems = null;
+                if (selectedSwiRegister != null)
+                {
+                    rpcListItems = await _psdzRpcClient.RpcService.GetSelectedOptions(selectedSwiRegister).ConfigureAwait(false);
+                }
+
+                lock (StatusLock)
+                {
+                    _statusData.RpcListItems = rpcListItems;
+                }
+
+                if (!statusInfo.VehicleConnected && statusInfo.HasOptionsDict)
+                {
+                    bool cleared = await _psdzRpcClient.RpcService.ClearOptionsDict().ConfigureAwait(false);
+                    if (cleared)
+                    {
+                        // update status again
+                        continue;
+                    }
+                }
+
+                break;
+            }
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     public class AndroidLogWriter : TextWriter
     {
         private readonly string _tag;
@@ -343,6 +462,7 @@ public class BmwRpcCoding : IDisposable
             Android.Util.Log.Info(_tag, value ?? string.Empty);
         }
     }
+
     public void Dispose()
     {
         Dispose(true);
