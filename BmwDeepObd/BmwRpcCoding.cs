@@ -61,7 +61,7 @@ public class BmwRpcCoding : IDisposable
 
     public delegate void UpdateDisplayDelegate();
     public delegate void UpdateProgressDelegate(int percent, bool indeterminate);
-    public delegate void UpdateTimeDelegate();
+    public delegate void UpdateTimeDelegate(DateTime? pingDateTime);
     public event UpdateDisplayDelegate UpdateDisplayEvent;
     public event UpdateProgressDelegate UpdateProgressEvent;
     public event UpdateTimeDelegate UpdateTimeEvent;
@@ -161,7 +161,7 @@ public class BmwRpcCoding : IDisposable
                     _statusData.StatusUpdateTime = pingDateTime;
                 }
 
-                UpdateTimeEvent?.Invoke();
+                UpdateTimeEvent?.Invoke(pingDateTime);
             };
 
             _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += async (s, success) =>
