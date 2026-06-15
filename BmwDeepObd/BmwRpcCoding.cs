@@ -120,6 +120,7 @@ public class BmwRpcCoding : IDisposable
 
                     if (connected)
                     {
+                        _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                         lock (StatusLock)
                         {
                             _statusData.StatusMessage = string.Empty;
@@ -128,6 +129,7 @@ public class BmwRpcCoding : IDisposable
                     }
                     else
                     {
+                        _activityCommon.SetLock(ActivityCommon.LockType.None);
                         lock (StatusLock)
                         {
                             _statusData.StatusInfo = null;
@@ -652,6 +654,7 @@ public class BmwRpcCoding : IDisposable
             {
                 _statusData.RpcClientConnected = false;
             }
+            _activityCommon.SetLock(ActivityCommon.LockType.None);
         }
         catch (Exception)
         {
