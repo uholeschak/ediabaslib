@@ -117,8 +117,6 @@ public class BmwRpcCoding : IDisposable
                             _statusData.StatusMessage = string.Empty;
                             _statusData.ShowMessage = null;
                             _statusData.ShowMessageWait = null;
-                            _statusData.ProgressIndeterminate = false;
-                            _statusData.ProgressPercent = 0;
                         }
                         await RpcClientUpdateDisplay().ConfigureAwait(false);
                     }
@@ -132,13 +130,18 @@ public class BmwRpcCoding : IDisposable
                             _statusData.StatusUpdateTime = null;
                             _statusData.ShowMessage = null;
                             _statusData.ShowMessageWait = null;
-                            _statusData.ProgressIndeterminate = false;
-                            _statusData.ProgressPercent = 0;
                             _statusData.CommErrorsOccurred = true;
                         }
                     }
 
+                    lock (StatusLock)
+                    {
+                        _statusData.ProgressIndeterminate = false;
+                        _statusData.ProgressPercent = 0;
+                    }
+
                     UpdateProgressEvent?.Invoke(0, false);
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
