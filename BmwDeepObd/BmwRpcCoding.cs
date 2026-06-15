@@ -60,7 +60,7 @@ public class BmwRpcCoding : IDisposable
     }
 
     public delegate void UpdateDisplayDelegate();
-    public delegate void UpdateProgressDelegate();
+    public delegate void UpdateProgressDelegate(int percent, bool indeterminate);
     public delegate void UpdateTimeDelegate();
     public event UpdateDisplayDelegate UpdateDisplayEvent;
     public event UpdateProgressDelegate UpdateProgressEvent;
@@ -313,7 +313,7 @@ public class BmwRpcCoding : IDisposable
                         _statusData.ProgressPercent = progressArgs.Percent;
                     }
 
-                    UpdateProgressEvent?.Invoke();
+                    UpdateProgressEvent?.Invoke(progressArgs.Percent, progressArgs.Marquee);
                 }
                 catch (Exception)
                 {
