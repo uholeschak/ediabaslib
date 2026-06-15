@@ -633,6 +633,36 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public async Task<bool> ConnectVehicle()
+    {
+        try
+        {
+            string istaFolder;
+            lock (StatusLock)
+            {
+                istaFolder = _statusData.IstaFolder;
+            }
+
+            bool result = await _psdzRpcClient.RpcService.ConnectVehicle(istaFolder, string.Empty, false).ConfigureAwait(false);
+            if (result)
+            {
+                await RpcClientTaskStarted().ConfigureAwait(false);
+            }
+            else
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
+
+    }
+
     public async Task DisposeRpcClient()
     {
         try
