@@ -123,8 +123,6 @@ public class BmwRpcCoding : IDisposable
                         lock (StatusLock)
                         {
                             _statusData.StatusMessage = string.Empty;
-                            _statusData.ShowMessage = null;
-                            _statusData.ShowMessageWait = null;
                         }
                         await RpcClientUpdateDisplay().ConfigureAwait(false);
                     }
@@ -136,14 +134,14 @@ public class BmwRpcCoding : IDisposable
                             _statusData.StatusOptionTypes = null;
                             _statusData.RpcListItems = null;
                             _statusData.StatusUpdateTime = null;
-                            _statusData.ShowMessage = null;
-                            _statusData.ShowMessageWait = null;
                             _statusData.CommErrorsOccurred = true;
                         }
                     }
 
                     lock (StatusLock)
                     {
+                        _statusData.ShowMessage = null;
+                        _statusData.ShowMessageWait = null;
                         _statusData.ProgressIndeterminate = false;
                         _statusData.ProgressPercent = 0;
                     }
@@ -832,28 +830,6 @@ public class BmwRpcCoding : IDisposable
         catch (Exception)
         {
             return false;
-        }
-    }
-
-    public class AndroidLogWriter : TextWriter
-    {
-        private readonly string _tag;
-
-        public AndroidLogWriter(string tag)
-        {
-            _tag = tag;
-        }
-
-        public override System.Text.Encoding Encoding => System.Text.Encoding.UTF8;
-
-        public override void WriteLine(string value)
-        {
-            Android.Util.Log.Info(_tag, value ?? string.Empty);
-        }
-
-        public override void Write(string value)
-        {
-            Android.Util.Log.Info(_tag, value ?? string.Empty);
         }
     }
 
