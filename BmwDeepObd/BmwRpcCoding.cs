@@ -660,7 +660,52 @@ public class BmwRpcCoding : IDisposable
                 EdiabasNet.GetExceptionText(ex, false, false));
             return false;
         }
+    }
 
+    public async Task<bool> DisconnectVehicle()
+    {
+        try
+        {
+            bool result = await _psdzRpcClient.RpcService.DisconnectVehicle().ConfigureAwait(false);
+            if (result)
+            {
+                await RpcClientTaskStarted().ConfigureAwait(false);
+            }
+            else
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
+    }
+
+    public async Task<bool> VehicleFunctions(PsdzOperationType operationType)
+    {
+        try
+        {
+            bool result = await _psdzRpcClient.RpcService.VehicleFunctions(operationType).ConfigureAwait(false);
+            if (result)
+            {
+                await RpcClientTaskStarted().ConfigureAwait(false);
+            }
+            else
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions {0} failed", operationType);
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions {0}: Exception={1}", operationType,
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
     }
 
     public async Task DisposeRpcClient()
