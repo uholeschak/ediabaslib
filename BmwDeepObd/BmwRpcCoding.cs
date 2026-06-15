@@ -38,6 +38,14 @@ public class BmwRpcCoding : IDisposable
             ProgressPercent = 0;
         }
 
+        public StatusData Clone()
+        {
+            StatusData clone = (StatusData)MemberwiseClone();
+            clone.StatusOptionTypes = StatusOptionTypes != null ? new List<PsdzRpcOptionType>(StatusOptionTypes) : null;
+            clone.RpcListItems = RpcListItems != null ? new List<PsdzRpcOptionItem>(RpcListItems) : null;
+            return clone;
+        }
+
         public bool TaskActive { get; set; }
         public string DayString { get; set; }
         public string ValidSerial { get; set; }
@@ -59,7 +67,7 @@ public class BmwRpcCoding : IDisposable
         public int ProgressPercent { get; set; }
     }
 
-    public delegate void UpdateDisplayDelegate();
+    public delegate void UpdateDisplayDelegate(StatusData statusData);
     public delegate void UpdateProgressDelegate(int percent, bool indeterminate);
     public delegate void UpdateTimeDelegate(DateTime? pingDateTime);
     public event UpdateDisplayDelegate UpdateDisplayEvent;
@@ -140,7 +148,7 @@ public class BmwRpcCoding : IDisposable
                         _statusData.ProgressPercent = 0;
                     }
 
-                    UpdateProgressEvent?.Invoke(0, false);
+                    UpdateProgress();
                     await RpcClientUpdateDisplay().ConfigureAwait(false);
                 }
                 catch (Exception)
@@ -161,7 +169,7 @@ public class BmwRpcCoding : IDisposable
                     _statusData.StatusUpdateTime = pingDateTime;
                 }
 
-                UpdateTimeEvent?.Invoke(pingDateTime);
+                UpdateTime();
             };
 
             _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += async (s, success) =>
@@ -323,7 +331,7 @@ public class BmwRpcCoding : IDisposable
                         _statusData.ProgressPercent = progressArgs.Percent;
                     }
 
-                    UpdateProgressEvent?.Invoke(progressArgs.Percent, progressArgs.Marquee);
+                    UpdateProgress();
                 }
                 catch (Exception)
                 {
@@ -385,13 +393,10 @@ public class BmwRpcCoding : IDisposable
                 {
                     lock (StatusLock)
                     {
-                        lock (StatusLock)
-                        {
-                            _statusData.ShowMessage = msgArgs.Message;
-                        }
+                        _statusData.ShowMessage = msgArgs.Message;
                     }
 
-                    UpdateDisplayEvent?.Invoke();
+                    UpdateDisplay();
                     msgArgs.Result = true;
                 }
                 catch (Exception)
@@ -415,7 +420,7 @@ public class BmwRpcCoding : IDisposable
                         _statusData.ShowMessageWait = msgArgs;
                     }
 
-                    UpdateDisplayEvent?.Invoke();
+                    UpdateDisplay();
                 }
                 catch (Exception)
                 {
@@ -690,12 +695,71 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public bool UpdateDisplay()
+    {
+        try
+        {
+            StatusData statusData;
+            lock (StatusLock)
+            {
+                statusData = _statusData.Clone();
+            }
+
+            UpdateDisplayEvent?.Invoke(statusData);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public bool UpdateProgress()
+    {
+        try
+        {
+            int progressPercent;
+            bool progressIndeterminate;
+            lock (StatusLock)
+            {
+                progressPercent = _statusData.ProgressPercent;
+                progressIndeterminate = _statusData.ProgressIndeterminate;
+            }
+
+            UpdateProgressEvent?.Invoke(progressPercent, progressIndeterminate);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public bool UpdateTime()
+    {
+        try
+        {
+            DateTime? updateTime;
+            lock (StatusLock)
+            {
+                updateTime = _statusData.StatusUpdateTime;
+            }
+
+            UpdateTimeEvent?.Invoke(updateTime);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     private async Task RpcClientUpdateDisplay()
     {
         try
         {
             await GetRemoteStatusAsync().ConfigureAwait(false);
-            UpdateDisplayEvent?.Invoke();
+            UpdateDisplay();
         }
         catch (Exception)
         {
