@@ -18,54 +18,61 @@ public class BmwRpcCoding : IDisposable
         public StatusData()
         {
             TaskActive = false;
-            CodingRpcUrl = string.Empty;
-            CodingRpcUrlTest = string.Empty;
-            CodingRpcEnableIpv6 = false;
             DayString = string.Empty;
             ValidSerial = string.Empty;
             Vin = string.Empty;
             LicenseValid = false;
             Url = string.Empty;
             IstaFolder = string.Empty;
-            TraceDir = string.Empty;
-            TraceActive = true;
-            TraceAppend = false;
             CommErrorsOccurred = false;
             SelectedSwiRegister = null;
             StatusInfo = null;
             StatusOptionTypes = null;
             RpcListItems = null;
             StatusMessage = string.Empty;
+            ShowMessage = null;
+            ShowMessageWait = null;
             StatusUpdateTime = null;
             RpcClientConnected = false;
             ProgressIndeterminate = false;
             ProgressPercent = 0;
         }
 
+        public StatusData Clone()
+        {
+            StatusData clone = (StatusData)MemberwiseClone();
+            clone.StatusOptionTypes = StatusOptionTypes != null ? new List<PsdzRpcOptionType>(StatusOptionTypes) : null;
+            clone.RpcListItems = RpcListItems != null ? new List<PsdzRpcOptionItem>(RpcListItems) : null;
+            return clone;
+        }
+
         public bool TaskActive { get; set; }
-        public string CodingRpcUrl { get; set; }
-        public string CodingRpcUrlTest { get; set; }
-        public bool CodingRpcEnableIpv6 { get; set; }
         public string DayString { get; set; }
         public string ValidSerial { get; set; }
         public string Vin { get; set; }
         public bool LicenseValid { get; set; }
         public string Url { get; set; }
         public string IstaFolder { get; set; }
-        public string TraceDir { get; set; }
-        public bool TraceActive { get; set; }
-        public bool TraceAppend { get; set; }
         public bool CommErrorsOccurred { get; set; }
         public PsdzRpcSwiRegisterEnum? SelectedSwiRegister { get; set; }
         public PsdzRpcStatusInfo StatusInfo { get; set; }
         public List<PsdzRpcOptionType> StatusOptionTypes { get; set; }
         public List<PsdzRpcOptionItem> RpcListItems { get; set; }
         public string StatusMessage { get; set; }
+        public string ShowMessage { get; set; }
+        public ShowMessageEventArgs ShowMessageWait { get; set; }
         public DateTime? StatusUpdateTime { get; set; }
         public bool RpcClientConnected { get; set; }
         public bool ProgressIndeterminate { get; set; }
         public int ProgressPercent { get; set; }
     }
+
+    public delegate void UpdateDisplayDelegate(StatusData statusData);
+    public delegate void UpdateProgressDelegate(int percent, bool indeterminate);
+    public delegate void UpdateTimeDelegate(DateTime? pingDateTime);
+    public event UpdateDisplayDelegate UpdateDisplayEvent;
+    public event UpdateProgressDelegate UpdateProgressEvent;
+    public event UpdateTimeDelegate UpdateTimeEvent;
 
 #if DEBUG
     private static readonly string Tag = typeof(BmwRpcCoding).FullName;
@@ -76,28 +83,7 @@ public class BmwRpcCoding : IDisposable
     private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
     private EdiabasProxyClient _ediabasProxyClient;
     private StatusData _statusData;
-    private Task<bool> _startTask;
-    private CancellationTokenSource _startCts;
-    private object _startLock = new object();
-    public object StatusLock { get; private set; } = new object();
-
-    public PsdzRpcClient.PsdzRpcClient PsdzRpcClient
-    {
-        get
-        {
-            lock (StatusLock)
-            {
-                return _psdzRpcClient;
-            }
-        }
-        private set
-        {
-            lock (StatusLock)
-            {
-                _psdzRpcClient = value;
-            }
-        }
-    }
+    public object StatusLock { get; } = new object();
 
     public BmwRpcCoding(Context appContext)
     {
@@ -105,7 +91,7 @@ public class BmwRpcCoding : IDisposable
         _activityCommon = new ActivityCommon(appContext);
     }
 
-    private bool CreateRpcClient(ActivityCommon activityCommon, EdiabasNet ediabas)
+    public bool CreateRpcClient(EdiabasNet ediabas)
     {
         try
         {
@@ -134,6 +120,7 @@ public class BmwRpcCoding : IDisposable
 
                     if (connected)
                     {
+                        _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                         lock (StatusLock)
                         {
                             _statusData.StatusMessage = string.Empty;
@@ -142,14 +129,27 @@ public class BmwRpcCoding : IDisposable
                     }
                     else
                     {
+                        _activityCommon.SetLock(ActivityCommon.LockType.None);
                         lock (StatusLock)
                         {
                             _statusData.StatusInfo = null;
                             _statusData.StatusOptionTypes = null;
                             _statusData.RpcListItems = null;
                             _statusData.StatusUpdateTime = null;
+                            _statusData.CommErrorsOccurred = true;
                         }
                     }
+
+                    lock (StatusLock)
+                    {
+                        _statusData.ShowMessage = null;
+                        _statusData.ShowMessageWait = null;
+                        _statusData.ProgressIndeterminate = false;
+                        _statusData.ProgressPercent = 0;
+                    }
+
+                    UpdateProgress();
+                    await RpcClientUpdateDisplay().ConfigureAwait(false);
                 }
                 catch (Exception)
                 {
@@ -168,6 +168,8 @@ public class BmwRpcCoding : IDisposable
                 {
                     _statusData.StatusUpdateTime = pingDateTime;
                 }
+
+                UpdateTime();
             };
 
             _psdzRpcClient.CallbackHandler.StartProgrammingCompleted += async (s, success) =>
@@ -260,6 +262,8 @@ public class BmwRpcCoding : IDisposable
                     {
                         _statusData.Vin = null;
                         _statusData.LicenseValid = false;
+                        _statusData.ShowMessage = null;
+                        _statusData.ShowMessageWait = null;
                     }
 
                     await RpcClientTaskCompleted().ConfigureAwait(false);
@@ -319,12 +323,20 @@ public class BmwRpcCoding : IDisposable
                     return;
                 }
 
-                lock (StatusLock)
+                try
                 {
-                    _statusData.ProgressIndeterminate = progressArgs.Marquee;
-                    _statusData.ProgressPercent = progressArgs.Percent;
+                    lock (StatusLock)
+                    {
+                        _statusData.ProgressIndeterminate = progressArgs.Marquee;
+                        _statusData.ProgressPercent = progressArgs.Percent;
+                    }
+
+                    UpdateProgress();
                 }
-                // Update display
+                catch (Exception)
+                {
+                    // ignored
+                }
             };
 
             _psdzRpcClient.CallbackHandler.UpdateOptions += async (sender, optionArgs) =>
@@ -373,21 +385,46 @@ public class BmwRpcCoding : IDisposable
             {
                 if (_disposed)
                 {
+                    msgArgs.Result = false;
                     return;
                 }
 
-                lock (StatusLock)
+                try
                 {
-                    _statusData.StatusMessage = msgArgs.Message;
+                    lock (StatusLock)
+                    {
+                        _statusData.ShowMessage = msgArgs.Message;
+                    }
+
+                    UpdateDisplay();
+                    msgArgs.Result = true;
                 }
-                msgArgs.Result = true;
+                catch (Exception)
+                {
+                    msgArgs.Result = false;
+                }
             };
 
             _psdzRpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
             {
                 if (_disposed)
                 {
+                    msgArgs.SetResult(false);
                     return;
+                }
+
+                try
+                {
+                    lock (StatusLock)
+                    {
+                        _statusData.ShowMessageWait = msgArgs;
+                    }
+
+                    UpdateDisplay();
+                }
+                catch (Exception)
+                {
+                    msgArgs.SetResult(false);
                 }
             };
 
@@ -505,6 +542,216 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public async Task<bool> RpcClientConnect(string loadUrl, bool enableIpV6, CancellationTokenSource startCts)
+    {
+        try
+        {
+            if (_ediabasProxyClient == null)
+            {
+                return false;
+            }
+
+            string normalizedUrl = loadUrl;
+            if (!normalizedUrl.Contains("://"))
+            {
+                normalizedUrl = "http://" + normalizedUrl;
+            }
+
+            if (!Uri.TryCreate(normalizedUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Invalid loadUrl={0}", loadUrl);
+                return false;
+            }
+
+            string remoteHost = loadUri.Host;
+            int remotePort = loadUri.Port > 0 ? loadUri.Port : PsdzRpcServiceConstants.DefaultTcpPort;
+            bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, enableIpV6, null, startCts.Token).ConfigureAwait(false);
+            if (!connected)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
+                return false;
+            }
+
+            int localVersion = PsdzRpcServiceConstants.InterfaceVersion;
+            int remoteVersion = await _psdzRpcClient.RpcService.GetInterfaceVersion().ConfigureAwait(false);
+            if (remoteVersion < localVersion)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Interface version mismatch");
+                return false;
+            }
+
+            string istaFolder = await _psdzRpcClient.RpcService.GetIstaInstallLocation().ConfigureAwait(false);
+            if (string.IsNullOrEmpty(istaFolder))
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Failed to get ISTA install location");
+                return false;
+            }
+
+            lock (StatusLock)
+            {
+                _statusData.IstaFolder = istaFolder;
+            }
+
+            bool licenseResult = await _psdzRpcClient.RpcService.SetLicenseValid(true).ConfigureAwait(false);
+            if (!licenseResult)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLicenseValid failed");
+                return false;
+            }
+
+            string language = _activityCommon.GetCurrentLanguage();
+            bool matched = await _psdzRpcClient.RpcService.SetLanguage(language, true).ConfigureAwait(false);
+            if (matched)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage matched: {0}", language);
+            }
+            else
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage mismatch: {0}", language);
+            }
+
+            if (!_ediabasProxyClient.StartEdiabasThread())
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
+                return false;
+            }
+
+            bool proxyResult = await _psdzRpcClient.RpcService.EnableVehicleProxy().ConfigureAwait(false);
+            if (!proxyResult)
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Exception={0}",
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
+    }
+
+    public async Task<bool> ConnectVehicle()
+    {
+        try
+        {
+            string istaFolder;
+            lock (StatusLock)
+            {
+                istaFolder = _statusData.IstaFolder;
+            }
+
+            bool result = await _psdzRpcClient.RpcService.ConnectVehicle(istaFolder, string.Empty, false).ConfigureAwait(false);
+            if (result)
+            {
+                await RpcClientTaskStarted().ConfigureAwait(false);
+            }
+            else
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
+    }
+
+    public async Task<bool> DisconnectVehicle()
+    {
+        try
+        {
+            bool result = await _psdzRpcClient.RpcService.DisconnectVehicle().ConfigureAwait(false);
+            if (result)
+            {
+                await RpcClientTaskStarted().ConfigureAwait(false);
+            }
+            else
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
+    }
+
+    public async Task<bool> VehicleFunctions(PsdzOperationType operationType)
+    {
+        try
+        {
+            bool result = await _psdzRpcClient.RpcService.VehicleFunctions(operationType).ConfigureAwait(false);
+            if (result)
+            {
+                await RpcClientTaskStarted().ConfigureAwait(false);
+            }
+            else
+            {
+                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions {0} failed", operationType);
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions {0}: Exception={1}", operationType,
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
+    }
+
+    public async Task<bool> CancelOperation()
+    {
+        try
+        {
+            await _psdzRpcClient.RpcService.CancelOperation().ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
+    }
+
+    public async Task DisposeRpcClient()
+    {
+        try
+        {
+            if (_psdzRpcClient != null)
+            {
+                _psdzRpcClient.Dispose();
+                _psdzRpcClient = null;
+            }
+
+            if (_ediabasProxyClient != null)
+            {
+                await _ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
+                await _ediabasProxyClient.DisposeAsync().ConfigureAwait(false);
+                _ediabasProxyClient = null;
+            }
+
+            lock (StatusLock)
+            {
+                _statusData.RpcClientConnected = false;
+            }
+            _activityCommon.SetLock(ActivityCommon.LockType.None);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+    }
+
     private async Task RpcClientTaskStarted()
     {
         lock (StatusLock)
@@ -539,11 +786,71 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public bool UpdateDisplay()
+    {
+        try
+        {
+            StatusData statusData;
+            lock (StatusLock)
+            {
+                statusData = _statusData.Clone();
+            }
+
+            UpdateDisplayEvent?.Invoke(statusData);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public bool UpdateProgress()
+    {
+        try
+        {
+            int progressPercent;
+            bool progressIndeterminate;
+            lock (StatusLock)
+            {
+                progressPercent = _statusData.ProgressPercent;
+                progressIndeterminate = _statusData.ProgressIndeterminate;
+            }
+
+            UpdateProgressEvent?.Invoke(progressPercent, progressIndeterminate);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public bool UpdateTime()
+    {
+        try
+        {
+            DateTime? updateTime;
+            lock (StatusLock)
+            {
+                updateTime = _statusData.StatusUpdateTime;
+            }
+
+            UpdateTimeEvent?.Invoke(updateTime);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     private async Task RpcClientUpdateDisplay()
     {
         try
         {
             await GetRemoteStatusAsync().ConfigureAwait(false);
+            UpdateDisplay();
         }
         catch (Exception)
         {
@@ -619,28 +926,6 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
-    public class AndroidLogWriter : TextWriter
-    {
-        private readonly string _tag;
-
-        public AndroidLogWriter(string tag)
-        {
-            _tag = tag;
-        }
-
-        public override System.Text.Encoding Encoding => System.Text.Encoding.UTF8;
-
-        public override void WriteLine(string value)
-        {
-            Android.Util.Log.Info(_tag, value ?? string.Empty);
-        }
-
-        public override void Write(string value)
-        {
-            Android.Util.Log.Info(_tag, value ?? string.Empty);
-        }
-    }
-
     public void Dispose()
     {
         Dispose(true);
@@ -661,7 +946,13 @@ public class BmwRpcCoding : IDisposable
             // and unmanaged resources.
             if (disposing)
             {
-                _activityCommon.Dispose();
+                Task.Run(DisposeRpcClient).GetAwaiter().GetResult();
+
+                if (_activityCommon != null)
+                {
+                    _activityCommon.Dispose();
+                    _activityCommon = null;
+                }
             }
         }
 

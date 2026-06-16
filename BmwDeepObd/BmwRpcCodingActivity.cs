@@ -1523,9 +1523,9 @@ namespace BmwDeepObd
         {
             try
             {
-                BmwRpcCoding.AndroidLogWriter logWriter = null;
+                AndroidLogWriter logWriter = null;
 #if DEBUG
-                logWriter = new BmwRpcCoding.AndroidLogWriter(Tag);
+                logWriter = new AndroidLogWriter(Tag);
 #endif
                 _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(logWriter,
                     PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, Assembly.GetExecutingAssembly());
@@ -2033,7 +2033,7 @@ namespace BmwDeepObd
             }
         }
 
-        async Task DisposeRpcClient()
+        private async Task DisposeRpcClient()
         {
             try
             {
