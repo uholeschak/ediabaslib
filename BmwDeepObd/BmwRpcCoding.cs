@@ -708,6 +708,21 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public async Task<bool> CancelOperation()
+    {
+        try
+        {
+            await _psdzRpcClient.RpcService.CancelOperation().ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
+                EdiabasNet.GetExceptionText(ex, false, false));
+            return false;
+        }
+    }
+
     public async Task DisposeRpcClient()
     {
         try
