@@ -723,6 +723,54 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public async Task<bool> SelectOptionIdAsync(string optionId, bool select)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(optionId))
+            {
+                return false;
+            }
+
+            PsdzRpcSwiRegisterEnum? selectedSwiRegister;
+            lock (StatusLock)
+            {
+                selectedSwiRegister = _statusData.SelectedSwiRegister;
+            }
+
+            if (selectedSwiRegister == null)
+            {
+                return false;
+            }
+
+            List<PsdzRpcOptionItem> rpcListItems = await _psdzRpcClient.RpcService.GetSelectedOptions(selectedSwiRegister).ConfigureAwait(false);
+            bool modified = false;
+            foreach (PsdzRpcOptionItem rpcListItem in rpcListItems)
+            {
+                if (string.Compare(rpcListItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    bool result = await _psdzRpcClient.RpcService.SelectOption(rpcListItem, select).ConfigureAwait(false);
+                    if (result)
+                    {
+                        modified = true;
+                    }
+                    break;
+                }
+            }
+
+            if (modified)
+            {
+                await RpcClientUpdateDisplay().ConfigureAwait(false);
+            }
+
+            return modified;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     public async Task DisposeRpcClient()
     {
         try
