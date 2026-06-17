@@ -18,6 +18,7 @@ namespace AssemblyPatcher
     {
         public const long FileVersion450 = (4 << 24) + (50 << 16) + 0;
         public const long FileVersion456 = (4 << 24) + (56 << 16) + 0;
+        public const long FileVersion493 = (4 << 24) + (59 << 16) + 30;
 
         public class Options
         {
@@ -206,7 +207,7 @@ namespace AssemblyPatcher
                 }
 
                 string exeFile = Path.Combine(inputDir, "ISTAGUI.exe");
-                if (!UpdateExeConfig(exeFile, noIcomVerCheck, verificationMode, overwriteConfig))
+                if (!UpdateExeConfig(exeFile, noIcomVerCheck, verificationMode, overwriteConfig, out long? exeFileVersion))
                 {
                     Console.WriteLine("*** Update config file failed for: {0}", exeFile);
                     return 1;
@@ -1452,117 +1453,120 @@ namespace AssemblyPatcher
                             Console.WriteLine("*** checkForPsdzInstancesLogFile Exception: {0}", ex.Message);
                         }
 
-                        try
+                        if (exeFileVersion == FileVersion493)
                         {
-                            Target target = new Target
+                            try
                             {
-                                Namespace = "RheingoldPsdzWebApi.Adapter",
-                                Class = "PsdzWebService",
-                                Method = "StartPsdzWebserviceProcess",
-                            };
-                            IList<Instruction> instructions = patcher.GetInstructionList(target);
-                            if (instructions != null)
-                            {
-                                Console.WriteLine("PsdzWebService.StartPsdzWebserviceProcess found");
-                                bool alreadyPatched = false;
-                                object psdzWebserviceProcessField = null;
-                                object psdzWebApiLogDirField = null;
-                                int insertIndex = -1;
-
-                                // Bereits gepatcht?
-                                foreach (Instruction inst in instructions)
+                                Target target = new Target
                                 {
-                                    if (inst.OpCode == OpCodes.Callvirt &&
-                                        inst.Operand?.ToString()?.Contains("set_WorkingDirectory") == true)
-                                    {
-                                        alreadyPatched = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!alreadyPatched)
+                                    Namespace = "RheingoldPsdzWebApi.Adapter",
+                                    Class = "PsdzWebService",
+                                    Method = "StartPsdzWebserviceProcess",
+                                };
+                                IList<Instruction> instructions = patcher.GetInstructionList(target);
+                                if (instructions != null)
                                 {
-                                    // psdzWebserviceProcess-Feld: ldfld direkt vor call StartAndRegisterWebserviceProcess
-                                    for (int index = 0; index < instructions.Count; index++)
+                                    Console.WriteLine("PsdzWebService.StartPsdzWebserviceProcess found");
+                                    bool alreadyPatched = false;
+                                    object psdzWebserviceProcessField = null;
+                                    object psdzWebApiLogDirField = null;
+                                    int insertIndex = -1;
+
+                                    // Bereits gepatcht?
+                                    foreach (Instruction inst in instructions)
                                     {
-                                        if (index >= 2 &&
-                                            instructions[index].OpCode == OpCodes.Call &&
-                                            instructions[index].Operand?.ToString()?.Contains("StartAndRegisterWebserviceProcess") == true &&
-                                            instructions[index - 1].OpCode == OpCodes.Ldfld &&
-                                            instructions[index - 2].OpCode == OpCodes.Ldarg_0)
+                                        if (inst.OpCode == OpCodes.Callvirt &&
+                                            inst.Operand?.ToString()?.Contains("set_WorkingDirectory") == true)
                                         {
-                                            psdzWebserviceProcessField = instructions[index - 1].Operand;
-                                            insertIndex = index - 2; // ldarg.0 vor ldfld psdzWebserviceProcess
-                                            Console.WriteLine("psdzWebserviceProcess field found at index: {0}", index - 1);
+                                            alreadyPatched = true;
                                             break;
                                         }
                                     }
 
-                                    // _psdzWebApiLogDir-Feld: im Konstruktor aus stfld nach ldarg.0, ldarg.1
-                                    Target targetCtor = new Target
+                                    if (!alreadyPatched)
                                     {
-                                        Namespace = "RheingoldPsdzWebApi.Adapter",
-                                        Class = "PsdzWebService",
-                                        Method = ".ctor",
-                                    };
-                                    IList<Instruction> ctorInstructions = patcher.GetInstructionList(targetCtor);
-                                    if (ctorInstructions != null)
-                                    {
-                                        for (int index = 0; index < ctorInstructions.Count; index++)
+                                        // psdzWebserviceProcess-Feld: ldfld direkt vor call StartAndRegisterWebserviceProcess
+                                        for (int index = 0; index < instructions.Count; index++)
                                         {
                                             if (index >= 2 &&
-                                                ctorInstructions[index].OpCode == OpCodes.Stfld &&
-                                                ctorInstructions[index - 1].OpCode == OpCodes.Ldarg_1 &&
-                                                ctorInstructions[index - 2].OpCode == OpCodes.Ldarg_0)
+                                                instructions[index].OpCode == OpCodes.Call &&
+                                                instructions[index].Operand?.ToString()?.Contains("StartAndRegisterWebserviceProcess") == true &&
+                                                instructions[index - 1].OpCode == OpCodes.Ldfld &&
+                                                instructions[index - 2].OpCode == OpCodes.Ldarg_0)
                                             {
-                                                psdzWebApiLogDirField = ctorInstructions[index].Operand;
-                                                Console.WriteLine("_psdzWebApiLogDir field found in .ctor at index: {0}", index);
+                                                psdzWebserviceProcessField = instructions[index - 1].Operand;
+                                                insertIndex = index - 2; // ldarg.0 vor ldfld psdzWebserviceProcess
+                                                Console.WriteLine("psdzWebserviceProcess field found at index: {0}", index - 1);
                                                 break;
                                             }
                                         }
+
+                                        // _psdzWebApiLogDir-Feld: im Konstruktor aus stfld nach ldarg.0, ldarg.1
+                                        Target targetCtor = new Target
+                                        {
+                                            Namespace = "RheingoldPsdzWebApi.Adapter",
+                                            Class = "PsdzWebService",
+                                            Method = ".ctor",
+                                        };
+                                        IList<Instruction> ctorInstructions = patcher.GetInstructionList(targetCtor);
+                                        if (ctorInstructions != null)
+                                        {
+                                            for (int index = 0; index < ctorInstructions.Count; index++)
+                                            {
+                                                if (index >= 2 &&
+                                                    ctorInstructions[index].OpCode == OpCodes.Stfld &&
+                                                    ctorInstructions[index - 1].OpCode == OpCodes.Ldarg_1 &&
+                                                    ctorInstructions[index - 2].OpCode == OpCodes.Ldarg_0)
+                                                {
+                                                    psdzWebApiLogDirField = ctorInstructions[index].Operand;
+                                                    Console.WriteLine("_psdzWebApiLogDir field found in .ctor at index: {0}", index);
+                                                    break;
+                                                }
+                                            }
+                                        }
                                     }
-                                }
 
-                                if (alreadyPatched)
-                                {
-                                    Console.WriteLine("StartPsdzWebserviceProcess already patched");
-                                }
-                                else if (insertIndex >= 0 && psdzWebserviceProcessField != null && psdzWebApiLogDirField != null)
-                                {
-                                    List<Instruction> insertInstructions = new List<Instruction>();
-
-                                    // psdzWebserviceProcess.StartInfo.WorkingDirectory = _psdzWebApiLogDir;
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldarg_0));
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Ldfld, (dnlib.DotNet.IField)psdzWebserviceProcessField));
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
-                                        patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
-                                            typeof(System.Diagnostics.ProcessStartInfo), null)));
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldarg_0));
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Ldfld, (dnlib.DotNet.IField)psdzWebApiLogDirField));
-                                    insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
-                                        patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo), "set_WorkingDirectory",
-                                            typeof(void), new[] { typeof(string) })));
-
-                                    int offset = 0;
-                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    if (alreadyPatched)
                                     {
-                                        instructions.Insert(insertIndex + offset, insertInstruction);
-                                        offset++;
+                                        Console.WriteLine("StartPsdzWebserviceProcess already patched");
                                     }
+                                    else if (insertIndex >= 0 && psdzWebserviceProcessField != null && psdzWebApiLogDirField != null)
+                                    {
+                                        List<Instruction> insertInstructions = new List<Instruction>();
 
-                                    patched = true;
-                                    Console.WriteLine("PsdzWebService.StartPsdzWebserviceProcess patched");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("*** Patching StartPsdzWebserviceProcess failed - " +
-                                        $"insertIndex={insertIndex}, processField={psdzWebserviceProcessField != null}, logDirField={psdzWebApiLogDirField != null}");
+                                        // psdzWebserviceProcess.StartInfo.WorkingDirectory = _psdzWebApiLogDir;
+                                        insertInstructions.Add(new Instruction(OpCodes.Ldarg_0));
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Ldfld, (dnlib.DotNet.IField)psdzWebserviceProcessField));
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
+                                            patcher.BuildCall(typeof(System.Diagnostics.Process), "get_StartInfo",
+                                                typeof(System.Diagnostics.ProcessStartInfo), null)));
+                                        insertInstructions.Add(new Instruction(OpCodes.Ldarg_0));
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Ldfld, (dnlib.DotNet.IField)psdzWebApiLogDirField));
+                                        insertInstructions.Add(Instruction.Create(OpCodes.Callvirt,
+                                            patcher.BuildCall(typeof(System.Diagnostics.ProcessStartInfo), "set_WorkingDirectory",
+                                                typeof(void), new[] { typeof(string) })));
+
+                                        int offset = 0;
+                                        foreach (Instruction insertInstruction in insertInstructions)
+                                        {
+                                            instructions.Insert(insertIndex + offset, insertInstruction);
+                                            offset++;
+                                        }
+
+                                        patched = true;
+                                        Console.WriteLine("PsdzWebService.StartPsdzWebserviceProcess patched");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("*** Patching StartPsdzWebserviceProcess failed - " +
+                                            $"insertIndex={insertIndex}, processField={psdzWebserviceProcessField != null}, logDirField={psdzWebApiLogDirField != null}");
+                                    }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("*** StartPsdzWebserviceProcess Exception: {0}", ex.Message);
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("*** StartPsdzWebserviceProcess Exception: {0}", ex.Message);
+                            }
                         }
 
                         try
@@ -2071,8 +2075,9 @@ namespace AssemblyPatcher
             return 0;
         }
 
-        static bool UpdateExeConfig(string exeFileName, bool noIcomVerCheck, bool verificationMode, bool overwriteConfig)
+        static bool UpdateExeConfig(string exeFileName, bool noIcomVerCheck, bool verificationMode, bool overwriteConfig, out long? fileVersion)
         {
+            fileVersion = null;
             try
             {
                 if (!File.Exists(exeFileName))
@@ -2089,7 +2094,6 @@ namespace AssemblyPatcher
                 }
 
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(exeFileName);
-                long? fileVersion = null;
                 string companyName = fvi?.CompanyName ?? string.Empty;
                 string legalCopyright = fvi?.LegalCopyright ?? string.Empty;
                 if (!string.IsNullOrEmpty(fvi?.FileVersion))
