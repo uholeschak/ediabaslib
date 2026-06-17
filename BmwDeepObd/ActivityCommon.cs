@@ -785,6 +785,7 @@ namespace BmwDeepObd
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
+        public delegate void SendEnetBroadacstDelegate(int count);
         public delegate void RunnablePostDelegate();
         public const int UdsDtcStatusOverride = 0x2C;
         [SupportedOSPlatform("android23.0")]
@@ -5845,6 +5846,33 @@ namespace BmwDeepObd
             serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, appDataDir);
             _activity?.StartActivityForResult(serverIntent, requestCode);
             return true;
+        }
+
+        public bool SendEnetBroadcast(SendEnetBroadacstDelegate handler)
+        {
+            try
+            {
+                Thread detectThread = new Thread(() =>
+                {
+                    List<EdInterfaceEnet.EnetConnection> detectedVehicles;
+                    using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false)
+                           {
+                               ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate, VehicleConnected)
+                           })
+                    {
+                        detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 1,
+                            new List<EdInterfaceEnet.CommunicationMode>() { EdInterfaceEnet.CommunicationMode.Hsfz });
+                    }
+                    handler.Invoke(detectedVehicles.Count);
+                });
+                detectThread.Start();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool SelectAdapterIp(EventHandler<DialogClickEventArgs> handler)
