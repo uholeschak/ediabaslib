@@ -18,7 +18,7 @@ namespace AssemblyPatcher
     {
         public const long FileVersion450 = (4 << 24) + (50 << 16) + 0;
         public const long FileVersion456 = (4 << 24) + (56 << 16) + 0;
-        public const long FileVersion493 = (4 << 24) + (59 << 16) + 30;
+        public const long FileVersion490 = (4 << 24) + (59 << 16) + 0;
 
         public class Options
         {
@@ -1453,7 +1453,7 @@ namespace AssemblyPatcher
                             Console.WriteLine("*** checkForPsdzInstancesLogFile Exception: {0}", ex.Message);
                         }
 
-                        if (exeFileVersion == FileVersion493)
+                        if (exeFileVersion & ~0xFF == FileVersion490)
                         {
                             try
                             {
