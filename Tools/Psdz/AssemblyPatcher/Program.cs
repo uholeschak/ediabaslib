@@ -1453,7 +1453,7 @@ namespace AssemblyPatcher
                             Console.WriteLine("*** checkForPsdzInstancesLogFile Exception: {0}", ex.Message);
                         }
 
-                        if (exeFileVersion & ~0xFF == FileVersion490)
+                        if ((exeFileVersion & ~0xFF) == FileVersion490)
                         {
                             try
                             {
