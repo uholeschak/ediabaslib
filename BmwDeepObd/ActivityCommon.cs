@@ -785,6 +785,7 @@ namespace BmwDeepObd
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
+        public delegate void SendEnetBroadacstDelegate(int count);
         public delegate void RunnablePostDelegate();
         public const int UdsDtcStatusOverride = 0x2C;
         [SupportedOSPlatform("android23.0")]
@@ -4886,8 +4887,9 @@ namespace BmwDeepObd
                     }
                 }
 
+                bool scanDocNanoSsid = AdapterSsidScanDocNanoRegEx.IsMatch(enetSsid);
                 bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw)
-                                 || enetSsid.Contains(AdapterSsidUniCar) || enetSsid.Contains(AdapterSsidMhd);
+                                 || enetSsid.Contains(AdapterSsidUniCar) || enetSsid.Contains(AdapterSsidMhd) || scanDocNanoSsid;
                 bool validEthernet = IsValidEthernetConnection();
                 bool ipSelected = !string.IsNullOrEmpty(SelectedEnetIp);
 
@@ -5845,6 +5847,54 @@ namespace BmwDeepObd
             serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, appDataDir);
             _activity?.StartActivityForResult(serverIntent, requestCode);
             return true;
+        }
+
+        public bool SendEnetBroadcast(SendEnetBroadacstDelegate handler)
+        {
+            try
+            {
+                CustomProgressDialog progress = new CustomProgressDialog(_context);
+                progress.SetMessage(_context.GetString(Resource.String.select_enet_ip_search));
+                progress.ButtonAbort.Visibility = ViewStates.Gone;
+                progress.Show();
+                SetLock(LockTypeCommunication);
+
+                Thread detectThread = new Thread(() =>
+                {
+                    List<EdInterfaceEnet.EnetConnection> detectedVehicles;
+                    using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false)
+                           {
+                               ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate, VehicleConnected)
+                           })
+                    {
+                        detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 1, null);
+                    }
+
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress = null;
+                            SetLock(LockType.None);
+                        }
+
+                        handler.Invoke(detectedVehicles.Count);
+                    });
+                });
+                detectThread.Start();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool SelectAdapterIp(EventHandler<DialogClickEventArgs> handler)
