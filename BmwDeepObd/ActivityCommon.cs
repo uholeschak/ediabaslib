@@ -1144,7 +1144,6 @@ namespace BmwDeepObd
         private Thread _ecuFuncReaderThread;
         private Thread _copyDocumentThread;
         private Thread _deleteDocumentThread;
-        private Thread _sendEnetBroadacstThread;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -5853,12 +5852,13 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_sendEnetBroadacstThread != null)
-                {
-                    return false;
-                }
+                CustomProgressDialog progress = new CustomProgressDialog(_context);
+                progress.SetMessage(_context.GetString(Resource.String.select_enet_ip_search));
+                progress.ButtonAbort.Visibility = ViewStates.Gone;
+                progress.Show();
+                SetLock(LockTypeCommunication);
 
-                _sendEnetBroadacstThread = new Thread(() =>
+                Thread detectThread = new Thread(() =>
                 {
                     List<EdInterfaceEnet.EnetConnection> detectedVehicles;
                     using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false)
@@ -5870,10 +5870,24 @@ namespace BmwDeepObd
                             new List<EdInterfaceEnet.CommunicationMode>() { EdInterfaceEnet.CommunicationMode.Hsfz });
                     }
 
-                    _sendEnetBroadacstThread = null;
-                    handler.Invoke(detectedVehicles.Count);
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress = null;
+                            SetLock(LockType.None);
+                        }
+
+                        handler.Invoke(detectedVehicles.Count);
+                    });
                 });
-                _sendEnetBroadacstThread.Start();
+                detectThread.Start();
 
                 return true;
             }
