@@ -4887,8 +4887,9 @@ namespace BmwDeepObd
                     }
                 }
 
+                bool scanDocNanoSsid = AdapterSsidScanDocNanoRegEx.IsMatch(enetSsid);
                 bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw)
-                                 || enetSsid.Contains(AdapterSsidUniCar) || enetSsid.Contains(AdapterSsidMhd);
+                                 || enetSsid.Contains(AdapterSsidUniCar) || enetSsid.Contains(AdapterSsidMhd) || scanDocNanoSsid;
                 bool validEthernet = IsValidEthernetConnection();
                 bool ipSelected = !string.IsNullOrEmpty(SelectedEnetIp);
 
