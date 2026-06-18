@@ -1144,6 +1144,7 @@ namespace BmwDeepObd
         private Thread _ecuFuncReaderThread;
         private Thread _copyDocumentThread;
         private Thread _deleteDocumentThread;
+        private Thread _sendEnetBroadacstThread;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -5852,7 +5853,12 @@ namespace BmwDeepObd
         {
             try
             {
-                Thread detectThread = new Thread(() =>
+                if (_sendEnetBroadacstThread != null)
+                {
+                    return false;
+                }
+
+                _sendEnetBroadacstThread = new Thread(() =>
                 {
                     List<EdInterfaceEnet.EnetConnection> detectedVehicles;
                     using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false)
@@ -5863,9 +5869,11 @@ namespace BmwDeepObd
                         detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 1,
                             new List<EdInterfaceEnet.CommunicationMode>() { EdInterfaceEnet.CommunicationMode.Hsfz });
                     }
+
+                    _sendEnetBroadacstThread = null;
                     handler.Invoke(detectedVehicles.Count);
                 });
-                detectThread.Start();
+                _sendEnetBroadacstThread.Start();
 
                 return true;
             }
