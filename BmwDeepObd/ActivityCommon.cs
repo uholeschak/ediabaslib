@@ -1614,6 +1614,7 @@ namespace BmwDeepObd
                     if (_baseActivity != null)
                     {
                         _baseActivity.InstanceDataCommon.LastEnetSsid = CommActive ? EnetSsidEmpty : string.Empty;
+                        _baseActivity.InstanceDataCommon.EnetBroadcastSend = false;
                     }
 
                     _lastInerfaceAvailable = null;
@@ -4883,6 +4884,7 @@ namespace BmwDeepObd
                     if (string.Compare(lastEnetSsid, EnetSsidEmpty, StringComparison.Ordinal) == 0)
                     {
                         _baseActivity.InstanceDataCommon.LastEnetSsid = enetSsid;
+                        _baseActivity.InstanceDataCommon.EnetBroadcastSend = false;
                         lastEnetSsid = enetSsid;
                     }
                 }
@@ -4897,6 +4899,7 @@ namespace BmwDeepObd
                     string.Compare(lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     _baseActivity?.InstanceDataCommon.LastEnetSsid = enetSsid;
+                    _baseActivity?.InstanceDataCommon.EnetBroadcastSend = false;
 
                     if (!validSsid && string.IsNullOrEmpty(SelectedEnetIp))
                     {
@@ -5582,6 +5585,7 @@ namespace BmwDeepObd
                         if (_baseActivity != null)
                         {
                             _baseActivity.InstanceDataCommon.LastEnetSsid = string.Empty;
+                            _baseActivity.InstanceDataCommon.EnetBroadcastSend = false;
                         }
 
                         try
