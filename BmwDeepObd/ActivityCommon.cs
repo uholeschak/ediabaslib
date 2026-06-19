@@ -5885,7 +5885,7 @@ namespace BmwDeepObd
                                ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate, VehicleConnected)
                            })
                     {
-                        detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 1, null);
+                        detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 1);
                     }
 
                     _activity?.RunOnUiThread(() =>

@@ -2870,7 +2870,7 @@ namespace EdiabasLib
             return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries, communicationModes);
         }
 
-        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<CommunicationMode> communicationModes, bool ignoreIcomOwner = false)
+        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<CommunicationMode> communicationModes = null, bool ignoreIcomOwner = false)
         {
             if (IsSimulationMode())
             {
