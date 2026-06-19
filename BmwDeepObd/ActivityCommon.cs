@@ -5902,7 +5902,8 @@ namespace BmwDeepObd
                             SetLock(LockType.None);
                         }
 
-                        handler.Invoke(detectedVehicles.Count);
+                        int count = detectedVehicles?.Count ?? 0;
+                        handler.Invoke(count);
                     });
                 });
                 detectThread.Start();
@@ -5915,7 +5916,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool SelectAdapterIp(EventHandler<DialogClickEventArgs> handler)
+        public bool SelectAdapterIp(EventHandler<DialogClickEventArgs> handler, int recursion = 0)
         {
             switch (SelectedInterface)
             {
@@ -5928,6 +5929,28 @@ namespace BmwDeepObd
 
                 default:
                     return false;
+            }
+
+            if (recursion == 0)
+            {
+                if (ShowConnectWarning(action =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        switch (action)
+                        {
+                            case SsidWarnAction.Continue:
+                            case SsidWarnAction.EditIp:
+                                SelectAdapterIp(handler, recursion + 1);
+                                break;
+                        }
+                    }))
+                {
+                    return false;
+                }
             }
 
             CustomProgressDialog progress = new CustomProgressDialog(_context);
