@@ -4945,6 +4945,18 @@ namespace BmwDeepObd
                         result = true;
                     }
                 }
+
+                if (scanDocNanoSsid)
+                {
+                    if (SendEnetBroadcast(count =>
+                        {
+                            handler(SsidWarnAction.Continue);
+                        }))
+                    {
+                        result = true;
+                    }
+                }
+
                 return result;
             }
             return false;
