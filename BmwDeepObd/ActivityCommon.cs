@@ -4896,10 +4896,7 @@ namespace BmwDeepObd
                 if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw && !validMhd && !validScanDocNano &&
                     string.Compare(lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
-                    if (_baseActivity != null)
-                    {
-                        _baseActivity.InstanceDataCommon.LastEnetSsid = enetSsid;
-                    }
+                    _baseActivity?.InstanceDataCommon.LastEnetSsid = enetSsid;
 
                     if (!validSsid && string.IsNullOrEmpty(SelectedEnetIp))
                     {
@@ -4946,15 +4943,24 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (scanDocNanoSsid)
+                if (validScanDocNano || scanDocNanoSsid)
                 {
-                    if (SendEnetBroadcast(count =>
-                        {
-                            handler(SsidWarnAction.Continue);
-                        }))
+                    bool enetBroadcastSent = _baseActivity != null && _baseActivity.InstanceDataCommon.EnetBroadcastSend;
+                    if (!enetBroadcastSent)
                     {
-                        result = true;
+                        if (SendEnetBroadcast(count =>
+                            {
+                                handler(SsidWarnAction.Continue);
+                            }))
+                        {
+                            _baseActivity?.InstanceDataCommon.EnetBroadcastSend = true;
+                            result = true;
+                        }
                     }
+                }
+                else
+                {
+                    _baseActivity?.InstanceDataCommon.EnetBroadcastSend = false;
                 }
 
                 return result;
