@@ -28,6 +28,7 @@ namespace BmwDeepObd
                 LowMemoryShown = false;
                 LongClickShown = false;
                 LastEnetSsid = string.Empty;
+                EnetBroadcastSend = false;
             }
 
             public bool ActionBarVisibilitySet
