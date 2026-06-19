@@ -2291,7 +2291,13 @@ namespace BmwDeepObd
                         switch (_selectedInterface)
                         {
                             case InterfaceType.Enet:
-                                return IsValidEthernetConnection();
+                                if (!IsValidEthernetConnection())
+                                {
+                                    _baseActivity?.InstanceDataCommon.EnetBroadcastSend = false;
+                                    return false;
+                                }
+
+                                return true;
 
                             case InterfaceType.DeepObdWifi:
                                 if (ignoreIp)
@@ -5889,7 +5895,7 @@ namespace BmwDeepObd
                                ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate, VehicleConnected)
                            })
                     {
-                        detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 1);
+                        detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 5);
                     }
 
                     _activity?.RunOnUiThread(() =>
