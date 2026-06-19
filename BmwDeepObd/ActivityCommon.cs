@@ -4896,10 +4896,7 @@ namespace BmwDeepObd
                 if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw && !validMhd && !validScanDocNano &&
                     string.Compare(lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
-                    if (_baseActivity != null)
-                    {
-                        _baseActivity.InstanceDataCommon.LastEnetSsid = enetSsid;
-                    }
+                    _baseActivity?.InstanceDataCommon.LastEnetSsid = enetSsid;
 
                     if (!validSsid && string.IsNullOrEmpty(SelectedEnetIp))
                     {
@@ -4945,6 +4942,27 @@ namespace BmwDeepObd
                         result = true;
                     }
                 }
+
+                if (validScanDocNano || scanDocNanoSsid)
+                {
+                    bool enetBroadcastSent = _baseActivity != null && _baseActivity.InstanceDataCommon.EnetBroadcastSend;
+                    if (!enetBroadcastSent)
+                    {
+                        if (SendEnetBroadcast(count =>
+                            {
+                                handler(SsidWarnAction.Continue);
+                            }))
+                        {
+                            _baseActivity?.InstanceDataCommon.EnetBroadcastSend = true;
+                            result = true;
+                        }
+                    }
+                }
+                else
+                {
+                    _baseActivity?.InstanceDataCommon.EnetBroadcastSend = false;
+                }
+
                 return result;
             }
             return false;
@@ -5867,7 +5885,7 @@ namespace BmwDeepObd
                                ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate, VehicleConnected)
                            })
                     {
-                        detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 1, null);
+                        detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined, 1, 1);
                     }
 
                     _activity?.RunOnUiThread(() =>
@@ -5884,7 +5902,8 @@ namespace BmwDeepObd
                             SetLock(LockType.None);
                         }
 
-                        handler.Invoke(detectedVehicles.Count);
+                        int count = detectedVehicles?.Count ?? 0;
+                        handler.Invoke(count);
                     });
                 });
                 detectThread.Start();
@@ -5897,7 +5916,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool SelectAdapterIp(EventHandler<DialogClickEventArgs> handler)
+        public bool SelectAdapterIp(EventHandler<DialogClickEventArgs> handler, int recursion = 0)
         {
             switch (SelectedInterface)
             {
@@ -5910,6 +5929,28 @@ namespace BmwDeepObd
 
                 default:
                     return false;
+            }
+
+            if (recursion == 0)
+            {
+                if (ShowConnectWarning(action =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        switch (action)
+                        {
+                            case SsidWarnAction.Continue:
+                            case SsidWarnAction.EditIp:
+                                SelectAdapterIp(handler, recursion + 1);
+                                break;
+                        }
+                    }))
+                {
+                    return false;
+                }
             }
 
             CustomProgressDialog progress = new CustomProgressDialog(_context);

@@ -51,6 +51,7 @@ namespace BmwDeepObd
             public bool LongClickShown { get; set; }
 
             public string LastEnetSsid { get; set; }
+            public bool EnetBroadcastSend { get; set; }
 
             private bool _actionBarVisibilitySet;
             private bool _actionBarVisible;
