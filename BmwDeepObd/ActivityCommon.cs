@@ -2300,6 +2300,7 @@ namespace BmwDeepObd
                                 return true;
 
                             case InterfaceType.DeepObdWifi:
+                                _baseActivity?.InstanceDataCommon.EnetBroadcastSend = false;
                                 if (ignoreIp)
                                 {
                                     return IsValidEthernetConnection();
@@ -2309,6 +2310,10 @@ namespace BmwDeepObd
                                 {
                                     return IsValidEthernetConnection(SelectedDeepObdWifiIp);
                                 }
+                                break;
+
+                            default:
+                                _baseActivity?.InstanceDataCommon.EnetBroadcastSend = false;
                                 break;
                         }
 
