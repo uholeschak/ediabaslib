@@ -791,6 +791,27 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public void AckShowMessage()
+    {
+        lock (StatusLock)
+        {
+            _statusData.ShowMessage = null;
+        }
+
+        UpdateDisplay();
+    }
+
+    public void AckShowMessageWait(bool result)
+    {
+        lock (StatusLock)
+        {
+            _statusData.ShowMessageWait.SetResult(result);
+            _statusData.ShowMessageWait = null;
+        }
+
+        UpdateDisplay();
+    }
+
     public async Task DisposeRpcClient()
     {
         try

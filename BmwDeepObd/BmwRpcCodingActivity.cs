@@ -1600,6 +1600,9 @@ namespace BmwDeepObd
                 });
             }
 
+#if STATIC_RPC_CODING
+            ShowRpcClientMessageBox(statusData);
+#endif
             UpdateOptionsMenu();
         }
 
@@ -1783,6 +1786,106 @@ namespace BmwDeepObd
                 string statusText = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_rpc_coding_update_time), timeText);
                 _textViewUpdateTime.Text = statusText;
             });
+        }
+
+        private bool ShowRpcClientMessageBox(BmwRpcCoding.StatusData statusData)
+        {
+            if (_alertDialogRpcMessage != null)
+            {
+                return false;
+            }
+
+            if (statusData.ShowMessage != null)
+            {
+                _alertDialogRpcMessage = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(statusData.ShowMessage)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+
+                if (_alertDialogRpcMessage != null)
+                {
+                    _alertDialogRpcMessage.DismissEvent += (sender, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        _alertDialogRpcMessage = null;
+                        _bmwRpcCoding.AckShowMessage();
+                    };
+                }
+
+                return true;
+            }
+
+            if (statusData.ShowMessageWait != null)
+            {
+                if (statusData.ShowMessageWait.OkBtn)
+                {
+                    _alertDialogRpcMessage = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(statusData.ShowMessageWait.Message)
+                        .SetTitle(Resource.String.alert_title_info)
+                        .Show();
+
+                    if (_alertDialogRpcMessage != null)
+                    {
+                        _alertDialogRpcMessage.DismissEvent += (sender, args) =>
+                        {
+                            _bmwRpcCoding.AckShowMessageWait(true);
+
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+                            _alertDialogRpcMessage = null;
+                        };
+                    }
+
+                    return true;
+                }
+
+                bool dialogResult = false;
+                _alertDialogRpcMessage = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        dialogResult = true;
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                        dialogResult = false;
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(statusData.ShowMessageWait.Message)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+
+                if (_alertDialogRpcMessage != null)
+                {
+                    _alertDialogRpcMessage.DismissEvent += (sender, args) =>
+                    {
+                        _bmwRpcCoding.AckShowMessageWait(dialogResult);
+
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        _alertDialogRpcMessage = null;
+                    };
+                }
+
+                return true;
+            }
+
+            return false;
         }
 #else
         private bool CreateRpcClient()
