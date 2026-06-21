@@ -110,6 +110,7 @@ namespace BmwDeepObd
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
+        private AlertDialog _alertDialogRpcMessage;
         // status data start
         private BmwRpcCoding.StatusData _statusData;
         private string _lastStatusMessage;
@@ -621,6 +622,9 @@ namespace BmwDeepObd
                     _activityCommon.StartMtcService();
                 }
 
+                _alertDialogInfo = null;
+                _alertDialogConnectError = null;
+                _alertDialogRpcMessage = null;
                 GetConnectionInfoRequest();
             }
 
@@ -1596,6 +1600,9 @@ namespace BmwDeepObd
                 });
             }
 
+#if STATIC_RPC_CODING
+            ShowRpcClientMessageBox(statusData);
+#endif
             UpdateOptionsMenu();
         }
 
@@ -1779,6 +1786,106 @@ namespace BmwDeepObd
                 string statusText = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_rpc_coding_update_time), timeText);
                 _textViewUpdateTime.Text = statusText;
             });
+        }
+
+        private bool ShowRpcClientMessageBox(BmwRpcCoding.StatusData statusData)
+        {
+            if (_alertDialogRpcMessage != null)
+            {
+                return false;
+            }
+
+            if (statusData.ShowMessage != null)
+            {
+                _alertDialogRpcMessage = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(statusData.ShowMessage)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+
+                if (_alertDialogRpcMessage != null)
+                {
+                    _alertDialogRpcMessage.DismissEvent += (sender, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        _alertDialogRpcMessage = null;
+                        _bmwRpcCoding.AckShowMessage();
+                    };
+                }
+
+                return true;
+            }
+
+            if (statusData.ShowMessageWait != null)
+            {
+                if (statusData.ShowMessageWait.OkBtn)
+                {
+                    _alertDialogRpcMessage = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(statusData.ShowMessageWait.Message)
+                        .SetTitle(Resource.String.alert_title_info)
+                        .Show();
+
+                    if (_alertDialogRpcMessage != null)
+                    {
+                        _alertDialogRpcMessage.DismissEvent += (sender, args) =>
+                        {
+                            _bmwRpcCoding.AckShowMessageWait(true);
+
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+                            _alertDialogRpcMessage = null;
+                        };
+                    }
+
+                    return true;
+                }
+
+                bool dialogResult = false;
+                _alertDialogRpcMessage = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        dialogResult = true;
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                        dialogResult = false;
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(statusData.ShowMessageWait.Message)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+
+                if (_alertDialogRpcMessage != null)
+                {
+                    _alertDialogRpcMessage.DismissEvent += (sender, args) =>
+                    {
+                        _bmwRpcCoding.AckShowMessageWait(dialogResult);
+
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        _alertDialogRpcMessage = null;
+                    };
+                }
+
+                return true;
+            }
+
+            return false;
         }
 #else
         private bool CreateRpcClient()
@@ -2115,7 +2222,12 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        new AlertDialog.Builder(this)
+                        if (_alertDialogRpcMessage != null)
+                        {
+                            return;
+                        }
+
+                        _alertDialogRpcMessage = new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                             {
                             })
@@ -2123,6 +2235,19 @@ namespace BmwDeepObd
                             .SetMessage(msgArgs.Message)
                             .SetTitle(Resource.String.alert_title_info)
                             .Show();
+
+                        if (_alertDialogRpcMessage != null)
+                        {
+                            _alertDialogRpcMessage.DismissEvent += (sender, args) =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                _alertDialogRpcMessage = null;
+                            };
+                        }
                     });
 
                     msgArgs.Result = true;
@@ -2131,6 +2256,12 @@ namespace BmwDeepObd
                 _psdzRpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
                 {
                     if (_activityCommon == null)
+                    {
+                        msgArgs.SetResult(false);
+                        return;
+                    }
+
+                    if (_alertDialogRpcMessage != null)
                     {
                         msgArgs.SetResult(false);
                         return;
@@ -2146,7 +2277,7 @@ namespace BmwDeepObd
 
                         if (msgArgs.OkBtn)
                         {
-                            AlertDialog alertDialogOk = new AlertDialog.Builder(this)
+                            _alertDialogRpcMessage = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                                 {
                                 })
@@ -2155,18 +2286,24 @@ namespace BmwDeepObd
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
 
-                            if (alertDialogOk != null)
+                            if (_alertDialogRpcMessage != null)
                             {
-                                alertDialogOk.DismissEvent += (sender, args) =>
+                                _alertDialogRpcMessage.DismissEvent += (sender, args) =>
                                 {
                                     msgArgs.SetResult(true);
+
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    _alertDialogRpcMessage = null;
                                 };
                             }
                             return;
                         }
 
                         bool dialogResult = false;
-                        AlertDialog alertDialogYesNo = new AlertDialog.Builder(this)
+                        _alertDialogRpcMessage = new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
                                 dialogResult = true;
@@ -2180,11 +2317,17 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_info)
                             .Show();
 
-                        if (alertDialogYesNo != null)
+                        if (_alertDialogRpcMessage != null)
                         {
-                            alertDialogYesNo.DismissEvent += (sender, args) =>
+                            _alertDialogRpcMessage.DismissEvent += (sender, args) =>
                             {
                                 msgArgs.SetResult(dialogResult);
+
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                _alertDialogRpcMessage = null;
                             };
                         }
                     });
