@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿//#define STATIC_RPC_CODING
+using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
 using Android.OS;
@@ -16,7 +17,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -88,6 +88,10 @@ namespace BmwDeepObd
         }
 
         private InstanceData _instanceData = new InstanceData();
+
+#if STATIC_RPC_CODING
+        private static BmwRpcCoding _bmwRpcCoding;
+#endif
         private ActivityCommon _activityCommon;
         private string _ecuDir;
         private string _appDataDir;
@@ -474,7 +478,11 @@ namespace BmwDeepObd
 
             _activityCommon.SetPreferredNetworkInterface();
 
+#if STATIC_RPC_CODING
+            CreateStaticRpcClient();
+#else
             CreateRpcClient();
+#endif
             UpdateDisplay();
         }
 
@@ -503,13 +511,21 @@ namespace BmwDeepObd
             base.OnResume();
             _activityActive = true;
 
+#if STATIC_RPC_CODING
+            AttachStaticRpcClient();
+#else
             StartRpcClient();
+#endif
         }
 
         protected override void OnPause()
         {
             base.OnPause();
             _activityActive = false;
+
+#if STATIC_RPC_CODING
+            DetachStaticRpcClient();
+#endif
         }
 
         protected override void OnStop()
@@ -1518,7 +1534,128 @@ namespace BmwDeepObd
             }
         }
 
+#if STATIC_RPC_CODING
+        private bool CreateStaticRpcClient()
+        {
+            try
+            {
+                if (_bmwRpcCoding != null)
+                {
+                    return true;
+                }
 
+                _bmwRpcCoding = new BmwRpcCoding(ApplicationContext);
+                EdiabasNet ediabas = new EdiabasNet
+                {
+                    EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+                };
+                ediabas.SetConfigProperty("EcuPath", _ecuDir);
+                ediabas.EdInterfaceClass.EnableTransmitCache = false;
+                _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress, _appDataDir);
+                _bmwRpcCoding.CreateRpcClient(ediabas);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool AttachStaticRpcClient()
+        {
+            try
+            {
+                if (_bmwRpcCoding == null)
+                {
+                    return false;
+                }
+
+                _bmwRpcCoding.UpdateDisplayEvent += RpcClientUpdateDisplay;
+                _bmwRpcCoding.UpdateProgressEvent += RpcClientUpdateProgress;
+                _bmwRpcCoding.UpdateTimeEvent += RpcClientUpdateTime;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool DetachStaticRpcClient()
+        {
+            try
+            {
+                if (_bmwRpcCoding == null)
+                {
+                    return false;
+                }
+
+                _bmwRpcCoding.UpdateDisplayEvent -= RpcClientUpdateDisplay;
+                _bmwRpcCoding.UpdateProgressEvent -= RpcClientUpdateProgress;
+                _bmwRpcCoding.UpdateTimeEvent -= RpcClientUpdateTime;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private void RpcClientUpdateDisplay(BmwRpcCoding.StatusData statusData)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                lock (_statusLock)
+                {
+                    _statusInfo = statusData.StatusInfo;
+                    _statusOptionTypes = statusData.StatusOptionTypes;
+                    _rpcListItems = statusData.RpcListItems;
+                    _statusMessage = statusData.StatusMessage;
+                }
+                UpdateDisplay();
+            });
+        }
+
+        private void RpcClientUpdateProgress(int percent, bool indeterminate)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                _progressBar.Indeterminate = indeterminate;
+                _progressBar.Progress = percent;
+            });
+        }
+
+        private void RpcClientUpdateTime(DateTime? updateTime)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                string timeText = "-";
+                if (updateTime.HasValue)
+                {
+                    timeText = updateTime.Value.ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+                }
+
+                string statusText = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_rpc_coding_update_time), timeText);
+                _textViewUpdateTime.Text = statusText;
+            });
+        }
+
+#else
         private bool CreateRpcClient()
         {
             try
@@ -1528,7 +1665,7 @@ namespace BmwDeepObd
                 logWriter = new AndroidLogWriter(Tag);
 #endif
                 _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(logWriter,
-                    PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, Assembly.GetExecutingAssembly());
+                    PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, System.Reflection.Assembly.GetExecutingAssembly());
                 _psdzRpcClient.ClientConnected += async (sender, connected) =>
                 {
                     if (_activityCommon == null)
@@ -1940,7 +2077,6 @@ namespace BmwDeepObd
                     }
                 };
 
-
                 _psdzRpcClient.CallbackHandler.GetAppInfo += (sender, infoArgs) =>
                 {
                     if (infoArgs == null)
@@ -2032,6 +2168,7 @@ namespace BmwDeepObd
                 return false;
             }
         }
+#endif
 
         private async Task DisposeRpcClient()
         {
