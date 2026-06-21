@@ -511,13 +511,21 @@ namespace BmwDeepObd
             base.OnResume();
             _activityActive = true;
 
+#if STATIC_RPC_CODING
+            AttachStaticRpcClient();
+#else
             StartRpcClient();
+#endif
         }
 
         protected override void OnPause()
         {
             base.OnPause();
             _activityActive = false;
+
+#if STATIC_RPC_CODING
+            DetachStaticRpcClient();
+#endif
         }
 
         protected override void OnStop()
@@ -1551,6 +1559,100 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        private bool AttachStaticRpcClient()
+        {
+            try
+            {
+                if (_bmwRpcCoding == null)
+                {
+                    return false;
+                }
+
+                _bmwRpcCoding.UpdateDisplayEvent += RpcClientUpdateDisplay;
+                _bmwRpcCoding.UpdateProgressEvent += RpcClientUpdateProgress;
+                _bmwRpcCoding.UpdateTimeEvent += RpcClientUpdateTime;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool DetachStaticRpcClient()
+        {
+            try
+            {
+                if (_bmwRpcCoding == null)
+                {
+                    return false;
+                }
+
+                _bmwRpcCoding.UpdateDisplayEvent -= RpcClientUpdateDisplay;
+                _bmwRpcCoding.UpdateProgressEvent -= RpcClientUpdateProgress;
+                _bmwRpcCoding.UpdateTimeEvent -= RpcClientUpdateTime;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private void RpcClientUpdateDisplay(BmwRpcCoding.StatusData statusData)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                lock (_statusLock)
+                {
+                    _statusInfo = statusData.StatusInfo;
+                    _statusOptionTypes = statusData.StatusOptionTypes;
+                    _rpcListItems = statusData.RpcListItems;
+                    _statusMessage = statusData.StatusMessage;
+                }
+                UpdateDisplay();
+            });
+        }
+
+        private void RpcClientUpdateProgress(int percent, bool indeterminate)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                _progressBar.Indeterminate = indeterminate;
+                _progressBar.Progress = percent;
+            });
+        }
+
+        private void RpcClientUpdateTime(DateTime? updateTime)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                string timeText = "-";
+                if (updateTime.HasValue)
+                {
+                    timeText = updateTime.Value.ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+                }
+
+                string statusText = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_rpc_coding_update_time), timeText);
+                _textViewUpdateTime.Text = statusText;
+            });
         }
 
 #else
