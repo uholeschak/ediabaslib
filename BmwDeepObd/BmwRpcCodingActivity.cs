@@ -111,14 +111,8 @@ namespace BmwDeepObd
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         // status data start
-        private PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
-        private PsdzRpcStatusInfo _statusInfo;
-        private List<PsdzRpcOptionType> _statusOptionTypes;
-        private List<PsdzRpcOptionItem> _rpcListItems;
-        private string _statusMessage;
+        private BmwRpcCoding.StatusData _statusData;
         private string _lastStatusMessage;
-        private DateTime? _statusUpdateTime;
-        private bool _rpcClientConnected;
         // status data end
 
         private LinearLayout _layoutBmwRpcCoding;
@@ -524,7 +518,7 @@ namespace BmwDeepObd
 #else
                 lock (_statusLock)
                 {
-                    _selectedSwiRegister = selectedSwiRegister;
+                    _statusData.SelectedSwiRegister = selectedSwiRegister;
                 }
 
                 Task.Run(async () =>
@@ -1357,23 +1351,23 @@ namespace BmwDeepObd
                     PsdzRpcSwiRegisterEnum? selectedSwiRegister;
                     lock (_statusLock)
                     {
-                        _statusInfo = statusInfo;
-                        _statusOptionTypes = statusOptionTypes;
-                        _statusUpdateTime = statusInfo.LastUpdated;
+                        _statusData.StatusInfo = statusInfo;
+                        _statusData.StatusOptionTypes = statusOptionTypes;
+                        _statusData.StatusUpdateTime = statusInfo.LastUpdated;
 
                         if (statusInfo.HasOptionsDict)
                         {
-                            if (_selectedSwiRegister == null)
+                            if (_statusData.SelectedSwiRegister == null)
                             {
-                                _selectedSwiRegister = PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
+                                _statusData.SelectedSwiRegister = PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
                             }
                         }
                         else
                         {
-                            _selectedSwiRegister = null;
+                            _statusData.SelectedSwiRegister = null;
                         }
 
-                        selectedSwiRegister = _selectedSwiRegister;
+                        selectedSwiRegister = _statusData.SelectedSwiRegister;
                     }
 
                     List<PsdzRpcOptionItem> rpcListItems = null;
@@ -1384,7 +1378,7 @@ namespace BmwDeepObd
 
                     lock (_statusLock)
                     {
-                        _rpcListItems = rpcListItems;
+                        _statusData.RpcListItems = rpcListItems;
                     }
 
                     if (!statusInfo.VehicleConnected && statusInfo.HasOptionsDict)
@@ -1420,7 +1414,7 @@ namespace BmwDeepObd
                 PsdzRpcSwiRegisterEnum? selectedSwiRegister;
                 lock (_statusLock)
                 {
-                    selectedSwiRegister = _selectedSwiRegister;
+                    selectedSwiRegister = _statusData.SelectedSwiRegister;
                 }
 
                 if (selectedSwiRegister == null)
@@ -1465,7 +1459,7 @@ namespace BmwDeepObd
             DateTime? statusUpdateTime;
             lock (_statusLock)
             {
-                statusUpdateTime = _statusUpdateTime;
+                statusUpdateTime = _statusData.StatusUpdateTime;
             }
 
             string timeText = "-";
@@ -1485,26 +1479,15 @@ namespace BmwDeepObd
                 return;
             }
 
-            PsdzRpcStatusInfo statusInfo;
-            List<PsdzRpcOptionType> statusOptionTypes;
-            List<PsdzRpcOptionItem> rpcListItems;
-            string statusMessage;
-            bool rpcClientConnected;
-            PsdzRpcSwiRegisterEnum? selectedSwiRegister;
-
+            BmwRpcCoding.StatusData statusData;
             lock (_statusLock)
             {
-                statusInfo = _statusInfo;
-                statusOptionTypes = _statusOptionTypes;
-                rpcListItems = _rpcListItems;
-                statusMessage = _statusMessage;
-                selectedSwiRegister = _selectedSwiRegister;
-                rpcClientConnected = _rpcClientConnected;
+                statusData = _statusData;
             }
 
             UpdateStatusTime();
 
-            if (statusInfo == null || !rpcClientConnected)
+            if (statusData == null || !statusData.RpcClientConnected)
             {
                 _buttonCodingConnect.Enabled = false;
                 _buttonCodingDisconnect.Enabled = false;
@@ -1518,28 +1501,28 @@ namespace BmwDeepObd
             }
 
             bool active = TaskActive;
-            bool modifyTal = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected && statusInfo.HasOptionsDict;
-            _buttonCodingConnect.Enabled = !active && !statusInfo.VehicleConnected;
-            _buttonCodingDisconnect.Enabled = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected;
-            _buttonCodingOptions.Enabled = !active && statusInfo.PsdzInitialized && statusInfo.VehicleConnected && !statusInfo.HasOptionsDict;
+            bool modifyTal = !active && _statusData.StatusInfo.PsdzInitialized && _statusData.StatusInfo.VehicleConnected && _statusData.StatusInfo.HasOptionsDict;
+            _buttonCodingConnect.Enabled = !active && !_statusData.StatusInfo.VehicleConnected;
+            _buttonCodingDisconnect.Enabled = !active && _statusData.StatusInfo.PsdzInitialized && _statusData.StatusInfo.VehicleConnected;
+            _buttonCodingOptions.Enabled = !active && _statusData.StatusInfo.PsdzInitialized && _statusData.StatusInfo.VehicleConnected && !_statusData.StatusInfo.HasOptionsDict;
             _buttonCodingGenerateTal.Enabled = modifyTal;
-            _buttonCodingExecuteTal.Enabled = modifyTal && statusInfo.TalPresent;
-            _buttonCodingAbort.Enabled = active && statusInfo.CancelPossible;
-            _progressBar.Visibility = active && statusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
+            _buttonCodingExecuteTal.Enabled = modifyTal && _statusData.StatusInfo.TalPresent;
+            _buttonCodingAbort.Enabled = active && _statusData.StatusInfo.CancelPossible;
+            _progressBar.Visibility = active && _statusData.StatusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
 
-            _layoutCodingOptions.Visibility = statusInfo.HasOptionsDict && statusOptionTypes != null && statusOptionTypes.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
+            _layoutCodingOptions.Visibility = _statusData.StatusInfo.HasOptionsDict && _statusData.StatusOptionTypes != null && _statusData.StatusOptionTypes.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
 
             try
             {
                 _ignoreItemSelection = true;
                 int optionSelPos = _spinnerOptionType.SelectedItemPosition;
                 _spinnerOptionTypeAdapter.Items.Clear();
-                if (statusOptionTypes != null)
+                if (statusData.StatusOptionTypes != null)
                 {
-                    foreach (PsdzRpcOptionType optionType in statusOptionTypes)
+                    foreach (PsdzRpcOptionType optionType in statusData.StatusOptionTypes)
                     {
                         _spinnerOptionTypeAdapter.Items.Add(new StringObjType(optionType.Caption, optionType.SwiRegisterEnum));
-                        if (selectedSwiRegister != null && selectedSwiRegister.Equals(optionType.SwiRegisterEnum))
+                        if (statusData.SelectedSwiRegister != null && statusData.SelectedSwiRegister.Equals(optionType.SwiRegisterEnum))
                         {
                             optionSelPos = _spinnerOptionTypeAdapter.Items.Count - 1;
                         }
@@ -1562,9 +1545,9 @@ namespace BmwDeepObd
             {
                 _ignoreItemSelection = true;
                 _listViewOptionsAdapter.Items.Clear();
-                if (rpcListItems != null)
+                if (statusData.RpcListItems != null)
                 {
-                    foreach (PsdzRpcOptionItem optionItem in rpcListItems)
+                    foreach (PsdzRpcOptionItem optionItem in statusData.RpcListItems)
                     {
                         TableResultItem resultItem = new TableResultItem(optionItem.Caption, null, optionItem.Id, true, optionItem.Selected)
                         {
@@ -1586,12 +1569,12 @@ namespace BmwDeepObd
             lock (_statusLock)
             {
                 lastStatusMessage = _lastStatusMessage;
-                _lastStatusMessage = statusMessage;
+                _lastStatusMessage = statusData.StatusMessage;
             }
 
-            _textCodingStatus.Text = statusMessage ?? string.Empty;
-            if (!string.IsNullOrEmpty(statusMessage) && !string.IsNullOrEmpty(lastStatusMessage) &&
-                statusMessage.Length > lastStatusMessage.Length)
+            _textCodingStatus.Text = statusData.StatusMessage ?? string.Empty;
+            if (!string.IsNullOrEmpty(statusData.StatusMessage) && !string.IsNullOrEmpty(lastStatusMessage) &&
+                statusData.StatusMessage.Length > lastStatusMessage.Length)
             {
                 _scrollBmwRpcCoding.Post(() =>
                 {
@@ -1749,13 +1732,7 @@ namespace BmwDeepObd
 
                 lock (_statusLock)
                 {
-                    _selectedSwiRegister = statusData.SelectedSwiRegister;
-                    _statusInfo = statusData.StatusInfo;
-                    _statusOptionTypes = statusData.StatusOptionTypes;
-                    _rpcListItems = statusData.RpcListItems;
-                    _statusMessage = statusData.StatusMessage;
-                    _statusUpdateTime = statusData.StatusUpdateTime;
-                    _rpcClientConnected = statusData.RpcClientConnected;
+                    _statusData = statusData;
                 }
                 UpdateDisplay();
             });
@@ -1819,14 +1796,14 @@ namespace BmwDeepObd
 
                         lock (_statusLock)
                         {
-                            _rpcClientConnected = connected;
+                            _statusData.RpcClientConnected = connected;
                         }
 
                         if (connected)
                         {
                             lock (_statusLock)
                             {
-                                _statusMessage = string.Empty;
+                                _statusData.StatusMessage = string.Empty;
                             }
                             await RpcClientUpdateDisplay().ConfigureAwait(false);
                         }
@@ -1834,10 +1811,10 @@ namespace BmwDeepObd
                         {
                             lock (_statusLock)
                             {
-                                _statusInfo = null;
-                                _statusOptionTypes = null;
-                                _rpcListItems = null;
-                                _statusUpdateTime = null;
+                                _statusData.StatusInfo = null;
+                                _statusData.StatusOptionTypes = null;
+                                _statusData.RpcListItems = null;
+                                _statusData.StatusUpdateTime = null;
                             }
                         }
 
@@ -1882,7 +1859,7 @@ namespace BmwDeepObd
 
                     lock (_statusLock)
                     {
-                        _statusUpdateTime = pingDateTime;
+                        _statusData.StatusUpdateTime = pingDateTime;
                     }
 
                     RunOnUiThread(() =>
@@ -2022,7 +1999,7 @@ namespace BmwDeepObd
                     {
                         lock (_statusLock)
                         {
-                            _statusMessage = message;
+                            _statusData.StatusMessage = message;
                         }
 
                         await RpcClientUpdateDisplay().ConfigureAwait(false);
@@ -2083,7 +2060,7 @@ namespace BmwDeepObd
                         {
                             lock (_statusLock)
                             {
-                                _selectedSwiRegister = swiRegisterEnum;
+                                _statusData.SelectedSwiRegister = swiRegisterEnum;
                             }
                         }
 
@@ -2345,11 +2322,12 @@ namespace BmwDeepObd
                     await _ediabasProxyClient.DisposeAsync().ConfigureAwait(false);
                     _ediabasProxyClient = null;
                 }
-#endif
+
                 lock (_statusLock)
                 {
-                    _rpcClientConnected = false;
+                    _statusData.RpcClientConnected = false;
                 }
+#endif
 
                 lock (_startLock)
                 {
@@ -2506,7 +2484,7 @@ namespace BmwDeepObd
 
                     lock (_statusLock)
                     {
-                        if (_rpcClientConnected)
+                        if (_statusData.RpcClientConnected)
                         {
                             return true;
                         }
@@ -2552,7 +2530,7 @@ namespace BmwDeepObd
                         {
                             lock (_statusLock)
                             {
-                                _rpcClientConnected = false;
+                                _statusData.RpcClientConnected = false;
                             }
                         }
 
