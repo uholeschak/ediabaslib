@@ -110,6 +110,7 @@ namespace BmwDeepObd
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
+        private AlertDialog _alertDialogRpcMessage;
         // status data start
         private BmwRpcCoding.StatusData _statusData;
         private string _lastStatusMessage;
@@ -621,6 +622,9 @@ namespace BmwDeepObd
                     _activityCommon.StartMtcService();
                 }
 
+                _alertDialogInfo = null;
+                _alertDialogConnectError = null;
+                _alertDialogRpcMessage = null;
                 GetConnectionInfoRequest();
             }
 
@@ -2115,7 +2119,12 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        new AlertDialog.Builder(this)
+                        if (_alertDialogRpcMessage != null)
+                        {
+                            return;
+                        }
+
+                        _alertDialogRpcMessage = new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                             {
                             })
@@ -2123,6 +2132,19 @@ namespace BmwDeepObd
                             .SetMessage(msgArgs.Message)
                             .SetTitle(Resource.String.alert_title_info)
                             .Show();
+
+                        if (_alertDialogRpcMessage != null)
+                        {
+                            _alertDialogRpcMessage.DismissEvent += (sender, args) =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                _alertDialogRpcMessage = null;
+                            };
+                        }
                     });
 
                     msgArgs.Result = true;
@@ -2131,6 +2153,12 @@ namespace BmwDeepObd
                 _psdzRpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
                 {
                     if (_activityCommon == null)
+                    {
+                        msgArgs.SetResult(false);
+                        return;
+                    }
+
+                    if (_alertDialogRpcMessage != null)
                     {
                         msgArgs.SetResult(false);
                         return;
@@ -2146,7 +2174,7 @@ namespace BmwDeepObd
 
                         if (msgArgs.OkBtn)
                         {
-                            AlertDialog alertDialogOk = new AlertDialog.Builder(this)
+                            _alertDialogRpcMessage = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                                 {
                                 })
@@ -2155,18 +2183,24 @@ namespace BmwDeepObd
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
 
-                            if (alertDialogOk != null)
+                            if (_alertDialogRpcMessage != null)
                             {
-                                alertDialogOk.DismissEvent += (sender, args) =>
+                                _alertDialogRpcMessage.DismissEvent += (sender, args) =>
                                 {
                                     msgArgs.SetResult(true);
+
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    _alertDialogRpcMessage = null;
                                 };
                             }
                             return;
                         }
 
                         bool dialogResult = false;
-                        AlertDialog alertDialogYesNo = new AlertDialog.Builder(this)
+                        _alertDialogRpcMessage = new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
                                 dialogResult = true;
@@ -2180,11 +2214,17 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_info)
                             .Show();
 
-                        if (alertDialogYesNo != null)
+                        if (_alertDialogRpcMessage != null)
                         {
-                            alertDialogYesNo.DismissEvent += (sender, args) =>
+                            _alertDialogRpcMessage.DismissEvent += (sender, args) =>
                             {
                                 msgArgs.SetResult(dialogResult);
+
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                _alertDialogRpcMessage = null;
                             };
                         }
                     });
