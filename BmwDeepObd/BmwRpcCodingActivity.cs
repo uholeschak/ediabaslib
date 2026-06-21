@@ -96,8 +96,8 @@ namespace BmwDeepObd
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceAddress;
-        private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
 #if !STATIC_RPC_CODING
+        private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
         private EdiabasProxyClient _ediabasProxyClient;
 #endif
         private Task<bool> _startTask;
@@ -110,6 +110,7 @@ namespace BmwDeepObd
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
+        // status data
         private PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         private PsdzRpcStatusInfo _statusInfo;
         private List<PsdzRpcOptionType> _statusOptionTypes;
@@ -205,6 +206,19 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if STATIC_RPC_CODING
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _bmwRpcCoding.ConnectVehicle().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+#else
                 string istaFolder;
                 lock (_instanceLock)
                 {
@@ -231,6 +245,7 @@ namespace BmwDeepObd
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
+#endif
             };
 
             _buttonCodingDisconnect = FindViewById<Button>(Resource.Id.buttonCodingDisconnect);
@@ -246,6 +261,19 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if STATIC_RPC_CODING
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _bmwRpcCoding.DisconnectVehicle().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+#else
                 Task.Run(async () =>
                 {
                     try
@@ -266,6 +294,7 @@ namespace BmwDeepObd
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
+#endif
             };
 
             _buttonCodingOptions = FindViewById<Button>(Resource.Id.buttonCodingOptions);
@@ -281,6 +310,19 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if STATIC_RPC_CODING
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _bmwRpcCoding.VehicleFunctions(PsdzOperationType.CreateOptions).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+#else
                 Task.Run(async () =>
                 {
                     try
@@ -301,6 +343,7 @@ namespace BmwDeepObd
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
+#endif
             };
 
             _buttonCodingGenerateTal = FindViewById<Button>(Resource.Id.buttonCodingGenerateTal);
@@ -316,6 +359,19 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if STATIC_RPC_CODING
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _bmwRpcCoding.VehicleFunctions(PsdzOperationType.BuildTalModFa).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+#else
                 Task.Run(async () =>
                 {
                     try
@@ -336,6 +392,7 @@ namespace BmwDeepObd
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
+#endif
             };
 
             _buttonCodingExecuteTal = FindViewById<Button>(Resource.Id.buttonCodingExecuteTal);
@@ -351,6 +408,19 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if STATIC_RPC_CODING
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _bmwRpcCoding.VehicleFunctions(PsdzOperationType.ExecuteTal).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+#else
                 Task.Run(async () =>
                 {
                     try
@@ -371,6 +441,7 @@ namespace BmwDeepObd
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
+#endif
             };
 
             _buttonCodingAbort = FindViewById<Button>(Resource.Id.buttonCodingAbort);
@@ -381,6 +452,19 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if STATIC_RPC_CODING
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _bmwRpcCoding.CancelOperation().ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+#else
                 Task.Run(async () =>
                 {
                     try
@@ -393,6 +477,7 @@ namespace BmwDeepObd
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
+#endif
             };
 
             _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
@@ -423,6 +508,19 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if STATIC_RPC_CODING
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _bmwRpcCoding.SelectSwiRegister(selectedSwiRegister).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+#else
                 lock (_statusLock)
                 {
                     _selectedSwiRegister = selectedSwiRegister;
@@ -439,6 +537,7 @@ namespace BmwDeepObd
                         // ignored
                     }
                 });
+#endif
             };
 
             _listViewOptions = FindViewById<ListView>(Resource.Id.listViewOptions);
@@ -456,6 +555,19 @@ namespace BmwDeepObd
                     return;
                 }
 
+#if STATIC_RPC_CODING
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _bmwRpcCoding.SelectOptionIdAsync(optionId, resultItem.Selected).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+#else
                 Task.Run(async () =>
                 {
                     try
@@ -467,6 +579,7 @@ namespace BmwDeepObd
                         // ignored
                     }
                 });
+#endif
             };
 
             _listViewOptions.Adapter = _listViewOptionsAdapter;
@@ -1172,6 +1285,7 @@ namespace BmwDeepObd
             }
         }
 
+#if !STATIC_RPC_CODING
         private async Task RpcClientTaskStarted()
         {
             TaskActive = true;
@@ -1333,6 +1447,7 @@ namespace BmwDeepObd
                 // ignored
             }
         }
+#endif
 
         private void UpdateStatusTime()
         {
@@ -1628,6 +1743,7 @@ namespace BmwDeepObd
 
                 lock (_statusLock)
                 {
+                    _selectedSwiRegister = statusData.SelectedSwiRegister;
                     _statusInfo = statusData.StatusInfo;
                     _statusOptionTypes = statusData.StatusOptionTypes;
                     _rpcListItems = statusData.RpcListItems;
@@ -2475,7 +2591,6 @@ namespace BmwDeepObd
                 return false;
             }
         }
-#endif
 
         private async Task<bool> RpcClientConnect()
         {
@@ -2608,7 +2723,7 @@ namespace BmwDeepObd
                 return false;
             }
         }
-
+#endif
         private void UpdateLogInfo()
         {
             string logDir = string.Empty;
