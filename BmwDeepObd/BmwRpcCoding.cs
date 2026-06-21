@@ -773,6 +773,24 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public async Task<bool> SelectSwiRegister(PsdzRpcSwiRegisterEnum? selectedSwiRegister)
+    {
+        try
+        {
+            lock (StatusLock)
+            {
+                _statusData.SelectedSwiRegister = selectedSwiRegister;
+            }
+
+            await RpcClientUpdateDisplay().ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     public async Task DisposeRpcClient()
     {
         try
