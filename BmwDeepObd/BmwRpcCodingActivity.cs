@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿//#define STATIC_RPC_CODING
+using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
 using Android.OS;
@@ -88,6 +89,10 @@ namespace BmwDeepObd
         }
 
         private InstanceData _instanceData = new InstanceData();
+
+#if STATIC_RPC_CODING
+        private static BmwRpcCoding _bmwRpcCoding;
+#endif
         private ActivityCommon _activityCommon;
         private string _ecuDir;
         private string _appDataDir;
@@ -156,6 +161,12 @@ namespace BmwDeepObd
             base.OnCreate(savedInstanceState);
             _allowTitleHiding = false;
 
+#if STATIC_RPC_CODING
+            if (_bmwRpcCoding == null)
+            {
+                _bmwRpcCoding = new BmwRpcCoding(ApplicationContext);
+            }
+#endif
             if (savedInstanceState != null)
             {
                 _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
