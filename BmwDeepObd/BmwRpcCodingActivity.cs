@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -161,12 +160,6 @@ namespace BmwDeepObd
             base.OnCreate(savedInstanceState);
             _allowTitleHiding = false;
 
-#if STATIC_RPC_CODING
-            if (_bmwRpcCoding == null)
-            {
-                _bmwRpcCoding = new BmwRpcCoding(ApplicationContext);
-            }
-#endif
             if (savedInstanceState != null)
             {
                 _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
@@ -485,7 +478,11 @@ namespace BmwDeepObd
 
             _activityCommon.SetPreferredNetworkInterface();
 
+#if STATIC_RPC_CODING
+            CreateStaticRpcClient();
+#else
             CreateRpcClient();
+#endif
             UpdateDisplay();
         }
 
@@ -1529,7 +1526,34 @@ namespace BmwDeepObd
             }
         }
 
+#if STATIC_RPC_CODING
+        private bool CreateStaticRpcClient()
+        {
+            try
+            {
+                if (_bmwRpcCoding != null)
+                {
+                    return true;
+                }
 
+                _bmwRpcCoding = new BmwRpcCoding(ApplicationContext);
+                EdiabasNet ediabas = new EdiabasNet
+                {
+                    EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+                };
+                ediabas.SetConfigProperty("EcuPath", _ecuDir);
+                ediabas.EdInterfaceClass.EnableTransmitCache = false;
+                _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress, _appDataDir);
+                _bmwRpcCoding.CreateRpcClient(ediabas);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+#else
         private bool CreateRpcClient()
         {
             try
@@ -1539,7 +1563,7 @@ namespace BmwDeepObd
                 logWriter = new AndroidLogWriter(Tag);
 #endif
                 _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(logWriter,
-                    PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, Assembly.GetExecutingAssembly());
+                    PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, System.Reflection.Assembly.GetExecutingAssembly());
                 _psdzRpcClient.ClientConnected += async (sender, connected) =>
                 {
                     if (_activityCommon == null)
@@ -1951,7 +1975,6 @@ namespace BmwDeepObd
                     }
                 };
 
-
                 _psdzRpcClient.CallbackHandler.GetAppInfo += (sender, infoArgs) =>
                 {
                     if (infoArgs == null)
@@ -2043,6 +2066,7 @@ namespace BmwDeepObd
                 return false;
             }
         }
+#endif
 
         private async Task DisposeRpcClient()
         {
