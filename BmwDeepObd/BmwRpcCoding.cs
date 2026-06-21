@@ -854,6 +854,14 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
+    public void RpcClientDisconnected()
+    {
+        lock (StatusLock)
+        {
+            _statusData.RpcClientConnected = false;
+        }
+    }
+
     public bool UpdateDisplay()
     {
         try

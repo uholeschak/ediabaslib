@@ -110,7 +110,7 @@ namespace BmwDeepObd
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
-        // status data
+        // status data start
         private PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         private PsdzRpcStatusInfo _statusInfo;
         private List<PsdzRpcOptionType> _statusOptionTypes;
@@ -119,6 +119,7 @@ namespace BmwDeepObd
         private string _lastStatusMessage;
         private DateTime? _statusUpdateTime;
         private bool _rpcClientConnected;
+        // status data end
 
         private LinearLayout _layoutBmwRpcCoding;
         private ScrollView _scrollBmwRpcCoding;
@@ -624,6 +625,11 @@ namespace BmwDeepObd
                 }
 
                 GetConnectionInfoRequest();
+            }
+
+            lock (_statusLock)
+            {
+                _lastStatusMessage = null;
             }
         }
 
@@ -1492,8 +1498,8 @@ namespace BmwDeepObd
                 statusOptionTypes = _statusOptionTypes;
                 rpcListItems = _rpcListItems;
                 statusMessage = _statusMessage;
-                rpcClientConnected = _rpcClientConnected;
                 selectedSwiRegister = _selectedSwiRegister;
+                rpcClientConnected = _rpcClientConnected;
             }
 
             UpdateStatusTime();
@@ -1748,6 +1754,8 @@ namespace BmwDeepObd
                     _statusOptionTypes = statusData.StatusOptionTypes;
                     _rpcListItems = statusData.RpcListItems;
                     _statusMessage = statusData.StatusMessage;
+                    _statusUpdateTime = statusData.StatusUpdateTime;
+                    _rpcClientConnected = statusData.RpcClientConnected;
                 }
                 UpdateDisplay();
             });
@@ -2446,10 +2454,7 @@ namespace BmwDeepObd
                     {
                         if (!t.Result)
                         {
-                            lock (_statusLock)
-                            {
-                                _rpcClientConnected = false;
-                            }
+                            _bmwRpcCoding.RpcClientDisconnected();
                         }
 
                         RunOnUiThread(() =>
