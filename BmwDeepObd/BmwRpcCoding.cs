@@ -83,7 +83,9 @@ public class BmwRpcCoding : IDisposable
     private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
     private EdiabasProxyClient _ediabasProxyClient;
     private StatusData _statusData;
+
     public object StatusLock { get; } = new object();
+    public EdiabasProxyClient EdiabasProxyClient { get => _ediabasProxyClient; }
 
     public BmwRpcCoding(Context appContext)
     {

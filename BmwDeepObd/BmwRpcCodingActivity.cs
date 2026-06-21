@@ -512,6 +512,7 @@ namespace BmwDeepObd
             _activityActive = true;
 
 #if STATIC_RPC_CODING
+            DetachStaticRpcClient();
             AttachStaticRpcClient();
 #else
             StartRpcClient();
@@ -541,6 +542,9 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
+#if STATIC_RPC_CODING
+            DetachStaticRpcClient();
+#endif
             if (_infoHttpClient != null)
             {
                 try
@@ -1559,6 +1563,10 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            finally
+            {
+                _ediabasProxyClient = _bmwRpcCoding?.EdiabasProxyClient;
+            }
         }
 
         private bool AttachStaticRpcClient()
@@ -1573,6 +1581,10 @@ namespace BmwDeepObd
                 _bmwRpcCoding.UpdateDisplayEvent += RpcClientUpdateDisplay;
                 _bmwRpcCoding.UpdateProgressEvent += RpcClientUpdateProgress;
                 _bmwRpcCoding.UpdateTimeEvent += RpcClientUpdateTime;
+
+                _bmwRpcCoding.UpdateDisplay();
+                _bmwRpcCoding.UpdateProgress();
+                _bmwRpcCoding.UpdateTime();
                 return true;
             }
             catch (Exception)
@@ -2226,6 +2238,136 @@ namespace BmwDeepObd
             }
         }
 
+#if STATIC_RPC_CODING
+        private bool StartRpcClient()
+        {
+            try
+            {
+                if (_bmwRpcCoding == null)
+                {
+                    return false;
+                }
+
+                lock (_startLock)
+                {
+                    if (_startTask != null && !_startTask.IsCompleted)
+                    {
+                        return false;
+                    }
+                }
+
+                if (!_activityCommon.IsNetworkPresent(out string domains))
+                {
+                    return false;
+                }
+
+                string loadUrl;
+                bool enableIpV6 = false;
+                lock (_instanceLock)
+                {
+                    if (string.IsNullOrEmpty(_instanceData.Url))
+                    {
+                        string url;
+                        if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (!string.IsNullOrEmpty(_instanceData.CodingRpcUrlTest))
+                            {
+                                url = _instanceData.CodingRpcUrlTest;
+                            }
+                            else
+                            {
+                                url = @"vm-ista.local.holeschak.de:" + PsdzRpcServiceConstants.DefaultTcpPort;
+                            }
+                        }
+                        else
+                        {
+                            url = _instanceData.CodingRpcUrl;
+                        }
+
+                        _instanceData.Url = url;
+                    }
+
+                    loadUrl = _instanceData.Url;
+                    enableIpV6 = _instanceData.CodingRpcEnableIpv6;
+                }
+
+                if (string.IsNullOrEmpty(loadUrl))
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
+                    return false;
+                }
+
+                TaskActive = false;
+                lock (_startLock)
+                {
+                    _startCts = new CancellationTokenSource();
+                    CustomProgressDialog progress = new CustomProgressDialog(this);
+                    progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+                    progress.ButtonAbort.Enabled = true;
+                    progress.AbortClick = sender =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        lock (_startLock)
+                        {
+                            _startCts?.Cancel();
+                        }
+                    };
+                    progress.Show();
+
+                    _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
+                    _activityCommon.SetPreferredNetworkInterface();
+
+                    _startTask = _bmwRpcCoding.RpcClientConnect(loadUrl, enableIpV6, _startCts);
+                    _startTask.ContinueWith(t =>
+                    {
+                        if (!t.Result)
+                        {
+                            lock (_statusLock)
+                            {
+                                _rpcClientConnected = false;
+                            }
+                        }
+
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (progress != null)
+                            {
+                                progress.Dismiss();
+                                progress = null;
+                            }
+
+                            lock (_startLock)
+                            {
+                                _startTask = null;
+                                _startCts?.Dispose();
+                                _startCts = null;
+                            }
+
+                            if (!t.Result)
+                            {
+                                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                ConnectionFailMessage();
+                            }
+                        });
+                    });
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+#else
         private bool StartRpcClient()
         {
             try
@@ -2329,6 +2471,7 @@ namespace BmwDeepObd
                 return false;
             }
         }
+#endif
 
         private async Task<bool> RpcClientConnect()
         {
