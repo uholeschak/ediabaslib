@@ -97,7 +97,9 @@ namespace BmwDeepObd
         private string _appDataDir;
         private string _deviceAddress;
         private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
+#if !STATIC_RPC_CODING
         private EdiabasProxyClient _ediabasProxyClient;
+#endif
         private Task<bool> _startTask;
         private CancellationTokenSource _startCts;
         private object _startLock = new object();
@@ -153,6 +155,12 @@ namespace BmwDeepObd
                 }
             }
         }
+
+#if STATIC_RPC_CODING
+        public EdiabasProxyClient EdiabasProxyClient => _bmwRpcCoding?.EdiabasProxyClient;
+#else
+        public EdiabasProxyClient EdiabasProxyClient => _ediabasProxyClient;
+#endif
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -214,12 +222,12 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
+                            EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle failed");
                         }
                     }
                     catch (Exception ex)
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicle: Exception={0}",
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
@@ -249,12 +257,12 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
+                            EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle failed");
                         }
                     }
                     catch (Exception ex)
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicle: Exception={0}",
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
@@ -284,12 +292,12 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions failed");
+                            EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions failed");
                         }
                     }
                     catch (Exception ex)
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions: Exception={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions CreateOptions: Exception={0}",
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
@@ -319,12 +327,12 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal failed");
+                            EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal failed");
                         }
                     }
                     catch (Exception ex)
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal: Exception={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions BuildTal: Exception={0}",
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
@@ -354,12 +362,12 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal failed");
+                            EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal failed");
                         }
                     }
                     catch (Exception ex)
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal: Exception={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctions ExecuteTal: Exception={0}",
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
@@ -381,7 +389,7 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "CancelOperation: Exception={0}",
                             EdiabasNet.GetExceptionText(ex, false, false));
                     }
                 });
@@ -1514,23 +1522,23 @@ namespace BmwDeepObd
 
         public bool IsEdiabasConnected()
         {
-            if (_ediabasProxyClient == null)
+            if (EdiabasProxyClient == null)
             {
                 return false;
             }
-            return _ediabasProxyClient.IsEdiabasConnected();
+            return EdiabasProxyClient.IsEdiabasConnected();
         }
 
         private bool CloseEdiabasLog()
         {
             try
             {
-                if (_ediabasProxyClient == null)
+                if (EdiabasProxyClient == null)
                 {
                     return true;
                 }
 
-                return _ediabasProxyClient.CloseEdiabasLog();
+                return EdiabasProxyClient.CloseEdiabasLog();
             }
             catch (Exception)
             {
@@ -1562,10 +1570,6 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return false;
-            }
-            finally
-            {
-                _ediabasProxyClient = _bmwRpcCoding?.EdiabasProxyClient;
             }
         }
 
@@ -1666,7 +1670,6 @@ namespace BmwDeepObd
                 _textViewUpdateTime.Text = statusText;
             });
         }
-
 #else
         private bool CreateRpcClient()
         {
@@ -1687,7 +1690,7 @@ namespace BmwDeepObd
 
                     try
                     {
-                        _ediabasProxyClient.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
                             connected);
 
                         lock (_statusLock)
@@ -1773,7 +1776,7 @@ namespace BmwDeepObd
 
                     try
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StartProgrammingCompleted: Success={0}",
                             success);
                         await RpcClientTaskCompleted().ConfigureAwait(false);
                     }
@@ -1792,7 +1795,7 @@ namespace BmwDeepObd
 
                     try
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "StopProgrammingCompleted: Success={0}",
                             success);
                         await RpcClientTaskCompleted().ConfigureAwait(false);
                     }
@@ -1811,7 +1814,7 @@ namespace BmwDeepObd
 
                     try
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}, LicenseValid={2}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ConnectVehicleCompleted: Success={0}, Vin={1}, LicenseValid={2}",
                             connectArgs.Success, connectArgs.Vin, connectArgs.LicenseValid);
 
                         if (connectArgs.Success)
@@ -1848,7 +1851,7 @@ namespace BmwDeepObd
 
                     try
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "DisconnectVehicleCompleted: Success={0}",
                             success);
                         lock (_instanceLock)
                         {
@@ -1873,7 +1876,7 @@ namespace BmwDeepObd
 
                     try
                     {
-                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
+                        EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "VehicleFunctionsCompleted: Success={0}, Type={1}",
                             vehicleArgs.Success, vehicleArgs.OperationType);
 
                         await RpcClientTaskCompleted().ConfigureAwait(false);
@@ -2077,10 +2080,10 @@ namespace BmwDeepObd
                             string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzAppClient.log");
 
                             bool result = await _psdzRpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
-                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
+                            EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
 
                             bool resetResult = await _psdzRpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
-                            _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ResetStarterGuard result: {0}", resetResult);
+                            EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ResetStarterGuard result: {0}", resetResult);
                         }
                     }
                     catch (Exception)
@@ -2140,12 +2143,12 @@ namespace BmwDeepObd
                         }
                     }
 
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "EdiabasProxyClient: Type={0}, Message={1}", messageType.ToString(), message);
                 };
 
                 _psdzRpcClient.CallbackHandler.VehicleConnect += (s, id) =>
                 {
-                    EdiabasProxyClient proxy = _ediabasProxyClient;
+                    EdiabasProxyClient proxy = EdiabasProxyClient;
                     if (proxy == null || proxy.IsDisposed)
                     {
                         return;
@@ -2155,7 +2158,7 @@ namespace BmwDeepObd
 
                 _psdzRpcClient.CallbackHandler.VehicleDisconnect += (s, id) =>
                 {
-                    EdiabasProxyClient proxy = _ediabasProxyClient;
+                    EdiabasProxyClient proxy = EdiabasProxyClient;
                     if (proxy == null || proxy.IsDisposed)
                     {
                         return;
@@ -2165,7 +2168,7 @@ namespace BmwDeepObd
 
                 _psdzRpcClient.CallbackHandler.VehicleSend += (s, sendArgs) =>
                 {
-                    EdiabasProxyClient proxy = _ediabasProxyClient;
+                    EdiabasProxyClient proxy = EdiabasProxyClient;
                     if (proxy == null || proxy.IsDisposed)
                     {
                         return;
@@ -2205,6 +2208,7 @@ namespace BmwDeepObd
                     }
                 }
 
+#if !STATIC_RPC_CODING
                 if (_psdzRpcClient != null)
                 {
                     _psdzRpcClient.Dispose();
@@ -2217,7 +2221,7 @@ namespace BmwDeepObd
                     await _ediabasProxyClient.DisposeAsync().ConfigureAwait(false);
                     _ediabasProxyClient = null;
                 }
-
+#endif
                 lock (_statusLock)
                 {
                     _rpcClientConnected = false;
@@ -2293,7 +2297,7 @@ namespace BmwDeepObd
 
                 if (string.IsNullOrEmpty(loadUrl))
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
                     return false;
                 }
 
@@ -2477,7 +2481,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_ediabasProxyClient == null)
+                if (EdiabasProxyClient == null)
                 {
                     return false;
                 }
@@ -2519,7 +2523,7 @@ namespace BmwDeepObd
 
                 if (string.IsNullOrEmpty(loadUrl))
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: loadUrl is empty");
                     return false;
                 }
 
@@ -2531,7 +2535,7 @@ namespace BmwDeepObd
 
                 if (!Uri.TryCreate(normalizedUrl, UriKind.Absolute, out Uri loadUri) || string.IsNullOrEmpty(loadUri.Host))
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Invalid loadUrl={0}", loadUrl);
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Invalid loadUrl={0}", loadUrl);
                     return false;
                 }
 
@@ -2540,7 +2544,7 @@ namespace BmwDeepObd
                 bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, enableIpV6, null, _startCts.Token).ConfigureAwait(false);
                 if (!connected)
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: ConnectTcpAsync failed");
                     return false;
                 }
 
@@ -2548,14 +2552,14 @@ namespace BmwDeepObd
                 int remoteVersion = await _psdzRpcClient.RpcService.GetInterfaceVersion().ConfigureAwait(false);
                 if (remoteVersion < localVersion)
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Interface version mismatch");
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Interface version mismatch");
                     return false;
                 }
 
                 string istaFolder = await _psdzRpcClient.RpcService.GetIstaInstallLocation().ConfigureAwait(false);
                 if (string.IsNullOrEmpty(istaFolder))
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Failed to get ISTA install location");
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Failed to get ISTA install location");
                     return false;
                 }
 
@@ -2567,7 +2571,7 @@ namespace BmwDeepObd
                 bool licenseResult = await _psdzRpcClient.RpcService.SetLicenseValid(true).ConfigureAwait(false);
                 if (!licenseResult)
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLicenseValid failed");
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLicenseValid failed");
                     return false;
                 }
 
@@ -2575,23 +2579,23 @@ namespace BmwDeepObd
                 bool matched = await _psdzRpcClient.RpcService.SetLanguage(language, true).ConfigureAwait(false);
                 if (matched)
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage matched: {0}", language);
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage matched: {0}", language);
                 }
                 else
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage mismatch: {0}", language);
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: SetLanguage mismatch: {0}", language);
                 }
 
-                if (!_ediabasProxyClient.StartEdiabasThread())
+                if (!EdiabasProxyClient.StartEdiabasThread())
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: StartEdiabasThread failed");
                     return false;
                 }
 
                 bool proxyResult = await _psdzRpcClient.RpcService.EnableVehicleProxy().ConfigureAwait(false);
                 if (!proxyResult)
                 {
-                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
+                    EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: EnableVehicleProxy failed");
                     return false;
                 }
 
@@ -2599,7 +2603,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Exception={0}",
+                EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "RpcConnect: Exception={0}",
                     EdiabasNet.GetExceptionText(ex, false, false));
                 return false;
             }
@@ -2627,9 +2631,9 @@ namespace BmwDeepObd
                 _instanceData.TraceDir = logDir;
             }
 
-            if (_ediabasProxyClient?.Ediabas != null)
+            if (EdiabasProxyClient?.Ediabas != null)
             {
-                ActivityCommon.SetEdiabasConfigProperties(_ediabasProxyClient.Ediabas, _instanceData.TraceDir, string.Empty, _instanceData.TraceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(EdiabasProxyClient.Ediabas, _instanceData.TraceDir, string.Empty, _instanceData.TraceAppend);
             }
         }
 
