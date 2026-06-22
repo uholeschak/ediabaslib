@@ -89,7 +89,10 @@ public class BmwRpcCoding : IDisposable
 
     public BmwRpcCoding(Context appContext)
     {
-        _statusData = new StatusData();
+        lock (StatusLock)
+        {
+            _statusData = new StatusData();
+        }
         _activityCommon = new ActivityCommon(appContext);
     }
 
@@ -101,6 +104,11 @@ public class BmwRpcCoding : IDisposable
 #if DEBUG
             logWriter = new AndroidLogWriter(Tag);
 #endif
+            lock (StatusLock)
+            {
+                _statusData = new StatusData();
+            }
+
             _psdzRpcClient = new PsdzRpcClient.PsdzRpcClient(logWriter,
                 PsdzRpcServiceConstants.CaCertFile, PsdzRpcServiceConstants.ClientPfxFile, Assembly.GetExecutingAssembly());
             _psdzRpcClient.ClientConnected += async (sender, connected) =>
