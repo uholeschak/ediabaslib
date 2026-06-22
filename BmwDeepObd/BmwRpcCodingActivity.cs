@@ -1,4 +1,4 @@
-﻿//#define STATIC_RPC_CODING
+﻿#define STATIC_RPC_CODING
 using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
@@ -134,6 +134,22 @@ namespace BmwDeepObd
         private ResultListAdapter _listViewOptionsAdapter;
         private TextView _textCodingStatus;
 
+#if STATIC_RPC_CODING
+        public bool TaskActive
+        {
+            get
+            {
+                lock (_statusLock)
+                {
+                    if (_statusData != null)
+                    {
+                        return _statusData.TaskActive;
+                    }
+                    return false;
+                }
+            }
+        }
+#else
         private bool _taskActive;
         public bool TaskActive
         {
@@ -152,6 +168,7 @@ namespace BmwDeepObd
                 }
             }
         }
+#endif
 
 #if STATIC_RPC_CODING
         public EdiabasProxyClient EdiabasProxyClient => _bmwRpcCoding?.EdiabasProxyClient;
@@ -2598,7 +2615,6 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                TaskActive = false;
                 lock (_startLock)
                 {
                     _startCts = new CancellationTokenSource();
