@@ -672,6 +672,11 @@ namespace BmwDeepObd
 
 #if STATIC_RPC_CODING
             DetachStaticRpcClient();
+            if (_bmwRpcCoding != null && _bmwRpcCoding.PsdzRpcClient == null)
+            {
+                _bmwRpcCoding.Dispose();
+                _bmwRpcCoding = null;
+            }
 #endif
             if (_infoHttpClient != null)
             {
