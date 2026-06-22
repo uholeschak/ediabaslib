@@ -1573,6 +1573,7 @@ namespace BmwDeepObd
                     optionSelPos = 0;
                 }
                 _spinnerOptionType.SetSelection(optionSelPos);
+                _spinnerOptionType.Enabled = !active;
             }
             finally
             {
@@ -1597,6 +1598,7 @@ namespace BmwDeepObd
 
                 _listViewOptionsAdapter.NotifyDataSetChanged();
                 AndroidUtility.SetListViewHeightBasedOnChildren(_listViewOptions);
+                _listViewOptions.Enabled = !active;
             }
             finally
             {
