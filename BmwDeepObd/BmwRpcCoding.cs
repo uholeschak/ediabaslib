@@ -85,6 +85,7 @@ public class BmwRpcCoding : IDisposable
     private StatusData _statusData;
 
     public object StatusLock { get; } = new object();
+    public PsdzRpcClient.PsdzRpcClient PsdzRpcClient { get => _psdzRpcClient; }
     public EdiabasProxyClient EdiabasProxyClient { get => _ediabasProxyClient; }
 
     public BmwRpcCoding(Context appContext)
@@ -102,6 +103,7 @@ public class BmwRpcCoding : IDisposable
         {
             if (_psdzRpcClient != null)
             {
+                ediabas.Dispose();
                 return true;
             }
 

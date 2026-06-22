@@ -796,6 +796,9 @@ namespace BmwDeepObd
 
         private void FinishContinue()
         {
+#if STATIC_RPC_CODING
+            Task.Run(_bmwRpcCoding.DisposeRpcClient).GetAwaiter().GetResult();
+#endif
             if (!SendTraceFile((sender, args) =>
                 {
                     if (_activityCommon == null)
@@ -1671,12 +1674,16 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_bmwRpcCoding != null)
+                if (_bmwRpcCoding == null)
+                {
+                    _bmwRpcCoding = new BmwRpcCoding(ApplicationContext);
+                }
+
+                if (_bmwRpcCoding.PsdzRpcClient != null)
                 {
                     return true;
                 }
 
-                _bmwRpcCoding = new BmwRpcCoding(ApplicationContext);
                 EdiabasNet ediabas = new EdiabasNet
                 {
                     EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
