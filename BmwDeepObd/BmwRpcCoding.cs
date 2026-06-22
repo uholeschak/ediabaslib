@@ -825,7 +825,7 @@ public class BmwRpcCoding : IDisposable
         UpdateDisplay();
     }
 
-    public async Task DisposeRpcClient()
+    public async Task<bool> DisposeRpcClient()
     {
         try
         {
@@ -844,13 +844,14 @@ public class BmwRpcCoding : IDisposable
 
             lock (StatusLock)
             {
-                _statusData = new StatusData();
+                _statusData.RpcClientConnected = false;
             }
             _activityCommon.SetLock(ActivityCommon.LockType.None);
+            return true;
         }
         catch (Exception)
         {
-            // ignored
+            return false;
         }
     }
 
