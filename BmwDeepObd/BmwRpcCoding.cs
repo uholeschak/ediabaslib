@@ -100,6 +100,11 @@ public class BmwRpcCoding : IDisposable
     {
         try
         {
+            if (_psdzRpcClient != null)
+            {
+                return true;
+            }
+
             AndroidLogWriter logWriter = null;
 #if DEBUG
             logWriter = new AndroidLogWriter(Tag);
@@ -839,7 +844,7 @@ public class BmwRpcCoding : IDisposable
 
             lock (StatusLock)
             {
-                _statusData.RpcClientConnected = false;
+                _statusData = new StatusData();
             }
             _activityCommon.SetLock(ActivityCommon.LockType.None);
         }
