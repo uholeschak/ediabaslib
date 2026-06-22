@@ -1750,6 +1750,15 @@ namespace BmwDeepObd
                 {
                     _statusData = statusData;
                 }
+
+                if (statusData != null && statusData.CommErrorsOccurred)
+                {
+                    lock (_instanceLock)
+                    {
+                        _instanceData.CommErrorsOccurred = true;
+                    }
+                }
+
                 UpdateDisplay();
             });
         }
