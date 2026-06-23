@@ -964,8 +964,17 @@ namespace BmwDeepObd
                 return true;
             }
 
-            if (!string.IsNullOrEmpty(_instanceData.CodingRpcUrl))
+            string codingUrl;
+            lock (_instanceLock)
             {
+                codingUrl = _instanceData.CodingRpcUrl;
+            }
+
+            if (!string.IsNullOrEmpty(codingUrl))
+            {
+#if STATIC_RPC_CODING
+                StartRpcClient();
+#endif
                 return true;
             }
 
