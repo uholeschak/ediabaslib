@@ -84,6 +84,12 @@
                 android:id="@+id/listViewOptions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <ProgressBar
+                android:id="@+id/progressBar2"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="false" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/layoutCodingStatus"
@@ -105,11 +111,5 @@
                 android:minLines="1"
                 android:maxLines="50" />
         </LinearLayout>
-        <ProgressBar
-            android:id="@+id/progressBar2"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="false" />
     </LinearLayout>
 </ScrollView>
