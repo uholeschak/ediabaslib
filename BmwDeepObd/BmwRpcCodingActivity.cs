@@ -2601,6 +2601,17 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                lock (_statusLock)
+                {
+                    if (_statusData != null)
+                    {
+                        if (_statusData.RpcClientConnected)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
                 lock (_startLock)
                 {
                     if (_startTask != null && !_startTask.IsCompleted)
