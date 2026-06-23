@@ -60,7 +60,7 @@
                 android:text="@string/bmw_rpc_coding_abort" />
         </org.apmem.tools.layouts.FlowLayout>
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/progressBar1"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -105,5 +105,11 @@
                 android:minLines="1"
                 android:maxLines="50" />
         </LinearLayout>
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="false" />
     </LinearLayout>
 </ScrollView>

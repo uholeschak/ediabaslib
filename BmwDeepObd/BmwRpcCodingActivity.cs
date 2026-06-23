@@ -125,7 +125,8 @@ namespace BmwDeepObd
         private Button _buttonCodingGenerateTal;
         private Button _buttonCodingExecuteTal;
         private Button _buttonCodingAbort;
-        private ProgressBar _progressBar;
+        private ProgressBar _progressBar1;
+        private ProgressBar _progressBar2;
         private LinearLayout _layoutCodingOptions;
         private LinearLayout _layoutCodingStatus;
         private Spinner _spinnerOptionType;
@@ -493,10 +494,15 @@ namespace BmwDeepObd
 #endif
             };
 
-            _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
-            _progressBar.Max = 100;
-            _progressBar.Progress = 0;
-            _progressBar.Indeterminate = false;
+            _progressBar1 = FindViewById<ProgressBar>(Resource.Id.progressBar1);
+            _progressBar1.Max = 100;
+            _progressBar1.Progress = 0;
+            _progressBar1.Indeterminate = false;
+
+            _progressBar2 = FindViewById<ProgressBar>(Resource.Id.progressBar2);
+            _progressBar2.Max = 100;
+            _progressBar2.Progress = 0;
+            _progressBar2.Indeterminate = false;
 
             _layoutCodingOptions = FindViewById<LinearLayout>(Resource.Id.layoutCodingOptions);
             _spinnerOptionType = FindViewById<Spinner>(Resource.Id.spinnerOptionType);
@@ -1533,7 +1539,8 @@ namespace BmwDeepObd
                 _buttonCodingGenerateTal.Enabled = false;
                 _buttonCodingExecuteTal.Enabled = false;
                 _buttonCodingAbort.Enabled = false;
-                _progressBar.Visibility = ViewStates.Invisible;
+                _progressBar1.Visibility = ViewStates.Invisible;
+                _progressBar2.Visibility = ViewStates.Invisible;
                 _layoutCodingOptions.Visibility = ViewStates.Gone;
                 return;
             }
@@ -1546,7 +1553,8 @@ namespace BmwDeepObd
             _buttonCodingGenerateTal.Enabled = modifyTal;
             _buttonCodingExecuteTal.Enabled = modifyTal && statusData.StatusInfo.TalPresent;
             _buttonCodingAbort.Enabled = active && statusData.StatusInfo.CancelPossible;
-            _progressBar.Visibility = active && statusData.StatusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
+            _progressBar1.Visibility = active && statusData.StatusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
+            _progressBar2.Visibility = active && statusData.StatusInfo.CancelPossible ? ViewStates.Visible : ViewStates.Invisible;
 
             _layoutCodingOptions.Visibility = statusData.StatusInfo.HasOptionsDict && statusData.StatusOptionTypes != null && statusData.StatusOptionTypes.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
 
