@@ -2021,8 +2021,12 @@ namespace BmwDeepObd
                                 ConnectionFailMessage();
                             }
 
-                            _progressBar.Progress = 0;
-                            _progressBar.Indeterminate = false;
+                            _progressBar1.Progress = 0;
+                            _progressBar1.Indeterminate = false;
+
+                            _progressBar2.Progress = 0;
+                            _progressBar2.Indeterminate = false;
+
                             UpdateDisplay();
                         });
                     }
@@ -2212,8 +2216,12 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _progressBar.Indeterminate = progressArgs.Marquee;
-                        _progressBar.Progress = progressArgs.Percent;
+                        _progressBar1.Indeterminate = progressArgs.Marquee;
+                        _progressBar1.Progress = progressArgs.Percent;
+
+                        _progressBar2.Indeterminate = progressArgs.Marquee;
+                        _progressBar2.Progress = progressArgs.Percent;
+
                         UpdateDisplay();
                     });
                 };
@@ -2458,7 +2466,16 @@ namespace BmwDeepObd
 
                 _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
                 {
-                    return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                    try
+                    {
+                        return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                    }
+                    catch (Exception ex)
+                    {
+                        _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "SetVehicleResponse: Exception={0}",
+                            EdiabasNet.GetExceptionText(ex, false, false));
+                        return false;
+                    }
                 };
 
                 _ediabasProxyClient.MessageEvent += (messageType, message) =>

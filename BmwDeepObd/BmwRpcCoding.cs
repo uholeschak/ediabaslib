@@ -473,7 +473,6 @@ public class BmwRpcCoding : IDisposable
                 }
             };
 
-
             _psdzRpcClient.CallbackHandler.GetAppInfo += (sender, infoArgs) =>
             {
                 if (_disposed)
@@ -497,7 +496,16 @@ public class BmwRpcCoding : IDisposable
             _ediabasProxyClient = new EdiabasProxyClient(ediabas);
             _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
             {
-                return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                try
+                {
+                    return Task.Run(() => _psdzRpcClient.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "SetVehicleResponse: Exception={0}",
+                        EdiabasNet.GetExceptionText(ex, false, false));
+                    return false;
+                }
             };
 
             _ediabasProxyClient.MessageEvent += (messageType, message) =>
