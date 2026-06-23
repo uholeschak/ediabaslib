@@ -1811,8 +1811,11 @@ namespace BmwDeepObd
                     return;
                 }
 
-                _progressBar.Indeterminate = indeterminate;
-                _progressBar.Progress = percent;
+                _progressBar1.Indeterminate = indeterminate;
+                _progressBar1.Progress = percent;
+
+                _progressBar2.Indeterminate = indeterminate;
+                _progressBar2.Progress = percent;
             });
         }
 
