@@ -40,8 +40,10 @@ namespace BmwDeepObd
                 CodingRpcEnableIpv6 = false;
                 DayString = string.Empty;
                 ValidSerial = string.Empty;
+#if !STATIC_RPC_CODING
                 Vin = string.Empty;
                 LicenseValid = false;
+#endif
                 Url = string.Empty;
                 IstaFolder = string.Empty;
                 TraceDir = string.Empty;
@@ -55,8 +57,10 @@ namespace BmwDeepObd
             public bool CodingRpcEnableIpv6 { get; set; }
             public string DayString { get; set; }
             public string ValidSerial { get; set; }
+#if !STATIC_RPC_CODING
             public string Vin { get; set; }
             public bool LicenseValid { get; set; }
+#endif
             public string Url { get; set; }
             public string IstaFolder { get; set; }
             public string TraceDir { get; set; }
@@ -1724,6 +1728,7 @@ namespace BmwDeepObd
                 ediabas.EdInterfaceClass.EnableTransmitCache = false;
                 _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress, _appDataDir);
                 _bmwRpcCoding.CreateRpcClient(ediabas);
+                UpdateLogInfo();
                 return true;
             }
             catch (Exception)
@@ -2594,6 +2599,8 @@ namespace BmwDeepObd
 
                 string loadUrl;
                 bool enableIpV6 = false;
+                string validSerial;
+
                 lock (_instanceLock)
                 {
                     if (string.IsNullOrEmpty(_instanceData.Url))
@@ -2620,6 +2627,7 @@ namespace BmwDeepObd
 
                     loadUrl = _instanceData.Url;
                     enableIpV6 = _instanceData.CodingRpcEnableIpv6;
+                    validSerial = _instanceData.ValidSerial;
                 }
 
                 if (string.IsNullOrEmpty(loadUrl))
@@ -2651,7 +2659,7 @@ namespace BmwDeepObd
                     _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                     _activityCommon.SetPreferredNetworkInterface();
 
-                    _startTask = _bmwRpcCoding.RpcClientConnect(loadUrl, enableIpV6, _startCts);
+                    _startTask = _bmwRpcCoding.RpcClientConnect(loadUrl, enableIpV6, validSerial, _startCts);
                     _startTask.ContinueWith(t =>
                     {
                         if (!t.Result)
