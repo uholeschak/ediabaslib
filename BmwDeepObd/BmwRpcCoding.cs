@@ -18,8 +18,6 @@ public class BmwRpcCoding : IDisposable
         public StatusData()
         {
             TaskActive = false;
-            DayString = string.Empty;
-            ValidSerial = string.Empty;
             Vin = string.Empty;
             LicenseValid = false;
             Url = string.Empty;
@@ -47,8 +45,6 @@ public class BmwRpcCoding : IDisposable
         }
 
         public bool TaskActive { get; set; }
-        public string DayString { get; set; }
-        public string ValidSerial { get; set; }
         public string Vin { get; set; }
         public bool LicenseValid { get; set; }
         public string Url { get; set; }
@@ -83,6 +79,7 @@ public class BmwRpcCoding : IDisposable
     private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
     private EdiabasProxyClient _ediabasProxyClient;
     private StatusData _statusData;
+    private string _validSerial;
 
     public object StatusLock { get; } = new object();
     public PsdzRpcClient.PsdzRpcClient PsdzRpcClient { get => _psdzRpcClient; }
@@ -485,12 +482,7 @@ public class BmwRpcCoding : IDisposable
                 }
 
                 string adapterSerial = ActivityCommon.LastAdapterSerial ?? string.Empty;
-                string validSerial;
-                lock (StatusLock)
-                {
-                    validSerial = _statusData.ValidSerial ?? string.Empty;
-                }
-
+                string validSerial = _validSerial ?? string.Empty;
                 bool adapterSerialValid = false;
                 if (!string.IsNullOrEmpty(validSerial) && string.Compare(validSerial, adapterSerial, StringComparison.Ordinal) == 0)
                 {
@@ -559,7 +551,7 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
-    public async Task<bool> RpcClientConnect(string loadUrl, bool enableIpV6, CancellationTokenSource startCts)
+    public async Task<bool> RpcClientConnect(string loadUrl, bool enableIpV6, string validSerial, CancellationTokenSource startCts)
     {
         try
         {
@@ -568,6 +560,7 @@ public class BmwRpcCoding : IDisposable
                 return false;
             }
 
+            _validSerial = validSerial;
             string normalizedUrl = loadUrl;
             if (!normalizedUrl.Contains("://"))
             {
