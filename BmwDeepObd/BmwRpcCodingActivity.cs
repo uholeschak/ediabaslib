@@ -1724,6 +1724,7 @@ namespace BmwDeepObd
                 ediabas.EdInterfaceClass.EnableTransmitCache = false;
                 _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress, _appDataDir);
                 _bmwRpcCoding.CreateRpcClient(ediabas);
+                UpdateLogInfo();
                 return true;
             }
             catch (Exception)
