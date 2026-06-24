@@ -1976,11 +1976,11 @@ namespace BmwDeepObd
                         EdiabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "ClientConnected: Connected={0}",
                             connected);
 
+                        TaskActive = false;
                         lock (_statusLock)
                         {
                             if (_statusData != null)
                             {
-                                _statusData.TaskActive = false;
                                 _statusData.RpcClientConnected = connected;
                             }
                         }
