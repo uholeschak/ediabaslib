@@ -158,7 +158,11 @@ public class BmwRpcCoding : IDisposable
                     lock (StatusLock)
                     {
                         _statusData.ShowMessage = null;
-                        _statusData.ShowMessageWait = null;
+                        if (_statusData.ShowMessageWait != null)
+                        {
+                            _statusData.ShowMessageWait.Dispose();
+                            _statusData.ShowMessageWait = null;
+                        }
                         _statusData.ProgressIndeterminate = false;
                         _statusData.ProgressPercent = 0;
                     }
@@ -432,6 +436,11 @@ public class BmwRpcCoding : IDisposable
                 {
                     lock (StatusLock)
                     {
+                        if (_statusData.ShowMessageWait != null)
+                        {
+                            _statusData.ShowMessageWait.Dispose();
+                            _statusData.ShowMessageWait = null;
+                        }
                         _statusData.ShowMessageWait = msgArgs;
                     }
 
@@ -827,8 +836,11 @@ public class BmwRpcCoding : IDisposable
     {
         lock (StatusLock)
         {
-            _statusData.ShowMessageWait.SetResult(result);
-            _statusData.ShowMessageWait = null;
+            if (_statusData.ShowMessageWait != null)
+            {
+                _statusData.ShowMessageWait.SetResult(result);
+                _statusData.ShowMessageWait = null;
+            }
         }
 
         UpdateDisplay();
@@ -853,6 +865,12 @@ public class BmwRpcCoding : IDisposable
 
             lock (StatusLock)
             {
+                _statusData.ShowMessage = null;
+                if (_statusData.ShowMessageWait != null)
+                {
+                    _statusData.ShowMessageWait.Dispose();
+                    _statusData.ShowMessageWait = null;
+                }
                 _statusData.RpcClientConnected = false;
             }
             _activityCommon.SetLock(ActivityCommon.LockType.None);
@@ -902,6 +920,14 @@ public class BmwRpcCoding : IDisposable
     {
         lock (StatusLock)
         {
+            _statusData.ShowMessage = null;
+
+            if (_statusData.ShowMessageWait != null)
+            {
+                _statusData.ShowMessageWait.Dispose();
+                _statusData.ShowMessageWait = null;
+            }
+
             _statusData.RpcClientConnected = false;
         }
     }

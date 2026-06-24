@@ -652,7 +652,9 @@ namespace BmwDeepObd
                 _alertDialogInfo = null;
                 _alertDialogConnectError = null;
                 _alertDialogRpcMessage = null;
+#if !STATIC_RPC_CODING
                 GetConnectionInfoRequest();
+#endif
             }
 
             lock (_statusLock)
@@ -669,6 +671,7 @@ namespace BmwDeepObd
 #if STATIC_RPC_CODING
             DetachStaticRpcClient();
             AttachStaticRpcClient();
+            GetConnectionInfoRequest();
 #else
             StartRpcClient();
 #endif
@@ -1562,21 +1565,6 @@ namespace BmwDeepObd
                 _progressBar1.Visibility = ViewStates.Invisible;
                 _progressBar2.Visibility = ViewStates.Invisible;
                 _layoutCodingOptions.Visibility = ViewStates.Gone;
-#if STATIC_RPC_CODING
-                if (statusData != null && !statusData.RpcClientConnected)
-                {
-                    string codingUrl;
-                    lock (_instanceLock)
-                    {
-                        codingUrl = _instanceData.CodingRpcUrl;
-                    }
-
-                    if (!string.IsNullOrEmpty(codingUrl))
-                    {
-                        ConnectionFailMessage();
-                    }
-                }
-#endif
                 return;
             }
 
@@ -1889,6 +1877,11 @@ namespace BmwDeepObd
 
         private bool ShowRpcClientMessageBox(BmwRpcCoding.StatusData statusData)
         {
+            if (statusData == null)
+            {
+                return false;
+            }
+
             if (_alertDialogRpcMessage != null)
             {
                 return false;
