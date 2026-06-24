@@ -719,7 +719,14 @@ namespace BmwDeepObd
                 _infoHttpClient = null;
             }
 
-            Task.Run(DisposeRpcClient).GetAwaiter().GetResult();
+            try
+            {
+                Task.Run(DisposeRpcClient).GetAwaiter().GetResult();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             if (_activityCommon != null)
             {
