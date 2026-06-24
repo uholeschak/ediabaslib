@@ -1563,7 +1563,19 @@ namespace BmwDeepObd
                 _progressBar2.Visibility = ViewStates.Invisible;
                 _layoutCodingOptions.Visibility = ViewStates.Gone;
 #if STATIC_RPC_CODING
-                StartRpcClient();
+                if (statusData != null && !statusData.RpcClientConnected)
+                {
+                    string codingUrl;
+                    lock (_instanceLock)
+                    {
+                        codingUrl = _instanceData.CodingRpcUrl;
+                    }
+
+                    if (!string.IsNullOrEmpty(codingUrl))
+                    {
+                        ConnectionFailMessage();
+                    }
+                }
 #endif
                 return;
             }
