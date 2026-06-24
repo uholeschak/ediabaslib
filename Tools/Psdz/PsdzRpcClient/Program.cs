@@ -576,7 +576,14 @@ namespace PsdzRpcClient
                         ediabasProxyClient = new EdiabasProxyClient(ediabasNet);
                         ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
                         {
-                            return Task.Run(() => client.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                            try
+                            {
+                                return Task.Run(() => client.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                            }
+                            catch (Exception)
+                            {
+                                return false;
+                            }
                         };
 
                         ediabasProxyClient.MessageEvent += (messageType, message) =>
