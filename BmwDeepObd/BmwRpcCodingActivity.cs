@@ -2608,6 +2608,12 @@ namespace BmwDeepObd
                 {
                     if (_statusData != null)
                     {
+                        _statusData.ShowMessage = null;
+                        if (_statusData.ShowMessageWait != null)
+                        {
+                            _statusData.ShowMessageWait.Dispose();
+                            _statusData.ShowMessageWait = null;
+                        }
                         _statusData.RpcClientConnected = false;
                     }
                 }
@@ -2840,6 +2846,14 @@ namespace BmwDeepObd
                             {
                                 if (_statusData != null)
                                 {
+                                    _statusData.ShowMessage = null;
+
+                                    if (_statusData.ShowMessageWait != null)
+                                    {
+                                        _statusData.ShowMessageWait.Dispose();
+                                        _statusData.ShowMessageWait = null;
+                                    }
+
                                     _statusData.RpcClientConnected = false;
                                 }
                             }
