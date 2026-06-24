@@ -90,30 +90,42 @@ namespace PsdzRpcClient
 
         public async Task<bool> OnShowMessage(string message, bool okBtn, bool wait)
         {
-            if (wait)
+            try
             {
-                ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn, waitForResult: true);
-                return await Task.Run(() =>
+                if (wait)
                 {
+                    ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn, waitForResult: true);
                     try
                     {
-                        ShowMessageWait?.Invoke(this, args);
-                    }
-                    catch (Exception)
-                    {
-                        args.SetResult(false);
-                    }
+                        return await Task.Run(() =>
+                        {
+                            try
+                            {
+                                ShowMessageWait?.Invoke(this, args);
+                            }
+                            catch (Exception)
+                            {
+                                args.SetResult(false);
+                            }
 
-                    bool result = args.WaitForResult(DisconnectToken);
-                    args.Dispose();
-                    return result;
-                }, DisconnectToken).ConfigureAwait(false);
+                            return args.WaitForResult(DisconnectToken);
+                        }, DisconnectToken).ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        args.Dispose();
+                    }
+                }
+                else
+                {
+                    using ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn);
+                    ShowMessage?.Invoke(this, args);
+                    return args.Result;
+                }
             }
-            else
+            catch (Exception)
             {
-                using ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn);
-                ShowMessage?.Invoke(this, args);
-                return args.Result;
+                return false;
             }
         }
 
