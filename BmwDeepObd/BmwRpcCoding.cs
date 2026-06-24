@@ -582,6 +582,11 @@ public class BmwRpcCoding : IDisposable
                 return false;
             }
 
+            lock (StatusLock)
+            {
+                _statusData.TaskActive = false;
+            }
+
             string remoteHost = loadUri.Host;
             int remotePort = loadUri.Port > 0 ? loadUri.Port : PsdzRpcServiceConstants.DefaultTcpPort;
             bool connected = await _psdzRpcClient.ConnectTcpAsync(remoteHost, remotePort, enableIpV6, null, startCts.Token).ConfigureAwait(false);
