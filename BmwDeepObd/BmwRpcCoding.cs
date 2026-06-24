@@ -129,6 +129,7 @@ public class BmwRpcCoding : IDisposable
 
                     lock (StatusLock)
                     {
+                        _statusData.TaskActive = false;
                         _statusData.RpcClientConnected = connected;
                     }
 

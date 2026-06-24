@@ -1980,6 +1980,7 @@ namespace BmwDeepObd
                         {
                             if (_statusData != null)
                             {
+                                _statusData.TaskActive = false;
                                 _statusData.RpcClientConnected = connected;
                             }
                         }
