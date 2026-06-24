@@ -719,7 +719,14 @@ namespace BmwDeepObd
                 _infoHttpClient = null;
             }
 
-            Task.Run(DisposeRpcClient).GetAwaiter().GetResult();
+            try
+            {
+                Task.Run(DisposeRpcClient).GetAwaiter().GetResult();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             if (_activityCommon != null)
             {
@@ -1555,6 +1562,9 @@ namespace BmwDeepObd
                 _progressBar1.Visibility = ViewStates.Invisible;
                 _progressBar2.Visibility = ViewStates.Invisible;
                 _layoutCodingOptions.Visibility = ViewStates.Gone;
+#if STATIC_RPC_CODING
+                StartRpcClient();
+#endif
                 return;
             }
 
@@ -2619,6 +2629,17 @@ namespace BmwDeepObd
             try
             {
                 if (_bmwRpcCoding == null)
+                {
+                    return false;
+                }
+
+                string codingUrl;
+                lock (_instanceLock)
+                {
+                    codingUrl = _instanceData.CodingRpcUrl;
+                }
+
+                if (string.IsNullOrEmpty(codingUrl))
                 {
                     return false;
                 }
