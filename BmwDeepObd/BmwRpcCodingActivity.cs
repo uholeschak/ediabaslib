@@ -1694,6 +1694,18 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            lock (_statusLock)
+            {
+                if (_statusData != null)
+                {
+                    if (!_statusData.RpcClientConnected)
+                    {
+                        return false;
+                    }
+                }
+            }
+
             return EdiabasProxyClient.IsEdiabasConnected();
         }
 
