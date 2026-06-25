@@ -4879,7 +4879,18 @@ namespace EdiabasLib
 
                 if (nextReadLength > 0)
                 {
-                    StartReadTcpDiag(nextReadLength);
+                    if (ar.CompletedSynchronously)
+                    {
+                        // BeginRead completed synchronously -> this callback runs inline on the same
+                        // stack. Re-issuing the read directly would recurse and eventually overflow
+                        // the stack on a continuous data burst. Continue on the thread pool to unwind.
+                        int readLength = nextReadLength;
+                        ThreadPool.QueueUserWorkItem(_ => StartReadTcpDiag(readLength));
+                    }
+                    else
+                    {
+                        StartReadTcpDiag(nextReadLength);
+                    }
                 }
             }
             catch (Exception)
