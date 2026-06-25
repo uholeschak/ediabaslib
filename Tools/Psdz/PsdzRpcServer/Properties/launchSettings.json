@@ -4,11 +4,11 @@
       "commandName": "Project",
       "remoteDebugEnabled": false
     },
-    "PsdzRpcServerTcp": {
+    "PsdzRpcServerSsl": {
       "commandName": "Project",
       "commandLineArgs": "-p 0 -s -l \"C:\\Users\\Ulrich\\PsdcRpcServer.log\""
     },
-    "PsdzRpcServerTcpVM-WIN11": {
+    "PsdzRpcServerSslVM-WIN11": {
       "commandName": "Project",
       "commandLineArgs": "-p 0 -s -l \"C:\\Users\\Ulrich\\PsdcRpcServer.log\"",
       "remoteDebugEnabled": true,
