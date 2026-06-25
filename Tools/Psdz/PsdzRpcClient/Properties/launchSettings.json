@@ -8,11 +8,11 @@
       "commandName": "Project",
       "commandLineArgs": "--vehicleproxy"
     },
-    "PsdzRpcClientTcpProxy": {
+    "PsdzRpcClientSslProxy": {
       "commandName": "Project",
       "commandLineArgs": "--vehicleproxy -p 0 -s"
     },
-    "PsdzRpcClientTcpProxyVmIsta": {
+    "PsdzRpcClientSslProxyVmIsta": {
       "commandName": "Project",
       "commandLineArgs": "--vehicleproxy -h vm-ista.local.holeschak.de -p 0 -s"
     },
