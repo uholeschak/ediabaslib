@@ -3613,7 +3613,17 @@ namespace EdiabasLib
 
                 if (continueRec)
                 {
-                    StartUdpListen();
+                    if (ar.CompletedSynchronously)
+                    {
+                        // BeginRead completed synchronously -> this callback runs inline on the same
+                        // stack. Re-issuing the read directly would recurse and eventually overflow
+                        // the stack on a continuous data burst. Continue on the thread pool to unwind.
+                        ThreadPool.QueueUserWorkItem(_ => StartUdpListen());
+                    }
+                    else
+                    {
+                        StartUdpListen();
+                    }
                 }
             }
             catch (Exception)
