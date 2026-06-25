@@ -1074,7 +1074,17 @@ namespace WebPsdzClient.App_Data
                             enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                             enetTcpClientData.EnetTcpChannel.RecEvent.Set();
 
-                            TcpReceive(enetTcpClientData);
+                            if (ar.CompletedSynchronously)
+                            {
+                                // BeginRead completed synchronously -> this callback runs inline on the
+                                // same stack. Re-issuing the read directly would recurse and eventually
+                                // overflow the stack on a continuous data burst. Continue on the thread pool.
+                                ThreadPool.QueueUserWorkItem(_ => TcpReceive(enetTcpClientData));
+                            }
+                            else
+                            {
+                                TcpReceive(enetTcpClientData);
+                            }
                         }
                     }
                 }
