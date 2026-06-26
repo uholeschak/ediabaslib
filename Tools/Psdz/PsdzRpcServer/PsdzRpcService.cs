@@ -907,8 +907,11 @@ namespace PsdzRpcServer
             lock (_ctsLock)
             {
                 _cts?.Cancel();
-                _cts?.Dispose();
-                _cts = null;
+            }
+
+            while (IsOperationActive())
+            {
+                Thread.Sleep(100);
             }
 
             if (_vehicleProxy != null)
