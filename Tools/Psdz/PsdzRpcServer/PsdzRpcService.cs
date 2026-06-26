@@ -5,6 +5,7 @@ using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -909,7 +910,9 @@ namespace PsdzRpcServer
                 _cts?.Cancel();
             }
 
-            while (IsOperationActive())
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            TimeSpan timeout = TimeSpan.FromSeconds(60);
+            while (IsOperationActive() && stopwatch.Elapsed < timeout)
             {
                 Thread.Sleep(100);
             }
