@@ -911,10 +911,15 @@ namespace PsdzRpcServer
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
-            TimeSpan timeout = TimeSpan.FromSeconds(60);
-            while (IsOperationActive() && stopwatch.Elapsed < timeout)
+            TimeSpan abortTimeout = TimeSpan.FromSeconds(60);
+            while (IsOperationActive())
             {
-                Thread.Sleep(100);
+                if (stopwatch.Elapsed >= abortTimeout)
+                {
+                    break;
+                }
+
+                Thread.Sleep(10);
             }
 
             if (_vehicleProxy != null)
