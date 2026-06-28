@@ -144,6 +144,10 @@ public class BmwRpcCoding : IDisposable
                     }
                     else
                     {
+                        if (_ediabasProxyClient != null)
+                        {
+                            await _ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
+                        }
                         _activityCommon.SetLock(ActivityCommon.LockType.None);
                         lock (StatusLock)
                         {

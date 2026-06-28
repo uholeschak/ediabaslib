@@ -2025,6 +2025,11 @@ namespace BmwDeepObd
                         }
                         else
                         {
+                            if (_ediabasProxyClient != null)
+                            {
+                                await _ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
+                            }
+
                             lock (_statusLock)
                             {
                                 if (_statusData != null)
