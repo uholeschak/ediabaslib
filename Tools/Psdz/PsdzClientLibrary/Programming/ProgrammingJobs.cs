@@ -2138,6 +2138,8 @@ namespace PsdzClient.Programming
                                 if (!ShowMessageEvent.Invoke(cts, Strings.TalHwDeinstallFinished, true, true))
                                 {
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
+                                    sbResult.AppendLine(Strings.OperationAborted);
+                                    UpdateStatus(sbResult.ToString());
                                     return false;
                                 }
                             }
@@ -3709,6 +3711,7 @@ namespace PsdzClient.Programming
                             {
                                 log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageValid aborted");
                                 sbResult.AppendLine(Strings.OperationAborted);
+                                UpdateStatus(sbResult.ToString());
                                 result = false;
                             }
                         }
@@ -3741,6 +3744,7 @@ namespace PsdzClient.Programming
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
                             sbResult.AppendLine(Strings.OperationAborted);
+                            UpdateStatus(sbResult.ToString());
                             result = false;
                             break;
                         }
@@ -3753,6 +3757,7 @@ namespace PsdzClient.Programming
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
                             sbResult.AppendLine(Strings.OperationAborted);
+                            UpdateStatus(sbResult.ToString());
                             result = false;
                         }
                         break;
