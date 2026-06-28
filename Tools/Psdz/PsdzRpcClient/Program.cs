@@ -174,7 +174,7 @@ namespace PsdzRpcClient
 
                 SingleThreadSynchronizationContext syncContext = new(Console.Out);
 
-                client.ClientConnected += (s, connected) =>
+                client.ClientConnected += async (s, connected) =>
                 {
                     syncContext.BeginInvoke(() =>
                     {
@@ -193,6 +193,15 @@ namespace PsdzRpcClient
                             }
                         }
                     });
+
+                    if (!connected)
+                    {
+                        EdiabasProxyClient proxy = ediabasProxyClient;
+                        if (!(proxy == null || proxy.IsDisposed))
+                        {
+                            await proxy.StopEdiabasThread().ConfigureAwait(false);
+                        }
+                    }
                 };
 
                 client.CallbackHandler.StartProgrammingCompleted += (s, success) =>
