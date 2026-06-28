@@ -251,6 +251,19 @@ namespace PsdzRpcClient
             _keepAliveCts?.Dispose();
             _keepAliveCts = new CancellationTokenSource();
 
+            // Dispose existing JsonRpc
+            if (_jsonRpc != null)
+            {
+                _jsonRpc.Disconnected -= OnJsonRpcDisconnected;
+                _jsonRpc.Dispose();
+                _jsonRpc = null;
+            }
+
+            // Dispose existing CancellationTokenSource for client disconnect
+            _clientCts?.Dispose();
+            _clientCts = new CancellationTokenSource();
+            CallbackHandler.DisconnectToken = _clientCts.Token;
+
             _jsonRpc = new JsonRpc(_stream);
             _jsonRpc.AddLocalRpcTarget(CallbackHandler);
             _jsonRpc.Disconnected += OnJsonRpcDisconnected;
