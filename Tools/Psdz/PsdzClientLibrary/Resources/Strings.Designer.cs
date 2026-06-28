@@ -479,6 +479,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Operation aborted ähnelt.
+        /// </summary>
+        internal static string OperationAborted {
+            get {
+                return ResourceManager.GetString("OperationAborted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die PIA master updated. ähnelt.
         /// </summary>
         internal static string PiaMasterUpdated {

@@ -3708,6 +3708,7 @@ namespace PsdzClient.Programming
                             if (!ShowMessageEvent.Invoke(cts, message, true, true))
                             {
                                 log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageValid aborted");
+                                sbResult.AppendLine(Strings.OperationAborted);
                                 result = false;
                             }
                         }
@@ -3739,6 +3740,7 @@ namespace PsdzClient.Programming
                         if (!ShowMessageEvent.Invoke(cts, message, false, true))
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
+                            sbResult.AppendLine(Strings.OperationAborted);
                             result = false;
                             break;
                         }
@@ -3750,6 +3752,7 @@ namespace PsdzClient.Programming
                         if (!ShowMessageEvent.Invoke(cts, message, true, true))
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
+                            sbResult.AppendLine(Strings.OperationAborted);
                             result = false;
                         }
                         break;

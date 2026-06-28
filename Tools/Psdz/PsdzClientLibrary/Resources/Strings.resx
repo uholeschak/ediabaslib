@@ -468,4 +468,7 @@ Coding is available only for F series or higher.</value>
     <value>Another instance with the same VIN is already active.
 Please try again later.</value>
   </data>
+  <data name="OperationAborted" xml:space="preserve">
+    <value>Operation aborted</value>
+  </data>
 </root>
