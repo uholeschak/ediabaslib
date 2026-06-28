@@ -395,6 +395,8 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
                 VehicleResponseEvent?.Invoke(vehicleResponse);
             }
         }
+
+        EdiabasDisconnect(0);
     }
 
     public void Dispose()
