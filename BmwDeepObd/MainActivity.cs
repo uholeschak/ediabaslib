@@ -175,6 +175,7 @@ namespace BmwDeepObd
         private const int MenuGroupRecentId = 1;
         private const int CpuLoadCritical = 70;
         private const int AutoHideTimeout = 3000;
+        private const int StoppCommunicationTimeout = 5000;
         private readonly string[] _permissionsExternalStorage =
         {
             Android.Manifest.Permission.WriteExternalStorage,
@@ -2761,7 +2762,7 @@ namespace BmwDeepObd
                                     .Show();
                             }
                         );
-                    }, null, 5000, Timeout.Infinite);
+                    }, null, StoppCommunicationTimeout, Timeout.Infinite);
                 }
             }
             _activityCommon.StopEdiabasThread(wait, EdiabasEventHandler);
@@ -3519,6 +3520,7 @@ namespace BmwDeepObd
                 responseCount = ediabasThread.GetResponseCount();
             }
 
+            StopDisconnectTimer();
             StopEdiabasThread(true);
             UpdateDisplay();
 
