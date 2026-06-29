@@ -30,14 +30,6 @@ namespace BmwDeepObd
         private Handler _notificationHandler;
         private UpdateNotificationRunnable _notificationRunnable;
         private long _notificationUpdateTime;
-        private static volatile bool _abortThread;
-        private static readonly object _threadLockObject;
-
-        static BmwRpcForegroundService()
-        {
-            _abortThread = false;
-            _threadLockObject = new object();
-        }
 
         public override void OnCreate()
         {
