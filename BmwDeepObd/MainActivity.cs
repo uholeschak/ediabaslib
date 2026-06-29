@@ -1266,6 +1266,7 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsCommActive();
+            bool commService = UseCommService();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(_instanceData.SimulationPath, true);
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
@@ -1565,7 +1566,7 @@ namespace BmwDeepObd
             }
 
             IMenuItem globalSettingsMenu = menu.FindItem(Resource.Id.menu_global_settings);
-            globalSettingsMenu?.SetEnabled(true);
+            globalSettingsMenu?.SetEnabled(commService);
 
             IMenuItem infoSubMenu = menu.FindItem(Resource.Id.menu_info);
             infoSubMenu?.SetEnabled(true);
