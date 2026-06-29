@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
-using System.Threading;
 using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
@@ -19,16 +17,10 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(BmwRpcForegroundService).FullName;
 #endif
-        public const int ServiceRunningNotificationId = 10000;
-        public const string BroadcastMessageKey = "broadcast_message";
-        public const string BroadcastStopComm = "stop_communication";
-        public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
-        public const string ActionBroadcastCommand = ActivityCommon.AppNameSpace + ".Action.Command";
-
+        public const int ServiceRunningNotificationId = 10001;
         public const string ActionStartService = "BmwRpcForegroundService.action.START_SERVICE";
         public const string ActionStopService = "BmwRpcForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "BmwRpcForegroundService.action.SHOW_MAIN_ACTIVITY";
-        public const string ExtraStartComm = "StartComm";
         private const int NotificationUpdateDelay = 2000;
 
         private bool _isStarted;
@@ -40,26 +32,6 @@ namespace BmwDeepObd
         private long _notificationUpdateTime;
         private static volatile bool _abortThread;
         private static readonly object _threadLockObject;
-
-        public ActivityCommon ActivityCommon => _activityCommon;
-
-        public static bool AbortThread
-        {
-            get
-            {
-                lock (_threadLockObject)
-                {
-                    return _abortThread;
-                }
-            }
-            set
-            {
-                lock (_threadLockObject)
-                {
-                    _abortThread = value;
-                }
-            }
-        }
 
         static BmwRpcForegroundService()
         {
@@ -95,7 +67,11 @@ namespace BmwDeepObd
             {
                 case ActionStartService:
                 {
-                    bool startComm = intent.GetBooleanExtra(ExtraStartComm, false);
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
+#endif
+                    RegisterForegroundService();
+                    _isStarted = true;
                     break;
                 }
 
@@ -250,19 +226,6 @@ namespace BmwDeepObd
             }
         }
 
-        private void PostUpdateNotification(bool delayUpdate = false)
-        {
-            if (_notificationHandler == null)
-            {
-                return;
-            }
-
-            ActivityCommon.PostRunnable(_notificationHandler, _notificationRunnable, () =>
-            {
-                _notificationRunnable.DelayUpdate = delayUpdate;
-            });
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void RegisterForegroundService()
         {
@@ -281,13 +244,6 @@ namespace BmwDeepObd
                 Android.Util.Log.Info(Tag, string.Format("RegisterForegroundService exception: {0}", ex.Message));
 #endif
             }
-        }
-
-        private void SendStopCommBroadcast()
-        {
-            Intent broadcastIntent = new Intent(NotificationBroadcastAction);
-            broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
-            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
         private bool ShowMainActivity()
@@ -335,103 +291,6 @@ namespace BmwDeepObd
                 return;
             }
             string action = intent.Action;
-            switch (action)
-            {
-                case ActionBroadcastCommand:
-                {
-                    HandleActionBroadcast(intent);
-                    HandleCustomBroadcast(context, intent);
-                    break;
-                }
-            }
-        }
-
-        private void HandleActionBroadcast(Intent intent)
-        {
-            string request = intent.GetStringExtra("action");
-            if (string.IsNullOrEmpty(request))
-            {
-                return;
-            }
-            string[] requestList = request.Split(':');
-            if (requestList.Length < 1)
-            {
-                return;
-            }
-            if (string.Compare(requestList[0], "new_page", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                if (requestList.Length < 2)
-                {
-                    return;
-                }
-                JobReader.PageInfo pageInfoSel = null;
-                foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
-                {
-                    if (string.Compare(pageInfo.Name, requestList[1], StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        pageInfoSel = pageInfo;
-                        break;
-                    }
-                }
-                if (pageInfoSel == null)
-                {
-                    return;
-                }
-                if (!ActivityCommon.CommActive)
-                {
-                    return;
-                }
-
-                lock (EdiabasThread.DataLock)
-                {
-                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                    if (ediabasThread != null)
-                    {
-                        if (ediabasThread.JobPageInfo != pageInfoSel)
-                        {
-                            ediabasThread.CommActive = true;
-                            ediabasThread.JobPageInfo = pageInfoSel;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void HandleCustomBroadcast(Context context, Intent intent)
-        {
-            try
-            {
-                JobReader.PageInfo pageInfo;
-                lock (EdiabasThread.DataLock)
-                {
-                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                    // ReSharper disable once UseNullPropagation
-                    if (ediabasThread == null)
-                    {
-                        return;
-                    }
-
-                    pageInfo = ediabasThread.JobPageInfo;
-                }
-
-                if (pageInfo.ClassObject == null)
-                {
-                    return;
-                }
-
-                Type pageType = pageInfo.ClassObject.GetType();
-                MethodInfo broadcastReceived = pageType.GetMethod("BroadcastReceived", new[] { typeof(JobReader.PageInfo), typeof(Context), typeof(Intent) });
-                if (broadcastReceived == null)
-                {
-                    return;
-                }
-                object[] args = { pageInfo, context, intent };
-                broadcastReceived.Invoke(pageInfo.ClassObject, args);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
         }
 
         public class UpdateNotificationRunnable : Java.Lang.Object, Java.Lang.IRunnable
