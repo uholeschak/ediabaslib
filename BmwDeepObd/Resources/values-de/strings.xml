@@ -33,6 +33,7 @@
   <string name="notification_permission_denied">Für die Hintergrundkommunikation sind Benachrichtungen notwendig.\nWollen Sie die App Einstellungen öffnen?</string>
   <string name="store_settings_failed">Das Speichern der Einstellungen ist fehlgeschlagen. Bitte reinstallieren Sie die App.</string>
   <string name="store_settings_filename">Die Einstellungen wurden gespeichert unter:</string>
+  <string name="communication_stop_timeout">Das Stoppen der Kommunikation hat zu lange gedauert.\nMöchten Sie die automatische Fahrzeugverbindung deaktivieren?</string>
   <string name="long_click_show_title">Lang-Klick um Titel anzuzeigen</string>
   <string name="low_memory_detected">Der Systemspeicher ist knapp!</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>

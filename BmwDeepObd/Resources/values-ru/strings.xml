@@ -34,6 +34,8 @@
   <string name="notification_permission_denied">Для фоновой связи требуется уведомление.\nОткрыть настройки приложения?</string>
   <string name="store_settings_failed">Не удалось сохранить настройки. Пожалуйста, переустановите приложение.</string>
   <string name="store_settings_filename">Настройки были сохранены в:</string>
+  <!--Translate-->
+  <string name="communication_stop_timeout">Превышено время ожидания остановки связи.\nХотите отключить автоматическое подключение к автомобилю?</string>
   <string name="long_click_show_title">Нажмите и удерживайте, чтобы показать заголовок</string>
   <string name="low_memory_detected">Недостаточно системной памяти!</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>

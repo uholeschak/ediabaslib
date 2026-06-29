@@ -32,6 +32,7 @@
   <string name="notification_permission_denied">For the background communication notification are required.\nDo you want to open the app settings?</string>
   <string name="store_settings_failed">Storing settings failed. Please reinstall the application.</string>
   <string name="store_settings_filename">The settings have been stored at:</string>
+  <string name="communication_stop_timeout">Stopping communication timed out.\nDo you want to disable automatic vehicle connection?</string>
   <string name="long_click_show_title">Long click to show title</string>
   <string name="low_memory_detected">System memory is low!</string>
   <string name="bt_enable">Bluetooth is not enabled.\nDo you want to enable it now?</string>
