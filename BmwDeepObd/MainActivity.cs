@@ -1565,10 +1565,10 @@ namespace BmwDeepObd
             }
 
             IMenuItem globalSettingsMenu = menu.FindItem(Resource.Id.menu_global_settings);
-            globalSettingsMenu?.SetEnabled(!commActive);
+            globalSettingsMenu?.SetEnabled(true);
 
             IMenuItem infoSubMenu = menu.FindItem(Resource.Id.menu_info);
-            infoSubMenu?.SetEnabled(!commActive);
+            infoSubMenu?.SetEnabled(true);
 
             IMenuItem exitSubMenu = menu.FindItem(Resource.Id.menu_exit);
             if (exitSubMenu != null)
