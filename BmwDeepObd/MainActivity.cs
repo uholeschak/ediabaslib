@@ -2719,28 +2719,31 @@ namespace BmwDeepObd
             if (!wait)
             {
                 StopDisconnectTimer();
-                _disconnectTimer = new Timer(state =>
+                if (ActivityCommon.AutoConnectHandling != ActivityCommon.AutoConnectType.Offline)
                 {
-                    if (_activityCommon == null)
+                    _disconnectTimer = new Timer(state =>
                     {
-                        return;
-                    }
-
-                    StopDisconnectTimer();
-                    RunOnUiThread(() =>
+                        if (_activityCommon == null)
                         {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (!IsCommActive())
-                            {
-                                return;
-                            }
+                            return;
                         }
-                    );
-                }, null, 1000, Timeout.Infinite);
+
+                        StopDisconnectTimer();
+                        RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                if (!IsCommActive())
+                                {
+                                    return;
+                                }
+                            }
+                        );
+                    }, null, 1000, Timeout.Infinite);
+                }
             }
             _activityCommon.StopEdiabasThread(wait, EdiabasEventHandler);
 
