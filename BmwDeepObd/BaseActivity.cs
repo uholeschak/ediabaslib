@@ -628,6 +628,25 @@ namespace BmwDeepObd
             }
         }
 
+        public static Android.App.Activity GetTopActivityFromStack()
+        {
+            lock (_activityStackLock)
+            {
+                for (int i = ActivityStack.Count - 1; i >= 0; i--)
+                {
+                    Android.App.Activity activity = ActivityStack[i];
+                    if (activity != null && !activity.IsFinishing && !activity.IsDestroyed)
+                    {
+#if DEBUG
+                        Android.Util.Log.Debug(Tag, string.Format("GetTopActivityFromStack: Top={0}", activity.GetType().Name));
+#endif
+                        return activity;
+                    }
+                }
+
+                return null;
+            }
+        }
         public static bool IsSearchFilterMatching(string text, string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))
