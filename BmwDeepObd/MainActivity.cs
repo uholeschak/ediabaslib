@@ -221,6 +221,7 @@ namespace BmwDeepObd
         public long _autoHideStartTime;
         private IMenu _optionsMenu;
         private Timer _autoHideTimer;
+        private Timer _disconnectTimer;
         private Handler _updateHandler;
         private Java.Lang.Runnable _createActionBarRunnable;
         private Java.Lang.Runnable _handleConnectOptionRunnable;
@@ -885,6 +886,7 @@ namespace BmwDeepObd
                 _errorEvalThread?.Join();
             }
 
+            StopDisconnectTimer();
             if (_httpClient != null)
             {
                 try
@@ -1266,7 +1268,6 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsCommActive();
-            bool commService = UseCommService();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(_instanceData.SimulationPath, true);
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
@@ -1566,7 +1567,7 @@ namespace BmwDeepObd
             }
 
             IMenuItem globalSettingsMenu = menu.FindItem(Resource.Id.menu_global_settings);
-            globalSettingsMenu?.SetEnabled(commService);
+            globalSettingsMenu?.SetEnabled(!commActive);
 
             IMenuItem infoSubMenu = menu.FindItem(Resource.Id.menu_info);
             infoSubMenu?.SetEnabled(true);
@@ -2715,6 +2716,32 @@ namespace BmwDeepObd
 
         private void StopEdiabasThread(bool wait)
         {
+            if (!wait)
+            {
+                StopDisconnectTimer();
+                _disconnectTimer = new Timer(state =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    StopDisconnectTimer();
+                    RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (!IsCommActive())
+                            {
+                                return;
+                            }
+                        }
+                    );
+                }, null, 1000, Timeout.Infinite);
+            }
             _activityCommon.StopEdiabasThread(wait, EdiabasEventHandler);
 
             UpdateLockState();
@@ -2756,6 +2783,15 @@ namespace BmwDeepObd
             else
             {
                 DisconnectEdiabasEvents();
+            }
+        }
+
+        private void StopDisconnectTimer()
+        {
+            if (_disconnectTimer != null)
+            {
+                _disconnectTimer.Dispose();
+                _disconnectTimer = null;
             }
         }
 
