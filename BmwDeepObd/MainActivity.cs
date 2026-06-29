@@ -221,6 +221,7 @@ namespace BmwDeepObd
         public long _autoHideStartTime;
         private IMenu _optionsMenu;
         private Timer _autoHideTimer;
+        private Timer _disconnectTimer;
         private Handler _updateHandler;
         private Java.Lang.Runnable _createActionBarRunnable;
         private Java.Lang.Runnable _handleConnectOptionRunnable;
@@ -885,6 +886,7 @@ namespace BmwDeepObd
                 _errorEvalThread?.Join();
             }
 
+            StopDisconnectTimer();
             if (_httpClient != null)
             {
                 try
@@ -1568,7 +1570,7 @@ namespace BmwDeepObd
             globalSettingsMenu?.SetEnabled(!commActive);
 
             IMenuItem infoSubMenu = menu.FindItem(Resource.Id.menu_info);
-            infoSubMenu?.SetEnabled(!commActive);
+            infoSubMenu?.SetEnabled(true);
 
             IMenuItem exitSubMenu = menu.FindItem(Resource.Id.menu_exit);
             if (exitSubMenu != null)
@@ -2714,6 +2716,32 @@ namespace BmwDeepObd
 
         private void StopEdiabasThread(bool wait)
         {
+            if (!wait)
+            {
+                StopDisconnectTimer();
+                _disconnectTimer = new Timer(state =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    StopDisconnectTimer();
+                    RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (!IsCommActive())
+                            {
+                                return;
+                            }
+                        }
+                    );
+                }, null, 1000, Timeout.Infinite);
+            }
             _activityCommon.StopEdiabasThread(wait, EdiabasEventHandler);
 
             UpdateLockState();
@@ -2755,6 +2783,15 @@ namespace BmwDeepObd
             else
             {
                 DisconnectEdiabasEvents();
+            }
+        }
+
+        private void StopDisconnectTimer()
+        {
+            if (_disconnectTimer != null)
+            {
+                _disconnectTimer.Dispose();
+                _disconnectTimer = null;
             }
         }
 
@@ -6991,6 +7028,7 @@ namespace BmwDeepObd
                 ActivityRequest requestCode = ActivityRequest.RequestGlobalSettings;
                 Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
                 serverIntent.PutExtra(GlobalSettingsActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+                serverIntent.PutExtra(GlobalSettingsActivity.ExtraCommActive, IsCommActive());
                 if (!string.IsNullOrEmpty(selection))
                 {
                     switch (selection)
