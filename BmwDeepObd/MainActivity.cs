@@ -175,6 +175,7 @@ namespace BmwDeepObd
         private const int MenuGroupRecentId = 1;
         private const int CpuLoadCritical = 70;
         private const int AutoHideTimeout = 3000;
+        private const int StoppCommunicationTimeout = 5000;
         private readonly string[] _permissionsExternalStorage =
         {
             Android.Manifest.Permission.WriteExternalStorage,
@@ -2719,28 +2720,50 @@ namespace BmwDeepObd
             if (!wait)
             {
                 StopDisconnectTimer();
-                _disconnectTimer = new Timer(state =>
+                if (ActivityCommon.AutoConnectHandling != ActivityCommon.AutoConnectType.Offline)
                 {
-                    if (_activityCommon == null)
+                    _disconnectTimer = new Timer(state =>
                     {
-                        return;
-                    }
-
-                    StopDisconnectTimer();
-                    RunOnUiThread(() =>
+                        if (_activityCommon == null)
                         {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (!IsCommActive())
-                            {
-                                return;
-                            }
+                            return;
                         }
-                    );
-                }, null, 1000, Timeout.Infinite);
+
+                        StopDisconnectTimer();
+                        RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                if (!_activityActive)
+                                {
+                                    return;
+                                }
+
+                                if (!IsCommActive())
+                                {
+                                    return;
+                                }
+
+                                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                                    {
+                                        ActivityCommon.AutoConnectHandling = ActivityCommon.AutoConnectType.Offline;
+                                        StoreSettings();
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.communication_stop_timeout)
+                                    .SetTitle(Resource.String.alert_title_warning)
+                                    .Show();
+                            }
+                        );
+                    }, null, StoppCommunicationTimeout, Timeout.Infinite);
+                }
             }
             _activityCommon.StopEdiabasThread(wait, EdiabasEventHandler);
 
@@ -2914,7 +2937,7 @@ namespace BmwDeepObd
             {
                 _overlayPermissionRequested = true;
                 bool yesSelected = false;
-                AlertDialog altertDialog = new AlertDialog.Builder(this)
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                     {
                         try
@@ -2940,9 +2963,9 @@ namespace BmwDeepObd
                     .SetMessage(Resource.String.overlay_permission_denied)
                     .SetTitle(Resource.String.alert_title_warning)
                     .Show();
-                if (altertDialog != null)
+                if (alertDialog != null)
                 {
-                    altertDialog.DismissEvent += (o, eventArgs) =>
+                    alertDialog.DismissEvent += (o, eventArgs) =>
                     {
                         if (_activityCommon == null)
                         {
@@ -3497,6 +3520,7 @@ namespace BmwDeepObd
                 responseCount = ediabasThread.GetResponseCount();
             }
 
+            StopDisconnectTimer();
             StopEdiabasThread(true);
             UpdateDisplay();
 
