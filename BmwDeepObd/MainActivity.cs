@@ -7052,7 +7052,6 @@ namespace BmwDeepObd
                 ActivityRequest requestCode = ActivityRequest.RequestGlobalSettings;
                 Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
                 serverIntent.PutExtra(GlobalSettingsActivity.ExtraAppDataDir, _instanceData.AppDataPath);
-                serverIntent.PutExtra(GlobalSettingsActivity.ExtraCommActive, IsCommActive());
                 if (!string.IsNullOrEmpty(selection))
                 {
                     switch (selection)

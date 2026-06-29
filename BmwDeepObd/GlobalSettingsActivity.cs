@@ -30,7 +30,6 @@ namespace BmwDeepObd
 
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
-        public const string ExtraCommActive = "comm_active";
         public const string ExtraCopyFileName = "copy_file_name";
         public const string ExtraDeleteFile = "delete_file";
         public const string ExtraSelection = "selection";
