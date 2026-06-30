@@ -81,7 +81,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: Show main activity");
 #endif
-                    ShowCurrentActivity();
+                    ShowRpcCodingActivity();
                     break;
                 }
             }
@@ -238,18 +238,11 @@ namespace BmwDeepObd
             }
         }
 
-        private bool ShowCurrentActivity()
+        private bool ShowRpcCodingActivity()
         {
             try
             {
-                Type activityType = typeof(ActivityMain);
-                Android.App.Activity topActivity = BaseActivity.GetTopActivityFromStack();
-                if (topActivity != null)
-                {
-                    activityType = topActivity.GetType();
-                }
-
-                Intent intent = new Intent(this, activityType);
+                Intent intent = new Intent(this, typeof(BmwRpcCodingActivity));
                 intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop);
                 StartActivity(intent);
                 return true;
@@ -259,6 +252,7 @@ namespace BmwDeepObd
                 return false;
             }
         }
+
         /// <summary>
         /// Builds a PendingIntent that will display the main activity of the app. This is used when the 
         /// user taps on the notification; it will take them to the main activity of the app.
