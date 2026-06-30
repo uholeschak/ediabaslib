@@ -31,6 +31,8 @@ namespace BmwDeepObd
         private Handler _notificationHandler;
         private UpdateNotificationRunnable _notificationRunnable;
         private long _notificationUpdateTime;
+        private string _notificationMessage;
+        private static readonly object _notificationLockObject = new object();
 
         public override void OnCreate()
         {
@@ -45,6 +47,10 @@ namespace BmwDeepObd
             _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
             _resourceContext = ActivityCommon.GetLocaleContext(this);
             _notificationUpdateTime = DateTime.MinValue.Ticks;
+            lock (_notificationLockObject)
+            {
+                _notificationMessage = string.Empty;
+            }
 
             _activityCommon?.StartMtcService();
         }
@@ -64,6 +70,10 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
                     RegisterForegroundService();
+                    lock (_notificationLockObject)
+                    {
+                        _notificationMessage = string.Empty;
+                    }
                     _isStarted = true;
                     break;
                 }
@@ -74,6 +84,10 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
                     StopService();
+                    lock (_notificationLockObject)
+                    {
+                        _notificationMessage = string.Empty;
+                    }
                     break;
                 }
 
@@ -180,7 +194,11 @@ namespace BmwDeepObd
 
         private Android.App.Notification GetNotification()
         {
-            string message = string.Empty;
+            string message;
+            lock (_notificationLockObject)
+            {
+                message = _notificationMessage;
+            }
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
                 .SetContentTitle(_resourceContext.GetString(Resource.String.app_name))
@@ -309,6 +327,11 @@ namespace BmwDeepObd
             if (string.IsNullOrEmpty(request))
             {
                 return;
+            }
+
+            lock (_notificationLockObject)
+            {
+                _notificationMessage = request;
             }
 
             PostUpdateNotification(true);
