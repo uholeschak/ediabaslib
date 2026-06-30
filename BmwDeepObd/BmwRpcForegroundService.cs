@@ -311,7 +311,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            UpdateNotification();
+            PostUpdateNotification(true);
         }
 
         public class UpdateNotificationRunnable : Java.Lang.Object, Java.Lang.IRunnable
