@@ -218,6 +218,19 @@ namespace BmwDeepObd
             }
         }
 
+        private void PostUpdateNotification(bool delayUpdate = false)
+        {
+            if (_notificationHandler == null)
+            {
+                return;
+            }
+
+            ActivityCommon.PostRunnable(_notificationHandler, _notificationRunnable, () =>
+            {
+                _notificationRunnable.DelayUpdate = delayUpdate;
+            });
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void RegisterForegroundService()
         {
