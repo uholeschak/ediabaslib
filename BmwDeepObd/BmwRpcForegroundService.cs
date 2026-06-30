@@ -32,7 +32,7 @@ namespace BmwDeepObd
         private UpdateNotificationRunnable _notificationRunnable;
         private long _notificationUpdateTime;
         private string _notificationMessage;
-        private static readonly object _notificationLockObject = new object();
+        private readonly object _notificationLockObject = new object();
 
         public override void OnCreate()
         {
@@ -324,17 +324,25 @@ namespace BmwDeepObd
         private void HandleMessageBroadcast(Intent intent)
         {
             string request = intent.GetStringExtra("message");
-            if (string.IsNullOrEmpty(request))
+            if (request == null)
             {
                 return;
             }
 
+            bool changed = false;
             lock (_notificationLockObject)
             {
-                _notificationMessage = request;
+                if (_notificationMessage != request)
+                {
+                    _notificationMessage = request;
+                    changed = true;
+                }
             }
 
-            PostUpdateNotification(true);
+            if (changed)
+            {
+                PostUpdateNotification(true);
+            }
         }
 
         public class UpdateNotificationRunnable : Java.Lang.Object, Java.Lang.IRunnable
