@@ -18,6 +18,7 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(BmwRpcForegroundService).FullName;
 #endif
         public const int ServiceRunningNotificationId = 10001;
+        public const string ActionBroadcastCommand = ActivityCommon.AppNameSpace + ".Action.Command";
         public const string ActionStartService = "BmwRpcForegroundService.action.START_SERVICE";
         public const string ActionStopService = "BmwRpcForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "BmwRpcForegroundService.action.SHOW_MAIN_ACTIVITY";
@@ -30,6 +31,8 @@ namespace BmwDeepObd
         private Handler _notificationHandler;
         private UpdateNotificationRunnable _notificationRunnable;
         private long _notificationUpdateTime;
+        private string _notificationMessage;
+        private static readonly object _notificationLockObject = new object();
 
         public override void OnCreate()
         {
@@ -44,6 +47,10 @@ namespace BmwDeepObd
             _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
             _resourceContext = ActivityCommon.GetLocaleContext(this);
             _notificationUpdateTime = DateTime.MinValue.Ticks;
+            lock (_notificationLockObject)
+            {
+                _notificationMessage = string.Empty;
+            }
 
             _activityCommon?.StartMtcService();
         }
@@ -63,6 +70,10 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
                     RegisterForegroundService();
+                    lock (_notificationLockObject)
+                    {
+                        _notificationMessage = string.Empty;
+                    }
                     _isStarted = true;
                     break;
                 }
@@ -73,6 +84,10 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
                     StopService();
+                    lock (_notificationLockObject)
+                    {
+                        _notificationMessage = string.Empty;
+                    }
                     break;
                 }
 
@@ -179,7 +194,11 @@ namespace BmwDeepObd
 
         private Android.App.Notification GetNotification()
         {
-            string message = string.Empty;
+            string message;
+            lock (_notificationLockObject)
+            {
+                message = _notificationMessage;
+            }
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
                 .SetContentTitle(_resourceContext.GetString(Resource.String.app_name))
@@ -216,6 +235,19 @@ namespace BmwDeepObd
             {
                 // ignored
             }
+        }
+
+        private void PostUpdateNotification(bool delayUpdate = false)
+        {
+            if (_notificationHandler == null)
+            {
+                return;
+            }
+
+            ActivityCommon.PostRunnable(_notificationHandler, _notificationRunnable, () =>
+            {
+                _notificationRunnable.DelayUpdate = delayUpdate;
+            });
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
@@ -279,6 +311,30 @@ namespace BmwDeepObd
                 return;
             }
             string action = intent.Action;
+            switch (action)
+            {
+                case ActionBroadcastCommand:
+                {
+                    HandleMessageBroadcast(intent);
+                    break;
+                }
+            }
+        }
+
+        private void HandleMessageBroadcast(Intent intent)
+        {
+            string request = intent.GetStringExtra("message");
+            if (string.IsNullOrEmpty(request))
+            {
+                return;
+            }
+
+            lock (_notificationLockObject)
+            {
+                _notificationMessage = request;
+            }
+
+            PostUpdateNotification(true);
         }
 
         public class UpdateNotificationRunnable : Java.Lang.Object, Java.Lang.IRunnable
