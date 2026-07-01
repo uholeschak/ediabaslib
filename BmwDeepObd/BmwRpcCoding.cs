@@ -137,6 +137,7 @@ public class BmwRpcCoding : IDisposable
 
                     if (connected)
                     {
+                        SendCodingStatusMessage(_appContext.GetString(Resource.String.bmw_rpc_coding_srv_connected));
                         _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                         lock (StatusLock)
                         {
@@ -146,6 +147,7 @@ public class BmwRpcCoding : IDisposable
                     }
                     else
                     {
+                        SendCodingStatusMessage(_appContext.GetString(Resource.String.bmw_rpc_coding_srv_disconnected));
                         if (_ediabasProxyClient != null)
                         {
                             await _ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
@@ -567,6 +569,7 @@ public class BmwRpcCoding : IDisposable
                 proxy.VehicleSend(sendArgs.Id, sendArgs.Data);
             };
 
+            SendCodingStatusMessage(_appContext.GetString(Resource.String.bmw_rpc_coding_srv_disconnected));
             return true;
         }
         catch (Exception)
