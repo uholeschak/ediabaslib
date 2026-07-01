@@ -18,7 +18,6 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(BmwRpcForegroundService).FullName;
 #endif
         public const int ServiceRunningNotificationId = 10001;
-        public const string ActionBroadcastCommand = ActivityCommon.AppNameSpace + ".Action.Command";
         public const string ActionStartService = "BmwRpcForegroundService.action.START_SERVICE";
         public const string ActionStopService = "BmwRpcForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "BmwRpcForegroundService.action.SHOW_MAIN_ACTIVITY";
@@ -313,7 +312,7 @@ namespace BmwDeepObd
             string action = intent.Action;
             switch (action)
             {
-                case ActionBroadcastCommand:
+                case ActivityCommon.BmwRpcCodingMessageAction:
                 {
                     HandleMessageBroadcast(intent);
                     break;
