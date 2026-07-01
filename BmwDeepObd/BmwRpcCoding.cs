@@ -75,6 +75,7 @@ public class BmwRpcCoding : IDisposable
 #endif
 
     private bool _disposed;
+    private Context _appContext;
     private ActivityCommon _activityCommon;
     private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
     private EdiabasProxyClient _ediabasProxyClient;
@@ -91,6 +92,7 @@ public class BmwRpcCoding : IDisposable
         {
             _statusData = new StatusData();
         }
+        _appContext = appContext;
         _activityCommon = new ActivityCommon(appContext);
     }
 
@@ -987,6 +989,21 @@ public class BmwRpcCoding : IDisposable
             }
 
             UpdateTimeEvent?.Invoke(updateTime);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public bool SendCodingStatusMessage(string message)
+    {
+        try
+        {
+            Intent broadcastIntent = new Intent(ActivityCommon.BmwRpcCodingMessageAction);
+            broadcastIntent.PutExtra("message", message);
+            InternalBroadcastManager.InternalBroadcastManager.GetInstance(_appContext).SendBroadcast(broadcastIntent);
             return true;
         }
         catch (Exception)
