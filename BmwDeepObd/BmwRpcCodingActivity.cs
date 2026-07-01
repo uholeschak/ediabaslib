@@ -840,6 +840,7 @@ namespace BmwDeepObd
         private void FinishContinue()
         {
 #if STATIC_RPC_CODING
+            StopForegroundService();
             Task.Run(_bmwRpcCoding.DisposeRpcClient).GetAwaiter().GetResult();
 #endif
             if (!SendTraceFile((sender, args) =>
@@ -924,6 +925,7 @@ namespace BmwDeepObd
 
         private void ConnectionFailMessage()
         {
+            StopForegroundService();
             if (_alertDialogConnectError != null)
             {
                 return;
@@ -2779,6 +2781,10 @@ namespace BmwDeepObd
                             {
                                 _activityCommon.SetLock(ActivityCommon.LockType.None);
                                 ConnectionFailMessage();
+                            }
+                            else
+                            {
+                                StartForegroundService();
                             }
                         });
                     });
