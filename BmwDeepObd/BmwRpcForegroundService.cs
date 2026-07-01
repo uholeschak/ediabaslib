@@ -199,6 +199,11 @@ namespace BmwDeepObd
                 message = _notificationMessage;
             }
 
+            if (string.IsNullOrEmpty(message))
+            {
+                message = _resourceContext.GetString(Resource.String.bmw_rpc_coding_srv_disconnected);
+            }
+
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
                 .SetContentTitle(_resourceContext.GetString(Resource.String.app_name))
                 .SetContentText(message)
