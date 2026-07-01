@@ -8,6 +8,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using AndroidX.Core.Content;
 using BmwDeepObd.Dialogs;
 using EdiabasLib;
 using PsdzRpcClient;
@@ -2788,6 +2789,36 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        public bool StartForegroundService()
+        {
+            try
+            {
+                Intent startServiceIntent = new Intent(this, typeof(BmwRpcForegroundService));
+                startServiceIntent.SetAction(ForegroundService.ActionStartService);
+                ContextCompat.StartForegroundService(this, startServiceIntent);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool StopForegroundService()
+        {
+            try
+            {
+                Intent stopServiceIntent = new Intent(this, typeof(BmwRpcForegroundService));
+                stopServiceIntent.SetAction(ForegroundService.ActionStopService);
+                StopService(stopServiceIntent);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 #else
         private bool StartRpcClient()
