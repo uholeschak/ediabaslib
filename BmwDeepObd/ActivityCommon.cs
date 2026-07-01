@@ -850,6 +850,7 @@ namespace BmwDeepObd
         public const string AppFolderName = AppNameSpace;
         public const string UsbPermissionAction = AppNameSpace + ".USB_PERMISSION";
         public const string CertificateAction = AppNameSpace + ".Action.Certificate";
+        public const string BmwRpcCodingMessageAction = AppNameSpace + ".Action.BmwRpcCodingMessage";
         public const string BroadcastCertStatus = "CertificateStatus";
         public const string BroadcastCertValidDate = "CertificateValidDate";
         public const string PackageNameAction = AppNameSpace + ".Action.PackageName";
@@ -1813,6 +1814,7 @@ namespace BmwDeepObd
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(PackageNameAction));
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(CertificateAction));
+                    InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(BmwRpcCodingMessageAction));
                     if (UsbSupport)
                     {   // usb handling
                         context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));   // system broadcasts
