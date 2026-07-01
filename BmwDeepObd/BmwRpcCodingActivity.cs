@@ -2802,7 +2802,7 @@ namespace BmwDeepObd
             try
             {
                 Intent startServiceIntent = new Intent(this, typeof(BmwRpcForegroundService));
-                startServiceIntent.SetAction(ForegroundService.ActionStartService);
+                startServiceIntent.SetAction(BmwRpcForegroundService.ActionStartService);
                 ContextCompat.StartForegroundService(this, startServiceIntent);
             }
             catch (Exception)
@@ -2817,7 +2817,7 @@ namespace BmwDeepObd
             try
             {
                 Intent stopServiceIntent = new Intent(this, typeof(BmwRpcForegroundService));
-                stopServiceIntent.SetAction(ForegroundService.ActionStopService);
+                stopServiceIntent.SetAction(BmwRpcForegroundService.ActionStopService);
                 StopService(stopServiceIntent);
             }
             catch (Exception)
