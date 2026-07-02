@@ -22,6 +22,7 @@ namespace BmwDeepObd
         public const string ActionStopService = "BmwRpcForegroundService.action.STOP_SERVICE";
         public const string ActionShowCodingActivity = "BmwRpcForegroundService.action.SHOW_CODING_ACTIVITY";
         public const string ExtraNotificationMessage = "message";
+        public const string ExtraNotificationDelayed = "delayed";
         private const int NotificationUpdateDelay = 2000;
 
         private bool _isStarted;
@@ -69,7 +70,6 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
-                    RegisterForegroundService();
                     string message = intent.GetStringExtra(ExtraNotificationMessage);
                     if (!string.IsNullOrEmpty(message))
                     {
@@ -77,10 +77,9 @@ namespace BmwDeepObd
                         {
                             _notificationMessage = message;
                         }
-
-                        PostUpdateNotification();
                     }
 
+                    RegisterForegroundService();
                     _isStarted = true;
                     break;
                 }
@@ -341,20 +340,13 @@ namespace BmwDeepObd
                 return;
             }
 
-            bool changed = false;
+            bool delayed = intent.GetBooleanExtra(ExtraNotificationDelayed, false);
             lock (_notificationLockObject)
             {
-                if (_notificationMessage != request)
-                {
-                    _notificationMessage = request;
-                    changed = true;
-                }
+                _notificationMessage = request;
             }
 
-            if (changed)
-            {
-                PostUpdateNotification(true);
-            }
+            PostUpdateNotification(delayed);
         }
 
         public class UpdateNotificationRunnable : Java.Lang.Object, Java.Lang.IRunnable
