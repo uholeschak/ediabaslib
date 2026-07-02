@@ -70,7 +70,6 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
-                    RegisterForegroundService();
                     string message = intent.GetStringExtra(ExtraNotificationMessage);
                     if (!string.IsNullOrEmpty(message))
                     {
@@ -78,9 +77,9 @@ namespace BmwDeepObd
                         {
                             _notificationMessage = message;
                         }
-
-                        PostUpdateNotification();
                     }
+
+                    RegisterForegroundService();
 
                     _isStarted = true;
                     break;
