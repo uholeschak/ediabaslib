@@ -343,20 +343,12 @@ namespace BmwDeepObd
             }
 
             bool delayed = intent.GetBooleanExtra(ExtraNotificationDelayed, false);
-            bool changed = false;
             lock (_notificationLockObject)
             {
-                if (_notificationMessage != request)
-                {
-                    _notificationMessage = request;
-                    changed = true;
-                }
+                _notificationMessage = request;
             }
 
-            if (changed)
-            {
-                PostUpdateNotification(delayed);
-            }
+            PostUpdateNotification(delayed);
         }
 
         public class UpdateNotificationRunnable : Java.Lang.Object, Java.Lang.IRunnable
