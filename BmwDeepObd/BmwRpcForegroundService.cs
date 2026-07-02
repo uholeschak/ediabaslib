@@ -22,6 +22,7 @@ namespace BmwDeepObd
         public const string ActionStopService = "BmwRpcForegroundService.action.STOP_SERVICE";
         public const string ActionShowCodingActivity = "BmwRpcForegroundService.action.SHOW_CODING_ACTIVITY";
         public const string ExtraNotificationMessage = "message";
+        public const string ExtraNotificationDelayed = "delayed";
         private const int NotificationUpdateDelay = 2000;
 
         private bool _isStarted;
@@ -341,6 +342,7 @@ namespace BmwDeepObd
                 return;
             }
 
+            bool delayed = intent.GetBooleanExtra(ExtraNotificationDelayed, false);
             bool changed = false;
             lock (_notificationLockObject)
             {
@@ -353,7 +355,7 @@ namespace BmwDeepObd
 
             if (changed)
             {
-                PostUpdateNotification();
+                PostUpdateNotification(delayed);
             }
         }
 
