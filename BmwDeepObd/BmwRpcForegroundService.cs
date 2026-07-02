@@ -80,7 +80,6 @@ namespace BmwDeepObd
                     }
 
                     RegisterForegroundService();
-
                     _isStarted = true;
                     break;
                 }
