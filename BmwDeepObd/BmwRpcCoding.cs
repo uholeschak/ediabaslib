@@ -571,7 +571,6 @@ public class BmwRpcCoding : IDisposable
                 proxy.VehicleSend(sendArgs.Id, sendArgs.Data);
             };
 
-            SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_srv_disconnected));
             return true;
         }
         catch (Exception)

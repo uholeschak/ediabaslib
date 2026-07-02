@@ -20,7 +20,7 @@ namespace BmwDeepObd
         public const int ServiceRunningNotificationId = 10001;
         public const string ActionStartService = "BmwRpcForegroundService.action.START_SERVICE";
         public const string ActionStopService = "BmwRpcForegroundService.action.STOP_SERVICE";
-        public const string ActionShowMainActivity = "BmwRpcForegroundService.action.SHOW_MAIN_ACTIVITY";
+        public const string ActionShowCodingActivity = "BmwRpcForegroundService.action.SHOW_CODING_ACTIVITY";
         public const string ExtraNotificationMessage = "message";
         private const int NotificationUpdateDelay = 2000;
 
@@ -71,10 +71,16 @@ namespace BmwDeepObd
 #endif
                     RegisterForegroundService();
                     string message = intent.GetStringExtra(ExtraNotificationMessage);
-                    lock (_notificationLockObject)
+                    if (!string.IsNullOrEmpty(message))
                     {
-                        _notificationMessage = message ?? string.Empty;
+                        lock (_notificationLockObject)
+                        {
+                            _notificationMessage = message;
+                        }
+
+                        PostUpdateNotification();
                     }
+
                     _isStarted = true;
                     break;
                 }
@@ -92,10 +98,10 @@ namespace BmwDeepObd
                     break;
                 }
 
-                case ActionShowMainActivity:
+                case ActionShowCodingActivity:
                 {
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "OnStartCommand: Show main activity");
+                    Android.Util.Log.Info(Tag, "OnStartCommand: Show coding activity");
 #endif
                     ShowRpcCodingActivity();
                     break;
@@ -210,7 +216,7 @@ namespace BmwDeepObd
                 .SetContentTitle(_resourceContext.GetString(Resource.String.app_name))
                 .SetContentText(message)
                 .SetSmallIcon(Resource.Drawable.ic_stat_obd)
-                .SetContentIntent(BuildIntentToShowMainActivity())
+                .SetContentIntent(BuildIntentToShowCodingActivity())
                 .SetOnlyAlertOnce(true)
                 .SetOngoing(true)
                 .SetPriority(NotificationCompat.PriorityLow)
@@ -297,16 +303,16 @@ namespace BmwDeepObd
         /// </summary>
         /// <returns>The content intent.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        private Android.App.PendingIntent BuildIntentToShowMainActivity()
+        private Android.App.PendingIntent BuildIntentToShowCodingActivity()
         {
-            Intent showMainActivityIntent = new Intent(this, GetType());
-            showMainActivityIntent.SetAction(ActionShowMainActivity);
+            Intent showCodingActivityIntent = new Intent(this, GetType());
+            showCodingActivityIntent.SetAction(ActionShowCodingActivity);
             Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
                 intentFlags |= Android.App.PendingIntentFlags.Mutable;
             }
-            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showMainActivityIntent, intentFlags);
+            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showCodingActivityIntent, intentFlags);
             return pendingIntent;
         }
 
