@@ -977,6 +977,12 @@ public class BmwRpcCoding : IDisposable
                 progressIndeterminate = _statusData.ProgressIndeterminate;
             }
 
+            if (!progressIndeterminate)
+            {
+                string message = string.Format("{0}: {1}%", _resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_active), progressPercent);
+                SendCodingStatusMessage(message);
+            }
+
             UpdateProgressEvent?.Invoke(progressPercent, progressIndeterminate);
             return true;
         }

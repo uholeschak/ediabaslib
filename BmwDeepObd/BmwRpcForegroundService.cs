@@ -353,7 +353,7 @@ namespace BmwDeepObd
 
             if (changed)
             {
-                PostUpdateNotification(true);
+                PostUpdateNotification();
             }
         }
 
