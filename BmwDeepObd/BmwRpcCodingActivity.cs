@@ -2784,7 +2784,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                StartForegroundService();
+                                StartForegroundService(GetString(Resource.String.bmw_rpc_coding_srv_connected));
                             }
                         });
                     });
@@ -2797,12 +2797,13 @@ namespace BmwDeepObd
             }
         }
 
-        public bool StartForegroundService()
+        public bool StartForegroundService(string message)
         {
             try
             {
                 Intent startServiceIntent = new Intent(this, typeof(BmwRpcForegroundService));
                 startServiceIntent.SetAction(BmwRpcForegroundService.ActionStartService);
+                startServiceIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationMessage, message);
                 ContextCompat.StartForegroundService(this, startServiceIntent);
             }
             catch (Exception)

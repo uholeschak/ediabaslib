@@ -812,8 +812,13 @@
   <string name="bmw_rpc_coding_status_title">Статус</string>
   <string name="bmw_rpc_coding_options_title">Опции</string>
   <string name="bmw_rpc_coding_update_time">Последнее обновление: {0}</string>
+  <!--Translate-->
+  <string name="bmw_rpc_coding_srv_disconnected">Сервер отключен</string>
+  <string name="bmw_rpc_coding_srv_connected">Сервер подключен</string>
+  <string name="bmw_rpc_coding_operation_active">Операция активна</string>
+  <string name="bmw_rpc_coding_operation_inactive">Нет активной операции</string>
 
-  <!-- CAN Adapter Activity -->
+    <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
   <string name="can_adapter_mode_name">Режим работы CAN</string>
   <string name="can_adapter_sep_time">Интервал между пакетами данных [мс]</string>

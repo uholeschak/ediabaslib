@@ -76,6 +76,7 @@ public class BmwRpcCoding : IDisposable
 
     private bool _disposed;
     private Context _appContext;
+    private Context _resourceContext;
     private ActivityCommon _activityCommon;
     private PsdzRpcClient.PsdzRpcClient _psdzRpcClient;
     private EdiabasProxyClient _ediabasProxyClient;
@@ -93,6 +94,7 @@ public class BmwRpcCoding : IDisposable
             _statusData = new StatusData();
         }
         _appContext = appContext;
+        _resourceContext = ActivityCommon.GetLocaleContext(_appContext);
         _activityCommon = new ActivityCommon(appContext);
     }
 
@@ -137,6 +139,7 @@ public class BmwRpcCoding : IDisposable
 
                     if (connected)
                     {
+                        SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_srv_connected));
                         _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                         lock (StatusLock)
                         {
@@ -146,6 +149,7 @@ public class BmwRpcCoding : IDisposable
                     }
                     else
                     {
+                        SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_srv_disconnected));
                         if (_ediabasProxyClient != null)
                         {
                             await _ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
@@ -567,6 +571,7 @@ public class BmwRpcCoding : IDisposable
                 proxy.VehicleSend(sendArgs.Id, sendArgs.Data);
             };
 
+            SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_srv_disconnected));
             return true;
         }
         catch (Exception)
@@ -890,6 +895,8 @@ public class BmwRpcCoding : IDisposable
 
     private async Task RpcClientTaskStarted()
     {
+        SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_active));
+
         lock (StatusLock)
         {
             _statusData.TaskActive = true;
@@ -907,6 +914,8 @@ public class BmwRpcCoding : IDisposable
 
     private async Task RpcClientTaskCompleted()
     {
+        SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_inactive));
+
         lock (StatusLock)
         {
             _statusData.TaskActive = false;
@@ -1002,7 +1011,7 @@ public class BmwRpcCoding : IDisposable
         try
         {
             Intent broadcastIntent = new Intent(ActivityCommon.BmwRpcCodingMessageAction);
-            broadcastIntent.PutExtra("message", message);
+            broadcastIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationMessage, message);
             InternalBroadcastManager.InternalBroadcastManager.GetInstance(_appContext).SendBroadcast(broadcastIntent);
             return true;
         }
