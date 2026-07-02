@@ -1007,7 +1007,7 @@ public class BmwRpcCoding : IDisposable
         try
         {
             Intent broadcastIntent = new Intent(ActivityCommon.BmwRpcCodingMessageAction);
-            broadcastIntent.PutExtra("message", message);
+            broadcastIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationMessage, message);
             InternalBroadcastManager.InternalBroadcastManager.GetInstance(_appContext).SendBroadcast(broadcastIntent);
             return true;
         }

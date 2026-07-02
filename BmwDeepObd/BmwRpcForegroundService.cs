@@ -21,6 +21,7 @@ namespace BmwDeepObd
         public const string ActionStartService = "BmwRpcForegroundService.action.START_SERVICE";
         public const string ActionStopService = "BmwRpcForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "BmwRpcForegroundService.action.SHOW_MAIN_ACTIVITY";
+        public const string ExtraNotificationMessage = "message";
         private const int NotificationUpdateDelay = 2000;
 
         private bool _isStarted;
@@ -69,9 +70,10 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
                     RegisterForegroundService();
+                    string message = intent.GetStringExtra(ExtraNotificationMessage);
                     lock (_notificationLockObject)
                     {
-                        _notificationMessage = string.Empty;
+                        _notificationMessage = message ?? string.Empty;
                     }
                     _isStarted = true;
                     break;
@@ -327,7 +329,7 @@ namespace BmwDeepObd
 
         private void HandleMessageBroadcast(Intent intent)
         {
-            string request = intent.GetStringExtra("message");
+            string request = intent.GetStringExtra(ExtraNotificationMessage);
             if (request == null)
             {
                 return;
