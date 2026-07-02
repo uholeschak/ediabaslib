@@ -804,8 +804,8 @@
   <string name="bmw_rpc_coding_update_time">Last update: {0}</string>
   <string name="bmw_rpc_coding_srv_disconnected">Server disconnected</string>
   <string name="bmw_rpc_coding_srv_connected">Server connected</string>
-  <string name="bmw_rpc_coding_vehicle_disconnected">Vehicle disconnected</string>
-  <string name="bmw_rpc_coding_vehicle_connected">Vehicle connected</string>
+  <string name="bmw_rpc_coding_operation_active">Operation active</string>
+  <string name="bmw_rpc_coding_operation_inactive">No active operation</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>

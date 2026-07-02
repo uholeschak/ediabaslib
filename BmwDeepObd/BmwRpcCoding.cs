@@ -895,6 +895,8 @@ public class BmwRpcCoding : IDisposable
 
     private async Task RpcClientTaskStarted()
     {
+        SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_active));
+
         lock (StatusLock)
         {
             _statusData.TaskActive = true;
@@ -912,6 +914,8 @@ public class BmwRpcCoding : IDisposable
 
     private async Task RpcClientTaskCompleted()
     {
+        SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_inactive));
+
         lock (StatusLock)
         {
             _statusData.TaskActive = false;
