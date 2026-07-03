@@ -295,7 +295,6 @@ public class BmwRpcCoding : IDisposable
                         _statusData.ShowMessageWait = null;
                     }
 
-                    SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_inactive));
                     await RpcClientTaskCompleted().ConfigureAwait(false);
                 }
                 catch (Exception)
@@ -455,6 +454,7 @@ public class BmwRpcCoding : IDisposable
                         _statusData.ShowMessageWait = msgArgs;
                     }
 
+                    SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_inactive));
                     UpdateDisplay();
                 }
                 catch (Exception)
