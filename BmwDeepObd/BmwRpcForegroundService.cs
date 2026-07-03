@@ -22,6 +22,7 @@ namespace BmwDeepObd
         public const string ActionStartService = "BmwRpcForegroundService.action.START_SERVICE";
         public const string ActionStopService = "BmwRpcForegroundService.action.STOP_SERVICE";
         public const string ActionShowCodingActivity = "BmwRpcForegroundService.action.SHOW_CODING_ACTIVITY";
+        public const string ActionCloseCodingActivity = "BmwRpcForegroundService.action.CLOSE_CODING_ACTIVITY";
         public const string ExtraNotificationMessage = "message";
         public const string ExtraNotificationDelayed = "delayed";
         private const int NotificationUpdateDelay = 2000;
@@ -117,6 +118,15 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: Show coding activity");
 #endif
                     ShowRpcCodingActivity();
+                    break;
+                }
+
+                case ActionCloseCodingActivity:
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "OnStartCommand: Close coding activity");
+#endif
+                    ShowRpcCodingActivity(true);
                     break;
                 }
             }
@@ -303,12 +313,16 @@ namespace BmwDeepObd
             }
         }
 
-        private bool ShowRpcCodingActivity()
+        private bool ShowRpcCodingActivity(bool close = false)
         {
             try
             {
                 Intent intent = new Intent(this, typeof(BmwRpcCodingActivity));
                 intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop);
+                if (close)
+                {
+                    intent.PutExtra(BmwRpcCodingActivity.ExtraCloseActivity, true);
+                }
                 StartActivity(intent);
                 return true;
             }
@@ -356,7 +370,7 @@ namespace BmwDeepObd
         {
             string message = _resourceContext.GetString(Resource.String.service_abort_operation);
             Intent stopServiceIntent = new Intent(this, GetType());
-            stopServiceIntent.SetAction(ActionStopService);
+            stopServiceIntent.SetAction(ActionCloseCodingActivity);
             Android.App.PendingIntentFlags intentFlags = 0;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
