@@ -102,6 +102,8 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
                     StopService();
+                    DisposeNotificationTimer();
+
                     lock (_notificationLockObject)
                     {
                         _notificationMessage = string.Empty;
@@ -134,11 +136,7 @@ namespace BmwDeepObd
 #if DEBUG
             Android.Util.Log.Info(Tag, "OnDestroy: Service is shutting down");
 #endif
-            if (_notificationUpdateTimer != null)
-            {
-                _notificationUpdateTimer.Dispose();
-                _notificationUpdateTimer = null;
-            }
+            DisposeNotificationTimer();
 
             // Remove the notification from the status bar.
             if (_notificationHandler != null)
@@ -311,6 +309,15 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        private void DisposeNotificationTimer()
+        {
+            if (_notificationUpdateTimer != null)
+            {
+                _notificationUpdateTimer.Dispose();
+                _notificationUpdateTimer = null;
             }
         }
 
