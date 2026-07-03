@@ -237,6 +237,12 @@ namespace BmwDeepObd
                 .SetPriority(NotificationCompat.PriorityLow)
                 .SetCategory(NotificationCompat.CategoryService);
 
+            NotificationCompat.Action action = BuildStopCodingAction();
+            if (action != null)
+            {
+                builder.AddAction(action);
+            }
+
             return builder.Build();
         }
 
@@ -338,6 +344,28 @@ namespace BmwDeepObd
             }
             Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showCodingActivityIntent, intentFlags);
             return pendingIntent;
+        }
+
+        /// <summary>
+        /// Builds the Notification.Action that will allow the user to stop the service via the
+        /// notification in the status bar
+        /// </summary>
+        /// <returns>The stop service action.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
+        private NotificationCompat.Action BuildStopCodingAction()
+        {
+            string message = _resourceContext.GetString(Resource.String.service_abort_operation);
+            Intent stopServiceIntent = new Intent(this, GetType());
+            stopServiceIntent.SetAction(ActionStopService);
+            Android.App.PendingIntentFlags intentFlags = 0;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+            {
+                intentFlags |= Android.App.PendingIntentFlags.Mutable;
+            }
+            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, intentFlags);
+
+            NotificationCompat.Action.Builder builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel, message, stopServicePendingIntent);
+            return builder.Build();
         }
 
         private void BroadcastReceived(Context context, Intent intent)
