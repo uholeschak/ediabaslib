@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
@@ -24,6 +25,7 @@ namespace BmwDeepObd
         public const string ExtraNotificationMessage = "message";
         public const string ExtraNotificationDelayed = "delayed";
         private const int NotificationUpdateDelay = 2000;
+        private const int NotificationTimerDelay = 3000;
 
         private bool _isStarted;
         private ActivityCommon _activityCommon;
@@ -33,6 +35,7 @@ namespace BmwDeepObd
         private UpdateNotificationRunnable _notificationRunnable;
         private long _notificationUpdateTime;
         private string _notificationMessage;
+        private Timer _notificationUpdateTimer;
         private readonly object _notificationLockObject = new object();
 
         public override void OnCreate()
@@ -80,6 +83,15 @@ namespace BmwDeepObd
                     }
 
                     RegisterForegroundService();
+
+                    if (_notificationUpdateTimer == null)
+                    {
+                        _notificationUpdateTimer = new Timer(state =>
+                        {
+                            PostUpdateNotification(true);
+                        }, null, NotificationTimerDelay, NotificationTimerDelay);
+                    }
+
                     _isStarted = true;
                     break;
                 }
@@ -122,6 +134,12 @@ namespace BmwDeepObd
 #if DEBUG
             Android.Util.Log.Info(Tag, "OnDestroy: Service is shutting down");
 #endif
+            if (_notificationUpdateTimer != null)
+            {
+                _notificationUpdateTimer.Dispose();
+                _notificationUpdateTimer = null;
+            }
+
             // Remove the notification from the status bar.
             if (_notificationHandler != null)
             {
