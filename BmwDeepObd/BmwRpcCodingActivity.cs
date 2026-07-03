@@ -1642,12 +1642,12 @@ namespace BmwDeepObd
             string lastStatusMessage;
             lock (_statusLock)
             {
-                lastStatusMessage = _lastStatusMessage;
+                lastStatusMessage = _lastStatusMessage ?? string.Empty;
                 _lastStatusMessage = statusData.StatusMessage;
             }
 
             _textCodingStatus.Text = statusData.StatusMessage ?? string.Empty;
-            if (!string.IsNullOrEmpty(statusData.StatusMessage) && !string.IsNullOrEmpty(lastStatusMessage) &&
+            if (!string.IsNullOrEmpty(statusData.StatusMessage) && lastStatusMessage != null &&
                 statusData.StatusMessage.Length > lastStatusMessage.Length)
             {
                 _scrollBmwRpcCoding.Post(() =>
