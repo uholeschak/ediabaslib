@@ -313,15 +313,15 @@ namespace BmwDeepObd
             }
         }
 
-        private bool ShowRpcCodingActivity(bool close = false)
+        private bool ShowRpcCodingActivity(bool abort = false)
         {
             try
             {
                 Intent intent = new Intent(this, typeof(BmwRpcCodingActivity));
                 intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop);
-                if (close)
+                if (abort)
                 {
-                    intent.PutExtra(BmwRpcCodingActivity.ExtraCloseActivity, true);
+                    intent.PutExtra(BmwRpcCodingActivity.ExtraAbortCoding, true);
                 }
                 StartActivity(intent);
                 return true;
@@ -368,7 +368,7 @@ namespace BmwDeepObd
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private NotificationCompat.Action BuildStopCodingAction()
         {
-            string message = _resourceContext.GetString(Resource.String.service_abort_operation);
+            string message = _resourceContext.GetString(Resource.String.bmw_rpc_coding_abort_action);
             Intent stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionCloseCodingActivity);
             Android.App.PendingIntentFlags intentFlags = 0;

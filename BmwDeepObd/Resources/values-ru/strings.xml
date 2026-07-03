@@ -817,8 +817,9 @@
   <string name="bmw_rpc_coding_srv_connected">Сервер подключен</string>
   <string name="bmw_rpc_coding_operation_active">Операция кодирования активна</string>
   <string name="bmw_rpc_coding_operation_inactive">Нет активной операции кодирования</string>
+  <string name="bmw_rpc_coding_abort_action">Прервать операцию кодирования</string>
 
-    <!-- CAN Adapter Activity -->
+  <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
   <string name="can_adapter_mode_name">Режим работы CAN</string>
   <string name="can_adapter_sep_time">Интервал между пакетами данных [мс]</string>
