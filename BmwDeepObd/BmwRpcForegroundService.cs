@@ -25,6 +25,7 @@ namespace BmwDeepObd
         public const string ExtraNotificationMessage = "message";
         public const string ExtraNotificationDelayed = "delayed";
         private const int NotificationUpdateDelay = 2000;
+        private const int NotificationTimerDelay = 3000;
 
         private bool _isStarted;
         private ActivityCommon _activityCommon;
@@ -88,7 +89,7 @@ namespace BmwDeepObd
                         _notificationUpdateTimer = new Timer(state =>
                         {
                             PostUpdateNotification(true);
-                        }, null, NotificationUpdateDelay, NotificationUpdateDelay);
+                        }, null, NotificationTimerDelay, NotificationTimerDelay);
                     }
 
                     _isStarted = true;
