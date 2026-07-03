@@ -81,6 +81,7 @@ namespace BmwDeepObd
         public const string ExtraEnetIp = "enet_ip";
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
+        public const string ExtraCloseActivity = "close_activity";
 
         private const string InfoCodingUrl = @"https://www.holeschak.de/BmwDeepObd/BmwCoding.php";
 #if DEBUG
