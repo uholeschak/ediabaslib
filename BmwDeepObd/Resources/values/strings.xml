@@ -806,6 +806,7 @@
   <string name="bmw_rpc_coding_srv_connected">Server connected</string>
   <string name="bmw_rpc_coding_operation_active">Coding operation active</string>
   <string name="bmw_rpc_coding_operation_inactive">No active coding operation</string>
+  <string name="bmw_rpc_coding_abort_action">Abort coding operation</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>
