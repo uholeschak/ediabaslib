@@ -74,6 +74,7 @@ namespace BmwDeepObd
         public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, bool enableIpv6 = false, string message = null, string dayString = null, string validSerial = null);
 
         // Intent extra
+        public const string ExtraAbortCoding = "abort_coding";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraInterface = "interface";
@@ -81,7 +82,6 @@ namespace BmwDeepObd
         public const string ExtraEnetIp = "enet_ip";
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
-        public const string ExtraAbortCoding = "abort_coding";
 
         private const string InfoCodingUrl = @"https://www.holeschak.de/BmwDeepObd/BmwCoding.php";
 #if DEBUG
@@ -99,6 +99,7 @@ namespace BmwDeepObd
         private static BmwRpcCoding _bmwRpcCoding;
 #endif
         private ActivityCommon _activityCommon;
+        private bool _abortCoding;
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceAddress;
@@ -616,6 +617,7 @@ namespace BmwDeepObd
             _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
             _textCodingStatus.MovementMethod = new ScrollingMovementMethod();
 
+            _abortCoding = Intent.GetBooleanExtra(ExtraAbortCoding, false);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
