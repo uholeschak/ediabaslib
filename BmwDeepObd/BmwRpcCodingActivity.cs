@@ -672,6 +672,12 @@ namespace BmwDeepObd
             base.OnResume();
             _activityActive = true;
 
+            if (_abortCoding)
+            {
+                FinishContinue();
+                return;
+            }
+
 #if STATIC_RPC_CODING
             DetachStaticRpcClient();
             AttachStaticRpcClient();
