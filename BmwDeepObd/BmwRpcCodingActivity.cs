@@ -617,7 +617,7 @@ namespace BmwDeepObd
             _textCodingStatus = FindViewById<TextView>(Resource.Id.textCodingStatus);
             _textCodingStatus.MovementMethod = new ScrollingMovementMethod();
 
-            _abortCoding = Intent.GetBooleanExtra(ExtraAbortCoding, false);
+            HandleIntent(Intent);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
@@ -863,6 +863,26 @@ namespace BmwDeepObd
             {
                 Finish();
             }
+        }
+
+        private void HandleIntent(Intent intent)
+        {
+            if (intent != null)
+            {
+                if ((intent.Flags & ActivityFlags.LaunchedFromHistory) != 0)
+                {   // old flags reused
+                    return;
+                }
+
+                _abortCoding = intent.GetBooleanExtra(ExtraAbortCoding, false);
+            }
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
+
+            HandleIntent(intent);
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
