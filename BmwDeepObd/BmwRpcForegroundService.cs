@@ -24,6 +24,8 @@ namespace BmwDeepObd
         public const string ActionShowCodingActivity = "BmwRpcForegroundService.action.SHOW_CODING_ACTIVITY";
         public const string ActionCloseCodingActivity = "BmwRpcForegroundService.action.CLOSE_CODING_ACTIVITY";
         public const string ExtraNotificationMessage = "message";
+        public const string ExtraNotificationProgress = "progress";
+        public const string ExtraNotificationProgressIndeterminate = "progress_indeterminate";
         public const string ExtraNotificationDelayed = "delayed";
         private const int NotificationUpdateDelay = 2000;
         private const int NotificationTimerDelay = 3000;
@@ -36,6 +38,8 @@ namespace BmwDeepObd
         private UpdateNotificationRunnable _notificationRunnable;
         private long _notificationUpdateTime;
         private string _notificationMessage;
+        private int _notificationProgress = -1;
+        private bool _notificationProgressIndeterminate;
         private Timer _notificationUpdateTimer;
         private readonly object _notificationLockObject = new object();
 
@@ -55,6 +59,8 @@ namespace BmwDeepObd
             lock (_notificationLockObject)
             {
                 _notificationMessage = string.Empty;
+                _notificationProgress = -1;
+                _notificationProgressIndeterminate = false;
             }
 
             _activityCommon?.StartMtcService();
@@ -75,11 +81,15 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
                     string message = intent.GetStringExtra(ExtraNotificationMessage);
+                    int progress = intent.GetIntExtra(ExtraNotificationProgress, -1);
+                    bool progressIndeterminate = intent.GetBooleanExtra(ExtraNotificationProgressIndeterminate, false);
                     if (!string.IsNullOrEmpty(message))
                     {
                         lock (_notificationLockObject)
                         {
                             _notificationMessage = message;
+                            _notificationProgress = progress;
+                            _notificationProgressIndeterminate = progressIndeterminate;
                         }
                     }
 
@@ -108,6 +118,8 @@ namespace BmwDeepObd
                     lock (_notificationLockObject)
                     {
                         _notificationMessage = string.Empty;
+                        _notificationProgress = -1;
+                        _notificationProgressIndeterminate = false;
                     }
                     break;
                 }
@@ -209,9 +221,13 @@ namespace BmwDeepObd
         private Android.App.Notification GetNotification()
         {
             string message;
+            int progress;
+            bool progressIndeterminate;
             lock (_notificationLockObject)
             {
                 message = _notificationMessage;
+                progress = _notificationProgress;
+                progressIndeterminate = _notificationProgressIndeterminate;
             }
 
             if (string.IsNullOrEmpty(message))
@@ -228,6 +244,16 @@ namespace BmwDeepObd
                 .SetOngoing(true)
                 .SetPriority(NotificationCompat.PriorityLow)
                 .SetCategory(NotificationCompat.CategoryService);
+
+            // optional progress bar
+            if (progressIndeterminate)
+            {
+                builder.SetProgress(0, 0, true);
+            }
+            else if (progress >= 0)
+            {
+                builder.SetProgress(100, progress, false);
+            }
 
             NotificationCompat.Action action = BuildStopCodingAction();
             if (action != null)
@@ -366,16 +392,20 @@ namespace BmwDeepObd
 
         private void HandleMessageBroadcast(Intent intent)
         {
-            string request = intent.GetStringExtra(ExtraNotificationMessage);
-            if (request == null)
+            string message = intent.GetStringExtra(ExtraNotificationMessage);
+            if (message == null)
             {
                 return;
             }
 
+            int progress = intent.GetIntExtra(ExtraNotificationProgress, -1);
+            bool progressIndeterminate = intent.GetBooleanExtra(ExtraNotificationProgressIndeterminate, false);
             bool delayed = intent.GetBooleanExtra(ExtraNotificationDelayed, false);
             lock (_notificationLockObject)
             {
-                _notificationMessage = request;
+                _notificationMessage = message;
+                _notificationProgress = progress;
+                _notificationProgressIndeterminate = progressIndeterminate;
             }
 
             PostUpdateNotification(delayed);
