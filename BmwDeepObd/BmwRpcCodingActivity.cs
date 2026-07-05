@@ -956,11 +956,6 @@ namespace BmwDeepObd
         {
             StopForegroundService();
 
-            if (_abortCoding)
-            {
-                return;
-            }
-
             if (_alertDialogConnectError != null)
             {
                 return;
@@ -1952,13 +1947,9 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (_abortCoding)
-            {
-                return false;
-            }
-
             if (_alertDialogRpcMessage != null)
             {
+                _abortCoding = false;
                 return false;
             }
 
@@ -1987,6 +1978,7 @@ namespace BmwDeepObd
                     };
                 }
 
+                _abortCoding = false;
                 return true;
             }
 
@@ -2017,6 +2009,7 @@ namespace BmwDeepObd
                         };
                     }
 
+                    _abortCoding = false;
                     return true;
                 }
 
@@ -2049,6 +2042,7 @@ namespace BmwDeepObd
                     };
                 }
 
+                _abortCoding = false;
                 return true;
             }
 
@@ -2873,6 +2867,7 @@ namespace BmwDeepObd
         {
             try
             {
+                _abortCoding = false;
                 Intent startServiceIntent = new Intent(this, typeof(BmwRpcForegroundService));
                 startServiceIntent.SetAction(BmwRpcForegroundService.ActionStartService);
                 startServiceIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationMessage, message);
@@ -2889,6 +2884,7 @@ namespace BmwDeepObd
         {
             try
             {
+                _abortCoding = false;
                 Intent stopServiceIntent = new Intent(this, typeof(BmwRpcForegroundService));
                 stopServiceIntent.SetAction(BmwRpcForegroundService.ActionStopService);
                 StopService(stopServiceIntent);
