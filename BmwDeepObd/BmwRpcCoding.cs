@@ -978,10 +978,9 @@ public class BmwRpcCoding : IDisposable
                 progressIndeterminate = _statusData.ProgressIndeterminate;
             }
 
-            if (!progressIndeterminate && progressPercent >= 0)
+            if (progressPercent >= 0)
             {
-                string message = string.Format("{0}: {1}%", _resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_active), progressPercent);
-                SendCodingStatusMessage(message, true);
+                SendCodingStatusMessage(_resourceContext.GetString(Resource.String.bmw_rpc_coding_operation_active), progressPercent, progressIndeterminate, true);
             }
 
             UpdateProgressEvent?.Invoke(progressPercent, progressIndeterminate);
@@ -1012,12 +1011,14 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
-    public bool SendCodingStatusMessage(string message, bool delayed = false)
+    public bool SendCodingStatusMessage(string message, int progress = -1, bool progressIndeterminate = false, bool delayed = false)
     {
         try
         {
             Intent broadcastIntent = new Intent(ActivityCommon.BmwRpcCodingMessageAction);
             broadcastIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationMessage, message);
+            broadcastIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationProgress, progress);
+            broadcastIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationProgressIndeterminate, progressIndeterminate);
             broadcastIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationDelayed, delayed);
             InternalBroadcastManager.InternalBroadcastManager.GetInstance(_appContext).SendBroadcast(broadcastIntent);
             return true;
