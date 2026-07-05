@@ -5376,7 +5376,7 @@ namespace BmwDeepObd
                                         compileResultList.Add(result);
                                     }
                                 }
-                            });
+                            }, 16 * 1024 * 1024);   // 16 MB stack for Roslyn recursion
                             compileThread.Start();
                             threadList.Add(compileThread);
                         }

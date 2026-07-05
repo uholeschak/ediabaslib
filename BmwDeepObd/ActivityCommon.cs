@@ -13027,7 +13027,9 @@ using System.Threading;"
                         "UserCode",
                         new[] { syntaxTree },
                         referencesList,
-                        new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary));
+                        new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(
+                            Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary,
+                            concurrentBuild: false));
 
                     using (MemoryStream ms = new MemoryStream())
                     {
