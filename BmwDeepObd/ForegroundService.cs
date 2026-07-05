@@ -222,15 +222,6 @@ namespace BmwDeepObd
                     }
                     break;
                 }
-
-                case ActionShowMainActivity:
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "OnStartCommand: Show main activity");
-#endif
-                    ShowMainActivity();
-                    break;
-                }
             }
 
             // This tells Android not to restart the service if it is killed to reclaim resources.
@@ -522,25 +513,6 @@ namespace BmwDeepObd
             if (isEmpty)
             {
                 BaseActivity.ClearActivityStack();
-            }
-        }
-
-        private bool ShowMainActivity()
-        {
-            try
-            {
-                Intent intent = new Intent(this, typeof(ActivityMain));
-                //intent.SetAction(Intent.ActionMain);
-                //intent.AddCategory(Intent.CategoryLauncher);
-                intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
-                intent.PutExtra(ActivityMain.ExtraShowTitle, true);
-                intent.PutExtra(ActivityMain.ExtraNoAutoconnect, true);
-                StartActivity(intent);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
 
@@ -1123,14 +1095,16 @@ namespace BmwDeepObd
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private Android.App.PendingIntent BuildIntentToShowMainActivity()
         {
-            Intent showMainActivityIntent = new Intent(this, GetType());
-            showMainActivityIntent.SetAction(ActionShowMainActivity);
+            Intent showMainActivityIntent = new Intent(this, typeof(ActivityMain));
+            showMainActivityIntent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
+            showMainActivityIntent.PutExtra(ActivityMain.ExtraShowTitle, true);
+            showMainActivityIntent.PutExtra(ActivityMain.ExtraNoAutoconnect, true);
             Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
-                intentFlags |= Android.App.PendingIntentFlags.Mutable;
+                intentFlags |= Android.App.PendingIntentFlags.Immutable;
             }
-            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showMainActivityIntent, intentFlags);
+            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, showMainActivityIntent, intentFlags);
             return pendingIntent;
         }
 
