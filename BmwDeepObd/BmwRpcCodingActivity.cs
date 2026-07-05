@@ -671,27 +671,12 @@ namespace BmwDeepObd
             base.OnResume();
             _activityActive = true;
 
-            if (_abortCoding)
-            {
-                ConnectionActiveWarn(accepted =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    if (accepted)
-                    {
-                        FinishContinue();
-                    }
-                });
-                return;
-            }
-
 #if STATIC_RPC_CODING
             DetachStaticRpcClient();
             AttachStaticRpcClient();
             GetConnectionInfoRequest();
+
+            HandleAbortCoding();
 #else
             StartRpcClient();
 #endif
@@ -889,10 +874,6 @@ namespace BmwDeepObd
                     case BmwRpcForegroundService.ActionCloseCodingActivity:
                         _abortCoding = true;
                         break;
-
-                    default:
-                        _abortCoding = false;
-                        break;
                 }
             }
         }
@@ -974,6 +955,12 @@ namespace BmwDeepObd
         private void ConnectionFailMessage()
         {
             StopForegroundService();
+
+            if (_abortCoding)
+            {
+                return;
+            }
+
             if (_alertDialogConnectError != null)
             {
                 return;
@@ -1015,6 +1002,38 @@ namespace BmwDeepObd
 
                     StartRpcClient();
                 };
+            }
+        }
+
+        public bool HandleAbortCoding()
+        {
+            try
+            {
+                if (_abortCoding)
+                {
+                    _abortCoding = false;
+                    ConnectionActiveWarn(accepted =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (accepted)
+                        {
+                            FinishContinue();
+                        }
+                    });
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                _abortCoding = false;
+                return false;
             }
         }
 
@@ -1929,6 +1948,11 @@ namespace BmwDeepObd
         private bool ShowRpcClientMessageBox(BmwRpcCoding.StatusData statusData)
         {
             if (statusData == null)
+            {
+                return false;
+            }
+
+            if (_abortCoding)
             {
                 return false;
             }
