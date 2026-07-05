@@ -674,7 +674,18 @@ namespace BmwDeepObd
 
             if (_abortCoding)
             {
-                FinishContinue();
+                ConnectionActiveWarn(accepted =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (accepted)
+                    {
+                        FinishContinue();
+                    }
+                });
                 return;
             }
 
