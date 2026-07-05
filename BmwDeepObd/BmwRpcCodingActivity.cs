@@ -74,7 +74,6 @@ namespace BmwDeepObd
         public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, bool enableIpv6 = false, string message = null, string dayString = null, string validSerial = null);
 
         // Intent extra
-        public const string ExtraAbortCoding = "abort_coding";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraInterface = "interface";
@@ -885,7 +884,16 @@ namespace BmwDeepObd
                     return;
                 }
 
-                _abortCoding = intent.GetBooleanExtra(ExtraAbortCoding, false);
+                switch (intent.Action)
+                {
+                    case BmwRpcForegroundService.ActionCloseCodingActivity:
+                        _abortCoding = true;
+                        break;
+
+                    default:
+                        _abortCoding = false;
+                        break;
+                }
             }
         }
 

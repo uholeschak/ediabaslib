@@ -336,7 +336,6 @@ namespace BmwDeepObd
             Intent closeCodingIntent = new Intent(this, typeof(BmwRpcCodingActivity));
             closeCodingIntent.SetAction(ActionCloseCodingActivity);
             closeCodingIntent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop);
-            closeCodingIntent.PutExtra(BmwRpcCodingActivity.ExtraAbortCoding, true);
             Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
