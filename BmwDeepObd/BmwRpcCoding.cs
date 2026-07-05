@@ -1011,7 +1011,12 @@ public class BmwRpcCoding : IDisposable
         }
     }
 
-    public bool SendCodingStatusMessage(string message, int progress = -1, bool progressIndeterminate = false, bool delayed = false)
+    public bool SendCodingStatusMessage(string message, bool delayed = false)
+    {
+        return SendCodingStatusMessage(message, -1, false, delayed);
+    }
+
+    public bool SendCodingStatusMessage(string message, int progress, bool progressIndeterminate, bool delayed = false)
     {
         try
         {

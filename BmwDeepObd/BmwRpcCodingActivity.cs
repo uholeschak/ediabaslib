@@ -2871,6 +2871,8 @@ namespace BmwDeepObd
                 Intent startServiceIntent = new Intent(this, typeof(BmwRpcForegroundService));
                 startServiceIntent.SetAction(BmwRpcForegroundService.ActionStartService);
                 startServiceIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationMessage, message);
+                startServiceIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationProgress, -1);
+                startServiceIntent.PutExtra(BmwRpcForegroundService.ExtraNotificationProgressIndeterminate, false);
                 ContextCompat.StartForegroundService(this, startServiceIntent);
             }
             catch (Exception)
