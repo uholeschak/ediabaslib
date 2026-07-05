@@ -111,24 +111,6 @@ namespace BmwDeepObd
                     }
                     break;
                 }
-
-                case ActionShowCodingActivity:
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "OnStartCommand: Show coding activity");
-#endif
-                    ShowRpcCodingActivity();
-                    break;
-                }
-
-                case ActionCloseCodingActivity:
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "OnStartCommand: Close coding activity");
-#endif
-                    ShowRpcCodingActivity(true);
-                    break;
-                }
             }
 
             // This tells Android not to restart the service if it is killed to reclaim resources.
@@ -313,25 +295,6 @@ namespace BmwDeepObd
             }
         }
 
-        private bool ShowRpcCodingActivity(bool abort = false)
-        {
-            try
-            {
-                Intent intent = new Intent(this, typeof(BmwRpcCodingActivity));
-                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop);
-                if (abort)
-                {
-                    intent.PutExtra(BmwRpcCodingActivity.ExtraAbortCoding, true);
-                }
-                StartActivity(intent);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         private void DisposeNotificationTimer()
         {
             if (_notificationUpdateTimer != null)
@@ -349,14 +312,15 @@ namespace BmwDeepObd
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private Android.App.PendingIntent BuildIntentToShowCodingActivity()
         {
-            Intent showCodingActivityIntent = new Intent(this, GetType());
+            Intent showCodingActivityIntent = new Intent(this, typeof(BmwRpcCodingActivity));
             showCodingActivityIntent.SetAction(ActionShowCodingActivity);
+            showCodingActivityIntent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop);
             Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
-                intentFlags |= Android.App.PendingIntentFlags.Mutable;
+                intentFlags |= Android.App.PendingIntentFlags.Immutable;
             }
-            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showCodingActivityIntent, intentFlags);
+            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, showCodingActivityIntent, intentFlags);
             return pendingIntent;
         }
 
@@ -369,16 +333,18 @@ namespace BmwDeepObd
         private NotificationCompat.Action BuildStopCodingAction()
         {
             string message = _resourceContext.GetString(Resource.String.bmw_rpc_coding_abort_action);
-            Intent stopServiceIntent = new Intent(this, GetType());
-            stopServiceIntent.SetAction(ActionCloseCodingActivity);
-            Android.App.PendingIntentFlags intentFlags = 0;
+            Intent closeCodingIntent = new Intent(this, typeof(BmwRpcCodingActivity));
+            closeCodingIntent.SetAction(ActionCloseCodingActivity);
+            closeCodingIntent.SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop);
+            closeCodingIntent.PutExtra(BmwRpcCodingActivity.ExtraAbortCoding, true);
+            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
-                intentFlags |= Android.App.PendingIntentFlags.Mutable;
+                intentFlags |= Android.App.PendingIntentFlags.Immutable;
             }
-            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, intentFlags);
+            Android.App.PendingIntent closeCodingPendingIntent = Android.App.PendingIntent.GetActivity(this, 1, closeCodingIntent, intentFlags);
 
-            NotificationCompat.Action.Builder builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel, message, stopServicePendingIntent);
+            NotificationCompat.Action.Builder builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel, message, closeCodingPendingIntent);
             return builder.Build();
         }
 
