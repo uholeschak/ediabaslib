@@ -695,7 +695,7 @@ namespace BmwDeepObd
                                 break;
                         }
                     }
-                });
+                }, ActivityCommon.CompileThreadStackSize);
                 _commThread.Start();
             }
 
