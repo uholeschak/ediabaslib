@@ -305,8 +305,8 @@ namespace BmwDeepObd
         }
 
         /// <summary>
-        /// Builds a PendingIntent that will display the main activity of the app. This is used when the 
-        /// user taps on the notification; it will take them to the main activity of the app.
+        /// Builds a PendingIntent that will display the coding activity of the app. This is used when the 
+        /// user taps on the notification; it will take them to the coding activity of the app.
         /// </summary>
         /// <returns>The content intent.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
@@ -325,10 +325,10 @@ namespace BmwDeepObd
         }
 
         /// <summary>
-        /// Builds the Notification.Action that will allow the user to stop the service via the
+        /// Builds the Notification.Action that will allow the user request to stop coding via the
         /// notification in the status bar
         /// </summary>
-        /// <returns>The stop service action.</returns>
+        /// <returns>The stop coding action.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private NotificationCompat.Action BuildStopCodingAction()
         {
