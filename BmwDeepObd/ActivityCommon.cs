@@ -794,7 +794,7 @@ namespace BmwDeepObd
         public const ThemeType ThemeDefault = ThemeType.Dark;
         public const int FileIoRetries = 10;
         public const int FileIoRetryDelay = 1000;
-        public const int CompileThreadStackSize = 16 * 1024 * 1024;
+        public const int CompileThreadStackSize = 0;    //16 * 1024 * 1024;
         public const int MinSendCommErrors = 3;
         public const int UserNotificationIdMax = 1000;
         public const int BalloonDismissDuration = 4000;
