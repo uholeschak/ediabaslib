@@ -80,19 +80,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
-                    string message = intent.GetStringExtra(ExtraNotificationMessage);
-                    int progress = intent.GetIntExtra(ExtraNotificationProgress, -1);
-                    bool progressIndeterminate = intent.GetBooleanExtra(ExtraNotificationProgressIndeterminate, false);
-                    if (!string.IsNullOrEmpty(message))
-                    {
-                        lock (_notificationLockObject)
-                        {
-                            _notificationMessage = message;
-                            _notificationProgress = progress;
-                            _notificationProgressIndeterminate = progressIndeterminate;
-                        }
-                    }
-
+                    HandleMessageBroadcast(intent);
                     RegisterForegroundService();
 
                     if (_notificationUpdateTimer == null)
