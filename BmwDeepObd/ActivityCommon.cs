@@ -13034,6 +13034,7 @@ using System.Threading;"
 
                     using (MemoryStream ms = new MemoryStream())
                     {
+                        // ToDo: Update to Microsoft.CodeAnalysis.CSharp.Scripting 5.6.0 not possible, because Volatile.ReadBarrier hangs on Android
                         Microsoft.CodeAnalysis.Emit.EmitResult emitResult = compilation.Emit(ms);
                         if (!emitResult.Success)
                         {
