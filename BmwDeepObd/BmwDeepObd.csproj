@@ -83,7 +83,6 @@
          Runtime fix: dotnet/runtime#124538 (merged to main = .NET 11; not backported to .NET 10 yet).
          Re-test with 5.6.0 once running on a runtime that contains the fix. -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="[5.3.0]" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="[5.3.0]" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.13.0.1" />
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.1.4" />
