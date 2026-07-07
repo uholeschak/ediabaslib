@@ -80,8 +80,10 @@
     <PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" />
     <!-- Pinned: 5.6.0 calls Volatile.ReadBarrier(), which recursively calls itself and
          hangs/crashes on the mono interpreter (android-arm64, .NET 10).
-         Runtime fix: dotnet/runtime#124538 (merged to main = .NET 11; not backported to .NET 10 yet).
-         Re-test with 5.6.0 once running on a runtime that contains the fix. -->
+         Runtime fix: dotnet/runtime#124538 (in .NET 11 / main).
+         .NET 10: tracked in dotnet/runtime#130265; backport to release/10.0 started 2026-07-07.
+         Re-test 5.6.0 after a .NET 10 servicing release with the fix ships
+         (dotnet workload update), then remove this pin. -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="[5.3.0]" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.13.0.1" />
@@ -93,7 +95,7 @@
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.4.0.6" />
     <PackageReference Include="Xamarin.AndroidX.ViewPager2" Version="1.1.0.11" />
     <PackageReference Include="Xamarin.AndroidX.WebKit" Version="1.16.0.1" />
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.14.0.4" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.14.0.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\CustomGaugeNetBinding\CustomGaugeNetBinding.csproj" />
