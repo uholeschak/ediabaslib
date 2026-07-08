@@ -6,11 +6,6 @@ namespace PsdzClient.Core
 {
     public static class ConfigIAPHelper
     {
-        public static string GetCompatibleICOMVersion()
-        {
-            return ConfigSettings.getConfigString("Icom.Package.Version.Compatible", "03.15.04");
-        }
-
         public static string GetCompatibleICOMNextVersion()
         {
             return ConfigSettings.getConfigString("IcomNext.Package.Version.Compatible", "03.15.06");
@@ -21,19 +16,9 @@ namespace PsdzClient.Core
             return ConfigSettings.getPathString("FASTADirPath", "..\\..\\..\\FASTAOut");
         }
 
-        public static string GetICOMImageLocation()
-        {
-            return ConfigSettings.getPathString("IcomFirmwareLocation", "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ICOM");
-        }
-
         public static string GetICOMNextImageLocation()
         {
             return ConfigSettings.getPathString("IcomNextFirmwareLocation", "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ICOMNext");
-        }
-
-        public static string GetICOMPackageVersion()
-        {
-            return ConfigSettings.getConfigString("Icom.Package.Version", "00-00-00");
         }
 
         public static string GetICOMNextPackageVersion()
@@ -78,15 +63,17 @@ namespace PsdzClient.Core
             int num = 0;
             num = Environment.OSVersion.Version.Major * 10;
             num += Environment.OSVersion.Version.Minor;
-            int? num2 = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "CurrentMajorVersionNumber", null) as int?;
+            int? num2 = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "CurrentMajorVersionNumber", null) as int? ;
             if (num2.HasValue)
             {
                 if (num2 == 10 && GetCurrentBuildVersion() >= 22000)
                 {
                     return 110;
                 }
+
                 return (num2 * 10).Value;
             }
+
             return num;
         }
 
@@ -141,6 +128,7 @@ namespace PsdzClient.Core
             {
                 return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.PUKActive", defaultValue: false);
             }
+
             return false;
         }
 

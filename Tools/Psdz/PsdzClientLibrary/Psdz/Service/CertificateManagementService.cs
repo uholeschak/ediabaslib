@@ -162,10 +162,5 @@ namespace BMW.Rheingold.Psdz
         {
             throw new NotImplementedException("Not implemented in the PSdZ Web API.");
         }
-
-        public PsdzBindingCalculationRequestId RequestBindingCalculation(PsdzCertMemoryObject[] certificates, string[] cbbUrls, string client, string system, IPsdzVin vin, int retries, int timeout, string[] certificatesRevocationList)
-        {
-            throw new NotImplementedException("Not implemented in the PSdZ Web API.");
-        }
     }
 }

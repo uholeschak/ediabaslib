@@ -33,7 +33,7 @@ namespace BMW.Rheingold.Psdz
             {
                 Source = _securityMemoryObjectSourceEtoMapper.GetValue(psdzCertMemoryObject.CertMemoryObjectSource),
                 Type = _securityMemoryObjectTypeEtoMapper.GetValue(psdzCertMemoryObject.CertMemoryObjectType),
-                Ecu = EcuIdentifierCtoMapper.MapCto(psdzCertMemoryObject.Ecu),
+                Ecu = EcuIdentifierCtoMapper.Map(psdzCertMemoryObject.Ecu),
                 SerializedCertificate = psdzCertMemoryObject.SerializedCertificate
             };
         }

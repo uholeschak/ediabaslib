@@ -620,7 +620,6 @@ namespace PsdzClient.Core
                     ProcessCompatibilityInfo(vecInfo, compatibilityInfo);
                 }
 
-                SetupMinimalECUConfiguration(vecInfo);
                 if (excludedConfiguration != null)
                 {
                     foreach (int item in excludedConfiguration)

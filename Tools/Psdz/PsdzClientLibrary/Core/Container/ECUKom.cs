@@ -30,7 +30,6 @@ namespace PsdzClient.Core.Container
         private const int DEFAULT_EDIABAS_TRACELEVEL = 6;
         private const int DEFAULT_IFH_TRACELEVEL = 3;
         private const int DEFAULT_SYSTEM_IFH_TRACELEVEL = 6;
-        private const int DEFAULT_SYSTEM_NET_TRACELEVEL = 6;
         private const int DEFAULT_EDIABAS_TRACE_SIZE = 32767;
         private const int _diagnosticPort = 50160;
         private const int _controlPort = 50161;
@@ -49,9 +48,9 @@ namespace PsdzClient.Core.Container
         private PlaceholderType sc;
         [PreserveSource(Hint = "ServiceControllerPermission scp", Placeholder = true)]
         private PlaceholderType scp;
-        private bool serviceIsRunning;
+        private readonly bool serviceIsRunning;
         private bool isTestCertReqCallExecuted;
-        private bool useSpecialEdiabasVersion;
+        private readonly bool useSpecialEdiabasVersion;
         private SpecialSecurityCases detectedSpecialSecurityCase;
         private readonly IInteractionService interactionService;
         private readonly ISec4DiagHandler sec4DiagHandler;
@@ -81,7 +80,7 @@ namespace PsdzClient.Core.Container
             {
                 if (istaIcsServiceClient.IsAvailable())
                 {
-                    useSpecialEdiabasVersion = istaIcsServiceClient.GetFeatureEnabledStatus("SpecialEdiabasVersionForNcar").IsActive;
+                    useSpecialEdiabasVersion = istaIcsServiceClient.GetFeatureEnabledStatus("EdiabasVersionForNcar").IsActive;
                 }
             }
             finally
@@ -428,9 +427,11 @@ namespace PsdzClient.Core.Container
             {
                 IstaIcsServiceClient ics = new IstaIcsServiceClient();
                 bool flag = false;
+                bool flag2 = false;
                 if (ConfigSettings.IsILeanActive && ics.IsAvailable())
                 {
-                    flag = ics.GetFeatureEnabledStatus("SpecialEdiabasVersionForNcar").IsActive;
+                    flag = ics.GetFeatureEnabledStatus("EdiabasVersionForNcar").IsActive;
+                    flag2 = ics.GetFeatureEnabledStatus("SpecialModeAllowAllBrand").IsActive;
                 }
 
                 detectedSpecialSecurityCase = SpecialSecurityCases.None;
@@ -447,7 +448,6 @@ namespace PsdzClient.Core.Container
                         //[-] boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.DoIpIsUsedByOtherOperationError.ToString();
                         //[-] return boolResultObject;
                         //[-] }
-
                         if (!device.IsSimulation)
                         {
                             boolResultObject2 = HandleS29Authentication(device);
@@ -464,7 +464,7 @@ namespace PsdzClient.Core.Container
                     }
                     else
                     {
-                        if (flag)
+                        if (flag && !flag2)
                         {
                             boolResultObject.ErrorCodeInt = 8;
                             boolResultObject.ErrorMessage = "Only NCAR Vehicles are allowed with the new EDIABAS Version.";
@@ -520,22 +520,10 @@ namespace PsdzClient.Core.Container
                     SetErrorCode(boolResultObject);
                 }
 
-                boolResultObject = CheckNonDoIpVehicleAuthentificationState(tuple.Item1, tuple.Item2, boolResultObject, out var resultHasToBeReturned);
-                if (resultHasToBeReturned)
+                CheckNonDoIpVehicleAuthentificationState(tuple.Item1, tuple.Item2, boolResultObject);
+                if (boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP))
                 {
-                    return boolResultObject;
-                }
-
-                if (ConfigSettings.SelectedBrand != UiBrand.BMWMotorrad && !device.IsSimulation && tuple.Item2 == Sec4CNVehicleGen.NCAR && boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState(device))
-                {
-                    if (detectedSpecialSecurityCase == SpecialSecurityCases.IpbCertificatesRequired)
-                    {
-                        boolResultObject.SetValues(result: false, "ZgwIssue", "IPB connected without Sec4Diag");
-                    }
-                    else
-                    {
-                        boolResultObject.SetValues(result: false, 0.ToString(), "Authentication failed with Vehicle!");
-                    }
+                    CheckDoIpVehicleAuthentificationState(boolResultObject, device, tuple.Item2);
                 }
 
                 return boolResultObject;
@@ -549,9 +537,24 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        private BoolResultObject CheckNonDoIpVehicleAuthentificationState(Sec4CNAuthStates authentificationState, Sec4CNVehicleGen sec4CNVehicleGen, BoolResultObject result, out bool resultHasToBeReturned)
+        private void CheckDoIpVehicleAuthentificationState(BoolResultObject result, IVciDevice device, Sec4CNVehicleGen sec4CNVehicleGen)
         {
-            resultHasToBeReturned = false;
+            if (ConfigSettings.SelectedBrand != UiBrand.BMWMotorrad && !device.IsSimulation && sec4CNVehicleGen == Sec4CNVehicleGen.NCAR && !CheckAuthentificationState(device))
+            {
+                if (detectedSpecialSecurityCase == SpecialSecurityCases.IpbCertificatesRequired)
+                {
+                    result.SetValues(result: false, "ZgwIssue", "IPB connected without Sec4Diag");
+                    result.ErrorCodeInt = 10;
+                }
+                else
+                {
+                    result.SetValues(result: false, 0.ToString(), "Authentication failed with Vehicle!");
+                }
+            }
+        }
+
+        private void CheckNonDoIpVehicleAuthentificationState(Sec4CNAuthStates authentificationState, Sec4CNVehicleGen sec4CNVehicleGen, BoolResultObject result)
+        {
             switch (authentificationState)
             {
                 case Sec4CNAuthStates.ACTIVATED:
@@ -559,13 +562,13 @@ namespace PsdzClient.Core.Container
                     {
                         case Sec4CNVehicleGen.SP18:
                             detectedSpecialSecurityCase = SpecialSecurityCases.Sec4CnTokenRequiredForSp18;
-                            result.SetValues(result: false, "Sec4CN-SP18", "SFA Token for SP18 Vehicle required");
-                            resultHasToBeReturned = true;
+                            result.SetValues(result: false, $"Sec4CN-SP18 - {ConnectToVehicleErrorCodes.Sec4CnAuthError}", "SFA Token for SP18 Vehicle required");
+                            result.ErrorCodeInt = 11;
                             break;
                         case Sec4CNVehicleGen.SP21:
                             detectedSpecialSecurityCase = SpecialSecurityCases.Sec4CnTokenRequiredForSp21;
-                            result.SetValues(result: false, "Sec4CN-SP21", "SFA Token for SP21 Vehicle required");
-                            resultHasToBeReturned = true;
+                            result.SetValues(result: false, $"Sec4CN-SP21 - {ConnectToVehicleErrorCodes.Sec4CnAuthError}", "SFA Token for SP21 Vehicle required");
+                            result.ErrorCodeInt = 11;
                             break;
                     }
 
@@ -575,9 +578,10 @@ namespace PsdzClient.Core.Container
                     detectedSpecialSecurityCase = SpecialSecurityCases.Sec4CnGetewayIssue;
                     result.SetValues(result: true, "Sec4CN-Gateway", "ZGW repair required");
                     break;
+                case Sec4CNAuthStates.DEACTIVATED:
+                case Sec4CNAuthStates.AUTHORIZED:
+                    break;
             }
-
-            return result;
         }
 
         [PreserveSource(Cleaned = true, OriginalHash = "BA191431D3FE8C0F1F6D3D0813C723D5")]
@@ -1283,7 +1287,6 @@ namespace PsdzClient.Core.Container
                 api.apiSetConfig("ApiTrace", "0");
                 api.apiSetConfig("IfhTrace", "0");
                 api.apiSetConfig("SystemTraceIfh", "0");
-                api.apiSetConfig("SystemTraceNet", "0");
             }
 
             isProblemHandlingTraceRunning = false;
@@ -1301,7 +1304,6 @@ namespace PsdzClient.Core.Container
                     api.apiSetConfig("TraceSize", configint2.ToString(CultureInfo.InvariantCulture));
                     api.apiSetConfig("IfhTrace", 3.ToString());
                     api.apiSetConfig("SystemTraceIfh", 6.ToString());
-                    api.apiSetConfig("SystemTraceNet", 6.ToString());
                 }
 
                 isProblemHandlingTraceRunning = true;
@@ -1318,16 +1320,13 @@ namespace PsdzClient.Core.Container
             //[-] string text = api.apiGetConfig("ApiTrace");
             //[-] string text2 = api.apiGetConfig("IfhTrace");
             //[-] string text3 = api.apiGetConfig("SystemTraceIfh");
-            //[-] string text4 = api.apiGetConfig("SystemTraceNet");
             //[+] api.apiGetConfig("ApiTrace", out string text);
             api.apiGetConfig("ApiTrace", out string text);
             //[+] api.apiGetConfig("IfhTrace", out string text2);
             api.apiGetConfig("IfhTrace", out string text2);
             //[+] api.apiGetConfig("SystemTraceIfh", out string text3);
             api.apiGetConfig("SystemTraceIfh", out string text3);
-            //[+] api.apiGetConfig("SystemTraceNet", out string text4);
-            api.apiGetConfig("SystemTraceNet", out string text4);
-            if (text != "0" || text2 != "0" || text3 != "0" || text4 != "0")
+            if (text != "0" || text2 != "0" || text3 != "0")
             {
                 return true;
             }

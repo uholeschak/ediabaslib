@@ -4,24 +4,15 @@ namespace PsdzClient.Utility
 {
     public class MetricApiJob : Metric
     {
-        private string ecu;
-
-        private string job;
-
-        private string args;
-
-        private string source;
-
+        private readonly string ecu;
+        private readonly string job;
+        private readonly string args;
+        private readonly string source;
         public string Ecu => ecu ?? string.Empty;
-
         public string Job => job;
-
         public string Args => args;
-
         public string Source => source;
-
         public DateTime StartTime { get; } = DateTime.UtcNow;
-
         public DateTime EndTime { get; set; }
 
         public MetricApiJob(string ecu, string job, string args, int argsLength, string source)
@@ -64,6 +55,7 @@ namespace PsdzClient.Utility
             {
                 return obj.GetHashCode() == GetHashCode();
             }
+
             return false;
         }
 

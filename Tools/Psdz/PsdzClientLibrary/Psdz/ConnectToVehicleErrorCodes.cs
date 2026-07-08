@@ -12,6 +12,8 @@
         DoIpIsUsedByOtherOperationError = 7,
         NewEdiabasVersionWithoutNcarVehicle = 8,
         EdiabasPemFileNotFound = 9,
+        IpbValidationFailed = 10,
+        Sec4CnAuthError = 11,
         Undefined = -1,
         IcomNetworkFailure = -2
     }

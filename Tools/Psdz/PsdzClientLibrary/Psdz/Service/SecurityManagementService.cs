@@ -14,8 +14,8 @@ namespace BMW.Rheingold.Psdz
 {
     internal class SecurityManagementService : ISecurityManagementService
     {
-        private IWebCallHandler _webCallHandler;
-        private string endpointService = "securitymanagement";
+        private readonly IWebCallHandler _webCallHandler;
+        private readonly string endpointService = "securitymanagement";
         public SecurityManagementService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;

@@ -23,7 +23,7 @@ namespace BMW.Rheingold.Psdz
         private readonly IEventManagerService eventManagerService;
         private readonly IPsdzProgressListener progressListener;
         private int _activeTalExecutions;
-        private bool _ignoreTalRelease = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Psdz.IgnoreTalRelease", defaultValue: true);
+        private readonly bool _ignoreTalRelease = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Psdz.IgnoreTalRelease", defaultValue: true);
         public string Description { get; }
         public string Name { get; }
 
@@ -76,7 +76,7 @@ namespace BMW.Rheingold.Psdz
             return ExecuteTalInternal(connection, tal, null, new PsdzVin { Value = vin }, fa, talExecutionSettings, null, ct, "ExecuteTalFile");
         }
 
-        public IPsdzTal ExecuteHDDUpdate(IPsdzConnection connection, IPsdzTal tal, IPsdzFa fa, IPsdzVin vin, TalExecutionSettings configs)
+        public IPsdzTal ExecuteHDDUpdate(IPsdzConnection connection, IPsdzTal tal, IPsdzFa fa, IPsdzVin vin, TalExecutionSettings settings)
         {
             IPsdzProgressListener listener = progressListener;
             string text = null;
@@ -84,7 +84,7 @@ namespace BMW.Rheingold.Psdz
             {
                 IncrementTalExecutions();
                 Log.Debug(Log.CurrentMethod(), "Call 'Programming.ExecuteHddUpdate(... )' ...");
-                text = _programmingService.ExecuteHDDUpdate(connection, tal, fa, vin, configs);
+                text = _programmingService.ExecuteHDDUpdate(connection, tal, fa, vin, settings);
                 Log.Debug(Log.CurrentMethod(), "ExecutionID: '" + text + "'");
                 long maxSecToCompletion = 0L;
                 long startTime = JavaCurrentTimeMillis();

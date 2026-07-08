@@ -24,18 +24,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private readonly PsdzDatabase.SwiInfoObj xepInfoObj;
         private const string DefaultParameterValue = "";
-        private ITextLocator ServiceProgramCollection
-        {
-            get
-            {
-                if (serviceProgramCollection == null)
-                {
-                    throw new ArgumentException("No text collection available.");
-                }
-
-                return serviceProgramCollection;
-            }
-        }
+        private ITextLocator ServiceProgramCollection => serviceProgramCollection ?? throw new ArgumentException("No text collection available.");
 
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public static ITextContentManager Create(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)

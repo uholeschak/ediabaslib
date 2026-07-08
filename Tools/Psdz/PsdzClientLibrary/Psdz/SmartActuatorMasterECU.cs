@@ -11,12 +11,16 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
         [XmlIgnore]
         public IStandardSvk SmacMasterSVK { get; set; }
 
+        [XmlIgnore]
         public IList<ISmartActuatorEcu> SmartActuators { get; set; }
 
-        public SmartActuatorMasterECU(ECU ecu)
-            : base(ecu)
+        public SmartActuatorMasterECU(ECU ecu) : base(ecu)
         {
             SmartActuators = new List<ISmartActuatorEcu>();
+        }
+
+        public SmartActuatorMasterECU()
+        {
         }
     }
 }

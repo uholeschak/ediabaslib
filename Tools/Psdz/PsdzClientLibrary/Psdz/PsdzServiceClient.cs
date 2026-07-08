@@ -188,7 +188,6 @@ namespace BMW.Rheingold.Psdz.Client
             macrosService.CloseCachedChannels();
             individualDataRestoreService.CloseCachedChannels();
             secureFeatureActivationService.CloseCachedChannels();
-            psdzProgressListenerDispatcher.Clear();
         }
 
         [PreserveSource(Added = true)]
@@ -220,7 +219,6 @@ namespace BMW.Rheingold.Psdz.Client
             //[-]CloseAllConnections();
             //[+]DisposeAllConnections();
             DisposeAllConnections();
-            psdzProgressListenerDispatcher.Clear();
         }
 
         public void RemovePsdzEventListener(IPsdzEventListener psdzEventListener)

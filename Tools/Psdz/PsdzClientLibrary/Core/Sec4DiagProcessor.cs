@@ -2,7 +2,7 @@
 {
     public class Sec4DiagProcessor : ISec4DiagProcessor
     {
-        private ISec4DiagProcessorImpl sec4DiagProcessImpl;
+        private readonly ISec4DiagProcessorImpl sec4DiagProcessImpl;
         public Sec4DiagProcessor(ISec4DiagProcessorImpl sec4DiagProcessorImpl)
         {
             sec4DiagProcessImpl = sec4DiagProcessorImpl;

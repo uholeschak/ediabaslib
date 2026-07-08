@@ -271,7 +271,7 @@ namespace PsdzClient.Core
         public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
             HashSet<int> hashSet = new HashSet<int>();
-            if (vecInfo.HasSA("369"))
+            if (vecInfo.HasSA("369") && vecInfo.Ereihe != "K60")
             {
                 hashSet.Add(92);
             }
@@ -281,7 +281,11 @@ namespace PsdzClient.Core
                 hashSet.Add(96);
             }
 
-            brSgbd = ((vecInfo.Ereihe == "K60" || vecInfo.Ereihe == "K02" || vecInfo.Ereihe == "K03" || vecInfo.Ereihe == "K08" || vecInfo.Ereihe == "K09") ? "X_KS01" : "X_K001");
+            if (vecInfo.Ereihe == "K60" || vecInfo.Ereihe == "K02" || vecInfo.Ereihe == "K03" || vecInfo.Ereihe == "K08" || vecInfo.Ereihe == "K09")
+            {
+                brSgbd = "X_KS01";
+            }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }

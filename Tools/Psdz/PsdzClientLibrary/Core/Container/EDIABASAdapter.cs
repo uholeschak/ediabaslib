@@ -13,7 +13,7 @@ namespace PsdzClient.Core.Container
         private byte[] ecuData;
         private string ecuGroup = string.Empty;
         private string ecuJob = string.Empty;
-        private IEcuKom ecuKom;
+        private readonly IEcuKom ecuKom;
         private string ecuParam = string.Empty;
         private string ecuResultFilter = string.Empty;
         private bool parameterizationDone;

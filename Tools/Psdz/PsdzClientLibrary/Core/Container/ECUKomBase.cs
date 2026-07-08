@@ -11,33 +11,22 @@ using System.Text;
 using System.Xml.Serialization;
 
 namespace PsdzClient.Core.Container;
-
 public abstract class ECUKomBase : IEcuKom, IEcuKomApi
 {
     private string _APP;
-
     public CommMode communicationMode;
-
     public bool isProblemHandlingTraceRunning;
-
-    private List<string> apiJobNamesToBeCached = CachedApiJobConfigParser.Parse();
-
+    private readonly List<string> apiJobNamesToBeCached = CachedApiJobConfigParser.Parse();
     private DateTime lastJobExecution;
-
     public VCIDevice vci;
-
-    private Dictionary<string, List<IEcuJob>> ecuJobDictionary = new Dictionary<string, List<IEcuJob>>();
-
+    private readonly Dictionary<string, List<IEcuJob>> ecuJobDictionary = new Dictionary<string, List<IEcuJob>>();
     private bool m_FromFastaConfig;
-
     [XmlIgnore]
     public IList<string> lang = new List<string>();
-
     public uint EdiabasHandle { get; }
 
     [XmlIgnore]
     public IReadOnlyList<IEcuJob> JobList => jobList;
-
     public List<ECUJob> jobList { get; set; }
 
     public string APP
@@ -46,6 +35,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             return _APP;
         }
+
         set
         {
             _APP = value;
@@ -59,6 +49,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             return m_FromFastaConfig;
         }
+
         set
         {
             if (value != m_FromFastaConfig)
@@ -83,6 +74,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             return communicationMode;
         }
+
         set
         {
             if (value != communicationMode)
@@ -99,6 +91,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             return vci;
         }
+
         set
         {
             if (vci != value)
@@ -117,6 +110,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             return isProblemHandlingTraceRunning;
         }
+
         set
         {
             if (isProblemHandlingTraceRunning != value)
@@ -136,6 +130,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 return VCIDeviceType.UNKNOWN;
             }
+
             return VCI.VCIType;
         }
     }
@@ -151,11 +146,8 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
     }
 
     public abstract void End();
-
     public abstract string GetEdiabasIniFilePath(string iniFilename);
-
     public abstract BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP);
-
     public int GetCacheHitCounter()
     {
         return CacheHitCounter;
@@ -182,15 +174,10 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
     }
 
     public abstract bool Refresh(bool isDoIP);
-
     public abstract bool ApiInitExt(string ifh, string unit, string app, string reserved);
-
     public abstract void SetEcuPath(bool logging);
-
     public abstract string GetLogPath();
-
     public abstract BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP);
-
     public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, bool cacheAdding)
     {
         return apiJob(ecu, job, param, resultFilter, cacheAdding, isRetry: false);
@@ -207,6 +194,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             return apiJob(ecu, job, param, resultFilter, retries, 0, fastaprotocoller);
         }
+
         return apiJob(ecu, job, param, resultFilter, fastaprotocoller);
     }
 
@@ -216,6 +204,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             return apiJob(ecu, job, param, string.Empty, retries, millisecondsTimeout);
         }
+
         return apiJob(ecu, job, param, string.Empty);
     }
 
@@ -229,6 +218,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 return jobFromCache;
             }
         }
+
         return apiJob(variant, job, param, resultFilter, retries, 0, fastaprotocoller, callerMember);
     }
 
@@ -238,10 +228,12 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
         }
+
         if (retries > 5)
         {
             Log.Warning("ECUKom.apiJob()", "Number of retries is set to {0}.", retries);
         }
+
         try
         {
             IEcuJob ecuJob = apiJob(ecu, jobName, param, resultFilter, fastaprotocoller, callerMember);
@@ -249,6 +241,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 return ecuJob;
             }
+
             ushort num = 1;
             while (num < retries && !ecuJob.IsDone())
             {
@@ -257,6 +250,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 ecuJob = apiJob(ecu, jobName, param, resultFilter, fastaprotocoller, callerMember);
                 num++;
             }
+
             return ecuJob;
         }
         catch (Exception exception)
@@ -292,16 +286,19 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 ecuJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true, isRetry: false, fastaprotocoller, callerMember);
             }
+
             if (ecuJob != null && VehicleCommunication.DebugLevel > 2)
             {
                 ECUJob.Dump(ecuJob);
             }
+
             return ecuJob;
         }
         catch (Exception exception)
         {
             Log.WarningException("ECUKom.apiJob()", exception);
         }
+
         ECUJob eCUJob = new ECUJob(fastaprotocoller);
         eCUJob.EcuName = ecu;
         eCUJob.JobName = job;
@@ -315,6 +312,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             ECUJob.Dump(eCUJob);
         }
+
         return eCUJob;
     }
 
@@ -327,6 +325,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
             }
+
             if (string.IsNullOrEmpty(ecu))
             {
                 ECUJob obj = new ECUJob(fastaprotocoller)
@@ -342,14 +341,17 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 obj.JobResult = new List<IEcuResult>();
                 return obj;
             }
+
             if (param == null)
             {
                 param = string.Empty;
             }
+
             if (resultFilter == null)
             {
                 resultFilter = string.Empty;
             }
+
             if (communicationMode == CommMode.Simulation)
             {
                 IEcuJob ecuJob = ApiJobSim(ecu, jobName, param, resultFilter);
@@ -357,6 +359,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 {
                     return ecuJob;
                 }
+
                 ECUJob obj2 = new ECUJob(fastaprotocoller)
                 {
                     EcuName = ecu,
@@ -371,6 +374,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 obj2.JobResult = new List<IEcuResult>();
                 return obj2;
             }
+
             if (communicationMode == CommMode.CacheFirst && cacheAdding)
             {
                 lastJobExecution = DateTime.MinValue;
@@ -380,6 +384,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                     return ecuJob2;
                 }
             }
+
             DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
             ECUJob eCUJob = new ECUJob(fastaprotocoller);
             eCUJob.EcuName = ecu;
@@ -400,6 +405,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 Log.WarningException("ECUKom.apiJob()", exception);
             }
+
             eCUJob.ExecutionEndTime = dateTimePrecise.Now;
             AddJobInCache(eCUJob, cacheAdding);
             string stringResult = eCUJob.getStringResult(1, "JOB_STATUS");
@@ -408,6 +414,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 eCUJob = tuple.Item2;
             }
+
             return eCUJob;
         }
         finally
@@ -417,23 +424,18 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
     }
 
     public abstract void EndTimeMetric(string ecu, string jobName, string param, int argsLength = -1);
-
     public abstract void StartTimeMetric(string ecu, string jobName, string param, int argsLength = -1);
-
     public abstract (bool, ECUJob) HandleEcuAuthorizationRejection(string ecu, string jobName, string param, string resultFilter, string jobStatus, bool isRetry);
-
     public abstract void RemoveTraceLevel(string callerMember);
-
     public abstract void SetTraceLevelToMax(string callerMember);
-
     public abstract SpecialSecurityCases DetectedSpecialSecurityCase();
-
     public IEcuJob ApiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter = "", int retries = 0)
     {
         if (retries == 0)
         {
             return apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
         }
+
         return apiJobData(ecu, job, param, paramlen, resultFilter, retries);
     }
 
@@ -443,6 +445,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
         }
+
         try
         {
             IEcuJob ecuJob = apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
@@ -450,6 +453,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 return ecuJob;
             }
+
             ushort num = 0;
             while (num < retries && !ecuJob.IsDone())
             {
@@ -457,6 +461,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 ecuJob = apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
                 num++;
             }
+
             return ecuJob;
         }
         catch (Exception exception)
@@ -495,22 +500,27 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 obj.JobResult = new List<IEcuResult>();
                 return obj;
             }
+
             if (!VehicleCommunication.validLicense)
             {
                 throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
             }
+
             if (param == null)
             {
                 param = new byte[0];
             }
+
             if (resultFilter == null)
             {
                 resultFilter = string.Empty;
             }
+
             if (paramlen == -1)
             {
                 paramlen = param.Length;
             }
+
             if (communicationMode == CommMode.Simulation)
             {
                 try
@@ -526,6 +536,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 {
                     Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex.ToString());
                 }
+
                 ECUJob obj2 = new ECUJob
                 {
                     EcuName = ecu,
@@ -540,6 +551,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 obj2.JobResult = new List<IEcuResult>();
                 return obj2;
             }
+
             DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
             ECUJob eCUJob = new ECUJob();
             eCUJob.EcuName = ecu;
@@ -560,6 +572,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex3.ToString());
             }
+
             eCUJob.ExecutionEndTime = dateTimePrecise.Now;
             AddJobInCache(eCUJob);
             return eCUJob;
@@ -571,15 +584,10 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
     }
 
     public abstract void ExecuteEdiabasJobAndGetResults(ECUJob ecuJob, string callerMember);
-
     public abstract void ExecuteEdiabasJobAndGetResultsWithByteParams(ECUJob ecuJob, byte[] param, int paramlen, string callerMember);
-
     public abstract int getErrorCode();
-
     public abstract string getErrorText();
-
     public abstract bool setConfig(string cfgName, string cfgValue);
-
     public IEcuJob GetJobFromCache(string ecuName, string jobName, string jobParam, string jobResultFilter)
     {
         Log.Info("ECUKom.GetJobFromCache()", "Try retrieve from Cache: EcuName:{0}, JobName:{1}, JobParam:{2})", ecuName, jobName, jobParam);
@@ -587,10 +595,12 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
         }
+
         if (!ecuJobDictionary.ContainsKey(ecuName + "-" + jobName))
         {
             ecuJobDictionary.Add(ecuName + "-" + jobName, new List<IEcuJob>());
         }
+
         try
         {
             IEnumerable<ECUJob> enumerable = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobResultFilter, jobResultFilter, StringComparison.OrdinalIgnoreCase) && job.ExecutionStartTime > lastJobExecution);
@@ -598,27 +608,32 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             {
                 return RetrieveEcuJob(enumerable, ecuName, jobName);
             }
+
             IEnumerable<ECUJob> enumerable2 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && job.ExecutionStartTime > lastJobExecution);
             if (enumerable2 != null && ((IEnumerable<IEcuJob>)enumerable2).Count() > 0)
             {
                 return RetrieveEcuJob(enumerable2, ecuName, jobName);
             }
+
             IEnumerable<ECUJob> enumerable3 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobResultFilter, jobResultFilter, StringComparison.OrdinalIgnoreCase));
             if (enumerable3 != null && ((IEnumerable<IEcuJob>)enumerable3).Count() > 0)
             {
                 return RetrieveEcuJobNoExecTime(enumerable3, ecuName, jobName);
             }
+
             IEnumerable<ECUJob> enumerable4 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase));
             if (enumerable4 != null && ((IEnumerable<IEcuJob>)enumerable4).Count() > 0)
             {
                 return RetrieveEcuJobNoExecTime(enumerable4, ecuName, jobName);
             }
+
             CacheMissCounter++;
         }
         catch (Exception ex)
         {
             Log.Warning("ECUKom.GetJobFromCache()", "job {0},{1}) - failed with exception {2}", ecuName, jobName, ex.ToString());
         }
+
         Log.Info("ECUKom.GetJobFromCache()", "No result! EcuName:{0}, JobName:{1}, JobParam:{2})", ecuName, jobName, jobParam);
         return null;
     }
@@ -646,7 +661,6 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
     }
 
     public abstract IEcuJob ExecuteJobOverEnetWrapper(string icomAddress, string ecu, string job, string param, bool isDoIP, string method, string resultFilter = "", int retries = 0);
-
     public void RefreshEdiabasConnection(bool isDoIp)
     {
         if (Refresh(isDoIp))
@@ -669,18 +683,21 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 {
                     lastJobExecution = GetLastExecutionTime(item.ExecutionStartTime);
                 }
+
                 ecuJobDictionary[ecuName + "-" + jobName].Add(item);
                 Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
                 CacheHitCounter++;
                 return item;
             }
         }
+
         ecuJobDictionary[ecuName + "-" + jobName].Clear();
         ecuJobDictionary[ecuName + "-" + jobName].Add(query.First());
         if (query.First().ExecutionStartTime > lastJobExecution)
         {
             lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
         }
+
         Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
         CacheHitCounter++;
         return query.First();
@@ -699,6 +716,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 return item;
             }
         }
+
         ecuJobDictionary[ecuName + "-" + jobName].Clear();
         ecuJobDictionary[ecuName + "-" + jobName].Add(query.First());
         lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
@@ -713,12 +731,14 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
         }
+
         IEcuJob ecuJob = null;
         if (!FromFastaConfig)
         {
             Log.Info(Log.CurrentMethod(), "Retrieving ECU " + ecu + " job " + job + " from cache.");
             ecuJob = GetJobFromCache(ecu, job, param, result);
         }
+
         if (ecuJob != null)
         {
             ecuJob.FASTARelevant = false;
@@ -727,19 +747,22 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 item.FASTARelevant = false;
             }
         }
+
         return ecuJob;
     }
 
     public virtual DateTime GetLastExecutionTime(DateTime executionStartTime)
     {
-        IOrderedEnumerable<ECUJob> source = from job in jobList
-                                            where job.ExecutionStartTime > lastJobExecution
-                                            orderby job.ExecutionStartTime
-                                            select job;
+        IOrderedEnumerable<ECUJob> source =
+            from job in jobList
+            where job.ExecutionStartTime > lastJobExecution
+            orderby job.ExecutionStartTime
+            select job;
         if (source.FirstOrDefault().ExecutionStartTime < executionStartTime)
         {
             return source.FirstOrDefault().ExecutionStartTime;
         }
+
         return executionStartTime;
     }
 
@@ -772,6 +795,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
         {
             Log.WarningException(Log.CurrentMethod(), exception);
         }
+
         return stringBuilder.ToString();
     }
 }

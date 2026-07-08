@@ -11,9 +11,9 @@ namespace PsdzClient.Utility
         private static Lazy<TimeMetricsUtility> instance = new Lazy<TimeMetricsUtility>(() => new TimeMetricsUtility(), isThreadSafe: true);
         [PreserveSource(Hint = "TimeMetrics", Placeholder = true)]
         private static PlaceholderType? currentMetrics;
-        private bool metricsEnabled;
-        private bool apiEnabled;
-        private int fastaApiDetailsCount;
+        private readonly bool metricsEnabled;
+        private readonly bool apiEnabled;
+        private readonly int fastaApiDetailsCount;
         [PreserveSource(Hint = "List<TimeMetrics>", Placeholder = true)]
         private static PlaceholderType metrics = new PlaceholderType();
         public static TimeMetricsUtility Instance => instance.Value;

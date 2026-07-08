@@ -16,7 +16,7 @@ namespace BMW.Rheingold.Psdz
     internal class SecureCodingService : ISecureCodingService
     {
         private readonly IWebCallHandler _webCallHandler;
-        private string endpointService = "securecoding";
+        private readonly string endpointService = "securecoding";
         public SecureCodingService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -81,11 +81,6 @@ namespace BMW.Rheingold.Psdz
                 Log.ErrorException(Log.CurrentMethod(), exception);
                 throw;
             }
-        }
-
-        public IPsdzCheckNcdAvailabilityResultCto CheckNcdAvailabilityForTal(IPsdzTal tal, string ncdDirectory, IPsdzVin vin)
-        {
-            throw new NotImplementedException("Not implemented in the PSdZ Web API, because this was using a deprecated PSdZ method. Also it was not used in ISTA.");
         }
 
         public IPsdzRequestNcdSignatureResponseCto RequestSignatureOnline(IList<IPsdzRequestNcdEto> sgbmidsForNcdCalculation, IPsdzSecureCodingConfigCto secureCodingConfigCto, IPsdzVin vin)

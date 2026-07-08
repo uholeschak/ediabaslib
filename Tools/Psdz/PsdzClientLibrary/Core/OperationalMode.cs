@@ -11,6 +11,7 @@ namespace PsdzClient.Core
         ISTA_POWERTRAIN,
         RITA,
         ISTAHV,
+        OPAPI,
         [Obsolete("This OperationalMode is only used by Testmodules. ISTA does not have anymore TELESERVICE")]
         TELESERVICE,
         [Obsolete("This OperationalMode is only used by Testmodules. ISTA does not have anymore TeleServiceConsole")]

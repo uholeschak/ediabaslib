@@ -31,19 +31,5 @@ namespace BMW.Rheingold.Psdz
                 DiagAddress = DiagAddressMapper.MapCto(psdzEcuIdentifier.DiagnosisAddress)
             };
         }
-
-        public static EcuIdentifierCtoModel MapCto(IPsdzEcuIdentifier psdzEcuIdentifier)
-        {
-            if (psdzEcuIdentifier == null)
-            {
-                return null;
-            }
-
-            return new EcuIdentifierCtoModel
-            {
-                BaseVariant = psdzEcuIdentifier.BaseVariant,
-                DiagAddress = DiagAddressMapper.MapCto(psdzEcuIdentifier.DiagnosisAddress)
-            };
-        }
     }
 }

@@ -158,7 +158,7 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}:{7}:{8}:{9}:{10}:{11}:{12}:{13}:{14}:{15}:{16}:{17}:{18}:{19}:{20}:{21}", CertVersion, IsCert2018, IsCert2021, IsCert2025, IsCertEnabled, IsSecOcEnabled, IsSecOcMaster, IsSfaEnabled, IsIPSecEnabled, IsLcsServicePackSupported, IsLcsSystemTimeSwitchSupported, IsMirrorProtocolSupported, IsEcuAuthEnabled, IsIPsecBitmaskSupported, ProgrammingProtectionLevel, IsMACsecEnabled, AclEnabled, IsSmartActuatorMaster, UpdateSmartActuatorConfigurationSupported, LcsIntegrityProtectionOCSupported, LcsIukCluster, ServicePack, IsLcsObiMaster);
+            return string.Format(CultureInfo.InvariantCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}:{7}:{8}:{9}:{10}:{11}:{12}:{13}:{14}:{15}:{16}:{17}:{18}:{19}:{20}:{21}:{22}", CertVersion, IsCert2018, IsCert2021, IsCert2025, IsCertEnabled, IsSecOcEnabled, IsSecOcMaster, IsSfaEnabled, IsIPSecEnabled, IsLcsServicePackSupported, IsLcsSystemTimeSwitchSupported, IsMirrorProtocolSupported, IsEcuAuthEnabled, IsIPsecBitmaskSupported, ProgrammingProtectionLevel, IsMACsecEnabled, AclEnabled, IsSmartActuatorMaster, UpdateSmartActuatorConfigurationSupported, LcsIntegrityProtectionOCSupported, LcsIukCluster, ServicePack, IsLcsObiMaster);
         }
     }
 }

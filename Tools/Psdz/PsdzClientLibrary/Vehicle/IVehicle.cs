@@ -113,12 +113,16 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string Kl30Voltage { get; }
 
+        [Obsolete("Use value from SessionInfo. Remove in 4.62")]
         DateTime KlVoltageLastMessageTime { get; }
 
+        [Obsolete("Remove in 4.62")]
         bool KlVoltageLastMessageTimeSpecified { get; }
 
+        [Obsolete("Use value from SessionInfo. Remove in 4.62")]
         DateTime LastChangeDate { get; }
 
+        [Obsolete("Use value from SessionInfo. Remove in 4.62")]
         DateTime LastSaveDate { get; }
 
         IVciDevice MIB { get; }
@@ -138,6 +142,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         [Obsolete("Use SessionInfoAccessor.SessionInfo.RepHistoryRequestFailed")]
         bool RepHistoryRequestFailed { get; }
 
+        [Obsolete("Remove in 4.62")]
         int SelectedDiagBUS { get; }
 
         IEcu SelectedECU { get; }

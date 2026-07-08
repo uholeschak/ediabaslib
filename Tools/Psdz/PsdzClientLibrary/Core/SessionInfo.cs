@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -10,88 +11,55 @@ namespace PsdzClient.Core
     [DataContract]
     public class SessionInfo : INotifyPropertyChanged
     {
+        public const int IndexOfFirsHDDAboUpdateInDecimal = 54;
         private SessionStart sessionStart;
-
         private Guid operationId;
-
         private string buNo;
-
         private CurrentSessionState sessionState = new CurrentSessionState();
-
         private bool isEcuIdentSuccessfull;
-
         private bool isClosingOperationActive;
-
         private bool isVehicleBusy;
-
         private bool isDoIP;
-
         private bool isCcmReadoutDone;
-
         private bool isProgrammingSessionStartable;
-
         private bool isVehicleTestDone;
-
         private bool isReadingFastaDataFinished;
-
         private bool vehicleIdentAlreadyDone;
-
         private bool isNewIdentActive;
-
         private bool isVehicleBreakdownAlreadyShown;
-
         private bool isPowerSafeModeActiveByNewEcus;
-
         private bool isPowerSafeModeActiveByOldEcus;
-
         private bool orderDataRequestFailed;
-
         private bool dOMRequestFailed;
-
         private bool ssl2RequestFailed;
-
         private bool tecCampaignsRequestFailed;
-
         private bool repHistoryRequestFailed;
-
         private bool vinNotReadbleFromCarAbort;
-
         private bool withLfpBattery;
-
         private bool withLfpNCarBattery;
-
         private bool kL15OverrideVoltageCheck;
-
         private bool kL15FaultILevelAlreadyAlerted;
-
         private bool simulatedParts;
-
         private bool zfsSuccessfull;
-
         private CentralErrorMemoryStatus centralErrorMemoryStatus;
-
         private bool isSendOBFCMDataForbidden;
-
         private bool isSendFastaDataForbidden;
-
         private bool noVehicleCommunicationRunning;
-
         private bool connectionLossRecognized;
-
         private bool isSecurityPopupAlreadyShown;
-
         private bool shouldSkipPinAuthentication;
-
+        private string vinRangeTypeLastResolvedType;
         private string statusFunctionName;
-
         private string vin17FromInputFieldMR;
-
         private double statusFunctionProgress;
-
+        private DateTime lastSaveDate;
+        private DateTime lastChangeDate;
         private int? faultCodeSum;
-
         private int? nonSignalErrorFaultCodeSum;
-
+        private double clamp15MinValue;
+        private double clamp30MinValue;
+        private DateTime klVoltageLastMessageTime;
+        private HashSet<int> validPWFStates = new HashSet<int>(new int[17] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
         [DataMember]
         [IgnoreForReopenedOperations]
         public SessionStart SessionStart
@@ -100,6 +68,7 @@ namespace PsdzClient.Core
             {
                 return sessionStart;
             }
+
             set
             {
                 if (sessionStart != value)
@@ -119,6 +88,7 @@ namespace PsdzClient.Core
             {
                 return operationId;
             }
+
             set
             {
                 if (operationId != value)
@@ -140,6 +110,7 @@ namespace PsdzClient.Core
             {
                 return buNo;
             }
+
             set
             {
                 if (buNo != value)
@@ -158,6 +129,7 @@ namespace PsdzClient.Core
             {
                 return sessionState;
             }
+
             set
             {
                 if (sessionState != value)
@@ -176,6 +148,7 @@ namespace PsdzClient.Core
             {
                 return isEcuIdentSuccessfull;
             }
+
             set
             {
                 if (isEcuIdentSuccessfull != value)
@@ -194,6 +167,7 @@ namespace PsdzClient.Core
             {
                 return isClosingOperationActive;
             }
+
             set
             {
                 if (isClosingOperationActive != value)
@@ -212,6 +186,7 @@ namespace PsdzClient.Core
             {
                 return isVehicleBusy;
             }
+
             set
             {
                 if (isVehicleBusy != value)
@@ -230,6 +205,7 @@ namespace PsdzClient.Core
             {
                 return isDoIP;
             }
+
             set
             {
                 if (isDoIP != value)
@@ -248,6 +224,7 @@ namespace PsdzClient.Core
             {
                 return isCcmReadoutDone;
             }
+
             set
             {
                 if (isCcmReadoutDone != value)
@@ -266,6 +243,7 @@ namespace PsdzClient.Core
             {
                 return isProgrammingSessionStartable;
             }
+
             set
             {
                 if (isProgrammingSessionStartable != value)
@@ -284,6 +262,7 @@ namespace PsdzClient.Core
             {
                 return isVehicleTestDone;
             }
+
             set
             {
                 if (isVehicleTestDone != value)
@@ -302,6 +281,7 @@ namespace PsdzClient.Core
             {
                 return isReadingFastaDataFinished;
             }
+
             set
             {
                 if (isReadingFastaDataFinished != value)
@@ -319,6 +299,7 @@ namespace PsdzClient.Core
             {
                 return vehicleIdentAlreadyDone;
             }
+
             set
             {
                 if (vehicleIdentAlreadyDone != value)
@@ -336,6 +317,7 @@ namespace PsdzClient.Core
             {
                 return isNewIdentActive;
             }
+
             set
             {
                 isNewIdentActive = value;
@@ -351,6 +333,7 @@ namespace PsdzClient.Core
             {
                 return isVehicleBreakdownAlreadyShown;
             }
+
             set
             {
                 isVehicleBreakdownAlreadyShown = value;
@@ -366,6 +349,7 @@ namespace PsdzClient.Core
             {
                 return isPowerSafeModeActiveByNewEcus;
             }
+
             set
             {
                 isPowerSafeModeActiveByNewEcus = value;
@@ -381,6 +365,7 @@ namespace PsdzClient.Core
             {
                 return isPowerSafeModeActiveByOldEcus;
             }
+
             set
             {
                 isPowerSafeModeActiveByOldEcus = value;
@@ -398,6 +383,7 @@ namespace PsdzClient.Core
                 {
                     return isPowerSafeModeActiveByNewEcus;
                 }
+
                 return true;
             }
         }
@@ -410,6 +396,7 @@ namespace PsdzClient.Core
             {
                 return orderDataRequestFailed;
             }
+
             set
             {
                 if (orderDataRequestFailed != value)
@@ -428,6 +415,7 @@ namespace PsdzClient.Core
             {
                 return dOMRequestFailed;
             }
+
             set
             {
                 if (dOMRequestFailed != value)
@@ -446,6 +434,7 @@ namespace PsdzClient.Core
             {
                 return ssl2RequestFailed;
             }
+
             set
             {
                 if (ssl2RequestFailed != value)
@@ -464,6 +453,7 @@ namespace PsdzClient.Core
             {
                 return tecCampaignsRequestFailed;
             }
+
             set
             {
                 if (tecCampaignsRequestFailed != value)
@@ -482,6 +472,7 @@ namespace PsdzClient.Core
             {
                 return repHistoryRequestFailed;
             }
+
             set
             {
                 if (repHistoryRequestFailed != value)
@@ -500,6 +491,7 @@ namespace PsdzClient.Core
             {
                 return vinNotReadbleFromCarAbort;
             }
+
             set
             {
                 vinNotReadbleFromCarAbort = value;
@@ -514,6 +506,7 @@ namespace PsdzClient.Core
             {
                 return withLfpBattery;
             }
+
             set
             {
                 if (withLfpBattery != value)
@@ -531,6 +524,7 @@ namespace PsdzClient.Core
             {
                 return withLfpNCarBattery;
             }
+
             set
             {
                 if (withLfpNCarBattery != value)
@@ -549,6 +543,7 @@ namespace PsdzClient.Core
             {
                 return kL15OverrideVoltageCheck;
             }
+
             set
             {
                 if (kL15OverrideVoltageCheck != value)
@@ -567,6 +562,7 @@ namespace PsdzClient.Core
             {
                 return kL15FaultILevelAlreadyAlerted;
             }
+
             set
             {
                 if (kL15FaultILevelAlreadyAlerted != value)
@@ -584,6 +580,7 @@ namespace PsdzClient.Core
             {
                 return simulatedParts;
             }
+
             set
             {
                 if (simulatedParts != value)
@@ -602,6 +599,7 @@ namespace PsdzClient.Core
             {
                 return zfsSuccessfull;
             }
+
             set
             {
                 if (zfsSuccessfull != value)
@@ -620,6 +618,7 @@ namespace PsdzClient.Core
             {
                 return centralErrorMemoryStatus;
             }
+
             set
             {
                 if (centralErrorMemoryStatus != value)
@@ -636,6 +635,7 @@ namespace PsdzClient.Core
             {
                 return isSendOBFCMDataForbidden;
             }
+
             set
             {
                 if (isSendOBFCMDataForbidden != value)
@@ -653,6 +653,7 @@ namespace PsdzClient.Core
             {
                 return isSendFastaDataForbidden;
             }
+
             set
             {
                 if (isSendFastaDataForbidden != value)
@@ -671,6 +672,7 @@ namespace PsdzClient.Core
             {
                 return noVehicleCommunicationRunning;
             }
+
             set
             {
                 noVehicleCommunicationRunning = value;
@@ -686,6 +688,7 @@ namespace PsdzClient.Core
             {
                 return connectionLossRecognized;
             }
+
             set
             {
                 if (connectionLossRecognized != value)
@@ -704,6 +707,7 @@ namespace PsdzClient.Core
             {
                 return isSecurityPopupAlreadyShown;
             }
+
             set
             {
                 if (isSecurityPopupAlreadyShown != value)
@@ -722,6 +726,7 @@ namespace PsdzClient.Core
             {
                 return statusFunctionName;
             }
+
             set
             {
                 if (statusFunctionName != value)
@@ -740,6 +745,7 @@ namespace PsdzClient.Core
             {
                 return vin17FromInputFieldMR;
             }
+
             set
             {
                 if (vin17FromInputFieldMR != value)
@@ -758,6 +764,7 @@ namespace PsdzClient.Core
             {
                 return statusFunctionProgress;
             }
+
             set
             {
                 if (statusFunctionProgress != value)
@@ -776,6 +783,7 @@ namespace PsdzClient.Core
             {
                 return faultCodeSum;
             }
+
             set
             {
                 faultCodeSum = value;
@@ -791,6 +799,7 @@ namespace PsdzClient.Core
             {
                 return nonSignalErrorFaultCodeSum;
             }
+
             set
             {
                 nonSignalErrorFaultCodeSum = value;
@@ -807,6 +816,7 @@ namespace PsdzClient.Core
             {
                 return shouldSkipPinAuthentication;
             }
+
             set
             {
                 if (shouldSkipPinAuthentication != value)
@@ -817,14 +827,144 @@ namespace PsdzClient.Core
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        [XmlIgnore]
+        [DataMember]
+        public double Clamp15MinValue
+        {
+            get
+            {
+                return clamp15MinValue;
+            }
 
+            set
+            {
+                if (clamp15MinValue != value)
+                {
+                    clamp15MinValue = value;
+                    OnPropertyChanged("Clamp15MinValue");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        [DataMember]
+        public double Clamp30MinValue
+        {
+            get
+            {
+                return clamp30MinValue;
+            }
+
+            set
+            {
+                if (clamp30MinValue != value)
+                {
+                    clamp30MinValue = value;
+                    OnPropertyChanged("Clamp30MinValue");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        [DataMember]
+        public HashSet<int> ValidPWFStates
+        {
+            get
+            {
+                return validPWFStates;
+            }
+
+            set
+            {
+                if (validPWFStates != value)
+                {
+                    validPWFStates = value;
+                    OnPropertyChanged("ValidPWFStates");
+                }
+            }
+        }
+
+        [DataMember]
+        public DateTime KlVoltageLastMessageTime
+        {
+            get
+            {
+                return klVoltageLastMessageTime;
+            }
+
+            set
+            {
+                if (klVoltageLastMessageTime != value)
+                {
+                    klVoltageLastMessageTime = value;
+                    OnPropertyChanged("KlVoltageLastMessageTime");
+                }
+            }
+        }
+
+        [DataMember]
+        public DateTime LastSaveDate
+        {
+            get
+            {
+                return lastSaveDate;
+            }
+
+            set
+            {
+                if (lastSaveDate != value)
+                {
+                    lastSaveDate = value;
+                    OnPropertyChanged("LastSaveDate");
+                }
+            }
+        }
+
+        [DataMember]
+        public DateTime LastChangeDate
+        {
+            get
+            {
+                return lastChangeDate;
+            }
+
+            set
+            {
+                if (lastChangeDate != value)
+                {
+                    lastChangeDate = value;
+                    OnPropertyChanged("LastChangeDate");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        [DataMember]
+        public string VinRangeTypeLastResolvedType
+        {
+            get
+            {
+                return vinRangeTypeLastResolvedType;
+            }
+
+            set
+            {
+                if (vinRangeTypeLastResolvedType != value)
+                {
+                    vinRangeTypeLastResolvedType = value;
+                    OnPropertyChanged("VinRangeTypeLastResolvedType");
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
         public void RewriteProperties(SessionInfo source)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
+
             PropertyInfo[] properties = typeof(SessionInfo).GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach (PropertyInfo propertyInfo in properties)
             {

@@ -30,8 +30,28 @@ namespace PsdzClient.Core
             FATAL
         }
 
+        private static int? _logThreshhold;
         private static readonly CultureInfo LogCulture = CultureInfo.CreateSpecificCulture("de-DE");
         public static bool LogCallerPid { get; set; }
+
+        private static int GetLogThreshhold()
+        {
+            if (_logThreshhold.HasValue)
+            {
+                return _logThreshhold.Value;
+            }
+
+            try
+            {
+                _logThreshhold = ((!ConfigSettings.IsDebugLoggingEnabled()) ? 1 : 0);
+            }
+            catch
+            {
+                _logThreshhold = 1;
+            }
+
+            return _logThreshhold.Value;
+        }
 
         public static void Error(string method, string msg, params object[] args)
         {
@@ -190,7 +210,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Using DebugLevel, logThreshhold=6", SignatureModified = true)]
         public static void Debug(string method, string msg, params object[] args)
         {
-            //[-] Debug(CoreFramework.DebugLevel, 1, method, msg, args);
+            Debug(CoreFramework.DebugLevel, GetLogThreshhold(), method, msg, args);
             //[+] Debug(CoreFramework.DebugLevel, 6, method, msg, args);
             Debug(CoreFramework.DebugLevel, 6, method, msg, args);
         }
@@ -198,7 +218,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public static void Debug(int logState, string method, string msg, params object[] args)
         {
-            Debug(logState, 1, method, msg, args);
+            Debug(logState, GetLogThreshhold(), method, msg, args);
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
@@ -219,11 +239,11 @@ namespace PsdzClient.Core
             {
                 //[+] WriteTraceEntry(method, msg, TraceLevel.DEBUG, evtKind, args);
                 WriteTraceEntry(method, msg, TraceLevel.DEBUG, evtKind, args);
-                //[-] string format = BuildEntry(TraceLevel.DEBUG, evtKind, method, msg);
-                //[-] if (args != null && args.Any())
-                //[-] {
-                //[-] string.Format(format, args);
-                //[-] }
+            //[-] string format = BuildEntry(TraceLevel.DEBUG, evtKind, method, msg);
+            //[-] if (args != null && args.Any())
+            //[-] {
+            //[-] string.Format(format, args);
+            //[-] }
             }
             catch (Exception ex)
             {
@@ -354,8 +374,9 @@ namespace PsdzClient.Core
             {
                 //[+] sb.Append(Path.GetFileName(sourceFilePath));
                 sb.Append(Path.GetFileName(sourceFilePath));
-                //[+] }
+            //[+] }
             }
+
             //[+] if (!string.IsNullOrEmpty(memberName))
             if (!string.IsNullOrEmpty(memberName))
             //[+] {
@@ -368,10 +389,12 @@ namespace PsdzClient.Core
                     sb.Append(": ");
                 //[+] }
                 }
+
                 //[+] sb.Append(memberName);
                 sb.Append(memberName);
-                //[+] }
+            //[+] }
             }
+
             //[+] return sb.ToString();
             return sb.ToString();
         }

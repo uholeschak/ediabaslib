@@ -193,23 +193,6 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public PsdzResultStateEto WriteFp(IPsdzConnection connection, string standardFp)
-        {
-            try
-            {
-                WriteFpRequestModel requestBodyObject = new WriteFpRequestModel
-                {
-                    FpAsString = standardFp
-                };
-                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefp/{connection.Id}", HttpMethod.Post, requestBodyObject));
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException(Log.CurrentMethod(), exception);
-                return PsdzResultStateEto.FINISHED_WITH_ERROR;
-            }
-        }
-
         public PsdzResultStateEto WriteIStufen(IPsdzConnection connection, string iStufeShipment, string iStufeLast, string iStufeCurrent)
         {
             try

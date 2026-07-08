@@ -107,18 +107,16 @@ namespace BMW.Rheingold.Psdz
             T result = default(T);
             if (response != null && response.StatusCode != HttpStatusCode.NoContent)
             {
-                string content = response.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
-                if (string.IsNullOrWhiteSpace(content))
+                string result2 = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                if (!string.IsNullOrEmpty(result2))
                 {
-                    return result;
+                    return JsonConvert.DeserializeObject<GenericApiResponse<T>>(result2).Data;
                 }
-
-                GenericApiResponse<T> apiResponse = JsonConvert.DeserializeObject<GenericApiResponse<T>>(content);
-                return apiResponse != null ? apiResponse.Data : result;
             }
 
             return result;
         }
+
         private string CreateRequestLogMessage(string loggerKeys, HttpClient client, HttpRequestMessage request, object requestBodyObject)
         {
             try

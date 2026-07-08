@@ -15,19 +15,6 @@ namespace BMW.Rheingold.Psdz
             _webCallHandler = webCallHandler;
         }
 
-        public string GetHttpServerAddress()
-        {
-            try
-            {
-                return _webCallHandler.ExecuteRequest<string>(_endpointService, "gethttpserveraddress", HttpMethod.Get).Data;
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException(Log.CurrentMethod(), exception);
-                throw;
-            }
-        }
-
         public string GetNetworkEndpointSet()
         {
             try

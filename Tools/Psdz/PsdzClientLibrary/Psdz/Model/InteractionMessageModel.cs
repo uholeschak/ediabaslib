@@ -110,26 +110,6 @@ namespace BMW.Rheingold.Psdz
             ButtonText = FormatedData.Localize("#Button.OK");
         }
 
-        public new object GetApiResponse()
-        {
-            return new
-            {
-                guid = base.Guid.ToString(),
-                title = base.Title,
-                messageText = MessageText,
-                detailsText = DetailText,
-                type = GetType(),
-                response = new[]
-                {
-                    new
-                    {
-                        key = Enum.GetName(typeof(InteractionButton), InteractionButton.Continue),
-                        label = ButtonText
-                    }
-                }
-            };
-        }
-
         public override void OnResponseReceived(InteractionButtonResponse response)
         {
             Log.Info("InteractionMessageModel.OnResponseRecived()", "InteractionButtonResponse was set to the model. Parameter: Button = '{0}' ", response?.Action);

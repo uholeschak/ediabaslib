@@ -19,17 +19,12 @@ namespace PsdzClient.Core
     public class ConfigSettings
     {
         public const string BMW_RHEINGOLD_CONFIG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
-        private const string BMW_RHEINGOLD_KEY_ISIGNORED = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold";
-        private const string BMW_RHEINGOLD_GLOBALCONFIG_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold";
         private const string BMW_RHEINGOLD_GLOBALCONFIG_64_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
         private const string BMW_RHEINGOLD_PERSISTENCY_DATASTORE = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold\\Persistency";
         private const string BMW_RHEINGOLD_PERSISTENCYACROSSSESSION_DATASTORE = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold\\AcrossPersistency";
-        private const string BMW_RHEINGOLD_SOFTWARE_REPOSITORY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold\\SoftwareRepository";
-        private const string BMW_ISTA_GLOBALCONFIG_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA";
         private const string BMW_ISTA_GLOBALCONFIG_64_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA";
         private const string BMW_ISTA_CONFIG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\ISTA";
         private const string BMW_ISTA_KEY = "SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
-        public const string BMW_ISTALAUNCHER_CONFIG_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMW\\ISPI\\TRIC\\ISTALauncher";
         public const string BMW_ISTALAUNCHER_CONFIG_64_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\BMW\\ISPI\\TRIC\\ISTALauncher";
         private const string CONFIG_FILE = "Configuration file";
         private const string KeyOssParamFile = "OssParamFile";
@@ -45,7 +40,6 @@ namespace PsdzClient.Core
         private static bool isProgrammingLocked;
         private static bool areSDPPacksInvalid;
         private static bool? ignoreRegKeys;
-        private static bool? isConwoyDataProviderConigured;
         private static bool runIstaRsuRepairMode;
         public static string hypenedDatabaseVersionForOnlinePatches { get; set; }
         public static CultureInfo CurrentCultureInfo => currentCultureInfo;
@@ -132,6 +126,11 @@ namespace PsdzClient.Core
                     return OperationalMode.ISTA;
                 }
 
+                if (IsProgrammingApiModeActive)
+                {
+                    return OperationalMode.OPAPI;
+                }
+
                 if (Enum.TryParse<OperationalMode>(configString, ignoreCase: true, out var result))
                 {
                     return result;
@@ -145,9 +144,9 @@ namespace PsdzClient.Core
         {
             get
             {
-                if (OperationalMode != OperationalMode.ISTA)
+                if (OperationalMode != OperationalMode.ISTA && OperationalMode != OperationalMode.ISTA_PLUS)
                 {
-                    return OperationalMode == OperationalMode.ISTA_PLUS;
+                    return OperationalMode == OperationalMode.OPAPI;
                 }
 
                 return true;
@@ -177,7 +176,9 @@ namespace PsdzClient.Core
 
         public static string AppBaseDirectory { get; set; }
         public static bool IsIRAPMode { get; set; }
+        public static string ConwoyDBVersion { get; set; }
         public static bool IsOssModeActive => getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.OSSModeActive", defaultValue: false);
+        public static bool IsProgrammingApiModeActive { get; set; }
         public static bool IsLightModeActive => getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.LightModeActive", defaultValue: false);
         public static bool IsMaster => isMaster;
 
@@ -249,7 +250,7 @@ namespace PsdzClient.Core
 
         public static string GetLogisticBaseVersion()
         {
-            return (Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", null) ?? Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", null)) as string;
+            return Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", null) as string;
         }
 
         public static string GetSwiDataUX()
@@ -275,12 +276,21 @@ namespace PsdzClient.Core
             return false;
         }
 
+        public static bool IsHttpHandlerChainEnabled()
+        {
+            return getConfigStringAsBoolean("BMW.Rheingold.HttpHandlerChainEnabled", defaultValue: false);
+        }
+
+        public static bool IsDebugLoggingEnabled()
+        {
+            return getConfigStringAsBoolean("BMW.Rheingold.Log.DebugEnabled", defaultValue: false);
+        }
+
         private static ISet<string> RetrieveAllKeys()
         {
             ISet<string> set = new HashSet<string>();
             IList<string> list = new List<string>();
             IList<string> list2 = new List<string>();
-            IList<string> list3 = new List<string>();
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\BMWGroup\\ISPI\\Rheingold"))
             {
                 if (registryKey != null)
@@ -289,19 +299,11 @@ namespace PsdzClient.Core
                 }
             }
 
-            using (RegistryKey registryKey2 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("SOFTWARE\\BMWGroup\\ISPI\\Rheingold"))
+            using (RegistryKey registryKey2 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE\\BMWGroup\\ISPI\\Rheingold"))
             {
                 if (registryKey2 != null)
                 {
                     list2 = registryKey2.GetValueNames().ToList();
-                }
-            }
-
-            using (RegistryKey registryKey3 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE\\BMWGroup\\ISPI\\Rheingold"))
-            {
-                if (registryKey3 != null)
-                {
-                    list3 = registryKey3.GetValueNames().ToList();
                 }
             }
 
@@ -314,11 +316,6 @@ namespace PsdzClient.Core
             foreach (string item3 in list2)
             {
                 set.Add(item3);
-            }
-
-            foreach (string item4 in list3)
-            {
-                set.Add(item4);
             }
 
             string[] array = allKeys;
@@ -658,7 +655,7 @@ namespace PsdzClient.Core
         private static string getConfigStringLocalMachine(string path, string key, string defaultValue)
         {
             path = path.Replace("HKEY_LOCAL_MACHINE\\", string.Empty);
-            RegistryKey registryKey = ((!Environment.Is64BitOperatingSystem) ? RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32) : RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64));
+            RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
             if (registryKey.OpenSubKey(path)?.GetValue(key) == null)
             {
                 return defaultValue;
@@ -791,7 +788,7 @@ namespace PsdzClient.Core
                         return (!currentConfigValues.ContainsKey(key)) ? defaultValue : ((currentConfigValues[key].Value == null) ? null : Convert.ToString(currentConfigValues[key].Value, CultureInfo.InvariantCulture));
                     }
 
-                    string text = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold", key, setOrigin) ?? GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin) ?? GetRegistryValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin);
+                    string text = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin) ?? GetRegistryValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin);
                     if (text != null)
                     {
                         return text;
@@ -962,7 +959,7 @@ namespace PsdzClient.Core
         {
             try
             {
-                return getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", key, null) ?? getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? getConfigString("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? defaultValue;
+                return getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? getConfigString("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? defaultValue;
             }
             catch (Exception exception)
             {
@@ -1015,13 +1012,7 @@ namespace PsdzClient.Core
 
         public static bool putGlobalConfigString(string key, string value)
         {
-            bool flag = PutGlobalConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold", key, value);
-            if (!flag)
-            {
-                flag = PutGlobalConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, value);
-            }
-
-            return flag;
+            return PutGlobalConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, value);
         }
 
         public static IDictionary<string, string> GetKeyValuePairs(string configKey)
@@ -1226,14 +1217,10 @@ namespace PsdzClient.Core
 
         public static bool IsPatchVersion(string appVersion)
         {
-            string configString = getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", "PatchVersion", string.Empty);
+            string configString = getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "PatchVersion", string.Empty);
             if (string.IsNullOrEmpty(configString))
             {
-                configString = getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "PatchVersion", string.Empty);
-                if (string.IsNullOrEmpty(configString))
-                {
-                    return false;
-                }
+                return false;
             }
 
             try
@@ -1295,7 +1282,7 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            return GetFeatureEnabledStatus("SdpOnlinePatchAndMultisession").IsActive;
+            return GetFeatureEnabledStatus("SdpOnlnPatchMultisess").IsActive;
         }
 
         public static string GetWebEAMNextStage()

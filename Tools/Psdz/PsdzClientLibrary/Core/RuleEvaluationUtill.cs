@@ -21,8 +21,8 @@ namespace PsdzClient.Core
         private IVehicleRuleEvaluation vehicle;
         [PreserveSource(Hint = "IDealer", Placeholder = true)]
         private PlaceholderType dealer;
-        private Action startRuleMetrics;
-        private Action stopRuleMetrics;
+        private readonly Action startRuleMetrics;
+        private readonly Action stopRuleMetrics;
         [PreserveSource(Hint = "dataProvider replaced", SignatureModified = true)]
         public RuleEvaluationUtill(IRuleEvaluationServices ruleEvaluationServices, PsdzDatabase database, Action startRuleMetrics = null, Action stopRuleMetrics = null)
         {

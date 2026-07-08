@@ -11,7 +11,6 @@ namespace BMW.Rheingold.Psdz
 {
     internal class ConfigurationService : IConfigurationService
     {
-        private const string DefaultDealerId = "1234";
         private readonly IWebCallHandler _webCallHandler;
         private readonly IHttpServerService _httpServerService;
         private readonly string _endpointService = "configuration";
@@ -124,26 +123,6 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        internal void SetPsdzProperties(string dealerId, string plantId = "0", string programmierGeraeteSeriennummer = "1000", string testerEinsatzKennung = "FA")
-        {
-            try
-            {
-                SetPSdZPropertiesRequestModel requestBodyObject = new SetPSdZPropertiesRequestModel
-                {
-                    DealerId = ConvertDealerIdToHex(dealerId),
-                    PlantId = plantId,
-                    ProgrammierGeraeteSeriennummer = programmierGeraeteSeriennummer,
-                    TesterEinsatzKennung = testerEinsatzKennung
-                };
-                _webCallHandler.ExecuteRequest(_endpointService, "setpsdzproperties", HttpMethod.Post, requestBodyObject);
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException(Log.CurrentMethod(), exception);
-                throw;
-            }
-        }
-
         public void SetRootDirectory(string rootDir)
         {
             try
@@ -174,23 +153,6 @@ namespace BMW.Rheingold.Psdz
                 Log.ErrorException(Log.CurrentMethod(), exception);
                 throw;
             }
-        }
-
-        private string ConvertDealerIdToHex(string dealerId)
-        {
-            string text;
-            if (dealerId != null && ushort.TryParse(dealerId, out var result))
-            {
-                text = result.ToString("X");
-                Log.Info(Log.CurrentMethod(), "Dealer ID " + text + " is used.");
-            }
-            else
-            {
-                text = "1234";
-                Log.Info(Log.CurrentMethod(), "dealerId " + dealerId + " cannot be converted to a Hex value. The default Hex value (1234) is used.");
-            }
-
-            return text;
         }
 
         [PreserveSource(Added = true)]

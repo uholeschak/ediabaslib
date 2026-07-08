@@ -325,6 +325,12 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Cleaned = true)]
+        public string GetTricRegionalCloudUrl()
+        {
+            return null;
+        }
+
+        [PreserveSource(Cleaned = true)]
         public int? GetTricRegionalCloudUrlMtlsPort()
         {
             return null;

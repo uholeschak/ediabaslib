@@ -56,6 +56,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum GenerationType
     {
         Classic,

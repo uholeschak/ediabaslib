@@ -551,7 +551,7 @@ namespace BMW.Rheingold.Psdz
                 return NetUtils.GetFirstFreePort(minPort, maxPort, 8888);
             }
 
-            if (ConfigSettings.GetFeatureEnabledStatus("UseReducedPortRangeForMirror").IsActive)
+            if (ConfigSettings.GetFeatureEnabledStatus("UseReducPortRangeMirror").IsActive)
             {
                 Log.Info(Log.CurrentMethod(), "Determining Port via Generic Feature Switch...");
                 return NetUtils.GetFirstFreePort(12304, 12319, 8888);

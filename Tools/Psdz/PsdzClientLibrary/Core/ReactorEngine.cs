@@ -11,10 +11,10 @@ namespace PsdzClient.Core
 {
     public class ReactorEngine
     {
-        private MultisourceLogic multisourceLogic;
+        private readonly MultisourceLogic multisourceLogic;
         private readonly FallbackMechanisms fallback;
         private readonly IReactorVehicle vehicle;
-        private static ILogger log;
+        private readonly ILogger log;
         public DataHolder dataHolder;
         private bool observerEnabled;
         private static object obj = new object ();

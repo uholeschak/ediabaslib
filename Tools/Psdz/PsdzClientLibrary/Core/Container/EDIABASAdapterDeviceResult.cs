@@ -8,8 +8,8 @@ namespace PsdzClient.Core.Container
 {
     internal class EDIABASAdapterDeviceResult : IDiagnosticDeviceResult
     {
-        private IEcuJob job;
-        private ParameterContainer inParameters;
+        private readonly IEcuJob job;
+        private readonly ParameterContainer inParameters;
         public IEcuJob ECUJob
         {
             get

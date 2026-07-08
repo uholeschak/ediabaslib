@@ -237,6 +237,13 @@ namespace PsdzClient.Core
                 DiagnosticsBusinessDataCore diagnosticsBusinessDataCore = new DiagnosticsBusinessDataCore();
                 switch (vecInfo.Ereihe.ToUpper())
                 {
+                    case "KR1":
+                    case "KR2":
+                    case "KR3":
+                    case "K02":
+                    case "K03":
+                    case "K06":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                     case "F01":
                     case "F02":
                     case "F03":
@@ -534,8 +541,6 @@ namespace PsdzClient.Core
                     case "K30":
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                     case "X_K001":
-                    case "K02":
-                    case "K03":
                     case "K08":
                     case "K09":
                     case "K22":

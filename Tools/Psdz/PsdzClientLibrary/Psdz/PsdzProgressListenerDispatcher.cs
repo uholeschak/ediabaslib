@@ -9,7 +9,6 @@ namespace BMW.Rheingold.Psdz.Client
     internal class PsdzProgressListenerDispatcher : IPsdzProgressListener
     {
         private readonly IList<IPsdzProgressListener> psdzProgressListeners = new List<IPsdzProgressListener>();
-
         public void AddPsdzProgressListener(IPsdzProgressListener progressListener)
         {
             lock (psdzProgressListeners)
@@ -73,14 +72,6 @@ namespace BMW.Rheingold.Psdz.Client
                 {
                     psdzProgressListener.SetFinished();
                 }
-            }
-        }
-
-        public void Clear()
-        {
-            lock (psdzProgressListeners)
-            {
-                psdzProgressListeners.Clear();
             }
         }
     }

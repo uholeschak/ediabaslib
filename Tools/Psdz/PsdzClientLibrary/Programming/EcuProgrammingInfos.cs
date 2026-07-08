@@ -346,7 +346,7 @@ namespace PsdzClient.Programming
                         foreach (PsdzSmartActuatorFlashStatusResult item2 in psdzSmacTransferStatusTA.SmartActuatorFlashStatusResult)
                         {
                             int offset2 = TalLineHelper.CalculateSmacDiagAddress(smacID: item2.SmartActuatorId, master: item.EcuIdentifier.DiagnosisAddress).Offset;
-                            PsdzTaExecutionState? psdzTaExecutionState = ParsePsdzTaExecutionState(item2.ProgrammingStatus);
+                            PsdzTaExecutionState? psdzTaExecutionState = ParsePsdzTaExecutionState(item2.ProgrammingStatus, psdzSmacTransferStatusTA.ExecutionState);
                             if (!dictionary.ContainsKey(offset2))
                             {
                                 dictionary.Add(offset2, psdzTaExecutionState);
@@ -607,16 +607,21 @@ namespace PsdzClient.Programming
             }
         }
 
-        private static PsdzTaExecutionState? ParsePsdzTaExecutionState(string status)
+        private static PsdzTaExecutionState? ParsePsdzTaExecutionState(string individualSmacStatus, PsdzTaExecutionState? smacTransferStatus)
         {
-            if (string.IsNullOrEmpty(status))
+            if (string.IsNullOrEmpty(individualSmacStatus))
             {
                 return null;
             }
 
-            if (Enum.TryParse<PsdzTaExecutionState>(status, ignoreCase: true, out var result))
+            if (Enum.TryParse<PsdzTaExecutionState>(individualSmacStatus, ignoreCase: true, out var result))
             {
                 return result;
+            }
+
+            if (smacTransferStatus.HasValue && smacTransferStatus.Value != PsdzTaExecutionState.Executable)
+            {
+                return smacTransferStatus.Value;
             }
 
             return null;

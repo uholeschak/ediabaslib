@@ -103,18 +103,76 @@ namespace PsdzClient.Programming
             return diagAddrToEcuMap[num];
         }
 
+        private EcuProgrammingInfo GetCorrespondingSmac(int diagAddr)
+        {
+            if (!diagAddrToEcuMap.ContainsKey(diagAddr))
+            {
+                return null;
+            }
+
+            return diagAddrToEcuMap[diagAddr];
+        }
+
         private void UpdateProgrammingAction(IPsdzTransactionEvent psdzEvent)
         {
             try
             {
+                Log.Debug("VehicleProgrammingEventHandler.UpdateProgrammingAction()", $"EcuId: {psdzEvent?.EcuId} - Message: {psdzEvent?.Message} - TransactionInfo: {psdzEvent?.TransactionInfo} - TransactionType: {psdzEvent?.TransactionType}");
+                PsdzTransactionInfo transactionInfo = psdzEvent.TransactionInfo;
+                PsdzTaCategories transactionType = psdzEvent.TransactionType;
+                if (transactionType == PsdzTaCategories.SmacTransferStatus || transactionType == PsdzTaCategories.SmacTransferStart)
+                {
+                    ProgrammingActionState? item = Map(transactionInfo);
+                    ProgrammingActionType? programmingActionType = Map(transactionType);
+                    if (!programmingActionType.HasValue || !item.HasValue)
+                    {
+                        return;
+                    }
+
+                    IEnumerable<IPsdzTalLine> source = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(psdzEvent.EcuId));
+                    Dictionary<int, ProgrammingActionState?> dictionary = new Dictionary<int, ProgrammingActionState?>();
+                    foreach (IPsdzTalLine item2 in source.Where((IPsdzTalLine x) => x.TaCategories == PsdzTaCategories.SmacTransferStart || x.TaCategories == PsdzTaCategories.SmacTransferStatus))
+                    {
+                        foreach (IPsdzTa ta in item2.TaCategory.Tas)
+                        {
+                            if (ta is PsdzSmacTransferStartTA psdzSmacTransferStartTA)
+                            {
+                                foreach (string key in psdzSmacTransferStartTA.SmartActuatorData.Keys)
+                                {
+                                    int offset = TalLineHelper.CalculateSmacDiagAddress(item2.EcuIdentifier.DiagnosisAddress, key).Offset;
+                                    dictionary.AddIfNotContains(offset, item);
+                                }
+                            }
+
+                            if (!(ta is PsdzSmacTransferStatusTA psdzSmacTransferStatusTA))
+                            {
+                                continue;
+                            }
+
+                            foreach (string smartActuatorID in psdzSmacTransferStatusTA.SmartActuatorIDs)
+                            {
+                                int offset2 = TalLineHelper.CalculateSmacDiagAddress(item2.EcuIdentifier.DiagnosisAddress, smartActuatorID).Offset;
+                                dictionary.AddIfNotContains(offset2, item);
+                            }
+                        }
+                    }
+
+                    {
+                        foreach (KeyValuePair<int, ProgrammingActionState?> item3 in dictionary)
+                        {
+                            GetCorrespondingSmac(item3.Key)?.UpdateSingleProgrammingAction(programmingActionType.Value, item.Value, executed: false);
+                        }
+
+                        return;
+                    }
+                }
+
                 EcuProgrammingInfo correspondingEcu = GetCorrespondingEcu(psdzEvent);
                 if (correspondingEcu == null)
                 {
                     return;
                 }
 
-                PsdzTransactionInfo transactionInfo = psdzEvent.TransactionInfo;
-                PsdzTaCategories transactionType = psdzEvent.TransactionType;
                 Log.Debug("VehicleProgrammingEventHandler.UpdateProgrammingAction", "ECU: 0x{0:X2} - transaction info: {1} - action type: {2}", correspondingEcu.Ecu.ID_SG_ADR, transactionInfo, transactionType);
                 if (transactionType == PsdzTaCategories.FscDeploy || transactionType == PsdzTaCategories.SFADeploy)
                 {
@@ -123,16 +181,16 @@ namespace PsdzClient.Programming
                     return;
                 }
 
-                ProgrammingActionType? programmingActionType = Map(transactionType);
+                ProgrammingActionType? programmingActionType2 = Map(transactionType);
                 ProgrammingActionState? programmingActionState = Map(transactionInfo);
-                if (programmingActionType.HasValue && programmingActionState.HasValue)
+                if (programmingActionType2.HasValue && programmingActionState.HasValue)
                 {
                     if (IsBootloaderFlashAndSwDeployCase(transactionType, psdzEvent.EcuId))
                     {
-                        programmingActionType = ProgrammingActionType.Programming;
+                        programmingActionType2 = ProgrammingActionType.Programming;
                     }
 
-                    correspondingEcu.UpdateSingleProgrammingAction(programmingActionType.Value, programmingActionState.Value, executed: false);
+                    correspondingEcu.UpdateSingleProgrammingAction(programmingActionType2.Value, programmingActionState.Value, executed: false);
                 }
             }
             catch (Exception exception)
@@ -169,7 +227,7 @@ namespace PsdzClient.Programming
             EcuProgrammingInfo correspondingEcu = GetCorrespondingEcu(psdzEvent);
             if (correspondingEcu != null)
             {
-                Log.Info("VehicleProgrammingEventHandler.UpdateProgrammingProgress()", "ECU: 0x{0:X2} - Progress: {1}", correspondingEcu.Ecu.ID_SG_ADR, psdzEvent.Progress);
+                Log.Info("VehicleProgrammingEventHandler.UpdateProgrammingProgress()", $"ECU: 0x{correspondingEcu.Ecu.ID_SG_ADR:X2} - Progress: {psdzEvent.Progress} - Message: {psdzEvent?.Message} - TransactionInfo: {psdzEvent?.TransactionInfo} - TransactionInfo: {psdzEvent?.TransactionType} ");
                 correspondingEcu.ProgressValue = (double)psdzEvent.Progress * 0.01;
             }
         }

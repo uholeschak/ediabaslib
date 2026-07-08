@@ -27,7 +27,7 @@ namespace BMW.Rheingold.Psdz
         private readonly IProgrammingService _programmingService;
         private static readonly TaExecutionStateMapper _taExecutionStateMapper = new TaExecutionStateMapper();
         private static readonly TalExecutionStateMapper _talExecutionStateMapper = new TalExecutionStateMapper();
-        private bool _ignoreTalRelease = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Psdz.IgnoreTalRelease", defaultValue: true);
+        private readonly bool _ignoreTalRelease = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Psdz.IgnoreTalRelease", defaultValue: true);
         public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged;
         public IndividualDataRestoreService(IWebCallHandler webCallHandler, IPsdzProgressListener progressListener, IMacrosService macrosService, IProgrammingService programmingService)
         {
