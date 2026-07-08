@@ -104,11 +104,6 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((ISecureFeatureActivationService service) => service.ResetEcus(connection, svt, ecusToBeReset));
         }
 
-        public IEnumerable<IPsdzEcuFailureResponseCto> ResetEcusFlashMode(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecusToBeReset, bool performWithFlashMode)
-        {
-            return CallFunction((ISecureFeatureActivationService service) => service.ResetEcusFlashMode(connection, svt, ecusToBeReset, performWithFlashMode));
-        }
-
         [PreserveSource(Hint = "Dummy")]
         public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestTokenDirectForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, IPsdzSvt svtIst, IPsdzSecureTokenRequestCto secureTokenRequest)
         {

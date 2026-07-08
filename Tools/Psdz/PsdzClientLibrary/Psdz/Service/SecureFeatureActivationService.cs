@@ -335,26 +335,6 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [Obsolete]
-        public IEnumerable<IPsdzEcuFailureResponseCto> ResetEcusFlashMode(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecusToBeReset, bool performWithFlashMode)
-        {
-            try
-            {
-                ResetEcusFlashModeRequestModel requestBodyObject = new ResetEcusFlashModeRequestModel
-                {
-                    Svt = SvtMapper.Map(svt),
-                    Ecus = ecusToBeReset?.Select(EcuIdentifierCtoMapper.Map).ToList(),
-                    PerformWithFlashMode = performWithFlashMode
-                };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"resetecus/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException(Log.CurrentMethod(), exception);
-                return null;
-            }
-        }
-
         public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestTokenDirectForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, IPsdzSvt svtIst, IPsdzSecureTokenRequestCto secureTokenRequest)
         {
             try
