@@ -160,7 +160,7 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
-        [PreserveSource(Cleaned = true, OriginalHash = "C222EF38D34939CDBD98728578208800")]
+        [PreserveSource(Cleaned = true, OriginalHash = "29576ED241B7998EE1E0CF4B24C66624")]
         private static void CheckClamp30(Vehicle vehicle)
         {
             throw new NotImplementedException();
