@@ -335,17 +335,6 @@ namespace PsdzClient.Programming
         public bool AllowDbGeneration { get; set; }
         public bool GenServiceModules { get; set; }
 
-        public VoltageThreshold VoltageThresholdPb { get; }
-        public VoltageThreshold VoltageThresholdLfp { get; }
-        public double MinBatteryVoltageErrorPb { get; }
-        public double MinBatteryVoltageErrorLfp { get; }
-        public double MinBatteryVoltageWarnPb { get; }
-        public double MinBatteryVoltageWarnLfp { get; }
-        public double MaxBatteryVoltageWarnPb { get; }
-        public double MaxBatteryVoltageWarnLfp { get; }
-        public double MaxBatteryVoltageErrorPb { get; }
-        public double MaxBatteryVoltageErrorLfp { get; }
-
         private PsdzContext _psdzContext;
         public PsdzContext PsdzContext
         {
@@ -476,21 +465,6 @@ namespace PsdzClient.Programming
                 ThreadContextId = GlobalThreadContextId++;
             }
             ProgrammingService = null;
-
-            VoltageThresholdPb = new VoltageThreshold(BatteryEnum.Pb);
-            VoltageThresholdLfp = new VoltageThreshold(BatteryEnum.LFP);
-
-            MinBatteryVoltageErrorPb = VoltageThresholdPb.MinError;
-            MinBatteryVoltageErrorLfp = VoltageThresholdLfp.MinError;
-
-            MinBatteryVoltageWarnPb = VoltageThresholdPb.MinWarning;
-            MinBatteryVoltageWarnLfp = VoltageThresholdLfp.MinWarning;
-
-            MaxBatteryVoltageWarnPb = VoltageThresholdPb.MaxWarning;
-            MaxBatteryVoltageWarnLfp = VoltageThresholdLfp.MaxWarning;
-
-            MaxBatteryVoltageErrorPb = VoltageThresholdPb.MaxError;
-            MaxBatteryVoltageErrorLfp = VoltageThresholdLfp.MaxError;
         }
 
         public bool IsModuleGenerationMode()
@@ -3703,15 +3677,13 @@ namespace PsdzClient.Programming
                     failCount = 0;
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
 
-                    bool lfpBattery = PsdzContext.VecInfo.BatteryType == BatteryEnum.LFP;
-                    bool lfpNCarBattery = PsdzContext.VecInfo.BatteryType == BatteryEnum.LFP_NCAR;
-                    bool isLpf = lfpBattery || lfpNCarBattery;
-                    double minVoltageError = isLpf ? MinBatteryVoltageErrorLfp : MinBatteryVoltageErrorPb;
-                    double minVoltageWarn = isLpf ? MinBatteryVoltageWarnLfp : MinBatteryVoltageWarnPb;
-                    double maxVoltageWarn = isLpf ? MaxBatteryVoltageWarnLfp : MaxBatteryVoltageWarnPb;
-                    double maxVoltageError = isLpf ? MaxBatteryVoltageErrorLfp : MaxBatteryVoltageErrorPb;
-                    log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: LFP={0}, MinErr={1}, MinWarn={2}, MaxWarn={3}, MaxErr={4}",
-                        lfpBattery, minVoltageError, minVoltageWarn, maxVoltageWarn, maxVoltageError);
+                    VoltageThreshold voltageThreshold = new VoltageThreshold(PsdzContext.VecInfo.BatteryType);
+                    double minVoltageError = voltageThreshold.MinError;
+                    double minVoltageWarn = voltageThreshold.MinWarning;
+                    double maxVoltageWarn = voltageThreshold.MaxWarning;
+                    double maxVoltageError = voltageThreshold.MaxError;
+                    log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: BatteryType={0}, MinErr={1}, MinWarn={2}, MaxWarn={3}, MaxErr={4}",
+                        PsdzContext.VecInfo.BatteryType, minVoltageError, minVoltageWarn, maxVoltageWarn, maxVoltageError);
 
                     bool error = voltage < minVoltageError || voltage > maxVoltageError;
                     bool warn = voltage < minVoltageWarn || voltage > maxVoltageWarn;
