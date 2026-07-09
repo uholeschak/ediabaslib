@@ -6,48 +6,54 @@ namespace PsdzClient.Core
     {
         public static class Features
         {
-            public const string AutomaticTestPlanCalculation = "AutomaticTestPlanCalculation";
-            public const string CheckRemoteUserDbStatusJob = "CheckRemoteUserDbStatusJob";
+            public const string AllowFsLesenErrorResult = "AllowFsLesenErrorResult";
+            public const string AutomaticTestPlanCalc = "AutomaticTestPlanCalc";
             public const string CollectLauncherLogs = "CollectLauncherLogs";
             public const string DownloadAllSdpPatches = "DownloadAllSdpPatches";
             public const string DumpOutOfMemoryException = "DumpOutOfMemoryException";
-            public const string DumpStackOverflowException = "DumpStackOverflowException";
+            public const string DumpStackOverflwExcep = "DumpStackOverflwExcep";
             public const string EarlyStartPsdzWebService = "EarlyStartPsdzWebService";
-            public const string ExecuteServiceCallCertreqprofiles = "ExecuteServiceCallCertreqprofiles";
-            public const string FastaSlowApiJobsSerivceCode = "FastaSlowApiJobsSerivceCode";
+            public const string EdiabasVersionForNcar = "EdiabasVersionForNcar";
+            public const string ExecServCallCertReqProf = "ExecServCallCertReqProf";
+            public const string FastaSlowApiJobServCode = "FastaSlowApiJobServCode";
             public const string FdlGateOverTricCloud = "FdlGateOverTricCloud";
-            public const string FillFunctionalJobsInFstdatIsActive = "FillFunctionalJobsInFstdatIsActive";
+            public const string FillFuncJobInFstdat = "FillFuncJobInFstdat";
             public const string FscOverTricCloud = "FscOverTricCloud";
             public const string FsLesenExpertOldCode = "FsLesenExpertOldCode";
+            public const string GetEFuseTitlesNewWay = "GetEFuseTitlesNewWay";
+            public const string GetEslDocFromAirViaTrz = "GetEslDocFromAirViaTrz";
             public const string IcomNextPCapReadout = "IcomNextPCapReadout";
+            public const string IpmOverTricCloud = "IpmOverTricCloud";
             public const string JumpAirInAwp = "JumpAirInAwp";
             public const string KaiServiceHistory = "KaiServiceHistory";
             public const string Login = "Login";
             public const string LogTracingMaximum = "LogTracingMaximum";
             public const string MidaOverTricCloud = "MidaOverTricCloud";
+            public const string NewDocTransformation = "NewDocTransformation";
             public const string NopOverTricCloud = "NopOverTricCloud";
             public const string PkiOverTricCloud = "PkiOverTricCloud";
-            public const string RenewConnectionAfterEcuReset = "RenewConnectionAfterEcuReset";
+            public const string RenewConAfterEcuReset = "RenewConAfterEcuReset";
             public const string SCBOverTricCloud = "SCBOverTricCloud";
             public const string SccOverTricCloud = "SccOverTricCloud";
-            public const string ScheduleLoginUserHousekeepingJob = "ScheduleLoginUserHousekeepingJob";
-            public const string SdpOnlinePatchAndMultisession = "SdpOnlinePatchAndMultisession";
+            public const string SchedUserHousekeepJob = "SchedUserHousekeepJob";
+            public const string SdpOnlnPatchMultisess = "SdpOnlnPatchMultisess";
             public const string SeamLM2OverTricCloud = "SeamLM2OverTricCloud";
             public const string SendAmpToAssistant = "SendAmpToAssistant";
+            public const string SendFastaProtToAsst = "SendFastaProtToAsst";
             public const string SessionStateDialog = "SessionStateDialog";
             public const string SFAOverTricCloud = "SFAOverTricCloud";
             public const string ShowCCMTab = "ShowCCMTab";
             public const string ShowImibDisconnectPopUp = "ShowImibDisconnectPopUp";
             public const string ShowNewSessionEnterTab = "ShowNewSessionEnterTab";
             public const string ShowTabFluids = "ShowTabFluids";
-            public const string SpecialEdiabasVersionForNcar = "SpecialEdiabasVersionForNcar";
-            public const string SynchronizeLoginDatabasesJob = "SynchronizeLoginDatabasesJob";
+            public const string SmartMaintenanceOverTRC = "SmartMaintenanceOverTRC";
+            public const string SpecialModeAllowAllBrand = "SpecialModeAllowAllBrand";
+            public const string SyncLoginDatabasesJob = "SyncLoginDatabasesJob";
             public const string TCMOverTricCloud = "TCMOverTricCloud";
             public const string UseAlphaRealm = "UseAlphaRealm";
             public const string UsePsdzSeriesFormatter = "UsePsdzSeriesFormatter";
             public const string UseQaBackendForSfaAndFsc = "UseQaBackendForSfaAndFsc";
-            public const string UseReducedPortRangeForMirror = "UseReducedPortRangeForMirror";
-            public const string UseSharedUserDatabase = "UseSharedUserDatabase";
+            public const string UseReducPortRangeMirror = "UseReducPortRangeMirror";
             public const string UseSweParallelDownloader = "UseSweParallelDownloader";
             public const string VcmComparison = "VcmComparison";
             public const string VinRangesOverConWoy = "VinRangesOverConWoy";
@@ -75,24 +81,25 @@ namespace PsdzClient.Core
             {
                 switch (featureName)
                 {
-                    case "AutomaticTestPlanCalculation":
-                    case "RenewConnectionAfterEcuReset":
-                    case "SynchronizeLoginDatabasesJob":
-                    case "UseReducedPortRangeForMirror":
+                    case "FastaSlowApiJobServCode":
+                    case "ShowImibDisconnectPopUp":
+                    case "UseReducPortRangeMirror":
+                    case "AllowFsLesenErrorResult":
+                    case "ExecServCallCertReqProf":
+                    case "AutomaticTestPlanCalc":
+                    case "DownloadAllSdpPatches":
+                    case "RenewConAfterEcuReset":
+                    case "SchedUserHousekeepJob":
+                    case "SdpOnlnPatchMultisess":
+                    case "SyncLoginDatabasesJob":
+                    case "CollectLauncherLogs":
+                    case "VinRangesOverConWoy":
                     case "ShowTabFluids":
                     case "UseAlphaRealm":
                     case "VcmComparison":
-                    case "CheckRemoteUserDbStatusJob":
-                    case "CollectLauncherLogs":
-                    case "DownloadAllSdpPatches":
-                    case "ExecuteServiceCallCertreqprofiles":
-                    case "FastaSlowApiJobsSerivceCode":
                     case "KaiServiceHistory":
                     case "Login":
-                    case "ScheduleLoginUserHousekeepingJob":
-                    case "SdpOnlinePatchAndMultisession":
                     case "UseQaBackendForSfaAndFsc":
-                    case "ShowImibDisconnectPopUp":
                     case "ZgwRepOverstForIpbBoot":
                         return true;
                     default:
@@ -104,17 +111,18 @@ namespace PsdzClient.Core
             {
                 switch (featureName)
                 {
+                    case "FastaSlowApiJobServCode":
+                    case "ShowImibDisconnectPopUp":
+                    case "UseReducPortRangeMirror":
+                    case "AllowFsLesenErrorResult":
+                    case "ExecServCallCertReqProf":
                     case "CollectLauncherLogs":
                     case "VinRangesOverConWoy":
-                    case "RenewConnectionAfterEcuReset":
-                    case "UseReducedPortRangeForMirror":
                     case "ShowTabFluids":
                     case "VcmComparison":
-                    case "ExecuteServiceCallCertreqprofiles":
-                    case "FastaSlowApiJobsSerivceCode":
                     case "KaiServiceHistory":
+                    case "RenewConAfterEcuReset":
                     case "UseQaBackendForSfaAndFsc":
-                    case "ShowImibDisconnectPopUp":
                     case "ZgwRepOverstForIpbBoot":
                         return true;
                     default:
@@ -126,9 +134,9 @@ namespace PsdzClient.Core
             {
                 switch (featureName)
                 {
-                    case "ExecuteServiceCallCertreqprofiles":
-                    case "FastaSlowApiJobsSerivceCode":
-                    case "RenewConnectionAfterEcuReset":
+                    case "ExecServCallCertReqProf":
+                    case "FastaSlowApiJobServCode":
+                    case "RenewConAfterEcuReset":
                     case "ShowTabFluids":
                     case "UseQaBackendForSfaAndFsc":
                     case "ShowImibDisconnectPopUp":

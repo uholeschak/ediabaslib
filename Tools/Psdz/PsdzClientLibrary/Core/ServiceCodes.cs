@@ -3,6 +3,9 @@
     public static class ServiceCodes
     {
         public static string ANA10_NonUniqueEFuseIdDetected_nu_LF = "ANA10_NonUniqueEFuseIdDetected_nu_LF";
+        public static string ANA11_FdlGateEcuStateAorO_nu_LF = "ANA11_FdlGateEcuStateAorO_nu_LF";
+        public static string ANA12_CorruptedMetadata_nu_LF = "ANA12_CorruptedMetadata_nu_LF";
+        public static string ANA13_ErrorInterpretationFsLesenDetail_nu_LF = "ANA13_ErrorInterpretationFsLesenDetail_nu_LF ";
         public static readonly string ESL01_FaultPatternDetectedId_nu_ST = "ESL01_FaultPatternDetectedId_nu_ST";
         public static readonly string ESL02_FaultPatternDisplayedId_nu_ST = "ESL02_FaultPatternDisplayedId_nu_ST";
         public const string SUC01_NoInternetConnection_nu_LF = "SUC01_NoInternetConnection_nu_LF";
@@ -45,12 +48,12 @@
         public static string TRC01_TricCloudOk_nu_LF => "TRC01_TricCloudOk_nu_LF";
         public static string TRC02_TricCloudNok_TricZentralOk_nu_LF => "TRC02_TricCloudNok_TricZentralOk_nu_LF";
         public static string TRC03_TricCloudNok_TricZentralNok_nu_LF => "TRC03_TricCloudNok_TricZentralNok_nu_LF";
-        public static string ConWoy_Offline_VIN_Range_Success => "CON01_ConWoyOfflineVinRangeSuccess_nu_LF";
-        public static string ConWoy_Offline_VIN_Range_Failed => "CON02_ConWoyOfflineVinRangeFailed_nu_LF";
-        public static string ConWoy_Online_VIN_Range_Success => "CON03_ConWoyOnlineVinRangeSuccess_nu_LF";
-        public static string ConWoy_Online_VIN_Range_Failed => "CON04_ConWoyOnlineVinRangeFailed_nu_LF";
-        public static string WSI_Fallback_VIN_Range_Success => "CON05_WsiVinRangeSuccess_nu_LF";
-        public static string WSI_Fallback_VIN_Range_Failed => "CON06_WsiVinRangeFailed_nu_LF";
+        public static string ConWoy_Offline_Success => "CON01_ConWoyOfflineSuccess_nu_LF";
+        public static string ConWoy_Offline_Failed => "CON02_ConWoyOfflineFailed_nu_LF";
+        public static string ConWoy_Online_Success => "CON03_ConWoyOnlineSuccess_nu_LF";
+        public static string ConWoy_Online_Failed => "CON04_ConWoyOnlineFailed_nu_LF";
+        public static string WSI_Fallback_Success => "CON05_WsiSuccess_nu_LF";
+        public static string WSI_Fallback_Failed => "CON06_WsiFailed_nu_LF";
         public static string ANA01_TimespanVehicleIdent_t_LF => "ANA01_TimespanVehicleIdent_t_LF";
         public static string ANA02_TimespanVehicleTest_t_LF => "ANA02_TimespanVehicleTest_t_LF";
         public static string ANA03_TimespanFastaReadout_t_LF => "ANA03_TimespanFastaReadout_t_LF";
@@ -64,6 +67,7 @@
         public static string EDI00_SGBDW2VinUse_nu_LF => "EDI00_SGBDW2VinUse_nu_LF";
         public static string ECU01_EdiabasError_nu_LF => "ECU01_EdiabasError_nu_LF";
         public static string ECU02_MPADnoResponseAfterWaitingTime_nu_LF => "ECU02_MPADnoResponseAfterWaitingTime_nu_LF";
+        public static string ECU03_SMACNameNotFoundInDatabase_nu_LF => "ECU03_SMACNameNotFoundInDatabase_nu_LF";
         public static string FCM_80_TransmissionStatus_nu_CV => "FCM_80_TransmissionStatus_nu_CV";
         public static string SKIPPEDECUKOM_UNKNOWNGROUP => "SKIPPEDECUKOM_UNKNOWNGROUP";
         public static string SYS00_UICOMRED_mV_MV => "SYS00_UICOMRED_mV_MV";
@@ -183,6 +187,8 @@
         public static string CON08_PsdzConnectionSuccessfulAfterHsfzRestart_nu_LF => "CON08_PsdzConnectionSuccessfulAfterHsfzRestart_nu_LF";
         public static string CON09_NoPsdzConnectionAfterHsfzRestart_nu_LF => "CON09_NoPsdzConnectionAfterHsfzRestart_nu_LF";
         public static string CON10_PsdzConnectionSuccessfulAfterIcomReboot_nu_LF => "CON10_PsdzConnectionSuccessfulAfterIcomReboot_nu_LF";
+        public static string CON11_PortCheckerFailed_ForHDDUpdate_nu_LF => "CON11_PortCheckerFailed_ForHDDUpdate_nu_LF";
+        public static string CON12_PortCheckerFailed_ForFlash_nu_LF => "CON12_PortCheckerFailed_ForFlash_nu_LF";
         public static string ISL01_ElapsedTimePackageDownload_nu_LF => "ISL01_ElapsedTimePackageDownload_nu_LF";
         public static string ISL02_ElapsedTimePackageUnpack_nu_LF => "ISL02_ElapsedTimePackageUnpack_nu_LF";
         public static string ISL03_ElapsedTimePackageInstallation_nu_LF => "ISL03_ElapsedTimePackageInstallation_nu_LF";
@@ -209,5 +215,6 @@
         public static string S4D02_InfoCode_nu_LF => "S4D02_InfoCode_nu_LF";
         public static string S4D03_ErrorCode_nu_LF => "S4D03_ErrorCode_nu_LF";
         public static string S4D04_DiagJobRejectByZdf_nu_LF => "S4D04_DiagJobRejectByZdf_nu_LF";
+        public static string ISA01_NoFreePortFound_nu_LF => "ISA01_NoFreePortFound_nu_LF";
     }
 }
