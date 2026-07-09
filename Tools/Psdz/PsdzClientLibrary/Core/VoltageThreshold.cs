@@ -4,56 +4,10 @@ namespace PsdzClient.Core
 {
     public class VoltageThreshold : IVoltageThreshold
     {
-        public const double minErrorLFPDefault = 10.25;
-
-        public const double minWarningLFPDefault = 12.35;
-
-        public const double maxWarningLFPDefault = 14.05;
-
-        public const double maxErrorLFPDefault = 14.45;
-
-        public const double minErrorLFPNCARDefault = 10.25;
-
-        public const double minWarningLFPNCARDefault = 12.35;
-
-        public const double maxWarningLFPNCARDefault = 14.85;
-
-        public const double maxErrorLFPNCARDefault = 15.55;
-
-        public const double minErrorPbNewDefault = 9.95;
-
-        public const double minWarningPbNewDefault = 12.55;
-
-        public const double maxWarningPbNewDefault = 14.85;
-
-        public const double maxErrorPbNewDefault = 16.05;
-
-        public const double minErrorPbDefault = 9.95;
-
-        public const double minWarningPbLightModeActiveDefault = 10.0;
-
-        public const double minWarningPbLightModeNotActiveDefault = 12.55;
-
-        public const double maxWarningPbDefault = 14.85;
-
-        public const double maxErrorPbDefault = 15.55;
-
-        public const double minErrorUnknownDefault = 9.9;
-
-        public const double minWarningUnknownDefault = 12.3;
-
-        public const double maxWarningUnknownDefault = 15.0;
-
-        public const double maxErrorUnknowDeault = 16.1;
-
         public double MinError { get; private set; }
-
         public double MinWarning { get; private set; }
-
         public double MaxWarning { get; private set; }
-
         public double MaxError { get; private set; }
-
         public BatteryEnum BatteryType { get; private set; }
 
         public VoltageThreshold(BatteryEnum batteryType)

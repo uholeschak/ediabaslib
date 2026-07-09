@@ -318,18 +318,6 @@ namespace PsdzClient.Programming
         public const int MaxOpRetries = 3;
         public const int MaxOpEmptyQueueRetries = 2;
 
-        public const double MinBatteryVoltageErrorPb = VoltageThreshold.minErrorPbNewDefault;
-        public const double MinBatteryVoltageErrorLfp = VoltageThreshold.minErrorLFPDefault;
-
-        public const double MinBatteryVoltageWarnPb = VoltageThreshold.minWarningPbNewDefault;
-        public const double MinBatteryVoltageWarnLfp = VoltageThreshold.minWarningLFPDefault;
-
-        public const double MaxBatteryVoltageWarnPb = VoltageThreshold.maxWarningPbDefault;
-        public const double MaxBatteryVoltageWarnLfp = VoltageThreshold.maxWarningLFPDefault;
-
-        public const double MaxBatteryVoltageErrorPb = VoltageThreshold.maxErrorPbDefault;
-        public const double MaxBatteryVoltageErrorLfp = VoltageThreshold.maxErrorLFPDefault;
-
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
         private string _dealerId;
@@ -346,6 +334,17 @@ namespace PsdzClient.Programming
         public IntPtr ParentWindowHandle { get; set; }
         public bool AllowDbGeneration { get; set; }
         public bool GenServiceModules { get; set; }
+
+        public VoltageThreshold VoltageThresholdPb { get; }
+        public VoltageThreshold VoltageThresholdLfp { get; }
+        public double MinBatteryVoltageErrorPb { get; }
+        public double MinBatteryVoltageErrorLfp { get; }
+        public double MinBatteryVoltageWarnPb { get; }
+        public double MinBatteryVoltageWarnLfp { get; }
+        public double MaxBatteryVoltageWarnPb { get; }
+        public double MaxBatteryVoltageWarnLfp { get; }
+        public double MaxBatteryVoltageErrorPb { get; }
+        public double MaxBatteryVoltageErrorLfp { get; }
 
         private PsdzContext _psdzContext;
         public PsdzContext PsdzContext
@@ -477,6 +476,21 @@ namespace PsdzClient.Programming
                 ThreadContextId = GlobalThreadContextId++;
             }
             ProgrammingService = null;
+
+            VoltageThresholdPb = new VoltageThreshold(BatteryEnum.Pb);
+            VoltageThresholdLfp = new VoltageThreshold(BatteryEnum.LFP);
+
+            MinBatteryVoltageErrorPb = VoltageThresholdPb.MinError;
+            MinBatteryVoltageErrorLfp = VoltageThresholdLfp.MinError;
+
+            MinBatteryVoltageWarnPb = VoltageThresholdPb.MinWarning;
+            MinBatteryVoltageWarnLfp = VoltageThresholdLfp.MinWarning;
+
+            MaxBatteryVoltageWarnPb = VoltageThresholdPb.MaxWarning;
+            MaxBatteryVoltageWarnLfp = VoltageThresholdLfp.MaxWarning;
+
+            MaxBatteryVoltageErrorPb = VoltageThresholdPb.MaxError;
+            MaxBatteryVoltageErrorLfp = VoltageThresholdLfp.MaxError;
         }
 
         public bool IsModuleGenerationMode()
