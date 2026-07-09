@@ -1,5 +1,9 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming.Common;
+using BMW.Rheingold.Psdz;
+using PsdzClient.Contracts;
 using PsdzClient.Core.Container;
+using PsdzClient.Programming;
 using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
@@ -12,9 +16,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
-using BMW.Rheingold.Programming.Common;
-using PsdzClient.Contracts;
-using PsdzClient.Programming;
 
 #pragma warning disable CS0169, CS0649, CS0618, CS0612
 namespace PsdzClient.Core
@@ -26,15 +27,11 @@ namespace PsdzClient.Core
         private readonly PlaceholderType pKodeList;
         private readonly ParameterContainer sessionDataStore;
         private string vinRangeType;
-        private string vinRangeTypeLastResolvedType;
         private FA targetFA;
         private string productLine;
         private string doorNumber;
         private string securityRelevant;
         private DateTime? cDatetimeByModelYearMonth;
-        private HashSet<int> validPWFStates;
-        private double clamp15MinValue;
-        private double clamp30MinValue;
         [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         private BatteryEnum batteryType;
         private string verkaufsBezeichnungField;
@@ -46,7 +43,6 @@ namespace PsdzClient.Core
         private PlaceholderType checkControlMessages;
         private string salesDesignationBadgeUIText;
         private string eBezeichnungUIText;
-        private const int indexOfFirsHDDAboUpdateInDecimal = 54;
         [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
         private PlaceholderType virtualFaultInfoList;
         private string hmiVersion;
@@ -127,8 +123,6 @@ namespace PsdzClient.Core
         private string leistungsklasseField;
         private string kraftstoffartField;
         private string eCTypeApprovalField;
-        private DateTime lastSaveDateField;
-        private DateTime lastChangeDateField;
         [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         private PlaceholderType serviceHistoryField;
         [PreserveSource(Hint = "ObservableCollection<typeDiagCode>", Placeholder = true)]
@@ -155,14 +149,11 @@ namespace PsdzClient.Core
         private string kl30VoltageField;
         private bool pADVehicleField;
         private int pwfStateField;
-        private DateTime klVoltageLastMessageTimeField;
-        private bool klVoltageLastMessageTimeFieldSpecified;
         private string applicationVersionField;
         private bool fASTAAlreadyDoneField;
         private IdentificationLevel vehicleIdentLevelField;
         private bool vehicleShortTestAsSessionEntryField;
         private bool pannenfallField;
-        private int selectedDiagBUSField;
         private bool gWSZReadoutSuccessField;
         private DateTime vehicleLifeStartDate;
         private double vehicleSystemTime;
@@ -1292,39 +1283,11 @@ namespace PsdzClient.Core
             }
         }
 
-        public DateTime LastSaveDate
-        {
-            get
-            {
-                return lastSaveDateField;
-            }
+        [Obsolete("Use value from SessionInfo. Remove in 4.62")]
+        public DateTime LastSaveDate { get; }
 
-            set
-            {
-                if (!lastSaveDateField.Equals(value))
-                {
-                    lastSaveDateField = value;
-                    OnPropertyChanged("LastSaveDate");
-                }
-            }
-        }
-
-        public DateTime LastChangeDate
-        {
-            get
-            {
-                return lastChangeDateField;
-            }
-
-            set
-            {
-                if (!lastChangeDateField.Equals(value))
-                {
-                    lastChangeDateField = value;
-                    OnPropertyChanged("LastChangeDate");
-                }
-            }
-        }
+        [Obsolete("Use value from SessionInfo. Remove in 4.62")]
+        public DateTime LastChangeDate { get; }
 
         [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         public PlaceholderType ServiceHistory;
@@ -1721,40 +1684,12 @@ namespace PsdzClient.Core
             }
         }
 
-        public DateTime KlVoltageLastMessageTime
-        {
-            get
-            {
-                return klVoltageLastMessageTimeField;
-            }
+        [Obsolete("Use value from SessionInfo. Remove in 4.62")]
+        public DateTime KlVoltageLastMessageTime { get; }
 
-            set
-            {
-                if (!klVoltageLastMessageTimeField.Equals(value))
-                {
-                    klVoltageLastMessageTimeField = value;
-                    OnPropertyChanged("KlVoltageLastMessageTime");
-                }
-            }
-        }
-
+        [Obsolete("Remove in 4.62")]
         [XmlIgnore]
-        public bool KlVoltageLastMessageTimeSpecified
-        {
-            get
-            {
-                return klVoltageLastMessageTimeFieldSpecified;
-            }
-
-            set
-            {
-                if (!klVoltageLastMessageTimeFieldSpecified.Equals(value))
-                {
-                    klVoltageLastMessageTimeFieldSpecified = value;
-                    OnPropertyChanged("KlVoltageLastMessageTimeSpecified");
-                }
-            }
-        }
+        public bool KlVoltageLastMessageTimeSpecified { get; }
 
         [DefaultValue("0.0.1")]
         public string ApplicationVersion
@@ -1860,22 +1795,8 @@ namespace PsdzClient.Core
         }
 
         [DefaultValue(0)]
-        public int SelectedDiagBUS
-        {
-            get
-            {
-                return selectedDiagBUSField;
-            }
-
-            set
-            {
-                if (!selectedDiagBUSField.Equals(value))
-                {
-                    selectedDiagBUSField = value;
-                    OnPropertyChanged("SelectedDiagBUS");
-                }
-            }
-        }
+        [Obsolete("Use value from SessionInfo. Remove in 4.62")]
+        public int SelectedDiagBUS { get; }
 
         [PreserveSource(Hint = "BackendsAvailabilityIndicator", Placeholder = true)]
         public PlaceholderType BackendsAvailabilityIndicator;
@@ -2626,24 +2547,6 @@ namespace PsdzClient.Core
         IEnumerable<ICemResult> IVehicle.CEM => CEM;
 
         [XmlIgnore]
-        public double Clamp15MinValue
-        {
-            get
-            {
-                return clamp15MinValue;
-            }
-
-            set
-            {
-                if (clamp15MinValue != value)
-                {
-                    clamp15MinValue = value;
-                    OnPropertyChanged("Clamp15MinValue");
-                }
-            }
-        }
-
-        [XmlIgnore]
         public TransmissionDataType TransmissionDataType { get; private set; } = new TransmissionDataType();
 
         [XmlIgnore]
@@ -2660,42 +2563,6 @@ namespace PsdzClient.Core
                 {
                     batteryType = value;
                     OnPropertyChanged("BatteryType");
-                }
-            }
-        }
-
-        [XmlIgnore]
-        public double Clamp30MinValue
-        {
-            get
-            {
-                return clamp30MinValue;
-            }
-
-            set
-            {
-                if (clamp30MinValue != value)
-                {
-                    clamp30MinValue = value;
-                    OnPropertyChanged("Clamp30MinValue");
-                }
-            }
-        }
-
-        [XmlIgnore]
-        public HashSet<int> ValidPWFStates
-        {
-            get
-            {
-                return validPWFStates;
-            }
-
-            set
-            {
-                if (validPWFStates != value)
-                {
-                    validPWFStates = value;
-                    OnPropertyChanged("ValidPWFStates");
                 }
             }
         }
@@ -2832,19 +2699,21 @@ namespace PsdzClient.Core
         public string SetVINRangeTypeFromVINRanges()
         {
             //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-            //[-] if (instance != null && instance.DatabaseAccessType != DatabaseType.None && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            //[-]if (instance != null && instance.DatabaseAccessType != DatabaseType.None && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(SessionInfoAccessor.SessionInfo.VinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             //[+] PsdzDatabase database = ClientContext.GetDatabase(this);
             PsdzDatabase database = ClientContext.GetDatabase(this);
-            //[+] if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
-            if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            //[+] if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(_clientContext.SessionInfo.VinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(_clientContext.SessionInfo.VinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             {
                 //[-] IVinRanges vinRangesByVin = instance.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
                 //[+] PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
                 PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
                 if (vinRangesByVin != null)
                 {
-                    vinRangeTypeLastResolvedType = VIN7;
+                    //[-] SessionInfoAccessor.SessionInfo.VinRangeTypeLastResolvedType = VIN7;
                     //[-] return vinRangesByVin.TYPSCHLUESSEL;
+                    //[+]_clientContext.SessionInfo.VinRangeTypeLastResolvedType = VIN7;
+                    _clientContext.SessionInfo.VinRangeTypeLastResolvedType = VIN7;
                     //[+] return vinRangesByVin.TypeKey;
                     return vinRangesByVin.TypeKey;
                 }
@@ -2896,7 +2765,6 @@ namespace PsdzClient.Core
             vehicleIdentLevelField = IdentificationLevel.None;
             vehicleShortTestAsSessionEntryField = false;
             pannenfallField = false;
-            selectedDiagBUSField = 0;
             gWSZReadoutSuccessField = false;
             dealerSessionProperties = new List<DealerSessionProperty>();
             //[-] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
@@ -2906,9 +2774,12 @@ namespace PsdzClient.Core
             sessionDataStore = new ParameterContainer();
             //[-] Testplan = new TestPlanType(this);
             diagCodesProgramming = new ObservableCollection<string>();
-            validPWFStates = new HashSet<int>(new int[17] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
-            clamp15MinValue = ConfigSettings.GetConfigDouble("BMW.Rheingold.ISTAGUI.Clamp15MinVoltage", 0.0);
-            clamp30MinValue = new VoltageThreshold(BatteryEnum.Pb).MinError;
+            //[-] SessionInfoAccessor.SessionInfo.Clamp15MinValue = ConfigSettings.GetConfigDouble("BMW.Rheingold.ISTAGUI.Clamp15MinVoltage", 0.0);
+            //[-] SessionInfoAccessor.SessionInfo.Clamp30MinValue = new VoltageThreshold(BatteryEnum.Pb).MinError;
+            //[+] _clientContext.SessionInfo.Clamp15MinValue = ConfigSettings.GetConfigDouble("BMW.Rheingold.ISTAGUI.Clamp15MinVoltage", 0.0);
+            _clientContext.SessionInfo.Clamp15MinValue = ConfigSettings.GetConfigDouble("BMW.Rheingold.ISTAGUI.Clamp15MinVoltage", 0.0);
+            //[+] _clientContext.SessionInfo.Clamp30MinValue = new VoltageThreshold(BatteryEnum.Pb).MinError;
+            _clientContext.SessionInfo.Clamp30MinValue = new VoltageThreshold(BatteryEnum.Pb).MinError;
             //[-] RxSwin = new RxSwinData();
             //[-] checkControlMessages = new ObservableCollection<CheckControlMessage>();
             Classification = new VehicleClassification(this);
@@ -2965,47 +2836,6 @@ namespace PsdzClient.Core
         private PlaceholderType GetXepFaultLabelsByDtcFOrtEcuVariantAsync()
         {
             return PlaceholderType.Value;
-        }
-
-        public string GetFSCfromUpdateIndex(string updateIndex, string huVariante)
-        {
-            string[] source = new string[2]
-            {
-                "HU_MGU",
-                "ENAVEVO"
-            };
-            try
-            {
-                int num = Convert.ToInt32(updateIndex, 16);
-                if (source.Any((string x) => huVariante.Equals(x)))
-                {
-                    string text = updateIndex.Substring(0, 2);
-                    return updateIndex.Substring(2, 2) + "-" + text;
-                }
-
-                if (num > 45)
-                {
-                    int months = num - 54;
-                    DateTime dateTime = new DateTime(2018, 7, 1).AddMonths(months);
-                    new DateTime(2017, 10, 1);
-                    return dateTime.Month + "-" + dateTime.Year;
-                }
-
-                if (num > 33)
-                {
-                    int num2 = 46 - num;
-                    int months2 = -1 * (num2 * 3 - 3);
-                    DateTime dateTime2 = new DateTime(2017, 10, 1).AddMonths(months2);
-                    return dateTime2.Month + "-" + dateTime2.Year;
-                }
-
-                return "-";
-            }
-            catch
-            {
-                Log.Warning("Vehicle.ValidateFSC", "Exception Occurred validating HDDUpdateIndex {0}", updateIndex);
-                return "-";
-            }
         }
 
         public static Vehicle Deserialize(string filename)
