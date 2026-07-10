@@ -551,6 +551,29 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.CoreFramework",
+                                Class = "ConfigSettings",
+                                Method = "GetActivateSdpOnlinePatch",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("ConfigSettings.GetActivateSdpOnlinePatch found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
+                                instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                                Console.WriteLine("GetActivateSdpOnlinePatch patched");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** ConfigSettings.GetActivateSdpOnlinePatch Exception: {0}", ex.Message);
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.RheingoldSessionController",
                                 Class = "Logic",
                                 Method = "SendFastaDataToFBM",
