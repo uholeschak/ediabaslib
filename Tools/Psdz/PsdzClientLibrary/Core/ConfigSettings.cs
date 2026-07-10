@@ -1277,13 +1277,7 @@ namespace PsdzClient.Core
 
         public static bool GetActivateSdpOnlinePatch()
         {
-            if (IsOssModeActive)
-            {
-                Log.Info(Log.CurrentMethod(), "SDP patch not enabled in AOS mode.");
-                return false;
-            }
-
-            return GetFeatureEnabledStatus("SdpOnlnPatchMultisess").IsActive;
+            return false;
         }
 
         public static string GetWebEAMNextStage()
