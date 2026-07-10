@@ -195,6 +195,7 @@ namespace PsdzClient.Core
             }
         }
 
+        public static bool IsAprilDeploymentModeCloud => string.Equals(getConfigString("TesterGUI.AprilDeploymentMode", "cloud"), "cloud", StringComparison.OrdinalIgnoreCase);
         public static bool IsILeanActive => true;
         public static string OssParamFile { get; set; }
 
@@ -250,7 +251,7 @@ namespace PsdzClient.Core
 
         public static string GetLogisticBaseVersion()
         {
-            return Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", null) as string;
+            return Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", string.Empty) as string;
         }
 
         public static string GetSwiDataUX()

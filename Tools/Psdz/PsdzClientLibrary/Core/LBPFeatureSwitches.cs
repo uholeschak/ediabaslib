@@ -33,6 +33,7 @@ namespace PsdzClient.Core
             public const string NopOverTricCloud = "NopOverTricCloud";
             public const string PkiOverTricCloud = "PkiOverTricCloud";
             public const string RenewConAfterEcuReset = "RenewConAfterEcuReset";
+            public const string SALocalizedOverConwoy = "SALocalizedOverConwoy";
             public const string SCBOverTricCloud = "SCBOverTricCloud";
             public const string SccOverTricCloud = "SccOverTricCloud";
             public const string SchedUserHousekeepJob = "SchedUserHousekeepJob";
@@ -51,6 +52,7 @@ namespace PsdzClient.Core
             public const string SyncLoginDatabasesJob = "SyncLoginDatabasesJob";
             public const string TCMOverTricCloud = "TCMOverTricCloud";
             public const string UseAlphaRealm = "UseAlphaRealm";
+            public const string UseNewIcomFwUpdate = "UseNewIcomFwUpdate";
             public const string UsePsdzSeriesFormatter = "UsePsdzSeriesFormatter";
             public const string UseQaBackendForSfaAndFsc = "UseQaBackendForSfaAndFsc";
             public const string UseReducPortRangeMirror = "UseReducPortRangeMirror";

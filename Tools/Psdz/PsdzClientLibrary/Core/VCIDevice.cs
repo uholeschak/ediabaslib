@@ -91,6 +91,15 @@ namespace PsdzClient.Core
         public bool IsDoIP { get; set; }
 
         [XmlIgnore]
+        public string ICOMUpdateProgress { get; set; }
+
+        [XmlIgnore]
+        public bool ICOMUpdating { get; set; }
+
+        [XmlIgnore]
+        public bool ICOMUpdatingIntermidite { get; set; }
+
+        [XmlIgnore]
         public bool IsSimulation { get; set; }
 
         [XmlIgnore]

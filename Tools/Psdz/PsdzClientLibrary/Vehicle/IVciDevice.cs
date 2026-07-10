@@ -11,6 +11,12 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IVciDevice : INotifyPropertyChanged, IVciDeviceRuleEvaluation, ICloneable
     {
+        bool ICOMUpdatingIntermidite { get; set; }
+
+        bool ICOMUpdating { get; set; }
+
+        string ICOMUpdateProgress { get; set; }
+
         string AccuCapacity { get; set; }
 
         IBasicFeatures BasicFeatures { get; }
