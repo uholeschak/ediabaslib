@@ -549,32 +549,6 @@ namespace AssemblyPatcher
 
                         try
                         {
-                            // Alternativly, create the folders:
-                            // C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\SdpPatch
-                            // C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\SdpPatchBOMs
-                            Target target = new Target
-                            {
-                                Namespace = "BMW.Rheingold.CoreFramework",
-                                Class = "ConfigSettings",
-                                Method = "GetActivateSdpOnlinePatch",
-                            };
-                            IList<Instruction> instructions = patcher.GetInstructionList(target);
-                            if (instructions != null)
-                            {
-                                Console.WriteLine("ConfigSettings.GetActivateSdpOnlinePatch found");
-                                instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
-                                instructions.Insert(1, Instruction.Create(OpCodes.Ret));
-                                patched = true;
-                                Console.WriteLine("GetActivateSdpOnlinePatch patched");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("*** ConfigSettings.GetActivateSdpOnlinePatch Exception: {0}", ex.Message);
-                        }
-
-                        try
-                        {
                             Target target = new Target
                             {
                                 Namespace = "BMW.Rheingold.RheingoldSessionController",
@@ -2000,6 +1974,32 @@ namespace AssemblyPatcher
                             catch (Exception ex)
                             {
                                 Console.WriteLine("*** WebService.GetServerBaseAddress Exception: {0}", ex.Message);
+                            }
+
+                            try
+                            {
+                                // Alternativly, create the folders and allow user write access:
+                                // C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\SdpPatch
+                                // C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\SdpPatchBOMs
+                                Target target = new Target
+                                {
+                                    Namespace = "BMW.Rheingold.CoreFramework",
+                                    Class = "ConfigSettings",
+                                    Method = "GetActivateSdpOnlinePatch",
+                                };
+                                IList<Instruction> instructions = patcher.GetInstructionList(target);
+                                if (instructions != null)
+                                {
+                                    Console.WriteLine("ConfigSettings.GetActivateSdpOnlinePatch found");
+                                    instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
+                                    instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                    patched = true;
+                                    Console.WriteLine("GetActivateSdpOnlinePatch patched");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("*** ConfigSettings.GetActivateSdpOnlinePatch Exception: {0}", ex.Message);
                             }
                         }
 
