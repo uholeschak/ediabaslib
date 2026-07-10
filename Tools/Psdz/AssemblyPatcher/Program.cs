@@ -549,6 +549,9 @@ namespace AssemblyPatcher
 
                         try
                         {
+                            // Alternativly, create the folders:
+                            // C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\SdpPatch
+                            // C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\SdpPatchBOMs
                             Target target = new Target
                             {
                                 Namespace = "BMW.Rheingold.CoreFramework",
