@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnpatch;
 using System;
@@ -1963,7 +1964,41 @@ namespace AssemblyPatcher
                                 {
                                     Console.WriteLine("SLP.ScanDeviceFromAttrList found");
 
-                                    Console.WriteLine("ScanDeviceFromAttrList patched");
+                                    int patchIndex = -1;
+                                    for (int index = 0; index + 1 < instructions.Count; index++)
+                                    {
+                                        // Find: ldstr "ICOM-Next"  followed by  call String::op_Equality(string, string)
+                                        if (instructions[index].OpCode == OpCodes.Ldstr &&
+                                            (instructions[index].Operand as string) == "ICOM-Next" &&
+                                            instructions[index + 1].OpCode == OpCodes.Call &&
+                                            instructions[index + 1].Operand is IMethod calledMethod &&
+                                            calledMethod.Name == "op_Equality")
+                                        {
+                                            patchIndex = index;
+                                            break;
+                                        }
+                                    }
+
+                                    if (patchIndex >= 0)
+                                    {
+                                        // Import instance method: bool String.StartsWith(string)
+                                        ModuleDef module = patcher.GetModule();
+                                        IMethod startsWith = module.Import(
+                                            typeof(string).GetMethod("StartsWith", new[] { typeof(string) }));
+
+                                        // Change comparison from ("DevType" == "ICOM-Next") to DevType.StartsWith("ICOM"),
+                                        // which matches both "ICOM" and "ICOM-Next".
+                                        instructions[patchIndex].Operand = "ICOM";
+                                        instructions[patchIndex + 1].OpCode = OpCodes.Callvirt;
+                                        instructions[patchIndex + 1].Operand = startsWith;
+
+                                        patched = true;
+                                        Console.WriteLine("ScanDeviceFromAttrList patched");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("*** Patching ScanDeviceFromAttrList failed");
+                                    }
                                 }
                             }
                             catch (Exception ex)
