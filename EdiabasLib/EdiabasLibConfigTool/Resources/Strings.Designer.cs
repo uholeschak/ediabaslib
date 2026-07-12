@@ -371,6 +371,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die You have to apply the patch again, when changing the adapter. ähnelt.
+        /// </summary>
+        internal static string PatchAgainHint {
+            get {
+                return ResourceManager.GetString("PatchAgainHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die EdiabasLib {0} file is missing. ähnelt.
         /// </summary>
         internal static string PatchApiDllMissing {
