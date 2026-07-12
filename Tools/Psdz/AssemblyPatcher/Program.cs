@@ -1949,6 +1949,27 @@ namespace AssemblyPatcher
                             {
                                 Console.WriteLine("*** IsIcomUnsupported Exception: {0}", ex.Message);
                             }
+
+                            try
+                            {
+                                Target target = new Target
+                                {
+                                    Namespace = "BMW.Rheingold.xVM",
+                                    Class = "SLP",
+                                    Method = "ScanDeviceFromAttrList",
+                                };
+                                IList<Instruction> instructions = patcher.GetInstructionList(target);
+                                if (instructions != null)
+                                {
+                                    Console.WriteLine("SLP.ScanDeviceFromAttrList found");
+
+                                    Console.WriteLine("ScanDeviceFromAttrList patched");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("*** ScanDeviceFromAttrList Exception: {0}", ex.Message);
+                            }
                         }
 
                         if (disableBackend)
