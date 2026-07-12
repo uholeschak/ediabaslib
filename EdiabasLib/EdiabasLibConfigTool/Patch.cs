@@ -1330,12 +1330,6 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                if (devInfo != null)
-                {
-                    sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchAgainHint);
-                }
-
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.PatchConfigUpdateOk);
                 switch (patchType)
@@ -1359,6 +1353,12 @@ namespace EdiabasLibConfigTool
                         sr.Append("\r\n");
                         sr.Append(Resources.Strings.PatchVaspcInfo);
                         break;
+                }
+
+                if (devInfo != null)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchAgainHint);
                 }
             }
             catch (Exception)
