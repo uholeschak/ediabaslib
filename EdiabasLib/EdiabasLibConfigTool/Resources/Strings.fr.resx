@@ -368,4 +368,7 @@ Installez d'abord le runtime VC++
   <data name="WifiAdapterRootPwd" xml:space="preserve">
     <value>Le mot de passe root par défaut est {0}.</value>
   </data>
+  <data name="PatchAgainHint" xml:space="preserve">
+    <value>Vous devez réappliquer le patch lorsque vous changez d'adaptateur.</value>
+  </data>
 </root>

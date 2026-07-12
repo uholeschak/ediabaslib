@@ -369,4 +369,7 @@ first.</value>
   <data name="WifiAdapterRootPwd" xml:space="preserve">
     <value>The default root password is {0}.</value>
   </data>
+  <data name="PatchAgainHint" xml:space="preserve">
+    <value>You have to apply the patch again, when changing the adapter.</value>
+  </data>
 </root>

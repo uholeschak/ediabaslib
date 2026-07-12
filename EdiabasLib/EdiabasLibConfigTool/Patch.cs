@@ -1330,6 +1330,12 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
+                if (devInfo != null)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchAgainHint);
+                }
+
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.PatchConfigUpdateOk);
                 switch (patchType)

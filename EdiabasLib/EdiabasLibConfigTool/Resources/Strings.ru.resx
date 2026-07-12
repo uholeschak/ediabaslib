@@ -366,4 +366,7 @@
   <data name="WifiAdapterRootPwd" xml:space="preserve">
     <value>Пароль по умолчанию - {0}.</value>
   </data>
+  <data name="PatchAgainHint" xml:space="preserve">
+    <value>При смене адаптера необходимо снова применить патч.</value>
+  </data>
 </root>
