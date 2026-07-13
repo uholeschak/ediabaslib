@@ -2056,14 +2056,17 @@ namespace AssemblyPatcher
                                         instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM_Next_A"));
                                         instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, setDevTypeExt));
 
-                                        patched = true;
+                                        // after the modification the jupms are too far, so they have to be recalculated
                                         MethodDef scanMethod = target.MethodDef;
                                         if (scanMethod?.Body != null)
                                         {
+                                            // converts all short branches to the long form, so that the offsets can be recalculated
                                             scanMethod.Body.SimplifyBranches();
+                                            // recalculates the offsets and converts long branches back to short branches where possible
                                             scanMethod.Body.OptimizeBranches();
                                         }
 
+                                        patched = true;
                                         Console.WriteLine("ScanDeviceFromAttrList DevTypeExt forced to ICOM_Next_A");
                                     }
                                     else
