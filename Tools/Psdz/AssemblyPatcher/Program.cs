@@ -2001,6 +2001,15 @@ namespace AssemblyPatcher
                                     }
 
                                     // Force DevTypeExt to "ICOM_Next_A" for real "ICOM" devices.
+
+                                    //if (dictionary.ContainsKey("DevTypeExt"))
+                                    //{
+                                    //  if (dictionary["DevType"] == "ICOM")          // <-- injected part
+                                    //  {
+                                    //    vcidevice.DevTypeExt = "ICOM_Next_A";
+                                    //  }
+                                    //}
+
                                     // IL of the existing assignment "vcidevice.DevTypeExt = dictionary["DevTypeExt"]":
                                     //   ldloc vcidevice
                                     //   ldloc dictionary
