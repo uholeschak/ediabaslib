@@ -1999,6 +1999,61 @@ namespace AssemblyPatcher
                                     {
                                         Console.WriteLine("*** Patching ScanDeviceFromAttrList failed");
                                     }
+
+                                    // Force DevTypeExt to "ICOM_Next_A" for real "ICOM" devices.
+                                    // IL of the existing assignment "vcidevice.DevTypeExt = dictionary["DevTypeExt"]":
+                                    //   ldloc vcidevice
+                                    //   ldloc dictionary
+                                    //   ldstr "DevTypeExt"
+                                    //   callvirt Dictionary::get_Item
+                                    //   callvirt VCIDevice::set_DevTypeExt
+                                    int extIndex = -1;
+                                    for (int index = 2; index + 2 < instructions.Count; index++)
+                                    {
+                                        if (instructions[index].OpCode == OpCodes.Ldstr &&
+                                            (instructions[index].Operand as string) == "DevTypeExt" &&
+                                            instructions[index + 1].OpCode == OpCodes.Callvirt &&
+                                            instructions[index + 2].OpCode == OpCodes.Callvirt &&
+                                            instructions[index + 2].Operand is IMethod devTypeExtSetter &&
+                                            devTypeExtSetter.Name == "set_DevTypeExt")
+                                        {
+                                            extIndex = index;
+                                            break;
+                                        }
+                                    }
+
+                                    if (extIndex >= 0)
+                                    {
+                                        ModuleDef module = patcher.GetModule();
+                                        IMethod opEquality = module.Import(
+                                            typeof(string).GetMethod("op_Equality", new[] { typeof(string), typeof(string) }));
+
+                                        Instruction ldVci = instructions[extIndex - 2];              // ldloc vcidevice
+                                        Instruction ldDict = instructions[extIndex - 1];             // ldloc dictionary
+                                        IMethod getItem = (IMethod)instructions[extIndex + 1].Operand;   // Dictionary::get_Item
+                                        IMethod setDevTypeExt = (IMethod)instructions[extIndex + 2].Operand; // VCIDevice::set_DevTypeExt
+
+                                        // Instruction after the assignment; branch target when DevType != "ICOM".
+                                        Instruction afterTarget = instructions[extIndex + 3];
+
+                                        int ins = extIndex + 3;
+                                        instructions.Insert(ins++, ldDict.Clone());
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "DevType"));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, getItem));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM"));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Call, opEquality));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Brfalse, afterTarget));
+                                        instructions.Insert(ins++, ldVci.Clone());
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM_Next_A"));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, setDevTypeExt));
+
+                                        patched = true;
+                                        Console.WriteLine("ScanDeviceFromAttrList DevTypeExt forced to ICOM_Next_A");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("*** Patching ScanDeviceFromAttrList DevTypeExt failed");
+                                    }
                                 }
                             }
                             catch (Exception ex)
