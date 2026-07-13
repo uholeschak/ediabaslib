@@ -2017,7 +2017,7 @@ namespace AssemblyPatcher
                                     //   callvirt Dictionary::get_Item
                                     //   callvirt VCIDevice::set_DevTypeExt
                                     int extIndex = -1;
-                                    for (int index = 2; index + 2 < instructions.Count; index++)
+                                    for (int index = 0; index + 2 < instructions.Count; index++)
                                     {
                                         if (instructions[index].OpCode == OpCodes.Ldstr &&
                                             (instructions[index].Operand as string) == "DevTypeExt" &&
@@ -2057,6 +2057,16 @@ namespace AssemblyPatcher
                                         instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, setDevTypeExt));
 
                                         patched = true;
+                                        // Instructions were inserted -> existing short branches may now be out of range.
+                                        // Convert branches to long form so the writer can emit valid offsets.
+                                        TypeDef slpType = module.Find("BMW.Rheingold.xVM.SLP", true);
+                                        MethodDef scanMethod = slpType?.FindMethod("ScanDeviceFromAttrList");
+                                        if (scanMethod?.Body != null)
+                                        {
+                                            scanMethod.Body.SimplifyBranches();
+                                            scanMethod.Body.OptimizeBranches();
+                                        }
+
                                         Console.WriteLine("ScanDeviceFromAttrList DevTypeExt forced to ICOM_Next_A");
                                     }
                                     else
