@@ -2057,10 +2057,7 @@ namespace AssemblyPatcher
                                         instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, setDevTypeExt));
 
                                         patched = true;
-                                        // Instructions were inserted -> existing short branches may now be out of range.
-                                        // Convert branches to long form so the writer can emit valid offsets.
-                                        TypeDef slpType = module.Find("BMW.Rheingold.xVM.SLP", true);
-                                        MethodDef scanMethod = slpType?.FindMethod("ScanDeviceFromAttrList");
+                                        MethodDef scanMethod = target.MethodDef;
                                         if (scanMethod?.Body != null)
                                         {
                                             scanMethod.Body.SimplifyBranches();

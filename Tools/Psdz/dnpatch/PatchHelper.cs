@@ -1023,6 +1023,7 @@ namespace dnpatch
             {
                 return null;
             }
+            target.MethodDef = method;
             return method.Body.Instructions.ToArray();
         }
 
@@ -1034,6 +1035,7 @@ namespace dnpatch
             {
                 return null;
             }
+            target.MethodDef = method;
             return method.Body.Instructions;
         }
 
@@ -1045,6 +1047,7 @@ namespace dnpatch
             {
                 return null;
             }
+            target.MethodDef = method;
             return method.Body.Variables;
         }
 
