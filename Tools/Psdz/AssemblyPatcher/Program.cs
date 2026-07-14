@@ -2012,7 +2012,7 @@ namespace AssemblyPatcher
                                         if (instructions[index].OpCode == OpCodes.Call &&
                                             instructions[index].Operand is IMethod fwMethod &&
                                             fwMethod.Name == "IsFirmwareUpdateRequired" &&
-                                            instructions[index - 1].OpCode.Code == Code.Ldloc_S) // ldloc vcidevice
+                                            IsLdloc(instructions[index - 1].OpCode.Code)) // ldloc vcidevice (any form)
                                         {
                                             fwIndex = index;
                                             break;
@@ -2375,6 +2375,22 @@ namespace AssemblyPatcher
                 return false;
             }
             return true;
+        }
+
+        private static bool IsLdloc(Code code)
+        {
+            switch (code)
+            {
+                case Code.Ldloc:
+                case Code.Ldloc_S:
+                case Code.Ldloc_0:
+                case Code.Ldloc_1:
+                case Code.Ldloc_2:
+                case Code.Ldloc_3:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         public static string GetRelativePath(string basePath, string fullPath)
