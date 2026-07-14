@@ -2037,27 +2037,36 @@ namespace AssemblyPatcher
                                          instructions[fwIndex + 1].OpCode == OpCodes.Brfalse_S))
                                     {
                                         ModuleDef module = patcher.GetModule();
-                                        IMethod opEquality = module.Import(
-                                            typeof(string).GetMethod("op_Equality", new[] { typeof(string), typeof(string) }));
+                                        IMethod startsWith = module.Import(
+                                            typeof(string).GetMethod("StartsWith", new[] { typeof(string) }));
 
                                         // bool VCIDevice.get_DevTypeExt() on the same declaring type as get_DevType.
                                         IMethod getDevTypeExt = new MemberRefUser(module, "get_DevTypeExt",
                                             MethodSig.CreateInstance(module.CorLibTypes.String), vciTypeRef);
 
-                                        Instruction ldVci = instructions[fwIndex - 1];               // ldloc vcidevice
+                                        Instruction ldVci = instructions[fwIndex - 1];               // ldloc vcidevice (also the fall-through target)
                                         Instruction elseTarget = (Instruction)instructions[fwIndex + 1].Operand; // else branch
 
+                                        // if ((ext = vcidevice.DevTypeExt) != null && ext.StartsWith("ICOM_A")) goto else;
+                                        Instruction popNull = Instruction.Create(OpCodes.Pop);       // drop null ext, fall through
+                                        Instruction[] seq =
+                                        {
+                                            ldVci.Clone(),                                            // ldloc vcidevice
+                                            Instruction.Create(OpCodes.Callvirt, getDevTypeExt),      // ext
+                                            Instruction.Create(OpCodes.Dup),                          // ext, ext
+                                            Instruction.Create(OpCodes.Brfalse, popNull),            // if null -> popNull
+                                            Instruction.Create(OpCodes.Ldstr, "ICOM_A"),
+                                            Instruction.Create(OpCodes.Callvirt, startsWith),        // bool
+                                            Instruction.Create(OpCodes.Brtrue, elseTarget),          // matched -> else
+                                            Instruction.Create(OpCodes.Br, ldVci),                   // no match -> firmware check
+                                            popNull,                                                  // pop null; fall through to ldVci
+                                        };
+
                                         int ins = fwIndex - 1; // insert before "ldloc vcidevice"
-                                        instructions.Insert(ins++, ldVci.Clone());
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, getDevTypeExt));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM_A1"));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Call, opEquality));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Brtrue, elseTarget));
-                                        instructions.Insert(ins++, ldVci.Clone());
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, getDevTypeExt));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM_A2"));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Call, opEquality));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Brtrue, elseTarget));
+                                        foreach (Instruction instr in seq)
+                                        {
+                                            instructions.Insert(ins++, instr);
+                                        }
 
                                         // Fix short branches now that instructions were inserted.
                                         MethodDef scanMethod = target.MethodDef;
@@ -2068,7 +2077,7 @@ namespace AssemblyPatcher
                                         }
 
                                         patched = true;
-                                        Console.WriteLine("ScanDeviceFromAttrList firmware check skipped for ICOM_A1/ICOM_A2");
+                                        Console.WriteLine("ScanDeviceFromAttrList firmware check skipped for DevTypeExt StartsWith ICOM_A");
                                     }
                                     else
                                     {
