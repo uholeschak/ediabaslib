@@ -1999,8 +1999,9 @@ namespace AssemblyPatcher
                                     {
                                         Console.WriteLine("*** Patching ScanDeviceFromAttrList failed");
                                     }
-
+#if false
                                     // Force DevTypeExt to "ICOM_Next_A" for real "ICOM" devices.
+                                    // This modification enforces a firmware update, which is not possible for "ICOM" devices.
 
                                     //if (dictionary.ContainsKey("DevTypeExt"))
                                     //{
@@ -2065,7 +2066,6 @@ namespace AssemblyPatcher
                                             // recalculates the offsets and converts long branches back to short branches where possible
                                             scanMethod.Body.OptimizeBranches();
                                         }
-
                                         patched = true;
                                         Console.WriteLine("ScanDeviceFromAttrList DevTypeExt forced to ICOM_Next_A");
                                     }
@@ -2073,6 +2073,7 @@ namespace AssemblyPatcher
                                     {
                                         Console.WriteLine("*** Patching ScanDeviceFromAttrList DevTypeExt failed");
                                     }
+#endif
                                 }
                             }
                             catch (Exception ex)
