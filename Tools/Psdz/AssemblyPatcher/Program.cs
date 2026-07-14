@@ -1999,81 +1999,81 @@ namespace AssemblyPatcher
                                     {
                                         Console.WriteLine("*** Patching ScanDeviceFromAttrList failed");
                                     }
-#if false
-                                    // Force DevTypeExt to "ICOM_Next_A" for real "ICOM" devices.
-                                    // This modification enforces a firmware update, which is not possible for "ICOM" devices.
 
-                                    //if (dictionary.ContainsKey("DevTypeExt"))
-                                    //{
-                                    //  if (dictionary["DevType"] == "ICOM")          // <-- injected part
-                                    //  {
-                                    //    vcidevice.DevTypeExt = "ICOM_Next_A";
-                                    //  }
-                                    //}
-
-                                    // IL of the existing assignment "vcidevice.DevTypeExt = dictionary["DevTypeExt"]":
-                                    //   ldloc vcidevice
-                                    //   ldloc dictionary
-                                    //   ldstr "DevTypeExt"
-                                    //   callvirt Dictionary::get_Item
-                                    //   callvirt VCIDevice::set_DevTypeExt
-                                    int extIndex = -1;
-                                    for (int index = 0; index + 2 < instructions.Count; index++)
+                                    // Ignore firmware-update requirement for ICOM_A1 / ICOM_A2:
+                                    // insert DevTypeExt checks right before the SLP.IsFirmwareUpdateRequired(vcidevice) call.
+                                    // This injects teh code:
+                                    //if (dictionary["State"] != "5"
+                                    //    && vcidevice.DevTypeExt != "ICOM_A1" && vcidevice.DevTypeExt != "ICOM_A2"
+                                    //    && SLP.IsFirmwareUpdateRequired(vcidevice))
+                                    int fwIndex = -1;
+                                    for (int index = 1; index + 1 < instructions.Count; index++)
                                     {
-                                        if (instructions[index].OpCode == OpCodes.Ldstr &&
-                                            (instructions[index].Operand as string) == "DevTypeExt" &&
-                                            instructions[index + 1].OpCode == OpCodes.Callvirt &&
-                                            instructions[index + 2].OpCode == OpCodes.Callvirt &&
-                                            instructions[index + 2].Operand is IMethod devTypeExtSetter &&
-                                            devTypeExtSetter.Name == "set_DevTypeExt")
+                                        if (instructions[index].OpCode == OpCodes.Call &&
+                                            instructions[index].Operand is IMethod fwMethod &&
+                                            fwMethod.Name == "IsFirmwareUpdateRequired" &&
+                                            instructions[index - 1].OpCode.Code == Code.Ldloc_S) // ldloc vcidevice
                                         {
-                                            extIndex = index;
+                                            fwIndex = index;
                                             break;
                                         }
                                     }
 
-                                    if (extIndex >= 0)
+                                    // Find a get_DevType callvirt to reuse its declaring-type reference for get_DevTypeExt.
+                                    IMemberRefParent vciTypeRef = null;
+                                    foreach (Instruction instr in instructions)
+                                    {
+                                        if (instr.OpCode == OpCodes.Callvirt &&
+                                            instr.Operand is MemberRef getter &&
+                                            getter.Name == "get_DevType")
+                                        {
+                                            vciTypeRef = getter.Class;
+                                            break;
+                                        }
+                                    }
+
+                                    if (fwIndex >= 0 && vciTypeRef != null &&
+                                        (instructions[fwIndex + 1].OpCode == OpCodes.Brfalse ||
+                                         instructions[fwIndex + 1].OpCode == OpCodes.Brfalse_S))
                                     {
                                         ModuleDef module = patcher.GetModule();
                                         IMethod opEquality = module.Import(
                                             typeof(string).GetMethod("op_Equality", new[] { typeof(string), typeof(string) }));
 
-                                        Instruction ldVci = instructions[extIndex - 2];              // ldloc vcidevice
-                                        Instruction ldDict = instructions[extIndex - 1];             // ldloc dictionary
-                                        IMethod getItem = (IMethod)instructions[extIndex + 1].Operand;   // Dictionary::get_Item
-                                        IMethod setDevTypeExt = (IMethod)instructions[extIndex + 2].Operand; // VCIDevice::set_DevTypeExt
+                                        // bool VCIDevice.get_DevTypeExt() on the same declaring type as get_DevType.
+                                        IMethod getDevTypeExt = new MemberRefUser(module, "get_DevTypeExt",
+                                            MethodSig.CreateInstance(module.CorLibTypes.String), vciTypeRef);
 
-                                        // Instruction after the assignment; branch target when DevType != "ICOM".
-                                        Instruction afterTarget = instructions[extIndex + 3];
+                                        Instruction ldVci = instructions[fwIndex - 1];               // ldloc vcidevice
+                                        Instruction elseTarget = (Instruction)instructions[fwIndex + 1].Operand; // else branch
 
-                                        int ins = extIndex + 3;
-                                        instructions.Insert(ins++, ldDict.Clone());
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "DevType"));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, getItem));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM"));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Call, opEquality));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Brfalse, afterTarget));
+                                        int ins = fwIndex - 1; // insert before "ldloc vcidevice"
                                         instructions.Insert(ins++, ldVci.Clone());
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM_Next_A"));
-                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, setDevTypeExt));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, getDevTypeExt));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM_A1"));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Call, opEquality));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Brtrue, elseTarget));
+                                        instructions.Insert(ins++, ldVci.Clone());
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Callvirt, getDevTypeExt));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Ldstr, "ICOM_A2"));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Call, opEquality));
+                                        instructions.Insert(ins++, Instruction.Create(OpCodes.Brtrue, elseTarget));
 
-                                        // after the modification the jupms are too far, so they have to be recalculated
+                                        // Fix short branches now that instructions were inserted.
                                         MethodDef scanMethod = target.MethodDef;
                                         if (scanMethod?.Body != null)
                                         {
-                                            // converts all short branches to the long form, so that the offsets can be recalculated
                                             scanMethod.Body.SimplifyBranches();
-                                            // recalculates the offsets and converts long branches back to short branches where possible
                                             scanMethod.Body.OptimizeBranches();
                                         }
+
                                         patched = true;
-                                        Console.WriteLine("ScanDeviceFromAttrList DevTypeExt forced to ICOM_Next_A");
+                                        Console.WriteLine("ScanDeviceFromAttrList firmware check skipped for ICOM_A1/ICOM_A2");
                                     }
                                     else
                                     {
-                                        Console.WriteLine("*** Patching ScanDeviceFromAttrList DevTypeExt failed");
+                                        Console.WriteLine("*** Patching ScanDeviceFromAttrList firmware check failed");
                                     }
-#endif
                                 }
                             }
                             catch (Exception ex)
