@@ -340,7 +340,7 @@ namespace SourceCodeSync
                 {
                     Console.WriteLine("Filter: {0}", string.Join(", ", filterParts));
                 }
-                Console.WriteLine("Decompiling ...");
+                Console.WriteLine("Decompiling assemblies ...");
 
                 List<string> decompileAssemblies = new List<string>();
                 foreach (string assemblyName in _decompileAssemblies)
@@ -361,6 +361,7 @@ namespace SourceCodeSync
 
                 if (!string.IsNullOrEmpty(testmoduleDir))
                 {
+                    Console.WriteLine("Decompiling test modules ...");
                     string[] testmoduleFiles = Directory.GetFiles(testmoduleDir, "ABL_AUS_*");
                     string testmoduleSourceDir = Path.Combine(sourceDir, "Testmodule");
                     if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList))
