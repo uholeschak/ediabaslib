@@ -350,7 +350,7 @@ namespace SourceCodeSync
                 }
 
                 List<string> searchList = new List<string> { assemblyDir };
-                if (!DecompileAssemblies(decompileAssemblies, sourceDir, true, searchList))
+                if (!DecompileAssemblies(decompileAssemblies, sourceDir, overwrite, searchList))
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
                     {
