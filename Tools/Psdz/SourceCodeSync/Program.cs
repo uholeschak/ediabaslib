@@ -177,8 +177,8 @@ namespace SourceCodeSync
             [Option('a', "assemblydir", Required = true, HelpText = "Assembly directory.")]
             public string AssemblyDir { get; set; }
 
-            [Option('t', "testmodulesdir", Required = false, HelpText = "Test modules directory.")]
-            public string TestmodulesDir { get; set; }
+            [Option('t', "testmoduledir", Required = false, HelpText = "Test module directory.")]
+            public string TestmoduleDir { get; set; }
 
             [Option('d', "destdir", Required = true, HelpText = "Destination directory.")]
             public string DestDir { get; set; }
@@ -201,7 +201,7 @@ namespace SourceCodeSync
             {
                 string sourceDir = null;
                 string assemblyDir = null;
-                string testmodulesDir = null;
+                string testmoduleDir = null;
                 string destDir = null;
                 string filter = null;
                 bool overwrite = false;
@@ -220,7 +220,7 @@ namespace SourceCodeSync
                     {
                         sourceDir = o.SourceDir;
                         assemblyDir = o.AssemblyDir;
-                        testmodulesDir = o.TestmodulesDir;
+                        testmoduleDir = o.TestmoduleDir;
                         destDir = o.DestDir;
                         filter = o.Filter;
                         overwrite = o.Overwrite;
@@ -252,22 +252,22 @@ namespace SourceCodeSync
                     return 1;
                 }
 
-                if (!string.IsNullOrEmpty(testmodulesDir))
+                if (!string.IsNullOrEmpty(testmoduleDir))
                 {
-                    if (!Path.IsPathRooted(testmodulesDir))
+                    if (!Path.IsPathRooted(testmoduleDir))
                     {
-                        testmodulesDir = Path.GetFullPath(Path.Combine(assemblyDir, testmodulesDir));
+                        testmoduleDir = Path.GetFullPath(Path.Combine(assemblyDir, testmoduleDir));
                         if (_verbosity >= Options.VerbosityOption.Info)
                         {
-                            Console.WriteLine("Test modules directory is relative, combined with assembly directory: {0}", testmodulesDir);
+                            Console.WriteLine("Test module directory is relative, combined with assembly directory: {0}", testmoduleDir);
                         }
                     }
 
-                    if (!Directory.Exists(testmodulesDir))
+                    if (!Directory.Exists(testmoduleDir))
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine("Test modules directory not existing: {0}", testmodulesDir);
+                            Console.WriteLine("Test module directory not existing: {0}", testmoduleDir);
                         }
                         return 1;
                     }
@@ -357,6 +357,20 @@ namespace SourceCodeSync
                         Console.WriteLine("*** Decompile assemblies failed");
                     }
                     return 1;
+                }
+
+                if (!string.IsNullOrEmpty(testmoduleDir))
+                {
+                    string[] testmoduleFiles = Directory.GetFiles(testmoduleDir, "ABL_AUS_*");
+                    string testmoduleSourceDir = Path.Combine(sourceDir, "Testmodule");
+                    if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList))
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("*** Decompile test modules failed");
+                        }
+                        return 1;
+                    }
                 }
 
                 Console.WriteLine("Dest dir: {0}", destDir);
