@@ -177,6 +177,9 @@ namespace SourceCodeSync
             [Option('a', "assemblydir", Required = true, HelpText = "Assembly directory.")]
             public string AssemblyDir { get; set; }
 
+            [Option('t', "testmodulesdir", Required = false, HelpText = "Test modules directory.")]
+            public string TestmodulesDir { get; set; }
+
             [Option('d', "destdir", Required = true, HelpText = "Destination directory.")]
             public string DestDir { get; set; }
 
@@ -198,6 +201,7 @@ namespace SourceCodeSync
             {
                 string sourceDir = null;
                 string assemblyDir = null;
+                string testmodulesDir = null;
                 string destDir = null;
                 string filter = null;
                 bool overwrite = false;
@@ -216,6 +220,7 @@ namespace SourceCodeSync
                     {
                         sourceDir = o.SourceDir;
                         assemblyDir = o.AssemblyDir;
+                        testmodulesDir = o.TestmodulesDir;
                         destDir = o.DestDir;
                         filter = o.Filter;
                         overwrite = o.Overwrite;
@@ -245,6 +250,27 @@ namespace SourceCodeSync
                         Console.WriteLine("Source directory missing");
                     }
                     return 1;
+                }
+
+                if (!string.IsNullOrEmpty(testmodulesDir))
+                {
+                    if (!Path.IsPathRooted(testmodulesDir))
+                    {
+                        testmodulesDir = Path.GetFullPath(Path.Combine(assemblyDir, testmodulesDir));
+                        if (_verbosity >= Options.VerbosityOption.Info)
+                        {
+                            Console.WriteLine("Test modules directory is relative, combined with assembly directory: {0}", testmodulesDir);
+                        }
+                    }
+
+                    if (!Directory.Exists(testmodulesDir))
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("Test modules directory not existing: {0}", testmodulesDir);
+                        }
+                        return 1;
+                    }
                 }
 
                 if (!Path.IsPathRooted(sourceDir))
