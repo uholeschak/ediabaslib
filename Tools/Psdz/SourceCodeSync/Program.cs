@@ -316,59 +316,21 @@ namespace SourceCodeSync
                 }
                 Console.WriteLine("Decompiling ...");
 
-                List<string> searchList = new List<string>() { assemblyDir };
+                List<string> decompileAssemblies = new List<string>();
                 foreach (string assemblyName in _decompileAssemblies)
                 {
                     string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
-                    if (File.Exists(assemblyPath))
-                    {
-                        string outputPath = Path.Combine(sourceDir, assemblyName);
-                        if (Directory.Exists(outputPath))
-                        {
-                            if (overwrite)
-                            {
-                                Directory.Delete(outputPath, true);
-                            }
-                            else
-                            {
-                                if (_verbosity >= Options.VerbosityOption.Info)
-                                {
-                                    Console.WriteLine("Source directory already exists, skipping decompilation: {0}", outputPath);
-                                }
-                                continue;
-                            }
-                        }
+                    decompileAssemblies.Add(assemblyPath);
+                }
 
-                        if (_verbosity >= Options.VerbosityOption.Info)
-                        {
-                            Console.WriteLine("Decompiling assembly: {0}", assemblyPath);
-                        }
-
-                        try
-                        {
-                            if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, _textReplacements))
-                            {
-                                if (_verbosity >= Options.VerbosityOption.Error)
-                                {
-                                    Console.WriteLine("*** Decompilation failed for assembly: {0}", assemblyPath);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("*** Decompilation failed for assembly: {0}, Exception: {1}", assemblyPath, ex.Message);
-                            }
-                        }
-                    }
-                    else
+                List<string> searchList = new List<string> { assemblyDir };
+                if (!DecompileAssemblies(decompileAssemblies, sourceDir, true, searchList))
+                {
+                    if (_verbosity >= Options.VerbosityOption.Error)
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            Console.WriteLine("*** Assembly not found for decompilation: {0}", assemblyPath);
-                        }
+                        Console.WriteLine("*** Decompile assemblies failed");
                     }
+                    return 1;
                 }
 
                 Console.WriteLine("Dest dir: {0}", destDir);
@@ -438,6 +400,79 @@ namespace SourceCodeSync
             }
 
             return 0;
+        }
+
+        public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList)
+        {
+            bool result = true;
+            foreach (string assemblyPath in decompileAssemblies)
+            {
+                if (File.Exists(assemblyPath))
+                {
+                    string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
+                    if (string.IsNullOrEmpty(assemblyName))
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("*** Invalid assembly name: {0}", assemblyPath);
+                        }
+                        result = false;
+                        continue;
+                    }
+
+                    string outputPath = Path.Combine(sourceDir, assemblyName);
+                    if (Directory.Exists(outputPath))
+                    {
+                        if (overwrite)
+                        {
+                            Directory.Delete(outputPath, true);
+                        }
+                        else
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                Console.WriteLine("Source directory already exists, skipping decompilation: {0}", outputPath);
+                            }
+                            continue;
+                        }
+                    }
+
+                    if (_verbosity >= Options.VerbosityOption.Info)
+                    {
+                        Console.WriteLine("Decompiling assembly: {0}", assemblyPath);
+                    }
+
+                    try
+                    {
+                        if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, _textReplacements))
+                        {
+                            result = false;
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("*** Decompilation failed for assembly: {0}", assemblyPath);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        result = false;
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("*** Decompilation failed for assembly: {0}, Exception: {1}", assemblyPath, ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    result = false;
+                    if (_verbosity >= Options.VerbosityOption.Error)
+                    {
+                        Console.WriteLine("*** Assembly not found for decompilation: {0}", assemblyPath);
+                    }
+                }
+            }
+
+            return result;
         }
 
         public static bool GetFileSource(string fileName)
