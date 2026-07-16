@@ -443,7 +443,7 @@ namespace SourceCodeSync
             return 0;
         }
 
-        public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList, Dictionary<string, string> textReplacements = null, bool noNamespacePath = false)
+        public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList, Dictionary<string, string> textReplacements = null, bool noSubdirectories = false)
         {
             bool result = true;
             foreach (string assemblyPath in decompileAssemblies)
@@ -461,20 +461,43 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    string outputPath = Path.Combine(sourceDir, assemblyName);
-                    if (Directory.Exists(outputPath))
+                    string outputPath = sourceDir;
+                    if (!noSubdirectories)
                     {
-                        if (overwrite)
+                        outputPath = Path.Combine(sourceDir, assemblyName);
+                        if (Directory.Exists(outputPath))
                         {
-                            Directory.Delete(outputPath, true);
-                        }
-                        else
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Info)
+                            if (overwrite)
                             {
-                                Console.WriteLine("Source directory already exists, skipping decompilation: {0}", outputPath);
+                                Directory.Delete(outputPath, true);
                             }
-                            continue;
+                            else
+                            {
+                                if (_verbosity >= Options.VerbosityOption.Info)
+                                {
+                                    Console.WriteLine("Source directory already exists, skipping decompilation: {0}", outputPath);
+                                }
+                                continue;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string outputFile = Path.Combine(outputPath, assemblyName + ".cs");
+                        if (File.Exists(outputFile))
+                        {
+                            if (overwrite)
+                            {
+                                File.Delete(outputFile);
+                            }
+                            else
+                            {
+                                if (_verbosity >= Options.VerbosityOption.Info)
+                                {
+                                    Console.WriteLine("Source file already exists, skipping decompilation: {0}", outputFile);
+                                }
+                                continue;
+                            }
                         }
                     }
 
@@ -485,7 +508,7 @@ namespace SourceCodeSync
 
                     try
                     {
-                        if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, noNamespacePath))
+                        if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, noSubdirectories))
                         {
                             result = false;
                             if (_verbosity >= Options.VerbosityOption.Error)
