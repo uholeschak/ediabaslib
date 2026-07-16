@@ -983,7 +983,7 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IFaultCodeLocator", Placeholder = true)]
+        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
         public PlaceholderType __FaultCode(string refCode)
         {
             throw new NotImplementedException();
@@ -1016,7 +1016,7 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IFaultCodeLocator", Placeholder = true)]
+        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
         public PlaceholderType __FaultCode(string sgbd, string variante, string fCode)
         {
             throw new NotImplementedException();
