@@ -9,7 +9,7 @@ using System;
 namespace BMW.Authoring.API
 {
     [AuthorAPI(SelectableTypeDeclaration = false)]
-    [PreserveSource(Hint = "Simplified")]
+    [PreserveSource(Hint = "Simplified", SuppressWarning = true)]
     public interface IAuthoringModule : IHideObjectMembers
     {
         ILogic IstaOperationLogic { get; }
