@@ -350,7 +350,7 @@ namespace SourceCodeSync
                 }
 
                 List<string> searchList = new List<string> { assemblyDir };
-                if (!DecompileAssemblies(decompileAssemblies, sourceDir, overwrite, searchList))
+                if (!DecompileAssemblies(decompileAssemblies, sourceDir, overwrite, searchList, _textReplacements))
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
                     {
@@ -364,7 +364,7 @@ namespace SourceCodeSync
                     Console.WriteLine("Decompiling test modules ...");
                     string[] testmoduleFiles = Directory.GetFiles(testmoduleDir, "ABL_AUS_*");
                     string testmoduleSourceDir = Path.Combine(sourceDir, "Testmodule");
-                    if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList))
+                    if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList, _textReplacements, true))
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
@@ -443,7 +443,7 @@ namespace SourceCodeSync
             return 0;
         }
 
-        public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList)
+        public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList, Dictionary<string, string> textReplacements = null, bool noNamespacePath = false)
         {
             bool result = true;
             foreach (string assemblyPath in decompileAssemblies)
@@ -485,7 +485,7 @@ namespace SourceCodeSync
 
                     try
                     {
-                        if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, _textReplacements))
+                        if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, noNamespacePath))
                         {
                             result = false;
                             if (_verbosity >= Options.VerbosityOption.Error)

@@ -10,7 +10,7 @@ namespace SourceCodeSync;
 
 public class DecompilerHelper
 {
-    public static bool DecompileAssembly(string dllPath, string outputPath, List<string> searchList = null, Dictionary<string, string> textReplacements = null)
+    public static bool DecompileAssembly(string dllPath, string outputPath, List<string> searchList = null, Dictionary<string, string> textReplacements = null, bool noNamespacePath = false)
     {
         if (string.IsNullOrEmpty(outputPath))
         {
@@ -73,9 +73,13 @@ public class DecompilerHelper
             }
 
             // Erstelle Namespace-Verzeichnis
-            string namespacePath = type.Namespace.Replace('.', Path.DirectorySeparatorChar);
-            string typeDirectory = Path.Combine(outputPath, namespacePath);
-            Directory.CreateDirectory(typeDirectory);
+            string typeDirectory = outputPath;
+            if (!noNamespacePath)
+            {
+                string namespacePath = type.Namespace.Replace('.', Path.DirectorySeparatorChar);
+                typeDirectory = Path.Combine(outputPath, namespacePath);
+                Directory.CreateDirectory(typeDirectory);
+            }
 
             // Dateiname basierend auf Typnamen
             string typeName = type.Name;
