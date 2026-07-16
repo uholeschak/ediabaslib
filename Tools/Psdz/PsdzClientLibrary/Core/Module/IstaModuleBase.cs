@@ -850,13 +850,13 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IFaultCodeLocator", Placeholder = true)]
+        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
         public PlaceholderType GetFaultCode(string refCode)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IVirtualFaultCodeLocator", Placeholder = true)]
+        [PreserveSource(Hint = "IVirtualFaultCodeLocator replaced", SignatureModified = true)]
         public PlaceholderType GetVirtualFaultCode(string refCode)
         {
             throw new NotImplementedException();
