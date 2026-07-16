@@ -3,6 +3,7 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Authoring.API
 {
@@ -22,7 +23,7 @@ namespace BMW.Authoring.API
 
         //IProtocolBasicBase FastaProtocolerBase { get; }
 
-        //IDealerData DealerData { get; set; }
+        IDealerData DealerData { get; set; }
 
         //IDatabaseProvider DBProvider { get; set; }
 
