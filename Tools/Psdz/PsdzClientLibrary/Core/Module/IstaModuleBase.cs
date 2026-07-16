@@ -1022,7 +1022,7 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IFaultCodeLocator", Placeholder = true)]
+        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
         public PlaceholderType FaultCodeNode(string id)
         {
             throw new NotImplementedException();
