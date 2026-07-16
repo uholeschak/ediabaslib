@@ -41,24 +41,32 @@ namespace BMW.Rheingold.CoreFramework
         public List<PlaceholderType> NotOkItems = new List<PlaceholderType>();
         public abstract ILogger Logger { get; }
         public abstract IProtocolBasic FastaProtocoler { get; }
+
         [PreserveSource(Hint = "IEcuKomStatement", Placeholder = true)]
         public abstract PlaceholderType EcuKomStatement { get; }
         public abstract IEcuKom ecuKom { get; }
         public abstract IFFMDynamicResolver FFMResolver { get; }
+
         [PreserveSource(Hint = "IInputListener", Placeholder = true)]
         public abstract PlaceholderType InputListener { get; }
+
         [PreserveSource(Hint = "IVehicleContext", Placeholder = true)]
         public abstract PlaceholderType VehicleContext { get; }
+
         [PreserveSource(Hint = "IDealerData", Placeholder = true)]
         public abstract PlaceholderType DealerData { get; }
+
         [PreserveSource(Hint = "ISOCAccessor", Placeholder = true)]
         public abstract PlaceholderType SOCAccessor { get; }
+
         [PreserveSource(Hint = "ISOCAccessor", Placeholder = true)]
         public abstract PlaceholderType Contexts { get; }
         public abstract Vehicle Vehicle { get; }
+
         [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
         public virtual PlaceholderType DBProvider { get; set; }
         protected ITextContentManager textContentManager { get; set; }
+
         [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
         protected PlaceholderType Me { get; set; }
 
@@ -141,12 +149,16 @@ namespace BMW.Rheingold.CoreFramework
 
         [PreserveSource(Hint = "IEnergySettings", Placeholder = true)]
         public abstract PlaceholderType EnergySettings { get; }
+
         [PreserveSource(Hint = "INOPProvisioning", Placeholder = true)]
         public abstract PlaceholderType NOPProvisioning { get; }
+
         [PreserveSource(Hint = "IVPSProvisioning", Placeholder = true)]
         public abstract PlaceholderType VPSProvisioning { get; }
+
         [PreserveSource(Hint = "IPersistency", Placeholder = true)]
         public abstract PlaceholderType Persistency { get; }
+
         [PreserveSource(Hint = "INavigationMapProcessor", Placeholder = true)]
         public abstract PlaceholderType NavigationMapProcessor { get; }
 
@@ -163,7 +175,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 if (_doLoopHandling && !value)
                 {
-                    //[-] FastaProtocoler?.WriteLoopEntriesToLog(_VerboseLoopLogs);
+                //[-] FastaProtocoler?.WriteLoopEntriesToLog(_VerboseLoopLogs);
                 }
 
                 _doLoopHandling = value;
@@ -887,9 +899,9 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Cleaned = true)]
         public virtual void RunAllServiceProgrammsWithPrefixABLQIC()
         {
-            throw new NotImplementedException();
         }
 
         public abstract void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters);
@@ -1199,8 +1211,7 @@ namespace BMW.Rheingold.CoreFramework
 
                 serviceCodesHandledInLoop.Add(value);
             }
-
-            //[-] FastaProtocoler.AddServiceCode(name, value, LayoutGroup.D);
+        //[-] FastaProtocoler.AddServiceCode(name, value, LayoutGroup.D);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
