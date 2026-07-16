@@ -4,7 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using PsdzClient;
+using PsdzClient.Programming;
 
 namespace BMW.Rheingold.CoreFramework
 {
@@ -12,72 +16,62 @@ namespace BMW.Rheingold.CoreFramework
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected ParameterContainer _globalModuleInParameter = new ParameterContainer();
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected ParameterContainer _globalModuleOutParameter = new ParameterContainer();
-#if false
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected ParameterContainer _globalModuleInAndOutParameter = new ParameterContainer();
-        public ILogic logic;
-#endif
+        [PreserveSource(Hint = "ILogic", Placeholder = true)]
+        public PlaceholderType logic;
         private IResult resultSet = new Result();
-#if false
-        private EcuKomProxy ecuKomProxy;
-
-        private ISuspicionLinkCounter suspicionLinkCount;
-
+        [PreserveSource(Hint = "EcuKomProxy", Placeholder = true)]
+        private PlaceholderType ecuKomProxy;
+        [PreserveSource(Hint = "ISuspicionLinkCounter", Placeholder = true)]
+        private PlaceholderType suspicionLinkCount;
         private string _lastCallingMethod = string.Empty;
-
-        private IAppSessionContext appSessionContext;
-
+        [PreserveSource(Hint = "IAppSessionContext", Placeholder = true)]
+        private PlaceholderType appSessionContext;
         private bool _doLoopHandling;
-
         private bool _verboseLoopLog;
-
         private readonly List<string> serviceCodesHandledInLoop = new List<string>();
-
-        public List<IDiagnosticObjectLocator> SuspiciuosItems = new List<IDiagnosticObjectLocator>();
-
-        public List<IDiagnosticObjectLocator> OkItems = new List<IDiagnosticObjectLocator>();
-
-        public List<IDiagnosticObjectLocator> NotOkItems = new List<IDiagnosticObjectLocator>();
-
-        public abstract BMW.Rheingold.ISTA.CoreFramework.ILogger Logger { get; }
-
+        [PreserveSource(Hint = "List<IDiagnosticObjectLocator>", Placeholder = true)]
+        public List<PlaceholderType> SuspiciuosItems = new List<PlaceholderType>();
+        [PreserveSource(Hint = "List<IDiagnosticObjectLocator>", Placeholder = true)]
+        public List<PlaceholderType> OkItems = new List<PlaceholderType>();
+        [PreserveSource(Hint = "List<IDiagnosticObjectLocator>", Placeholder = true)]
+        public List<PlaceholderType> NotOkItems = new List<PlaceholderType>();
+        public abstract ILogger Logger { get; }
         public abstract IProtocolBasic FastaProtocoler { get; }
-
-        public abstract IEcuKomStatement EcuKomStatement { get; }
-
+        [PreserveSource(Hint = "IEcuKomStatement", Placeholder = true)]
+        public abstract PlaceholderType EcuKomStatement { get; }
         public abstract IEcuKom ecuKom { get; }
-
         public abstract IFFMDynamicResolver FFMResolver { get; }
-
-        public abstract IInputListener InputListener { get; }
-
-        public abstract IVehicleContext VehicleContext { get; }
-
-        public abstract IDealerData DealerData { get; }
-
-        public abstract ISOCAccessor SOCAccessor { get; }
-
-        public abstract ISOCAccessor Contexts { get; }
-
+        [PreserveSource(Hint = "IInputListener", Placeholder = true)]
+        public abstract PlaceholderType InputListener { get; }
+        [PreserveSource(Hint = "IVehicleContext", Placeholder = true)]
+        public abstract PlaceholderType VehicleContext { get; }
+        [PreserveSource(Hint = "IDealerData", Placeholder = true)]
+        public abstract PlaceholderType DealerData { get; }
+        [PreserveSource(Hint = "ISOCAccessor", Placeholder = true)]
+        public abstract PlaceholderType SOCAccessor { get; }
+        [PreserveSource(Hint = "ISOCAccessor", Placeholder = true)]
+        public abstract PlaceholderType Contexts { get; }
         public abstract Vehicle Vehicle { get; }
-
-        public virtual IDatabaseProvider DBProvider { get; set; }
-
+        [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
+        public virtual PlaceholderType DBProvider { get; set; }
         protected ITextContentManager textContentManager { get; set; }
-
-        protected IXepInfoObject Me { get; set; }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [AuthorAPIHidden]
-        public IFastaGrouping FastaGrouping { get; set; }
+        [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
+        protected PlaceholderType Me { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public ILogic IstaOperationLogic => logic;
-#endif
+        [PreserveSource(Hint = "IFastaGrouping", Placeholder = true)]
+        public PlaceholderType FastaGrouping { get; set; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [AuthorAPIHidden]
+        [PreserveSource(Hint = "ILogic", Placeholder = true)]
+        public PlaceholderType IstaOperationLogic => logic;
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public IResult ResultSet
         {
@@ -85,39 +79,34 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return resultSet;
             }
+
             set
             {
                 resultSet = value;
             }
         }
-#if false
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         public IEcuKom EcuKom => ecuKom;
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [PreserveSource(Cleaned = true)]
         public IEcuKomApi EcuKomApi
         {
             get
             {
-                if (ecuKomProxy == null || ecuKomProxy.FastaService != FastaProtocoler || ecuKom != ecuKomProxy.EcuKom)
-                {
-                    ecuKomProxy = new EcuKomProxy(ecuKom, FastaProtocoler);
-                }
-                return ecuKomProxy;
+                throw new NotImplementedException();
             }
         }
 
+        [PreserveSource(Hint = "ISuspicionLinkCounter", Placeholder = true)]
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public ISuspicionLinkCounter SuspicionLinkCount
+        public PlaceholderType SuspicionLinkCount
         {
             get
             {
-                if (suspicionLinkCount == null)
-                {
-                    suspicionLinkCount = new SuspicionLinkCounter(this, Vehicle, FFMResolver);
-                }
-                return suspicionLinkCount;
+                throw new NotImplementedException();
             }
         }
 
@@ -131,32 +120,35 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return "_not_set_";
                 }
+
                 return _lastCallingMethod;
             }
+
             protected set
             {
                 _lastCallingMethod = value;
             }
         }
 
-        public virtual IAppSessionContext AppSessionContext
+        [PreserveSource(Hint = "IAppSessionContext", Placeholder = true)]
+        public virtual PlaceholderType AppSessionContext
         {
             get
             {
-                appSessionContext = appSessionContext ?? new AppSessionContext(ConfigSettings.OperationalMode, ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.OnlineMode", defaultValue: true), logic);
-                return appSessionContext;
+                throw new NotImplementedException();
             }
         }
 
-        public abstract IEnergySettings EnergySettings { get; }
-
-        public abstract INOPProvisioning NOPProvisioning { get; }
-
-        public abstract IVPSProvisioning VPSProvisioning { get; }
-
-        public abstract IPersistency Persistency { get; }
-
-        public abstract INavigationMapProcessor NavigationMapProcessor { get; }
+        [PreserveSource(Hint = "IEnergySettings", Placeholder = true)]
+        public abstract PlaceholderType EnergySettings { get; }
+        [PreserveSource(Hint = "INOPProvisioning", Placeholder = true)]
+        public abstract PlaceholderType NOPProvisioning { get; }
+        [PreserveSource(Hint = "IVPSProvisioning", Placeholder = true)]
+        public abstract PlaceholderType VPSProvisioning { get; }
+        [PreserveSource(Hint = "IPersistency", Placeholder = true)]
+        public abstract PlaceholderType Persistency { get; }
+        [PreserveSource(Hint = "INavigationMapProcessor", Placeholder = true)]
+        public abstract PlaceholderType NavigationMapProcessor { get; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
@@ -166,12 +158,14 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return _doLoopHandling;
             }
+
             set
             {
                 if (_doLoopHandling && !value)
                 {
-                    FastaProtocoler?.WriteLoopEntriesToLog(_VerboseLoopLogs);
+                    //[-] FastaProtocoler?.WriteLoopEntriesToLog(_VerboseLoopLogs);
                 }
+
                 _doLoopHandling = value;
             }
         }
@@ -184,6 +178,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return _verboseLoopLog;
             }
+
             set
             {
                 _verboseLoopLog = value;
@@ -192,8 +187,9 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public abstract IModule ModuleData { get; }
-#endif
+        [PreserveSource(Hint = "IModule", Placeholder = true)]
+        public abstract PlaceholderType ModuleData { get; }
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static string ModuleNameTransformator(string moduleName)
         {
@@ -213,6 +209,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.WarningException("IstaModuleBase.ModuleNameTransformator()", exception);
             }
+
             return text;
         }
 
@@ -243,6 +240,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToBoolean(object)", exception);
             }
+
             return result;
         }
 
@@ -258,6 +256,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToByte(object)", exception);
             }
+
             return result;
         }
 
@@ -273,6 +272,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToByte(double)", exception);
             }
+
             return result;
         }
 
@@ -288,6 +288,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToByte(float)", exception);
             }
+
             return result;
         }
 
@@ -307,6 +308,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.ErrorException("ISTAModule.__convertToByte(string)", exception);
                 }
             }
+
             return result;
         }
 
@@ -322,6 +324,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToByte(string, int)", exception);
             }
+
             return result;
         }
 
@@ -356,6 +359,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.ErrorException("ISTAModule.__convertToInt16(object)", exception2);
                 }
             }
+
             return result;
         }
 
@@ -371,6 +375,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt16(double)", exception);
             }
+
             return result;
         }
 
@@ -386,6 +391,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt16(float)", exception);
             }
+
             return result;
         }
 
@@ -405,6 +411,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.ErrorException("ISTAModule.__convertToInt16(string)", exception);
                 }
             }
+
             return result;
         }
 
@@ -420,6 +427,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt16(string, int)", exception);
             }
+
             return result;
         }
 
@@ -454,6 +462,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.ErrorException("ISTAModule.__convertToInt32(object)", exception2);
                 }
             }
+
             return result;
         }
 
@@ -469,6 +478,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt32(double)", exception);
             }
+
             return result;
         }
 
@@ -484,6 +494,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt32(float)", exception);
             }
+
             return result;
         }
 
@@ -503,6 +514,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.ErrorException("ISTAModule.__convertToInt32(string)", exception);
                 }
             }
+
             return result;
         }
 
@@ -518,6 +530,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt32(string, int)", exception);
             }
+
             return result;
         }
 
@@ -552,6 +565,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.ErrorException("ISTAModule.__convertToInt64(object)", exception2);
                 }
             }
+
             return result;
         }
 
@@ -567,6 +581,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt64(double)", exception);
             }
+
             return result;
         }
 
@@ -582,6 +597,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt64(float)", exception);
             }
+
             return result;
         }
 
@@ -601,6 +617,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.ErrorException("ISTAModule.__convertToInt64(string)", exception);
                 }
             }
+
             return result;
         }
 
@@ -616,6 +633,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToInt64(string, int)", exception);
             }
+
             return result;
         }
 
@@ -650,6 +668,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.ErrorException("ISTAModule.__convertToDouble(object)", exception2);
                 }
             }
+
             return result;
         }
 
@@ -665,6 +684,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__convertToString(object)", exception);
             }
+
             return result;
         }
 
@@ -675,6 +695,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return string.Empty;
             }
+
             return text.Substring(position, 1);
         }
 
@@ -690,11 +711,13 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     val = (T)initValue;
                 }
+
                 int num = sizes[0];
                 for (int i = 1; i < sizes.Length; i++)
                 {
                     num *= sizes[i];
                 }
+
                 int[] array2 = new int[sizes.Length];
                 for (int j = 0; j < num; j++)
                 {
@@ -717,6 +740,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__initArray<T>(int[], object)", exception);
             }
+
             return array;
         }
 
@@ -734,6 +758,7 @@ namespace BMW.Rheingold.CoreFramework
                     {
                         item = (T)initValue;
                     }
+
                     for (int i = 0; i < size; i++)
                     {
                         list.Add(item);
@@ -744,6 +769,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.ErrorException("ISTAModule.__initList<T>(int, object)", exception);
             }
+
             return list;
         }
 
@@ -755,747 +781,350 @@ namespace BMW.Rheingold.CoreFramework
             {
                 list.Add(obj);
             }
+
             return list;
         }
 
         public abstract void Dispose();
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         protected abstract void __handleInParameter();
-#if false
         [AuthorAPIHidden]
-        public IVehicleContext GetVehicleContext()
+        [PreserveSource(Hint = "IVehicleContext", Placeholder = true)]
+        public PlaceholderType GetVehicleContext()
         {
             return VehicleContext;
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        public IDiagnosticObjectLocator __DiagnosticObject(string refText)
+        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
+        public PlaceholderType __DiagnosticObject(string refText)
         {
-            string text = refText;
-            if (string.IsNullOrEmpty(text))
-            {
-                XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
-                if (xEP_DIAGNOSISOBJECTSEX != null)
-                {
-                    text = xEP_DIAGNOSISOBJECTSEX.Name;
-                }
-            }
-            DiagnosticObjectLocator diagnosticObjectLocator = null;
-            try
-            {
-                ICollection<XEP_DIAGNOSISOBJECTSEX> diagObjectsByName = DBProvider.GetDiagObjectsByName(text, Vehicle, FFMResolver, getHidden: true);
-                if (diagObjectsByName.Count > 0)
-                {
-                    DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectsByName.First(), Vehicle, FFMResolver);
-                    Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().Title_dede);
-                    ICollection<XEP_DIAGNOSISOBJECTSEX> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
-                    diagnosticObjectLocator = new DiagnosticObjectLocator(diagnosticObject, childDiagObjects);
-                }
-                else
-                {
-                    Log.Warning("ISTAModule.__DiagnosticObject()", "unable to find diagnostic object refreneced with: {0}", refText);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.__DiagnosticObject()", exception);
-            }
-            if (diagnosticObjectLocator == null)
-            {
-                Log.Warning("ISTAModule.__DiagnosticObject()", "result was null; maybe your testmodule will die");
-                return null;
-            }
-            return diagnosticObjectLocator;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        public IDiagnosticObjectLocator __DiagnosticObject(decimal id)
+        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
+        public PlaceholderType __DiagnosticObject(decimal id)
         {
-            try
-            {
-                XEP_DIAGNOSISOBJECTSEX diagObjectById = DBProvider.GetDiagObjectById(id, Vehicle, FFMResolver, getHidden: true);
-                if (diagObjectById != null)
-                {
-                    DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectById, Vehicle, FFMResolver);
-                    Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().Title_dede);
-                    ICollection<XEP_DIAGNOSISOBJECTSEX> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
-                    return new DiagnosticObjectLocator(diagnosticObject, childDiagObjects);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.__DiagnosticObject()", exception);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
-        public XEP_DIAGNOSISOBJECTSEX SelectDiagParent(string callingMethod)
+        [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
+        public PlaceholderType SelectDiagParent(string callingMethod)
         {
-            InfoObject infoObjStarted = GetInfoObjStarted();
-            if (infoObjStarted == null)
-            {
-                return null;
-            }
-            IList<XEP_DIAGNOSISOBJECTSEX> list = FindDiagParents(infoObjStarted);
-            if (list.Count == 0)
-            {
-                Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object [{0}/{1}]. Returning null.", infoObjStarted.XepInfoObject.Identifikator, infoObjStarted.XepInfoObject.Id);
-                return null;
-            }
-            XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX;
-            if (list.Count == 1)
-            {
-                xEP_DIAGNOSISOBJECTSEX = list[0];
-            }
-            else
-            {
-                IEnumerable<XEP_DIAGNOSISOBJECTSEX> enumerable = (infoObjStarted.ParentDiagnosisObject as ManualDiagObj)?.SearchTreeNode;
-                IList<XEP_DIAGNOSISOBJECTSEX> list2 = new List<XEP_DIAGNOSISOBJECTSEX>();
-                if (enumerable != null && enumerable.Any())
-                {
-                    List<decimal> list3 = new List<decimal>();
-                    foreach (XEP_DIAGNOSISOBJECTSEX item in enumerable)
-                    {
-                        if (item != null)
-                        {
-                            list3.Add(item.Id);
-                        }
-                    }
-                    foreach (XEP_DIAGNOSISOBJECTSEX item2 in list)
-                    {
-                        if (item2 != null && list3.Contains(item2.Id))
-                        {
-                            list2.Add(item2);
-                        }
-                    }
-                }
-                if (!list2.Any())
-                {
-                    foreach (XEP_DIAGNOSISOBJECTSEX item3 in list)
-                    {
-                        list2.Add(item3);
-                    }
-                }
-                xEP_DIAGNOSISOBJECTSEX = ((list2.Count != 1) ? SelectDiagParentByAskingUser(list2, callingMethod) : list2.First());
-            }
-            infoObjStarted.ParentDiagnosisObject = xEP_DIAGNOSISOBJECTSEX;
-            return xEP_DIAGNOSISOBJECTSEX;
+            throw new NotImplementedException();
         }
 
-        public abstract InfoObject GetInfoObjStarted();
-
-        public abstract XEP_DIAGNOSISOBJECTSEX SelectDiagParentByAskingUser(IList<XEP_DIAGNOSISOBJECTSEX> diag, string callingMethod);
-
-        private IList<XEP_DIAGNOSISOBJECTSEX> FindDiagParents(InfoObject infoObj)
+        [PreserveSource(Hint = "InfoObject", Placeholder = true)]
+        public abstract PlaceholderType GetInfoObjStarted();
+        [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
+        public abstract PlaceholderType SelectDiagParentByAskingUser(IList<PlaceholderType> diag, string callingMethod);
+        [PreserveSource(Hint = "IList<XEP_DIAGNOSISOBJECTSEX>", Placeholder = true)]
+        private IList<PlaceholderType> FindDiagParents()
         {
-            if (infoObj == null || infoObj.XepInfoObject == null)
-            {
-                throw new ArgumentNullException("infoObj");
-            }
-            IList<XEP_DIAGNOSISOBJECTSEX> list = new List<XEP_DIAGNOSISOBJECTSEX>();
-            ManualDiagObj manualDiagObj = infoObj.ParentDiagnosisObject as ManualDiagObj;
-            if (infoObj.ParentDiagnosisObject != null && manualDiagObj == null)
-            {
-                list.Add(infoObj.ParentDiagnosisObject);
-                Log.Info("ISTAModule.FindDiagParents()", "Found parent diag objects in info object: {0}", LogDiagObj(list));
-                return list;
-            }
-            list = DBProvider.GetDiagObjectsForInfoObject(infoObj.Id, Vehicle, FFMResolver, getHidden: true).ToList();
-            Log.Info("ISTAModule.FindDiagParents()", "Found parent diag objects in table: {0}", LogDiagObj(list));
-            return list;
+            throw new NotImplementedException();
         }
 
-        private string LogDiagObj(IList<XEP_DIAGNOSISOBJECTSEX> diag)
+        [PreserveSource(Cleaned = true)]
+        private string LogDiagObj()
         {
-            StringBuilder stringBuilder = new StringBuilder("[");
-            foreach (XEP_DIAGNOSISOBJECTSEX item in diag)
-            {
-                stringBuilder.Append("{").Append(LogDiagObj(item)).Append("},");
-            }
-            if (diag.Count > 0)
-            {
-                stringBuilder.Length--;
-            }
-            stringBuilder.Append("]");
-            return stringBuilder.ToString();
+            throw new NotImplementedException();
         }
 
-        private string LogDiagObj(XEP_DIAGNOSISOBJECTSEX diag)
+        [PreserveSource(Cleaned = true)]
+        private string LogDiagObj(PlaceholderType diag)
         {
-            if (diag == null)
-            {
-                return "null";
-            }
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(diag.Name).Append("/").Append(diag.Id);
-            return stringBuilder.ToString();
+            throw new NotImplementedException();
         }
 
-        public IFaultCodeLocator GetFaultCode(string refCode)
+        [PreserveSource(Hint = "IFaultCodeLocator", Placeholder = true)]
+        public PlaceholderType GetFaultCode(string refCode)
         {
-            FaultCode faultCode = FaultCode.GetFaultCode(refCode, Vehicle, FFMResolver);
-            if (faultCode == null)
-            {
-                Log.Warning("ISTAModule.__FaultCode()", "no fault code found for reference: {0}", refCode);
-                return null;
-            }
-            return new FaultCodeLocator(faultCode, Vehicle, FFMResolver);
+            throw new NotImplementedException();
         }
 
-        public IVirtualFaultCodeLocator GetVirtualFaultCode(string refCode)
+        [PreserveSource(Hint = "IVirtualFaultCodeLocator", Placeholder = true)]
+        public PlaceholderType GetVirtualFaultCode(string refCode)
         {
-            FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(refCode, Vehicle, FFMResolver);
-            if (virtualFaultCode == null)
-            {
-                Log.Warning("ISTAModule.__VirtualFaultCode()", "no virtual fault code found for reference: {0}", refCode);
-                return null;
-            }
-            return new VirtualFaultCodeLocator(virtualFaultCode, Vehicle, GetRootModule());
+            throw new NotImplementedException();
         }
 
-        public abstract IXepInfoObject GetRootModule();
-
+        [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
+        public abstract PlaceholderType GetRootModule();
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IVehiclePartLocator __Part(string refText)
+        [PreserveSource(Hint = "IVehiclePartLocator", Placeholder = true)]
+        public PlaceholderType __Part(string refText)
         {
-            try
-            {
-                XEP_VEHICLEPART xepVehiclePartById = DBProvider.GetXepVehiclePartById(Convert.ToDecimal(refText));
-                if (xepVehiclePartById != null)
-                {
-                    return new VehiclePart(xepVehiclePartById);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.__Part()", exception);
-            }
-            Log.Warning("ISTAModule.__Part()", "unable to locate vehicle part with reference: {0}", refText);
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IVehicleStateLocator __State(string refText)
+        [PreserveSource(Hint = "IVehicleStateLocator", Placeholder = true)]
+        public PlaceholderType __State(string refText)
         {
-            XEP_VEHICLESTATE xepVehicleStateById = DBProvider.GetXepVehicleStateById(refText);
-            if (xepVehicleStateById != null)
-            {
-                return new VehicleStateLocator(xepVehicleStateById);
-            }
-            Log.Warning("ISTAModule.__State()", "unable to locate vehicle state with reference: {0}", refText);
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IVehicleAdapterLocator __Adapter(string refText)
+        [PreserveSource(Hint = "IVehicleAdapterLocator", Placeholder = true)]
+        public PlaceholderType __Adapter(string refText)
         {
-            XEP_VEHICLEADAPTER vehicleAdapterById = DBProvider.GetVehicleAdapterById(refText);
-            if (vehicleAdapterById != null)
-            {
-                return new VehicleAdapterLocator(vehicleAdapterById);
-            }
-            Log.Warning("ISTAModule.__Adapter()", "unable to locate adapter with reference: {0}", refText);
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [PreserveSource(Cleaned = true)]
         public virtual void ClearErrorInfoMemory()
         {
-            IMethodCall methodCall = FastaProtocoler.AddMethodCall("ClearErrorInfoMemory");
-            logic.ClearErrorInfoMemory();
-            methodCall.EndTime = DateTime.Now;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [PreserveSource(Cleaned = true)]
         public virtual void ReadErrorInfoMemory()
         {
-            IMethodCall methodCall = FastaProtocoler.AddMethodCall("ReadErrorInfoMemory");
-            logic.ReadErrorInfoMemory();
-            RunAllServiceProgrammsWithPrefixABLQIC();
-            methodCall.EndTime = DateTime.Now;
+            throw new NotImplementedException();
         }
 
         public virtual void RunAllServiceProgrammsWithPrefixABLQIC()
         {
-            string text = "ABL-QIC";
-            List<IXepInfoObject> infoObjectListByIdentifierPrefix = DBProvider.GetInfoObjectListByIdentifierPrefix(text, Vehicle, logic.FFMResolver, null);
-            if (infoObjectListByIdentifierPrefix == null || infoObjectListByIdentifierPrefix.Count == 0)
-            {
-                Log.Error("VehicleIdent.ReadErrorInfoMemory()", "Service program prefix not found: " + text);
-                return;
-            }
-            foreach (IXepInfoObject item in infoObjectListByIdentifierPrefix)
-            {
-                ParameterContainer inParameters = new ParameterContainer();
-                ParameterContainer outParameters = new ParameterContainer();
-                ParameterContainer inAndOutParameters = new ParameterContainer();
-                callModuleRef(item.ControlId.ToString(), inParameters, ref outParameters, ref inAndOutParameters);
-            }
+            throw new NotImplementedException();
         }
 
         public abstract void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters);
-
         [EditorBrowsable(EditorBrowsableState.Always)]
-        public virtual IDocumentLocator __Document(string controlId)
+        [PreserveSource(Hint = "IDocumentLocator", Placeholder = true)]
+        public virtual PlaceholderType __Document(string controlId)
         {
-            InfoObject document = logic.Factory.GetDocument(Vehicle, FFMResolver, controlId, isRgNews: false);
-            if (document != null && DBProvider.EvaluateXepRulesById(document.Id, Vehicle, FFMResolver))
-            {
-                Log.Info("ISTAModule.__Document()", "found valid document for controlId: {0} {1}", controlId, document.XepInfoObject.Identifikator);
-                return new DocumentLocator(document);
-            }
-            Log.Info("ISTAModule.__Document()", "no valid document found for controlId: {0}", controlId);
-            return null;
+            throw new NotImplementedException();
         }
 
-        private IList<InfoObject> ExecuteCommandIndirectDocument(string sysName, string infoType, string heading, string callingMethod)
+        [PreserveSource(Hint = "IList<InfoObject>", Placeholder = true)]
+        private IList<PlaceholderType> ExecuteCommandIndirectDocument(string sysName, string infoType, string heading, string callingMethod)
         {
-            List<InfoObject> list = new List<InfoObject>();
-            if (Vehicle == null)
-            {
-                Log.Error("ISTAModule.ExecuteCommandIndirectDocument()", "Vehicle is null, thus returning empty document list.");
-                return list;
-            }
-            if (string.IsNullOrEmpty(sysName))
-            {
-                XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent(callingMethod);
-                if (xEP_DIAGNOSISOBJECTSEX == null)
-                {
-                    Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No Diag parent found, returning empty document list.");
-                    return list;
-                }
-                sysName = xEP_DIAGNOSISOBJECTSEX.Name;
-                decimal id = xEP_DIAGNOSISOBJECTSEX.Id;
-                if (string.IsNullOrEmpty(sysName))
-                {
-                    foreach (string item in BuildInfoType(infoType))
-                    {
-                        list.AddRange(logic.Factory.GetIndirectDocument(Vehicle, id, heading, item, FFMResolver, getHidden: true));
-                    }
-                    if (!list.Any())
-                    {
-                        Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No document found for DiagObj: id={0}, sysName=\"{1}\", heading=\"{2}\"", id, sysName, heading);
-                    }
-                    else
-                    {
-                        list = ValuateDocument(list);
-                    }
-                }
-            }
-            if (!string.IsNullOrEmpty(sysName))
-            {
-                foreach (string item2 in BuildInfoType(infoType))
-                {
-                    list.AddRange(logic.Factory.GetIndirectDocument(Vehicle, sysName, heading, item2, FFMResolver, getHidden: true));
-                }
-                if (!list.Any())
-                {
-                    Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No document found for DiagObj: sysName=\"{0}\", infoType=\"{1}\", heading=\"{2}\"", sysName, infoType, heading);
-                }
-                else
-                {
-                    list = ValuateDocument(list);
-                }
-            }
-            return list;
+            throw new NotImplementedException();
         }
 
-        private List<InfoObject> ValuateDocument(List<InfoObject> infoObjects)
+        [PreserveSource(Hint = "List<InfoObject>", Placeholder = true)]
+        private List<PlaceholderType> ValuateDocument(List<PlaceholderType> infoObjects)
         {
-            List<string> list = new List<string>();
-            List<string> list2 = new List<string>();
-            List<InfoObject> list3 = new List<InfoObject>();
-            if (infoObjects == null)
-            {
-                Log.Warning(Log.CurrentMethod(), "Document is null");
-                ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
-            }
-            else
-            {
-                foreach (InfoObject infoObject in infoObjects)
-                {
-                    if (string.Compare(infoObject.XepInfoObject.DocumentType, "NONE", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        Log.Warning(Log.CurrentMethod(), "Unable to find document for document identifier: {0}", infoObject.Identifier ?? "");
-                        infoObject.State = typeDiagObjectState.Canceled;
-                        list.Add(infoObject.Identifier);
-                    }
-                    else if (!infoObject.IsExternalDocument && (string.IsNullOrEmpty(infoObject.Content.TransformedDocument) || (string.IsNullOrEmpty(infoObject.Content.Doc) && infoObject.Content.BinaryDocument == null)))
-                    {
-                        Log.Warning(Log.CurrentMethod(), "Selected document has no content for document identifier: {0} UI-culture: {1}", infoObject.Identifier ?? "", ConfigSettings.CurrentUICulture);
-                        infoObject.State = typeDiagObjectState.Canceled;
-                        list2.Add(infoObject.Identifier);
-                    }
-                    else
-                    {
-                        list3.Add(infoObject);
-                    }
-                }
-            }
-            if (list.Any())
-            {
-                ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
-            }
-            if (list2.Any())
-            {
-                ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NoContent", "ISTAGui", true, string.Join(Environment.NewLine, list2)));
-            }
-            return list3;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        protected IList<IDocumentLocator> __IndirectDocument(string title, string heading)
+        [PreserveSource(Hint = "IList<IDocumentLocator>", Placeholder = true)]
+        protected IList<PlaceholderType> __IndirectDocument(string title, string heading)
         {
-            return __IndirectDocument(title, heading, null);
+            throw new NotImplementedException();
         }
 
         private IEnumerable<string> BuildInfoType(string infoType)
         {
             if (string.IsNullOrEmpty(infoType))
             {
-                return new string[1] { string.Empty };
+                return new string[1]
+                {
+                    string.Empty
+                };
             }
+
             return infoType.Split('|');
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        public IList<IDocumentLocator> __IndirectDocument(string title, string heading, string informationsTyp)
+        [PreserveSource(Hint = "IList<IDocumentLocator>", Placeholder = true)]
+        public IList<PlaceholderType> __IndirectDocument(string title, string heading, string informationsTyp)
         {
-            List<IDocumentLocator> list = new List<IDocumentLocator>();
-            List<InfoObject> list2 = new List<InfoObject>();
-            Log.Info("ISTAModule.__IndirectDocument()", "Search for indirect document by title \"{0}\",  heading \"{1}\", informationTyp \"{2}\".", title, heading, informationsTyp);
-            InteractionModel interactionModel = new InteractionProgressModel();
-            try
-            {
-                RegisterAndDeregisterInteractionModel(interactionModel, register: true);
-                list2.AddRange(ExecuteCommandIndirectDocument(title, informationsTyp, heading, "__IndirectDocument(string,string,string)"));
-                list.AddRange(list2.Select((InfoObject x) => new DocumentLocator(x)));
-                return list;
-            }
-            finally
-            {
-                RegisterAndDeregisterInteractionModel(interactionModel, register: false);
-            }
+            throw new NotImplementedException();
         }
 
         public abstract void ShowMessage(string title, string message);
-
         public abstract void RegisterAndDeregisterInteractionModel(InteractionModel interactionModel, bool register);
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public IServiceProgramLocator __Program(string refPath)
+        [PreserveSource(Hint = "IServiceProgramLocator", Placeholder = true)]
+        public PlaceholderType __Program(string refPath)
         {
-            DBProvider.GetInfoObjectsByDiagObjectControlId(Convert.ToDecimal(refPath, CultureInfo.InvariantCulture), Vehicle, FFMResolver, getHidden: true);
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [PreserveSource(Cleaned = true)]
         public int? GetFaultCodeSum()
         {
-            return SessionInfoAccessor.SessionInfo.FaultCodeSum;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IPerceivedSymptomsLocator __PerceivedSymptom(string refText)
+        [PreserveSource(Hint = "IPerceivedSymptomsLocator", Placeholder = true)]
+        public PlaceholderType __PerceivedSymptom(string refText)
         {
-            try
-            {
-                decimal num = Convert.ToDecimal(refText, CultureInfo.InvariantCulture);
-                XEP_PERCEIVEDSYMPTOMSEX perceivedSymptomById = DBProvider.GetPerceivedSymptomById(num, Vehicle, FFMResolver);
-                if (perceivedSymptomById != null)
-                {
-                    return new PerceivedSymptomsLocator(perceivedSymptomById);
-                }
-                Log.Warning("ISTAModule.__PerceivedSymptom()", "preceived symptom for id: '{0}' was null", num);
-            }
-            catch (FormatException exception)
-            {
-                Log.WarningException("ISTAModule.__PerceivedSymptom()", exception);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IEquipmentLocator __Equipment(string refText)
+        [PreserveSource(Hint = "IEquipmentLocator", Placeholder = true)]
+        public PlaceholderType __Equipment(string refText)
         {
-            XEP_EQUIPMENT equipmentByName = DBProvider.GetEquipmentByName(refText);
-            if (equipmentByName != null)
-            {
-                return new EquipmentLocator(equipmentByName);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IFaultCodeLocator __FaultCode(string refCode)
+        [PreserveSource(Hint = "IFaultCodeLocator", Placeholder = true)]
+        public PlaceholderType __FaultCode(string refCode)
         {
-            return GetFaultCode(refCode);
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public ICombinedFaultLocator __CombinedFault(string fC_Id)
+        [PreserveSource(Hint = "ICombinedFaultLocator", Placeholder = true)]
+        public PlaceholderType __CombinedFault(string fC_Id)
         {
-            return CombinedFaultNode(fC_Id);
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IFaultModeLocator __FaultMode(string refCode)
+        [PreserveSource(Hint = "IFaultModeLocator", Placeholder = true)]
+        public PlaceholderType __FaultMode(string refCode)
         {
-            decimal id = Convert.ToDecimal(refCode, CultureInfo.InvariantCulture);
-            XEP_FAULTMODELABELS faultModeLabelById = DBProvider.GetFaultModeLabelById(id);
-            if (faultModeLabelById != null)
-            {
-                return new FaultModeLocator(faultModeLabelById);
-            }
-            Log.Warning("ISTAModule.__FaultMode()", "no valid faultmode found in database for ref: {0}", refCode);
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IVirtualFaultCodeLocator __VirtualFaultCode(string refCode)
+        [PreserveSource(Hint = "IVirtualFaultCodeLocator", Placeholder = true)]
+        public PlaceholderType __VirtualFaultCode(string refCode)
         {
-            return GetVirtualFaultCode(refCode);
+            throw new NotImplementedException();
         }
 
-        public ICombinedFaultLocator CombinedFaultNode(string fC_Id)
+        [PreserveSource(Hint = "ICombinedFaultLocator", Placeholder = true)]
+        public PlaceholderType CombinedFaultNode(string fC_Id)
         {
-            try
-            {
-                return CombinedFaultCode.GetCombinedFaultCode(Convert.ToDecimal(fC_Id, CultureInfo.InvariantCulture), Vehicle, FFMResolver);
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.CombinedFaultNode(string)", exception);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
-        public IFaultCodeLocator FaultCodeNode(string sgbd, string variante, string fCode)
+        [PreserveSource(Hint = "IFaultCodeLocator", Placeholder = true)]
+        public PlaceholderType __FaultCode(string sgbd, string variante, string fCode)
         {
-            try
-            {
-                decimal code = Convert.ToDecimal(fCode, CultureInfo.InvariantCulture);
-                FaultCode faultCodeByCodeAndVariantName = DBProvider.GetFaultCodeByCodeAndVariantName(code, variante, null, Vehicle, FFMResolver);
-                if (faultCodeByCodeAndVariantName != null)
-                {
-                    faultCodeByCodeAndVariantName.VehicleContext = Vehicle;
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.FaultCodeNode(string,string,string)", exception);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
-        public IFaultCodeLocator FaultCodeNode(string id)
+        [PreserveSource(Hint = "IFaultCodeLocator", Placeholder = true)]
+        public PlaceholderType FaultCodeNode(string id)
         {
-            try
-            {
-                decimal id2 = Convert.ToDecimal(id, CultureInfo.InvariantCulture);
-                FaultCode faultCodeById = DBProvider.GetFaultCodeById(id2, Vehicle, FFMResolver);
-                if (faultCodeById != null)
-                {
-                    faultCodeById.VehicleContext = Vehicle;
-                    return new FaultCodeLocator(faultCodeById, Vehicle, FFMResolver);
-                }
-                Log.Warning("ISTAModule.FaultCodeNode()", "Can not find fault code node for id: {0}", id);
-                return null;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.FaultCodeNode()", exception);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
-        public IVirtualFaultCodeLocator VirtualFaultCodeNode(string id)
+        [PreserveSource(Hint = "IVirtualFaultCodeLocator", Placeholder = true)]
+        public PlaceholderType VirtualFaultCodeNode(string id)
         {
-            try
-            {
-                FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(id, Vehicle, FFMResolver);
-                if (virtualFaultCode != null)
-                {
-                    return new VirtualFaultCodeLocator(virtualFaultCode, logic.VecInfo, GetRootModule());
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.FaultCodeNode()", exception);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        public IStateListLocator __StateList(string stateListId)
+        [PreserveSource(Hint = "IStateListLocator", Placeholder = true)]
+        public PlaceholderType __StateList(string stateListId)
         {
-            return new StateList(stateListId);
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public ICharacteristicsLocator __Characteristics(string controlId)
+        [PreserveSource(Hint = "ICharacteristicsLocator", Placeholder = true)]
+        public PlaceholderType __Characteristics(string controlId)
         {
-            try
-            {
-                IXepCharacteristics characteristicById = DBProvider.GetCharacteristicById(Convert.ToInt64(controlId, CultureInfo.InvariantCulture));
-                if (characteristicById != null)
-                {
-                    return new CharacteristicsLocator(characteristicById);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.__Characteristics()", exception);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [PreserveSource(Cleaned = true)]
         public IEcuGroupLocator __EcuGroup(string groupName)
         {
-            XEP_ECUGROUPS ecuGroupByName = DBProvider.GetEcuGroupByName(groupName);
-            if (ecuGroupByName != null)
-            {
-                return new EcuGroupLocator(ecuGroupByName, Vehicle, FFMResolver);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Cleaned = true)]
         public IEcuGroupLocator __EcuGroup(decimal ecuGroupId)
         {
-            XEP_ECUGROUPS ecuGroupById = DBProvider.GetEcuGroupById(ecuGroupId);
-            if (ecuGroupById != null)
-            {
-                return new EcuGroupLocator(ecuGroupById, Vehicle, FFMResolver);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [PreserveSource(Cleaned = true)]
         public IEcuVariantLocator __EcuVariant(string variantName)
         {
-            XEP_ECUVARIANTS ecuVariantByName = DBProvider.GetEcuVariantByName(variantName);
-            if (ecuVariantByName != null)
-            {
-                return new EcuVariantLocator(ecuVariantByName, Vehicle, FFMResolver);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Cleaned = true)]
         public IEcuVariantLocator __EcuVariant(decimal ecuVariantId)
         {
-            XEP_ECUVARIANTS ecuVariantById = DBProvider.GetEcuVariantById(ecuVariantId);
-            if (ecuVariantById != null)
-            {
-                return new EcuVariantLocator(ecuVariantById, Vehicle, FFMResolver);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IEcuProgrammingVariantLocator __EcuProgrammingVariant(string ecuProgrammingVariant)
+        [PreserveSource(Hint = "IEcuProgrammingVariantLocator", Placeholder = true)]
+        public PlaceholderType __EcuProgrammingVariant(string ecuProgrammingVariant)
         {
-            return EcuProgrammingVariantLocator.CreateEcuProgrammingVariantLocator(ecuProgrammingVariant, Vehicle, FFMResolver);
+            throw new NotImplementedException();
         }
 
-        public IEcuProgrammingVariantLocator __EcuProgrammingVariant(decimal ecuProgrammingVariantId)
+        [PreserveSource(Hint = "IEcuProgrammingVariantLocator", Placeholder = true)]
+        public PlaceholderType __EcuProgrammingVariant(decimal ecuProgrammingVariantId)
         {
-            XEP_ECUPROGRAMMINGVARIANT ecuProgrammingVariantById = DBProvider.GetEcuProgrammingVariantById(ecuProgrammingVariantId, Vehicle, FFMResolver);
-            if (ecuProgrammingVariantById != null)
-            {
-                return new EcuProgrammingVariantLocator(ecuProgrammingVariantById, Vehicle, FFMResolver);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public bool HasVehicleVariant(string group, string variant)
         {
-            if (!new string[4] { "UNKNOWNGROUP", "D_EXX", "G_FXX", "G_OBD" }.Any((string x) => x.Equals(group, StringComparison.OrdinalIgnoreCase)))
+            if (!new string[4]
+            {
+                "UNKNOWNGROUP",
+                "D_EXX",
+                "G_FXX",
+                "G_OBD"
+            }.Any((string x) => x.Equals(group, StringComparison.OrdinalIgnoreCase)))
             {
                 if (!string.IsNullOrEmpty(variant))
                 {
                     return Vehicle.ECU.Any((ECU x) => x.VARIANTE != null && x.VARIANTE.Equals(variant, StringComparison.OrdinalIgnoreCase));
                 }
+
                 if (!string.IsNullOrEmpty(group))
                 {
                     return Vehicle.getECUbyECU_GRUPPE(group) != null;
                 }
             }
+
             return true;
         }
 
-        public ICombinedFaultLocator GetCombinedFaultCode(string refCode)
+        [PreserveSource(Hint = "ICombinedFaultLocator", Placeholder = true)]
+        public PlaceholderType GetCombinedFaultCode(string refCode)
         {
-            try
-            {
-                ICombinedFaultLocator combinedFaultCode = CombinedFaultCode.GetCombinedFaultCode(Convert.ToDecimal(refCode, CultureInfo.InvariantCulture), Vehicle, FFMResolver);
-                if (combinedFaultCode == null)
-                {
-                    Log.Warning("ISTAModule.GetCombinedFaultCode()", "no combined fault code found for reference: {0}", refCode);
-                }
-                return combinedFaultCode;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.GetCombinedFaultCode()", exception);
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        [PreserveSource(Cleaned = true)]
         public ISPELocator CalledFrom()
         {
-            try
-            {
-                InfoObject infoObjStarted = GetInfoObjStarted();
-                if (infoObjStarted == null)
-                {
-                    Log.Error("ISTAModule.CalledFrom()", "No info object found in module parameter. Returning null.");
-                    return null;
-                }
-                XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("CalledFrom()");
-                if (xEP_DIAGNOSISOBJECTSEX != null)
-                {
-                    return new DiagnosticObjectLocator(new DiagnosticObject(xEP_DIAGNOSISOBJECTSEX, Vehicle, FFMResolver));
-                }
-                Log.Error("ISTAModule.CalledFrom()", "No diag object found. Returning SPELocator(infoObj.Id).");
-                return new SPELocator(infoObjStarted.Id);
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException("ISTAModule.CalledFrom()", exception);
-                return null;
-            }
+            throw new NotImplementedException();
         }
 
         public abstract void SetProperty(string propertyName, object data);
-
         public abstract void SetPersistentProperty(string propertyName, object data);
-
         public abstract void SetAcrossSessionProperty(string propertyName, object data);
-
         public abstract void SetDealerSessionProperty(string propertyName, string propertyValue);
-
         public abstract object GetAcrossSessionProperty(string propertyName);
-
         public abstract object GetPersistentProperty(string propertyName);
-
         public abstract object GetProperty(string propertyName);
-
         public abstract T GetPersistentProperty<T>(string propertyName);
-
         public abstract T GetProperty<T>(string propertyName);
-
         public abstract string GetDealerSessionProperty(string propertyName);
-
         public abstract void DoBackgroundProgressbarExecution(Action action);
-
         public abstract void LogStatement(string headlineValue, params object[] paramList);
-
         [EditorBrowsable(EditorBrowsableState.Always)]
         public ITextLocator __Text()
         {
@@ -1537,44 +1166,25 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
+        [PreserveSource(Cleaned = true)]
         protected virtual void __StartStep()
         {
             Log.Info("ISTAModule.__StartStep()", "setting up log container for: {0} Verbose logging: {1}", LastCallingMethod, _VerboseLoopLogs);
-            if (FastaGrouping != null)
-            {
-                List<LocalizedText> list = new List<LocalizedText>();
-                list.AddRange(logic.Lang.Select((string x) => new LocalizedText(LastCallingMethod, x)));
-                FastaGrouping.CreateSubGroup(GroupingType.Ablaufschritt, list);
-            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
+        [PreserveSource(Cleaned = true)]
         protected virtual void __FinishStep()
         {
             Log.Info("ISTAModule.__FinishStep()", "finishing log container for: {0} Verbose logging: {1}", LastCallingMethod, _VerboseLoopLogs);
-            if (FastaProtocoler != null)
-            {
-                FastaProtocoler.EndTime = DateTime.Now;
-            }
-            if (FastaGrouping != null)
-            {
-                FastaGrouping.EndTime = DateTime.Now;
-            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public IXmlElement CreateXmlDocument(string xml)
+        [PreserveSource(Hint = "IXmlElement", Placeholder = true)]
+        public PlaceholderType CreateXmlDocument(string xml)
         {
-            try
-            {
-                return new ModuleXmlElement(XDocument.Parse(xml).Root);
-            }
-            catch (Exception ex)
-            {
-                Log.Error("ISTAModule.CreateXmlDocument()", "Failed to create document from XML \"{0}\": {1}", xml, ex);
-                return null;
-            }
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1586,9 +1196,11 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return;
                 }
+
                 serviceCodesHandledInLoop.Add(value);
             }
-            FastaProtocoler.AddServiceCode(name, value, LayoutGroup.D);
+
+            //[-] FastaProtocoler.AddServiceCode(name, value, LayoutGroup.D);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -1600,141 +1212,47 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public void __SetSuspiciousItem(IDiagnosticObjectLocator diagObj)
+        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
+        public void __SetSuspiciousItem(PlaceholderType diagObj)
         {
-            if (diagObj != null)
-            {
-                Log.Info("ISTAModule.__SetSuspiciousItem()", "adding diag obj id: {0}", diagObj.Id);
-                AddSuspiciousItemToServiceProgram(diagObj);
-                if (!SuspiciuosItems.Contains(diagObj))
-                {
-                    SuspiciuosItems.Add(diagObj);
-                }
-            }
-            else
-            {
-                Log.Info("ISTAModule.__SetSuspiciousItem()", "diag obj was null");
-            }
+            throw new NotImplementedException();
         }
 
-        public abstract void AddSuspiciousItemToServiceProgram(IDiagnosticObjectLocator diagObjLocator);
-
+        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
+        public abstract void AddSuspiciousItemToServiceProgram(PlaceholderType diagObjLocator);
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public void __SetOkItem(IDiagnosticObjectLocator diagObj)
+        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
+        public void __SetOkItem(PlaceholderType diagObj)
         {
-            if (diagObj != null)
-            {
-                Log.Info("ISTAModule.__SetOkItem()", "adding diag obj id: {0}", diagObj.Id);
-                if (!OkItems.Contains(diagObj))
-                {
-                    OkItems.Add(diagObj);
-                }
-            }
-            else
-            {
-                Log.Info("ISTAModule.__SetOkItem()", "diag obj was null");
-            }
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public void __SetNotOkItem(IDiagnosticObjectLocator diagObj)
+        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
+        public void __SetNotOkItem(PlaceholderType diagObj)
         {
-            if (diagObj != null)
-            {
-                Log.Info("ISTAModule.__SetNotOkItem()", "adding diag obj id: {0}", diagObj.Id);
-                if (!NotOkItems.Contains(diagObj))
-                {
-                    NotOkItems.Add(diagObj);
-                }
-            }
-            else
-            {
-                Log.Info("ISTAModule.__SetNotOkItem()", "diag obj was null");
-            }
+            throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
+        [PreserveSource(Cleaned = true)]
         public virtual void __handleOutParameter()
         {
-            try
-            {
-                if (SuspiciuosItems != null && SuspiciuosItems.Count > 0)
-                {
-                    foreach (IDiagnosticObjectLocator suspiciuosItem in SuspiciuosItems)
-                    {
-                        Log.Info("ISTAModule.__handleOutParameter()", "set suspicious items: {0}", suspiciuosItem.Id, suspiciuosItem.GetDataValue("NAME"));
-                        decimal diagObjectId = Convert.ToDecimal(suspiciuosItem.Id, CultureInfo.InvariantCulture);
-                        XEP_DIAGNOSISOBJECTSEX diagObjectById = DBProvider.GetDiagObjectById(diagObjectId, Vehicle, FFMResolver, getHidden: true);
-                        if (suspiciuosItem.Parents != null && suspiciuosItem.Parents.Any())
-                        {
-                            decimal diagObjectId2 = Convert.ToDecimal(suspiciuosItem.Parents[0].Id, CultureInfo.InvariantCulture);
-                            DBProvider.GetDiagObjectById(diagObjectId2, Vehicle, FFMResolver, getHidden: true);
-                        }
-                        if (diagObjectById == null)
-                        {
-                            continue;
-                        }
-                        DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectById, Vehicle, FFMResolver);
-                        if (diagnosticObject == null)
-                        {
-                            continue;
-                        }
-                        foreach (IXepInfoObject attachedInfoObject in diagnosticObject.GetAttachedInfoObjects())
-                        {
-                            InfoObject infoObject = logic.Factory.CreateInfoObject(attachedInfoObject);
-                            string name = (string.IsNullOrEmpty(attachedInfoObject.Identifikator) ? attachedInfoObject.Title : attachedInfoObject.Identifikator);
-                            infoObject.XepInfoObjectCasted.Name = name;
-                            infoObject.State = typeDiagObjectState.Suspected;
-                            AddSuspicious(infoObject, diagObjectById);
-                        }
-                    }
-                }
-                if (ResultSet.CollectiveResult == CollectiveResultSet.NotOk)
-                {
-                    foreach (IDiagnosticObjectLocator notOkItem in NotOkItems)
-                    {
-                        Log.Info("ISTAModule.__handleOutParameter()", "set notOK items: {0}", notOkItem.Id, notOkItem.GetDataValue("NAME"));
-                        decimal diagObjectId3 = Convert.ToDecimal(notOkItem.Id, CultureInfo.InvariantCulture);
-                        DiagnosticObject diagnosticObject2 = new DiagnosticObject(DBProvider.GetDiagObjectById(diagObjectId3, Vehicle, FFMResolver, getHidden: true), Vehicle, FFMResolver);
-                        foreach (IXepInfoObject attachedInfoObject2 in diagnosticObject2.GetAttachedInfoObjects())
-                        {
-                            InfoObject infoObject2 = logic.Factory.CreateInfoObject(attachedInfoObject2);
-                            string name2 = (string.IsNullOrEmpty(attachedInfoObject2.Identifikator) ? attachedInfoObject2.Title : attachedInfoObject2.Identifikator);
-                            infoObject2.XepInfoObjectCasted.Name = name2;
-                            AddSuspicious(infoObject2, diagnosticObject2.GetXepDiagnosisObject());
-                        }
-                    }
-                }
-                if (ResultSet.CollectiveResult != CollectiveResultSet.Ok)
-                {
-                    return;
-                }
-                foreach (IDiagnosticObjectLocator okItem in OkItems)
-                {
-                    Log.Info("ISTAModule.__handleOutParameter()", "set OK items: {0}", okItem.Id, okItem.GetDataValue("NAME"));
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.__handleOutParameter()", exception);
-            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public virtual void AddSuspicious(InfoObject infoObject, XEP_DIAGNOSISOBJECTSEX diagObj)
+        [PreserveSource(Cleaned = true)]
+        public virtual void AddSuspicious()
         {
-            logic?.AddSuspiciousItem(ModuleData, infoObject, diagObj);
         }
 
         public abstract int ShowQuestionPopup(ITextContent title, ITextContent question, int size = 0, params ITextContent[] buttonTexts);
-
         public abstract string DeactivateOtdLscCalls();
-
-        public abstract FcFnActivationResult StoreAndActivateFcFn(int appNo, int upgradeIdx, byte[] fsc);
-#endif
+        [PreserveSource(Hint = "FcFnActivationResult", Placeholder = true)]
+        public abstract PlaceholderType StoreAndActivateFcFn(int appNo, int upgradeIdx, byte[] fsc);
     }
 }
