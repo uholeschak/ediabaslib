@@ -39,7 +39,7 @@ namespace BMW.Rheingold.CoreFramework
         public List<PlaceholderType> OkItems = new List<PlaceholderType>();
         [PreserveSource(Hint = "List<IDiagnosticObjectLocator>", Placeholder = true)]
         public List<PlaceholderType> NotOkItems = new List<PlaceholderType>();
-        public abstract BMW.Rheingold.ISTA.CoreFramework.ILogger Logger { get; }
+        public abstract ILogger Logger { get; }
         public abstract IProtocolBasic FastaProtocoler { get; }
 
         [PreserveSource(Hint = "IEcuKomStatement", Placeholder = true)]
@@ -996,9 +996,9 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
-        public PlaceholderType __FaultCode(string refCode)
+        public void __FaultCode(string refCode)
         {
-            return GetFaultCode(refCode);
+            //[-] return GetFaultCode(refCode);
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1029,46 +1029,23 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
-        public PlaceholderType FaultCodeNode(string id)
+        public void FaultCodeNode(string id)
         {
-            try
-            {
-                decimal code = Convert.ToDecimal(fCode, CultureInfo.InvariantCulture);
-                FaultCode faultCodeByCodeAndVariantName = DBProvider.GetFaultCodeByCodeAndVariantName(code, variante, null, Vehicle, FFMResolver);
-                if (faultCodeByCodeAndVariantName != null)
-                {
-                    faultCodeByCodeAndVariantName.VehicleContext = Vehicle;
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.FaultCodeNode(string,string,string)", exception);
-            }
+            //[-] try
+            //[-] {
+            //[-] decimal code = Convert.ToDecimal(fCode, CultureInfo.InvariantCulture);
+            //[-] FaultCode faultCodeByCodeAndVariantName = DBProvider.GetFaultCodeByCodeAndVariantName(code, variante, null, Vehicle, FFMResolver);
+            //[-] if (faultCodeByCodeAndVariantName != null)
+            //[-] {
+            //[-] faultCodeByCodeAndVariantName.VehicleContext = Vehicle;
+            //[-] }
+            //[-] }
+            //[-] catch (Exception exception)
+            //[-] {
+            //[-] Log.WarningException("ISTAModule.FaultCodeNode(string,string,string)", exception);
+            //[-] }
 
-            return null;
-        }
-
-        public IFaultCodeLocator FaultCodeNode(string id)
-        {
-            try
-            {
-                decimal id2 = Convert.ToDecimal(id, CultureInfo.InvariantCulture);
-                FaultCode faultCodeById = DBProvider.GetFaultCodeById(id2, Vehicle, FFMResolver);
-                if (faultCodeById != null)
-                {
-                    faultCodeById.VehicleContext = Vehicle;
-                    return new FaultCodeLocator(faultCodeById, Vehicle, FFMResolver);
-                }
-
-                Log.Warning("ISTAModule.FaultCodeNode()", "Can not find fault code node for id: {0}", id);
-                return null;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ISTAModule.FaultCodeNode()", exception);
-            }
-
-            return null;
+            //[-] return null;
         }
 
         [PreserveSource(Hint = "IVirtualFaultCodeLocator", Placeholder = true)]
@@ -1308,12 +1285,6 @@ namespace BMW.Rheingold.CoreFramework
         public abstract string DeactivateOtdLscCalls();
         [PreserveSource(Hint = "FcFnActivationResult", Placeholder = true)]
         public abstract PlaceholderType StoreAndActivateFcFn(int appNo, int upgradeIdx, byte[] fsc);
-        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
-        public PlaceholderType __FaultCode(string sgbd, string variante, string fCode)
-        {
-            throw new NotImplementedException();
-        }
-
         [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
         public PlaceholderType __FaultCode(string sgbd, string variante, string fCode)
         {
