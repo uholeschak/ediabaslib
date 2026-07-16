@@ -1285,10 +1285,5 @@ namespace BMW.Rheingold.CoreFramework
         public abstract string DeactivateOtdLscCalls();
         [PreserveSource(Hint = "FcFnActivationResult", Placeholder = true)]
         public abstract PlaceholderType StoreAndActivateFcFn(int appNo, int upgradeIdx, byte[] fsc);
-        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
-        public PlaceholderType __FaultCode(string sgbd, string variante, string fCode)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
