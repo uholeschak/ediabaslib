@@ -6,9 +6,11 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework
 {
+    [PreserveSource(Hint = "Simplified")]
     public interface ILogic : ISession, INotifyPropertyChanged
     {
         //IList<ISdpPatchBomContent> SdpPatchBomContents { get; set; }
