@@ -1,4 +1,5 @@
-﻿using PsdzClient;
+﻿using BMW.Rheingold.CoreFramework.Contracts;
+using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
@@ -50,8 +51,7 @@ namespace BMW.Rheingold.CoreFramework
         [PreserveSource(Hint = "IVehicleContext", Placeholder = true)]
         public abstract PlaceholderType VehicleContext { get; }
 
-        [PreserveSource(Hint = "IDealerData", Placeholder = true)]
-        public abstract PlaceholderType DealerData { get; }
+        public abstract IDealerData DealerData { get; }
 
         [PreserveSource(Hint = "ISOCAccessor", Placeholder = true)]
         public abstract PlaceholderType SOCAccessor { get; }
