@@ -21,8 +21,7 @@ namespace BMW.Rheingold.CoreFramework
         protected ParameterContainer _globalModuleOutParameter = new ParameterContainer();
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected ParameterContainer _globalModuleInAndOutParameter = new ParameterContainer();
-        [PreserveSource(Hint = "ILogic", Placeholder = true)]
-        public PlaceholderType logic;
+        public ILogic logic;
         private IResult resultSet = new Result();
         [PreserveSource(Hint = "EcuKomProxy", Placeholder = true)]
         private PlaceholderType ecuKomProxy;
@@ -78,8 +77,7 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Hint = "ILogic", Placeholder = true)]
-        public PlaceholderType IstaOperationLogic => logic;
+        public ILogic IstaOperationLogic => logic;
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public IResult ResultSet
