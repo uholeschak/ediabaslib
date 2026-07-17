@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.SDK.SystemWeb/4.0.106">
+﻿<Project Sdk="MSBuild.SDK.SystemWeb/4.0.107">
   <PropertyGroup>
     <RootNamespace>WebPsdzClient</RootNamespace>
     <AssemblyName>WebPsdzClient</AssemblyName>
@@ -111,7 +111,7 @@
     <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.2.3" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="6.0.3">
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

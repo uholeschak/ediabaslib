@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "es2015",
+    "noEmitOnError": true,
+    "outDir": "Scripts"
+  },
+  "include": [ "Scripts/**/*.ts" ],
+  "exclude": [ "obj", "bin", "node_modules" ]
+}
