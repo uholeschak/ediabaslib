@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
@@ -53,11 +54,9 @@ namespace BMW.Rheingold.CoreFramework
 
         public abstract IDealerData DealerData { get; }
 
-        [PreserveSource(Hint = "ISOCAccessor", Placeholder = true)]
-        public abstract PlaceholderType SOCAccessor { get; }
+        public abstract ISOCAccessor SOCAccessor { get; }
 
-        [PreserveSource(Hint = "ISOCAccessor", Placeholder = true)]
-        public abstract PlaceholderType Contexts { get; }
+        public abstract ISOCAccessor Contexts { get; }
         public abstract Vehicle Vehicle { get; }
 
         [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
