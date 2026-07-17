@@ -40,8 +40,7 @@ namespace BMW.Rheingold.CoreFramework
         public abstract ILogger Logger { get; }
         public abstract IProtocolBasic FastaProtocoler { get; }
 
-        [PreserveSource(Hint = "IEcuKomStatement", Placeholder = true)]
-        public abstract PlaceholderType EcuKomStatement { get; }
+        public abstract IEcuKomStatement EcuKomStatement { get; }
         public abstract IEcuKom ecuKom { get; }
         public abstract IFFMDynamicResolver FFMResolver { get; }
 
