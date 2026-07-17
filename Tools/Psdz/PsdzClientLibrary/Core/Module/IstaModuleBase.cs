@@ -1,4 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using PsdzClient;
 using PsdzClient.Core;
@@ -10,7 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169, CS0649
 namespace BMW.Rheingold.CoreFramework
 {
     public abstract class IstaModuleBase : IIstaModule, IDisposable
@@ -25,8 +27,7 @@ namespace BMW.Rheingold.CoreFramework
         private IResult resultSet = new Result();
         [PreserveSource(Hint = "EcuKomProxy", Placeholder = true)]
         private PlaceholderType ecuKomProxy;
-        [PreserveSource(Hint = "ISuspicionLinkCounter", Placeholder = true)]
-        private PlaceholderType suspicionLinkCount;
+        private ISuspicionLinkCounter suspicionLinkCount;
         private string _lastCallingMethod = string.Empty;
         [PreserveSource(Hint = "IAppSessionContext", Placeholder = true)]
         private PlaceholderType appSessionContext;
@@ -68,8 +69,7 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Hint = "IFastaGrouping", Placeholder = true)]
-        public PlaceholderType FastaGrouping { get; set; }
+        public IFastaGrouping FastaGrouping { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
@@ -103,13 +103,16 @@ namespace BMW.Rheingold.CoreFramework
             }
         }
 
-        [PreserveSource(Hint = "ISuspicionLinkCounter", Placeholder = true)]
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public PlaceholderType SuspicionLinkCount
+        public ISuspicionLinkCounter SuspicionLinkCount
         {
             get
             {
-                throw new NotImplementedException();
+                if (suspicionLinkCount == null)
+                {
+                    //[-] suspicionLinkCount = new SuspicionLinkCounter(this, Vehicle, FFMResolver);
+                }
+                return suspicionLinkCount;
             }
         }
 
