@@ -3,6 +3,7 @@ using PsdzClient.Core;
 using System.ComponentModel;
 using PsdzClient;
 
+#pragma warning disable CS0109
 namespace BMW.Authoring
 {
     [EditorBrowsable(EditorBrowsableState.Never)]

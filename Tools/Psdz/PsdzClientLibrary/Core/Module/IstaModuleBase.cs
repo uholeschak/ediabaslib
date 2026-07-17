@@ -1,16 +1,14 @@
 ﻿using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
-using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.ServiceModel;
 using System.Text;
-using System.Xml.Linq;
 
+#pragma warning disable CS0169
 namespace BMW.Rheingold.CoreFramework
 {
     public abstract class IstaModuleBase : IIstaModule, IDisposable
