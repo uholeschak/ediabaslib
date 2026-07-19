@@ -1193,7 +1193,31 @@ namespace PsdzClient.Core
             }
         }
 
-        public ObservableCollection<InfoObject> HistoryInfoObjects;
+        public ObservableCollection<InfoObject> HistoryInfoObjects
+        {
+            get
+            {
+                return historyInfoObjectsField;
+            }
+
+            set
+            {
+                if (historyInfoObjectsField != null)
+                {
+                    if (!historyInfoObjectsField.Equals(value))
+                    {
+                        historyInfoObjectsField = value;
+                        OnPropertyChanged("HistoryInfoObjects");
+                    }
+                }
+                else
+                {
+                    historyInfoObjectsField = value;
+                    OnPropertyChanged("HistoryInfoObjects");
+                }
+            }
+        }
+
         [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
         public PlaceholderType Testplan;
         [PreserveSource(Hint = "public TestPlanCache", Placeholder = true)]
@@ -2740,7 +2764,7 @@ namespace PsdzClient.Core
             vCIField = new VCIDevice(clientContext);
             //[-] testplanField = new TestPlanType();
             //[-] testPlanCache = new TestPlanCache();
-            //[-] historyInfoObjectsField = new ObservableCollection<InfoObject>();
+            historyInfoObjectsField = new ObservableCollection<InfoObject>();
             faField = new FA();
             fFMField = new ObservableCollection<FFMResult>();
             eMotorField = new EMotor();
