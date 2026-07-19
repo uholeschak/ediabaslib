@@ -196,8 +196,7 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Hint = "IModule", Placeholder = true)]
-        public abstract PlaceholderType ModuleData { get; }
+        public abstract IModule ModuleData { get; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static string ModuleNameTransformator(string moduleName)
