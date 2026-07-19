@@ -1,5 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using PsdzClient;
@@ -823,8 +824,7 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "InfoObject", Placeholder = true)]
-        public abstract PlaceholderType GetInfoObjStarted();
+        public abstract InfoObject GetInfoObjStarted();
         [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
         public abstract PlaceholderType SelectDiagParentByAskingUser(IList<PlaceholderType> diag, string callingMethod);
         [PreserveSource(Hint = "IList<XEP_DIAGNOSISOBJECTSEX>", Placeholder = true)]
@@ -919,14 +919,14 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IList<InfoObject>", Placeholder = true)]
-        private IList<PlaceholderType> ExecuteCommandIndirectDocument(string sysName, string infoType, string heading, string callingMethod)
+        [PreserveSource(Cleaned = true)]
+        private IList<InfoObject> ExecuteCommandIndirectDocument(string sysName, string infoType, string heading, string callingMethod)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "List<InfoObject>", Placeholder = true)]
-        private List<PlaceholderType> ValuateDocument(List<PlaceholderType> infoObjects)
+        [PreserveSource(Cleaned = true)]
+        private List<InfoObject> ValuateDocument(List<InfoObject> infoObjects)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz;
 using PsdzClient.Contracts;
@@ -110,8 +111,7 @@ namespace PsdzClient.Core
         private string iLevelBackupField;
         private FA faField;
         private string zCSField;
-        [PreserveSource(Hint = "ObservableCollection<InfoObject>", Placeholder = true)]
-        private PlaceholderType historyInfoObjectsField;
+        private ObservableCollection<InfoObject> historyInfoObjectsField;
         [PreserveSource(Hint = "TestPlanType", Placeholder = true)]
         private PlaceholderType testplanField;
         [PreserveSource(Hint = "TestPlanCache", Placeholder = true)]
@@ -1193,8 +1193,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "public ObservableCollection<InfoObject>", Placeholder = true)]
-        public PlaceholderType HistoryInfoObjects;
+        public ObservableCollection<InfoObject> HistoryInfoObjects;
         [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
         public PlaceholderType Testplan;
         [PreserveSource(Hint = "public TestPlanCache", Placeholder = true)]

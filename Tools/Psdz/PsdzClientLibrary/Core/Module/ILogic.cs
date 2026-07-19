@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework
@@ -155,7 +156,7 @@ namespace BMW.Rheingold.CoreFramework
 
         bool DeactivateKL15(IProgressMonitor monitor);
 
-        //bool IsInfoObjectExecutable(InfoObject infoObj);
+        bool IsInfoObjectExecutable(InfoObject infoObj);
 
         //void AddFaultPattern(XEP_PERCEIVEDSYMPTOMSEX add);
 

@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Programming;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.CoreFramework
 {
@@ -13,7 +14,7 @@ namespace BMW.Rheingold.CoreFramework
 
         string Title { get; }
 
-        //InfoObject InfoObj { get; }
+        InfoObject InfoObj { get; }
 
         ModuleExecutionOrigin ExecutedFrom { get; }
 
