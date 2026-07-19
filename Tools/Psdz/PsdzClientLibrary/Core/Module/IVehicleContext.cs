@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [AuthorAPI(SelectableTypeDeclaration = false)]
+    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public interface IVehicleContext
     {
         BrandName? VehicleBrandName { get; }
