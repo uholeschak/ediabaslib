@@ -43,20 +43,15 @@ namespace BMW.Rheingold.CoreFramework
         public List<PlaceholderType> NotOkItems = new List<PlaceholderType>();
         public abstract ILogger Logger { get; }
         public abstract IProtocolBasic FastaProtocoler { get; }
-
         public abstract IEcuKomStatement EcuKomStatement { get; }
         public abstract IEcuKom ecuKom { get; }
         public abstract IFFMDynamicResolver FFMResolver { get; }
 
         [PreserveSource(Hint = "IInputListener", Placeholder = true)]
         public abstract PlaceholderType InputListener { get; }
-
         public abstract IVehicleContext VehicleContext { get; }
-
         public abstract IDealerData DealerData { get; }
-
         public abstract ISOCAccessor SOCAccessor { get; }
-
         public abstract ISOCAccessor Contexts { get; }
         public abstract Vehicle Vehicle { get; }
 
@@ -110,8 +105,9 @@ namespace BMW.Rheingold.CoreFramework
             {
                 if (suspicionLinkCount == null)
                 {
-                    //[-] suspicionLinkCount = new SuspicionLinkCounter(this, Vehicle, FFMResolver);
+                //[-] suspicionLinkCount = new SuspicionLinkCounter(this, Vehicle, FFMResolver);
                 }
+
                 return suspicionLinkCount;
             }
         }
@@ -913,9 +909,10 @@ namespace BMW.Rheingold.CoreFramework
 
         public abstract void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters);
         [EditorBrowsable(EditorBrowsableState.Always)]
+        [PreserveSource(Cleaned = true)]
         public virtual IDocumentLocator __Document(string controlId)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         [PreserveSource(Cleaned = true)]
@@ -931,9 +928,10 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
+        [PreserveSource(SignatureModified = true)]
         protected IList<IDocumentLocator> __IndirectDocument(string title, string heading)
         {
-            throw new NotImplementedException();
+            return __IndirectDocument(title, heading, null);
         }
 
         private IEnumerable<string> BuildInfoType(string infoType)
@@ -950,9 +948,24 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
+        [PreserveSource(SignatureModified = true)]
         public IList<IDocumentLocator> __IndirectDocument(string title, string heading, string informationsTyp)
         {
-            throw new NotImplementedException();
+            List<IDocumentLocator> list = new List<IDocumentLocator>();
+            List<InfoObject> list2 = new List<InfoObject>();
+            Log.Info("ISTAModule.__IndirectDocument()", "Search for indirect document by title \"{0}\",  heading \"{1}\", informationTyp \"{2}\".", title, heading, informationsTyp);
+            //[-] InteractionModel interactionModel = new InteractionProgressModel();
+            try
+            {
+                //[-] RegisterAndDeregisterInteractionModel(interactionModel, register: true);
+                list2.AddRange(ExecuteCommandIndirectDocument(title, informationsTyp, heading, "__IndirectDocument(string,string,string)"));
+                //[-] list.AddRange(list2.Select((InfoObject x) => new DocumentLocator(x)));
+                return list;
+            }
+            finally
+            {
+                //[-] RegisterAndDeregisterInteractionModel(interactionModel, register: false);
+            }
         }
 
         public abstract void ShowMessage(string title, string message);
