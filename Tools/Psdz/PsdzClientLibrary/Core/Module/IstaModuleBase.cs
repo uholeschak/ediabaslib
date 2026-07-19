@@ -50,8 +50,7 @@ namespace BMW.Rheingold.CoreFramework
         [PreserveSource(Hint = "IInputListener", Placeholder = true)]
         public abstract PlaceholderType InputListener { get; }
 
-        [PreserveSource(Hint = "IVehicleContext", Placeholder = true)]
-        public abstract PlaceholderType VehicleContext { get; }
+        public abstract IVehicleContext VehicleContext { get; }
 
         public abstract IDealerData DealerData { get; }
 
@@ -800,8 +799,7 @@ namespace BMW.Rheingold.CoreFramework
         [AuthorAPIHidden]
         protected abstract void __handleInParameter();
         [AuthorAPIHidden]
-        [PreserveSource(Hint = "IVehicleContext", Placeholder = true)]
-        public PlaceholderType GetVehicleContext()
+        public IVehicleContext GetVehicleContext()
         {
             return VehicleContext;
         }
