@@ -913,8 +913,7 @@ namespace BMW.Rheingold.CoreFramework
 
         public abstract void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters);
         [EditorBrowsable(EditorBrowsableState.Always)]
-        [PreserveSource(Hint = "IDocumentLocator", Placeholder = true)]
-        public virtual PlaceholderType __Document(string controlId)
+        public virtual IDocumentLocator __Document(string controlId)
         {
             throw new NotImplementedException();
         }
@@ -932,8 +931,7 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        [PreserveSource(Hint = "IList<IDocumentLocator>", Placeholder = true)]
-        protected IList<PlaceholderType> __IndirectDocument(string title, string heading)
+        protected IList<IDocumentLocator> __IndirectDocument(string title, string heading)
         {
             throw new NotImplementedException();
         }
@@ -952,8 +950,7 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        [PreserveSource(Hint = "IList<IDocumentLocator>", Placeholder = true)]
-        public IList<PlaceholderType> __IndirectDocument(string title, string heading, string informationsTyp)
+        public IList<IDocumentLocator> __IndirectDocument(string title, string heading, string informationsTyp)
         {
             throw new NotImplementedException();
         }
