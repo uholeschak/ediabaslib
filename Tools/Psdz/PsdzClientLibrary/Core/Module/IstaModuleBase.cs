@@ -972,10 +972,10 @@ namespace BMW.Rheingold.CoreFramework
         public abstract void RegisterAndDeregisterInteractionModel(InteractionModel interactionModel, bool register);
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Hint = "IServiceProgramLocator", Placeholder = true)]
-        public PlaceholderType __Program(string refPath)
+        public IServiceProgramLocator __Program(string refPath)
         {
-            throw new NotImplementedException();
+            //[-] DBProvider.GetInfoObjectsByDiagObjectControlId(Convert.ToDecimal(refPath, CultureInfo.InvariantCulture), Vehicle, FFMResolver, getHidden: true);
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
