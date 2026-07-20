@@ -979,10 +979,11 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Cleaned = true)]
         public int? GetFaultCodeSum()
         {
-            throw new NotImplementedException();
+            //[-]return SessionInfoAccessor.SessionInfo.FaultCodeSum;
+            //[+] return ClientContext.GetClientContext(Vehicle)?.SessionInfo?.FaultCodeSum;
+            return ClientContext.GetClientContext(Vehicle)?.SessionInfo?.FaultCodeSum;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
