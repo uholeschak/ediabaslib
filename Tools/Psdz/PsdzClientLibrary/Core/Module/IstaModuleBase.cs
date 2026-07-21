@@ -992,10 +992,14 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IEquipmentLocator", Placeholder = true)]
-        public PlaceholderType __Equipment(string refText)
+        public IEquipmentLocator __Equipment(string refText)
         {
-            throw new NotImplementedException();
+            //[-] XEP_EQUIPMENT equipmentByName = DBProvider.GetEquipmentByName(refText);
+            //[-] if (equipmentByName != null)
+            //[-] {
+            //[-] return new EquipmentLocator(equipmentByName);
+            //[-] }
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
