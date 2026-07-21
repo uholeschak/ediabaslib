@@ -14,7 +14,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 
-#pragma warning disable CS0169, CS0649
+#pragma warning disable CS0169, CS0649, CS0162
 namespace BMW.Rheingold.CoreFramework
 {
     public abstract class IstaModuleBase : IIstaModule, IDisposable
@@ -1335,42 +1335,69 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Cleaned = true)]
+        [PreserveSource(SignatureModified = true)]
         public IEcuGroupLocator __EcuGroup(string groupName)
         {
-            throw new NotImplementedException();
+            //[-] XEP_ECUGROUPS ecuGroupByName = DBProvider.GetEcuGroupByName(groupName);
+            //[-] if (ecuGroupByName != null)
+            //[-] {
+            //[-] return new EcuGroupLocator(ecuGroupByName, Vehicle, FFMResolver);
+            //[-] }
+            return null;
         }
 
-        [PreserveSource(Cleaned = true)]
+        [PreserveSource(SignatureModified = true)]
         public IEcuGroupLocator __EcuGroup(decimal ecuGroupId)
         {
-            throw new NotImplementedException();
+            //[-] XEP_ECUGROUPS ecuGroupById = DBProvider.GetEcuGroupById(ecuGroupId);
+            //[-] if (ecuGroupById != null)
+            //[-] {
+            //[-] return new EcuGroupLocator(ecuGroupById, Vehicle, FFMResolver);
+            //[-] }
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Cleaned = true)]
+        [PreserveSource(SignatureModified = true)]
         public IEcuVariantLocator __EcuVariant(string variantName)
         {
-            throw new NotImplementedException();
+            //[-] XEP_ECUVARIANTS ecuVariantByName = DBProvider.GetEcuVariantByName(variantName);
+            //[-] if (ecuVariantByName != null)
+            //[-] {
+            //[-] return new EcuVariantLocator(ecuVariantByName, Vehicle, FFMResolver);
+            //[-] }
+            return null;
         }
 
-        [PreserveSource(Cleaned = true)]
+        [PreserveSource(SignatureModified = true)]
         public IEcuVariantLocator __EcuVariant(decimal ecuVariantId)
         {
-            throw new NotImplementedException();
+            //[-] XEP_ECUVARIANTS ecuVariantById = DBProvider.GetEcuVariantById(ecuVariantId);
+            //[-] if (ecuVariantById != null)
+            //[-] {
+            //[-] return new EcuVariantLocator(ecuVariantById, Vehicle, FFMResolver);
+            //[-] }
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IEcuProgrammingVariantLocator", Placeholder = true)]
-        public PlaceholderType __EcuProgrammingVariant(string ecuProgrammingVariant)
+        [PreserveSource(SignatureModified = true)]
+        public IEcuProgrammingVariantLocator __EcuProgrammingVariant(string ecuProgrammingVariant)
         {
-            throw new NotImplementedException();
+            //[-] return EcuProgrammingVariantLocator.CreateEcuProgrammingVariantLocator(ecuProgrammingVariant, Vehicle, FFMResolver);
+            //[+] return null;
+            return null;
         }
 
-        [PreserveSource(Hint = "IEcuProgrammingVariantLocator", Placeholder = true)]
-        public PlaceholderType __EcuProgrammingVariant(decimal ecuProgrammingVariantId)
+        [PreserveSource(SignatureModified = true)]
+        public IEcuProgrammingVariantLocator __EcuProgrammingVariant(decimal ecuProgrammingVariantId)
         {
-            throw new NotImplementedException();
+            //[-] XEP_ECUPROGRAMMINGVARIANT ecuProgrammingVariantById = DBProvider.GetEcuProgrammingVariantById(ecuProgrammingVariantId, Vehicle, FFMResolver);
+            //[-] if (ecuProgrammingVariantById != null)
+            //[-] {
+            //[-] return new EcuProgrammingVariantLocator(ecuProgrammingVariantById, Vehicle, FFMResolver);
+            //[-] }
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
