@@ -838,16 +838,17 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
-        public void GetFaultCode(string refCode)
+        public IFaultCodeLocator GetFaultCode(string refCode)
         {
-        //[-] FaultCode faultCode = FaultCode.GetFaultCode(refCode, Vehicle, FFMResolver);
-        //[-] if (faultCode == null)
-        //[-] {
-        //[-] Log.Warning("ISTAModule.__FaultCode()", "no fault code found for reference: {0}", refCode);
-        //[-] return null;
-        //[-] }
-        //[-] return new FaultCodeLocator(faultCode, Vehicle, FFMResolver);
+            //[-] FaultCode faultCode = FaultCode.GetFaultCode(refCode, Vehicle, FFMResolver);
+            //[-] if (faultCode == null)
+            //[-] {
+            //[-] Log.Warning("ISTAModule.__FaultCode()", "no fault code found for reference: {0}", refCode);
+            //[-] return null;
+            //[-] }
+            //[-] return new FaultCodeLocator(faultCode, Vehicle, FFMResolver);
+            //[+] return null;
+            return null;
         }
 
         [PreserveSource(Hint = "IVirtualFaultCodeLocator replaced", SignatureModified = true)]
@@ -998,10 +999,9 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
-        public void __FaultCode(string refCode)
+        public IFaultCodeLocator __FaultCode(string refCode)
         {
-        //[-] return GetFaultCode(refCode);
+            return GetFaultCode(refCode);
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1031,8 +1031,7 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
-        public void FaultCodeNode(string sgbd, string variante, string fCode)
+        public IFaultCodeLocator FaultCodeNode(string sgbd, string variante, string fCode)
         {
         //[-] try
         //[-] {
@@ -1047,11 +1046,10 @@ namespace BMW.Rheingold.CoreFramework
         //[-] {
         //[-] Log.WarningException("ISTAModule.FaultCodeNode(string,string,string)", exception);
         //[-] }
-        //[-] return null;
+            return null;
         }
 
-        [PreserveSource(Hint = "IFaultCodeLocator replaced", SignatureModified = true)]
-        public void FaultCodeNode(string id)
+        public IFaultCodeLocator FaultCodeNode(string id)
         {
         //[-] try
         //[-] {
@@ -1069,7 +1067,7 @@ namespace BMW.Rheingold.CoreFramework
         //[-] {
         //[-] Log.WarningException("ISTAModule.FaultCodeNode()", exception);
         //[-] }
-        //[-] return null;
+            return null;
         }
 
         [PreserveSource(Hint = "IVirtualFaultCodeLocator", Placeholder = true)]

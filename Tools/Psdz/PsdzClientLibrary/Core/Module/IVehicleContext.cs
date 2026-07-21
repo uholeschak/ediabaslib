@@ -64,7 +64,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts
 
         bool IsSet(IPerceivedSymptomsLocator preceivedSymptom);
 
-        //bool IsSet(IFaultCodeLocator faultCodeLocator);
+        bool IsSet(IFaultCodeLocator faultCodeLocator);
 
         //bool IsSet(IEquipmentLocator equipment);
 
