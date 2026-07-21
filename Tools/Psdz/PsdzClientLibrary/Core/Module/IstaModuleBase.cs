@@ -803,6 +803,7 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
+        [PreserveSource(SignatureModified = true)]
         public IDiagnosticObjectLocator __DiagnosticObject(string refText)
         {
             string text = refText;
@@ -843,10 +844,25 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        [PreserveSource(Cleaned = true)]
+        [PreserveSource(SignatureModified = true)]
         public IDiagnosticObjectLocator __DiagnosticObject(decimal id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //[-] XEP_DIAGNOSISOBJECTSEX diagObjectById = DBProvider.GetDiagObjectById(id, Vehicle, FFMResolver, getHidden: true);
+                //[-] if (diagObjectById != null)
+                //[-] {
+                //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectById, Vehicle, FFMResolver);
+                //[-] Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().Title_dede);
+                //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
+                //[-] return new DiagnosticObjectLocator(diagnosticObject, childDiagObjects);
+                //[-] }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.__DiagnosticObject()", exception);
+            }
+            return null;
         }
 
         [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
