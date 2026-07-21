@@ -1027,10 +1027,56 @@ namespace BMW.Rheingold.CoreFramework
             return null;
         }
 
-        [PreserveSource(Cleaned = true)]
         private IList<InfoObject> ExecuteCommandIndirectDocument(string sysName, string infoType, string heading, string callingMethod)
         {
-            throw new NotImplementedException();
+            List<InfoObject> list = new List<InfoObject>();
+            if (Vehicle == null)
+            {
+                Log.Error("ISTAModule.ExecuteCommandIndirectDocument()", "Vehicle is null, thus returning empty document list.");
+                return list;
+            }
+            if (string.IsNullOrEmpty(sysName))
+            {
+                //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent(callingMethod);
+                //[-] if (xEP_DIAGNOSISOBJECTSEX == null)
+                {
+                    Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No Diag parent found, returning empty document list.");
+                    return list;
+                }
+                //[-] sysName = xEP_DIAGNOSISOBJECTSEX.Name;
+                //[-] decimal id = xEP_DIAGNOSISOBJECTSEX.Id;
+                if (string.IsNullOrEmpty(sysName))
+                {
+                    foreach (string item in BuildInfoType(infoType))
+                    {
+                        //[-] list.AddRange(logic.Factory.GetIndirectDocument(Vehicle, id, heading, item, FFMResolver, getHidden: true));
+                    }
+                    if (!list.Any())
+                    {
+                        //[-] Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No document found for DiagObj: id={0}, sysName=\"{1}\", heading=\"{2}\"", id, sysName, heading);
+                    }
+                    else
+                    {
+                        list = ValuateDocument(list);
+                    }
+                }
+            }
+            if (!string.IsNullOrEmpty(sysName))
+            {
+                foreach (string item2 in BuildInfoType(infoType))
+                {
+                    //[-] list.AddRange(logic.Factory.GetIndirectDocument(Vehicle, sysName, heading, item2, FFMResolver, getHidden: true));
+                }
+                if (!list.Any())
+                {
+                    Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No document found for DiagObj: sysName=\"{0}\", infoType=\"{1}\", heading=\"{2}\"", sysName, infoType, heading);
+                }
+                else
+                {
+                    list = ValuateDocument(list);
+                }
+            }
+            return list;
         }
 
         [PreserveSource(Cleaned = true)]
