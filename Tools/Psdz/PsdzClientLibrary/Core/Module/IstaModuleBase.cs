@@ -880,16 +880,32 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Cleaned = true)]
+        [PreserveSource(SignatureModified = true)]
         private string LogDiagObj()
         {
-            throw new NotImplementedException();
+            StringBuilder stringBuilder = new StringBuilder("[");
+            //[-] foreach (XEP_DIAGNOSISOBJECTSEX item in diag)
+            //[-] {
+            //[-] stringBuilder.Append("{").Append(LogDiagObj(item)).Append("},");
+            //[-] }
+            //[-] if (diag.Count > 0)
+            //[-] {
+            //[-] stringBuilder.Length--;
+            //[-] }
+            stringBuilder.Append("]");
+            return stringBuilder.ToString();
         }
 
-        [PreserveSource(Cleaned = true)]
+        [PreserveSource(SignatureModified = true)]
         private string LogDiagObj(PlaceholderType diag)
         {
-            throw new NotImplementedException();
+            //[-] if (diag == null)
+            //[-] {
+            //[-] return "null";
+            //[-] }
+            StringBuilder stringBuilder = new StringBuilder();
+            //[-] stringBuilder.Append(diag.Name).Append("/").Append(diag.Id);
+            return stringBuilder.ToString();
         }
 
         public IFaultCodeLocator GetFaultCode(string refCode)
