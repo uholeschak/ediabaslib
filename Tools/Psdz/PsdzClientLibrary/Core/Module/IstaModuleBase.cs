@@ -1341,25 +1341,106 @@ namespace BMW.Rheingold.CoreFramework
         public abstract void AddSuspiciousItemToServiceProgram(IDiagnosticObjectLocator diagObjLocator);
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Cleaned = true)]
         public void __SetOkItem(IDiagnosticObjectLocator diagObj)
         {
-            throw new NotImplementedException();
+            if (diagObj != null)
+            {
+                Log.Info("ISTAModule.__SetOkItem()", "adding diag obj id: {0}", diagObj.Id);
+                if (!OkItems.Contains(diagObj))
+                {
+                    OkItems.Add(diagObj);
+                }
+            }
+            else
+            {
+                Log.Info("ISTAModule.__SetOkItem()", "diag obj was null");
+            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Cleaned = true)]
         public void __SetNotOkItem(IDiagnosticObjectLocator diagObj)
         {
-            throw new NotImplementedException();
+            if (diagObj != null)
+            {
+                Log.Info("ISTAModule.__SetNotOkItem()", "adding diag obj id: {0}", diagObj.Id);
+                if (!NotOkItems.Contains(diagObj))
+                {
+                    NotOkItems.Add(diagObj);
+                }
+            }
+            else
+            {
+                Log.Info("ISTAModule.__SetNotOkItem()", "diag obj was null");
+            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Cleaned = true)]
         public virtual void __handleOutParameter()
         {
+            try
+            {
+                if (SuspiciuosItems != null && SuspiciuosItems.Count > 0)
+                {
+                    foreach (IDiagnosticObjectLocator suspiciuosItem in SuspiciuosItems)
+                    {
+                        Log.Info("ISTAModule.__handleOutParameter()", "set suspicious items: {0}", suspiciuosItem.Id, suspiciuosItem.GetDataValue("NAME"));
+                        decimal diagObjectId = Convert.ToDecimal(suspiciuosItem.Id, CultureInfo.InvariantCulture);
+                        //[-] XEP_DIAGNOSISOBJECTSEX diagObjectById = DBProvider.GetDiagObjectById(diagObjectId, Vehicle, FFMResolver, getHidden: true);
+                        if (suspiciuosItem.Parents != null && suspiciuosItem.Parents.Any())
+                        {
+                            decimal diagObjectId2 = Convert.ToDecimal(suspiciuosItem.Parents[0].Id, CultureInfo.InvariantCulture);
+                            //[-] DBProvider.GetDiagObjectById(diagObjectId2, Vehicle, FFMResolver, getHidden: true);
+                        }
+                        //[-] if (diagObjectById == null)
+                        //[-] {
+                        //[-] continue;
+                        //[-] }
+                        //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectById, Vehicle, FFMResolver);
+                        //[-] if (diagnosticObject == null)
+                        //[-] {
+                        //[-] continue;
+                        //[-] }
+                        //[-] foreach (IXepInfoObject attachedInfoObject in diagnosticObject.GetAttachedInfoObjects())
+                        //[-] {
+                        //[-] InfoObject infoObject = logic.Factory.CreateInfoObject(attachedInfoObject);
+                        //[-] string name = (string.IsNullOrEmpty(attachedInfoObject.Identifikator) ? attachedInfoObject.Title : attachedInfoObject.Identifikator);
+                        //[-] infoObject.XepInfoObjectCasted.Name = name;
+                        //[-] infoObject.State = typeDiagObjectState.Suspected;
+                        //[-] AddSuspicious(infoObject, diagObjectById);
+                        //[-] }
+                    }
+                }
+                if (ResultSet.CollectiveResult == CollectiveResultSet.NotOk)
+                {
+                    foreach (IDiagnosticObjectLocator notOkItem in NotOkItems)
+                    {
+                        Log.Info("ISTAModule.__handleOutParameter()", "set notOK items: {0}", notOkItem.Id, notOkItem.GetDataValue("NAME"));
+                        decimal diagObjectId3 = Convert.ToDecimal(notOkItem.Id, CultureInfo.InvariantCulture);
+                        //[-] DiagnosticObject diagnosticObject2 = new DiagnosticObject(DBProvider.GetDiagObjectById(diagObjectId3, Vehicle, FFMResolver, getHidden: true), Vehicle, FFMResolver);
+                        //[-] foreach (IXepInfoObject attachedInfoObject2 in diagnosticObject2.GetAttachedInfoObjects())
+                        //[-] {
+                        //[-] InfoObject infoObject2 = logic.Factory.CreateInfoObject(attachedInfoObject2);
+                        //[-] string name2 = (string.IsNullOrEmpty(attachedInfoObject2.Identifikator) ? attachedInfoObject2.Title : attachedInfoObject2.Identifikator);
+                        //[-] infoObject2.XepInfoObjectCasted.Name = name2;
+                        //[-] AddSuspicious(infoObject2, diagnosticObject2.GetXepDiagnosisObject());
+                        //[-] }
+                    }
+                }
+                if (ResultSet.CollectiveResult != CollectiveResultSet.Ok)
+                {
+                    return;
+                }
+                foreach (IDiagnosticObjectLocator okItem in OkItems)
+                {
+                    Log.Info("ISTAModule.__handleOutParameter()", "set OK items: {0}", okItem.Id, okItem.GetDataValue("NAME"));
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.__handleOutParameter()", exception);
+            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
