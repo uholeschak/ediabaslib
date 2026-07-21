@@ -1016,10 +1016,16 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IFaultModeLocator", Placeholder = true)]
-        public PlaceholderType __FaultMode(string refCode)
+        public IFaultModeLocator __FaultMode(string refCode)
         {
-            throw new NotImplementedException();
+            decimal id = Convert.ToDecimal(refCode, CultureInfo.InvariantCulture);
+            //[-] XEP_FAULTMODELABELS faultModeLabelById = DBProvider.GetFaultModeLabelById(id);
+            //[-] if (faultModeLabelById != null)
+            //[-] {
+            //[-] return new FaultModeLocator(faultModeLabelById);
+            //[-] }
+            Log.Warning("ISTAModule.__FaultMode()", "no valid faultmode found in database for ref: {0}", refCode);
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]

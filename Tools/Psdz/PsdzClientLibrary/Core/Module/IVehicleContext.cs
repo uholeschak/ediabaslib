@@ -68,7 +68,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts
 
         bool IsSet(IEquipmentLocator equipment);
 
-        //bool IsSet(IFaultModeLocator faultModeLocator);
+        bool IsSet(IFaultModeLocator faultModeLocator);
 
         //IEnumerable<ITechnicalAction> GetTechnicalActions(bool isSoftwareCampaign);
 
