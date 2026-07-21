@@ -35,12 +35,9 @@ namespace BMW.Rheingold.CoreFramework
         private bool _doLoopHandling;
         private bool _verboseLoopLog;
         private readonly List<string> serviceCodesHandledInLoop = new List<string>();
-        [PreserveSource(Hint = "List<IDiagnosticObjectLocator>", Placeholder = true)]
-        public List<PlaceholderType> SuspiciuosItems = new List<PlaceholderType>();
-        [PreserveSource(Hint = "List<IDiagnosticObjectLocator>", Placeholder = true)]
-        public List<PlaceholderType> OkItems = new List<PlaceholderType>();
-        [PreserveSource(Hint = "List<IDiagnosticObjectLocator>", Placeholder = true)]
-        public List<PlaceholderType> NotOkItems = new List<PlaceholderType>();
+        public List<IDiagnosticObjectLocator> SuspiciuosItems = new List<IDiagnosticObjectLocator>();
+        public List<IDiagnosticObjectLocator> OkItems = new List<IDiagnosticObjectLocator>();
+        public List<IDiagnosticObjectLocator> NotOkItems = new List<IDiagnosticObjectLocator>();
         public abstract ILogger Logger { get; }
         public abstract IProtocolBasic FastaProtocoler { get; }
         public abstract IEcuKomStatement EcuKomStatement { get; }
@@ -801,15 +798,15 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
-        public PlaceholderType __DiagnosticObject(string refText)
+        [PreserveSource(Cleaned = true)]
+        public IDiagnosticObjectLocator __DiagnosticObject(string refText)
         {
             throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
-        public PlaceholderType __DiagnosticObject(decimal id)
+        [PreserveSource(Cleaned = true)]
+        public IDiagnosticObjectLocator __DiagnosticObject(decimal id)
         {
             throw new NotImplementedException();
         }
@@ -1270,26 +1267,26 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
-        public void __SetSuspiciousItem(PlaceholderType diagObj)
+        [PreserveSource(Cleaned = true)]
+        public void __SetSuspiciousItem(IDiagnosticObjectLocator diagObj)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
-        public abstract void AddSuspiciousItemToServiceProgram(PlaceholderType diagObjLocator);
+        [PreserveSource(Cleaned = true)]
+        public abstract void AddSuspiciousItemToServiceProgram(IDiagnosticObjectLocator diagObjLocator);
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
-        public void __SetOkItem(PlaceholderType diagObj)
+        [PreserveSource(Cleaned = true)]
+        public void __SetOkItem(IDiagnosticObjectLocator diagObj)
         {
             throw new NotImplementedException();
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Hint = "IDiagnosticObjectLocator", Placeholder = true)]
-        public void __SetNotOkItem(PlaceholderType diagObj)
+        [PreserveSource(Cleaned = true)]
+        public void __SetNotOkItem(IDiagnosticObjectLocator diagObj)
         {
             throw new NotImplementedException();
         }

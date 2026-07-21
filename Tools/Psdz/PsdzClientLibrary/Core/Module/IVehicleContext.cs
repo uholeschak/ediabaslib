@@ -60,9 +60,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts
 
         bool IsSet(IEcuVariantLocator variant);
 
-        //bool IsSet(IDiagnosticObjectLocator diagObject);
+        bool IsSet(IDiagnosticObjectLocator diagObject);
 
-        //bool IsSet(IPerceivedSymptomsLocator preceivedSymptom);
+        bool IsSet(IPerceivedSymptomsLocator preceivedSymptom);
 
         //bool IsSet(IFaultCodeLocator faultCodeLocator);
 
