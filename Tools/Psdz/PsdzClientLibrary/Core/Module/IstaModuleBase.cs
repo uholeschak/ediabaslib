@@ -1009,8 +1009,7 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "ICombinedFaultLocator", Placeholder = true)]
-        public PlaceholderType __CombinedFault(string fC_Id)
+        public ICombinedFaultLocator __CombinedFault(string fC_Id)
         {
             throw new NotImplementedException();
         }
@@ -1035,10 +1034,18 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "ICombinedFaultLocator", Placeholder = true)]
-        public PlaceholderType CombinedFaultNode(string fC_Id)
+        [PreserveSource(SignatureModified = true)]
+        public ICombinedFaultLocator CombinedFaultNode(string fC_Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //[-] return CombinedFaultCode.GetCombinedFaultCode(Convert.ToDecimal(fC_Id, CultureInfo.InvariantCulture), Vehicle, FFMResolver);
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.CombinedFaultNode(string)", exception);
+            }
+            return null;
         }
 
         [PreserveSource(SignatureModified = true)]
@@ -1181,10 +1188,22 @@ namespace BMW.Rheingold.CoreFramework
             return true;
         }
 
-        [PreserveSource(Hint = "ICombinedFaultLocator", Placeholder = true)]
-        public PlaceholderType GetCombinedFaultCode(string refCode)
+        public ICombinedFaultLocator GetCombinedFaultCode(string refCode)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //[-] ICombinedFaultLocator combinedFaultCode = CombinedFaultCode.GetCombinedFaultCode(Convert.ToDecimal(refCode, CultureInfo.InvariantCulture), Vehicle, FFMResolver);
+                //[-] if (combinedFaultCode == null)
+                //[-] {
+                //[-] Log.Warning("ISTAModule.GetCombinedFaultCode()", "no combined fault code found for reference: {0}", refCode);
+                //[-] }
+                //[-] return combinedFaultCode;
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.GetCombinedFaultCode()", exception);
+            }
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
