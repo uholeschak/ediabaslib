@@ -1094,10 +1094,21 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "ICharacteristicsLocator", Placeholder = true)]
-        public PlaceholderType __Characteristics(string controlId)
+        public ICharacteristicsLocator __Characteristics(string controlId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //[-] IXepCharacteristics characteristicById = DBProvider.GetCharacteristicById(Convert.ToInt64(controlId, CultureInfo.InvariantCulture));
+                //[-] if (characteristicById != null)
+                //[-] {
+                //[-] return new CharacteristicsLocator(characteristicById);
+                //[-] }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.__Characteristics()", exception);
+            }
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]

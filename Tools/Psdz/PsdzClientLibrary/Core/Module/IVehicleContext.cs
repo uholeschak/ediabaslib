@@ -54,7 +54,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts
 
         IEnumerable<IEcu> ECU { get; }
 
-        //bool IsSet(ICharacteristicsLocator characteristicsLocator);
+        bool IsSet(ICharacteristicsLocator characteristicsLocator);
 
         bool IsSet(IEcuGroupLocator group);
 
