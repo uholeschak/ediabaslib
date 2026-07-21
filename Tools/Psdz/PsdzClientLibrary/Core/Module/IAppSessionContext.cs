@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Core;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework
 {
     [AuthorAPI]
