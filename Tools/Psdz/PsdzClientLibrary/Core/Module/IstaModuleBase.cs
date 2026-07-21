@@ -31,8 +31,7 @@ namespace BMW.Rheingold.CoreFramework
         private PlaceholderType ecuKomProxy;
         private ISuspicionLinkCounter suspicionLinkCount;
         private string _lastCallingMethod = string.Empty;
-        [PreserveSource(Hint = "IAppSessionContext", Placeholder = true)]
-        private PlaceholderType appSessionContext;
+        private IAppSessionContext appSessionContext;
         private bool _doLoopHandling;
         private bool _verboseLoopLog;
         private readonly List<string> serviceCodesHandledInLoop = new List<string>();
@@ -135,12 +134,12 @@ namespace BMW.Rheingold.CoreFramework
             }
         }
 
-        [PreserveSource(Hint = "IAppSessionContext", Placeholder = true)]
-        public virtual PlaceholderType AppSessionContext
+        public virtual IAppSessionContext AppSessionContext
         {
             get
             {
-                throw new NotImplementedException();
+                //[-] appSessionContext = appSessionContext ?? new AppSessionContext(ConfigSettings.OperationalMode, ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.OnlineMode", defaultValue: true), logic);
+                return appSessionContext;
             }
         }
 
