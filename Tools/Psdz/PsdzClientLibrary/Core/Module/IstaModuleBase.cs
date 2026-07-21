@@ -1079,10 +1079,47 @@ namespace BMW.Rheingold.CoreFramework
             return list;
         }
 
-        [PreserveSource(Cleaned = true)]
         private List<InfoObject> ValuateDocument(List<InfoObject> infoObjects)
         {
-            throw new NotImplementedException();
+            List<string> list = new List<string>();
+            List<string> list2 = new List<string>();
+            List<InfoObject> list3 = new List<InfoObject>();
+            if (infoObjects == null)
+            {
+                Log.Warning(Log.CurrentMethod(), "Document is null");
+                ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
+            }
+            else
+            {
+                foreach (InfoObject infoObject in infoObjects)
+                {
+                    //[-] if (string.Compare(infoObject.XepInfoObject.DocumentType, "NONE", StringComparison.OrdinalIgnoreCase) == 0)
+                    //[-] {
+                    //[-] Log.Warning(Log.CurrentMethod(), "Unable to find document for document identifier: {0}", infoObject.Identifier ?? "");
+                    //[-] infoObject.State = typeDiagObjectState.Canceled;
+                    //[-] list.Add(infoObject.Identifier);
+                    //[-] }
+                    //[-] else if (!infoObject.IsExternalDocument && (string.IsNullOrEmpty(infoObject.Content.TransformedDocument) || (string.IsNullOrEmpty(infoObject.Content.Doc) && infoObject.Content.BinaryDocument == null)))
+                    //[-] {
+                    //[-] Log.Warning(Log.CurrentMethod(), "Selected document has no content for document identifier: {0} UI-culture: {1}", infoObject.Identifier ?? "", ConfigSettings.CurrentUICulture);
+                    //[-] infoObject.State = typeDiagObjectState.Canceled;
+                    //[-] list2.Add(infoObject.Identifier);
+                    //[-] }
+                    //[-] else
+                    {
+                        list3.Add(infoObject);
+                    }
+                }
+            }
+            if (list.Any())
+            {
+                ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
+            }
+            if (list2.Any())
+            {
+                ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NoContent", "ISTAGui", true, string.Join(Environment.NewLine, list2)));
+            }
+            return list3;
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
