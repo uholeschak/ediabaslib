@@ -1208,10 +1208,29 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Cleaned = true)]
         public ISPELocator CalledFrom()
         {
-            throw new NotImplementedException();
+            try
+            {
+                InfoObject infoObjStarted = GetInfoObjStarted();
+                if (infoObjStarted == null)
+                {
+                    Log.Error("ISTAModule.CalledFrom()", "No info object found in module parameter. Returning null.");
+                    return null;
+                }
+                //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("CalledFrom()");
+                //[-] if (xEP_DIAGNOSISOBJECTSEX != null)
+                //[-] {
+                //[-] return new DiagnosticObjectLocator(new DiagnosticObject(xEP_DIAGNOSISOBJECTSEX, Vehicle, FFMResolver));
+                //[-] }
+                Log.Error("ISTAModule.CalledFrom()", "No diag object found. Returning SPELocator(infoObj.Id).");
+                return new SPELocator(infoObjStarted.Id);
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("ISTAModule.CalledFrom()", exception);
+                return null;
+            }
         }
 
         public abstract void SetProperty(string propertyName, object data);
