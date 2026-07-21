@@ -7,7 +7,6 @@ using System.Collections.Generic;
 namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [AuthorAPI(SelectableTypeDeclaration = false)]
-    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public interface IVehicleContext
     {
         BrandName? VehicleBrandName { get; }
@@ -70,7 +69,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts
 
         bool IsSet(IFaultModeLocator faultModeLocator);
 
-        //IEnumerable<ITechnicalAction> GetTechnicalActions(bool isSoftwareCampaign);
+        IEnumerable<ITechnicalAction> GetTechnicalActions(bool isSoftwareCampaign);
 
         void SetClamp15GuardianTrigger(double voltage);
 
