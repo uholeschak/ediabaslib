@@ -1041,6 +1041,7 @@ namespace BMW.Rheingold.CoreFramework
             throw new NotImplementedException();
         }
 
+        [PreserveSource(SignatureModified = true)]
         public IFaultCodeLocator FaultCodeNode(string sgbd, string variante, string fCode)
         {
             try
@@ -1060,6 +1061,7 @@ namespace BMW.Rheingold.CoreFramework
             return null;
         }
 
+        [PreserveSource(SignatureModified = true)]
         public IFaultCodeLocator FaultCodeNode(string id)
         {
             try
