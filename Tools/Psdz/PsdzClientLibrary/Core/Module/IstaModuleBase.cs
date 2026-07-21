@@ -936,50 +936,94 @@ namespace BMW.Rheingold.CoreFramework
         [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
         public abstract PlaceholderType GetRootModule();
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IVehiclePartLocator", Placeholder = true)]
-        public PlaceholderType __Part(string refText)
+        public IVehiclePartLocator __Part(string refText)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //[-] XEP_VEHICLEPART xepVehiclePartById = DBProvider.GetXepVehiclePartById(Convert.ToDecimal(refText));
+                //[-] if (xepVehiclePartById != null)
+                //[-] {
+                //[-] return new VehiclePart(xepVehiclePartById);
+                //[-] }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.__Part()", exception);
+            }
+            Log.Warning("ISTAModule.__Part()", "unable to locate vehicle part with reference: {0}", refText);
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IVehicleStateLocator", Placeholder = true)]
-        public PlaceholderType __State(string refText)
+        public IVehicleStateLocator __State(string refText)
         {
-            throw new NotImplementedException();
+            //[-] XEP_VEHICLESTATE xepVehicleStateById = DBProvider.GetXepVehicleStateById(refText);
+            //[-] if (xepVehicleStateById != null)
+            //[-] {
+            //[-] return new VehicleStateLocator(xepVehicleStateById);
+            //[-] }
+            Log.Warning("ISTAModule.__State()", "unable to locate vehicle state with reference: {0}", refText);
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IVehicleAdapterLocator", Placeholder = true)]
-        public PlaceholderType __Adapter(string refText)
+        public IVehicleAdapterLocator __Adapter(string refText)
         {
-            throw new NotImplementedException();
+            //[-] XEP_VEHICLEADAPTER vehicleAdapterById = DBProvider.GetVehicleAdapterById(refText);
+            //[-] if (vehicleAdapterById != null)
+            //[-] {
+            //[-] return new VehicleAdapterLocator(vehicleAdapterById);
+            //[-] }
+            Log.Warning("ISTAModule.__Adapter()", "unable to locate adapter with reference: {0}", refText);
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Cleaned = true)]
         public virtual void ClearErrorInfoMemory()
         {
-            throw new NotImplementedException();
+            //[-] IMethodCall methodCall = FastaProtocoler.AddMethodCall("ClearErrorInfoMemory");
+            //[-] logic.ClearErrorInfoMemory();
+            //[-] methodCall.EndTime = DateTime.Now;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Cleaned = true)]
         public virtual void ReadErrorInfoMemory()
         {
-            throw new NotImplementedException();
+            //[-] IMethodCall methodCall = FastaProtocoler.AddMethodCall("ReadErrorInfoMemory");
+            //[-] logic.ReadErrorInfoMemory();
+            RunAllServiceProgrammsWithPrefixABLQIC();
+            //[-] methodCall.EndTime = DateTime.Now;
         }
 
-        [PreserveSource(Cleaned = true)]
         public virtual void RunAllServiceProgrammsWithPrefixABLQIC()
         {
+            string text = "ABL-QIC";
+            //[-] List<IXepInfoObject> infoObjectListByIdentifierPrefix = DBProvider.GetInfoObjectListByIdentifierPrefix(text, Vehicle, logic.FFMResolver, null);
+            //[-] if (infoObjectListByIdentifierPrefix == null || infoObjectListByIdentifierPrefix.Count == 0)
+            {
+                Log.Error("VehicleIdent.ReadErrorInfoMemory()", "Service program prefix not found: " + text);
+                return;
+            }
+            //[-] foreach (IXepInfoObject item in infoObjectListByIdentifierPrefix)
+            //[-] {
+            //[-] ParameterContainer inParameters = new ParameterContainer();
+            //[-] ParameterContainer outParameters = new ParameterContainer();
+            //[-] ParameterContainer inAndOutParameters = new ParameterContainer();
+            //[-] callModuleRef(item.ControlId.ToString(), inParameters, ref outParameters, ref inAndOutParameters);
+            //[-] }
         }
 
         public abstract void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters);
         [EditorBrowsable(EditorBrowsableState.Always)]
-        [PreserveSource(Cleaned = true)]
         public virtual IDocumentLocator __Document(string controlId)
         {
+            //[-] InfoObject document = logic.Factory.GetDocument(Vehicle, FFMResolver, controlId, isRgNews: false);
+            //[-] if (document != null && DBProvider.EvaluateXepRulesById(document.Id, Vehicle, FFMResolver))
+            //[-] {
+            //[-] Log.Info("ISTAModule.__Document()", "found valid document for controlId: {0} {1}", controlId, document.XepInfoObject.Identifikator);
+            //[-] return new DocumentLocator(document);
+            //[-] }
+            //[-] Log.Info("ISTAModule.__Document()", "no valid document found for controlId: {0}", controlId);
             return null;
         }
 
