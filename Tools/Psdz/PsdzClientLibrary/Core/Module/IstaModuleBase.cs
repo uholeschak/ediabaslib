@@ -809,12 +809,13 @@ namespace BMW.Rheingold.CoreFramework
             string text = refText;
             if (string.IsNullOrEmpty(text))
             {
-                //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
-                //[-] if (xEP_DIAGNOSISOBJECTSEX != null)
-                //[-] {
-                //[-] text = xEP_DIAGNOSISOBJECTSEX.Name;
-                //[-] }
+            //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
+            //[-] if (xEP_DIAGNOSISOBJECTSEX != null)
+            //[-] {
+            //[-] text = xEP_DIAGNOSISOBJECTSEX.Name;
+            //[-] }
             }
+
             //[-] DiagnosticObjectLocator diagnosticObjectLocator = null;
             try
             {
@@ -835,12 +836,13 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.WarningException("ISTAModule.__DiagnosticObject()", exception);
             }
+
             //[-] if (diagnosticObjectLocator == null)
             {
                 Log.Warning("ISTAModule.__DiagnosticObject()", "result was null; maybe your testmodule will die");
                 return null;
             }
-            //[-] return diagnosticObjectLocator;
+        //[-] return diagnosticObjectLocator;
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
@@ -849,19 +851,20 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-                //[-] XEP_DIAGNOSISOBJECTSEX diagObjectById = DBProvider.GetDiagObjectById(id, Vehicle, FFMResolver, getHidden: true);
-                //[-] if (diagObjectById != null)
-                //[-] {
-                //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectById, Vehicle, FFMResolver);
-                //[-] Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().Title_dede);
-                //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
-                //[-] return new DiagnosticObjectLocator(diagnosticObject, childDiagObjects);
-                //[-] }
+            //[-] XEP_DIAGNOSISOBJECTSEX diagObjectById = DBProvider.GetDiagObjectById(id, Vehicle, FFMResolver, getHidden: true);
+            //[-] if (diagObjectById != null)
+            //[-] {
+            //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectById, Vehicle, FFMResolver);
+            //[-] Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().Title_dede);
+            //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
+            //[-] return new DiagnosticObjectLocator(diagnosticObject, childDiagObjects);
+            //[-] }
             }
             catch (Exception exception)
             {
                 Log.WarningException("ISTAModule.__DiagnosticObject()", exception);
             }
+
             return null;
         }
 
@@ -940,16 +943,17 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-                //[-] XEP_VEHICLEPART xepVehiclePartById = DBProvider.GetXepVehiclePartById(Convert.ToDecimal(refText));
-                //[-] if (xepVehiclePartById != null)
-                //[-] {
-                //[-] return new VehiclePart(xepVehiclePartById);
-                //[-] }
+            //[-] XEP_VEHICLEPART xepVehiclePartById = DBProvider.GetXepVehiclePartById(Convert.ToDecimal(refText));
+            //[-] if (xepVehiclePartById != null)
+            //[-] {
+            //[-] return new VehiclePart(xepVehiclePartById);
+            //[-] }
             }
             catch (Exception exception)
             {
                 Log.WarningException("ISTAModule.__Part()", exception);
             }
+
             Log.Warning("ISTAModule.__Part()", "unable to locate vehicle part with reference: {0}", refText);
             return null;
         }
@@ -981,9 +985,9 @@ namespace BMW.Rheingold.CoreFramework
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public virtual void ClearErrorInfoMemory()
         {
-            //[-] IMethodCall methodCall = FastaProtocoler.AddMethodCall("ClearErrorInfoMemory");
-            //[-] logic.ClearErrorInfoMemory();
-            //[-] methodCall.EndTime = DateTime.Now;
+        //[-] IMethodCall methodCall = FastaProtocoler.AddMethodCall("ClearErrorInfoMemory");
+        //[-] logic.ClearErrorInfoMemory();
+        //[-] methodCall.EndTime = DateTime.Now;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -992,7 +996,7 @@ namespace BMW.Rheingold.CoreFramework
             //[-] IMethodCall methodCall = FastaProtocoler.AddMethodCall("ReadErrorInfoMemory");
             //[-] logic.ReadErrorInfoMemory();
             RunAllServiceProgrammsWithPrefixABLQIC();
-            //[-] methodCall.EndTime = DateTime.Now;
+        //[-] methodCall.EndTime = DateTime.Now;
         }
 
         public virtual void RunAllServiceProgrammsWithPrefixABLQIC()
@@ -1004,13 +1008,13 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Error("VehicleIdent.ReadErrorInfoMemory()", "Service program prefix not found: " + text);
                 return;
             }
-            //[-] foreach (IXepInfoObject item in infoObjectListByIdentifierPrefix)
-            //[-] {
-            //[-] ParameterContainer inParameters = new ParameterContainer();
-            //[-] ParameterContainer outParameters = new ParameterContainer();
-            //[-] ParameterContainer inAndOutParameters = new ParameterContainer();
-            //[-] callModuleRef(item.ControlId.ToString(), inParameters, ref outParameters, ref inAndOutParameters);
-            //[-] }
+        //[-] foreach (IXepInfoObject item in infoObjectListByIdentifierPrefix)
+        //[-] {
+        //[-] ParameterContainer inParameters = new ParameterContainer();
+        //[-] ParameterContainer outParameters = new ParameterContainer();
+        //[-] ParameterContainer inAndOutParameters = new ParameterContainer();
+        //[-] callModuleRef(item.ControlId.ToString(), inParameters, ref outParameters, ref inAndOutParameters);
+        //[-] }
         }
 
         public abstract void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters);
@@ -1035,6 +1039,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Error("ISTAModule.ExecuteCommandIndirectDocument()", "Vehicle is null, thus returning empty document list.");
                 return list;
             }
+
             if (string.IsNullOrEmpty(sysName))
             {
                 //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent(callingMethod);
@@ -1043,17 +1048,19 @@ namespace BMW.Rheingold.CoreFramework
                     Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No Diag parent found, returning empty document list.");
                     return list;
                 }
+
                 //[-] sysName = xEP_DIAGNOSISOBJECTSEX.Name;
                 //[-] decimal id = xEP_DIAGNOSISOBJECTSEX.Id;
                 if (string.IsNullOrEmpty(sysName))
                 {
                     foreach (string item in BuildInfoType(infoType))
                     {
-                        //[-] list.AddRange(logic.Factory.GetIndirectDocument(Vehicle, id, heading, item, FFMResolver, getHidden: true));
+                    //[-] list.AddRange(logic.Factory.GetIndirectDocument(Vehicle, id, heading, item, FFMResolver, getHidden: true));
                     }
+
                     if (!list.Any())
                     {
-                        //[-] Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No document found for DiagObj: id={0}, sysName=\"{1}\", heading=\"{2}\"", id, sysName, heading);
+                    //[-] Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No document found for DiagObj: id={0}, sysName=\"{1}\", heading=\"{2}\"", id, sysName, heading);
                     }
                     else
                     {
@@ -1061,12 +1068,14 @@ namespace BMW.Rheingold.CoreFramework
                     }
                 }
             }
+
             if (!string.IsNullOrEmpty(sysName))
             {
                 foreach (string item2 in BuildInfoType(infoType))
                 {
-                    //[-] list.AddRange(logic.Factory.GetIndirectDocument(Vehicle, sysName, heading, item2, FFMResolver, getHidden: true));
+                //[-] list.AddRange(logic.Factory.GetIndirectDocument(Vehicle, sysName, heading, item2, FFMResolver, getHidden: true));
                 }
+
                 if (!list.Any())
                 {
                     Log.Warning("ISTAModule.ExecuteCommandIndirectDocument()", "No document found for DiagObj: sysName=\"{0}\", infoType=\"{1}\", heading=\"{2}\"", sysName, infoType, heading);
@@ -1076,6 +1085,7 @@ namespace BMW.Rheingold.CoreFramework
                     list = ValuateDocument(list);
                 }
             }
+
             return list;
         }
 
@@ -1089,36 +1099,39 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning(Log.CurrentMethod(), "Document is null");
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
             }
-            else
-            {
-                foreach (InfoObject infoObject in infoObjects)
-                {
-                    //[-] if (string.Compare(infoObject.XepInfoObject.DocumentType, "NONE", StringComparison.OrdinalIgnoreCase) == 0)
-                    //[-] {
-                    //[-] Log.Warning(Log.CurrentMethod(), "Unable to find document for document identifier: {0}", infoObject.Identifier ?? "");
-                    //[-] infoObject.State = typeDiagObjectState.Canceled;
-                    //[-] list.Add(infoObject.Identifier);
-                    //[-] }
-                    //[-] else if (!infoObject.IsExternalDocument && (string.IsNullOrEmpty(infoObject.Content.TransformedDocument) || (string.IsNullOrEmpty(infoObject.Content.Doc) && infoObject.Content.BinaryDocument == null)))
-                    //[-] {
-                    //[-] Log.Warning(Log.CurrentMethod(), "Selected document has no content for document identifier: {0} UI-culture: {1}", infoObject.Identifier ?? "", ConfigSettings.CurrentUICulture);
-                    //[-] infoObject.State = typeDiagObjectState.Canceled;
-                    //[-] list2.Add(infoObject.Identifier);
-                    //[-] }
-                    //[-] else
-                    {
-                        list3.Add(infoObject);
-                    }
-                }
-            }
+            //[-] else
+            //[-] {
+            //[-] foreach (InfoObject infoObject in infoObjects)
+            //[-] {
+            //[-] if (string.Compare(infoObject.XepInfoObject.DocumentType, "NONE", StringComparison.OrdinalIgnoreCase) == 0)
+            //[-] {
+            //[-] Log.Warning(Log.CurrentMethod(), "Unable to find document for document identifier: {0}", infoObject.Identifier ?? "");
+            //[-] infoObject.State = typeDiagObjectState.Canceled;
+            //[-] list.Add(infoObject.Identifier);
+            //[-] }
+            //[-] else if (!infoObject.IsExternalDocument && (string.IsNullOrEmpty(infoObject.Content.TransformedDocument) || (string.IsNullOrEmpty(infoObject.Content.Doc) && infoObject.Content.BinaryDocument == null)))
+            //[-] {
+            //[-] Log.Warning(Log.CurrentMethod(), "Selected document has no content for document identifier: {0} UI-culture: {1}", infoObject.Identifier ?? "", ConfigSettings.CurrentUICulture);
+            //[-] infoObject.State = typeDiagObjectState.Canceled;
+            //[-] list2.Add(infoObject.Identifier);
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] list3.Add(infoObject);
+            //[-] }
+            //[-] }
+            //[-] }
+
             if (list.Any())
             {
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
             }
+
             if (list2.Any())
             {
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NoContent", "ISTAGui", true, string.Join(Environment.NewLine, list2)));
             }
+
             return list3;
         }
 
@@ -1293,16 +1306,17 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-                //[-] FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(id, Vehicle, FFMResolver);
-                //[-] if (virtualFaultCode != null)
-                //[-] {
-                //[-] return new VirtualFaultCodeLocator(virtualFaultCode, logic.VecInfo, GetRootModule());
-                //[-] }
+            //[-] FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(id, Vehicle, FFMResolver);
+            //[-] if (virtualFaultCode != null)
+            //[-] {
+            //[-] return new VirtualFaultCodeLocator(virtualFaultCode, logic.VecInfo, GetRootModule());
+            //[-] }
             }
             catch (Exception exception)
             {
                 Log.WarningException("ISTAModule.FaultCodeNode()", exception);
             }
+
             return null;
         }
 
@@ -1454,6 +1468,7 @@ namespace BMW.Rheingold.CoreFramework
                     Log.Error("ISTAModule.CalledFrom()", "No info object found in module parameter. Returning null.");
                     return null;
                 }
+
                 //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("CalledFrom()");
                 //[-] if (xEP_DIAGNOSISOBJECTSEX != null)
                 //[-] {
@@ -1627,47 +1642,50 @@ namespace BMW.Rheingold.CoreFramework
                         if (suspiciuosItem.Parents != null && suspiciuosItem.Parents.Any())
                         {
                             decimal diagObjectId2 = Convert.ToDecimal(suspiciuosItem.Parents[0].Id, CultureInfo.InvariantCulture);
-                            //[-] DBProvider.GetDiagObjectById(diagObjectId2, Vehicle, FFMResolver, getHidden: true);
+                        //[-] DBProvider.GetDiagObjectById(diagObjectId2, Vehicle, FFMResolver, getHidden: true);
                         }
-                        //[-] if (diagObjectById == null)
-                        //[-] {
-                        //[-] continue;
-                        //[-] }
-                        //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectById, Vehicle, FFMResolver);
-                        //[-] if (diagnosticObject == null)
-                        //[-] {
-                        //[-] continue;
-                        //[-] }
-                        //[-] foreach (IXepInfoObject attachedInfoObject in diagnosticObject.GetAttachedInfoObjects())
-                        //[-] {
-                        //[-] InfoObject infoObject = logic.Factory.CreateInfoObject(attachedInfoObject);
-                        //[-] string name = (string.IsNullOrEmpty(attachedInfoObject.Identifikator) ? attachedInfoObject.Title : attachedInfoObject.Identifikator);
-                        //[-] infoObject.XepInfoObjectCasted.Name = name;
-                        //[-] infoObject.State = typeDiagObjectState.Suspected;
-                        //[-] AddSuspicious(infoObject, diagObjectById);
-                        //[-] }
+                    //[-] if (diagObjectById == null)
+                    //[-] {
+                    //[-] continue;
+                    //[-] }
+                    //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectById, Vehicle, FFMResolver);
+                    //[-] if (diagnosticObject == null)
+                    //[-] {
+                    //[-] continue;
+                    //[-] }
+                    //[-] foreach (IXepInfoObject attachedInfoObject in diagnosticObject.GetAttachedInfoObjects())
+                    //[-] {
+                    //[-] InfoObject infoObject = logic.Factory.CreateInfoObject(attachedInfoObject);
+                    //[-] string name = (string.IsNullOrEmpty(attachedInfoObject.Identifikator) ? attachedInfoObject.Title : attachedInfoObject.Identifikator);
+                    //[-] infoObject.XepInfoObjectCasted.Name = name;
+                    //[-] infoObject.State = typeDiagObjectState.Suspected;
+                    //[-] AddSuspicious(infoObject, diagObjectById);
+                    //[-] }
                     }
                 }
+
                 if (ResultSet.CollectiveResult == CollectiveResultSet.NotOk)
                 {
                     foreach (IDiagnosticObjectLocator notOkItem in NotOkItems)
                     {
                         Log.Info("ISTAModule.__handleOutParameter()", "set notOK items: {0}", notOkItem.Id, notOkItem.GetDataValue("NAME"));
                         decimal diagObjectId3 = Convert.ToDecimal(notOkItem.Id, CultureInfo.InvariantCulture);
-                        //[-] DiagnosticObject diagnosticObject2 = new DiagnosticObject(DBProvider.GetDiagObjectById(diagObjectId3, Vehicle, FFMResolver, getHidden: true), Vehicle, FFMResolver);
-                        //[-] foreach (IXepInfoObject attachedInfoObject2 in diagnosticObject2.GetAttachedInfoObjects())
-                        //[-] {
-                        //[-] InfoObject infoObject2 = logic.Factory.CreateInfoObject(attachedInfoObject2);
-                        //[-] string name2 = (string.IsNullOrEmpty(attachedInfoObject2.Identifikator) ? attachedInfoObject2.Title : attachedInfoObject2.Identifikator);
-                        //[-] infoObject2.XepInfoObjectCasted.Name = name2;
-                        //[-] AddSuspicious(infoObject2, diagnosticObject2.GetXepDiagnosisObject());
-                        //[-] }
+                    //[-] DiagnosticObject diagnosticObject2 = new DiagnosticObject(DBProvider.GetDiagObjectById(diagObjectId3, Vehicle, FFMResolver, getHidden: true), Vehicle, FFMResolver);
+                    //[-] foreach (IXepInfoObject attachedInfoObject2 in diagnosticObject2.GetAttachedInfoObjects())
+                    //[-] {
+                    //[-] InfoObject infoObject2 = logic.Factory.CreateInfoObject(attachedInfoObject2);
+                    //[-] string name2 = (string.IsNullOrEmpty(attachedInfoObject2.Identifikator) ? attachedInfoObject2.Title : attachedInfoObject2.Identifikator);
+                    //[-] infoObject2.XepInfoObjectCasted.Name = name2;
+                    //[-] AddSuspicious(infoObject2, diagnosticObject2.GetXepDiagnosisObject());
+                    //[-] }
                     }
                 }
+
                 if (ResultSet.CollectiveResult != CollectiveResultSet.Ok)
                 {
                     return;
                 }
+
                 foreach (IDiagnosticObjectLocator okItem in OkItems)
                 {
                     Log.Info("ISTAModule.__handleOutParameter()", "set OK items: {0}", okItem.Id, okItem.GetDataValue("NAME"));
