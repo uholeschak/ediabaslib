@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 
 #pragma warning disable CS0169, CS0649
@@ -1289,17 +1290,29 @@ namespace BMW.Rheingold.CoreFramework
             return null;
         }
 
-        [PreserveSource(Hint = "IVirtualFaultCodeLocator", Placeholder = true)]
-        public PlaceholderType VirtualFaultCodeNode(string id)
+        public IVirtualFaultCodeLocator VirtualFaultCodeNode(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //[-] FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(id, Vehicle, FFMResolver);
+                //[-] if (virtualFaultCode != null)
+                //[-] {
+                //[-] return new VirtualFaultCodeLocator(virtualFaultCode, logic.VecInfo, GetRootModule());
+                //[-] }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.FaultCodeNode()", exception);
+            }
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        [PreserveSource(Hint = "IStateListLocator", Placeholder = true)]
-        public PlaceholderType __StateList(string stateListId)
+        public IStateListLocator __StateList(string stateListId)
         {
-            throw new NotImplementedException();
+            //[-] return new StateList(stateListId);
+            //[+] return null;
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
