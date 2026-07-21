@@ -962,7 +962,7 @@ namespace BMW.Rheingold.CoreFramework
             }
             finally
             {
-                //[-] RegisterAndDeregisterInteractionModel(interactionModel, register: false);
+            //[-] RegisterAndDeregisterInteractionModel(interactionModel, register: false);
             }
         }
 
@@ -1043,40 +1043,43 @@ namespace BMW.Rheingold.CoreFramework
 
         public IFaultCodeLocator FaultCodeNode(string sgbd, string variante, string fCode)
         {
-        //[-] try
-        //[-] {
-        //[-] decimal code = Convert.ToDecimal(fCode, CultureInfo.InvariantCulture);
-        //[-] FaultCode faultCodeByCodeAndVariantName = DBProvider.GetFaultCodeByCodeAndVariantName(code, variante, null, Vehicle, FFMResolver);
-        //[-] if (faultCodeByCodeAndVariantName != null)
-        //[-] {
-        //[-] faultCodeByCodeAndVariantName.VehicleContext = Vehicle;
-        //[-] }
-        //[-] }
-        //[-] catch (Exception exception)
-        //[-] {
-        //[-] Log.WarningException("ISTAModule.FaultCodeNode(string,string,string)", exception);
-        //[-] }
+            try
+            {
+            //[-] decimal code = Convert.ToDecimal(fCode, CultureInfo.InvariantCulture);
+            //[-] FaultCode faultCodeByCodeAndVariantName = DBProvider.GetFaultCodeByCodeAndVariantName(code, variante, null, Vehicle, FFMResolver);
+            //[-] if (faultCodeByCodeAndVariantName != null)
+            //[-] {
+            //[-] faultCodeByCodeAndVariantName.VehicleContext = Vehicle;
+            //[-] }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.FaultCodeNode(string,string,string)", exception);
+            }
+
             return null;
         }
 
         public IFaultCodeLocator FaultCodeNode(string id)
         {
-        //[-] try
-        //[-] {
-        //[-] decimal id2 = Convert.ToDecimal(id, CultureInfo.InvariantCulture);
-        //[-] FaultCode faultCodeById = DBProvider.GetFaultCodeById(id2, Vehicle, FFMResolver);
-        //[-] if (faultCodeById != null)
-        //[-] {
-        //[-] faultCodeById.VehicleContext = Vehicle;
-        //[-] return new FaultCodeLocator(faultCodeById, Vehicle, FFMResolver);
-        //[-] }
-        //[-] Log.Warning("ISTAModule.FaultCodeNode()", "Can not find fault code node for id: {0}", id);
-        //[-] return null;
-        //[-] }
-        //[-] catch (Exception exception)
-        //[-] {
-        //[-] Log.WarningException("ISTAModule.FaultCodeNode()", exception);
-        //[-] }
+            try
+            {
+                //[-] decimal id2 = Convert.ToDecimal(id, CultureInfo.InvariantCulture);
+                //[-] FaultCode faultCodeById = DBProvider.GetFaultCodeById(id2, Vehicle, FFMResolver);
+                //[-] if (faultCodeById != null)
+                //[-] {
+                //[-] faultCodeById.VehicleContext = Vehicle;
+                //[-] return new FaultCodeLocator(faultCodeById, Vehicle, FFMResolver);
+                //[-] }
+
+                Log.Warning("ISTAModule.FaultCodeNode()", "Can not find fault code node for id: {0}", id);
+                return null;
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ISTAModule.FaultCodeNode()", exception);
+            }
+
             return null;
         }
 
@@ -1098,16 +1101,17 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-                //[-] IXepCharacteristics characteristicById = DBProvider.GetCharacteristicById(Convert.ToInt64(controlId, CultureInfo.InvariantCulture));
-                //[-] if (characteristicById != null)
-                //[-] {
-                //[-] return new CharacteristicsLocator(characteristicById);
-                //[-] }
+            //[-] IXepCharacteristics characteristicById = DBProvider.GetCharacteristicById(Convert.ToInt64(controlId, CultureInfo.InvariantCulture));
+            //[-] if (characteristicById != null)
+            //[-] {
+            //[-] return new CharacteristicsLocator(characteristicById);
+            //[-] }
             }
             catch (Exception exception)
             {
                 Log.WarningException("ISTAModule.__Characteristics()", exception);
             }
+
             return null;
         }
 
