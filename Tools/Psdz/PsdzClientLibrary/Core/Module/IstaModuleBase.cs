@@ -1011,7 +1011,7 @@ namespace BMW.Rheingold.CoreFramework
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public ICombinedFaultLocator __CombinedFault(string fC_Id)
         {
-            throw new NotImplementedException();
+            return CombinedFaultNode(fC_Id);
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1039,12 +1039,13 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-                //[-] return CombinedFaultCode.GetCombinedFaultCode(Convert.ToDecimal(fC_Id, CultureInfo.InvariantCulture), Vehicle, FFMResolver);
+            //[-] return CombinedFaultCode.GetCombinedFaultCode(Convert.ToDecimal(fC_Id, CultureInfo.InvariantCulture), Vehicle, FFMResolver);
             }
             catch (Exception exception)
             {
                 Log.WarningException("ISTAModule.CombinedFaultNode(string)", exception);
             }
+
             return null;
         }
 
@@ -1080,7 +1081,6 @@ namespace BMW.Rheingold.CoreFramework
                 //[-] faultCodeById.VehicleContext = Vehicle;
                 //[-] return new FaultCodeLocator(faultCodeById, Vehicle, FFMResolver);
                 //[-] }
-
                 Log.Warning("ISTAModule.FaultCodeNode()", "Can not find fault code node for id: {0}", id);
                 return null;
             }
@@ -1192,17 +1192,18 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-                //[-] ICombinedFaultLocator combinedFaultCode = CombinedFaultCode.GetCombinedFaultCode(Convert.ToDecimal(refCode, CultureInfo.InvariantCulture), Vehicle, FFMResolver);
-                //[-] if (combinedFaultCode == null)
-                //[-] {
-                //[-] Log.Warning("ISTAModule.GetCombinedFaultCode()", "no combined fault code found for reference: {0}", refCode);
-                //[-] }
-                //[-] return combinedFaultCode;
+            //[-] ICombinedFaultLocator combinedFaultCode = CombinedFaultCode.GetCombinedFaultCode(Convert.ToDecimal(refCode, CultureInfo.InvariantCulture), Vehicle, FFMResolver);
+            //[-] if (combinedFaultCode == null)
+            //[-] {
+            //[-] Log.Warning("ISTAModule.GetCombinedFaultCode()", "no combined fault code found for reference: {0}", refCode);
+            //[-] }
+            //[-] return combinedFaultCode;
             }
             catch (Exception exception)
             {
                 Log.WarningException("ISTAModule.GetCombinedFaultCode()", exception);
             }
+
             return null;
         }
 
