@@ -1605,13 +1605,23 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Cleaned = true)]
         public void __SetSuspiciousItem(IDiagnosticObjectLocator diagObj)
         {
-            throw new NotImplementedException();
+            if (diagObj != null)
+            {
+                Log.Info("ISTAModule.__SetSuspiciousItem()", "adding diag obj id: {0}", diagObj.Id);
+                AddSuspiciousItemToServiceProgram(diagObj);
+                if (!SuspiciuosItems.Contains(diagObj))
+                {
+                    SuspiciuosItems.Add(diagObj);
+                }
+            }
+            else
+            {
+                Log.Info("ISTAModule.__SetSuspiciousItem()", "diag obj was null");
+            }
         }
 
-        [PreserveSource(Cleaned = true)]
         public abstract void AddSuspiciousItemToServiceProgram(IDiagnosticObjectLocator diagObjLocator);
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
