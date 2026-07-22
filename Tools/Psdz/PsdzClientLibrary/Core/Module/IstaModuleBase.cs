@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using PsdzClient;
@@ -13,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
+using System.Xml.Linq;
 
 #pragma warning disable CS0169, CS0649, CS0162
 namespace BMW.Rheingold.CoreFramework
@@ -1564,10 +1566,19 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IXmlElement", Placeholder = true)]
-        public PlaceholderType CreateXmlDocument(string xml)
+        public IXmlElement CreateXmlDocument(string xml)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //[-]return new ModuleXmlElement(XDocument.Parse(xml).Root);
+                //[+] return null;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("ISTAModule.CreateXmlDocument()", "Failed to create document from XML \"{0}\": {1}", xml, ex);
+                return null;
+            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
