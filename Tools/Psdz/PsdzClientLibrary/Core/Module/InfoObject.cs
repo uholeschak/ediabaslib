@@ -84,6 +84,16 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public bool IsLinked { get; private set; }
 
         [XmlIgnore]
+        public string Identifier
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+
+        [XmlIgnore]
         public SwiActionLinkType LinkType => SwiActionLinkType.SwiActionDiagnosticLink;
 
         [XmlIgnore]
