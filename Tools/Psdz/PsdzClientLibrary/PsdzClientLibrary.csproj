@@ -9,6 +9,10 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>12.0</LangVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- SYSLIB0011 nicht als Fehler behandeln -->
+    <NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
+  </PropertyGroup>
     <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
         <Reference Include="System.ComponentModel.DataAnnotations" />
         <Reference Include="System.Configuration" />
@@ -25,6 +29,7 @@
     <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
         <PackageReference Include="HtmlTextWriter" Version="3.0.2" />
         <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.0.652802" />
+        <PackageReference Include="System.Runtime.Serialization.Formatters" Version="10.0.10"/>
     </ItemGroup>
   <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0">
