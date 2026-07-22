@@ -922,14 +922,13 @@ namespace BMW.Rheingold.CoreFramework
             return null;
         }
 
-        [PreserveSource(Hint = "IVirtualFaultCodeLocator replaced", SignatureModified = true)]
-        public void GetVirtualFaultCode(string refCode)
+        public IVirtualFaultCodeLocator GetVirtualFaultCode(string refCode)
         {
         //[-] FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(refCode, Vehicle, FFMResolver);
         //[-] if (virtualFaultCode == null)
         //[-] {
-        //[-] Log.Warning("ISTAModule.__VirtualFaultCode()", "no virtual fault code found for reference: {0}", refCode);
-        //[-] return null;
+        Log.Warning("ISTAModule.__VirtualFaultCode()", "no virtual fault code found for reference: {0}", refCode);
+        return null;
         //[-] }
         //[-] return new VirtualFaultCodeLocator(virtualFaultCode, Vehicle, GetRootModule());
         }
@@ -1249,10 +1248,9 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IVirtualFaultCodeLocator", Placeholder = true)]
-        public PlaceholderType __VirtualFaultCode(string refCode)
+        public IVirtualFaultCodeLocator __VirtualFaultCode(string refCode)
         {
-            throw new NotImplementedException();
+            return GetVirtualFaultCode(refCode);
         }
 
         [PreserveSource(SignatureModified = true)]
