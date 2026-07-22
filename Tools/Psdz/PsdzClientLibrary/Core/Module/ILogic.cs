@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
@@ -88,7 +89,7 @@ namespace BMW.Rheingold.CoreFramework
 
         bool NewsDisclaimerDone { get; set; }
 
-        //ISWTProcessor SWTProcessor { get; }
+        ISWTProcessor SWTProcessor { get; }
 
         IList<string> Lang { get; }
 
