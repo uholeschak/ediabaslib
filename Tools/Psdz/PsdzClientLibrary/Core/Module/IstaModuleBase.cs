@@ -47,8 +47,7 @@ namespace BMW.Rheingold.CoreFramework
         public abstract IEcuKom ecuKom { get; }
         public abstract IFFMDynamicResolver FFMResolver { get; }
 
-        [PreserveSource(Hint = "IInputListener", Placeholder = true)]
-        public abstract PlaceholderType InputListener { get; }
+        public abstract IInputListener InputListener { get; }
         public abstract IVehicleContext VehicleContext { get; }
         public abstract IDealerData DealerData { get; }
         public abstract ISOCAccessor SOCAccessor { get; }
