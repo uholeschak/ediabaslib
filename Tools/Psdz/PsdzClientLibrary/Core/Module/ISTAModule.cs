@@ -40,6 +40,7 @@ using System.Xml.Serialization;
 namespace BMW.Rheingold.Module.ISTA
 {
     [AuthorAPIFlowBase]
+    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public abstract class ISTAModule : IstaModuleBase, IAuthoringModule, IHideObjectMembers
     {
         //private ProgrammingSessionProxy programmingSessionProxy;
