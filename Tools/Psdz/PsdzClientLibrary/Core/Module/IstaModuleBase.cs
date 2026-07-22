@@ -1537,18 +1537,30 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Cleaned = true)]
         protected virtual void __StartStep()
         {
             Log.Info("ISTAModule.__StartStep()", "setting up log container for: {0} Verbose logging: {1}", LastCallingMethod, _VerboseLoopLogs);
+            if (FastaGrouping != null)
+            {
+                List<LocalizedText> list = new List<LocalizedText>();
+                list.AddRange(logic.Lang.Select((string x) => new LocalizedText(LastCallingMethod, x)));
+                FastaGrouping.CreateSubGroup(GroupingType.Ablaufschritt, list);
+            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Cleaned = true)]
         protected virtual void __FinishStep()
         {
             Log.Info("ISTAModule.__FinishStep()", "finishing log container for: {0} Verbose logging: {1}", LastCallingMethod, _VerboseLoopLogs);
+            if (FastaProtocoler != null)
+            {
+                FastaProtocoler.EndTime = DateTime.Now;
+            }
+            if (FastaGrouping != null)
+            {
+                FastaGrouping.EndTime = DateTime.Now;
+            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
