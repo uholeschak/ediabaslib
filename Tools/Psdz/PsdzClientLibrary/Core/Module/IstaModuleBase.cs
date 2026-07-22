@@ -152,11 +152,9 @@ namespace BMW.Rheingold.CoreFramework
 
         public abstract IVPSProvisioning VPSProvisioning { get; }
 
-        [PreserveSource(Hint = "IPersistency", Placeholder = true)]
-        public abstract PlaceholderType Persistency { get; }
+        public abstract IPersistency Persistency { get; }
 
-        [PreserveSource(Hint = "INavigationMapProcessor", Placeholder = true)]
-        public abstract PlaceholderType NavigationMapProcessor { get; }
+        public abstract INavigationMapProcessor NavigationMapProcessor { get; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
