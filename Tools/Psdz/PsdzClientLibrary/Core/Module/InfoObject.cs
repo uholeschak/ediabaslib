@@ -1,4 +1,5 @@
-﻿using PsdzClient;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
@@ -18,6 +19,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private bool isLoadedAsHotspot;
 
         private decimal? implicitVersion;
+
+        private InfoObjectExecutionCout executionCoutField;
 
         private bool isESLError;
 
@@ -93,6 +96,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public DateTime? EndExecution { get; set; }
 
         [XmlIgnore]
+        public IList<ISwiActionReport> SwiActionReport { get; private set; }
+
+        [XmlIgnore]
         public bool IsLoadedAsHotspot
         {
             get
@@ -156,6 +162,30 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
+        public InfoObjectExecutionCout ExecutionCout
+        {
+            get
+            {
+                return executionCoutField;
+            }
+            set
+            {
+                if (executionCoutField != null)
+                {
+                    if (!executionCoutField.Equals(value))
+                    {
+                        executionCoutField = value;
+                        OnPropertyChanged("ExecutionCout");
+                    }
+                }
+                else
+                {
+                    executionCoutField = value;
+                    OnPropertyChanged("ExecutionCout");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public IList<LocalizedText> GetLocalizedObjectTitle(IList<string> lang)
@@ -192,14 +222,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public InfoObject()
         {
-            //executionCoutField = new InfoObjectExecutionCout();
+            executionCoutField = new InfoObjectExecutionCout();
             historyIndexField = 0u;
             stateField = typeDiagObjectState.NotCalled;
+            SwiActionReport = new List<ISwiActionReport>();
         }
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            //this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
