@@ -148,11 +148,9 @@ namespace BMW.Rheingold.CoreFramework
 
         public abstract IEnergySettings EnergySettings { get; }
 
-        [PreserveSource(Hint = "INOPProvisioning", Placeholder = true)]
-        public abstract PlaceholderType NOPProvisioning { get; }
+        public abstract INOPProvisioning NOPProvisioning { get; }
 
-        [PreserveSource(Hint = "IVPSProvisioning", Placeholder = true)]
-        public abstract PlaceholderType VPSProvisioning { get; }
+        public abstract IVPSProvisioning VPSProvisioning { get; }
 
         [PreserveSource(Hint = "IPersistency", Placeholder = true)]
         public abstract PlaceholderType Persistency { get; }
