@@ -1193,10 +1193,23 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [PreserveSource(Hint = "IPerceivedSymptomsLocator", Placeholder = true)]
-        public PlaceholderType __PerceivedSymptom(string refText)
+        public IPerceivedSymptomsLocator __PerceivedSymptom(string refText)
         {
-            throw new NotImplementedException();
+            try
+            {
+                decimal num = Convert.ToDecimal(refText, CultureInfo.InvariantCulture);
+                //[-] XEP_PERCEIVEDSYMPTOMSEX perceivedSymptomById = DBProvider.GetPerceivedSymptomById(num, Vehicle, FFMResolver);
+                //[-] if (perceivedSymptomById != null)
+                //[-] {
+                //[-] return new PerceivedSymptomsLocator(perceivedSymptomById);
+                //[-] }
+                Log.Warning("ISTAModule.__PerceivedSymptom()", "preceived symptom for id: '{0}' was null", num);
+            }
+            catch (FormatException exception)
+            {
+                Log.WarningException("ISTAModule.__PerceivedSymptom()", exception);
+            }
+            return null;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
