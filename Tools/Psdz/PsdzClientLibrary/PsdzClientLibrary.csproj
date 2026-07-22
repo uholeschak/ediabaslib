@@ -29,7 +29,7 @@
     <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
         <PackageReference Include="HtmlTextWriter" Version="3.0.2" />
         <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.0.652802" />
-        <PackageReference Include="System.Runtime.Serialization.Formatters" Version="10.0.10"/>
+        <PackageReference Include="System.Runtime.Serialization.Formatters" Version="10.0.10" />
     </ItemGroup>
   <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0">
@@ -87,7 +87,7 @@
     <PackageReference Include="RestSharp" Version="114.0.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="2.1.11" />
-    <PackageReference Include="SQLitePCLRaw.core" Version="3.0.3" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="3.0.4" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="System.Management" Version="10.0.10" />
     <PackageReference Include="System.Memory" Version="4.6.3" />
