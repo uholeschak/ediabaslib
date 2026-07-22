@@ -1732,14 +1732,14 @@ namespace BMW.Rheingold.CoreFramework
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        [PreserveSource(Cleaned = true)]
-        public virtual void AddSuspicious()
+        [PreserveSource(Hint = "diagObj replaced", SignatureModified = true)]
+        public virtual void AddSuspicious(InfoObject infoObject, PlaceholderType diagObj)
         {
+            //[-] logic?.AddSuspiciousItem(ModuleData, infoObject, diagObj);
         }
 
         public abstract int ShowQuestionPopup(ITextContent title, ITextContent question, int size = 0, params ITextContent[] buttonTexts);
         public abstract string DeactivateOtdLscCalls();
-        [PreserveSource(Hint = "FcFnActivationResult", Placeholder = true)]
-        public abstract PlaceholderType StoreAndActivateFcFn(int appNo, int upgradeIdx, byte[] fsc);
+        public abstract FcFnActivationResult StoreAndActivateFcFn(int appNo, int upgradeIdx, byte[] fsc);
     }
 }
