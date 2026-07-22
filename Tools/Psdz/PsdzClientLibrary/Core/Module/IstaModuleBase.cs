@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.EnergySettings;
 using BMW.Rheingold.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
@@ -145,8 +146,7 @@ namespace BMW.Rheingold.CoreFramework
             }
         }
 
-        [PreserveSource(Hint = "IEnergySettings", Placeholder = true)]
-        public abstract PlaceholderType EnergySettings { get; }
+        public abstract IEnergySettings EnergySettings { get; }
 
         [PreserveSource(Hint = "INOPProvisioning", Placeholder = true)]
         public abstract PlaceholderType NOPProvisioning { get; }
