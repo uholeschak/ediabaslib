@@ -33,7 +33,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         IFeatureSpecificField FeatureSpecificField { get; }
 
-        //IComponentTheftProtectionService ComponentTheftProtectionService { get; }
+        IComponentTheftProtectionService ComponentTheftProtectionService { get; }
 
         IPsdzInfo Psdz { get; }
 
