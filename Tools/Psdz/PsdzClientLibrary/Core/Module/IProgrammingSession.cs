@@ -166,7 +166,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         IBoolResultObject CheckAvailabilityOfPsdzConnection();
 
-        //IBoolResultObject<IEcuFailureResponseSet> ResetEcus(List<string> hexEcuAddress);
+        IBoolResultObject<IEcuFailureResponseSet> ResetEcus(List<string> hexEcuAddress);
 
         IBoolResultObject CheckAvailabilityOfSdpPatchStorage();
 
