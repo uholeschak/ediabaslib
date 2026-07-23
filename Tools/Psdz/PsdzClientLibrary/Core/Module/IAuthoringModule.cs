@@ -5,11 +5,13 @@ using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
+using BMW.Authoring.API.Interface.Rita;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using PsdzClientLibrary.Core.Module;
 
 namespace BMW.Authoring.API
 {
     [AuthorAPI(SelectableTypeDeclaration = false)]
-    [PreserveSource(Hint = "Simplified", SuppressWarning = true)]
     public interface IAuthoringModule : IHideObjectMembers
     {
         ILogic IstaOperationLogic { get; }
@@ -23,17 +25,18 @@ namespace BMW.Authoring.API
 
         IEcuKom EcuKom { get; }
 
-        //IProtocolBasicBase FastaProtocolerBase { get; }
+        IProtocolBasicBase FastaProtocolerBase { get; }
 
         IDealerData DealerData { get; set; }
 
-        //IDatabaseProvider DBProvider { get; set; }
+        [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
+        PlaceholderType DBProvider { get; set; }
 
         SessionInfo SessionInfo { get; }
 
-        //ISfaHandler SfaHandler { get; }
+        ISfaHandler SfaHandler { get; }
 
-        //IRitaFunctionsProvider RitaFunctionsProvider { get; }
+        IRitaFunctionsProvider RitaFunctionsProvider { get; }
 
         Vehicle VehicleDeepClone(Vehicle vehicle);
     }

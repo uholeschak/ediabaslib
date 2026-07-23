@@ -27,17 +27,15 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
 
-#pragma warning disable CS0649, CS0219
+#pragma warning disable CS0649, CS0219, CS0809
 namespace BMW.Rheingold.Module.ISTA
 {
     [AuthorAPIFlowBase]
@@ -397,9 +395,9 @@ namespace BMW.Rheingold.Module.ISTA
         }
 #if false
         public override IDatabaseProvider DBProvider => DatabaseProviderFactory.Instance;
-
-        public IProtocolBasicBase FastaProtocolerBase => FastaProtocoler;
 #endif
+        public IProtocolBasicBase FastaProtocolerBase => FastaProtocoler;
+
         public SessionInfo SessionInfo => ClientContext.GetClientContext(vehicle)?.SessionInfo;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
