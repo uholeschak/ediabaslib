@@ -127,7 +127,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         IBoolResultObject SetTargetContext(string newTargetILevel, BMW.Rheingold.CoreFramework.Contracts.Programming.IFa targetFa);
 
-        //IBoolResultObject PlanVehicleModifications(List<IPlannedSwiAction> plannedSwiActions);
+        IBoolResultObject PlanVehicleModifications(List<IPlannedSwiAction> plannedSwiActions);
 
         IBoolResultObject DeselectVehicleModifications(List<string> swiActionsToDeselect);
 
@@ -145,7 +145,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         IBoolResultObject AddTechnicalActionResultToProtocoll(string taNummer, string taBezeichnung, IList<string> mindestIStufens, bool abArbeitungsstatus, string diagnosisCodeTitle, string diagnoseCodes);
 
-        //IBoolResultObject AddRxSwinListToProtocol(List<IRxSwinObject> rxSwinList, bool updateActualContext);
+        IBoolResultObject AddRxSwinListToProtocol(List<IRxSwinObject> rxSwinList, bool updateActualContext);
 
         IBoolResultObject StartVehicleOrderImport();
 
