@@ -2016,22 +2016,22 @@ namespace BMW.Rheingold.Module.ISTA
                 Task.Factory.StartNew(action);
             }
         }
-#if false
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public override async void DoBackgroundProgressbarExecution(Action action)
         {
-            InteractionModel progress = new InteractionProgressModel();
+            //[-] InteractionModel progress = new InteractionProgressModel();
             try
             {
-                logic.Services.InteractionService.Register(progress);
+                //[-] logic.Services.InteractionService.Register(progress);
                 await Task.Run(action);
             }
             finally
             {
-                logic.Services.InteractionService.Deregister(progress);
+                //[-] logic.Services.InteractionService.Deregister(progress);
             }
         }
-#endif
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         public override void LogStatement(string headlineValue, params object[] paramList)
