@@ -1097,81 +1097,13 @@ namespace BMW.Rheingold.Module.ISTA
             }
             return result;
         }
-#if false
-        public override XEP_DIAGNOSISOBJECTSEX SelectDiagParentByAskingUser(IList<XEP_DIAGNOSISOBJECTSEX> diag, string callingMethod)
+
+        [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
+        public override PlaceholderType SelectDiagParentByAskingUser(IList<PlaceholderType> diag, string callingMethod)
         {
-            XEP_DIAGNOSISOBJECTSEX result = null;
-            try
-            {
-                IList<SimpleSelectionDialogDiagObjModel> list = new List<SimpleSelectionDialogDiagObjModel>();
-                StringBuilder stringBuilder = new StringBuilder("[");
-                ISelectable selectable = null;
-                IAction<IUiDialog> action = null;
-                IList<LocalizedText> list2 = new FormatedData("#00d").Localize(logic.Lang);
-                if (FastaProtocoler != null)
-                {
-                    action = FastaProtocoler.CreateAndAddUiDialogFromServiceProgram("Selectiondialog", callingMethod);
-                    action.SpecialAction.SetTitle(list2);
-                    List<LocalizedText> list3 = new List<LocalizedText>();
-                    list3.AddRange(logic.Lang.Select((string x) => new LocalizedText("n/a", x)));
-                    selectable = action.SpecialAction.CreateAndAddMessageText(list3).CreateAndAddSelectable("Diagnosisobjectlist");
-                }
-                else
-                {
-                    Log.Error("ISTAModule.SelectDiagParentByAskingUser()", "FASTA protocoling not available.");
-                }
-                foreach (XEP_DIAGNOSISOBJECTSEX item in diag)
-                {
-                    stringBuilder.Append("{").Append(item.Title).Append(" (")
-                        .Append(item.Name)
-                        .Append("/")
-                        .Append(item.Id)
-                        .Append(")},");
-                    list.Add(new SimpleSelectionDialogDiagObjModel(item));
-                    selectable?.AddEntry(selectionState: false, null, null);
-                }
-                if (diag.Count > 0)
-                {
-                    stringBuilder.Length--;
-                }
-                stringBuilder.Append("]");
-                Log.Info("ISTAModule.SelectDiagParentByAskingUser()", "Show user selection dialog for diag objects: {0}", stringBuilder.ToString());
-                IList<string> list4 = new List<string>();
-                foreach (SimpleSelectionDialogDiagObjModel item2 in list)
-                {
-                    list4.Add(item2.ToString());
-                }
-                InteractionSimpleSelectionModel interactionSimpleSelectionModel = new InteractionSimpleSelectionModel(list2[0].TextItem, new FormatedData("#Title").Localize(), list4);
-                logic.Services.InteractionService.Register(interactionSimpleSelectionModel);
-                string selectedItem = interactionSimpleSelectionModel.Response.SelectedItem;
-                foreach (SimpleSelectionDialogDiagObjModel item3 in list)
-                {
-                    if (item3.ToString().Equals(selectedItem))
-                    {
-                        result = item3.DiagObj;
-                        selectable?.SetEntry(list.IndexOf(item3), selectionState: true);
-                        break;
-                    }
-                }
-                if (result != null && action != null)
-                {
-                    List<LocalizedText> list5 = new List<LocalizedText>();
-                    list5.AddRange(logic.Lang.Select((string x) => new LocalizedText($"{result.GetLocalizedDiagnosisObjectTitle(x)} ({result.Name}/{result.Id})", x)));
-                    action.SpecialAction.AddAnswer(list5, "selected-diag-object");
-                    Log.Info("ISTAModule.SelectDiagParentByAskingUser()", "User selected diag object: {0} ({1}/{2})", result.Title, result.Name, result.Id);
-                }
-                else
-                {
-                    Log.Error("ISTAModule.SelectDiagParentByAskingUser()", "User selected diag object: null");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Warning("ISTAModule.SelectDiagParentByAskingUser()", "Exception while showing user selection dialog for diag objects. Try again. {0}", ex);
-            }
-            return result;
+            throw new NotImplementedException();
         }
-#endif
+
         public override void ShowMessage(string title, string message)
         {
             logic.Services.InteractionService.RegisterMessageAsync(title, message);
