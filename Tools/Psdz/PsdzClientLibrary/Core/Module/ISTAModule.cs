@@ -1830,39 +1830,41 @@ namespace BMW.Rheingold.Module.ISTA
             }
             return Assembly.GetCallingAssembly();
         }
-#if false
+
         public override InfoObject GetInfoObjStarted()
         {
-            InfoObject infoObject = __RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.InfoObjStarted) as InfoObject;
-            if (infoObject == null)
-            {
-                Log.Info("ISTAModule.GetInfoObjStarted()", "InfoObjStarted is null.");
-                if (!(__RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.XepInfoObjectStarted) is XepInfoObject xep))
-                {
-                    Log.Info("ISTAModule.GetInfoObjStarted()", "XepInfoObjectStarted is null.");
-                }
-                else if (logic == null || logic.Factory == null)
-                {
-                    Log.Error("ISTAModule.GetInfoObjStarted()", "Logic or Logic.Factory is null.");
-                }
-                else
-                {
-                    Log.Info("ISTAModule.GetInfoObjStarted()", "Create info object from XepInfoObjectStarted.");
-                    infoObject = logic.Factory.CreateInfoObject(xep);
-                    if (infoObject != null)
-                    {
-                        infoObject.ParentDiagnosisObject = null;
-                        __RheinGoldCoreModuleParameters__.setParameter(ModuleParameter.ParameterName.InfoObjStarted, infoObject);
-                    }
-                }
-            }
-            if (infoObject == null)
+            //[-] InfoObject infoObject = __RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.InfoObjStarted) as InfoObject;
+            //[-] if (infoObject == null)
+            //[-] {
+            //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "InfoObjStarted is null.");
+            //[-] if (!(__RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.XepInfoObjectStarted) is XepInfoObject xep))
+            //[-] {
+            //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "XepInfoObjectStarted is null.");
+            //[-] }
+            //[-] else if (logic == null || logic.Factory == null)
+            //[-] {
+            //[-] Log.Error("ISTAModule.GetInfoObjStarted()", "Logic or Logic.Factory is null.");
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "Create info object from XepInfoObjectStarted.");
+            //[-] infoObject = logic.Factory.CreateInfoObject(xep);
+            //[-] if (infoObject != null)
+            //[-] {
+            //[-] infoObject.ParentDiagnosisObject = null;
+            //[-] __RheinGoldCoreModuleParameters__.setParameter(ModuleParameter.ParameterName.InfoObjStarted, infoObject);
+            //[-] }
+            //[-] }
+            //[-] }
+            //[-] if (infoObject == null)
             {
                 Log.Error("ISTAModule.GetInfoObjStarted()", "Failed to get info object. Returning null.");
             }
-            return infoObject;
+            //[-] return infoObject;
+            //[+] return null;
+            return null;
         }
-#endif
+
         public override void AddSuspiciousItemToServiceProgram(IDiagnosticObjectLocator diagObjLocator)
         {
             try
