@@ -12,6 +12,7 @@ using PsdzClientLibrary.Core.Module;
 namespace BMW.Authoring.API
 {
     [AuthorAPI(SelectableTypeDeclaration = false)]
+    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public interface IAuthoringModule : IHideObjectMembers
     {
         ILogic IstaOperationLogic { get; }
