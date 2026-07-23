@@ -37,7 +37,7 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
 
-#pragma warning disable CS0649
+#pragma warning disable CS0649, CS0219
 namespace BMW.Rheingold.Module.ISTA
 {
     [AuthorAPIFlowBase]
