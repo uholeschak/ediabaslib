@@ -153,12 +153,12 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         IBoolResultObject StartVehicleOrderImportOnlyManualOption();
 
-        //IBoolResultObject<ISdpPatchResult> SdpPatchAvailable();
+        IBoolResultObject<ISdpPatchResult> SdpPatchAvailable();
 
-        //IList<ISdpPatchResult> GetAvailableSdpPatches();
+        IList<ISdpPatchResult> GetAvailableSdpPatches();
 
-        //[Obsolete("This API-Function is deprecated, please use 'GetAvailableSdpPatches()' instead.")]
-        //IBoolResultObject<IList<ISdpPatchResult>> AvailableSdpPatches();
+        [Obsolete("This API-Function is deprecated, please use 'GetAvailableSdpPatches()' instead.")]
+        IBoolResultObject<IList<ISdpPatchResult>> AvailableSdpPatches();
 
         IBoolResultObject SdpPatchDownload(string swiDataTarget);
 
