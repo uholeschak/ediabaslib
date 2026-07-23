@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using PsdzClient;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
 {
     [PreserveSource(Hint = "No update", SuppressWarning = true)]

@@ -3,8 +3,8 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient;
-using PsdzClient.Core;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
 {
     [PreserveSource(Hint = "No update", SuppressWarning = true)]
@@ -15,10 +15,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
         public IDealerData DealerData => dealerDataLogic;
 
         public string OutletCountry => DealerData?.OutletCountry;
+
         public bool HasLicenseForBrand(BrandName? brandName)
         {
             return false;
         }
+
         public bool HasProtectionVehicleService(BrandName brandName)
         {
             return false;

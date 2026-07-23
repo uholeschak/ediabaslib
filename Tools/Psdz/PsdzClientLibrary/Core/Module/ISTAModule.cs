@@ -2104,10 +2104,10 @@ namespace BMW.Rheingold.Module.ISTA
                 return FcFnActivationResult.ErrorUnexpected;
             }
         }
-#if false
+
         public override string DeactivateOtdLscCalls()
         {
-            IMethodCall methodCall = FastaProtocoler.AddMethodCall("DeactivateOtdLscCalls");
+            //[-] IMethodCall methodCall = FastaProtocoler.AddMethodCall("DeactivateOtdLscCalls");
             string vIN = logic.VecInfo.VIN17;
             long km = -1L;
             try
@@ -2115,19 +2115,21 @@ namespace BMW.Rheingold.Module.ISTA
                 if (logic.VecInfo.Gwsz.HasValue)
                 {
                     decimal value = logic.VecInfo.Gwsz.Value;
-                    km = ((logic.VecInfo.GwszUnit != GwszUnitType.miles) ? Convert.ToInt32(value) : Convert.ToInt32(UnitConverter.ConvertUnit(LengthUnit.Mile, LengthUnit.Kilometer, (double)value)));
+                    //[-] km = ((logic.VecInfo.GwszUnit != GwszUnitType.miles) ? Convert.ToInt32(value) : Convert.ToInt32(UnitConverter.ConvertUnit(LengthUnit.Mile, LengthUnit.Kilometer, (double)value)));
                 }
             }
             catch (Exception exception)
             {
                 Log.ErrorException("ISTAModule.DeactivateOtdLscCalls()", exception);
             }
-            PDIRequest data = (logic as Logic).CreatePDIRequest(vIN, km);
-            HttpStatusCode httpStatusCode = EDGEProcessorFactory.Create(logic.ProgrammingSession?.BackendCallsWatchDogProgramming).SendDataToBackend(vIN, data, BackendServiceType.EDGEPDI);
-            Log.Info("ISTAModule.DeactivateOtdLscCalls()", "Sending cleaning data: ISTAEdge returned status {0}", httpStatusCode);
-            string result = (methodCall.ReturnValue = httpStatusCode.ToString());
-            methodCall.EndTime = DateTime.Now;
-            return result;
+            //[-] PDIRequest data = (logic as Logic).CreatePDIRequest(vIN, km);
+            //[-] HttpStatusCode httpStatusCode = EDGEProcessorFactory.Create(logic.ProgrammingSession?.BackendCallsWatchDogProgramming).SendDataToBackend(vIN, data, BackendServiceType.EDGEPDI);
+            //[-] Log.Info("ISTAModule.DeactivateOtdLscCalls()", "Sending cleaning data: ISTAEdge returned status {0}", httpStatusCode);
+            //[-] string result = (methodCall.ReturnValue = httpStatusCode.ToString());
+            //[-] methodCall.EndTime = DateTime.Now;
+            //[-] return result;
+            //[+] return null;
+            return null;
         }
 
         private void ProtocolRheingoldApiUsage(string interfaceName)
@@ -2136,7 +2138,7 @@ namespace BMW.Rheingold.Module.ISTA
             string callingModule = CallingModule;
             FastaProtocoler.AddServiceCode(aNA08_TestmodulesUsingNotAllowedIstaFunctions_nu_LF, "Module: " + callingModule + ", interface: " + interfaceName, LayoutGroup.D, allowMultipleEntries: true);
         }
-#endif
+
         public virtual Vehicle VehicleDeepClone(Vehicle vehicle)
         {
             return vehicle.DeepClone();
