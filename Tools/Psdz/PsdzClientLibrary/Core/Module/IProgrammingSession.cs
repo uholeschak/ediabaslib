@@ -47,7 +47,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         string TalFilterAsXml { get; }
 
-        //ITherapyPlanApi TherapyPlanApi { get; }
+        ITherapyPlanApi TherapyPlanApi { get; }
 
         double TimeLeftSec { get; }
 
