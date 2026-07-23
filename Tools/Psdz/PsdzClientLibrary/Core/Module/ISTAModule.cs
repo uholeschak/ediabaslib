@@ -1120,7 +1120,7 @@ namespace BMW.Rheingold.Module.ISTA
                 logic.Services.InteractionService.Deregister(interactionModel);
             }
         }
-#if false
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         protected override void __handleInParameter()
@@ -1129,24 +1129,24 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (_globalModuleInParameter != null)
                 {
-                    base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as IXepInfoObject;
-                    ModuleParameter moduleParameter = (ModuleParameter)_globalModuleInParameter.getParameter("__RheinGoldCoreModuleParameters__");
-                    if (moduleParameter != null)
-                    {
-                        __RheinGoldCoreModuleParameters__ = moduleParameter;
-                        logic = moduleParameter.getParameter(ModuleParameter.ParameterName.Logic) as ILogic;
-                        vehicle = moduleParameter.getParameter(ModuleParameter.ParameterName.Vehicle) as BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle;
-                        authoringVehicle = new Lazy<BMW.Authoring.Vehicle.IVehicle>(() => new BMW.Authoring.Vehicle.Vehicle(this));
-                        _ISOCAccessor = new SOCAccessor(vehicle, LicenseHelper.DealerInstance);
-                        _globalModuleInParameter.setParameter("__RheinGoldSOCAccessor__", _ISOCAccessor);
-                        SetTextContentManager();
-                        if (logic != null)
-                        {
-                            ffmResolver = logic.FFMResolver;
-                        }
-                        vehicleContext = new VehicleContext(vehicle, ffmResolver);
-                        MeasurementLauncher = moduleParameter.getParameter(ModuleParameter.ParameterName.MeasurementLauncher) as IStartMeasurementServiceServer;
-                    }
+                    //[-] base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as IXepInfoObject;
+                    //[-] ModuleParameter moduleParameter = (ModuleParameter)_globalModuleInParameter.getParameter("__RheinGoldCoreModuleParameters__");
+                    //[-] if (moduleParameter != null)
+                    //[-] {
+                    //[-] __RheinGoldCoreModuleParameters__ = moduleParameter;
+                    //[-] logic = moduleParameter.getParameter(ModuleParameter.ParameterName.Logic) as ILogic;
+                    //[-] vehicle = moduleParameter.getParameter(ModuleParameter.ParameterName.Vehicle) as BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle;
+                    //[-] authoringVehicle = new Lazy<BMW.Authoring.Vehicle.IVehicle>(() => new BMW.Authoring.Vehicle.Vehicle(this));
+                    //[-] _ISOCAccessor = new SOCAccessor(vehicle, LicenseHelper.DealerInstance);
+                    //[-] _globalModuleInParameter.setParameter("__RheinGoldSOCAccessor__", _ISOCAccessor);
+                    //[-] SetTextContentManager();
+                    //[-] if (logic != null)
+                    //[-] {
+                    //[-] ffmResolver = logic.FFMResolver;
+                    //[-] }
+                    //[-] vehicleContext = new VehicleContext(vehicle, ffmResolver);
+                    //[-] MeasurementLauncher = moduleParameter.getParameter(ModuleParameter.ParameterName.MeasurementLauncher) as IStartMeasurementServiceServer;
+                    //[-] }
                     _globalTabModuleISTA = (IModuleExecutionParent)_globalModuleInParameter.getParameter("__RheinGoldTabModuleISTA__");
                     if (_globalTabModuleISTA == null)
                     {
@@ -1163,10 +1163,10 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                     if (appSessionContext == null)
                     {
-                        InitAppSessionContext();
+                        //[-] InitAppSessionContext();
                     }
-                    Logic obj = logic as Logic;
-                    if (obj != null && obj.IsInputListenerActive)
+                    //[-] Logic obj = logic as Logic;
+                    //[-] if (obj != null && obj.IsInputListenerActive)
                     {
                         InputListener.StartListening();
                     }
@@ -1183,7 +1183,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.WarningException("ISTAModule.__handleInParameter()", exception);
             }
         }
-
+#if false
         private void InitAppSessionContext()
         {
             ILogic iLogic = logic;
