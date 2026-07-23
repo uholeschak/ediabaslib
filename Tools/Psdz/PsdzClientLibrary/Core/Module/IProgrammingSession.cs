@@ -90,9 +90,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         void SetSvtCurrent(ISvt svt);
 
-        //void SetVehicleUpdate(IVehicleUpdate vehicleUpdate);
+        void SetVehicleUpdate(IVehicleUpdate vehicleUpdate);
 
-        //IVehicleUpdate SpecialPlanRequired(string swiActionName);
+        IVehicleUpdate SpecialPlanRequired(string swiActionName);
 
         void UpdateSFATalFilterForAllEcus(ISfaPerEcuOptions ecuOptions);
 
