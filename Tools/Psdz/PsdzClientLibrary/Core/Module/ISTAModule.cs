@@ -1410,25 +1410,13 @@ namespace BMW.Rheingold.Module.ISTA
         {
             return Path.GetFullPath(Path.Combine(ConfigSettings.AppBaseDirectory, ConfigSettings.getPathString("BMW.Rheingold.Diagnostics.Module.ISTA.ISTATabModuleCore.SubModulePath", "..\\..\\..\\Testmodule")));
         }
-#if false
-        public override IXepInfoObject GetRootModule()
+
+        [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
+        public override PlaceholderType GetRootModule()
         {
-            IXepInfoObject xepInfoObject = __RheinGoldCoreModuleParameters__?.getParameter(ModuleParameter.ParameterName.XepInfoObjectStarted) as XepInfoObject;
-            if (xepInfoObject == null)
-            {
-                if (__RheinGoldCoreModuleParameters__?.getParameter(ModuleParameter.ParameterName.InfoObjStarted) is InfoObject infoObject)
-                {
-                    xepInfoObject = infoObject.XepInfoObject;
-                }
-                if (xepInfoObject == null)
-                {
-                    Log.Warning("ISTAModule.GetRootModule", "Cannot retrieve root module, using current: " + base.Me.Title);
-                    xepInfoObject = base.Me;
-                }
-            }
-            return xepInfoObject;
+            throw new NotImplementedException();
         }
-#endif
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         public void Sleep(int millisecondsTimeout)
