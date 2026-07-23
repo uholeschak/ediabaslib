@@ -12,7 +12,6 @@ using PsdzClient;
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
-    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public interface IProgrammingSession : INotifyPropertyChanged, IDisposable
     {
         BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaCurrent { get; }
@@ -21,13 +20,16 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         string IntegrationLevelTarget { get; }
 
-        //IProgrammingApi ProgrammingApi { get; }
+        [PreserveSource(Hint = "IProgrammingApi", Placeholder = true)]
+        PlaceholderType ProgrammingApi { get; }
 
         IAPISecurity APISecurity { get; }
 
-        //ISecureEcuModeService SecureEcuModeService { get; }
+        [PreserveSource(Hint = "ISecureEcuModeService", Placeholder = true)]
+        PlaceholderType SecureEcuModeService { get; }
 
-        //ISecManagementService SecurityManagementService { get; }
+        [PreserveSource(Hint = "ISecManagementService", Placeholder = true)]
+        PlaceholderType SecurityManagementService { get; }
 
         IValidityCondition ValidityCondition { get; }
 
