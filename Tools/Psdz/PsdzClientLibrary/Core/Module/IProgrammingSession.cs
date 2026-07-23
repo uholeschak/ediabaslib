@@ -117,7 +117,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         int GetConnectionPort();
 
-        //IHttpServerResponse RequestProgrammingHttpServer();
+        IHttpServerResponse RequestProgrammingHttpServer();
 
         bool IsHddUpdateUrlReachableByVehicle();
 
