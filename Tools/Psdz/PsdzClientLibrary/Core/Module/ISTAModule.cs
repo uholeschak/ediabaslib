@@ -302,10 +302,10 @@ namespace BMW.Rheingold.Module.ISTA
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public override IVehicleContext VehicleContext => vehicleContext;
-#if false
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public override IDealerData DealerData => logic.Dealer.DealerData;
-#endif
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public override ISOCAccessor SOCAccessor => _ISOCAccessor;
 
