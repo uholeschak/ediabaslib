@@ -24,7 +24,7 @@
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
      <Reference Include="System.Net.Http" />
-     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.28000.2270" GeneratePathProperty="true" />
+     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.28000.2526" GeneratePathProperty="true" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
       <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" GeneratePathProperty="true" />
