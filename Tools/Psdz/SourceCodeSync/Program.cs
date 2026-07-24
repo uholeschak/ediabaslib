@@ -123,7 +123,8 @@ namespace SourceCodeSync
         private static readonly List<string> _moduleTextInsertions = new List<string>
         {
             "using PsdzClient.Core;",
-            "using PsdzClient.Core.Container;"
+            "using PsdzClient.Core.Container;",
+            "using PsdzClient.Programming;"
         };
 
         private const string _commentedRemoveCodeMarker = "//[-]";
