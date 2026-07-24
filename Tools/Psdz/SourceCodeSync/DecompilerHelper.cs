@@ -10,7 +10,7 @@ namespace SourceCodeSync;
 
 public class DecompilerHelper
 {
-    public static bool DecompileAssembly(string dllPath, string outputPath, List<string> searchList = null, Dictionary<string, string> textReplacements = null, bool noSubdirectories = false)
+    public static bool DecompileAssembly(string dllPath, string outputPath, List<string> searchList = null, Dictionary<string, string> textReplacements = null, List<string> textInsertions = null, bool noSubdirectories = false)
     {
         if (string.IsNullOrEmpty(outputPath))
         {

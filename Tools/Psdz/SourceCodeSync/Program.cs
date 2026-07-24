@@ -515,7 +515,7 @@ namespace SourceCodeSync
 
                     try
                     {
-                        if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, noSubdirectories))
+                        if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, textInsertions, noSubdirectories))
                         {
                             result = false;
                             if (_verbosity >= Options.VerbosityOption.Error)
