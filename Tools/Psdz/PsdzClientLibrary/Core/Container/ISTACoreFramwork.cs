@@ -1,4 +1,5 @@
 ﻿using System;
+using BMW.Rheingold.CoreFramework.InteropHelper;
 using PsdzClient;
 
 namespace PsdzClient.Core.Container
@@ -35,7 +36,7 @@ namespace PsdzClient.Core.Container
 
         static ISTACoreFramwork()
         {
-            //[-] VerifyAssemblyHelper.VerifyStrongName(typeof(ISTACoreFramwork), force: true);
+            VerifyAssemblyHelper.VerifyStrongName(typeof(ISTACoreFramwork), force: true);
             Log.Info("ISTACoreFramework.ISTACoreFramework()", "ctor called.");
             try
             {

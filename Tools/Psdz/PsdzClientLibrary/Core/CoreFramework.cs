@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System;
+using BMW.Rheingold.CoreFramework.InteropHelper;
 
 #pragma warning disable CS0649
 namespace PsdzClient.Core
@@ -95,7 +96,7 @@ namespace PsdzClient.Core
         static CoreFramework()
         {
             Log.Info("CoreFramework.CoreFramework()", "ctor called.");
-            //[-] VerifyAssemblyHelper.VerifyStrongName(typeof(CoreFramework), force: true);
+            VerifyAssemblyHelper.VerifyStrongName(typeof(CoreFramework), force: true);
             //[-] lastCompileTime = AssemblyHelper.GetBuildDateTime(Assembly.GetAssembly(typeof(CoreFramework)));
             debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);
             debuglevel = ConfigSettings.getConfigint("BMW.Rheingold.CoreFramework.DebugLevel", debuglevel);
