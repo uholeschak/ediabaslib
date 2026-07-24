@@ -120,6 +120,12 @@ namespace SourceCodeSync
             { "BMW.Rheingold.ISTA.CoreFramework.ILogger", "ILogger" }
         };
 
+        private static readonly List<string> _moduleTextInsertions = new List<string>
+        {
+            "using PsdzClient.Core;",
+            "using PsdzClient.Core.Container;"
+        };
+
         private const string _commentedRemoveCodeMarker = "//[-]";
 
         private const string _commentedAddCodeMarker = "//[+]";
@@ -365,7 +371,7 @@ namespace SourceCodeSync
                     Console.WriteLine("Decompiling test modules ...");
                     string[] testmoduleFiles = Directory.GetFiles(testmoduleDir, "ABL_AUS_*");
                     string testmoduleSourceDir = Path.Combine(sourceDir, "Testmodule");
-                    if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList, _textReplacements, true))
+                    if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList, _textReplacements, _moduleTextInsertions, true))
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
@@ -444,7 +450,7 @@ namespace SourceCodeSync
             return 0;
         }
 
-        public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList, Dictionary<string, string> textReplacements = null, bool noSubdirectories = false)
+        public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList, Dictionary<string, string> textReplacements = null, List<string> textInsertions = null, bool noSubdirectories = false)
         {
             bool result = true;
             foreach (string assemblyPath in decompileAssemblies)
