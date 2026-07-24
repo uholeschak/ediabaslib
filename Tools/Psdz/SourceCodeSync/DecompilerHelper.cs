@@ -101,6 +101,14 @@ public class DecompilerHelper
                 }
             }
 
+            if (textInsertions != null)
+            {
+                foreach (string insertion in textInsertions)
+                {
+                    typeCode = insertion + System.Environment.NewLine + typeCode;
+                }
+            }
+
             // Remove comments
             typeCode = System.Text.RegularExpressions.Regex.Replace(typeCode, @"^\s*//.*$", "", System.Text.RegularExpressions.RegexOptions.Multiline);
             File.WriteAllText(filePath, typeCode);
