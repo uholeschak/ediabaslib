@@ -176,11 +176,11 @@ namespace BMW.Rheingold.Module.ISTA
                 return null;
             }
         }
-#if false
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         public IServiceDialogFactory Factory { get; private set; }
-#endif
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         public override IFFMDynamicResolver FFMResolver => ffmResolver;
