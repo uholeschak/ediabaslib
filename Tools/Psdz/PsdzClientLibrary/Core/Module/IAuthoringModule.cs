@@ -10,13 +10,15 @@ using System;
 
 namespace BMW.Authoring.API
 {
+    using Vehicle = PsdzClient.Core.Vehicle;
+
     [AuthorAPI(SelectableTypeDeclaration = false)]
     [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public interface IAuthoringModule : IHideObjectMembers
     {
         ILogic IstaOperationLogic { get; }
 
-        PsdzClient.Core.Vehicle Vehicle { get; }
+        Vehicle Vehicle { get; }
 
         IFFMDynamicResolver FFMDynamicResolver { get; }
 
@@ -38,6 +40,6 @@ namespace BMW.Authoring.API
 
         IRitaFunctionsProvider RitaFunctionsProvider { get; }
 
-        PsdzClient.Core.Vehicle VehicleDeepClone(PsdzClient.Core.Vehicle vehicle);
+        Vehicle VehicleDeepClone(Vehicle vehicle);
     }
 }
