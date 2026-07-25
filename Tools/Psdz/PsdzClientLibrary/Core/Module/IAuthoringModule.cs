@@ -1,13 +1,12 @@
-﻿using BMW.Authoring;
+﻿using BMW.Authoring.API.Interface.Rita;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
-using System;
-using BMW.Authoring.API.Interface.Rita;
-using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using PsdzClientLibrary.Core.Module;
+using System;
 
 namespace BMW.Authoring.API
 {
@@ -17,7 +16,7 @@ namespace BMW.Authoring.API
     {
         ILogic IstaOperationLogic { get; }
 
-        Vehicle Vehicle { get; }
+        PsdzClient.Core.Vehicle Vehicle { get; }
 
         IFFMDynamicResolver FFMDynamicResolver { get; }
 
@@ -39,6 +38,6 @@ namespace BMW.Authoring.API
 
         IRitaFunctionsProvider RitaFunctionsProvider { get; }
 
-        Vehicle VehicleDeepClone(Vehicle vehicle);
+        PsdzClient.Core.Vehicle VehicleDeepClone(PsdzClient.Core.Vehicle vehicle);
     }
 }
