@@ -886,7 +886,7 @@ namespace BMW.Rheingold.Module.ISTA
                 throw new ArgumentException("Parameter buttonTexts count must be between 0 and 20.");
             }
         }
-#if false
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         protected void DocumentHandler(DocumentStatementAction action, IDocumentLocator documentLocator)
@@ -1010,11 +1010,11 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.Info("ISTAModule.DocumentHandler(DocumentStatementAction, List<Document>, int)", "execute action: {0} documents: {1} slot: {2}", action.ToString(), text, slot);
                 foreach (InfoObject document2 in documents)
                 {
-                    if (document2 == null || (document2.Content.Doc == null && document2.Content.BinaryDocument == null) || document2.Content.TransformedDocument == null)
-                    {
-                        Log.Warning("ISTAModule.DocumentHandler(DocumentStatementAction action, Document document, int Slot)", "document was null");
-                    }
-                    else
+                    //[-] if (document2 == null || (document2.Content.Doc == null && document2.Content.BinaryDocument == null) || document2.Content.TransformedDocument == null)
+                    //[-] {
+                    //[-] Log.Warning("ISTAModule.DocumentHandler(DocumentStatementAction action, Document document, int Slot)", "document was null");
+                    //[-] }
+                    //[-] else
                     {
                         list.Add(document2);
                     }
@@ -1081,7 +1081,7 @@ namespace BMW.Rheingold.Module.ISTA
                     break;
             }
         }
-#endif
+
         private bool __tryQueryValue(ANode node, string nodePath, out Value resultValue)
         {
             bool result = false;

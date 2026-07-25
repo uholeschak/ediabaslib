@@ -14,9 +14,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public class InfoObject : ITherapyPlanAction, INotifyPropertyChanged
     {
+        private InfoObjectContentTransformed content;
+
         private bool isMarkedForExport;
 
         private bool isLoadedAsHotspot;
+
+        private byte[] documentUtf8;
 
         private decimal? implicitVersion;
 
@@ -29,6 +33,32 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private typeDiagObjectState stateField;
 
         private decimal idField;
+
+        [XmlIgnore]
+        public byte[] DocumentUtf8
+        {
+            get
+            {
+                return documentUtf8;
+            }
+            set
+            {
+                documentUtf8 = value;
+            }
+        }
+
+        [XmlIgnore]
+        public InfoObjectContentTransformed Content
+        {
+            get
+            {
+                if (content == null)
+                {
+                    content = new InfoObjectContentTransformed(this);
+                }
+                return content;
+            }
+        }
 
         public bool IsESLError
         {
@@ -91,7 +121,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 return string.Empty;
             }
         }
-
 
         [XmlIgnore]
         public SwiActionLinkType LinkType => SwiActionLinkType.SwiActionDiagnosticLink;
