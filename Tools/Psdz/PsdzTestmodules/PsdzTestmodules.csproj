@@ -10,19 +10,19 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-windows10.0.26100.0|AnyCPU'">
-    <NoWarn>CS0219</NoWarn>
+    <NoWarn>CS0219;CS0162</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net481|AnyCPU'">
-    <NoWarn>CS0219</NoWarn>
+    <NoWarn>CS0219;CS0162</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-windows10.0.26100.0|AnyCPU'">
-    <NoWarn>CS0219</NoWarn>
+    <NoWarn>CS0219;CS0162</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net481|AnyCPU'">
-    <NoWarn>CS0219</NoWarn>
+    <NoWarn>CS0219;CS0162</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
