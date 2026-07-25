@@ -7,13 +7,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class InfoObjectContentTransformed
     {
         private readonly InfoObject parent;
-
         private string styleSheetField;
-
         private string transformedDocumentField;
-
         private bool isDocumentTransformationValid;
-
         [XmlIgnore]
         public string FilenameOfContent { get; set; }
 
@@ -41,6 +37,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[-] }
                 return string.Empty;
             }
+
             set
             {
                 IsDocumentTransformationValid = false;
@@ -75,6 +72,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[-] }
                 return transformedDocumentField;
             }
+
             set
             {
                 if (transformedDocumentField != null)
@@ -100,6 +98,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return isDocumentTransformationValid;
             }
+
             set
             {
                 isDocumentTransformationValid = value;
@@ -115,5 +114,4 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
         }
     }
-
 }
