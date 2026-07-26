@@ -122,9 +122,8 @@ namespace SourceCodeSync
 
         private static readonly Dictionary<string, string> _moduleTextReplacements = new Dictionary<string, string>
         {
-            {
-                "using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;", "using BMW.Rheingold.CoreFramework.Contracts;"
-            }
+            { "using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;", "using BMW.Rheingold.CoreFramework.Contracts;" },
+            { "GetProperty(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")", "GetProperty<string>(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")" }
         };
 
         private static readonly List<string> _moduleTextInsertions = new List<string>
