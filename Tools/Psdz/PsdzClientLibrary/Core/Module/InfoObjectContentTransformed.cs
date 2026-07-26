@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
-    public class InfoObjectContentTransformed
+    public class InfoObjectContentTransformed : InfoObjectContent
     {
         private readonly InfoObject parent;
         private string styleSheetField;
