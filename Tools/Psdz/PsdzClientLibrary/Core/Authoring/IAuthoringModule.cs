@@ -13,7 +13,6 @@ namespace BMW.Authoring.API
     using Vehicle = PsdzClient.Core.Vehicle;
 
     [AuthorAPI(SelectableTypeDeclaration = false)]
-    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public interface IAuthoringModule : IHideObjectMembers
     {
         ILogic IstaOperationLogic { get; }

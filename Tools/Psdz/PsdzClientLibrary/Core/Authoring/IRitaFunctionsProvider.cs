@@ -8,7 +8,6 @@ namespace BMW.Authoring.API.Interface.Rita
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public interface IRitaFunctionsProvider
     {
         [Obsolete("This function is not supported")]

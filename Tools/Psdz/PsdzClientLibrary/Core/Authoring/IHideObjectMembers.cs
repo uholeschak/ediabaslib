@@ -7,7 +7,6 @@ using PsdzClient;
 namespace BMW.Authoring
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public interface IHideObjectMembers
     {
         [AuthorAPIHidden]
