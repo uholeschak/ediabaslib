@@ -354,7 +354,7 @@ namespace SourceCodeSync
                 {
                     Console.WriteLine("Filter: {0}", string.Join(", ", filterParts));
                 }
-                Console.WriteLine("Decompiling assemblies ...");
+                Console.WriteLine("Decompiling assemblies part 1...");
 
                 List<string> decompileAssemblies = new List<string>();
                 foreach (string assemblyName in _decompileAssemblies)
@@ -363,8 +363,9 @@ namespace SourceCodeSync
                     decompileAssemblies.Add(assemblyPath);
                 }
 
+                string sourceSubDir1 = Path.Combine(sourceDir, "Source1");
                 List<string> searchList = new List<string> { assemblyDir };
-                if (!DecompileAssemblies(decompileAssemblies, sourceDir, overwrite, searchList, _textReplacements))
+                if (!DecompileAssemblies(decompileAssemblies, sourceSubDir1, overwrite, searchList, _textReplacements))
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
                     {
@@ -395,9 +396,9 @@ namespace SourceCodeSync
                 }
 
                 Console.WriteLine("Dest dir: {0}", destDir);
-                Console.WriteLine("Updating source ...");
+                Console.WriteLine("Updating source part 1 ...");
 
-                string[] sourceFiles = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
+                string[] sourceFiles = Directory.GetFiles(sourceSubDir1, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in sourceFiles)
                 {
                     if (!GetFileSource(file))
