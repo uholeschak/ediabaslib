@@ -117,7 +117,14 @@ namespace SourceCodeSync
             { "BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic", "MultisourceLogic"},
             { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"},
             { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", "BusType"},
-            { "BMW.Rheingold.ISTA.CoreFramework.ILogger", "ILogger" }
+            { "BMW.Rheingold.ISTA.CoreFramework.ILogger", "ILogger" },
+        };
+
+        private static readonly Dictionary<string, string> _moduleTextReplacements = new Dictionary<string, string>
+        {
+            {
+                "using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;", "using BMW.Rheingold.CoreFramework.Contracts;"
+            }
         };
 
         private static readonly List<string> _moduleTextInsertions = new List<string>
@@ -372,7 +379,13 @@ namespace SourceCodeSync
                     Console.WriteLine("Decompiling test modules ...");
                     string[] testmoduleFiles = Directory.GetFiles(testmoduleDir, "ABL_AUS_*");
                     string testmoduleSourceDir = Path.Combine(sourceDir, "Testmodule");
-                    if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList, _textReplacements, _moduleTextInsertions, true))
+                    Dictionary<string, string> moduleReplacements = new Dictionary<string, string>(_textReplacements);
+                    foreach (KeyValuePair<string, string> kvp in _moduleTextReplacements)
+                    {
+                        moduleReplacements.Add(kvp.Key, kvp.Value);
+                    }
+
+                    if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList, moduleReplacements, _moduleTextInsertions, true))
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
