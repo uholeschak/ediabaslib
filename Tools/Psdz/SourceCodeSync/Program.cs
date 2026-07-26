@@ -80,7 +80,7 @@ namespace SourceCodeSync
             {"BMW.Rheingold.Module.ISTA.DataType", null},
         };
 
-        private static readonly string[] _decompileAssemblies =
+        private static readonly string[] _decompileAssemblies1 =
         [
             "BMW.ISPI.TRIC.ISTA.Common",
             "BMW.ISPI.TRIC.ISTA.Contracts",
@@ -105,6 +105,11 @@ namespace SourceCodeSync
             "RheingoldPsdzWebApi.Adapter",
             "RheingoldPsdzWebApi.Adapter.Contracts",
             "RheingoldVehicleCommunication"
+        ];
+
+        private static readonly string[] _decompileAssemblies2 =
+        [
+            "Authoring",
         ];
 
         private static readonly Dictionary<string, string> _textReplacements = new Dictionary<string, string>
@@ -354,22 +359,41 @@ namespace SourceCodeSync
                 {
                     Console.WriteLine("Filter: {0}", string.Join(", ", filterParts));
                 }
-                Console.WriteLine("Decompiling assemblies part 1...");
 
-                List<string> decompileAssemblies = new List<string>();
-                foreach (string assemblyName in _decompileAssemblies)
+                List<string> searchList = new List<string> { assemblyDir };
+
+                Console.WriteLine("Decompiling assemblies part 1...");
+                List<string> decompileAssemblies1 = new List<string>();
+                foreach (string assemblyName in _decompileAssemblies1)
                 {
                     string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
-                    decompileAssemblies.Add(assemblyPath);
+                    decompileAssemblies1.Add(assemblyPath);
                 }
 
                 string sourceSubDir1 = Path.Combine(sourceDir, "Source1");
-                List<string> searchList = new List<string> { assemblyDir };
-                if (!DecompileAssemblies(decompileAssemblies, sourceSubDir1, overwrite, searchList, _textReplacements))
+                if (!DecompileAssemblies(decompileAssemblies1, sourceSubDir1, overwrite, searchList, _textReplacements))
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
                     {
                         Console.WriteLine("*** Decompile assemblies failed");
+                    }
+                    return 1;
+                }
+
+                Console.WriteLine("Decompiling assemblies part 2...");
+                List<string> decompileAssemblies2 = new List<string>();
+                foreach (string assemblyName in _decompileAssemblies2)
+                {
+                    string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
+                    decompileAssemblies2.Add(assemblyPath);
+                }
+
+                string sourceSubDir2 = Path.Combine(sourceDir, "Source2");
+                if (!DecompileAssemblies(decompileAssemblies2, sourceSubDir2, overwrite, searchList, _textReplacements))
+                {
+                    if (_verbosity >= Options.VerbosityOption.Error)
+                    {
+                        Console.WriteLine("*** Decompile assemblies part 2 failed");
                     }
                     return 1;
                 }
