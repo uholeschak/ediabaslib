@@ -396,6 +396,8 @@ namespace BMW.Rheingold.Module.ISTA
 #if false
         public override IDatabaseProvider DBProvider => DatabaseProviderFactory.Instance;
 #endif
+        public override PsdzDatabase DBProvider => ClientContext.GetDatabase(vehicle);
+
         public IProtocolBasicBase FastaProtocolerBase => FastaProtocoler;
 
         public SessionInfo SessionInfo => ClientContext.GetClientContext(vehicle)?.SessionInfo;
@@ -1211,11 +1213,15 @@ namespace BMW.Rheingold.Module.ISTA
         public override void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters)
         {
             //[-] IXepInfoObject xepInfoObject = null;
+            //[+] SwiInfoObj xepInfoObject = null;
+            PsdzDatabase.SwiInfoObj xepInfoObject = null;
             InteractionMessageModel interactionMessageModel = new InteractionMessageModel();
             Log.Info("ISTAModule.callModuleRef()", "CallStatement with reference path: {0}", refPath);
             try
             {
                 //[-] xepInfoObject = DBProvider.GetInfoObjectByControlId(Convert.ToInt64(refPath, CultureInfo.InvariantCulture));
+                //[+] xepInfoObject = DBProvider?.GetInfoObjectByControlId(refPath);
+                xepInfoObject = DBProvider?.GetInfoObjectByControlId(refPath);
             }
             catch (Exception exception)
             {

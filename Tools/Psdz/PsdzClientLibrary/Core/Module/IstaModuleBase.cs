@@ -54,8 +54,8 @@ namespace BMW.Rheingold.CoreFramework
         public abstract ISOCAccessor Contexts { get; }
         public abstract Vehicle Vehicle { get; }
 
-        [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
-        public virtual PlaceholderType DBProvider { get; set; }
+        [PreserveSource(Hint = "IDatabaseProvider", SignatureModified = true)]
+        public virtual PsdzDatabase DBProvider { get; set; }
         protected ITextContentManager textContentManager { get; set; }
 
         [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
