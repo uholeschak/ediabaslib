@@ -7,6 +7,8 @@ using System.ComponentModel;
 
 namespace BMW.Authoring.Vehicle.Interface
 {
+    using Vehicle = PsdzClient.Core.Vehicle;
+
     [AuthorAPI(SelectableTypeDeclaration = true)]
     [EditorBrowsable(EditorBrowsableState.Always)]
     public interface ICentralErrorMemory : IHideObjectMembers
@@ -20,6 +22,6 @@ namespace BMW.Authoring.Vehicle.Interface
         List<ICemResult> CemResult { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        CentralErrorMemoryStatus DoEcuReadCentralErrorMemoryForNewGenerationVehicles(IAuthoringModule istaModule, PsdzClient.Core.Vehicle vehicle);
+        CentralErrorMemoryStatus DoEcuReadCentralErrorMemoryForNewGenerationVehicles(IAuthoringModule istaModule, Vehicle vehicle);
     }
 }
