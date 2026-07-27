@@ -420,78 +420,93 @@ namespace SourceCodeSync
                 }
 
                 Console.WriteLine("Dest dir: {0}", destDir);
-                Console.WriteLine("Updating source part 1 ...");
-
-                string[] sourceFiles = Directory.GetFiles(sourceSubDir1, "*.cs", SearchOption.AllDirectories);
-                foreach (string file in sourceFiles)
-                {
-                    if (!GetFileSource(file))
-                    {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            Console.WriteLine("*** Get file source failed: {0}", file);
-                        }
-                    }
-                }
 
                 List<string> filterSpecialDirs = new List<string>
                 {
                     "Core\\Authoring"
                 };
 
-                string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
-                foreach (string file in destFiles)
+                for (int partIdx = 0; partIdx < 2; partIdx++)
                 {
-                    if (file.EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
+                    Console.WriteLine("Updating source part {0} ...", partIdx + 1);
 
-                    string relPath = GetRelativePath(destDir, file);
-                    string relDir = Path.GetDirectoryName(relPath);
-                    if (string.IsNullOrEmpty(relDir))
+                    string sourceSubDir = partIdx == 0 ? sourceSubDir1 : sourceSubDir2;
+                    string[] sourceFiles = Directory.GetFiles(sourceSubDir, "*.cs", SearchOption.AllDirectories);
+                    foreach (string file in sourceFiles)
                     {
-                        continue;
-                    }
-
-                    bool filterDir = false;
-                    foreach (string filterPart in filterSpecialDirs)
-                    {
-                        if (relDir.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
+                        if (!GetFileSource(file))
                         {
-                            filterDir = true;
-                            break;
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("*** Get file source failed: {0}", file);
+                            }
                         }
                     }
 
-                    if (filterDir)
+                    string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
+                    foreach (string file in destFiles)
                     {
-                        continue;
-                    }
+                        if (file.EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
 
-                    if (filterParts != null && filterParts.Length > 0)
-                    {
-                        bool matched = false;
-                        foreach (string filterPart in filterParts)
+                        string relPath = GetRelativePath(destDir, file);
+                        string relDir = Path.GetDirectoryName(relPath);
+                        if (string.IsNullOrEmpty(relDir))
+                        {
+                            continue;
+                        }
+
+                        bool filterDir = false;
+                        foreach (string filterPart in filterSpecialDirs)
                         {
                             if (relDir.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
                             {
-                                matched = true;
+                                filterDir = true;
                                 break;
                             }
                         }
 
-                        if (!matched)
+                        if (partIdx == 0)
                         {
-                            continue;
+                            if (filterDir)
+                            {
+                                continue;
+                            }
                         }
-                    }
-
-                    if (!UpdateFile(file))
-                    {
-                        if (_verbosity >= Options.VerbosityOption.Error)
+                        else
                         {
-                            Console.WriteLine("*** Update file failed: {0}", file);
+                            if (!filterDir)
+                            {
+                                continue;
+                            }
+                        }
+
+                        if (filterParts != null && filterParts.Length > 0)
+                        {
+                            bool matched = false;
+                            foreach (string filterPart in filterParts)
+                            {
+                                if (relDir.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    matched = true;
+                                    break;
+                                }
+                            }
+
+                            if (!matched)
+                            {
+                                continue;
+                            }
+                        }
+
+                        if (!UpdateFile(file))
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("*** Update file failed: {0}", file);
+                            }
                         }
                     }
                 }
