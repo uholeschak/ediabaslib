@@ -27,12 +27,12 @@ namespace SourceCodeSync
             public int? Index { get; set; }
         }
 
-        private static Dictionary<string, ClassDeclarationSyntax> _classDict = new (StringComparer.Ordinal);
-        private static Dictionary<string, ClassDeclarationSyntax> _classBareDict = new (StringComparer.Ordinal);
-        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict = new (StringComparer.Ordinal);
-        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceBareDict = new (StringComparer.Ordinal);
-        private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new (StringComparer.Ordinal);
-        private static Dictionary<string, EnumDeclarationSyntax> _enumBareDict = new (StringComparer.Ordinal);
+        private static Dictionary<string, ClassDeclarationSyntax> _classDict;
+        private static Dictionary<string, ClassDeclarationSyntax> _classBareDict;
+        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict;
+        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceBareDict;
+        private static Dictionary<string, EnumDeclarationSyntax> _enumDict;
+        private static Dictionary<string, EnumDeclarationSyntax> _enumBareDict;
 
         private static readonly string[] _ignoreNamespaces =
         [
@@ -430,6 +430,13 @@ namespace SourceCodeSync
                 for (int partIdx = 0; partIdx < 2; partIdx++)
                 {
                     Console.WriteLine("Updating source part {0} ...", partIdx + 1);
+
+                    _classDict = new(StringComparer.Ordinal);
+                    _classBareDict = new(StringComparer.Ordinal);
+                    _interfaceDict = new(StringComparer.Ordinal);
+                    _interfaceBareDict = new(StringComparer.Ordinal);
+                    _enumDict = new(StringComparer.Ordinal);
+                    _enumBareDict = new(StringComparer.Ordinal);
 
                     string sourceSubDir = partIdx == 0 ? sourceSubDir1 : sourceSubDir2;
                     string[] sourceFiles = Directory.GetFiles(sourceSubDir, "*.cs", SearchOption.AllDirectories);
