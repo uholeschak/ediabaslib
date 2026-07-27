@@ -46,7 +46,6 @@ namespace BMW.Rheingold.CoreFramework
         public abstract IEcuKomStatement EcuKomStatement { get; }
         public abstract IEcuKom ecuKom { get; }
         public abstract IFFMDynamicResolver FFMResolver { get; }
-
         public abstract IInputListener InputListener { get; }
         public abstract IVehicleContext VehicleContext { get; }
         public abstract IDealerData DealerData { get; }
@@ -54,7 +53,7 @@ namespace BMW.Rheingold.CoreFramework
         public abstract ISOCAccessor Contexts { get; }
         public abstract Vehicle Vehicle { get; }
 
-        [PreserveSource(Hint = "IDatabaseProvider", SignatureModified = true)]
+        [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
         public virtual PsdzDatabase DBProvider { get; set; }
         protected ITextContentManager textContentManager { get; set; }
 
@@ -146,13 +145,9 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         public abstract IEnergySettings EnergySettings { get; }
-
         public abstract INOPProvisioning NOPProvisioning { get; }
-
         public abstract IVPSProvisioning VPSProvisioning { get; }
-
         public abstract IPersistency Persistency { get; }
-
         public abstract INavigationMapProcessor NavigationMapProcessor { get; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -923,11 +918,11 @@ namespace BMW.Rheingold.CoreFramework
 
         public IVirtualFaultCodeLocator GetVirtualFaultCode(string refCode)
         {
-        //[-] FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(refCode, Vehicle, FFMResolver);
-        //[-] if (virtualFaultCode == null)
-        //[-] {
-        Log.Warning("ISTAModule.__VirtualFaultCode()", "no virtual fault code found for reference: {0}", refCode);
-        return null;
+            //[-] FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(refCode, Vehicle, FFMResolver);
+            //[-] if (virtualFaultCode == null)
+            //[-] {
+            Log.Warning("ISTAModule.__VirtualFaultCode()", "no virtual fault code found for reference: {0}", refCode);
+            return null;
         //[-] }
         //[-] return new VirtualFaultCodeLocator(virtualFaultCode, Vehicle, GetRootModule());
         }
@@ -1095,6 +1090,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning(Log.CurrentMethod(), "Document is null");
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
             }
+
             //[-] else
             //[-] {
             //[-] foreach (InfoObject infoObject in infoObjects)
@@ -1117,7 +1113,6 @@ namespace BMW.Rheingold.CoreFramework
             //[-] }
             //[-] }
             //[-] }
-
             if (list.Any())
             {
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
@@ -1207,6 +1202,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.WarningException("ISTAModule.__PerceivedSymptom()", exception);
             }
+
             return null;
         }
 
@@ -1565,6 +1561,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 FastaProtocoler.EndTime = DateTime.Now;
             }
+
             if (FastaGrouping != null)
             {
                 FastaGrouping.EndTime = DateTime.Now;
@@ -1741,7 +1738,7 @@ namespace BMW.Rheingold.CoreFramework
         [PreserveSource(Hint = "diagObj replaced", SignatureModified = true)]
         public virtual void AddSuspicious(InfoObject infoObject, PlaceholderType diagObj)
         {
-            //[-] logic?.AddSuspiciousItem(ModuleData, infoObject, diagObj);
+        //[-] logic?.AddSuspiciousItem(ModuleData, infoObject, diagObj);
         }
 
         public abstract int ShowQuestionPopup(ITextContent title, ITextContent question, int size = 0, params ITextContent[] buttonTexts);

@@ -30,7 +30,7 @@ namespace BMW.Authoring.API
 
         IDealerData DealerData { get; set; }
 
-        [PreserveSource(Hint = "IDatabaseProvider", SignatureModified = true)]
+        [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
         PsdzDatabase DBProvider { get; set; }
 
         SessionInfo SessionInfo { get; }
