@@ -79,7 +79,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
             {
                 if (dealerAddress == null)
                 {
-                    //[-] dealerAddress = new DealerAddress(FirstOutlet);
+                //[-] dealerAddress = new DealerAddress(FirstOutlet);
                 }
 
                 return dealerAddress;
@@ -177,11 +177,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
                 hasDistributionPartner = false;
                 Log.Warning("DealerDataLogic.Initialize()", "No element 'distributionPartner' in dealer master data found!");
             }
-
-            //[-] if (IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA") && (string.IsNullOrEmpty(distributionPartnerNumber) || distributionPartnerNumber == "0"))
-            //[-] {
-            //[-] distributionPartnerNumber = "-1";
-            //[-] }
+        //[-] if (IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA") && (string.IsNullOrEmpty(distributionPartnerNumber) || distributionPartnerNumber == "0"))
+        //[-] {
+        //[-] distributionPartnerNumber = "-1";
+        //[-] }
         }
 
         private bool IsValidServiceContract(Contract contract)
@@ -293,7 +292,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
             //[-] {
             //[-] return GetValidContract(OutletNumber, brandName.Value, !CoreFramework.OSSModeActive, null) != null;
             //[-] }
-
             return false;
         }
 
@@ -373,10 +371,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
 
         private void PreLoadValidBrands()
         {
-            //[-] foreach (BrandName baseBrandName in BrandMapping.BaseBrandNames)
-            //[-] {
-            //[-] DealerBrands.Add(baseBrandName, HasLicenseForBrandInternal(baseBrandName));
-            //[-] }
+        //[-] foreach (BrandName baseBrandName in BrandMapping.BaseBrandNames)
+        //[-] {
+        //[-] DealerBrands.Add(baseBrandName, HasLicenseForBrandInternal(baseBrandName));
+        //[-] }
         }
     }
 }
