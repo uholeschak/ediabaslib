@@ -225,6 +225,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
             return false;
         }
 
+        [PreserveSource(SignatureModified = true)]
         internal Contract GetValidContract(string outletNumber, BrandName brandName, string salesBranch)
         {
             //[-] return GetValidContract(outletNumber, brandName, !CoreFramework.OSSModeActive, salesBranch);
@@ -232,6 +233,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
             return null;
         }
 
+        [PreserveSource(SignatureModified = true)]
         internal Contract GetValidContract(string outletNumber, BrandName brandName, bool isBmwDealer, string salesBranch)
         {
             //[-] BrandName baseBrandName = BrandMapping.GetBaseBrandName(brandName);
