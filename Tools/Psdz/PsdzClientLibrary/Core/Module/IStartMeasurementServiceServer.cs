@@ -8,5 +8,11 @@ namespace BMW.Rheingold.Measurement.Common
     public interface IStartMeasurementServiceServer
     {
         int ConnectAndReserveImib(IVciDevice device, IFasta2Service fasta2);
+
+        //IDmmManager CreateAndInititalizeDmm();
+
+        //IDsoManager CreateAndInitializeDso();
+
+        //IDeviceImib ReserveMeasurementDevice(CallingSource callingSource = CallingSource.TestModul);
     }
 }
