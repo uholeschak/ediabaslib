@@ -434,12 +434,10 @@ namespace SourceCodeSync
                     }
                 }
 
-                List<string> filterList1 = new List<string>();
-                filterList1.Add("Authoring");
-                if (filterParts != null && filterParts.Length > 0)
+                List<string> filterSpecialDirs = new List<string>
                 {
-                    filterList1.AddRange(filterParts);
-                }
+                    "Authoring"
+                };
 
                 string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in destFiles)
@@ -456,10 +454,25 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (filterList1.Count > 0)
+                    bool filterDir = false;
+                    foreach (string filterPart in filterSpecialDirs)
+                    {
+                        if (relDir.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
+                        {
+                            filterDir = true;
+                            break;
+                        }
+                    }
+
+                    if (filterDir)
+                    {
+                        continue;
+                    }
+
+                    if (filterParts != null && filterParts.Length > 0)
                     {
                         bool matched = false;
-                        foreach (string filterPart in filterList1)
+                        foreach (string filterPart in filterParts)
                         {
                             if (relDir.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
                             {
