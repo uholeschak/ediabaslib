@@ -436,7 +436,7 @@ namespace SourceCodeSync
 
                 List<string> filterSpecialDirs = new List<string>
                 {
-                    "Authoring"
+                    "Core\\Authoring"
                 };
 
                 string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
