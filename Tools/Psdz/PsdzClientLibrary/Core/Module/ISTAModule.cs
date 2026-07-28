@@ -34,6 +34,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using BmwFileReader;
 
 #pragma warning disable CS0649, CS0219, CS0809
 namespace BMW.Rheingold.Module.ISTA
@@ -1234,15 +1235,21 @@ namespace BMW.Rheingold.Module.ISTA
                 if (!string.IsNullOrEmpty(xepInfoObject.Identification))
                 {
                     //[-] decimal? generell = xepInfoObject.Generell;
-                    //[-] decimal num = 1;
+                    //[+] string generell = xepInfoObject.General;
+                    string generell = xepInfoObject.General;
+                    decimal num = 1;
                     //[-] if ((generell.GetValueOrDefault() == num) & generell.HasValue)
-                    //[-] {
+                    //[+] if (!string.IsNullOrEmpty(generell) && generell.ConvertToInt() == num)
+                    if (!string.IsNullOrEmpty(generell) && generell.ConvertToInt() == num)
+                    {
                     //[-] feedbackViewHeaderHelper?.SetDocumentSubTitle(xepInfoObject.DocNumber, xepInfoObject.VersionNumber.Value.ToString());
-                    //[-] }
+                    }
                     //[-] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identifikator);
-                    //[-] Log.Info("ISTAModule.callModuleRef()", "submodule to call: {0}", text);
-                    //[-] try
-                    //[-] {
+                    //[+] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identification);
+                    string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identification);
+                    Log.Info("ISTAModule.callModuleRef()", "submodule to call: {0}", text);
+                    try
+                    {
                     //[-] string text2 = text.Replace("BMW.Rheingold.Module.ISTA.", string.Empty);
                     //[-] Assembly assembly = PatchLoaderUtility.CheckPatchServiceProgram(text2, logic.VersionInfo.DataBaseDiagDocVersion);
                     //[-] if (assembly == null)
@@ -1322,17 +1329,17 @@ namespace BMW.Rheingold.Module.ISTA
                     //[-] }
                     //[-] }
                     //[-] return;
-                    //[-] }
-                    //[-] catch (ThreadAbortException ex)
-                    //[-] {
-                    //[-] Log.Warning("ISTAModule.callModuleRef()", "Abort: {0}", ex.ToString());
-                    //[-] return;
-                    //[-] }
-                    //[-] catch (Exception exception2)
-                    //[-] {
-                    //[-] Log.WarningException("ISTAModule.callModuleRef()", exception2);
-                    //[-] throw;
-                    //[-] }
+                    }
+                    catch (ThreadAbortException ex)
+                    {
+                        Log.Warning("ISTAModule.callModuleRef()", "Abort: {0}", ex.ToString());
+                        return;
+                    }
+                    catch (Exception exception2)
+                    {
+                        Log.WarningException("ISTAModule.callModuleRef()", exception2);
+                        throw;
+                    }
                 }
                 interactionMessageModel.MessageText = new FormatedData("#FailedToResolveSubmoduleMessage", refPath).Localize();
                 interactionMessageModel.DetailText = new FormatedData("#FailedToResolveSubmoduleDetail", base.LastCallingMethod).Localize();
