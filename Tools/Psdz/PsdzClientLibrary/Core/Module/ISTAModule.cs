@@ -45,7 +45,8 @@ namespace BMW.Rheingold.Module.ISTA
     [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public abstract class ISTAModule : IstaModuleBase, IAuthoringModule, IHideObjectMembers
     {
-        //private ProgrammingSessionProxy programmingSessionProxy;
+        [PreserveSource(Hint = "ProgrammingSessionProxy", Placeholder = true)]
+        private PlaceholderType programmingSessionProxy;
 
         private object onTheFlyCompileLock = new object();
 
