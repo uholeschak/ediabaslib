@@ -49,8 +49,8 @@ namespace BMW.Rheingold.Module.ISTA
 
         private readonly IFeedbackViewHeaderTitleHelper feedbackViewHeaderHelper;
 
-        //[EditorBrowsable(EditorBrowsableState.Never)]
-        //internal ModuleParameter __RheinGoldCoreModuleParameters__;
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal ModuleParameter __RheinGoldCoreModuleParameters__;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected IModuleExecutionParent _globalTabModuleISTA;
@@ -92,7 +92,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         private Vehicle vehicle;
 
-        private Lazy<IVehicle> authoringVehicle;
+        private Lazy<BMW.Authoring.Vehicle.IVehicle> authoringVehicle;
 
         private ISPEUserInterface _SPEUserInterface;
 
@@ -152,7 +152,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public IVehicle AuthoringVehicle => authoringVehicle?.Value;
+        public BMW.Authoring.Vehicle.IVehicle AuthoringVehicle => authoringVehicle?.Value;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
@@ -463,7 +463,7 @@ namespace BMW.Rheingold.Module.ISTA
             _globalModuleOutParameter = null;
             _globalModuleInParameter = null;
             _globalModuleInAndOutParameter = null;
-            //[-] __RheinGoldCoreModuleParameters__ = null;
+            __RheinGoldCoreModuleParameters__ = null;
         }
 
         private bool HasValue(object valueObject)
@@ -1135,23 +1135,23 @@ namespace BMW.Rheingold.Module.ISTA
                     //[-] base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as IXepInfoObject;
                     //[+] base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as PsdzDatabase.SwiInfoObj;
                     base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as PsdzDatabase.SwiInfoObj;
-                    //[-] ModuleParameter moduleParameter = (ModuleParameter)_globalModuleInParameter.getParameter("__RheinGoldCoreModuleParameters__");
-                    //[-] if (moduleParameter != null)
-                    //[-] {
-                    //[-] __RheinGoldCoreModuleParameters__ = moduleParameter;
-                    //[-] logic = moduleParameter.getParameter(ModuleParameter.ParameterName.Logic) as ILogic;
-                    //[-] vehicle = moduleParameter.getParameter(ModuleParameter.ParameterName.Vehicle) as BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle;
-                    //[-] authoringVehicle = new Lazy<BMW.Authoring.Vehicle.IVehicle>(() => new BMW.Authoring.Vehicle.Vehicle(this));
-                    //[-] _ISOCAccessor = new SOCAccessor(vehicle, LicenseHelper.DealerInstance);
-                    _globalModuleInParameter.setParameter("__RheinGoldSOCAccessor__", _ISOCAccessor);
-                    SetTextContentManager();
-                    //[-] if (logic != null)
-                    //[-] {
-                    //[-] ffmResolver = logic.FFMResolver;
-                    //[-] }
-                    //[-] vehicleContext = new VehicleContext(vehicle, ffmResolver);
-                    //[-] MeasurementLauncher = moduleParameter.getParameter(ModuleParameter.ParameterName.MeasurementLauncher) as IStartMeasurementServiceServer;
-                    //[-] }
+                    ModuleParameter moduleParameter = (ModuleParameter)_globalModuleInParameter.getParameter("__RheinGoldCoreModuleParameters__");
+                    if (moduleParameter != null)
+                    {
+                        __RheinGoldCoreModuleParameters__ = moduleParameter;
+                        logic = moduleParameter.getParameter(ModuleParameter.ParameterName.Logic) as ILogic;
+                        vehicle = moduleParameter.getParameter(ModuleParameter.ParameterName.Vehicle) as Vehicle;
+                        authoringVehicle = new Lazy<BMW.Authoring.Vehicle.IVehicle>(() => new BMW.Authoring.Vehicle.Vehicle(this));
+                        //[-] _ISOCAccessor = new SOCAccessor(vehicle, LicenseHelper.DealerInstance);
+                        _globalModuleInParameter.setParameter("__RheinGoldSOCAccessor__", _ISOCAccessor);
+                        SetTextContentManager();
+                        //[-] if (logic != null)
+                        //[-] {
+                        //[-] ffmResolver = logic.FFMResolver;
+                        //[-] }
+                        //[-] vehicleContext = new VehicleContext(vehicle, ffmResolver);
+                        MeasurementLauncher = moduleParameter.getParameter(ModuleParameter.ParameterName.MeasurementLauncher) as IStartMeasurementServiceServer;
+                    }
                     _globalTabModuleISTA = (IModuleExecutionParent)_globalModuleInParameter.getParameter("__RheinGoldTabModuleISTA__");
                     if (_globalTabModuleISTA == null)
                     {
@@ -1274,8 +1274,8 @@ namespace BMW.Rheingold.Module.ISTA
                         //[-] {
                         //[-] moduleStep = FastaCreateAndAddModuleStepTo(inParameters);
                         //[-] }
-                        //[-] ModuleParameter value = __RheinGoldCoreModuleParameters__.Clone();
-                        //[-] inParameters.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
+                        ModuleParameter value = __RheinGoldCoreModuleParameters__.Clone();
+                        inParameters.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
                         inParameters.Parameter.Add("__RheinGoldTabModuleISTA__", _globalTabModuleISTA);
                         inParameters.Parameter.Add("__RheinGoldSOCAccessor__", _ISOCAccessor);
                         inParameters.Parameter.Add("ISTAModule.Me", xepInfoObject);
@@ -1559,8 +1559,8 @@ namespace BMW.Rheingold.Module.ISTA
                 string cleanIstaModuleName = moduleName.Replace("BMW.Rheingold.Diagnostics.Module.ISTA.", string.Empty);
                 Assembly moduleAssembly = GetModuleAssembly(cleanIstaModuleName);
                 IModuleStep moduleStep = FastaCreateAndAddModuleStepTo(inParameters);
-                //[-] ModuleParameter value = __RheinGoldCoreModuleParameters__.Clone();
-                //[-] inParameters.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
+                ModuleParameter value = __RheinGoldCoreModuleParameters__.Clone();
+                inParameters.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
                 inParameters.Parameter.Add("__RheinGoldTabModuleISTA__", _globalTabModuleISTA);
                 inParameters.Parameter.Add("__RheinGoldSOCAccessor__", _ISOCAccessor);
                 inParameters.Parameter.Add("InParameterTestModuleCache", testModuleCache);
@@ -1772,36 +1772,34 @@ namespace BMW.Rheingold.Module.ISTA
 
         public override InfoObject GetInfoObjStarted()
         {
-            //[-] InfoObject infoObject = __RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.InfoObjStarted) as InfoObject;
-            //[-] if (infoObject == null)
-            //[-] {
-            //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "InfoObjStarted is null.");
-            //[-] if (!(__RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.XepInfoObjectStarted) is XepInfoObject xep))
-            //[-] {
-            //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "XepInfoObjectStarted is null.");
-            //[-] }
-            //[-] else if (logic == null || logic.Factory == null)
-            //[-] {
-            //[-] Log.Error("ISTAModule.GetInfoObjStarted()", "Logic or Logic.Factory is null.");
-            //[-] }
-            //[-] else
-            //[-] {
-            //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "Create info object from XepInfoObjectStarted.");
-            //[-] infoObject = logic.Factory.CreateInfoObject(xep);
-            //[-] if (infoObject != null)
-            //[-] {
-            //[-] infoObject.ParentDiagnosisObject = null;
-            //[-] __RheinGoldCoreModuleParameters__.setParameter(ModuleParameter.ParameterName.InfoObjStarted, infoObject);
-            //[-] }
-            //[-] }
-            //[-] }
-            //[-] if (infoObject == null)
+            InfoObject infoObject = __RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.InfoObjStarted) as InfoObject;
+            if (infoObject == null)
+            {
+                Log.Info("ISTAModule.GetInfoObjStarted()", "InfoObjStarted is null.");
+                //[-] if (!(__RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.XepInfoObjectStarted) is XepInfoObject xep))
+                //[-] {
+                //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "XepInfoObjectStarted is null.");
+                //[-] }
+                //[-] else if (logic == null || logic.Factory == null)
+                //[-] {
+                //[-] Log.Error("ISTAModule.GetInfoObjStarted()", "Logic or Logic.Factory is null.");
+                //[-] }
+                //[-] else
+                //[-] {
+                //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "Create info object from XepInfoObjectStarted.");
+                //[-] infoObject = logic.Factory.CreateInfoObject(xep);
+                //[-] if (infoObject != null)
+                //[-] {
+                //[-] infoObject.ParentDiagnosisObject = null;
+                //[-] __RheinGoldCoreModuleParameters__.setParameter(ModuleParameter.ParameterName.InfoObjStarted, infoObject);
+                //[-] }
+                //[-] }
+            }
+            if (infoObject == null)
             {
                 Log.Error("ISTAModule.GetInfoObjStarted()", "Failed to get info object. Returning null.");
             }
-            //[-] return infoObject;
-            //[+] return null;
-            return null;
+            return infoObject;
         }
 
         public override void AddSuspiciousItemToServiceProgram(IDiagnosticObjectLocator diagObjLocator)
