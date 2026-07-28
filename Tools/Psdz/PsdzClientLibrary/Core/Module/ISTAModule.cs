@@ -35,6 +35,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.Rheingold.ISTA.CoreFramework.Module;
 
 #pragma warning disable CS0649, CS0219, CS0809
 namespace BMW.Rheingold.Module.ISTA
@@ -102,7 +103,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         private IInputListener inputListener;
 
-        //private readonly Lazy<IPSDataProvider> ipsDataProvider = new Lazy<IPSDataProvider>();
+        private readonly Lazy<IPSDataProvider> ipsDataProvider = new Lazy<IPSDataProvider>();
 
         private ISfaHandler sfaHandler;
 
@@ -267,11 +268,11 @@ namespace BMW.Rheingold.Module.ISTA
                 return inputListener;
             }
         }
-#if false
+
         [Obsolete("use new Method over the Authoring BackendCommunication GetServiceRideDataHandler")]
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         protected IIPSDataProvider IPSDataProvider => ipsDataProvider.Value;
-#endif
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         protected ISPEUserInterface SPEUserInterface
