@@ -14,6 +14,7 @@ using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Psdz;
+using BmwFileReader;
 using PBMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 using PsdzClient.Core;
@@ -34,7 +35,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using BmwFileReader;
 
 #pragma warning disable CS0649, CS0219, CS0809
 namespace BMW.Rheingold.Module.ISTA
@@ -1133,6 +1133,8 @@ namespace BMW.Rheingold.Module.ISTA
                 if (_globalModuleInParameter != null)
                 {
                     //[-] base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as IXepInfoObject;
+                    //[+] base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as PsdzDatabase.SwiInfoObj;
+                    base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as PsdzDatabase.SwiInfoObj;
                     //[-] ModuleParameter moduleParameter = (ModuleParameter)_globalModuleInParameter.getParameter("__RheinGoldCoreModuleParameters__");
                     //[-] if (moduleParameter != null)
                     //[-] {
@@ -1429,7 +1431,7 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
-        public override PlaceholderType GetRootModule()
+        public override PsdzDatabase.SwiInfoObj GetRootModule()
         {
             throw new NotImplementedException();
         }

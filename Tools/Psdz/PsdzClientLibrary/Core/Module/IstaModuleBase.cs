@@ -58,7 +58,7 @@ namespace BMW.Rheingold.CoreFramework
         protected ITextContentManager textContentManager { get; set; }
 
         [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
-        protected PlaceholderType Me { get; set; }
+        protected PsdzDatabase.SwiInfoObj Me { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
@@ -928,7 +928,7 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
-        public abstract PlaceholderType GetRootModule();
+        public abstract PsdzDatabase.SwiInfoObj GetRootModule();
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public IVehiclePartLocator __Part(string refText)
         {
