@@ -814,7 +814,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
             return num;
         }
-#if false
+
         private InteractionQuestionAdvancedPopupModel GetNewAdvancedPopupModel(ITextLocator title, ITextLocator heading, ITextLocator suffix, ITextLocator buttonCancelText, ITextLocator buttonNextText, int buttonCount, ITextLocator[] buttonLabels, ITextLocator[] buttonTexts, int size)
         {
             InteractionQuestionAdvancedPopupModel interactionQuestionAdvancedPopupModel = new InteractionQuestionAdvancedPopupModel();
@@ -849,7 +849,7 @@ namespace BMW.Rheingold.Module.ISTA
                 model.Selections.Add(new QuestionPopupAdvancedDialogAnswer(textLocator?.ToString(), textLocator2?.ToString(), i));
             }
         }
-#endif
+
         private static bool LessTextItemsAvailableThenButtonCount(ITextLocator[] buttonTexts, int index)
         {
             return buttonTexts.Count() <= index;
@@ -1671,7 +1671,7 @@ namespace BMW.Rheingold.Module.ISTA
             list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetLocalizedInfoObjectTitle(x) : fastaTitle, x)));
             return list;
         }
-
+#endif
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         public static void Serialize(string filename, Flow flow, Encoding encType)
@@ -1721,9 +1721,11 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     case "BMW IMIB":
                         {
-                            MeasuringConfigurationAdapter measuringConfigurationAdapter = new MeasuringConfigurationAdapter(cfgContainer);
-                            measuringConfigurationAdapter.ParseParametrization();
-                            dscSynchronResult = measuringConfigurationAdapter.Execute();
+                            //[-] MeasuringConfigurationAdapter measuringConfigurationAdapter = new MeasuringConfigurationAdapter(cfgContainer);
+                            //[-] measuringConfigurationAdapter.ParseParametrization();
+                            //[-] dscSynchronResult = measuringConfigurationAdapter.Execute();
+                            //[+] dscSynchronResult = null;
+                            dscSynchronResult = null;
                             return dscSynchronResult;
                         }
                     case "BMW-EDIABAS-Adapter":
@@ -1735,7 +1737,9 @@ namespace BMW.Rheingold.Module.ISTA
                         }
                     case "VehicleConfiguration":
                         Log.Info("ISTAModule.DscSynchron()", "VehicleConfiguration used");
-                        dscSynchronResult = new VehicleConfigurationAdapterDeviceResult(Vehicle);
+                        //[-] dscSynchronResult = new VehicleConfigurationAdapterDeviceResult(Vehicle);
+                        //[+] dscSynchronResult = null;
+                        dscSynchronResult = null;
                         return dscSynchronResult;
                     default:
                         Log.Warning("ISTAModule.DscSynchron()", "unknown adapter type used: {0}", cfgContainer.Header.Adapter.Name);
@@ -1747,7 +1751,7 @@ namespace BMW.Rheingold.Module.ISTA
             dscSynchronResult = null;
             return null;
         }
-#endif
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         private static Assembly TypeResolver(string typeName)
