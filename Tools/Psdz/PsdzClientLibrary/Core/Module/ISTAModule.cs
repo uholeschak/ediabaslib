@@ -35,6 +35,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
 
 #pragma warning disable CS0649, CS0219, CS0809
@@ -395,9 +396,8 @@ namespace BMW.Rheingold.Module.ISTA
                 throw new NotImplementedException();
             }
         }
-#if false
-        public override IDatabaseProvider DBProvider => DatabaseProviderFactory.Instance;
-#endif
+
+        [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
         public override PsdzDatabase DBProvider => ClientContext.GetDatabase(vehicle);
 
         public IProtocolBasicBase FastaProtocolerBase => FastaProtocoler;
@@ -576,7 +576,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[+] return string.Empty;
             return string.Empty;
         }
-#if false
+
         private int AskQuestion(ITextContent question, string answer0, string answer1, string answer2, int result0, int result1, int result2, string title, int size)
         {
             QuestionPopupDialogAnswer answerLeft = null;
@@ -639,7 +639,7 @@ namespace BMW.Rheingold.Module.ISTA
             logic.Services.InteractionService.RegisterSync(m);
             return m.Response.Selection;
         }
-#endif
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         protected int __QuestionPopup(ITextContent text, params ITextContent[] buttonTexts)
