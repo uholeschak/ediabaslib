@@ -1572,12 +1572,12 @@ namespace BMW.Rheingold.Module.ISTA
                     if (method != null)
                     {
                         string name = obj.GetType().Name;
-                        //[-] ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(null, name), null);
+                        ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(null, name), null);
                         IFastaGrouping fastaGrouping = null;
                         if (_globalTabModuleISTA != null)
                         {
                             fastaGrouping = _globalTabModuleISTA.FastaGrouping;
-                            //[-] _globalTabModuleISTA.FastaGrouping = subModule;
+                            _globalTabModuleISTA.FastaGrouping = subModule;
                         }
                         Log.Info("ISTAModule.callModule()", "executing submodule now...");
                         method.Invoke(obj, new object[3] { inParameters, outParameters, inAndOutParameters });
@@ -1587,11 +1587,11 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             ISTAModule iSTAModule = (ISTAModule)obj;
                             Log.Info("ISTAModule.callModule()", "submodule returned with collective result: {0}", iSTAModule.ResultSet.CollectiveResult);
-                            //[-] if (subModule != null)
-                            //[-] {
-                            //[-] subModule.CollectiveResult = iSTAModule.ResultSet.CollectiveResult;
-                            //[-] }
-                            //[-] else
+                            if (subModule != null)
+                            {
+                                subModule.CollectiveResult = iSTAModule.ResultSet.CollectiveResult;
+                            }
+                            else
                             {
                                 Log.Error("ISTAModule.callModule()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", base.ResultSet.CollectiveResult);
                             }
