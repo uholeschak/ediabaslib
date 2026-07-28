@@ -4,6 +4,7 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using PsdzClient;
 
 namespace PsdzClientLibrary.Core.Module;
 [Serializable]
@@ -12,6 +13,7 @@ namespace PsdzClientLibrary.Core.Module;
 [DesignerCategory("code")]
 [XmlRoot("ReferenceElement", Namespace = "", IsNullable = false)]
 [DataContract(Name = "ReferenceStructure")]
+[PreserveSource(Hint = "XmlIncludes removed", InheritanceModified = true)]
 public abstract class ReferenceStructure : INotifyPropertyChanged
 {
     private ReferenceStructureType typeField;
