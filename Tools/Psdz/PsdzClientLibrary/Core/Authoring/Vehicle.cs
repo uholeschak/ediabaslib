@@ -1,12 +1,11 @@
 ﻿using BMW.Authoring.API;
 using BMW.Authoring.Vehicle.Interface;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
-using System.Collections.Generic;
 
+#pragma warning disable CS0618
 namespace BMW.Authoring.Vehicle
 {
     public class Vehicle : IVehicle, IHideObjectMembers

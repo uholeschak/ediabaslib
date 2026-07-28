@@ -2,6 +2,7 @@
 using System;
 using PsdzClient;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.ISTA.CoreFramework.Module
 {
     [Obsolete("use new Method over the Authoring BackendCommunication GetServiceRideDataHandler")]
