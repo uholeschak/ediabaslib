@@ -1250,85 +1250,87 @@ namespace BMW.Rheingold.Module.ISTA
                     Log.Info("ISTAModule.callModuleRef()", "submodule to call: {0}", text);
                     try
                     {
-                    //[-] string text2 = text.Replace("BMW.Rheingold.Module.ISTA.", string.Empty);
-                    //[-] Assembly assembly = PatchLoaderUtility.CheckPatchServiceProgram(text2, logic.VersionInfo.DataBaseDiagDocVersion);
-                    //[-] if (assembly == null)
-                    //[-] {
-                    //[-] assembly = GetModuleAssembly(text2);
-                    //[-] }
-                    //[-] IModuleStep moduleStep = null;
-                    //[-] bool flag = false;
-                    //[-] if (inParameters.Parameter.ContainsKey("PreventProtocol"))
-                    //[-] {
-                    //[-] flag = (bool)inParameters.Parameter["PreventProtocol"];
-                    //[-] }
-                    //[-] else if (_globalModuleInParameter.Parameter.ContainsKey("PreventProtocol"))
-                    //[-] {
-                    //[-] flag = (bool)_globalModuleInParameter.Parameter["PreventProtocol"];
-                    //[-] }
-                    //[-] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identifikator) || !flag)
-                    //[-] {
-                    //[-] moduleStep = FastaCreateAndAddModuleStepTo(inParameters);
-                    //[-] }
-                    //[-] ModuleParameter value = __RheinGoldCoreModuleParameters__.Clone();
-                    //[-] inParameters.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
-                    //[-] inParameters.Parameter.Add("__RheinGoldTabModuleISTA__", _globalTabModuleISTA);
-                    //[-] inParameters.Parameter.Add("__RheinGoldSOCAccessor__", _ISOCAccessor);
-                    //[-] inParameters.Parameter.Add("ISTAModule.Me", xepInfoObject);
-                    //[-] inParameters.Parameter.Add("InParameterTestModuleCache", testModuleCache);
-                    //[-] inParameters.Parameter.Add("PreventProtocol", flag);
-                    //[-] object obj = assembly.CreateInstance(text, ignoreCase: true, BindingFlags.ExactBinding, null, new object[1] { inParameters }, new CultureInfo(ConfigSettings.CurrentUICulture), null);
-                    //[-] if (obj != null)
-                    //[-] {
-                    //[-] string name = obj.GetType().Name;
-                    //[-] ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identifikator);
-                    //[-] IFastaGrouping fastaGrouping = null;
-                    //[-] if (_globalTabModuleISTA != null)
-                    //[-] {
-                    //[-] fastaGrouping = _globalTabModuleISTA.FastaGrouping;
-                    //[-] _globalTabModuleISTA.FastaGrouping = subModule;
-                    //[-] }
-                    //[-] MethodInfo method = obj.GetType().GetMethod("run");
-                    //[-] if (method != null)
-                    //[-] {
-                    //[-] Log.Info("ISTAModule.callModuleRef()", "executing submodule now...");
-                    //[-] method.Invoke(obj, new object[3] { inParameters, outParameters, inAndOutParameters });
-                    //[-] Log.Info("ISTAModule.callModuleRef()", "returned from submodule");
-                    //[-] if (obj is ISTAModule)
-                    //[-] {
-                    //[-] ISTAModule iSTAModule = (ISTAModule)obj;
-                    //[-] Log.Info("ISTAModule.callModuleRef()", "submodule returned with collective result: {0}", iSTAModule.ResultSet.CollectiveResult);
-                    //[-] if (subModule != null)
-                    //[-] {
-                    //[-] subModule.CollectiveResult = iSTAModule.ResultSet.CollectiveResult;
-                    //[-] }
-                    //[-] else
-                    //[-] {
-                    //[-] Log.Error("ISTAModule.callModuleRef()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", base.ResultSet.CollectiveResult);
-                    //[-] }
-                    //[-] }
-                    //[-] if (_globalTabModuleISTA != null)
-                    //[-] {
-                    //[-] _globalTabModuleISTA.FastaGrouping = fastaGrouping;
-                    //[-] }
-                    //[-] }
-                    //[-] else
-                    //[-] {
-                    //[-] Log.Error("ISTAModule.callModuleRef()", "no run method found!!!");
-                    //[-] }
-                    //[-] }
-                    //[-] else
-                    //[-] {
-                    //[-] Log.Warning("ISTAModule.callModuleRef()", "unable to create instance of: {0}", text);
-                    //[-] if (_globalModuleInParameter != null)
-                    //[-] {
-                    //[-] interactionMessageModel.MessageText = string.Format(CultureInfo.InvariantCulture, "System error in testmodule: {0}", GetType().Name);
-                    //[-] interactionMessageModel.DetailText = string.Format(CultureInfo.InvariantCulture, "Unable to start submodule {0} / {1}", refPath, text);
-                    //[-] interactionMessageModel.Title = "Error";
-                    //[-] logic.Services.InteractionService.Register(interactionMessageModel);
-                    //[-] }
-                    //[-] }
-                    //[-] return;
+                        //[-] string text2 = text.Replace("BMW.Rheingold.Module.ISTA.", string.Empty);
+                        //[-] Assembly assembly = PatchLoaderUtility.CheckPatchServiceProgram(text2, logic.VersionInfo.DataBaseDiagDocVersion);
+                        //[-] if (assembly == null)
+                        //[-] {
+                        //[-] assembly = GetModuleAssembly(text2);
+                        //[-] }
+                        //[+] Assembly assembly = Assembly.GetExecutingAssembly();
+                        Assembly assembly = Assembly.GetExecutingAssembly();
+                        //[-] IModuleStep moduleStep = null;
+                        //[-] bool flag = false;
+                        //[-] if (inParameters.Parameter.ContainsKey("PreventProtocol"))
+                        //[-] {
+                        //[-] flag = (bool)inParameters.Parameter["PreventProtocol"];
+                        //[-] }
+                        //[-] else if (_globalModuleInParameter.Parameter.ContainsKey("PreventProtocol"))
+                        //[-] {
+                        //[-] flag = (bool)_globalModuleInParameter.Parameter["PreventProtocol"];
+                        //[-] }
+                        //[-] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identifikator) || !flag)
+                        //[-] {
+                        //[-] moduleStep = FastaCreateAndAddModuleStepTo(inParameters);
+                        //[-] }
+                        //[-] ModuleParameter value = __RheinGoldCoreModuleParameters__.Clone();
+                        //[-] inParameters.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
+                        inParameters.Parameter.Add("__RheinGoldTabModuleISTA__", _globalTabModuleISTA);
+                        inParameters.Parameter.Add("__RheinGoldSOCAccessor__", _ISOCAccessor);
+                        inParameters.Parameter.Add("ISTAModule.Me", xepInfoObject);
+                        inParameters.Parameter.Add("InParameterTestModuleCache", testModuleCache);
+                        //[-] inParameters.Parameter.Add("PreventProtocol", flag);
+                        object obj = assembly.CreateInstance(text, ignoreCase: true, BindingFlags.ExactBinding, null, new object[1] { inParameters }, new CultureInfo(ConfigSettings.CurrentUICulture), null);
+                        if (obj != null)
+                        {
+                            string name = obj.GetType().Name;
+                        //[-] ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identifikator);
+                        //[-] IFastaGrouping fastaGrouping = null;
+                        //[-] if (_globalTabModuleISTA != null)
+                        //[-] {
+                        //[-] fastaGrouping = _globalTabModuleISTA.FastaGrouping;
+                        //[-] _globalTabModuleISTA.FastaGrouping = subModule;
+                        //[-] }
+                        //[-] MethodInfo method = obj.GetType().GetMethod("run");
+                        //[-] if (method != null)
+                        //[-] {
+                        //[-] Log.Info("ISTAModule.callModuleRef()", "executing submodule now...");
+                        //[-] method.Invoke(obj, new object[3] { inParameters, outParameters, inAndOutParameters });
+                        //[-] Log.Info("ISTAModule.callModuleRef()", "returned from submodule");
+                        //[-] if (obj is ISTAModule)
+                        //[-] {
+                        //[-] ISTAModule iSTAModule = (ISTAModule)obj;
+                        //[-] Log.Info("ISTAModule.callModuleRef()", "submodule returned with collective result: {0}", iSTAModule.ResultSet.CollectiveResult);
+                        //[-] if (subModule != null)
+                        //[-] {
+                        //[-] subModule.CollectiveResult = iSTAModule.ResultSet.CollectiveResult;
+                        //[-] }
+                        //[-] else
+                        //[-] {
+                        //[-] Log.Error("ISTAModule.callModuleRef()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", base.ResultSet.CollectiveResult);
+                        //[-] }
+                        //[-] }
+                        //[-] if (_globalTabModuleISTA != null)
+                        //[-] {
+                        //[-] _globalTabModuleISTA.FastaGrouping = fastaGrouping;
+                        //[-] }
+                        //[-] }
+                        //[-] else
+                        //[-] {
+                        //[-] Log.Error("ISTAModule.callModuleRef()", "no run method found!!!");
+                        //[-] }
+                        //[-] }
+                        //[-] else
+                        //[-] {
+                        //[-] Log.Warning("ISTAModule.callModuleRef()", "unable to create instance of: {0}", text);
+                        //[-] if (_globalModuleInParameter != null)
+                        //[-] {
+                        //[-] interactionMessageModel.MessageText = string.Format(CultureInfo.InvariantCulture, "System error in testmodule: {0}", GetType().Name);
+                        //[-] interactionMessageModel.DetailText = string.Format(CultureInfo.InvariantCulture, "Unable to start submodule {0} / {1}", refPath, text);
+                        //[-] interactionMessageModel.Title = "Error";
+                        //[-] logic.Services.InteractionService.Register(interactionMessageModel);
+                        //[-] }
+                        }
+                        return;
                     }
                     catch (ThreadAbortException ex)
                     {
