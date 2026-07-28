@@ -383,11 +383,13 @@ namespace BMW.Rheingold.Module.ISTA
         public SessionInfo SessionInfo => ClientContext.GetClientContext(vehicle)?.SessionInfo;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public ISTAModule() : this(null)
         {
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public ISTAModule(ITextContentManager textContentManager)
         {
             instances++;
@@ -460,6 +462,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         protected void __MessagePopup(ITextContent text)
         {
             IList<LocalizedText> textForUI = text.GetTextForUI(logic.Lang);
@@ -483,6 +486,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         protected void __MessagePopup(ITextLocator text)
         {
             if (text != null)
@@ -497,6 +501,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         protected string __EnterPopup(ITextLocator pre, ITextLocator post)
         {
             ITextContent textContent;
@@ -528,6 +533,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         protected string __EnterPopup(ITextContent pre, ITextContent post)
         {
             DateTime now = DateTime.Now;
