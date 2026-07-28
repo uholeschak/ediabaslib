@@ -42,79 +42,45 @@ using BMW.Rheingold.ISTA.CoreFramework.Module;
 namespace BMW.Rheingold.Module.ISTA
 {
     [AuthorAPIFlowBase]
-    [PreserveSource(Hint = "No update", SuppressWarning = true)]
     public abstract class ISTAModule : IstaModuleBase, IAuthoringModule, IHideObjectMembers
     {
         [PreserveSource(Hint = "ProgrammingSessionProxy", Placeholder = true)]
         private PlaceholderType programmingSessionProxy;
-
-        private object onTheFlyCompileLock = new object();
-
+        private object onTheFlyCompileLock = new object ();
         private readonly IFeedbackViewHeaderTitleHelper feedbackViewHeaderHelper;
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         internal ModuleParameter __RheinGoldCoreModuleParameters__;
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected IModuleExecutionParent _globalTabModuleISTA;
-
         protected const string InParameterFastaName = "FASTA";
-
         protected const string InParameterMethodname = "methodname";
-
         protected const string InParameterTestModuleCacheName = "InParameterTestModuleCache";
-
         protected string CallingModule = "";
-
         private Dictionary<string, string> testModuleCache;
-
         private List<string> serviceCodesHandledInLoop = new List<string>();
-
         private IFFMDynamicResolver ffmResolver;
-
         private IVehicleStateManager vehicleStateManager;
-
         private INOPProvisioning nopProvisioning;
-
         private IVPSProvisioning vpsProvisioning;
-
         private IEnergySettings _energySettings;
-
         private IPersistency persistency;
-
         private INavigationMapProcessor navigationMapProcessor;
-
         private IAppSessionContext appSessionContext;
-
         private ILogger logger;
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected IDiagnosticDeviceResult dscSynchronResult;
-
         private IVehicleAdapters vehicleAdapters;
-
         private Vehicle vehicle;
-
         private Lazy<BMW.Authoring.Vehicle.IVehicle> authoringVehicle;
-
         private ISPEUserInterface _SPEUserInterface;
-
         private static int instances;
-
         private IEcuKomStatement ecuKomStatement;
-
         private IInputListener inputListener;
-
         private readonly Lazy<IPSDataProvider> ipsDataProvider = new Lazy<IPSDataProvider>();
-
         private ISfaHandler sfaHandler;
-
         private IRitaFunctionsProvider ritaFunctionsProvider;
-
         private IVehicleContext vehicleContext;
-
         private ISOCAccessor _ISOCAccessor;
-
         internal IModuleExecutionParent GlobalTabModuleISTA => _globalTabModuleISTA;
 
         [EditorBrowsable(EditorBrowsableState.Always)]
@@ -130,6 +96,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return logic.SWTProcessor;
                 }
+
                 //[-] IRheingoldApp rheingoldApp = Application.Current as IRheingoldApp;
                 //[-] ProtocolRheingoldApiUsage("IRheingoldApp");
                 //[-] if (rheingoldApp != null && rheingoldApp.ILogic != null)
@@ -174,6 +141,7 @@ namespace BMW.Rheingold.Module.ISTA
                         return protocolingInstance;
                     }
                 }
+
                 Log.Error("FastaProtocoler_get", "FastaProtocoler is null, returning instance of class Fasta2ServiceNop instead.");
                 //[-] return new Fasta2ServiceNop();
                 //[+] return null;
@@ -204,6 +172,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return logic.EcuKom;
                 }
+
                 //[-] IRheingoldApp rheingoldApp = Application.Current as IRheingoldApp;
                 //[-] ProtocolRheingoldApiUsage("IRheingoldApp");
                 //[-] if (rheingoldApp != null && rheingoldApp.ILogic != null)
@@ -226,8 +195,9 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (sfaHandler == null)
                 {
-                    //[-] sfaHandler = new SfaHandler(Vehicle, CommonServiceHelper.GetIdentificationStringOfClient(), CommonServiceHelper.GetIdentificationStringOfSystem(), new SfaService(logic.BackendCallWatchDog, new ErrorManager(FastaProtocoler)), EcuKomStatement, FastaProtocoler);
+                //[-] sfaHandler = new SfaHandler(Vehicle, CommonServiceHelper.GetIdentificationStringOfClient(), CommonServiceHelper.GetIdentificationStringOfSystem(), new SfaService(logic.BackendCallWatchDog, new ErrorManager(FastaProtocoler)), EcuKomStatement, FastaProtocoler);
                 }
+
                 return sfaHandler;
             }
         }
@@ -239,8 +209,9 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (ritaFunctionsProvider == null)
                 {
-                    //[-] ritaFunctionsProvider = new RitaFunctionsProvider();
+                //[-] ritaFunctionsProvider = new RitaFunctionsProvider();
                 }
+
                 return ritaFunctionsProvider;
             }
         }
@@ -252,8 +223,9 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (ecuKomStatement == null)
                 {
-                    //[-] ecuKomStatement = new EcuKomStatement(this);
+                //[-] ecuKomStatement = new EcuKomStatement(this);
                 }
+
                 return ecuKomStatement;
             }
         }
@@ -265,8 +237,9 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (inputListener == null)
                 {
-                    //[-] inputListener = new InputListener(logic as Logic);
+                //[-] inputListener = new InputListener(logic as Logic);
                 }
+
                 return inputListener;
             }
         }
@@ -283,8 +256,9 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (_SPEUserInterface == null)
                 {
-                    //[-] _SPEUserInterface = new SPEUserInterface(this);
+                //[-] _SPEUserInterface = new SPEUserInterface(this);
                 }
+
                 return _SPEUserInterface;
             }
         }
@@ -299,6 +273,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return vehicleAdapters;
                 }
+
                 //[-] vehicleAdapters = new VehicleAdapters(Vehicle);
                 return vehicleAdapters;
             }
@@ -315,7 +290,6 @@ namespace BMW.Rheingold.Module.ISTA
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public override ISOCAccessor Contexts => _ISOCAccessor;
-
         public override IModule ModuleData => _globalTabModuleISTA.ModuleData;
 
         protected IProgrammingSession ProgrammingSession
@@ -324,12 +298,13 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (logic != null)
                 {
-                    //[-] if (programmingSessionProxy == null || programmingSessionProxy.Fasta != FastaProtocoler || logic.ProgrammingSession != programmingSessionProxy.ProgrammingSession)
-                    //[-] {
-                    //[-] programmingSessionProxy = new ProgrammingSessionProxy(logic.ProgrammingSession, FastaProtocoler);
-                    //[-] }
-                    //[-] return programmingSessionProxy;
+                //[-] if (programmingSessionProxy == null || programmingSessionProxy.Fasta != FastaProtocoler || logic.ProgrammingSession != programmingSessionProxy.ProgrammingSession)
+                //[-] {
+                //[-] programmingSessionProxy = new ProgrammingSessionProxy(logic.ProgrammingSession, FastaProtocoler);
+                //[-] }
+                //[-] return programmingSessionProxy;
                 }
+
                 Log.Warning("ISTAModule.get_ProgrammingSession", "programming session handle in logic or logic was null");
                 return null;
             }
@@ -346,8 +321,9 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (_energySettings == null)
                 {
-                    //[-] _energySettings = new EnergySettings();
+                //[-] _energySettings = new EnergySettings();
                 }
+
                 return _energySettings;
             }
         }
@@ -378,8 +354,9 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (navigationMapProcessor == null)
                 {
-                    //[-] navigationMapProcessor = new NavigationMapProcessor(EcuKom, logic);
+                //[-] navigationMapProcessor = new NavigationMapProcessor(EcuKom, logic);
                 }
+
                 return navigationMapProcessor;
             }
         }
@@ -392,6 +369,7 @@ namespace BMW.Rheingold.Module.ISTA
                 //[+] return null;
                 return null;
             }
+
             set
             {
                 throw new NotImplementedException();
@@ -400,14 +378,12 @@ namespace BMW.Rheingold.Module.ISTA
 
         [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
         public override PsdzDatabase DBProvider => ClientContext.GetDatabase(vehicle);
-
         public IProtocolBasicBase FastaProtocolerBase => FastaProtocoler;
-
+        [PreserveSource(Hint = "SessionInfoAccessor replaced", Placeholder = true)]
         public SessionInfo SessionInfo => ClientContext.GetClientContext(vehicle)?.SessionInfo;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public ISTAModule()
-            : this(null)
+        public ISTAModule() : this(null)
         {
         }
 
@@ -420,6 +396,8 @@ namespace BMW.Rheingold.Module.ISTA
             base.textContentManager = textContentManager;
             //[-] Factory = new ServiceDialogFactory();
             //[-] logger = new Logger(GetType().Name);
+            //[+] logger = new NugetLogger();
+            logger = new NugetLogger();
             //[-] vehicleStateManager = new VehicleStateManager(this);
             //[-] nopProvisioning = new NOPProvisioning();
             //[-] vpsProvisioning = new VPSProvisioning();
@@ -455,6 +433,7 @@ namespace BMW.Rheingold.Module.ISTA
                     Log.ErrorException("ISTAModule.Dispose()", exception);
                 }
             }
+
             SuspiciuosItems = null;
             logic = null;
             ffmResolver = null;
@@ -475,6 +454,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return !string.IsNullOrEmpty(valueObject as string);
             }
+
             return valueObject != null;
         }
 
@@ -490,10 +470,10 @@ namespace BMW.Rheingold.Module.ISTA
             IProtocolBasic fastaProtocoler = FastaProtocoler;
             if (fastaProtocoler != null)
             {
-                //[-] IAction<IUiDialog> action = fastaProtocoler.CreateAndAddUiDialogFromServiceProgram("MessagePopup", base.LastCallingMethod);
-                //[-] action.StartTime = now;
-                //[-] action.SpecialAction.SetTitle(list);
-                //[-] action.SpecialAction.CreateAndAddMessageText(textForUI);
+            //[-] IAction<IUiDialog> action = fastaProtocoler.CreateAndAddUiDialogFromServiceProgram("MessagePopup", base.LastCallingMethod);
+            //[-] action.StartTime = now;
+            //[-] action.SpecialAction.SetTitle(list);
+            //[-] action.SpecialAction.CreateAndAddMessageText(textForUI);
             }
             else
             {
@@ -529,6 +509,7 @@ namespace BMW.Rheingold.Module.ISTA
                 ITextContent textContent2 = new TextContent(string.Empty);
                 textContent = textContent2;
             }
+
             ITextContent pre2 = textContent;
             ITextContent textContent3;
             if (post != null)
@@ -540,6 +521,7 @@ namespace BMW.Rheingold.Module.ISTA
                 ITextContent textContent2 = new TextContent(string.Empty);
                 textContent3 = textContent2;
             }
+
             ITextContent post2 = textContent3;
             return __EnterPopup(pre2, post2);
         }
@@ -556,26 +538,27 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] interactionEnterModel.SuccessorText = textContent2.GetTextForUI(logic.Lang)[0].TextItem;
             //[-] logic.Services.InteractionService.Register(interactionEnterModel);
             //[-] string output = interactionEnterModel.Response.UserInput;
-            if (FastaProtocoler != null)
-            {
-                //[-] IAction<IUiDialog> action = FastaProtocoler.CreateAndAddUiDialogFromServiceProgram("EnterPopup", "TODO");
-                //[-] action.StartTime = now;
-                IList<LocalizedText> messageTextList = ((!string.IsNullOrEmpty(textContent.FormattedText) && textContent.FormattedText.Length != 0) ? __Text().TextContent.Concat(textContent).Concat(textContent2).GetTextForUI(logic.Lang) : textContent2.GetTextForUI(logic.Lang));
-                //[-] action.SpecialAction.CreateAndAddMessageText(messageTextList);
-                //[-] if (output != null)
-                //[-] {
-                //[-] List<LocalizedText> list = new List<LocalizedText>();
-                //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText(output, x)));
-                //[-] action.SpecialAction.AddAnswer(list, "UserInput");
-                //[-] }
-            }
-            else
+            //[-] if (FastaProtocoler != null)
+            //[-] {
+            //[-] IAction<IUiDialog> action = FastaProtocoler.CreateAndAddUiDialogFromServiceProgram("EnterPopup", "TODO");
+            //[-] action.StartTime = now;
+            //[-] IList<LocalizedText> messageTextList = ((!string.IsNullOrEmpty(textContent.FormattedText) && textContent.FormattedText.Length != 0) ? __Text().TextContent.Concat(textContent).Concat(textContent2).GetTextForUI(logic.Lang) : textContent2.GetTextForUI(logic.Lang));
+            //[-] action.SpecialAction.CreateAndAddMessageText(messageTextList);
+            //[-] if (output != null)
+            //[-] {
+            //[-] List<LocalizedText> list = new List<LocalizedText>();
+            //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText(output, x)));
+            //[-] action.SpecialAction.AddAnswer(list, "UserInput");
+            //[-] }
+            //[-] }
+            //[-] else
             {
                 Log.Error("ISTAModule.__EnterPopup()", "No ModuleStep available in FASTA");
             }
+
             //[-] return output;
-            //[+] return string.Empty;
-            return string.Empty;
+            //[+] return null;
+            return null;
         }
 
         private int AskQuestion(ITextContent question, string answer0, string answer1, string answer2, int result0, int result1, int result2, string title, int size)
@@ -615,6 +598,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 answerLeft = new QuestionPopupDialogAnswer(answer0, result0);
             }
+
             InteractionQuestionPopupModel interactionQuestionPopupModel = new InteractionQuestionPopupModel();
             interactionQuestionPopupModel.Title = title;
             interactionQuestionPopupModel.Question = question.GetTextForUI(logic.Lang)[0].TextItem;
@@ -667,6 +651,7 @@ namespace BMW.Rheingold.Module.ISTA
                     text2 = text.TextContent;
                 }
             }
+
             return __QuestionPopup(text2, buttonTexts2);
         }
 
@@ -694,18 +679,21 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         text2 = buttonTexts[0].PlainText;
                     }
+
                     if (buttonTexts.Length > 1)
                     {
                         if (buttonTexts[1] != null)
                         {
                             text3 = buttonTexts[1].PlainText;
                         }
+
                         if (buttonTexts.Length > 2 && buttonTexts[2] != null)
                         {
                             text4 = buttonTexts[2].PlainText;
                         }
                     }
                 }
+
                 if (!string.IsNullOrEmpty(text2))
                 {
                     if (!string.IsNullOrEmpty(text3))
@@ -738,10 +726,12 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     result3 = 0;
                 }
+
                 if (text == null || string.IsNullOrEmpty(text.PlainText))
                 {
                     throw new ArgumentException("Parameter \"text\" must not be null or empty.");
                 }
+
                 List<LocalizedText> list = new List<LocalizedText>();
                 string title2;
                 if (title == null)
@@ -754,6 +744,7 @@ namespace BMW.Rheingold.Module.ISTA
                     list.AddRangeIfNotContains(title.GetTextForUI(logic.Lang));
                     title2 = title.PlainText;
                 }
+
                 //[-] num = AskQuestion(text, text2, text3, text4, result, result2, result3, title2, size);
                 if (FastaProtocoler != null)
                 {
@@ -764,7 +755,7 @@ namespace BMW.Rheingold.Module.ISTA
                     List<LocalizedText> list2 = new List<LocalizedText>();
                     string resultString = num.ToString(CultureInfo.InvariantCulture);
                     list2.AddRange(logic.Lang.Select((string x) => new LocalizedText(resultString, x)));
-                    //[-] action.SpecialAction.AddAnswer(list2, "clicked-button");
+                //[-] action.SpecialAction.AddAnswer(list2, "clicked-button");
                 }
                 else
                 {
@@ -775,6 +766,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("ISTAModule.__QuestionPopup()", "Failed to ask question, returning {0} as result. {1}.", num, ex.ToString());
             }
+
             return num;
         }
 
@@ -802,7 +794,7 @@ namespace BMW.Rheingold.Module.ISTA
                     List<LocalizedText> list = new List<LocalizedText>();
                     string resultString = num.ToString(CultureInfo.InvariantCulture);
                     list.AddRange(logic.Lang.Select((string x) => new LocalizedText(resultString, x)));
-                    //[-] action.SpecialAction.AddAnswer(list, "clicked-button");
+                //[-] action.SpecialAction.AddAnswer(list, "clicked-button");
                 }
                 else
                 {
@@ -813,6 +805,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("ISTAModule.DoShowQuestionAdvancedPopup()", "Failed to ask advanced question, returning {0} as result. {1}.", num, ex.ToString());
             }
+
             return num;
         }
 
@@ -830,6 +823,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 interactionQuestionAdvancedPopupModel.AnswerCancel = new QuestionPopupAdvancedDialogAnswer(string.Empty, text, -1);
             }
+
             interactionQuestionAdvancedPopupModel.AnswerNext = new QuestionPopupAdvancedDialogAnswer(string.Empty, buttonNextText?.ToString(), -1);
             interactionQuestionAdvancedPopupModel.Answer = new QuestionPopupAdvancedDialogAnswer(string.Empty, string.Empty, -1);
             interactionQuestionAdvancedPopupModel.DialogSize = size;
@@ -847,6 +841,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     textLocator2 = buttonLabels[i];
                 }
+
                 model.Selections.Add(new QuestionPopupAdvancedDialogAnswer(textLocator?.ToString(), textLocator2?.ToString(), i));
             }
         }
@@ -862,30 +857,37 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 throw new ArgumentException("Parameter title must not be null or empty.");
             }
+
             if (heading == null)
             {
                 throw new ArgumentException("Parameter heading must not be null or empty.");
             }
+
             if (suffix == null)
             {
                 throw new ArgumentException("Parameter suffix must not be null or empty.");
             }
+
             if (buttonNextText == null)
             {
                 throw new ArgumentException("Parameter buttonNextText must not be null or empty.");
             }
+
             if (buttonCancelText == null)
             {
                 throw new ArgumentException("Parameter buttonCancelText must not be null or empty.");
             }
+
             if (buttonCount < 0 || buttonCount > 20)
             {
                 throw new ArgumentException("Parameter buttonCount count must be between 0 and 20.");
             }
+
             if (buttonLabels.Count() < 0 || buttonLabels.Count() > 20)
             {
                 throw new ArgumentException("Parameter buttonLabels count must be between 0 and 20.");
             }
+
             if (buttonTexts.Count() < 0 || buttonTexts.Count() > 20)
             {
                 throw new ArgumentException("Parameter buttonTexts count must be between 0 and 20.");
@@ -961,6 +963,7 @@ namespace BMW.Rheingold.Module.ISTA
                         list.Add(documentLocator.GetDocument());
                     }
                 }
+
                 DocumentHandler(action, list, slot);
             }
             else
@@ -985,11 +988,13 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.Warning("ISTAModule.DocumentHandler()", "document was null");
                 return;
             }
+
             List<InfoObject> list = new List<InfoObject>();
             if (document != null)
             {
                 list.Add(document);
             }
+
             DocumentHandler(action, list, slot);
         }
 
@@ -1010,20 +1015,23 @@ namespace BMW.Rheingold.Module.ISTA
                             text += string.Format(CultureInfo.InvariantCulture, "{0},", document.Id);
                         }
                     }
+
                     text = text.TrimEnd(',');
                 }
+
                 Log.Info("ISTAModule.DocumentHandler(DocumentStatementAction, List<Document>, int)", "execute action: {0} documents: {1} slot: {2}", action.ToString(), text, slot);
                 foreach (InfoObject document2 in documents)
                 {
-                    //[-] if (document2 == null || (document2.Content.Doc == null && document2.Content.BinaryDocument == null) || document2.Content.TransformedDocument == null)
-                    //[-] {
-                    //[-] Log.Warning("ISTAModule.DocumentHandler(DocumentStatementAction action, Document document, int Slot)", "document was null");
-                    //[-] }
-                    //[-] else
+                    if (document2 == null || (document2.Content.Doc == null && document2.Content.BinaryDocument == null) || document2.Content.TransformedDocument == null)
+                    {
+                        Log.Warning("ISTAModule.DocumentHandler(DocumentStatementAction action, Document document, int Slot)", "document was null");
+                    }
+                    else
                     {
                         list.Add(document2);
                     }
                 }
+
                 switch (action)
                 {
                     case DocumentStatementAction.Add:
@@ -1031,18 +1039,21 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             _globalTabModuleISTA.AddDocInfoObjects(list, slot, FastaProtocoler);
                         }
+
                         break;
                     case DocumentStatementAction.RemoveAll:
                         if (_globalTabModuleISTA != null)
                         {
                             _globalTabModuleISTA.RemoveDocInfoObjectsAll();
                         }
+
                         break;
                     case DocumentStatementAction.Remove:
                         if (_globalTabModuleISTA != null)
                         {
                             _globalTabModuleISTA.RemoveDocInfoObjects(list, slot);
                         }
+
                         break;
                 }
             }
@@ -1075,12 +1086,14 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         _globalTabModuleISTA.RemoveDocInfoObjects(null, slot);
                     }
+
                     break;
                 case DocumentStatementAction.RemoveAll:
                     if (_globalTabModuleISTA != null)
                     {
                         _globalTabModuleISTA.RemoveDocInfoObjectsAll();
                     }
+
                     break;
                 case DocumentStatementAction.Add:
                     break;
@@ -1100,6 +1113,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.ErrorException("ISTAModule.__tryQueryValue(ANode, string, out Value)", exception);
             }
+
             return result;
         }
 
@@ -1154,29 +1168,35 @@ namespace BMW.Rheingold.Module.ISTA
                         //[-] vehicleContext = new VehicleContext(vehicle, ffmResolver);
                         MeasurementLauncher = moduleParameter.getParameter(ModuleParameter.ParameterName.MeasurementLauncher) as IStartMeasurementServiceServer;
                     }
+
                     _globalTabModuleISTA = (IModuleExecutionParent)_globalModuleInParameter.getParameter("__RheinGoldTabModuleISTA__");
                     if (_globalTabModuleISTA == null)
                     {
                         Log.Warning("ISTAModule.__handleInParameter()", "failed with no TabModuleISTA handle available - this module will not work.");
                     }
+
                     base.FastaGrouping = _globalModuleInParameter.getParameter("FASTA") as IFastaGrouping;
                     if (base.FastaGrouping == null)
                     {
                         Log.Warning("ISTAModule.__handleInParameter()", "No FASTA functionality available.");
                     }
+
                     if (MeasurementLauncher == null)
                     {
                         Log.Warning("ISTAModule.__handleInParameter()", "No measurement service functionality available. Holy crab!");
                     }
+
                     if (appSessionContext == null)
                     {
                         InitAppSessionContext();
                     }
+
                     //[-] Logic obj = logic as Logic;
                     //[-] if (obj != null && obj.IsInputListenerActive)
                     {
                         InputListener.StartListening();
                     }
+
                     Dictionary<string, string> dictionary = _globalModuleInParameter.getParameter("InParameterTestModuleCache") as Dictionary<string, string>;
                     testModuleCache = dictionary ?? new Dictionary<string, string>();
                 }
@@ -1194,11 +1214,11 @@ namespace BMW.Rheingold.Module.ISTA
         private void InitAppSessionContext()
         {
             ILogic iLogic = logic;
-            //[-] if (iLogic == null && Application.Current is IRheingoldApp rheingoldApp)
-            //[-] {
-            //[-] iLogic = rheingoldApp.ILogic;
-            //[-] }
-            //[-] appSessionContext = new AppSessionContext(ConfigSettings.OperationalMode, ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.OnlineMode", defaultValue: true), iLogic);
+        //[-] if (iLogic == null && Application.Current is IRheingoldApp rheingoldApp)
+        //[-] {
+        //[-] iLogic = rheingoldApp.ILogic;
+        //[-] }
+        //[-] appSessionContext = new AppSessionContext(ConfigSettings.OperationalMode, ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.OnlineMode", defaultValue: true), iLogic);
         }
 
         private void SetTextContentManager()
@@ -1208,7 +1228,7 @@ namespace BMW.Rheingold.Module.ISTA
                 base.textContentManager = _globalModuleInParameter.getParameter("ISTAModule.TextCollection") as TextContentManager;
                 if (base.textContentManager == null)
                 {
-                    //[-] base.textContentManager = TextContentManager.Create(DatabaseProviderFactory.Instance, logic.Lang, base.Me);
+                //[-] base.textContentManager = TextContentManager.Create(DatabaseProviderFactory.Instance, logic.Lang, base.Me);
                 }
             }
         }
@@ -1218,7 +1238,7 @@ namespace BMW.Rheingold.Module.ISTA
         public override void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters)
         {
             //[-] IXepInfoObject xepInfoObject = null;
-            //[+] SwiInfoObj xepInfoObject = null;
+            //[+] PsdzDatabase.SwiInfoObj xepInfoObject = null;
             PsdzDatabase.SwiInfoObj xepInfoObject = null;
             InteractionMessageModel interactionMessageModel = new InteractionMessageModel();
             Log.Info("ISTAModule.callModuleRef()", "CallStatement with reference path: {0}", refPath);
@@ -1232,6 +1252,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("ISTAModule.callModuleRef()", exception);
             }
+
             if (xepInfoObject != null)
             {
                 //[-] if (!string.IsNullOrEmpty(xepInfoObject.Identifikator))
@@ -1246,8 +1267,9 @@ namespace BMW.Rheingold.Module.ISTA
                     //[+] if (!string.IsNullOrEmpty(generell) && generell.ConvertToInt() == num)
                     if (!string.IsNullOrEmpty(generell) && generell.ConvertToInt() == num)
                     {
-                        //[-] feedbackViewHeaderHelper?.SetDocumentSubTitle(xepInfoObject.DocNumber, xepInfoObject.VersionNumber.Value.ToString());
+                    //[-] feedbackViewHeaderHelper?.SetDocumentSubTitle(xepInfoObject.DocNumber, xepInfoObject.VersionNumber.Value.ToString());
                     }
+
                     //[-] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identifikator);
                     //[+] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identification);
                     string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identification);
@@ -1272,12 +1294,14 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             flag = (bool)_globalModuleInParameter.Parameter["PreventProtocol"];
                         }
+
                         //[-] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identifikator) || !flag)
                         //[+] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identification) || !flag)
                         if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identification) || !flag)
                         {
                             moduleStep = FastaCreateAndAddModuleStepTo(inParameters);
                         }
+
                         ModuleParameter value = __RheinGoldCoreModuleParameters__.Clone();
                         inParameters.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
                         inParameters.Parameter.Add("__RheinGoldTabModuleISTA__", _globalTabModuleISTA);
@@ -1298,6 +1322,7 @@ namespace BMW.Rheingold.Module.ISTA
                                 fastaGrouping = _globalTabModuleISTA.FastaGrouping;
                                 _globalTabModuleISTA.FastaGrouping = subModule;
                             }
+
                             MethodInfo method = obj.GetType().GetMethod("run");
                             if (method != null)
                             {
@@ -1317,6 +1342,7 @@ namespace BMW.Rheingold.Module.ISTA
                                         Log.Error("ISTAModule.callModuleRef()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", base.ResultSet.CollectiveResult);
                                     }
                                 }
+
                                 if (_globalTabModuleISTA != null)
                                 {
                                     _globalTabModuleISTA.FastaGrouping = fastaGrouping;
@@ -1338,6 +1364,7 @@ namespace BMW.Rheingold.Module.ISTA
                                 logic.Services.InteractionService.Register(interactionMessageModel);
                             }
                         }
+
                         return;
                     }
                     catch (ThreadAbortException ex)
@@ -1351,6 +1378,7 @@ namespace BMW.Rheingold.Module.ISTA
                         throw;
                     }
                 }
+
                 interactionMessageModel.MessageText = new FormatedData("#FailedToResolveSubmoduleMessage", refPath).Localize();
                 interactionMessageModel.DetailText = new FormatedData("#FailedToResolveSubmoduleDetail", base.LastCallingMethod).Localize();
                 interactionMessageModel.Title = FormatedData.Localize("#Error");
@@ -1369,7 +1397,13 @@ namespace BMW.Rheingold.Module.ISTA
 
         private bool IsTestModulePreventedFromProtocolling(string moduleName)
         {
-            return new List<string> { "ABL-GEN", "ABL_GEN", "ABL-LIF", "ABL_LIF" }.Any((string m) => moduleName.ToUpper().StartsWith(m));
+            return new List<string>
+            {
+                "ABL-GEN",
+                "ABL_GEN",
+                "ABL-LIF",
+                "ABL_LIF"
+            }.Any((string m) => moduleName.ToUpper().StartsWith(m));
         }
 
         private Assembly TryGetAssemblyFromAppDomain(string cleanIstaModuleName)
@@ -1378,6 +1412,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault((Assembly a) => a.GetName().Name == testModuleCache[cleanIstaModuleName]);
             }
+
             return null;
         }
 
@@ -1392,6 +1427,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.Module.ISTA.UseCompiledTestmodulesCache", defaultValue: false);
             }
+
             return false;
         }
 
@@ -1405,6 +1441,7 @@ namespace BMW.Rheingold.Module.ISTA
                 if (!(configString == "SingleAssemblyContainer"))
                 {
                 }
+
                 string text = Path.Combine(GetAssemblyDir(), cleanIstaModuleName + ".dll");
                 assembly = Assembly.LoadFrom(text);
                 if (assembly == null)
@@ -1419,6 +1456,7 @@ namespace BMW.Rheingold.Module.ISTA
                     assembly = TryGetAssemblyFromAppDomain(cleanIstaModuleName);
                     flag = assembly == null;
                 }
+
                 if (assembly == null)
                 {
                     assembly = CompileOnTheFly(cleanIstaModuleName);
@@ -1428,6 +1466,7 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
+
             return assembly;
         }
 
@@ -1485,6 +1524,7 @@ namespace BMW.Rheingold.Module.ISTA
                     inParameters.Parameter.Add("FASTA", moduleStep);
                 }
             }
+
             return moduleStep;
         }
 
@@ -1495,31 +1535,38 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return "n/a";
             }
+
             empty = infoObject.Identifier;
             if (!empty.StartsWith("ABL", StringComparison.Ordinal))
             {
                 return "n/a";
             }
+
             if (empty.StartsWith("ABL-AUS", StringComparison.Ordinal) || empty.StartsWith("ABL-SMP", StringComparison.Ordinal) || empty.StartsWith("ABL-MPB", StringComparison.Ordinal))
             {
                 return "PBV";
             }
+
             if (empty.StartsWith("ABL-MNS", StringComparison.Ordinal) || empty.StartsWith("ABL-MNF", StringComparison.Ordinal) || empty.StartsWith("ABL-MHN", StringComparison.Ordinal))
             {
                 return "PAN";
             }
+
             if (empty.StartsWith("ABL-PRF", StringComparison.Ordinal) || empty.StartsWith("ABL-SMP", StringComparison.Ordinal) || empty.StartsWith("ABL-MPB", StringComparison.Ordinal))
             {
                 return "PAP";
             }
+
             if (empty.StartsWith("ABL-ESK", StringComparison.Ordinal) || empty.StartsWith("ABL-ESK", StringComparison.Ordinal) || empty.StartsWith("ABL-ESK", StringComparison.Ordinal))
             {
                 return "PAE";
             }
+
             if (empty.StartsWith("ABL-MHV", StringComparison.Ordinal) || empty.StartsWith("ABL-MVF", StringComparison.Ordinal) || empty.StartsWith("ABL-MVS", StringComparison.Ordinal))
             {
                 return "PAV";
             }
+
             return "D";
         }
 
@@ -1540,14 +1587,17 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         inParameters.Parameter.Add("FASTA", fastaGrouping);
                     }
+
                     return fastaGrouping as ISubModule;
                 }
+
                 Log.Error("ISTAModule.callModule()", "In FASTA no submodule is created.");
             }
             else
             {
                 Log.Warning("ISTAModule.callModule()", "FASTA is not available.");
             }
+
             return null;
         }
 
@@ -1560,6 +1610,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.Warning("ISTAModule.callModule()", "Failed because moduleName was empty");
                 return;
             }
+
             try
             {
                 string cleanIstaModuleName = moduleName.Replace("BMW.Rheingold.Diagnostics.Module.ISTA.", string.Empty);
@@ -1584,6 +1635,7 @@ namespace BMW.Rheingold.Module.ISTA
                             fastaGrouping = _globalTabModuleISTA.FastaGrouping;
                             _globalTabModuleISTA.FastaGrouping = subModule;
                         }
+
                         Log.Info("ISTAModule.callModule()", "executing submodule now...");
                         method.Invoke(obj, new object[3] { inParameters, outParameters, inAndOutParameters });
                         CallingModule = moduleName;
@@ -1601,6 +1653,7 @@ namespace BMW.Rheingold.Module.ISTA
                                 Log.Error("ISTAModule.callModule()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", base.ResultSet.CollectiveResult);
                             }
                         }
+
                         if (_globalTabModuleISTA != null)
                         {
                             _globalTabModuleISTA.FastaGrouping = fastaGrouping;
@@ -1636,6 +1689,7 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Error("ISTAModule.CompileOnTheFly()", "Couldn't find Serviceprogram Compiler {0}", fullPath);
                         return null;
                     }
+
                     string location = assembly.Location;
                     try
                     {
@@ -1653,12 +1707,14 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         Log.WarningException("ISTAModule.CompileOnTheFly()", exception);
                     }
+
                     MethodInfo method = assembly.CreateInstance("BMW.Rheingold.ServiceProgramCompiler.Program").GetType().GetMethod("CompileModuleOnTheFly");
                     if (!(method != null))
                     {
                         Log.Error("ISTAModule.CompileOnTheFly()", "Couldn't find Method {0} in {1}", "CompileModuleOnTheFly", "BMW.Rheingold.ServiceProgramCompiler.Program");
                         return null;
                     }
+
                     result = (Assembly)method.Invoke(null, new object[1] { istaModuleName });
                 }
                 catch (Exception exception2)
@@ -1666,6 +1722,7 @@ namespace BMW.Rheingold.Module.ISTA
                     Log.ErrorException("ISTAModule.CompileOnTheFly()", exception2);
                     return null;
                 }
+
                 return result;
             }
         }
@@ -1695,6 +1752,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("ISTAModule.Serialize()", exception);
             }
+
             Log.Info("ISTAModule.Serialize()", "successfully done");
         }
 
@@ -1715,6 +1773,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.WarningException("ISTAModule.DeSerialize()", exception);
                 return null;
             }
+
             Log.Debug("ISTAModule.DeSerialize()", "successfully done");
             return result;
         }
@@ -1728,21 +1787,23 @@ namespace BMW.Rheingold.Module.ISTA
                 switch (cfgContainer.Header.Adapter.Name)
                 {
                     case "BMW IMIB":
-                        {
-                            //[-] MeasuringConfigurationAdapter measuringConfigurationAdapter = new MeasuringConfigurationAdapter(cfgContainer);
-                            //[-] measuringConfigurationAdapter.ParseParametrization();
-                            //[-] dscSynchronResult = measuringConfigurationAdapter.Execute();
-                            //[+] dscSynchronResult = null;
-                            dscSynchronResult = null;
-                            return dscSynchronResult;
-                        }
+                    {
+                        //[-] MeasuringConfigurationAdapter measuringConfigurationAdapter = new MeasuringConfigurationAdapter(cfgContainer);
+                        //[-] measuringConfigurationAdapter.ParseParametrization();
+                        //[-] dscSynchronResult = measuringConfigurationAdapter.Execute();
+                        //[+] dscSynchronResult = null;
+                        dscSynchronResult = null;
+                        return dscSynchronResult;
+                    }
+
                     case "BMW-EDIABAS-Adapter":
-                        {
-                            EDIABASAdapter eDIABASAdapter = new EDIABASAdapter(standardErrorHandling, EcuKom, cfgContainer);
-                            eDIABASAdapter.DoParameterization();
-                            dscSynchronResult = eDIABASAdapter.Execute();
-                            return dscSynchronResult;
-                        }
+                    {
+                        EDIABASAdapter eDIABASAdapter = new EDIABASAdapter(standardErrorHandling, EcuKom, cfgContainer);
+                        eDIABASAdapter.DoParameterization();
+                        dscSynchronResult = eDIABASAdapter.Execute();
+                        return dscSynchronResult;
+                    }
+
                     case "VehicleConfiguration":
                         Log.Info("ISTAModule.DscSynchron()", "VehicleConfiguration used");
                         //[-] dscSynchronResult = new VehicleConfigurationAdapterDeviceResult(Vehicle);
@@ -1755,6 +1816,7 @@ namespace BMW.Rheingold.Module.ISTA
                         return dscSynchronResult;
                 }
             }
+
             Log.Warning("ISTAModule.DscSynchron()", "cfgContainer or header was null");
             dscSynchronResult = null;
             return null;
@@ -1780,6 +1842,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("TabModuleCore.TypeResolver()", exception);
             }
+
             return Assembly.GetCallingAssembly();
         }
 
@@ -1789,29 +1852,31 @@ namespace BMW.Rheingold.Module.ISTA
             if (infoObject == null)
             {
                 Log.Info("ISTAModule.GetInfoObjStarted()", "InfoObjStarted is null.");
-                //[-] if (!(__RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.XepInfoObjectStarted) is XepInfoObject xep))
-                //[-] {
-                //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "XepInfoObjectStarted is null.");
-                //[-] }
-                //[-] else if (logic == null || logic.Factory == null)
-                //[-] {
-                //[-] Log.Error("ISTAModule.GetInfoObjStarted()", "Logic or Logic.Factory is null.");
-                //[-] }
-                //[-] else
-                //[-] {
-                //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "Create info object from XepInfoObjectStarted.");
-                //[-] infoObject = logic.Factory.CreateInfoObject(xep);
-                //[-] if (infoObject != null)
-                //[-] {
-                //[-] infoObject.ParentDiagnosisObject = null;
-                //[-] __RheinGoldCoreModuleParameters__.setParameter(ModuleParameter.ParameterName.InfoObjStarted, infoObject);
-                //[-] }
-                //[-] }
+            //[-] if (!(__RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.XepInfoObjectStarted) is XepInfoObject xep))
+            //[-] {
+            //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "XepInfoObjectStarted is null.");
+            //[-] }
+            //[-] else if (logic == null || logic.Factory == null)
+            //[-] {
+            //[-] Log.Error("ISTAModule.GetInfoObjStarted()", "Logic or Logic.Factory is null.");
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] Log.Info("ISTAModule.GetInfoObjStarted()", "Create info object from XepInfoObjectStarted.");
+            //[-] infoObject = logic.Factory.CreateInfoObject(xep);
+            //[-] if (infoObject != null)
+            //[-] {
+            //[-] infoObject.ParentDiagnosisObject = null;
+            //[-] __RheinGoldCoreModuleParameters__.setParameter(ModuleParameter.ParameterName.InfoObjStarted, infoObject);
+            //[-] }
+            //[-] }
             }
+
             if (infoObject == null)
             {
                 Log.Error("ISTAModule.GetInfoObjStarted()", "Failed to get info object. Returning null.");
             }
+
             return infoObject;
         }
 
@@ -1935,12 +2000,14 @@ namespace BMW.Rheingold.Module.ISTA
                     memoryStream.Close();
                     return result;
                 }
+
                 Log.Info("ISTAModule.GetAcrossSessionProperty()", "no perisistent property \"{0}\" found", propertyName);
             }
             catch (Exception exception)
             {
                 Log.WarningException("ISTAModule.GetAcrossSessionProperty()", exception);
             }
+
             return null;
         }
 
@@ -1963,6 +2030,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("ISTAModule.GetPersistentProperty()", exception);
             }
+
             return null;
         }
 
@@ -1983,6 +2051,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("ISTAModule.GetProperty()", "session data store in vehicle context was null!");
             }
+
             return obj;
         }
 
@@ -1998,6 +2067,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("ISTAModule.GetPersistentProperty<T>()", exception);
             }
+
             return default(T);
         }
 
@@ -2013,6 +2083,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("ISTAModule.GetProperty<T>()", exception);
             }
+
             return default(T);
         }
 
@@ -2027,6 +2098,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return dealerSessionProperty.SessionPropertyValue;
                 }
+
                 Log.Warning("ISTAModule.GetDealerSessionProperty()", "property {0} not found in current vehicle", propertyName);
                 return null;
             }
@@ -2058,7 +2130,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
             finally
             {
-                //[-] logic.Services.InteractionService.Deregister(progress);
+            //[-] logic.Services.InteractionService.Deregister(progress);
             }
         }
 
@@ -2086,12 +2158,13 @@ namespace BMW.Rheingold.Module.ISTA
                             stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0}:{1} ", text, text2));
                             dictionary.Add(text, text2);
                         }
-                        //[-] fastaProtocoler.AddLogStatement(headlineValue, dictionary, now);
+                    //[-] fastaProtocoler.AddLogStatement(headlineValue, dictionary, now);
                     }
                     else
                     {
                         stringBuilder.Append("Empty parameter list added");
                     }
+
                     Log.Info(method, string.Format(CultureInfo.InvariantCulture, "LogStatement. StructuredString: {0}. StructureElementValues: {1}", headlineValue, stringBuilder));
                     Log.Info(Log.CurrentMethod(), "End Method");
                 }
@@ -2114,12 +2187,14 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.Warning("ISTAModule.StoreAndActivateFcFn()", "Logic must not be null!");
                 return FcFnActivationResult.ErrorUnexpected;
             }
+
             IProgrammingService programmingService = logic.ProgrammingService;
             if (programmingService == null)
             {
                 Log.Warning("ISTAModule.StoreAndActivateFcFn()", "ProgrammingService must not be null!");
                 return FcFnActivationResult.ErrorUnexpected;
             }
+
             try
             {
                 //[-] IICOMHandler iICOMHandler = null;
@@ -2145,13 +2220,14 @@ namespace BMW.Rheingold.Module.ISTA
                 if (logic.VecInfo.Gwsz.HasValue)
                 {
                     decimal value = logic.VecInfo.Gwsz.Value;
-                    //[-] km = ((logic.VecInfo.GwszUnit != GwszUnitType.miles) ? Convert.ToInt32(value) : Convert.ToInt32(UnitConverter.ConvertUnit(LengthUnit.Mile, LengthUnit.Kilometer, (double)value)));
+                //[-] km = ((logic.VecInfo.GwszUnit != GwszUnitType.miles) ? Convert.ToInt32(value) : Convert.ToInt32(UnitConverter.ConvertUnit(LengthUnit.Mile, LengthUnit.Kilometer, (double)value)));
                 }
             }
             catch (Exception exception)
             {
                 Log.ErrorException("ISTAModule.DeactivateOtdLscCalls()", exception);
             }
+
             //[-] PDIRequest data = (logic as Logic).CreatePDIRequest(vIN, km);
             //[-] HttpStatusCode httpStatusCode = EDGEProcessorFactory.Create(logic.ProgrammingSession?.BackendCallsWatchDogProgramming).SendDataToBackend(vIN, data, BackendServiceType.EDGEPDI);
             //[-] Log.Info("ISTAModule.DeactivateOtdLscCalls()", "Sending cleaning data: ISTAEdge returned status {0}", httpStatusCode);
