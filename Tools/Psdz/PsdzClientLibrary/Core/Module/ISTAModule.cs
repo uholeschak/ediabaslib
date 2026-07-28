@@ -1664,14 +1664,17 @@ namespace BMW.Rheingold.Module.ISTA
                 return result;
             }
         }
-#if false
-        private List<LocalizedText> GetLocalizedInfoObjectTitle(IXepInfoObject xepInfoObject, string fastaTitle)
+
+        [PreserveSource(Hint = "IXepInfoObject replaced", SignatureModified = true)]
+        private List<LocalizedText> GetLocalizedInfoObjectTitle(PsdzDatabase.SwiInfoObj xepInfoObject, string fastaTitle)
         {
             List<LocalizedText> list = new List<LocalizedText>();
-            list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetLocalizedInfoObjectTitle(x) : fastaTitle, x)));
+            //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetLocalizedInfoObjectTitle(x) : fastaTitle, x)));
+            //[+] list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetTitleTranslated(x) : fastaTitle, x)));
+            list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetTitleTranslated(x) : fastaTitle, x)));
             return list;
         }
-#endif
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
         public static void Serialize(string filename, Flow flow, Encoding encType)
