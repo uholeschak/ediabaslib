@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace PsdzClientLibrary.Core.Module;
-
 [Serializable]
 [XmlInclude(typeof(TextReferenceStructure))]
 [GeneratedCode("Xsd2Code", "3.4.0.32990")]
@@ -16,9 +15,7 @@ namespace PsdzClientLibrary.Core.Module;
 public abstract class ReferenceStructure : INotifyPropertyChanged
 {
     private ReferenceStructureType typeField;
-
     private string pathField;
-
     [XmlAttribute]
     [DefaultValue(ReferenceStructureType.CMS)]
     [DataMember]
@@ -28,6 +25,7 @@ public abstract class ReferenceStructure : INotifyPropertyChanged
         {
             return typeField;
         }
+
         set
         {
             if (!typeField.Equals(value))
@@ -46,6 +44,7 @@ public abstract class ReferenceStructure : INotifyPropertyChanged
         {
             return pathField;
         }
+
         set
         {
             if (pathField != null)
@@ -65,7 +64,6 @@ public abstract class ReferenceStructure : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
-
     public ReferenceStructure()
     {
         typeField = ReferenceStructureType.CMS;

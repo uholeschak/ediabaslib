@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClient;
+using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -11,12 +12,11 @@ namespace BMW.Rheingold.Module.ISTA
     [DesignerCategory("code")]
     [XmlRoot(Namespace = "", IsNullable = true)]
     [DataContract(Name = "Statement")]
+    [PreserveSource(Hint = "GenericElement removed", InheritanceModified = true)]
     public abstract class Statement : INotifyPropertyChanged
     {
         private bool activeField;
-
         private bool protocolField;
-
         [XmlAttribute]
         [DefaultValue(true)]
         [DataMember]
@@ -26,6 +26,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return activeField;
             }
+
             set
             {
                 if (!activeField.Equals(value))
@@ -44,6 +45,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return protocolField;
             }
+
             set
             {
                 if (!protocolField.Equals(value))
@@ -55,7 +57,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public Statement()
         {
             activeField = true;

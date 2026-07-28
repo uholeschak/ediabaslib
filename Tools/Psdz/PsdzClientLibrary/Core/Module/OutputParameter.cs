@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClient;
+using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -11,16 +12,13 @@ namespace BMW.Rheingold.Module.ISTA
     [DesignerCategory("code")]
     [XmlRoot(Namespace = "", IsNullable = true)]
     [DataContract(Name = "OutputParameter")]
+    [PreserveSource(Hint = "GenericNamedElement removed", InheritanceModified = true)]
     public class OutputParameter : INotifyPropertyChanged
     {
         private string typeField;
-
         private string friendlyNameField;
-
         private bool lockedField;
-
         private bool lockedFieldSpecified;
-
         [XmlAttribute]
         [DataMember]
         public string Type
@@ -29,6 +27,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return typeField;
             }
+
             set
             {
                 if (typeField != null)
@@ -55,6 +54,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return friendlyNameField;
             }
+
             set
             {
                 if (friendlyNameField != null)
@@ -81,6 +81,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return lockedField;
             }
+
             set
             {
                 if (!lockedField.Equals(value))
@@ -99,6 +100,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return lockedFieldSpecified;
             }
+
             set
             {
                 if (!lockedFieldSpecified.Equals(value))
@@ -110,7 +112,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using PsdzClient;
 
 namespace BMW.Rheingold.Module.ISTA
 {
@@ -14,16 +15,13 @@ namespace BMW.Rheingold.Module.ISTA
     [DesignerCategory("code")]
     [XmlRoot(Namespace = "", IsNullable = false)]
     [DataContract(Name = "Flow")]
+    [PreserveSource(Hint = "ServiceProgram removed", InheritanceModified = true)]
     public class Flow : INotifyPropertyChanged
     {
         private TextReferenceStructure titleField;
-
         private TextReferenceStructure descriptionField;
-
         private MainTestStep mainTestStepField;
-
         private ObservableCollection<TestStep> testStepsField;
-
         [XmlElement(Form = XmlSchemaForm.Unqualified)]
         [DataMember]
         public TextReferenceStructure Title
@@ -32,6 +30,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return titleField;
             }
+
             set
             {
                 if (titleField != null)
@@ -58,6 +57,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return descriptionField;
             }
+
             set
             {
                 if (descriptionField != null)
@@ -84,6 +84,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return mainTestStepField;
             }
+
             set
             {
                 if (mainTestStepField != null)
@@ -111,6 +112,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return testStepsField;
             }
+
             set
             {
                 if (testStepsField != null)
@@ -130,7 +132,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

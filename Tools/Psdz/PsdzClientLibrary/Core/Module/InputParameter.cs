@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClient;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,24 +14,17 @@ namespace BMW.Rheingold.Module.ISTA
     [DesignerCategory("code")]
     [XmlRoot(Namespace = "", IsNullable = true)]
     [DataContract(Name = "InputParameter")]
+    [PreserveSource(Hint = "GenericNamedElement removed", InheritanceModified = true)]
     public class InputParameter : INotifyPropertyChanged
     {
         private string defaultValueField;
-
         private ObservableCollection<RangeValue> valueRangeListField;
-
         private string typeField;
-
         private string friendlyNameField;
-
         private bool lockedField;
-
         private bool lockedFieldSpecified;
-
         private bool mandatoryField;
-
         private bool mandatoryFieldSpecified;
-
         [XmlElement(Form = XmlSchemaForm.Unqualified)]
         [DataMember]
         public string DefaultValue
@@ -39,6 +33,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return defaultValueField;
             }
+
             set
             {
                 if (defaultValueField != null)
@@ -66,6 +61,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return valueRangeListField;
             }
+
             set
             {
                 if (valueRangeListField != null)
@@ -92,6 +88,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return typeField;
             }
+
             set
             {
                 if (typeField != null)
@@ -118,6 +115,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return friendlyNameField;
             }
+
             set
             {
                 if (friendlyNameField != null)
@@ -144,6 +142,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return lockedField;
             }
+
             set
             {
                 if (!lockedField.Equals(value))
@@ -162,6 +161,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return lockedFieldSpecified;
             }
+
             set
             {
                 if (!lockedFieldSpecified.Equals(value))
@@ -180,6 +180,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return mandatoryField;
             }
+
             set
             {
                 if (!mandatoryField.Equals(value))
@@ -198,6 +199,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return mandatoryFieldSpecified;
             }
+
             set
             {
                 if (!mandatoryFieldSpecified.Equals(value))
@@ -209,7 +211,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
