@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
+#pragma warning disable CS0109
 namespace BMW.Rheingold.Module.ISTA
 {
     [Serializable]
