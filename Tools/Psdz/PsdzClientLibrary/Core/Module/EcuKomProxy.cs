@@ -3,6 +3,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using PsdzClient;
 
 namespace BMW.Rheingold.ISTA.CoreFramework.Module
 {
@@ -26,6 +27,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
             this.fastaService = fastaService;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter = "", int retries = 0, bool fastaActive = true)
         {
             Log.Info("EcuKomProxy.ApiJob", "Method ApiJob() called with parameter ecu: {0} - job name: {1} - param: {2} - result filter: {3} - retries: {4}", ecu, job, param, resultFilter, retries);
@@ -80,6 +82,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
             return ecuJob;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public IEcuJob ApiJob(string ecu, string job, string param, int retries, int millisecondsTimeout)
         {
             return ApiJob(ecu, job, param, string.Empty, retries);
