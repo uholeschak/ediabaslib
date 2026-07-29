@@ -30,4 +30,22 @@ public static class DatabaseFunctions
 
         return result;
     }
+    public static string GetNodeClassNameById(Microsoft.Data.Sqlite.SqliteConnection sqliteConnection, string nodeClassId)
+    {
+        string result = string.Empty;
+        string sql = string.Format(@"SELECT NAME FROM XEP_NODECLASSES WHERE ID = '{0}'", nodeClassId);
+        using (Microsoft.Data.Sqlite.SqliteCommand command = sqliteConnection.CreateCommand())
+        {
+            command.CommandText = sql;
+            using (Microsoft.Data.Sqlite.SqliteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result = reader["NAME"].ToString();
+                }
+            }
+        }
+
+        return result;
+    }
 }
