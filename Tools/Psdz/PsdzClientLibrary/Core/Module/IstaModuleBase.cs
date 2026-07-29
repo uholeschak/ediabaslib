@@ -4,6 +4,7 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.EnergySettings;
 using BMW.Rheingold.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework;
+using BMW.Rheingold.ISTA.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using PsdzClient;
 using PsdzClient.Core;
@@ -30,8 +31,7 @@ namespace BMW.Rheingold.CoreFramework
         protected ParameterContainer _globalModuleInAndOutParameter = new ParameterContainer();
         public ILogic logic;
         private IResult resultSet = new Result();
-        [PreserveSource(Hint = "EcuKomProxy", Placeholder = true)]
-        private PlaceholderType ecuKomProxy;
+        private EcuKomProxy ecuKomProxy;
         private ISuspicionLinkCounter suspicionLinkCount;
         private string _lastCallingMethod = string.Empty;
         private IAppSessionContext appSessionContext;
@@ -91,13 +91,11 @@ namespace BMW.Rheingold.CoreFramework
         {
             get
             {
-                //[-] if (ecuKomProxy == null || ecuKomProxy.FastaService != FastaProtocoler || ecuKom != ecuKomProxy.EcuKom)
-                //[-] {
-                //[-] ecuKomProxy = new EcuKomProxy(ecuKom, FastaProtocoler);
-                //[-] }
-                //[-] return ecuKomProxy;
-                //[+] return null;
-                return null;
+                if (ecuKomProxy == null || ecuKomProxy.FastaService != FastaProtocoler || ecuKom != ecuKomProxy.EcuKom)
+                {
+                    ecuKomProxy = new EcuKomProxy(ecuKom, FastaProtocoler);
+                }
+                return ecuKomProxy;
             }
         }
 
