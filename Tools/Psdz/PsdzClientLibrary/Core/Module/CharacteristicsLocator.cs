@@ -144,7 +144,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                 case "ID":
                     return characteristicsContainer.Id.ToString(CultureInfo.InvariantCulture);
                 case "NODECLASS":
-                    //if (!characteristicsContainer.Nodeclass.HasValue)
+                    //[-] if (!characteristicsContainer.Nodeclass.HasValue)
                     if (string.IsNullOrEmpty(characteristicsContainer.NodeClass))
                     {
                         return "0";
