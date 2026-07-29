@@ -14,9 +14,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.ServiceModel;
 using System.Text;
-using System.Xml.Linq;
+using BMW.Rheingold.CoreFramework.DatabaseProvide;
 
 #pragma warning disable CS0169, CS0649, CS0162
 namespace BMW.Rheingold.CoreFramework
@@ -1340,7 +1339,7 @@ namespace BMW.Rheingold.CoreFramework
                 PsdzDatabase.Characteristics characteristicById = DBProvider.GetCharacteristicById(controlId);
                 if (characteristicById != null)
                 {
-                    //[-] return new CharacteristicsLocator(characteristicById);
+                    return new CharacteristicsLocator(characteristicById, ClientContext.GetClientContext(Vehicle));
                 }
             }
             catch (Exception exception)
@@ -1356,10 +1355,12 @@ namespace BMW.Rheingold.CoreFramework
         public IEcuGroupLocator __EcuGroup(string groupName)
         {
             //[-] XEP_ECUGROUPS ecuGroupByName = DBProvider.GetEcuGroupByName(groupName);
-            //[-] if (ecuGroupByName != null)
-            //[-] {
-            //[-] return new EcuGroupLocator(ecuGroupByName, Vehicle, FFMResolver);
-            //[-] }
+            //[+] PsdzDatabase.EcuGroup ecuGroupByName = DBProvider.GetEcuGroupByName(groupName);
+            PsdzDatabase.EcuGroup ecuGroupByName = DBProvider.GetEcuGroupByName(groupName);
+            if (ecuGroupByName != null)
+            {
+                return new EcuGroupLocator(ecuGroupByName, Vehicle, FFMResolver);
+            }
             return null;
         }
 
