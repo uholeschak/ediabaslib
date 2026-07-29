@@ -1725,6 +1725,11 @@ namespace PsdzClient
             return true;
         }
 
+        public string GetNodeClassNameById(string nodeClassId)
+        {
+            return DatabaseFunctions.GetNodeClassNameById(_mDbConnection, nodeClassId);
+        }
+
         public List<LocalizedText> GetTextCollectionById(string idInfoObject, IList<string> lang = null)
         {
             log.InfoFormat("GetTextCollectionById Id: {0}", idInfoObject);

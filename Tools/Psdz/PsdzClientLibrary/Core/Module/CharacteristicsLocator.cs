@@ -11,6 +11,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
         [PreserveSource(Hint = "IXepCharacteristics", Placeholder = true)]
         private readonly PsdzDatabase.Characteristics characteristicsContainer;
 
+        [PreserveSource(Added = true)]
+        private readonly ClientContext clientContext;
+
         private readonly ISPELocator[] children;
 
         private readonly ISPELocator[] parents;
@@ -30,6 +33,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                 if (!string.IsNullOrEmpty(characteristicsContainer.NodeClass))
                 {
                     //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(characteristicsContainer.Nodeclass.Value);
+                    //[+] return clientContext?.Database?.GetNodeClassNameById(characteristicsContainer.NodeClass);
+                    return clientContext?.Database?.GetNodeClassNameById(characteristicsContainer.NodeClass);
                 }
                 return string.Empty;
             }
@@ -119,9 +124,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
         }
 
         [PreserveSource(Hint = "IXepCharacteristics replaced", SignatureModified = true)]
-        public CharacteristicsLocator(PsdzDatabase.Characteristics characteristicsContainer)
+        public CharacteristicsLocator(PsdzDatabase.Characteristics characteristicsContainer, ClientContext clientContext)
         {
             this.characteristicsContainer = characteristicsContainer;
+            //[+] this.clientContext = clientContext;
+            this.clientContext = clientContext;
             children = new ISPELocator[0];
             parents = new ISPELocator[0];
         }
