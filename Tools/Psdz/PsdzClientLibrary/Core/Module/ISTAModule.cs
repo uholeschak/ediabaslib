@@ -544,27 +544,27 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] interactionEnterModel.SuccessorText = textContent2.GetTextForUI(logic.Lang)[0].TextItem;
             //[-] logic.Services.InteractionService.Register(interactionEnterModel);
             //[-] string output = interactionEnterModel.Response.UserInput;
-            //[-] if (FastaProtocoler != null)
-            //[-] {
-            //[-] IAction<IUiDialog> action = FastaProtocoler.CreateAndAddUiDialogFromServiceProgram("EnterPopup", "TODO");
-            //[-] action.StartTime = now;
-            //[-] IList<LocalizedText> messageTextList = ((!string.IsNullOrEmpty(textContent.FormattedText) && textContent.FormattedText.Length != 0) ? __Text().TextContent.Concat(textContent).Concat(textContent2).GetTextForUI(logic.Lang) : textContent2.GetTextForUI(logic.Lang));
-            //[-] action.SpecialAction.CreateAndAddMessageText(messageTextList);
-            //[-] if (output != null)
-            //[-] {
-            //[-] List<LocalizedText> list = new List<LocalizedText>();
-            //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText(output, x)));
-            //[-] action.SpecialAction.AddAnswer(list, "UserInput");
-            //[-] }
-            //[-] }
-            //[-] else
+            //[+] string output = string.Empty;
+            string output = string.Empty;
+            if (FastaProtocoler != null)
+            {
+                //[-] IAction<IUiDialog> action = FastaProtocoler.CreateAndAddUiDialogFromServiceProgram("EnterPopup", "TODO");
+                //[-] action.StartTime = now;
+                //[-] IList<LocalizedText> messageTextList = ((!string.IsNullOrEmpty(textContent.FormattedText) && textContent.FormattedText.Length != 0) ? __Text().TextContent.Concat(textContent).Concat(textContent2).GetTextForUI(logic.Lang) : textContent2.GetTextForUI(logic.Lang));
+                //[-] action.SpecialAction.CreateAndAddMessageText(messageTextList);
+                //[-] if (output != null)
+                //[-] {
+                //[-] List<LocalizedText> list = new List<LocalizedText>();
+                //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText(output, x)));
+                //[-] action.SpecialAction.AddAnswer(list, "UserInput");
+                //[-] }
+            }
+            else
             {
                 Log.Error("ISTAModule.__EnterPopup()", "No ModuleStep available in FASTA");
             }
 
-            //[-] return output;
-            //[+] return null;
-            return null;
+            return output;
         }
 
         private int AskQuestion(ITextContent question, string answer0, string answer1, string answer2, int result0, int result1, int result2, string title, int size)
