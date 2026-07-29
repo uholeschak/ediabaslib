@@ -251,7 +251,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                     return characteristicsContainer.StaticClassVar;
                 case "STATICCLASSVARIABLESMOTORRAD":
                     //[-] if (!characteristicsContainer.StaticClassVariablesMotorrad.HasValue)
-                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.StaticClassVarMotorrad))
+                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.StaticClassVarMCycle))
                     if (string.IsNullOrEmpty(characteristicsContainer.StaticClassVarMCycle))
                     {
                         return "0";
