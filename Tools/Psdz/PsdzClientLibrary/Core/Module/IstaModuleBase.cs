@@ -94,6 +94,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     ecuKomProxy = new EcuKomProxy(ecuKom, FastaProtocoler);
                 }
+
                 return ecuKomProxy;
             }
         }
@@ -1339,6 +1340,8 @@ namespace BMW.Rheingold.CoreFramework
                 PsdzDatabase.Characteristics characteristicById = DBProvider.GetCharacteristicById(controlId);
                 if (characteristicById != null)
                 {
+                    //[-] return new CharacteristicsLocator(characteristicById);
+                    //[+] return new CharacteristicsLocator(characteristicById, ClientContext.GetClientContext(Vehicle));
                     return new CharacteristicsLocator(characteristicById, ClientContext.GetClientContext(Vehicle));
                 }
             }
@@ -1361,6 +1364,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return new EcuGroupLocator(ecuGroupByName, Vehicle, FFMResolver);
             }
+
             return null;
         }
 
