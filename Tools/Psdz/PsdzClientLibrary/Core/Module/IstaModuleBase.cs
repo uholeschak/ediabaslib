@@ -1335,11 +1335,13 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-            //[-] IXepCharacteristics characteristicById = DBProvider.GetCharacteristicById(Convert.ToInt64(controlId, CultureInfo.InvariantCulture));
-            //[-] if (characteristicById != null)
-            //[-] {
-            //[-] return new CharacteristicsLocator(characteristicById);
-            //[-] }
+                //[-] IXepCharacteristics characteristicById = DBProvider.GetCharacteristicById(Convert.ToInt64(controlId, CultureInfo.InvariantCulture));
+                //[+] PsdzDatabase.Characteristics characteristicById = DBProvider.GetCharacteristicById(controlId);
+                PsdzDatabase.Characteristics characteristicById = DBProvider.GetCharacteristicById(controlId);
+                if (characteristicById != null)
+                {
+                    //[-] return new CharacteristicsLocator(characteristicById);
+                }
             }
             catch (Exception exception)
             {

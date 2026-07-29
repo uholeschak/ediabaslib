@@ -2845,7 +2845,6 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             characteristics = ReadXepCharacteristics(reader);
-                            break;
                         }
                     }
                 }
