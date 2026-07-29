@@ -1172,6 +1172,8 @@ namespace BMW.Rheingold.CoreFramework
         public IServiceProgramLocator __Program(string refPath)
         {
             //[-] DBProvider.GetInfoObjectsByDiagObjectControlId(Convert.ToDecimal(refPath, CultureInfo.InvariantCulture), Vehicle, FFMResolver, getHidden: true);
+            //[+] DBProvider.GetInfoObjectsByDiagObjectControlId(refPath, Vehicle, FFMResolver, getHidden: true);
+            DBProvider.GetInfoObjectsByDiagObjectControlId(refPath, Vehicle, FFMResolver, getHidden: true);
             return null;
         }
 
