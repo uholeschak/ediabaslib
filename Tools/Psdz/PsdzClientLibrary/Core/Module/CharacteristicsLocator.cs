@@ -10,18 +10,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
     {
         [PreserveSource(Hint = "IXepCharacteristics", Placeholder = true)]
         private readonly PsdzDatabase.Characteristics characteristicsContainer;
-
-        [PreserveSource(Added = true)]
-        private readonly ClientContext clientContext;
-
         private readonly ISPELocator[] children;
-
         private readonly ISPELocator[] parents;
-
         public ISPELocator[] Children => children;
-
         public string Id => characteristicsContainer.Id.ToString(CultureInfo.InvariantCulture);
-
         public ISPELocator[] Parents => parents;
 
         public string DataClassName
@@ -36,19 +28,43 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                     //[+] return clientContext?.Database?.GetNodeClassNameById(characteristicsContainer.NodeClass);
                     return clientContext?.Database?.GetNodeClassNameById(characteristicsContainer.NodeClass);
                 }
+
                 return string.Empty;
             }
         }
 
         public string[] OutgoingLinkNames => new string[0];
-
         public string[] IncomingLinkNames => new string[0];
-
         public string[] DataValueNames => new string[28]
         {
-        "ID", "NODECLASS", "TITLEID", "TITLE_DEDE", "TITLE_ENGB", "TITLE_ENUS", "TITLE_FR", "TITLE_TH", "TITLE_SV", "TITLE_IT",
-        "TITLE_ES", "TITLE_ID", "TITLE_KO", "TITLE_EL", "TITLE_TR", "TITLE_ZHCN", "TITLE_RU", "TITLE_NL", "TITLE_PT", "TITLE_ZHTW",
-        "TITLE_JA", "TITLE_CSCZ", "TITLE_PLPL", "STATICCLASSVARIABLES", "STATICCLASSVARIABLESMOTORRAD", "PARENTID", "NAME", "LEGACY_NAME"
+            "ID",
+            "NODECLASS",
+            "TITLEID",
+            "TITLE_DEDE",
+            "TITLE_ENGB",
+            "TITLE_ENUS",
+            "TITLE_FR",
+            "TITLE_TH",
+            "TITLE_SV",
+            "TITLE_IT",
+            "TITLE_ES",
+            "TITLE_ID",
+            "TITLE_KO",
+            "TITLE_EL",
+            "TITLE_TR",
+            "TITLE_ZHCN",
+            "TITLE_RU",
+            "TITLE_NL",
+            "TITLE_PT",
+            "TITLE_ZHTW",
+            "TITLE_JA",
+            "TITLE_CSCZ",
+            "TITLE_PLPL",
+            "STATICCLASSVARIABLES",
+            "STATICCLASSVARIABLESMOTORRAD",
+            "PARENTID",
+            "NAME",
+            "LEGACY_NAME"
         };
 
         public decimal SignedId
@@ -59,6 +75,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                 {
                     return -1m;
                 }
+
                 //[-] return characteristicsContainer.Id;
                 //[+] return characteristicsContainer.Id.ConvertToInt();
                 return characteristicsContainer.Id.ConvertToInt();
@@ -66,7 +83,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
         }
 
         public Exception Exception => null;
-
         public bool HasException => false;
 
         public decimal ParentId
@@ -77,6 +93,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                 {
                     return -1m;
                 }
+
                 //[-] return characteristicsContainer.ParentId.Value;
                 //[+] return characteristicsContainer.ParentId.ConvertToInt();
                 return characteristicsContainer.ParentId.ConvertToInt();
@@ -91,6 +108,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                 {
                     return null;
                 }
+
                 //[-] return characteristicsContainer.Title;
                 //[+] return characteristicsContainer.GetTitleTranslated(clientContext.Language);
                 return characteristicsContainer.GetTitleTranslated(clientContext.Language);
@@ -105,6 +123,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                 {
                     return null;
                 }
+
                 //[-] return characteristicsContainer.Title_dede;
                 //[+] return characteristicsContainer.EcuTranslation.TextDe;
                 return characteristicsContainer.EcuTranslation.TextDe;
@@ -119,6 +138,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                 {
                     return null;
                 }
+
                 return characteristicsContainer.Name;
             }
         }
@@ -139,12 +159,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
             {
                 return null;
             }
+
             switch (name.ToUpperInvariant())
             {
                 case "ID":
                     return characteristicsContainer.Id.ToString(CultureInfo.InvariantCulture);
                 case "NODECLASS":
                     //[-] if (!characteristicsContainer.Nodeclass.HasValue)
+                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.NodeClass))
                     if (string.IsNullOrEmpty(characteristicsContainer.NodeClass))
                     {
                         return "0";
@@ -154,6 +176,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                     return characteristicsContainer.NodeClass;
                 case "TITLEID":
                     //[-] if (!characteristicsContainer.TitleId.HasValue)
+                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.TitleId))
                     if (string.IsNullOrEmpty(characteristicsContainer.TitleId))
                     {
                         return "0";
@@ -246,6 +269,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                     {
                         return "0";
                     }
+
                     //[-] return characteristicsContainer.StaticClassVariables.ToString();
                     //[+] return characteristicsContainer.StaticClassVar;
                     return characteristicsContainer.StaticClassVar;
@@ -256,6 +280,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                     {
                         return "0";
                     }
+
                     //[-] return characteristicsContainer.StaticClassVariablesMotorrad.ToString();
                     //[+] return characteristicsContainer.StaticClassVarMCycle;
                     return characteristicsContainer.StaticClassVarMCycle;
@@ -266,6 +291,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
                     {
                         return "0";
                     }
+
                     return characteristicsContainer.ParentId.ToString();
                 case "TITLE":
                     //[-] return characteristicsContainer.Title;
@@ -304,5 +330,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvide
         {
             throw new NotImplementedException();
         }
+
+        [PreserveSource(Added = true)]
+        private readonly ClientContext clientContext;
     }
 }
