@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -16,7 +9,13 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Utility;
-using PsdzClient;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace PsdzClient
 {
@@ -2825,6 +2824,39 @@ namespace PsdzClient
             }
 
             return characteristicRoots;
+        }
+
+        public Characteristics GetCharacteristicById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            Characteristics characteristics = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", STATICCLASSVARIABLES, STATICCLASSVARIABLESMOTORRAD, PARENTID, ISTA_VISIBLE, NAME, LEGACY_NAME FROM XEP_CHARACTERISTICS WHERE (ID = {0})", id);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            characteristics = ReadXepCharacteristics(reader);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetCharacteristicById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return characteristics;
         }
 
         public List<Characteristics> GetCharacteristicsByTypeKeyId(string typeKeyId)
