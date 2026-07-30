@@ -54,7 +54,7 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
             ICollection<PsdzDatabase.SwiDiagObj> parentDiagObjects = clientContext?.Database?.GetParentDiagObjects(diagnosticObjectContainer.GetXepDiagnosisObject(), diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver, getHidden: true);
             parents = new ISPELocator[parentDiagObjects.Count];
             //[-] foreach (XEP_DIAGNOSISOBJECTSEX item in parentDiagObjects)
-            //[+] foreach (SwiDiagObj item in parentDiagObjects)
+            //[+] foreach (PsdzDatabase.SwiDiagObj item in parentDiagObjects)
             foreach (PsdzDatabase.SwiDiagObj item in parentDiagObjects)
             {
                 if (item != null)
