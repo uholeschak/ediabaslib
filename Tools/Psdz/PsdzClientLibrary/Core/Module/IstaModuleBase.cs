@@ -799,10 +799,12 @@ namespace BMW.Rheingold.CoreFramework
             if (string.IsNullOrEmpty(text))
             {
                 //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
-                //[-] if (xEP_DIAGNOSISOBJECTSEX != null)
-                //[-] {
-                //[-] text = xEP_DIAGNOSISOBJECTSEX.Name;
-                //[-] }
+                //[+] PsdzDatabase.SwiDiagObj xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
+                PsdzDatabase.SwiDiagObj xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
+                if (xEP_DIAGNOSISOBJECTSEX != null)
+                {
+                    text = xEP_DIAGNOSISOBJECTSEX.Name;
+                }
             }
 
             DiagnosticObjectLocator diagnosticObjectLocator = null;
