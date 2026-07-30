@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
-using static PsdzClient.PsdzDatabase;
 
 #pragma warning disable CS0067
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
@@ -15,6 +14,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class InfoObject : ITherapyPlanAction, INotifyPropertyChanged
     {
         private InfoObjectContentTransformed content;
+
+        //private IXepInfoObject xepInfoObject;
 
         private bool isMarkedForExport;
 
@@ -59,7 +60,28 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 return content;
             }
         }
-
+#if false
+        [XmlIgnore]
+        public IXepInfoObject XepInfoObject
+        {
+            get
+            {
+                if (xepInfoObject == null)
+                {
+                    xepInfoObject = new XepInfoObject();
+                }
+                return xepInfoObject;
+            }
+            set
+            {
+                if (xepInfoObject != value)
+                {
+                    xepInfoObject = value;
+                    OnPropertyChanged("XepInfoObject");
+                }
+            }
+        }
+#endif
         public bool IsESLError
         {
             get
@@ -80,6 +102,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 return string.Empty;
             }
         }
+
+        [XmlIgnore]
+        public PsdzDatabase.SwiDiagObj ParentDiagnosisObject { get; set; }
 
         [XmlIgnore]
         public int Index { get; set; }
@@ -123,7 +148,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         [XmlIgnore]
-        public SwiActionLinkType LinkType => SwiActionLinkType.SwiActionDiagnosticLink;
+        public PsdzDatabase.SwiActionLinkType LinkType => PsdzDatabase.SwiActionLinkType.SwiActionDiagnosticLink;
 
         [XmlIgnore]
         public decimal? Priority { get; set; }

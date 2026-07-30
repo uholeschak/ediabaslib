@@ -1075,6 +1075,10 @@ namespace PsdzClient
 
         public class SwiDiagObj
         {
+            public SwiDiagObj()
+            {
+            }
+
             public SwiDiagObj(string id, string nodeClass,
                 string titleId, string versionNum, string name, string failWeight, string hidden,
                 string safetyRelevant, string controlId, string sortOrder, EcuTranslation ecuTranslation)

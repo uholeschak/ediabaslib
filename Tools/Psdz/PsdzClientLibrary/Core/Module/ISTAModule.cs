@@ -1124,7 +1124,7 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
-        public override PlaceholderType SelectDiagParentByAskingUser(IList<PlaceholderType> diag, string callingMethod)
+        public override PsdzDatabase.SwiDiagObj SelectDiagParentByAskingUser(IList<PsdzDatabase.SwiDiagObj> diag, string callingMethod)
         {
             throw new NotImplementedException();
         }

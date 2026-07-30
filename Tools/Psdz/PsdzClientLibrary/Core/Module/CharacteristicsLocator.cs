@@ -4,7 +4,7 @@ using System.Globalization;
 using BmwFileReader;
 using PsdzClient;
 
-namespace BMW.Rheingold.CoreFramework.DatabaseProvide
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class CharacteristicsLocator : ICharacteristicsLocator, ISPELocator
     {

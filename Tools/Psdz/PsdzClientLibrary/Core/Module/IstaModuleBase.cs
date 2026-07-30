@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
-using BMW.Rheingold.CoreFramework.DatabaseProvide;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.EnergySettings;
 using BMW.Rheingold.CoreFramework.Module;
@@ -16,7 +15,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using BMW.Rheingold.CoreFramework.DatabaseProvide;
 
 #pragma warning disable CS0169, CS0649, CS0162
 namespace BMW.Rheingold.CoreFramework
@@ -862,16 +860,82 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
-        public PlaceholderType SelectDiagParent(string callingMethod)
+        public PsdzDatabase.SwiDiagObj SelectDiagParent(string callingMethod)
         {
-            throw new NotImplementedException();
+            InfoObject infoObjStarted = GetInfoObjStarted();
+            if (infoObjStarted == null)
+            {
+                return null;
+            }
+            //[-] IList<XEP_DIAGNOSISOBJECTSEX> list = FindDiagParents(infoObjStarted);
+            //[+] IList<PsdzDatabase.SwiDiagObj> list = FindDiagParents(infoObjStarted);
+            IList<PsdzDatabase.SwiDiagObj> list = FindDiagParents(infoObjStarted);
+            if (list.Count == 0)
+            {
+                //[-] Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object [{0}/{1}]. Returning null.", infoObjStarted.XepInfoObject.Identifikator, infoObjStarted.XepInfoObject.Id);
+                //[+] Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object. Returning null.");
+                Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object. Returning null.");
+                return null;
+            }
+            //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX;
+            //[+] PsdzDatabase.SwiDiagObj xEP_DIAGNOSISOBJECTSEX;
+            PsdzDatabase.SwiDiagObj xEP_DIAGNOSISOBJECTSEX;
+            if (list.Count == 1)
+            {
+                xEP_DIAGNOSISOBJECTSEX = list[0];
+            }
+            else
+            {
+                //[-] IEnumerable<XEP_DIAGNOSISOBJECTSEX> enumerable = (infoObjStarted.ParentDiagnosisObject as ManualDiagObj)?.SearchTreeNode;
+                //[+] IEnumerable<PsdzDatabase.SwiDiagObj> enumerable = (infoObjStarted.ParentDiagnosisObject as ManualDiagObj)?.SearchTreeNode;
+                IEnumerable<PsdzDatabase.SwiDiagObj> enumerable = (infoObjStarted.ParentDiagnosisObject as ManualDiagObj)?.SearchTreeNode;
+                //[-] IList<XEP_DIAGNOSISOBJECTSEX> list2 = new List<XEP_DIAGNOSISOBJECTSEX>();
+                //[+] IList<PsdzDatabase.SwiDiagObj> list2 = new List<PsdzDatabase.SwiDiagObj>();
+                IList<PsdzDatabase.SwiDiagObj> list2 = new List<PsdzDatabase.SwiDiagObj>();
+                if (enumerable != null && enumerable.Any())
+                {
+                    //[-] List<decimal> list3 = new List<decimal>();
+                    //[+] List<string> list3 = new List<string>();
+                    List<string> list3 = new List<string>();
+                    //[-] foreach (XEP_DIAGNOSISOBJECTSEX item in enumerable)
+                    //[+] foreach (PsdzDatabase.SwiDiagObj item in enumerable)
+                    foreach (PsdzDatabase.SwiDiagObj item in enumerable)
+                    {
+                        if (item != null)
+                        {
+                            list3.Add(item.Id);
+                        }
+                    }
+                    //[-] foreach (XEP_DIAGNOSISOBJECTSEX item2 in list)
+                    //[+] foreach (PsdzDatabase.SwiDiagObj item2 in list)
+                    foreach (PsdzDatabase.SwiDiagObj item2 in list)
+                    {
+                        if (item2 != null && list3.Contains(item2.Id))
+                        {
+                            list2.Add(item2);
+                        }
+                    }
+                }
+                if (!list2.Any())
+                {
+                    //[-] foreach (XEP_DIAGNOSISOBJECTSEX item3 in list)
+                    //[+] foreach (PsdzDatabase.SwiDiagObj item3 in list)
+                    foreach (PsdzDatabase.SwiDiagObj item3 in list)
+                    {
+                        list2.Add(item3);
+                    }
+                }
+                xEP_DIAGNOSISOBJECTSEX = ((list2.Count != 1) ? SelectDiagParentByAskingUser(list2, callingMethod) : list2.First());
+            }
+            infoObjStarted.ParentDiagnosisObject = xEP_DIAGNOSISOBJECTSEX;
+            return xEP_DIAGNOSISOBJECTSEX;
         }
 
         public abstract InfoObject GetInfoObjStarted();
         [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
-        public abstract PlaceholderType SelectDiagParentByAskingUser(IList<PlaceholderType> diag, string callingMethod);
+        public abstract PsdzDatabase.SwiDiagObj SelectDiagParentByAskingUser(IList<PsdzDatabase.SwiDiagObj> diag, string callingMethod);
         [PreserveSource(Hint = "IList<XEP_DIAGNOSISOBJECTSEX>", Placeholder = true)]
-        private IList<PlaceholderType> FindDiagParents()
+        private IList<PsdzDatabase.SwiDiagObj> FindDiagParents(InfoObject infoObj)
         {
             throw new NotImplementedException();
         }
