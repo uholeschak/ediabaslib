@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -12,7 +11,6 @@ using PsdzClient.Core;
 using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
