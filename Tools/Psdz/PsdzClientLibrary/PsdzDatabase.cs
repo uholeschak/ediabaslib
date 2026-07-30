@@ -4450,6 +4450,59 @@ namespace PsdzClient
             return swiDiagObj;
         }
 
+        public List<SwiDiagObj> GetDiagObjectsByName(string name, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+
+            log.InfoFormat("GetDiagObjectsByName Name: {0}, Hidden: {1}", name, getHidden);
+            List<SwiDiagObj> swiDiagObjs = new List<SwiDiagObj>();
+            try
+            {
+                string hiddenRule = string.Empty;
+                if (!getHidden)
+                {
+                    hiddenRule = " AND VERSTECKT = 0";
+                }
+
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT " + DiagObjectItems +
+                    @" FROM XEP_DIAGNOSISOBJECTS WHERE (NAME = {0}{1})",
+                    name, hiddenRule);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            SwiDiagObj swiDiagObj = ReadXepSwiDiagObj(reader);
+                            if (vehicle != null)
+                            {
+                                if (IsDiagObjectValid(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                                {
+                                    swiDiagObjs.Add(swiDiagObj);
+                                }
+                            }
+                            else
+                            {
+                                swiDiagObjs.Add(swiDiagObj);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetDiagObjectsByName Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return swiDiagObjs;
+        }
+
         public List<SwiDiagObj> GetDiagObjectsByControlId(string controlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
             if (string.IsNullOrEmpty(controlId))
