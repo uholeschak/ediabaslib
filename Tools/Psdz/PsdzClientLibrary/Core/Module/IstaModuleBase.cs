@@ -1,5 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.DatabaseProvide;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.EnergySettings;
 using BMW.Rheingold.CoreFramework.Module;
@@ -799,25 +800,27 @@ namespace BMW.Rheingold.CoreFramework
             string text = refText;
             if (string.IsNullOrEmpty(text))
             {
-            //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
-            //[-] if (xEP_DIAGNOSISOBJECTSEX != null)
-            //[-] {
-            //[-] text = xEP_DIAGNOSISOBJECTSEX.Name;
-            //[-] }
+                //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
+                //[-] if (xEP_DIAGNOSISOBJECTSEX != null)
+                //[-] {
+                //[-] text = xEP_DIAGNOSISOBJECTSEX.Name;
+                //[-] }
             }
 
             //[-] DiagnosticObjectLocator diagnosticObjectLocator = null;
             try
             {
                 //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> diagObjectsByName = DBProvider.GetDiagObjectsByName(text, Vehicle, FFMResolver, getHidden: true);
-                //[-] if (diagObjectsByName.Count > 0)
-                //[-] {
-                //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectsByName.First(), Vehicle, FFMResolver);
-                //[-] Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().Title_dede);
-                //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
-                //[-] diagnosticObjectLocator = new DiagnosticObjectLocator(diagnosticObject, childDiagObjects);
-                //[-] }
-                //[-] else
+                //[+] ICollection<PsdzDatabase.SwiDiagObj> diagObjectsByName = DBProvider.GetDiagObjectsByName(text, Vehicle, FFMResolver, getHidden: true);
+                ICollection<PsdzDatabase.SwiDiagObj> diagObjectsByName = DBProvider.GetDiagObjectsByName(text, Vehicle, FFMResolver, getHidden: true);
+                if (diagObjectsByName.Count > 0)
+                {
+                    //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectsByName.First(), Vehicle, FFMResolver);
+                    //[-] Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().Title_dede);
+                    //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
+                    //[-] diagnosticObjectLocator = new DiagnosticObjectLocator(diagnosticObject, childDiagObjects);
+                }
+                else
                 {
                     Log.Warning("ISTAModule.__DiagnosticObject()", "unable to find diagnostic object refreneced with: {0}", refText);
                 }
