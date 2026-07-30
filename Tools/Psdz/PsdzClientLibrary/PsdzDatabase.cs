@@ -127,6 +127,29 @@ namespace PsdzClient
                 TextPl = string.Empty;
             }
 
+            public EcuTranslation(EcuTranslation ecuTranslation)
+            {
+                TextDe = ecuTranslation.TextDe;
+                TextEn = ecuTranslation.TextEn;
+                TextUs = ecuTranslation.TextUs;
+                TextFr = ecuTranslation.TextFr;
+                TextTh = ecuTranslation.TextTh;
+                TextSv = ecuTranslation.TextSv;
+                TextIt = ecuTranslation.TextIt;
+                TextEs = ecuTranslation.TextEs;
+                TextId = ecuTranslation.TextId;
+                TextKo = ecuTranslation.TextKo;
+                TextEl = ecuTranslation.TextEl;
+                TextTr = ecuTranslation.TextTr;
+                TextZh = ecuTranslation.TextZh;
+                TextRu = ecuTranslation.TextRu;
+                TextNl = ecuTranslation.TextNl;
+                TextPt = ecuTranslation.TextPt;
+                TextJa = ecuTranslation.TextJa;
+                TextCs = ecuTranslation.TextCs;
+                TextPl = ecuTranslation.TextPl;
+            }
+
             public EcuTranslation(string textDe, string textEnGb, string textEnUs, string textFr, string textTh, string textSv, string textIt,
                 string textEs, string textId, string textKo, string textEl, string textTr, string textZh,
                 string textRu, string textNl, string textPt, string textJa, string textCs, string textPl)
@@ -1077,6 +1100,24 @@ namespace PsdzClient
         {
             public SwiDiagObj()
             {
+            }
+
+            public SwiDiagObj(SwiDiagObj swiDiagObj)
+            {
+                Id = swiDiagObj.Id;
+                NodeClass = swiDiagObj.NodeClass;
+                TitleId = swiDiagObj.TitleId;
+                VersionNum = swiDiagObj.VersionNum;
+                Name = swiDiagObj.Name;
+                FailWeight = swiDiagObj.FailWeight;
+                Hidden = swiDiagObj.Hidden;
+                SafetyRelevant = swiDiagObj.SafetyRelevant;
+                Identifier = swiDiagObj.Identifier;
+                ControlId = swiDiagObj.ControlId;
+                SortOrder = swiDiagObj.SortOrder;
+                EcuTranslation = swiDiagObj.EcuTranslation != null ? new EcuTranslation(swiDiagObj.EcuTranslation) : null;
+                InfoObjects = swiDiagObj.InfoObjects != null ? new List<SwiInfoObj>(swiDiagObj.InfoObjects) : null;
+                Children = swiDiagObj.Children != null ? new List<SwiDiagObj>(swiDiagObj.Children) : null;
             }
 
             public SwiDiagObj(string id, string nodeClass,
