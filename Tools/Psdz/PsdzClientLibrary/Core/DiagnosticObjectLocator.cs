@@ -288,6 +288,7 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
                 return xepDiagnosisObject.ControlId.ToString();
             case "TITLE":
                 //[-] return xepDiagnosisObject.Title;
+                //[+] return xepDiagnosisObject.EcuTranslation.GetTitleTranslated(clientContext.Language);
                 return xepDiagnosisObject.EcuTranslation.GetTitleTranslated(clientContext.Language);
             default:
                 return string.Empty;
