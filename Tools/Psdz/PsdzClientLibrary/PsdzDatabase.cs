@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -11,6 +12,7 @@ using PsdzClient.Core;
 using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -3972,6 +3974,15 @@ namespace PsdzClient
             }
 
             return swiInfoObjs;
+        }
+
+        public List<SwiInfoObj> GetInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        {
+            if (!string.IsNullOrEmpty(diagObject.ControlId))
+            {
+                return GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, vehicle, ffmDynamicResolver, getHidden: true);
+            }
+            return new List<SwiInfoObj>();
         }
 
         public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string diagnosisObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden, List<string> typeFilter = null)
