@@ -154,6 +154,8 @@ public class DiagnosticObject
     {
         this.vehicle = vehicle;
         ffmResolver = ffmDynamicResolver;
+        //[-] diagnosisObject = new XEP_DIAGNOSISOBJECTSEX(diagnosticObjectContainer);
+        //[+] diagnosisObject = new PsdzDatabase.SwiDiagObj(diagnosticObjectContainer);
         diagnosisObject = new PsdzDatabase.SwiDiagObj(diagnosticObjectContainer);
     }
 
