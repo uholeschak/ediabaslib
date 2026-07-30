@@ -144,11 +144,12 @@ public class DiagnosticObject
     [PreserveSource(Hint = "ConvertToInt", Placeholder = true)]
     public decimal? ControlId => diagnosisObject.ControlId.ConvertToInt();
 
+    [PreserveSource(Hint = "No Change", SignatureModified = true)]
     public DiagnosticObject()
     {
     }
 
-    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
+    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", SignatureModified = true)]
     public DiagnosticObject(PsdzDatabase.SwiDiagObj diagnosticObjectContainer, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
     {
         this.vehicle = vehicle;

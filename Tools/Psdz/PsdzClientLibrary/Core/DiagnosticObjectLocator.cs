@@ -28,7 +28,7 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
             int num = 0;
             children = new ISPELocator[childDiagObjects.Count];
             //[-] foreach (XEP_DIAGNOSISOBJECTSEX item in childDiagObjects)
-            //[+] foreach (SwiDiagObj item in childDiagObjects)
+            //[+] foreach (PsdzDatabase.SwiDiagObj item in childDiagObjects)
             foreach (PsdzDatabase.SwiDiagObj item in childDiagObjects)
             {
                 DiagnosticObject diagObj = new DiagnosticObject(item, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver);
