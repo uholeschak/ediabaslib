@@ -31,7 +31,7 @@ public class DiagnosticObject
                     break;
                 case "en-GB":
                     //[-] text = diagnosisObject.Title_engb;
-                    //[+] text = diagnosisObject.EcuTranslation.TextEn;
+                    //[+](0) text = diagnosisObject.EcuTranslation.TextEn;
                     text = diagnosisObject.EcuTranslation.TextEn;
                     break;
                 case "en-US":
@@ -122,14 +122,14 @@ public class DiagnosticObject
                 default:
                     Log.Warning("DiagnosticObject.get_Title", "CurrentUICulture {0} not available - language set to enGB", ConfigSettings.CurrentUICulture);
                     //[-] text = diagnosisObject.Title_engb;
-                    //[+] text = diagnosisObject.EcuTranslation.TextEn;
+                    //[+](1) text = diagnosisObject.EcuTranslation.TextEn;
                     text = diagnosisObject.EcuTranslation.TextEn;
                     break;
             }
             if (string.IsNullOrEmpty(text))
             {
                 //[-] return diagnosisObject.Title_engb;
-                //[+] return diagnosisObject.EcuTranslation.TextEn;
+                //[+](2) return diagnosisObject.EcuTranslation.TextEn;
                 return diagnosisObject.EcuTranslation.TextEn;
             }
             return text;
