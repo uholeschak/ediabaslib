@@ -270,7 +270,7 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
                 return string.Empty;
             case "SICHERHEITSRELEVANT":
                 //[-] return xepDiagnosisObject.SicherheitsRelevant.ToString();
-                //[+] xepDiagnosisObject.SafetyRelevant;
+                //[+] return xepDiagnosisObject.SafetyRelevant;
                 return xepDiagnosisObject.SafetyRelevant;
             case "GROBZEICHEN":
                 //[-] return xepDiagnosisObject.Grobzeichen;
