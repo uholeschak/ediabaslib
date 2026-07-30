@@ -116,12 +116,13 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
 
     public bool HasException => false;
 
+    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", SignatureModified = true)]
     public DiagnosticObjectLocator(DiagnosticObject diagObj)
     {
         diagnosticObjectContainer = diagObj;
     }
 
-    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
+    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", SignatureModified = true)]
     public DiagnosticObjectLocator(DiagnosticObject diagObj, ICollection<PsdzDatabase.SwiDiagObj> diagChildren, ClientContext clientContext)
     {
         diagnosticObjectContainer = diagObj;

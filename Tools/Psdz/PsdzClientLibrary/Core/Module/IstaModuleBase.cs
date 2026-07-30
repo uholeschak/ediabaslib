@@ -805,7 +805,7 @@ namespace BMW.Rheingold.CoreFramework
                 //[-] }
             }
 
-            //[-] DiagnosticObjectLocator diagnosticObjectLocator = null;
+            DiagnosticObjectLocator diagnosticObjectLocator = null;
             try
             {
                 //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> diagObjectsByName = DBProvider.GetDiagObjectsByName(text, Vehicle, FFMResolver, getHidden: true);
@@ -813,10 +813,16 @@ namespace BMW.Rheingold.CoreFramework
                 ICollection<PsdzDatabase.SwiDiagObj> diagObjectsByName = DBProvider.GetDiagObjectsByName(text, Vehicle, FFMResolver, getHidden: true);
                 if (diagObjectsByName.Count > 0)
                 {
-                    //[-] DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectsByName.First(), Vehicle, FFMResolver);
+                    DiagnosticObject diagnosticObject = new DiagnosticObject(diagObjectsByName.First(), Vehicle, FFMResolver);
                     //[-] Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().Title_dede);
+                    //[+] Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().EcuTranslation.TextDe);
+                    Log.Info("ISTAModule.__DiagnosticObject()", "found diag object with children title:{0}", diagnosticObject.GetXepDiagnosisObject().EcuTranslation.TextDe);
                     //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
+                    //[+] ICollection<PsdzDatabase.SwiDiagObj> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
+                    ICollection<PsdzDatabase.SwiDiagObj> childDiagObjects = DBProvider.GetChildDiagObjects(diagnosticObject.GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
                     //[-] diagnosticObjectLocator = new DiagnosticObjectLocator(diagnosticObject, childDiagObjects);
+                    //[+] diagnosticObjectLocator = new DiagnosticObjectLocator(diagnosticObject, childDiagObjects, ClientContext.GetClientContext(Vehicle));
+                    diagnosticObjectLocator = new DiagnosticObjectLocator(diagnosticObject, childDiagObjects, ClientContext.GetClientContext(Vehicle));
                 }
                 else
                 {
@@ -828,12 +834,12 @@ namespace BMW.Rheingold.CoreFramework
                 Log.WarningException("ISTAModule.__DiagnosticObject()", exception);
             }
 
-            //[-] if (diagnosticObjectLocator == null)
+            if (diagnosticObjectLocator == null)
             {
                 Log.Warning("ISTAModule.__DiagnosticObject()", "result was null; maybe your testmodule will die");
                 return null;
             }
-        //[-] return diagnosticObjectLocator;
+            return diagnosticObjectLocator;
         }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
