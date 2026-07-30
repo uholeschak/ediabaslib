@@ -294,6 +294,7 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
         }
     }
 
+    [PreserveSource(Hint = "No change", SignatureModified = true)]
     public ISPELocator[] GetIncomingLinks()
     {
         //[-] ICollection<FaultCode> incomingFaultCodesForDiagObject = DatabaseProviderFactory.Instance.GetIncomingFaultCodesForDiagObject(diagnosticObjectContainer.GetXepDiagnosisObject().Id, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver);
@@ -308,6 +309,7 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
         return list.ToArray();
     }
 
+    [PreserveSource(Hint = "No change", SignatureModified = true)]
     public ISPELocator[] GetIncomingLinks(string incomingLinkName)
     {
         if ("SUSPICIONLINK".Equals(incomingLinkName, StringComparison.OrdinalIgnoreCase))
