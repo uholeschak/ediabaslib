@@ -30,6 +30,7 @@ public static class DatabaseFunctions
 
         return result;
     }
+
     public static string GetNodeClassNameById(Microsoft.Data.Sqlite.SqliteConnection sqliteConnection, string nodeClassId)
     {
         string result = string.Empty;

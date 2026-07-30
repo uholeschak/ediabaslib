@@ -4229,6 +4229,17 @@ namespace PsdzClient
             return diagObjectsList;
         }
 
+        public ICollection<SwiDiagObj> GetParentDiagObjects(SwiDiagObj diagnosisObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        {
+            HashSet<SwiDiagObj> hashSet = new HashSet<SwiDiagObj>();
+            if (!string.IsNullOrEmpty(diagnosisObject.ControlId))
+            {
+                GetParentDiagObjectsByChildControlId(diagnosisObject.ControlId, vehicle, ffmDynamicResolver, getHidden, hashSet);
+            }
+            return hashSet;
+        }
+
+
         public SwiInfoObj GetInfoObjectByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType? linkType = null)
         {
             if (string.IsNullOrEmpty(controlId))
@@ -4943,6 +4954,18 @@ namespace PsdzClient
 
             log.InfoFormat("GetParentDiagObjectControlIdsForControlId IdList: {0}", idList.Count);
             return idList;
+        }
+
+        private void GetParentDiagObjectsByChildControlId(string childControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden, HashSet<SwiDiagObj> diagObjectsCollection)
+        {
+            foreach (string item in GetParentDiagObjectControlIdsForControlId(childControlId))
+            {
+                List<SwiDiagObj> diagObjectsByControlId = GetDiagObjectsByControlId(item, vehicle, ffmDynamicResolver, getHidden);
+                if (diagObjectsByControlId != null && diagObjectsByControlId.Count > 0)
+                {
+                    diagObjectsCollection.AddRangeIfNotContains(diagObjectsByControlId);
+                }
+            }
         }
 
         public string GetDiagObjectObjectId(string diagObjectId)
