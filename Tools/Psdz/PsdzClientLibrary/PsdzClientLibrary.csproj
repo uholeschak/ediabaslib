@@ -79,7 +79,7 @@
     <EmbeddedResource Include="Resources\BMW.Rheingold.CoreFramework.DatabaseProvider.Text.Spe_Text_2.0.xsl" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
     <PackageReference Include="Lib.Harmony" Version="2.4.2" />
     <PackageReference Include="log4net" Version="3.3.2" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.10" />
