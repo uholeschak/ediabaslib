@@ -43,7 +43,7 @@ namespace PsdzClient
             "XML_CSCZ, XML_PLPL";
 
         public const string DiagObjectItems =
-            "ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, CONTROLID, SORT_ORDER";
+            "ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, GROBZEICHEN, HG_NUMMER, HGUG_NUMMER, CONTROLID, SORT_ORDER";
 
         public enum SwiRegisterEnum
         {
@@ -1111,7 +1111,12 @@ namespace PsdzClient
                 Name = swiDiagObj.Name;
                 FailWeight = swiDiagObj.FailWeight;
                 Hidden = swiDiagObj.Hidden;
+                ValidFrom = swiDiagObj.ValidFrom;
+                ValidTo = swiDiagObj.ValidTo;
                 SafetyRelevant = swiDiagObj.SafetyRelevant;
+                Grobzeichen = swiDiagObj.Grobzeichen;
+                Hg_Nummer = swiDiagObj.Hg_Nummer;
+                Hgug_Nummer = swiDiagObj.Hgug_Nummer;   
                 Identifier = swiDiagObj.Identifier;
                 ControlId = swiDiagObj.ControlId;
                 SortOrder = swiDiagObj.SortOrder;
@@ -1122,8 +1127,8 @@ namespace PsdzClient
 
             public SwiDiagObj(string id, string nodeClass,
                 string titleId, string versionNum, string name, string failWeight, string hidden,
-                string validFrom, string validTo,
-                string safetyRelevant, string controlId, string sortOrder, EcuTranslation ecuTranslation)
+                string validFrom, string validTo, string safetyRelevant, string grobzeichen, string hgNummer, string hgugNummer,
+                string controlId, string sortOrder, EcuTranslation ecuTranslation)
             {
                 Id = id;
                 NodeClass = nodeClass;
@@ -1135,6 +1140,9 @@ namespace PsdzClient
                 ValidFrom = validFrom;
                 ValidTo = validTo;
                 SafetyRelevant = safetyRelevant;
+                Grobzeichen = grobzeichen;
+                Hg_Nummer = hgNummer;
+                Hgug_Nummer = hgugNummer;
                 ControlId = controlId;
                 SortOrder = sortOrder;
                 EcuTranslation = ecuTranslation;
@@ -1159,6 +1167,12 @@ namespace PsdzClient
             public string ValidTo { get; set; }
 
             public string SafetyRelevant { get; set; }
+
+            public string Grobzeichen { get; set; }
+
+            public string Hg_Nummer { get; set; }
+
+            public string Hgug_Nummer { get; set; }
 
             public string Identifier { get; set; }
 
@@ -5769,9 +5783,12 @@ namespace PsdzClient
             string validFrom = reader["VALIDFROM"].ToString()?.Trim();
             string validTo = reader["VALIDTO"].ToString()?.Trim();
             string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString()?.Trim();
+            string grobzeichen = reader["GROBZEICHEN"].ToString()?.Trim();
+            string hgNummer = reader["HG_NUMMER"].ToString()?.Trim();
+            string hgugNummer = reader["HGUG_NUMMER"].ToString()?.Trim();
             string controlId = reader["CONTROLID"].ToString()?.Trim();
             string sortOrder = reader["SORT_ORDER"].ToString()?.Trim();
-            return new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, validFrom, validTo, safetyRelevant, controlId, sortOrder, GetTranslation(reader));
+            return new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, validFrom, validTo, safetyRelevant, grobzeichen, hgNummer, hgugNummer, controlId, sortOrder, GetTranslation(reader));
         }
 
         private static EcuTranslation GetTranslation(SqliteDataReader reader, string prefix = "TITLE", string language = null)

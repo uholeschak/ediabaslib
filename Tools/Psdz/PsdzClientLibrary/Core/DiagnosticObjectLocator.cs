@@ -273,17 +273,11 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
                 //[+] return xepDiagnosisObject.SafetyRelevant;
                 return xepDiagnosisObject.SafetyRelevant;
             case "GROBZEICHEN":
-                //[-] return xepDiagnosisObject.Grobzeichen;
-                //[+] return string.Empty;
-                return string.Empty;
+                return xepDiagnosisObject.Grobzeichen;
             case "HG_NUMMER":
-                //[-] return xepDiagnosisObject.Hg_Nummer;
-                //[+] return string.Empty;
-                return string.Empty;
+                return xepDiagnosisObject.Hg_Nummer;
             case "HGUG_NUMMER":
-                //[-] return xepDiagnosisObject.Hgug_Nummer;
-                //[+] return string.Empty;
-                return string.Empty;
+                return xepDiagnosisObject.Hgug_Nummer;
             case "CONTROLID":
                 return xepDiagnosisObject.ControlId.ToString();
             case "TITLE":
