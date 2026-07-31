@@ -159,7 +159,7 @@ public class DiagnosticObject
         diagnosisObject = new PsdzDatabase.SwiDiagObj(diagnosticObjectContainer);
     }
 
-    [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
+    [PreserveSource(Hint = "IXepInfoObject", SignatureModified = true)]
     public ICollection<PsdzDatabase.SwiInfoObj> GetAttachedInfoObjects()
     {
         if (infoObjects != null)
@@ -167,13 +167,16 @@ public class DiagnosticObject
             return infoObjects;
         }
         //[-] infoObjects = DatabaseProviderFactory.Instance.GetInfoObjectsForDiagObject(GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
+        //[+] infoObjects = ClientContext.GetClientContext(vehicle).Database.GetInfoObjectsForDiagObject(GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
         infoObjects = ClientContext.GetClientContext(vehicle).Database.GetInfoObjectsForDiagObject(GetXepDiagnosisObject(), Vehicle, FFMResolver, getHidden: true);
         return infoObjects;
     }
 
-    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
+    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", SignatureModified = true)]
     public PsdzDatabase.SwiDiagObj GetXepDiagnosisObject()
     {
+        //[-] return new XEP_DIAGNOSISOBJECTSEX(diagnosisObject);
+        //[+] return new PsdzDatabase.SwiDiagObj(diagnosisObject);
         return new PsdzDatabase.SwiDiagObj(diagnosisObject);
     }
 }
