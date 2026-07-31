@@ -83,6 +83,8 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
             if (!string.IsNullOrEmpty(xepDiagnosisObject.NodeClass))
             {
                 //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(xepDiagnosisObject.Nodeclass.Value);
+                //[+] return clientContext?.Database?.GetNodeClassNameById(xepDiagnosisObject.NodeClass);
+                return clientContext?.Database?.GetNodeClassNameById(xepDiagnosisObject.NodeClass);
             }
             return string.Empty;
         }
