@@ -43,7 +43,7 @@ namespace PsdzClient
             "XML_CSCZ, XML_PLPL";
 
         public const string DiagObjectItems =
-            "ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, CONTROLID, SORT_ORDER";
+            "ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, CONTROLID, SORT_ORDER";
 
         public enum SwiRegisterEnum
         {
@@ -1122,6 +1122,7 @@ namespace PsdzClient
 
             public SwiDiagObj(string id, string nodeClass,
                 string titleId, string versionNum, string name, string failWeight, string hidden,
+                string validFrom, string validTo,
                 string safetyRelevant, string controlId, string sortOrder, EcuTranslation ecuTranslation)
             {
                 Id = id;
@@ -1131,6 +1132,8 @@ namespace PsdzClient
                 Name = name;
                 FailWeight = failWeight;
                 Hidden = hidden;
+                ValidFrom = validFrom;
+                ValidTo = validTo;
                 SafetyRelevant = safetyRelevant;
                 ControlId = controlId;
                 SortOrder = sortOrder;
@@ -1150,6 +1153,10 @@ namespace PsdzClient
             public string FailWeight { get; set; }
 
             public string Hidden { get; set; }
+
+            public string ValidFrom { get; set; }
+
+            public string ValidTo { get; set; }
 
             public string SafetyRelevant { get; set; }
 
@@ -5759,10 +5766,12 @@ namespace PsdzClient
             string name = reader["NAME"].ToString()?.Trim();
             string failWeight = reader["FAILUREWEIGHT"].ToString()?.Trim();
             string hidden = reader["VERSTECKT"].ToString()?.Trim();
+            string validFrom = reader["VALIDFROM"].ToString()?.Trim();
+            string validTo = reader["VALIDTO"].ToString()?.Trim();
             string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString()?.Trim();
             string controlId = reader["CONTROLID"].ToString()?.Trim();
             string sortOrder = reader["SORT_ORDER"].ToString()?.Trim();
-            return new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant, controlId, sortOrder, GetTranslation(reader));
+            return new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, validFrom, validTo, safetyRelevant, controlId, sortOrder, GetTranslation(reader));
         }
 
         private static EcuTranslation GetTranslation(SqliteDataReader reader, string prefix = "TITLE", string language = null)

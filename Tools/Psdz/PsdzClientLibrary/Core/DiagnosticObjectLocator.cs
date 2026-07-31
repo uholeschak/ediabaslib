@@ -262,12 +262,12 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
                 return xepDiagnosisObject.Hidden;
             case "VALIDFROM":
                 //[-] return xepDiagnosisObject.ValidFrom.ToString();
-                //[+] return string.Empty;
-                return string.Empty;
+                //[+] return xepDiagnosisObject.ValidFrom;
+                return xepDiagnosisObject.ValidFrom;
             case "VALIDTO":
                 //[-] return xepDiagnosisObject.ValidTo.ToString();
-                //[+] return string.Empty;
-                return string.Empty;
+                //[+] return xepDiagnosisObject.ValidTo;
+                return xepDiagnosisObject.ValidTo;
             case "SICHERHEITSRELEVANT":
                 //[-] return xepDiagnosisObject.SicherheitsRelevant.ToString();
                 //[+] return xepDiagnosisObject.SafetyRelevant;
