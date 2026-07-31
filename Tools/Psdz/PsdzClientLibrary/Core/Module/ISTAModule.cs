@@ -1234,7 +1234,9 @@ namespace BMW.Rheingold.Module.ISTA
                 base.textContentManager = _globalModuleInParameter.getParameter("ISTAModule.TextCollection") as TextContentManager;
                 if (base.textContentManager == null)
                 {
-                //[-] base.textContentManager = TextContentManager.Create(DatabaseProviderFactory.Instance, logic.Lang, base.Me);
+                    //[-] base.textContentManager = TextContentManager.Create(DatabaseProviderFactory.Instance, logic.Lang, base.Me);
+                    //[+] base.textContentManager = TextContentManager.Create(DBProvider, logic.Lang, base.Me);
+                    base.textContentManager = TextContentManager.Create(DBProvider, logic.Lang, base.Me);
                 }
             }
         }
