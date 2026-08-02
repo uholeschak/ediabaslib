@@ -402,7 +402,27 @@ namespace SourceCodeSync
                 if (!string.IsNullOrEmpty(testmoduleDir))
                 {
                     Console.WriteLine("Decompiling test modules ...");
-                    string[] testmoduleFiles = Directory.GetFiles(testmoduleDir, "ABL_AUS_*");
+                    string[] allTestmoduleFiles = Directory.GetFiles(testmoduleDir, "*.dll");
+                    List<string> testmoduleFiles = new List<string>();
+                    foreach (string fileName in allTestmoduleFiles)
+                    {
+                        bool nameValid = false;
+                        if (fileName.StartsWith("ABL_AUS_", StringComparison.OrdinalIgnoreCase))
+                        {
+                            nameValid = true;
+                        }
+
+                        if (fileName.StartsWith("ABL_GEN_", StringComparison.OrdinalIgnoreCase))
+                        {
+                            nameValid = true;
+                        }
+
+                        if (nameValid)
+                        {
+                            testmoduleFiles.Add(fileName);
+                        }
+                    }
+
                     string testmoduleSourceDir = Path.Combine(sourceDir, "Testmodule");
                     Dictionary<string, string> moduleReplacements = new Dictionary<string, string>(_textReplacements);
                     foreach (KeyValuePair<string, string> kvp in _moduleTextReplacements)
@@ -410,7 +430,7 @@ namespace SourceCodeSync
                         moduleReplacements.Add(kvp.Key, kvp.Value);
                     }
 
-                    if (!DecompileAssemblies(testmoduleFiles.ToList(), testmoduleSourceDir, overwrite, searchList, moduleReplacements, _moduleTextInsertions, true))
+                    if (!DecompileAssemblies(testmoduleFiles, testmoduleSourceDir, overwrite, searchList, moduleReplacements, _moduleTextInsertions, true))
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
