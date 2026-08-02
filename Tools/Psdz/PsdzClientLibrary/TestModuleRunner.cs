@@ -10,15 +10,15 @@ namespace PsdzClientLibrary;
 [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
 public class TestModuleRunner
 {
-    private string _moduleName;
-    private ModuleParameter _moduleParameters;
-    private PsdzDatabase.SwiInfoObj _swiInfoObj;
+    private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
+    private readonly string _moduleName;
+    private readonly ModuleParameter _moduleParameters;
 
-    public TestModuleRunner(string moduleName, Dictionary<string, object> parametersDict, PsdzDatabase.SwiInfoObj swiInfoObj)
+    public TestModuleRunner(PsdzDatabase.SwiInfoObj swiInfoObj, Dictionary<string, object> parametersDict)
     {
-        _moduleName = moduleName;
-        _moduleParameters = new ModuleParameter(parametersDict);
         _swiInfoObj = swiInfoObj;
+        _moduleName = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identification);
+        _moduleParameters = new ModuleParameter(parametersDict);
     }
 
     private ParameterContainer SetUpModuleInParameters()
