@@ -3,7 +3,7 @@ using PsdzClient.Core;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
-namespace PBMW.Rheingold.CoreFramework.Contracts.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ITherapyPlanItem : INotifyPropertyChanged
