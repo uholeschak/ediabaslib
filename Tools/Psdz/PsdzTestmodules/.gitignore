@@ -1,3 +1,4 @@
 /bin/
 /obj/
-ABL_AUS*.cs
+ABL_AUS_*.cs
+ABL_GEN_*.cs

@@ -4,7 +4,6 @@ using PsdzClient.Core;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Windows.ApplicationModel.Store;
 
 namespace BMW.Authoring.Vehicle
 {
