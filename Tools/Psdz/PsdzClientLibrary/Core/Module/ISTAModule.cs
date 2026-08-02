@@ -1486,7 +1486,7 @@ namespace BMW.Rheingold.Module.ISTA
         [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
         public override PsdzDatabase.SwiInfoObj GetRootModule()
         {
-            throw new NotImplementedException();
+            return base.Me;
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
