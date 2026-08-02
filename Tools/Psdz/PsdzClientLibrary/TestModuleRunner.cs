@@ -14,7 +14,7 @@ public class TestModuleRunner
     private readonly string _moduleName;
     private readonly ModuleParameter _moduleParameters;
 
-    public TestModuleRunner(PsdzDatabase.SwiInfoObj swiInfoObj, Dictionary<string, object> parametersDict)
+    public TestModuleRunner(PsdzDatabase.SwiInfoObj swiInfoObj, Dictionary<string, object> parametersDict = null)
     {
         _swiInfoObj = swiInfoObj;
         _moduleName = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identification);
@@ -24,12 +24,17 @@ public class TestModuleRunner
     private ParameterContainer SetUpModuleInParameters()
     {
         ParameterContainer parameterContainer = new ParameterContainer();
-        Dictionary<string, object> dictionary = _moduleParameters.Clone().callParameter[0] as Dictionary<string, object>;
-        foreach (string key in dictionary.Keys)
+        if (_moduleParameters != null)
         {
-            parameterContainer.setParameter(key, dictionary[key]);
+            Dictionary<string, object> dictionary = _moduleParameters.Clone().callParameter[0] as Dictionary<string, object>;
+            foreach (string key in dictionary.Keys)
+            {
+                parameterContainer.setParameter(key, dictionary[key]);
+            }
+
+            parameterContainer.setParameter("__RheinGoldCoreModuleParameters__", _moduleParameters.Clone());
         }
-        parameterContainer.setParameter("__RheinGoldCoreModuleParameters__", _moduleParameters.Clone());
+
         //parameterContainer.setParameter("__RheinGoldTabModuleISTA__", parent);
         //parameterContainer.setParameter("FASTA", fasta2);
         //parameterContainer.setParameter("MeasurementLauncher", measurementService);
