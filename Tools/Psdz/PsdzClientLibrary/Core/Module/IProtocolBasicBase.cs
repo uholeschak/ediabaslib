@@ -83,7 +83,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 
         //void CreateAndAddVoChange(DateTime startTime, ITherapyPlanReport therapyPlanReport, string faCurrent, string faTarget, LayoutGroup layoutGroup);
 
-        //IMethodCall AddMethodCall(string name, IDictionary<string, string> parameter = null, DateTime? startTime = null);
+        IMethodCall AddMethodCall(string name, IDictionary<string, string> parameter = null, DateTime? startTime = null);
 
         //void AddSwtDeactivation(IEnumerable<SwtDeactivation> swtDeactivationData, LayoutGroup layoutGroup);
 
