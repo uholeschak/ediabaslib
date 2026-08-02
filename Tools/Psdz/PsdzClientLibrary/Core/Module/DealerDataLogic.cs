@@ -236,14 +236,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
         [PreserveSource(SignatureModified = true)]
         internal Contract GetValidContract(string outletNumber, BrandName brandName, bool isBmwDealer, string salesBranch)
         {
-            //[-] BrandName baseBrandName = BrandMapping.GetBaseBrandName(brandName);
-            //[-] Brand brand = BrandMapping.ConvertToBrand(baseBrandName);
-            //[-] Product product = BrandMapping.ConvertToProduct(baseBrandName);
-            //[-] Contract validServiceContract = GetValidServiceContract(outletNumber, brand, product, salesBranch);
-            //[-] if (validServiceContract != null || !isBmwDealer)
-            //[-] {
-            //[-] return validServiceContract;
-            //[-] }
+            BrandName baseBrandName = BrandMapping.GetBaseBrandName(brandName);
+            Brand brand = BrandMapping.ConvertToBrand(baseBrandName);
+            Product product = BrandMapping.ConvertToProduct(baseBrandName);
+            Contract validServiceContract = GetValidServiceContract(outletNumber, brand, product, salesBranch);
+            if (validServiceContract != null || !isBmwDealer)
+            {
+                return validServiceContract;
+            }
 
             return null;
         }
