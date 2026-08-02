@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using PsdzClient.Core.Container;
 using System;
@@ -10,13 +9,20 @@ namespace PsdzClientLibrary;
 [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
 public class TestModuleRunner
 {
+    private readonly ClientContext _clientContext;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly string _moduleName;
     private readonly ModuleParameter _moduleParameters;
 
-    public TestModuleRunner(PsdzDatabase.SwiInfoObj swiInfoObj, Dictionary<string, object> parametersDict = null)
+    public TestModuleRunner(ClientContext clientContext, string controlId, Dictionary<string, object> parametersDict = null)
     {
-        _swiInfoObj = swiInfoObj;
+        _clientContext = clientContext;
+        _swiInfoObj = _clientContext?.Database?.GetInfoObjectByControlId(controlId);
+        if (_swiInfoObj == null)
+        {
+            throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
+        }
+
         _moduleName = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleParameters = new ModuleParameter(parametersDict);
     }
