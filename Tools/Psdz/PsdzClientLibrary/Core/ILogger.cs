@@ -17,6 +17,9 @@ namespace PsdzClient.Core
         string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null);
 
         [PreserveSource(Hint = "For test modules", Added = true)]
+        public void WriteInformation(string msg, params object[] parmArray)
+
+        [PreserveSource(Hint = "For test modules", Added = true)]
         public void WriteError(string msg, params object[] parmArray);
     }
 }

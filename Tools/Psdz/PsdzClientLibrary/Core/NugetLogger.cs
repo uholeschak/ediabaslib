@@ -54,6 +54,12 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Hint = "For test modules", Added = true)]
+        public void WriteInformation(string msg, params object[] parmArray)
+        {
+            Log.Info("General", msg, parmArray);
+        }
+
+        [PreserveSource(Hint = "For test modules", Added = true)]
         public void WriteError(string msg, params object[] parmArray)
         {
             Log.Error("General", msg, parmArray);
