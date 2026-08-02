@@ -52,5 +52,11 @@ namespace PsdzClient.Core
         {
             Log.WarningException(method, msg, exception);
         }
+
+        [PreserveSource(Hint = "For test modules", Added = true)]
+        public void WriteError(string msg, params object[] parmArray)
+        {
+            Log.Error("General", msg, parmArray);
+        }
     }
 }

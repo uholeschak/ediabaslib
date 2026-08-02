@@ -15,5 +15,8 @@ namespace PsdzClient.Core
         void WarningException(string method, string msg, Exception exception);
         [PreserveSource(Hint = "Arguments modified", SignatureModified = true)]
         string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null);
+
+        [PreserveSource(Hint = "For test modules", Added = true)]
+        public void WriteError(string msg, params object[] parmArray);
     }
 }
