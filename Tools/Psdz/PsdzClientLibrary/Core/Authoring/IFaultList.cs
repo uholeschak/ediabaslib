@@ -1,6 +1,4 @@
-﻿using BMW.Authoring;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient.Core;
+﻿using PsdzClient.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 
