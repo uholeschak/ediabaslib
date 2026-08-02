@@ -44,8 +44,8 @@ namespace PsdzClient.Core
             if (xepInfoObj == null || xepInfoObj.Id.ConvertToInt(-1) == -1)
             {
                 //[-] Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identifikator + "(" + xepInfoObj.ControlId + ")"));
-                //[+] Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identification + "(" + xepInfoObj.ControlId + ")"));
-                Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identification + "(" + xepInfoObj.ControlId + ")"));
+                //[+] Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identificator + "(" + xepInfoObj.ControlId + ")"));
+                Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identificator + "(" + xepInfoObj.ControlId + ")"));
                 return new TextContentManagerDummy();
             }
 
@@ -98,8 +98,8 @@ namespace PsdzClient.Core
 
             serviceProgramCollectionRoot = null;
             //[-] Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identifikator, xepInfoObj.ControlId);
-            //[+] Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
-            Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
+            //[+] Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identificator, xepInfoObj.ControlId);
+            Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identificator, xepInfoObj.ControlId);
         }
 
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
@@ -217,8 +217,8 @@ namespace PsdzClient.Core
                 if (num == 0)
                 {
                     //[-] Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identifikator : "null");
-                    //[+] Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identification : "null");
-                    Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identification : "null");
+                    //[+] Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identificator : "null");
+                    Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identificator : "null");
                     item = new LocalizedText("<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>### " + textItemId + " ###</spe:PARAGRAPH></spe:TEXTITEM>", lang[j]);
                 }
                 else

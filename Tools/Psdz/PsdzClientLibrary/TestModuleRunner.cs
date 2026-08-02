@@ -17,7 +17,7 @@ public class TestModuleRunner
     public TestModuleRunner(PsdzDatabase.SwiInfoObj swiInfoObj, Dictionary<string, object> parametersDict = null)
     {
         _swiInfoObj = swiInfoObj;
-        _moduleName = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identification);
+        _moduleName = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleParameters = new ModuleParameter(parametersDict);
     }
 

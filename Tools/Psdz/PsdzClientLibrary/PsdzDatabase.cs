@@ -951,7 +951,7 @@ namespace PsdzClient
         {
             public SwiInfoObj(SwiActionDatabaseLinkType? linkType, SwiActionLinkType? mappedLinkType, string id, string nodeClass, string assembly, string versionNum, string programType, string safetyRelevant,
                 string titleId, string general, string telSrvId, string vehicleComm, string measurement, string hidden, string name, string informationType,
-                string identification, string informationFormat, string siNumber, string targetILevel, string controlId,
+                string identificator, string informationFormat, string siNumber, string targetILevel, string controlId,
                 string infoType, string infoFormat, string docNum, string priority, string identifier, string flowXml, EcuTranslation ecuTranslation)
             {
                 LinkType = linkType;
@@ -970,7 +970,7 @@ namespace PsdzClient
                 Hidden = hidden;
                 Name = name;
                 InformationType = informationType;
-                Identification = identification;
+                Identificator = identificator;
                 InformationFormat = informationFormat;
                 SiNumber = siNumber;
                 TargetILevel = targetILevel;
@@ -1037,7 +1037,7 @@ namespace PsdzClient
 
             public string InformationType { get; set; }
 
-            public string Identification { get; set; }
+            public string Identificator { get; set; }
 
             public string InformationFormat { get; set; }
 
@@ -1070,8 +1070,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiInfoObj: LinkType={0}, Id={1}, Class={2}, PrgType={3}, InformationType={4}, Identification={5}, ILevel={6}, InfoType={7}, Identifier={8}, Flow={9}, Title='{10}'",
-                    LinkType, Id, NodeClass, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, FlowXml, EcuTranslation.GetTitle(language)));
+                    "SwiInfoObj: LinkType={0}, Id={1}, Class={2}, PrgType={3}, InformationType={4}, Identificator={5}, ILevel={6}, InfoType={7}, Identifier={8}, Flow={9}, Title='{10}'",
+                    LinkType, Id, NodeClass, ProgramType, InformationType, Identificator, TargetILevel, InfoType, Identifier, FlowXml, EcuTranslation.GetTitle(language)));
 #if false
                 if (!string.IsNullOrEmpty(FlowXml))
                 {
@@ -5755,7 +5755,7 @@ namespace PsdzClient
             string hidden = reader["VERSTECKT"].ToString()?.Trim();
             string name = reader["NAME"].ToString()?.Trim();
             string informationType = reader["INFORMATIONSTYP"].ToString()?.Trim();
-            string identification = reader["IDENTIFIKATOR"].ToString()?.Trim();
+            string identificator = reader["IDENTIFIKATOR"].ToString()?.Trim();
             string informationFormat = reader["INFORMATIONSFORMAT"].ToString()?.Trim();
             string siNumber = reader["SINUMMER"].ToString()?.Trim();
             string targetILevel = reader["ZIELISTUFE"].ToString()?.Trim();
@@ -5767,7 +5767,7 @@ namespace PsdzClient
             string identifier = reader["IDENTIFIER"].ToString()?.Trim();
             string flowXml = reader["FLOWXML"].ToString()?.Trim();
             return new SwiInfoObj(linkType, mappedLinkType, id, nodeClass, assembly, versionNum, programType, safetyRelevant, titleId, general,
-                telSrvId, vehicleComm, measurement, hidden, name, informationType, identification, informationFormat, siNumber, targetILevel, controlId,
+                telSrvId, vehicleComm, measurement, hidden, name, informationType, identificator, informationFormat, siNumber, targetILevel, controlId,
                 infoType, infoFormat, docNum, priority, identifier, flowXml, GetTranslation(reader));
         }
 

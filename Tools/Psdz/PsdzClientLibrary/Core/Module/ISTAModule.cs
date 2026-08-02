@@ -1264,8 +1264,8 @@ namespace BMW.Rheingold.Module.ISTA
             if (xepInfoObject != null)
             {
                 //[-] if (!string.IsNullOrEmpty(xepInfoObject.Identifikator))
-                //[+] if (!string.IsNullOrEmpty(xepInfoObject.Identification))
-                if (!string.IsNullOrEmpty(xepInfoObject.Identification))
+                //[+] if (!string.IsNullOrEmpty(xepInfoObject.Identifier))
+                if (!string.IsNullOrEmpty(xepInfoObject.Identifier))
                 {
                     //[-] decimal? generell = xepInfoObject.Generell;
                     //[+] string generell = xepInfoObject.General;
@@ -1279,8 +1279,8 @@ namespace BMW.Rheingold.Module.ISTA
                     }
 
                     //[-] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identifikator);
-                    //[+] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identification);
-                    string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identification);
+                    //[+] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identificator);
+                    string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identificator);
                     Log.Info("ISTAModule.callModuleRef()", "submodule to call: {0}", text);
                     try
                     {
@@ -1304,8 +1304,8 @@ namespace BMW.Rheingold.Module.ISTA
                         }
 
                         //[-] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identifikator) || !flag)
-                        //[+] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identification) || !flag)
-                        if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identification) || !flag)
+                        //[+] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identificator) || !flag)
+                        if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identificator) || !flag)
                         {
                             moduleStep = FastaCreateAndAddModuleStepTo(inParameters);
                         }
@@ -1322,8 +1322,8 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             string name = obj.GetType().Name;
                             //[-] ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identifikator);
-                            //[+] ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identification);
-                            ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identification);
+                            //[+] ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identificator);
+                            ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identificator);
                             IFastaGrouping fastaGrouping = null;
                             if (_globalTabModuleISTA != null)
                             {
