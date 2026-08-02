@@ -407,12 +407,13 @@ namespace SourceCodeSync
                     foreach (string fileName in allTestmoduleFiles)
                     {
                         bool nameValid = false;
-                        if (fileName.StartsWith("ABL_AUS_", StringComparison.OrdinalIgnoreCase))
+                        string fileBaseName = Path.GetFileName(fileName);
+                        if (fileBaseName.StartsWith("ABL_AUS_", StringComparison.OrdinalIgnoreCase))
                         {
                             nameValid = true;
                         }
 
-                        if (fileName.StartsWith("ABL_GEN_", StringComparison.OrdinalIgnoreCase))
+                        if (fileBaseName.StartsWith("ABL_GEN_", StringComparison.OrdinalIgnoreCase))
                         {
                             nameValid = true;
                         }
