@@ -95,7 +95,7 @@
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.4.0.6" />
     <PackageReference Include="Xamarin.AndroidX.ViewPager2" Version="1.1.0.11" />
     <PackageReference Include="Xamarin.AndroidX.WebKit" Version="1.16.0.1" />
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.14.0.5" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.14.0.6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\CustomGaugeNetBinding\CustomGaugeNetBinding.csproj" />
