@@ -86,7 +86,7 @@
     <ProjectReference Include="..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
     <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" GeneratePathProperty="true">
         <ExcludeAssets>all</ExcludeAssets>
     </PackageReference>
