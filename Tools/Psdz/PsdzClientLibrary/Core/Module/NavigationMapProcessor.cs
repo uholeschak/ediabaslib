@@ -20,9 +20,7 @@ namespace BMW.Rheingold.Module.ISTA
     internal class NavigationMapProcessor : INavigationMapProcessor
     {
         private readonly IEcuKom ecuKom;
-
         private ILogic logic;
-
         internal NavigationMapProcessor(IEcuKom ecuKom, ILogic logic)
         {
             this.ecuKom = ecuKom;
@@ -39,6 +37,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("NavigationMapProcessor.DecodeFromBase32()", exception);
             }
+
             return string.Empty;
         }
 
@@ -51,11 +50,13 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.Info("NavigationMapProcessor.GetINIActivationCodes()", "vin7 was null or empty or was in incorrect length");
                 return;
             }
+
             if (string.IsNullOrEmpty(vin17) || vin17.Length != 17)
             {
                 Log.Info("NavigationMapProcessor.GetINIActivationCodes()", "vin17 was null or empty or was in incorrect length");
                 return;
             }
+
             try
             {
                 //[-] List<TypeFSCProvidedDto> list = new SwtProcessorV3Service(new SWTProcessorV3Impl(null)).GetFSCList(vin7, vin17, new string[1] { sHaendlernummer }, TypeResourceIndicatorDto.INI, applicationNo, upgradeIndex, 3)?.ToList();
@@ -65,6 +66,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return;
                 }
+
                 List<TypeFSCProvidedDto> list2 = new List<TypeFSCProvidedDto>();
                 foreach (TypeFSCProvidedDto fsc in list)
                 {
@@ -105,6 +107,7 @@ namespace BMW.Rheingold.Module.ISTA
                         }
                     }
                 }
+
                 Log.Info("NavigationMapProcessor.GetActivationCodes()", "Output SwIds: " + string.Join(", ", swIds) + ". N. SwIds: " + swIds.Count);
             }
             catch (Exception exception)
@@ -115,7 +118,12 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void GetActivationCodes(string svin, string sHaendlernummer, out List<string> swIds, out List<string> activationCodes)
         {
-            string[] sHaendlernummer2 = (string.IsNullOrEmpty(sHaendlernummer) ? null : new string[1] { sHaendlernummer });
+            string[] sHaendlernummer2 = (string.IsNullOrEmpty(sHaendlernummer) ? null : new string[1]
+            {
+                sHaendlernummer
+            }
+
+            );
             GetActivationCodes(svin, sHaendlernummer2, out swIds, out activationCodes);
         }
 
@@ -157,18 +165,21 @@ namespace BMW.Rheingold.Module.ISTA
                             brand2 = Brand.BMW;
                             break;
                     }
+
                     Product product2;
                     if (!(product == "motorcycle"))
                     {
                         if (!(product == "vehicle"))
                         {
                         }
+
                         product2 = Product.Vehicle;
                     }
                     else
                     {
                         product2 = Product.Motorcycle;
                     }
+
                     BrandName? brandName = BrandMapping.ConvertToBrandName(brand2, product2);
                     Contract contract = null;
                     //[-] contract = ((brandName != EnumConverter.ConvertBrandNameToContractsBrandName(BrandName.TOYOTA)) ? (brandName.HasValue ? dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, "T") : null) : dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, null));
@@ -177,6 +188,7 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Info("NavigationMapProcessor.GetInternationalDealerNumber()", "international dpno was: {0}", contract.internationalDealerNumber);
                         return contract.internationalDealerNumber;
                     }
+
                     Log.Info("NavigationMapProcessor.GetInternationalDealerNumber()", "No valid contract found, dpno will be AG100");
                 }
             }
@@ -184,13 +196,14 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("NavigationMapProcessor.GetInternationalDealerNumber()", exception);
             }
+
             return "AG100";
         }
 
         public void GetSoftwareIdAndMapName(string sSGBMID, out string sSoftwareID, out string sMapName)
         {
             Log.Info("NavigationMapProcessor.GetSoftwareIdAndMapName()", "Input sSGBMID: " + sSGBMID);
-            //[-] IEnumerable<SgbmIdType> hddLogisticsEntries = NavigationMapProcessor.getHddLogisticsEntries(sSGBMID);
+            //[-] IEnumerable<SgbmIdType> hddLogisticsEntries = BMW.Rheingold.InfoProvider.NavigationMapProcessor.getHddLogisticsEntries(sSGBMID);
             //[-] SgbmIdType sgbmIdType = SelectHddLogisticsEntry(hddLogisticsEntries, sSGBMID, ecuKom);
             //[+] SgbmIdType sgbmIdType = null;
             SgbmIdType sgbmIdType = null;
@@ -236,10 +249,12 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return null;
             }
+
             if (entries.Count() == 1)
             {
                 return entries.First();
             }
+
             Log.Info("NavigationMapProcessor.SelectHddLogisticsEntry()", "No. of found entries for SGBMID '{0}': {1}", sgbmId, entries.Count());
             if (ecuKom != null)
             {
@@ -250,10 +265,10 @@ namespace BMW.Rheingold.Module.ISTA
                     if (!string.IsNullOrEmpty(compId))
                     {
                         Log.Info("NavigationMapProcessor.SelectHddLogisticsEntry()", "HDD compatibility identifier found: {0}", compId);
-                        SgbmIdType sgbmIdType = (from elem in entries
-                                                 where elem.EcuVariant != null && elem.EcuVariant.Any((EcuVariantType ecuVariant) => string.Equals(compId, ecuVariant.CompatibilityIdentifier, StringComparison.OrdinalIgnoreCase))
-                                                 orderby elem.SWID_FscShort descending
-                                                 select elem).FirstOrDefault();
+                        SgbmIdType sgbmIdType = (
+                            from elem in entries
+                            where elem.EcuVariant != null && elem.EcuVariant.Any((EcuVariantType ecuVariant) => string.Equals(compId, ecuVariant.CompatibilityIdentifier, StringComparison.OrdinalIgnoreCase))orderby elem.SWID_FscShort descending
+                            select elem).FirstOrDefault();
                         if (sgbmIdType != null)
                         {
                             Log.Info("NavigationMapProcessor.SelectHddLogisticsEntry()", "Logistics entry selected due to compatibility identifier. ([SWID_FscShort: '{0}', MapName: '{1}'])", sgbmIdType.SWID_FscShort, sgbmIdType.name);
@@ -262,6 +277,7 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
+
             Log.Warning("NavigationMapProcessor.SelectHddLogisticsEntry()", "Correct logistics entry could not be determined. First entry will be returned.");
             return entries.First();
         }
