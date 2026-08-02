@@ -229,8 +229,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
         internal Contract GetValidContract(string outletNumber, BrandName brandName, string salesBranch)
         {
             //[-] return GetValidContract(outletNumber, brandName, !CoreFramework.OSSModeActive, salesBranch);
-            //[+] return null;
-            return null;
+            //[+] return GetValidContract(outletNumber, brandName, true, salesBranch);
+            return GetValidContract(outletNumber, brandName, true, salesBranch);
         }
 
         [PreserveSource(SignatureModified = true)]
