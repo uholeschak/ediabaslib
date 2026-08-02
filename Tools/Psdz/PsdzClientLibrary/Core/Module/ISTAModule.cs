@@ -354,7 +354,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (navigationMapProcessor == null)
                 {
-                //[-] navigationMapProcessor = new NavigationMapProcessor(EcuKom, logic);
+                    navigationMapProcessor = new NavigationMapProcessor(EcuKom, logic);
                 }
 
                 return navigationMapProcessor;
