@@ -14,6 +14,7 @@ using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.InfoProvider.HDD.HDDLookup;
 using BMW.Rheingold.InfoProvider.SWT.DTOs;
+using PsdzClient;
 
 namespace BMW.Rheingold.Module.ISTA
 {
@@ -84,6 +85,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public void GetActivationCodes(string svin, string[] sHaendlernummer, out List<string> swIds, out List<string> activationCodes)
         {
             swIds = new List<string>();
@@ -116,6 +118,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public void GetActivationCodes(string svin, string sHaendlernummer, out List<string> swIds, out List<string> activationCodes)
         {
             string[] sHaendlernummer2 = (string.IsNullOrEmpty(sHaendlernummer) ? null : new string[1]
