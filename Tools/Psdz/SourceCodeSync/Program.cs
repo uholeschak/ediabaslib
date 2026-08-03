@@ -128,7 +128,7 @@ namespace SourceCodeSync
 
         private static readonly Dictionary<string, string> _moduleTextReplacements = new Dictionary<string, string>
         {
-            { "using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;", "using BMW.Rheingold.CoreFramework.Contracts;" },
+            { "using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;", "" },
             { "GetProperty(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")", "GetProperty<string>(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")" }
         };
 
@@ -136,7 +136,8 @@ namespace SourceCodeSync
         {
             "using PsdzClient.Core;",
             "using PsdzClient.Core.Container;",
-            "using PsdzClient.Programming;"
+            "using PsdzClient.Programming;",
+            "using BMW.Rheingold.Psdz;"
         };
 
         private const string _commentedRemoveCodeMarker = "//[-]";
