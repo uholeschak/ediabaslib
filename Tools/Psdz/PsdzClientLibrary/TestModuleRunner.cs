@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
+using EdiabasLib;
 using PsdzClient;
 using PsdzClient.Core.Container;
 using System;
@@ -50,7 +51,14 @@ public class TestModuleRunner
             return null;
         }
 
-        return Assembly.Load(assemblyModuleName);
+        string appDir = EdiabasNet.AssemblyDirectory;
+        if (string.IsNullOrEmpty(appDir))
+        {
+            return null;
+        }
+
+        string assemblyPath = System.IO.Path.Combine(appDir, assemblyModuleName);
+        return Assembly.LoadFrom(assemblyPath);
     }
 
     private ParameterContainer SetUpModuleInParameters()
