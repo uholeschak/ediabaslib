@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using PsdzClient.Programming;
 
 namespace PsdzClientLibrary;
 
@@ -20,7 +21,7 @@ public class TestModuleRunner
 
     public ModuleParameter ModuleParameters => _moduleParameters;
 
-    public TestModuleRunner(ClientContext clientContext, string controlId, Dictionary<string, object> parametersDict = null)
+    public TestModuleRunner(ClientContext clientContext, PsdzContext psdzContext, string controlId, Dictionary<string, object> parametersDict = null)
     {
         _clientContext = clientContext;
         _swiInfoObj = _clientContext?.Database?.GetInfoObjectByControlId(controlId);
@@ -32,6 +33,7 @@ public class TestModuleRunner
         _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
         _moduleParameters = new ModuleParameter(parametersDict);
+        _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, psdzContext.VecInfo);
     }
 
     public bool Run()

@@ -141,7 +141,7 @@ namespace PsdzClient
             checkBoxGenServiceModules.Enabled = !active && !hostRunning;
             buttonVehicleSearch.Enabled = ipEnabled && !editMode;
             buttonInternalTest.Enabled = !active && !editMode;
-            buttonTestModule.Enabled = ipEnabled && !editMode;
+            buttonTestModule.Enabled = !active && hostRunning && !editMode;
             buttonDecryptFile.Enabled = !active;
             buttonDecryptFile.Text = editMode ? Resources.ButtonEncrypt : Resources.ButtonDecrypt;
             buttonStopHost.Enabled = !active && hostRunning && !editMode;
