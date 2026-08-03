@@ -34,7 +34,7 @@ public class TestModuleRunner
         _moduleParameters = new ModuleParameter(parametersDict);
     }
 
-    public bool RunModule()
+    public bool Run()
     {
         try
         {

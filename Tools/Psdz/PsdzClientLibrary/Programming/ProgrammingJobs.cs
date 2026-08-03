@@ -21,6 +21,7 @@ using log4net.Config;
 using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Psdz;
+using PsdzClientLibrary;
 using PsdzClientLibrary.Resources;
 using System;
 using System.Collections.Generic;
@@ -1553,6 +1554,32 @@ namespace PsdzClient.Programming
             }
 
             return result;
+        }
+
+        public bool RunTestModule(CancellationTokenSource cts, string controlId, Dictionary<string, object> parametersDict)
+        {
+            SetThreadContextId();
+            try
+            {
+                if (string.IsNullOrEmpty(controlId))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed: controlId is null or empty");
+                    return false;
+                }
+
+                TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, controlId, parametersDict);
+                if (!testModuleRunner.Run())
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed for controlId: {0}", controlId);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule Exception: {0}", ex.Message);
+                return false;
+            }
+            return true;
         }
 
         public bool VehicleFunctions(CancellationTokenSource cts, OperationType operationType)
