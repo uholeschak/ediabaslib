@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using EdiabasLib;
 using PsdzClient;
+using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,10 @@ public class TestModuleRunner
     private readonly ClientContext _clientContext;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly string _moduleName;
+    private readonly string _moduleTypeName;
     private readonly ModuleParameter _moduleParameters;
+
+    public ModuleParameter ModuleParameters => _moduleParameters;
 
     public TestModuleRunner(ClientContext clientContext, string controlId, Dictionary<string, object> parametersDict = null)
     {
@@ -25,8 +29,50 @@ public class TestModuleRunner
             throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
         }
 
-        _moduleName = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
+        _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
+        _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
         _moduleParameters = new ModuleParameter(parametersDict);
+    }
+
+    public bool RunModule()
+    {
+        try
+        {
+            ParameterContainer inParameters = SetUpModuleInParameters();
+            ParameterContainer outParameters = new ParameterContainer();
+            ParameterContainer inAndOutParameters = new ParameterContainer();
+
+            //Vehicle vehicle = _moduleParameters.getParameter(ModuleParameter.ParameterName.Vehicle) as Vehicle;
+
+            Assembly assembly = GetModuleAssembly(_moduleName);
+            if (assembly == null)
+            {
+                return false;
+            }
+
+            Type type = assembly.GetType(_moduleTypeName, throwOnError: true);
+            IIstaModule instance = type?.CreateInstance(new Type[1] { typeof(ParameterContainer) }, new object[1] { inParameters }) as IIstaModule;
+            if (instance == null)
+            {
+                return false;
+            }
+
+            MethodInfo method = instance.GetType().GetMethod("run");
+            if (method == null)
+            {
+                return false;
+            }
+            method.Invoke(instance, new object[3] { inParameters, outParameters, inAndOutParameters });
+
+            _moduleParameters.setParameter(ModuleParameter.ParameterName.OutParameters, outParameters);
+            _moduleParameters.setParameter(ModuleParameter.ParameterName.InAndOutParameters, inAndOutParameters);
+            _moduleParameters.setParameter(ModuleParameter.ParameterName.ResultSet, instance.ResultSet);
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        return true;
     }
 
     public static Assembly GetModuleAssembly(string cleanIstaModuleName)
