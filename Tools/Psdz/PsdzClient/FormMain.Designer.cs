@@ -63,6 +63,7 @@ namespace PsdzClient
             textBoxStatus = new System.Windows.Forms.RichTextBox();
             saveFileDialogDecrypt = new System.Windows.Forms.SaveFileDialog();
             ipAddressControlVehicleIp = new PsdzClient.Controls.IpAddressControl();
+            buttonTestModule = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -267,12 +268,20 @@ namespace PsdzClient
             resources.ApplyResources(ipAddressControlVehicleIp, "ipAddressControlVehicleIp");
             ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
             // 
+            // buttonTestModule
+            // 
+            resources.ApplyResources(buttonTestModule, "buttonTestModule");
+            buttonTestModule.Name = "buttonTestModule";
+            buttonTestModule.UseVisualStyleBackColor = true;
+            buttonTestModule.Click += buttonTestModule_Click;
+            // 
             // FormMain
             // 
             AcceptButton = buttonClose;
             resources.ApplyResources(this, "$this");
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonAbort;
+            Controls.Add(buttonTestModule);
             Controls.Add(ipAddressControlVehicleIp);
             Controls.Add(textBoxStatus);
             Controls.Add(buttonDecryptFile);
@@ -344,6 +353,7 @@ namespace PsdzClient
         private System.Windows.Forms.RichTextBox textBoxStatus;
         private System.Windows.Forms.SaveFileDialog saveFileDialogDecrypt;
         private Controls.IpAddressControl ipAddressControlVehicleIp;
+        private System.Windows.Forms.Button buttonTestModule;
     }
 }
 

@@ -135,6 +135,12 @@
   <data name="NoResponse" xml:space="preserve">
     <value>No response</value>
   </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>Operation failed.</value>
+  </data>
+  <data name="OperationSuccess" xml:space="preserve">
+    <value>Operation successfully.</value>
+  </data>
   <data name="VehiceNotDetected" xml:space="preserve">
     <value>Vehicle not detected</value>
   </data>

@@ -408,7 +408,7 @@ namespace PsdzClient
 
             if (wait)
             {
-                bool invokeResult = (bool) Invoke(new Func<bool>(() =>
+                bool invokeResult = (bool)Invoke(new Func<bool>(() =>
                 {
                     DialogResult dialogResult = MessageBox.Show(this, message, Text, buttons);
                     switch (dialogResult)
@@ -640,6 +640,17 @@ namespace PsdzClient
         private string InternalTest(string configurationContainerXml, Dictionary<string, string> runOverrideDict)
         {
             return _programmingJobs.ExecuteContainerXml(_cts, configurationContainerXml, runOverrideDict);
+        }
+
+        private async Task<bool> RunTestModuleTask(string controlId, Dictionary<string, object> parametersDict = null)
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => RunTestModule(controlId, parametersDict)).ConfigureAwait(false);
+        }
+
+        private bool RunTestModule(string controlId, Dictionary<string, object> parametersDict = null)
+        {
+            return _programmingJobs.RunTestModule(_cts, controlId, parametersDict);
         }
 
         private async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom)
@@ -1084,6 +1095,40 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
+        private void buttonTestModule_Click(object sender, EventArgs e)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            UpdateStatus(sb.ToString());
+            _cts = new CancellationTokenSource();
+            RunTestModuleTask("2000370015209").ContinueWith(task =>
+            {
+                TaskActive = false;
+                _cts.Dispose();
+                _cts = null;
+
+                BeginInvoke((Action)(() =>
+                {
+                    if (!task.Result)
+                    {
+                        sb.AppendLine(Resources.OperationFailed);
+                    }
+                    else
+                    {
+                        sb.AppendLine(Resources.OperationSuccess);
+                    }
+
+                    UpdateStatus(sb.ToString());
+                }));
+            });
+
+            TaskActive = true;
+            UpdateDisplay();
+        }
 
         private void buttonDecryptFile_Click(object sender, EventArgs e)
         {

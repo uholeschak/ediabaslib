@@ -146,7 +146,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;textBoxIstaFolder.ZOrder" xml:space="preserve">
-    <value>26</value>
+    <value>27</value>
   </data>
   <data name="buttonClose.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -176,7 +176,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonClose.ZOrder" xml:space="preserve">
-    <value>25</value>
+    <value>26</value>
   </data>
   <data name="buttonAbort.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -206,7 +206,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonAbort.ZOrder" xml:space="preserve">
-    <value>24</value>
+    <value>25</value>
   </data>
   <metadata name="folderBrowserDialogIsta.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -239,7 +239,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonIstaFolder.ZOrder" xml:space="preserve">
-    <value>23</value>
+    <value>24</value>
   </data>
   <data name="buttonStopHost.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 112</value>
@@ -266,7 +266,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonStopHost.ZOrder" xml:space="preserve">
-    <value>22</value>
+    <value>23</value>
   </data>
   <metadata name="timerUpdate.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>199, 17</value>
@@ -299,7 +299,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelVehicleIp.ZOrder" xml:space="preserve">
-    <value>21</value>
+    <value>22</value>
   </data>
   <data name="buttonConnect.Location" type="System.Drawing.Point, System.Drawing">
     <value>109, 112</value>
@@ -326,7 +326,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonConnect.ZOrder" xml:space="preserve">
-    <value>20</value>
+    <value>21</value>
   </data>
   <data name="buttonDisconnect.Location" type="System.Drawing.Point, System.Drawing">
     <value>205, 112</value>
@@ -353,7 +353,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonDisconnect.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>20</value>
   </data>
   <data name="buttonModILevel.Location" type="System.Drawing.Point, System.Drawing">
     <value>397, 112</value>
@@ -380,7 +380,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonModILevel.ZOrder" xml:space="preserve">
-    <value>18</value>
+    <value>19</value>
   </data>
   <data name="labelIstaFolder.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -410,7 +410,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelIstaFolder.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>18</value>
   </data>
   <data name="buttonModFa.Location" type="System.Drawing.Point, System.Drawing">
     <value>493, 112</value>
@@ -437,7 +437,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonModFa.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>17</value>
   </data>
   <data name="buttonExecuteTal.Location" type="System.Drawing.Point, System.Drawing">
     <value>589, 112</value>
@@ -464,7 +464,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonExecuteTal.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>16</value>
   </data>
   <data name="progressBarEvent.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -491,7 +491,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;progressBarEvent.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>15</value>
   </data>
   <data name="labelProgressEvent.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -524,7 +524,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelProgressEvent.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>14</value>
   </data>
   <data name="checkBoxIcom.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -554,7 +554,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxIcom.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>13</value>
   </data>
   <data name="buttonVehicleSearch.Location" type="System.Drawing.Point, System.Drawing">
     <value>397, 78</value>
@@ -581,7 +581,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonVehicleSearch.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="buttonCreateOptions.Location" type="System.Drawing.Point, System.Drawing">
     <value>301, 112</value>
@@ -608,7 +608,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonCreateOptions.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="checkedListBoxOptions.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -635,7 +635,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkedListBoxOptions.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="comboBoxOptionType.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -662,7 +662,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;comboBoxOptionType.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -692,7 +692,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="labelLanguage.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -722,7 +722,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelLanguage.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="comboBoxLanguage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -749,7 +749,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;comboBoxLanguage.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="buttonInternalTest.Location" type="System.Drawing.Point, System.Drawing">
     <value>493, 78</value>
@@ -776,7 +776,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonInternalTest.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <metadata name="openFileDialogTest.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>319, 17</value>
@@ -815,10 +815,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxGenServiceModules.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="buttonDecryptFile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>589, 78</value>
+    <value>680, 78</value>
   </data>
   <data name="buttonDecryptFile.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -842,7 +842,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonDecryptFile.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <metadata name="openFileDialogDecrypt.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>473, 17</value>
@@ -881,7 +881,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;textBoxStatus.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <metadata name="saveFileDialogDecrypt.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>647, 17</value>
@@ -917,6 +917,36 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ipAddressControlVehicleIp.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="buttonTestModule.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonTestModule.Location" type="System.Drawing.Point, System.Drawing">
+    <value>589, 78</value>
+  </data>
+  <data name="buttonTestModule.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
+  </data>
+  <data name="buttonTestModule.Size" type="System.Drawing.Size, System.Drawing">
+    <value>88, 27</value>
+  </data>
+  <data name="buttonTestModule.TabIndex" type="System.Int32, mscorlib">
+    <value>28</value>
+  </data>
+  <data name="buttonTestModule.Text" xml:space="preserve">
+    <value>Testmod</value>
+  </data>
+  <data name="&gt;&gt;buttonTestModule.Name" xml:space="preserve">
+    <value>buttonTestModule</value>
+  </data>
+  <data name="&gt;&gt;buttonTestModule.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonTestModule.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;buttonTestModule.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

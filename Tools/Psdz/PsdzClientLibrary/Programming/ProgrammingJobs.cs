@@ -1556,7 +1556,7 @@ namespace PsdzClient.Programming
             return result;
         }
 
-        public bool RunTestModule(CancellationTokenSource cts, string controlId, Dictionary<string, object> parametersDict)
+        public bool RunTestModule(CancellationTokenSource cts, string controlId, Dictionary<string, object> parametersDict = null)
         {
             SetThreadContextId();
             try
