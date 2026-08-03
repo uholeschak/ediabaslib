@@ -26,12 +26,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PsdzClientLibrary\PsdzClientLibrary.csproj" />
+    <ProjectReference Include="..\..\PsdzClientLibrary\PsdzClientLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="**/*.cs" />
-    <Compile Include="ABL_AUS_*.cs" />
+    <Compile Include="..\Source\ABL_AUS_*.cs" />
   </ItemGroup>
 
 </Project>
