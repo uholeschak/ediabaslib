@@ -20,8 +20,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         string IntegrationLevelTarget { get; }
 
-        [PreserveSource(Hint = "IProgrammingApi", Placeholder = true)]
-        PlaceholderType ProgrammingApi { get; }
+        IProgrammingApi ProgrammingApi { get; }
 
         IAPISecurity APISecurity { get; }
 
