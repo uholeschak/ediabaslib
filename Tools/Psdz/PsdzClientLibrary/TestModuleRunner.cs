@@ -3,6 +3,7 @@ using PsdzClient;
 using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace PsdzClientLibrary;
 
@@ -25,6 +26,31 @@ public class TestModuleRunner
 
         _moduleName = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleParameters = new ModuleParameter(parametersDict);
+    }
+
+    public static Assembly GetModuleAssembly(string cleanIstaModuleName)
+    {
+        if (string.IsNullOrEmpty(cleanIstaModuleName))
+        {
+            return null;
+        }
+
+        string assemblyModuleName = null;
+        if (cleanIstaModuleName.StartsWith("ABL_AUS_"))
+        {
+            assemblyModuleName = "TestmodulesAblAus.dll";
+        }
+        else if (cleanIstaModuleName.StartsWith("ABL_GEN_"))
+        {
+            assemblyModuleName = "TestmodulesAblGen.dll";
+        }
+
+        if (string.IsNullOrEmpty(assemblyModuleName))
+        {
+            return null;
+        }
+
+        return Assembly.Load(assemblyModuleName);
     }
 
     private ParameterContainer SetUpModuleInParameters()
