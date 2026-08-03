@@ -32,7 +32,8 @@ public class TestModuleRunner
 
         _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
-        _moduleParameters = new ModuleParameter(parametersDict);
+        Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();
+        _moduleParameters = new ModuleParameter(useParametersDict);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, psdzContext.VecInfo);
     }
 
@@ -112,16 +113,13 @@ public class TestModuleRunner
     private ParameterContainer SetUpModuleInParameters()
     {
         ParameterContainer parameterContainer = new ParameterContainer();
-        if (_moduleParameters != null)
+        Dictionary<string, object> dictionary = _moduleParameters.Clone().callParameter[0] as Dictionary<string, object>;
+        foreach (string key in dictionary.Keys)
         {
-            Dictionary<string, object> dictionary = _moduleParameters.Clone().callParameter[0] as Dictionary<string, object>;
-            foreach (string key in dictionary.Keys)
-            {
-                parameterContainer.setParameter(key, dictionary[key]);
-            }
-
-            parameterContainer.setParameter("__RheinGoldCoreModuleParameters__", _moduleParameters.Clone());
+            parameterContainer.setParameter(key, dictionary[key]);
         }
+
+        parameterContainer.setParameter("__RheinGoldCoreModuleParameters__", _moduleParameters.Clone());
 
         //parameterContainer.setParameter("__RheinGoldTabModuleISTA__", parent);
         //parameterContainer.setParameter("FASTA", fasta2);
