@@ -1105,7 +1105,7 @@ namespace PsdzClient
             StringBuilder sb = new StringBuilder();
             UpdateStatus(sb.ToString());
             _cts = new CancellationTokenSource();
-            RunTestModuleTask("2000370015209").ContinueWith(task =>
+            RunTestModuleTask("20000370015209").ContinueWith(task =>
             {
                 TaskActive = false;
                 _cts.Dispose();
