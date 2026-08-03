@@ -35,7 +35,8 @@
     <Compile Remove="..\Source\ABL_GEN_AT*.cs" />
     <Compile Remove="..\Source\ABL_GEN_AU*.cs" />
     <Compile Remove="..\Source\ABL_GEN_G*.cs" />
-    <Compile Remove="..\Source\ABL_GEN_COMPLETE_CODE.cs" />
+    <Compile Remove="..\Source\ABL_GEN_G*.cs" />
+    <Compile Remove="..\Source\ABL_GEN_BIKE_SET_SERVICEDATA*" />
     <Compile Remove="..\Source\ABL_GEN_LIB_BIKE_UXP_COMPLETECODING.cs" />
     <Compile Remove="..\Source\ABL_GEN_RESTOREINDIVDATA.cs" />
   </ItemGroup>
