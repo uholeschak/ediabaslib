@@ -37,6 +37,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
+using PsdzClientLibrary;
 
 #pragma warning disable CS0649, CS0219, CS0809, CS0618, CS0169
 namespace BMW.Rheingold.Module.ISTA
@@ -1284,14 +1285,14 @@ namespace BMW.Rheingold.Module.ISTA
                     Log.Info("ISTAModule.callModuleRef()", "submodule to call: {0}", text);
                     try
                     {
-                        //[-] string text2 = text.Replace("BMW.Rheingold.Module.ISTA.", string.Empty);
+                        string text2 = text.Replace("BMW.Rheingold.Module.ISTA.", string.Empty);
                         //[-] Assembly assembly = PatchLoaderUtility.CheckPatchServiceProgram(text2, logic.VersionInfo.DataBaseDiagDocVersion);
-                        //[-] if (assembly == null)
-                        //[-] {
-                        //[-] assembly = GetModuleAssembly(text2);
-                        //[-] }
-                        //[+] Assembly assembly = Assembly.GetExecutingAssembly();
-                        Assembly assembly = Assembly.GetExecutingAssembly();
+                        //[+] Assembly assembly = null;
+                        Assembly assembly = null;
+                        if (assembly == null)
+                        {
+                            assembly = GetModuleAssembly(text2);
+                        }
                         IModuleStep moduleStep = null;
                         bool flag = false;
                         if (inParameters.Parameter.ContainsKey("PreventProtocol"))
@@ -1441,6 +1442,8 @@ namespace BMW.Rheingold.Module.ISTA
 
         private Assembly GetModuleAssembly(string cleanIstaModuleName)
         {
+            //[+] return TestModuleRunner.GetModuleAssembly(cleanIstaModuleName);
+            return TestModuleRunner.GetModuleAssembly(cleanIstaModuleName);
             Assembly assembly = null;
             bool flag = false;
             string configString = ConfigSettings.getConfigString("BMW.Rheingold.Diagnostics.Module.ISTA.ISTATabModuleCore.TestmoduleType", "SingleAssemblyContainer");
