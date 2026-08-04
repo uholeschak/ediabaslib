@@ -51,7 +51,7 @@
     <Compile Remove="$(Src)\ABL_LIF_PROVISIONING*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_PC__SOUNDPLAYER*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_SEND_SPEEDLINKDATA*.cs" />
-    <Compile Remove="$(Src)\ABL_LIF_SPEZIAL__ALL_SNAPSHOTS*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_SPEZIAL*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_SWITCH_ECUS_TO_FIELDMODE*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_WRITESECURETOKENAUTOMATIK*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_WRITE_PRG*.cs" />
