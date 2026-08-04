@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestmodulesAblAus", "Testmo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestmodulesAblGen", "Testmodules\TestmodulesAblGen\TestmodulesAblGen.csproj", "{1365A627-7750-A1DB-B56E-DBD064106CEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestmodulesAblLif", "Testmodules\TestmodulesAblLif\TestmodulesAblLif.csproj", "{D061A174-0ECB-2A55-C298-51AC64691DC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -228,6 +230,18 @@ Global
 		{1365A627-7750-A1DB-B56E-DBD064106CEC}.Release|x64.Build.0 = Release|Any CPU
 		{1365A627-7750-A1DB-B56E-DBD064106CEC}.Release|x86.ActiveCfg = Release|Any CPU
 		{1365A627-7750-A1DB-B56E-DBD064106CEC}.Release|x86.Build.0 = Release|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Debug|x64.Build.0 = Debug|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Debug|x86.Build.0 = Debug|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Release|x64.ActiveCfg = Release|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Release|x64.Build.0 = Release|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Release|x86.ActiveCfg = Release|Any CPU
+		{D061A174-0ECB-2A55-C298-51AC64691DC2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFrameworks>net10.0-windows10.0.26100.0;net481</TargetFrameworks>
+      <ImplicitUsings>disable</ImplicitUsings>
+      <Nullable>disable</Nullable>
+      <Platforms>AnyCPU</Platforms>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-windows10.0.26100.0|AnyCPU'">
+    <NoWarn>CS0219;CS0162;CS1717;CS0618</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net481|AnyCPU'">
+    <NoWarn>CS0219;CS0162;CS1717;CS0618</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-windows10.0.26100.0|AnyCPU'">
+    <NoWarn>CS0219;CS0162;CS1717;CS0618</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net481|AnyCPU'">
+    <NoWarn>CS0219;CS0162;CS1717;CS0618</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\PsdzClientLibrary\PsdzClientLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Source\ABL_LIF_*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_BACK*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_BIKE*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_CLEARERRORINFOMEMORY*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_DATA*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_DOC*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_EOS*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_GETIBOOLRESULTOBJECTPROPERTIES*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_KOMPONENTENDIEBSTAHLSCHUTZ*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_OBFCM*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_POLYNOM*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_PARALLELGENERIERUNG_SECURETOKEN*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_PROVISIONING*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_PC__SOUNDPLAYER*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_SEND_SPEEDLINKDATA*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_SPEZIAL__ALL_SNAPSHOTS*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_SWITCH_ECUS_TO_FIELDMODE*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_WRITESECURETOKENAUTOMATIK*.cs" />
+    <Compile Remove="..\Source\ABL_LIF_WRITE_PRG*.cs" />
+  </ItemGroup>
+
+</Project>
