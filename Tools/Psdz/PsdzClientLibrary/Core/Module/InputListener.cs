@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.ISTA.CoreFramework.Module
 {
     public class InputListener : IInputListener, IDisposable
