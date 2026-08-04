@@ -501,13 +501,13 @@ namespace BMW.Rheingold.RheingoldSessionController
                 Fasta2Service = new Fasta2ServiceNop();
             }
             //applicationState = new MultidimensionalApplicationState(this);
-            FeedbackViewHeaderTitleHelper = ServiceLocator.Current.GetService<IFeedbackViewHeaderTitleHelper>();
-            if (FeedbackViewHeaderTitleHelper == null)
-            {
-                ServiceLocator.Current.RemoveService<IFeedbackViewHeaderTitleHelper>();
+            //FeedbackViewHeaderTitleHelper = ServiceLocator.Current.GetService<IFeedbackViewHeaderTitleHelper>();
+            //if (FeedbackViewHeaderTitleHelper == null)
+            //{
+                //ServiceLocator.Current.RemoveService<IFeedbackViewHeaderTitleHelper>();
                 //FeedbackViewHeaderTitleHelper = new FeedbackViewHeaderTitleHelper();
-                ServiceLocator.Current.AddService(FeedbackViewHeaderTitleHelper);
-            }
+                //ServiceLocator.Current.AddService(FeedbackViewHeaderTitleHelper);
+            //}
             Log.LocalIP();
             Log.Threads();
             //GlobalSettings = GlobalSettingsObject.TryLoadFromRegistry();
