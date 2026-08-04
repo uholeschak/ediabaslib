@@ -115,6 +115,14 @@ public class DecompilerHelper
             File.WriteAllText(filePath, typeCode);
         }
 
+        if (!noSubdirectories)
+        {
+            if (!ExtractXmlResources(dllPath, Path.Combine(outputPath, "Resources")))
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 
