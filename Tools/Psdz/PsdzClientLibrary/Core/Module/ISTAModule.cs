@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
+using BMW.Rheingold.FASTA;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
 using PsdzClientLibrary;
 
@@ -144,9 +145,7 @@ namespace BMW.Rheingold.Module.ISTA
                 }
 
                 Log.Error("FastaProtocoler_get", "FastaProtocoler is null, returning instance of class Fasta2ServiceNop instead.");
-                //[-] return new Fasta2ServiceNop();
-                //[+] return null;
-                return null;
+                return new Fasta2ServiceNop();
             }
         }
 

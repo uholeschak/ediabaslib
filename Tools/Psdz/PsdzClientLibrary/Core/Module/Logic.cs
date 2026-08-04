@@ -22,6 +22,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using BMW.Rheingold.FASTA;
 
 #pragma warning disable CS0649, CS0618, CS0169
 namespace BMW.Rheingold.RheingoldSessionController
@@ -495,9 +496,9 @@ namespace BMW.Rheingold.RheingoldSessionController
             //SessionLogic = null;
             //Factory = InfoObjectFactory.Instance;
             Fasta2Service = fasta2;
-            if (ConfigSettings.OperationalMode == OperationalMode.RITA)
+            if (Fasta2Service == null)
             {
-                //Fasta2Service = new Fasta2ServiceNop();
+                Fasta2Service = new Fasta2ServiceNop();
             }
             //applicationState = new MultidimensionalApplicationState(this);
             FeedbackViewHeaderTitleHelper = ServiceLocator.Current.GetService<IFeedbackViewHeaderTitleHelper>();
