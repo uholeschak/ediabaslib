@@ -39,7 +39,7 @@ using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
 using PsdzClientLibrary;
 
-#pragma warning disable CS0649, CS0219, CS0809, CS0618, CS0169
+#pragma warning disable CS0649, CS0219, CS0809, CS0618, CS0169, CS0162
 namespace BMW.Rheingold.Module.ISTA
 {
     [AuthorAPIFlowBase]

@@ -4,36 +4,26 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using BMW.Rheingold.CoreFramework.Feedback;
-using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Svb;
 using Microsoft.Win32;
 using PsdzClient;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
-using PsdzClient.Psdz;
 using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Net;
 using System.Runtime.CompilerServices;
-using System.ServiceModel;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable CS0649, CS0618, CS0169
 namespace BMW.Rheingold.RheingoldSessionController
 {
     [PreserveSource(Hint = "Simplified", SuppressWarning = true)]
