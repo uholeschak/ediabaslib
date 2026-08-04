@@ -1314,8 +1314,7 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         public PlaceholderType ServiceHistory;
-        [PreserveSource(Hint = "ObservableCollection<typeDiagCode>", Placeholder = true)]
-        public PlaceholderType DiagCodes;
+        public ObservableCollection<typeDiagCode> DiagCodes;
         public string Motorarbeitsverfahren
         {
             get
@@ -2529,9 +2528,8 @@ namespace PsdzClient.Core
         [XmlIgnore]
         PlaceholderType IVehicle.CombinedFaults => CombinedFaults;
 
-        [PreserveSource(Hint = "IEnumerable<IDiagCode>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.DiagCodes => DiagCodes;
+        IEnumerable<IDiagCode> IVehicle.DiagCodes => DiagCodes;
 
         [XmlIgnore]
         IEnumerable<IEcu> IVehicle.ECU => ECU;
