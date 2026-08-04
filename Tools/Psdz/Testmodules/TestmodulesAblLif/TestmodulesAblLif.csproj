@@ -35,6 +35,7 @@
 
     <ItemGroup>
     <Compile Include="$(Src)\ABL_LIF_*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_ASEC__LCS_STATUS*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_BACK*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_BIKE*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_CLEARERRORINFOMEMORY*.cs" />
