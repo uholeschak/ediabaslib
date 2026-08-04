@@ -4,10 +4,8 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
-using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 
 namespace BMW.Rheingold.FASTA
 {
