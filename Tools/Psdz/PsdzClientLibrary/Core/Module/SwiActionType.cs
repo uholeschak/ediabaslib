@@ -1,0 +1,33 @@
+﻿namespace BMW.Rheingold.CoreFramework.Contracts.Programming
+{
+    public enum SwiActionType
+    {
+        SwiAction,
+        TalFilter,
+        InitialOrder,
+        HddUpdate,
+        HddActivation,
+        VehicleOrderImport,
+        ZgwRepair,
+        ZgwRepairReferenceFlash,
+        SpecialPlan,
+        RefurbishFsc,
+        CertificateManagement,
+        SecureFeatureActivation,
+        SecureEcuMode,
+        SecureEcuModeSelection,
+        NavFscManagement,
+        KdsOfflineActivation,
+        kdsactivationwithoutserviceprograms,
+        LcsActivationWithoutServicePrograms,
+        SecureCoding,
+        CertificateManagementApiTest,
+        SecureEcuModeApiTest,
+        RebuildTokenPackage,
+        WriteSfaNewFeatureForVehicleAutomaticApiTest,
+        ExecuteProgrammingProtection,
+        HddUpdateAndroidHU,
+        SecurityManagement,
+        SdpPatch
+    }
+}
