@@ -104,6 +104,7 @@ namespace SourceCodeSync
             "RheingoldProgramming",
             "RheingoldPsdzWebApi.Adapter",
             "RheingoldPsdzWebApi.Adapter.Contracts",
+            "RheingoldSessionController",
             "RheingoldVehicleCommunication"
         ];
 
