@@ -73,8 +73,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         [Obsolete("Use SessionInfoAccessor.SessionInfo.DOMRequestFailed")]
         bool DOMRequestFailed { get; set; }
 
-        [PreserveSource(Hint = "IEnumerable<IDiagCode>", Placeholder = true)]
-        PlaceholderType DiagCodes { get; }
+        IEnumerable<IDiagCode> DiagCodes { get; }
 
         ObservableCollection<string> DiagCodesProgramming { get; }
 
