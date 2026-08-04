@@ -99,6 +99,10 @@ public class TestModuleRunner
         {
             assemblyModuleName = "TestmodulesAblGen.dll";
         }
+        else if (cleanIstaModuleName.StartsWith("ABL_LIF_"))
+        {
+            assemblyModuleName = "TestmodulesAblLif.dll";
+        }
 
         if (string.IsNullOrEmpty(assemblyModuleName))
         {
