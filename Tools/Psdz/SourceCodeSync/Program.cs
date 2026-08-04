@@ -137,8 +137,9 @@ namespace SourceCodeSync
         {
             "using PsdzClient.Core;",
             "using PsdzClient.Core.Container;",
+            "using PsdzClient.Contracts;",
             "using PsdzClient.Programming;",
-            "using BMW.Rheingold.Psdz;"
+            "using BMW.Rheingold.Psdz;",
         };
 
         private const string _commentedRemoveCodeMarker = "//[-]";
