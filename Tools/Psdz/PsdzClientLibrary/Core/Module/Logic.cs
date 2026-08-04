@@ -22,6 +22,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.FASTA;
 
 #pragma warning disable CS0649, CS0618, CS0169
@@ -71,11 +72,11 @@ namespace BMW.Rheingold.RheingoldSessionController
 
         private IFFMDynamicResolver ffmResolver;
 
-        //private IProgrammingSessionExt programmingSession;
+        private IProgrammingSessionExt programmingSession;
 
         //private IVehicleDataLogic vehicleDataLogic;
 
-        //private IProgrammingSessionData programmingSessionDataContext;
+        private IProgrammingSessionData programmingSessionDataContext;
 
         private IBackendCallsWatchDog backendCallsWatchDogLogic;
 
@@ -343,7 +344,7 @@ namespace BMW.Rheingold.RheingoldSessionController
         public IList<ISdpPatchResult> SdpPatchResults { get; set; }
 
         //public IList<ISdpPatchBomContent> SdpPatchBomContents { get; set; }
-#if false
+
         public virtual IProgrammingSessionData ProgrammingSessionDataContext
         {
             get
@@ -372,7 +373,7 @@ namespace BMW.Rheingold.RheingoldSessionController
                 OnPropertyChanged("ProgrammingSession");
             }
         }
-
+#if false
         public IKmmService KmmService => ServiceLocator.Current.GetService<IKmmService>();
 #endif
         public IFasta2Service Fasta2Service { get; private set; }

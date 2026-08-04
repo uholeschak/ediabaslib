@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using PsdzClient;
@@ -70,9 +71,9 @@ namespace BMW.Rheingold.CoreFramework
 
         //FaultFilter FaultFilterSettings { get; }
 
-        //IProgrammingSessionData ProgrammingSessionDataContext { get; }
+        IProgrammingSessionData ProgrammingSessionDataContext { get; }
 
-        //IProgrammingSessionExt ProgrammingSession { get; set; }
+        IProgrammingSessionExt ProgrammingSession { get; set; }
 
         IProgrammingService ProgrammingService { get; }
 

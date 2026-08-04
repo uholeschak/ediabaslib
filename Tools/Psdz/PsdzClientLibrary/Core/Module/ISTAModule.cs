@@ -47,8 +47,7 @@ namespace BMW.Rheingold.Module.ISTA
     [AuthorAPIFlowBase]
     public abstract class ISTAModule : IstaModuleBase, IAuthoringModule, IHideObjectMembers
     {
-        [PreserveSource(Hint = "ProgrammingSessionProxy", Placeholder = true)]
-        private PlaceholderType programmingSessionProxy;
+        private ProgrammingSessionProxy programmingSessionProxy;
         private object onTheFlyCompileLock = new object ();
         private readonly IFeedbackViewHeaderTitleHelper feedbackViewHeaderHelper;
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -299,11 +298,11 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (logic != null)
                 {
-                //[-] if (programmingSessionProxy == null || programmingSessionProxy.Fasta != FastaProtocoler || logic.ProgrammingSession != programmingSessionProxy.ProgrammingSession)
-                //[-] {
-                //[-] programmingSessionProxy = new ProgrammingSessionProxy(logic.ProgrammingSession, FastaProtocoler);
-                //[-] }
-                //[-] return programmingSessionProxy;
+                    if (programmingSessionProxy == null || programmingSessionProxy.Fasta != FastaProtocoler || logic.ProgrammingSession != programmingSessionProxy.ProgrammingSession)
+                    {
+                        programmingSessionProxy = new ProgrammingSessionProxy(logic.ProgrammingSession, FastaProtocoler);
+                    }
+                    return programmingSessionProxy;
                 }
 
                 Log.Warning("ISTAModule.get_ProgrammingSession", "programming session handle in logic or logic was null");
