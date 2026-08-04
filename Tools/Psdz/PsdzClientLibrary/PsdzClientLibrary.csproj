@@ -76,8 +76,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\BMW.Rheingold.CoreFramework.DatabaseProvider.Text.Spe_Text_2.0.xsl" />
-    <EmbeddedResource Include="Resources\BMW.Rheingold.CoreFramework.Localization.Localization.xml" />
+      <None Remove="Resources\**\*.xml;Resources\**\*.xsl" />
+      <EmbeddedResource Include="Resources\**\*.xml;Resources\**\*.xsl" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
