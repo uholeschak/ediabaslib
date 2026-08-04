@@ -36,20 +36,27 @@
     <ItemGroup>
     <Compile Include="$(Src)\ABL_LIF_*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_ASEC__LCS_STATUS*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_AUTHORING*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_BACK*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_BIKE*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_CERT*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_CLEARERRORINFOMEMORY*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_DATA*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_DOC*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_EOS*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_GET__DISPLAYTEXT_DOB*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_GET__EFUSE_VERBRAUCHERLISTE*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_GETIBOOLRESULTOBJECTPROPERTIES*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_IDENTIFY_ISTA_OPERATIONALMODE*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_KOMPONENTENDIEBSTAHLSCHUTZ*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_KI__RANDOMFOREST*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_OBFCM*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_POLYNOM*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_PARALLELGENERIERUNG_SECURETOKEN*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_PROVISIONING*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_PC__SOUNDPLAYER*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_QDM*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_QMD*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_SEND_SPEEDLINKDATA*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_SPEZIAL*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_SWITCH_ECUS_TO_FIELDMODE*.cs" />
