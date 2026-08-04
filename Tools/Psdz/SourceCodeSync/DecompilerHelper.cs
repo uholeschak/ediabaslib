@@ -4,6 +4,7 @@ using ICSharpCode.Decompiler.CSharp.OutputVisitor;
 using ICSharpCode.Decompiler.Metadata;
 using System.Collections.Generic;
 using System.IO;
+using System.Resources.Extensions;
 using ICSharpCode.Decompiler.TypeSystem;
 
 namespace SourceCodeSync;
@@ -128,5 +129,70 @@ public class DecompilerHelper
         // Entferne generische Parameter-Marker
         fileName = fileName.Replace('<', '_').Replace('>', '_').Replace('`', '_');
         return fileName;
+    }
+
+    public static bool ExtractXmlResources(string dllPath, string outputPath, bool expandResourceFiles = true)
+    {
+        if (string.IsNullOrEmpty(outputPath))
+        {
+            return false;
+        }
+
+        Directory.CreateDirectory(outputPath);
+
+        using PEFile peFile = new PEFile(dllPath);
+        foreach (Resource resource in peFile.Resources)
+        {
+            if (resource.ResourceType != ResourceType.Embedded)
+            {
+                continue;
+            }
+
+            using Stream stream = resource.TryOpenStream();
+            if (stream == null)
+            {
+                continue;
+            }
+
+            if (resource.Name.EndsWith(".xml", System.StringComparison.OrdinalIgnoreCase))
+            {
+                // Direkt eingebettete XML-Datei speichern
+                string filePath = Path.Combine(outputPath, SanitizeFileName(resource.Name));
+                using FileStream fs = File.Create(filePath);
+                stream.CopyTo(fs);
+            }
+            else if (expandResourceFiles && resource.Name.EndsWith(".resources", System.StringComparison.OrdinalIgnoreCase))
+            {
+                // Nur XML-Einträge aus .resources-Containern extrahieren
+                using DeserializingResourceReader reader = new DeserializingResourceReader(stream);
+                foreach (System.Collections.DictionaryEntry entry in reader)
+                {
+                    string entryName = entry.Key.ToString();
+                    if (!entryName.EndsWith(".xml", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    string entryPath = Path.Combine(outputPath, SanitizeFileName(entryName));
+                    switch (entry.Value)
+                    {
+                        case Stream s:
+                            using (FileStream fs = File.Create(entryPath))
+                            {
+                                s.CopyTo(fs);
+                            }
+                            break;
+                        case byte[] bytes:
+                            File.WriteAllBytes(entryPath, bytes);
+                            break;
+                        case string text:
+                            File.WriteAllText(entryPath, text);
+                            break;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }
