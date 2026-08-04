@@ -26,8 +26,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         ISecureEcuModeService SecureEcuModeService { get; }
 
-        [PreserveSource(Hint = "ISecManagementService", Placeholder = true)]
-        PlaceholderType SecurityManagementService { get; }
+        ISecManagementService SecurityManagementService { get; }
 
         IValidityCondition ValidityCondition { get; }
 
