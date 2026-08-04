@@ -462,6 +462,34 @@ namespace SourceCodeSync
                     _enumBareDict = new(StringComparer.Ordinal);
 
                     string sourceSubDir = partIdx == 0 ? sourceSubDir1 : sourceSubDir2;
+
+                    // XML-Dateien im Zielverzeichnis aktualisieren, wenn sie im Quellverzeichnis vorhanden sind
+                    string[] destXmlFiles = Directory.GetFiles(destDir, "*.xml", SearchOption.AllDirectories);
+                    foreach (string destXmlFile in destXmlFiles)
+                    {
+                        string xmlFileName = Path.GetFileName(destXmlFile);
+                        string[] sourceXmlFiles = Directory.GetFiles(sourceSubDir, xmlFileName, SearchOption.AllDirectories);
+                        if (sourceXmlFiles.Length == 0)
+                        {
+                            continue;
+                        }
+
+                        if (sourceXmlFiles.Length > 1)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("*** Multiple source XML files found for: {0}", xmlFileName);
+                            }
+                            continue;
+                        }
+
+                        File.Copy(sourceXmlFiles[0], destXmlFile, true);
+                        if (_verbosity >= Options.VerbosityOption.Info)
+                        {
+                            Console.WriteLine("Updated XML file: {0}", destXmlFile);
+                        }
+                    }
+
                     string[] sourceFiles = Directory.GetFiles(sourceSubDir, "*.cs", SearchOption.AllDirectories);
                     foreach (string file in sourceFiles)
                     {
