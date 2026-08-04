@@ -77,7 +77,9 @@
   </ItemGroup>
   <ItemGroup>
       <None Remove="Resources\**\*.xml;Resources\**\*.xsl" />
-      <EmbeddedResource Include="Resources\**\*.xml;Resources\**\*.xsl" />
+      <EmbeddedResource Include="Resources\**\*.xml;Resources\**\*.xsl">
+          <LogicalName>%(Filename)%(Extension)</LogicalName>
+      </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
