@@ -29,8 +29,12 @@
     <ProjectReference Include="..\..\PsdzClientLibrary\PsdzClientLibrary.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Source\ABL_AUS_*.cs" />
+    <PropertyGroup>
+        <Src>..\Source</Src>
+    </PropertyGroup>
+
+    <ItemGroup>
+    <Compile Include="$(Src)\ABL_AUS_*.cs" />
   </ItemGroup>
 
 </Project>
