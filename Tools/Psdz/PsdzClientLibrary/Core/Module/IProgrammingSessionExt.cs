@@ -53,71 +53,41 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         IEnumerable<IProgrammingTask> Tasks { get; }
 
-
-        BMW.Rheingold.CoreFramework.Contracts.Programming.ITherapyPlan TherapyPlan { get; }
+        ITherapyPlan TherapyPlan { get; }
 
         TimeSpan TimeLeft { get; }
 
         DateTime? VehicleTestStarted { get; set; }
 
         void Abort();
-
         bool CanContinueOperation();
-
         void CheckNote(IVehicle vehicle);
-
         WorkStateValues CheckOpenActions();
-
         void ContinueCalculatingTherapyPlan();
-
         void DeleteIndividualDataFromPuk();
-
         void DownloadIndividualDataFromPuk();
-
         LayoutGroup FindLayoutGroupVehicleTest();
-
         bool IsTargetILevelSetToBackIlevel(IProtocolBasic fastaService);
-
         void NotifyFinishedMessage();
-
         void RefreshCanExecute();
-
         void Reset();
-
         void Resume();
-
         void SelectCoding(long ecu);
-
         void SelectCodingAll(bool enable);
-
         void SelectEcuPostExchange(long ecu);
-
         void SelectEcuPreExchange(long ecu);
-
         void SelectProgramming(long ecu);
-
         void SelectSpecialAction(SwiActionType swiActionType);
-
         void SelectVehicleConversion(decimal swiActionId);
-
         string SerializeData();
-
-        void SetFaTarget(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa, IProtocolBasic fastaService);
-
+        void SetFaTarget(IFa fa, IProtocolBasic fastaService);
         bool SetTargetToBackupILevel(IProtocolBasic fastaService);
-
         bool SetTargetToDefinedILevel(IProtocolBasic fastaService, string targetILevel);
-
-        IVehicleUpdate SpecialPlanRequired(BMW.Rheingold.CoreFramework.Contracts.Programming.ISwiAction swiAction);
-
+        IVehicleUpdate SpecialPlanRequired(ISwiAction swiAction);
         void StartUsing(bool refresh = false);
-
         void Stop();
-
         void TryClosePSdZConnection();
-
         void UpdateAndProtocolTherapyPlanReport();
-
         void HandleSecureFeatureData();
     }
 }
