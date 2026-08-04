@@ -125,8 +125,7 @@ namespace PsdzClient.Core
         private string eCTypeApprovalField;
         [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         private PlaceholderType serviceHistoryField;
-        [PreserveSource(Hint = "ObservableCollection<typeDiagCode>", Placeholder = true)]
-        private PlaceholderType diagCodesField;
+        private ObservableCollection<typeDiagCode> diagCodesField;
         private string motorarbeitsverfahrenField;
         private string drehmomentField;
         private string hybridkennzeichenField;
@@ -1314,7 +1313,31 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         public PlaceholderType ServiceHistory;
-        public ObservableCollection<typeDiagCode> DiagCodes;
+        public ObservableCollection<typeDiagCode> DiagCodes
+        {
+            get
+            {
+                return diagCodesField;
+            }
+
+            set
+            {
+                if (diagCodesField != null)
+                {
+                    if (!diagCodesField.Equals(value))
+                    {
+                        diagCodesField = value;
+                        OnPropertyChanged("DiagCodes");
+                    }
+                }
+                else
+                {
+                    diagCodesField = value;
+                    OnPropertyChanged("DiagCodes");
+                }
+            }
+        }
+
         public string Motorarbeitsverfahren
         {
             get

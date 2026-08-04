@@ -73,6 +73,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         [Obsolete("Use SessionInfoAccessor.SessionInfo.DOMRequestFailed")]
         bool DOMRequestFailed { get; set; }
 
+        [Obsolete("Please use Authoring -> Session.DiagCodes. Can be removed with 4.57.XX")]
         IEnumerable<IDiagCode> DiagCodes { get; }
 
         ObservableCollection<string> DiagCodesProgramming { get; }
