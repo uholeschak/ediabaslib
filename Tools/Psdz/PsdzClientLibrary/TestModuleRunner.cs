@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using BMW.Rheingold.RheingoldSessionController;
 using PsdzClient.Programming;
 
 namespace PsdzClientLibrary;
@@ -15,6 +16,7 @@ public class TestModuleRunner
 {
     private readonly ClientContext _clientContext;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
+    private readonly ILogic _logic;
     private readonly string _moduleName;
     private readonly string _moduleTypeName;
     private readonly ModuleParameter _moduleParameters;
@@ -30,10 +32,13 @@ public class TestModuleRunner
             throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
         }
 
+        _logic = new Logic(clientContext.Database, null);
         _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
+
         Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();
         _moduleParameters = new ModuleParameter(useParametersDict);
+        _moduleParameters.setParameter(ModuleParameter.ParameterName.Logic, _logic);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, psdzContext.VecInfo);
     }
 
