@@ -124,7 +124,8 @@ namespace SourceCodeSync
             { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"},
             { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", "BusType"},
             { "BMW.Rheingold.ISTA.CoreFramework.ILogger", "ILogger" },
-            { "BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle", "Vehicle"}
+            { "BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle", "Vehicle"},
+            { "BMW.Rheingold.CoreFramework.Contracts.Programming.TaCategories", "TaCategories"}
         };
 
         private static readonly Dictionary<string, string> _moduleTextReplacements = new Dictionary<string, string>

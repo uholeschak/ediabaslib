@@ -42,6 +42,7 @@
     <Compile Remove="$(Src)\ABL_LIF_DATA*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_DOC*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_EOS*.cs" />
+    <Compile Remove="$(Src)\ABL_LIF_GET__DISPLAYTEXT_DOB*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_GETIBOOLRESULTOBJECTPROPERTIES*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_KOMPONENTENDIEBSTAHLSCHUTZ*.cs" />
     <Compile Remove="$(Src)\ABL_LIF_OBFCM*.cs" />
