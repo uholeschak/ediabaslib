@@ -19,6 +19,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         bool IsHidden { get; }
 
+        [PreserveSource(Placeholder = true)]
         PsdzDatabase.SwiRegister? Register { get; }
 
         string EcuId { get; }
@@ -27,6 +28,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         ISwiAction Data { get; }
 
+        [PreserveSource(Placeholder = true)]
         void ExecuteServiceProgramms(PsdzDatabase.SwiActionLinkType type, IProgrammingSessionExt session);
     }
 }
