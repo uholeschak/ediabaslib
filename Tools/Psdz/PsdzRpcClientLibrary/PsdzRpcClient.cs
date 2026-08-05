@@ -101,6 +101,23 @@ namespace PsdzRpcClient
         /// <summary>Verbindet via TCP (kein automatischer Serverstart erforderlich).</summary>
         public async Task<bool> ConnectTcpAsync(string host, int port, bool enableIpv6, SynchronizationContext synchronizationContext, CancellationToken ct, int timeoutSeconds = 10)
         {
+            if (await ConnectTcpInternalAsync(host, port, enableIpv6, synchronizationContext, ct, timeoutSeconds).ConfigureAwait(false))
+            {
+                return true;
+            }
+
+            // Fallback: Bei aktiviertem IPv6 einen zweiten Versuch mit reinem IPv4 starten
+            if (enableIpv6 && !ct.IsCancellationRequested)
+            {
+                _output?.WriteLine("Retrying with IPv4 only...");
+                return await ConnectTcpInternalAsync(host, port, false, synchronizationContext, ct, timeoutSeconds).ConfigureAwait(false);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> ConnectTcpInternalAsync(string host, int port, bool enableIpv6, SynchronizationContext synchronizationContext, CancellationToken ct, int timeoutSeconds = 10)
+        {
             try
             {
                 string hostName = string.IsNullOrEmpty(host) ? PsdzRpcServiceConstants.Localhost : host;
