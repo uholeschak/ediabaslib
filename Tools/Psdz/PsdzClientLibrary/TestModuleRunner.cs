@@ -15,6 +15,7 @@ namespace PsdzClientLibrary;
 public class TestModuleRunner
 {
     private readonly ClientContext _clientContext;
+    private readonly ProgrammingJobs _programmingJobs;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly ILogic _logic;
     private readonly string _moduleName;
@@ -23,23 +24,24 @@ public class TestModuleRunner
 
     public ModuleParameter ModuleParameters => _moduleParameters;
 
-    public TestModuleRunner(ClientContext clientContext, PsdzContext psdzContext, string controlId, Dictionary<string, object> parametersDict = null)
+    public TestModuleRunner(ClientContext clientContext, ProgrammingJobs programmingJobs, string controlId, Dictionary<string, object> parametersDict = null)
     {
         _clientContext = clientContext;
+        _programmingJobs = programmingJobs;
         _swiInfoObj = _clientContext?.Database?.GetInfoObjectByControlId(controlId);
         if (_swiInfoObj == null)
         {
             throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
         }
 
-        _logic = new Logic(clientContext.Database, null);
+        _logic = new Logic(clientContext, programmingJobs);
         _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
 
         Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();
         _moduleParameters = new ModuleParameter(useParametersDict);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Logic, _logic);
-        _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, psdzContext.VecInfo);
+        _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, programmingJobs.PsdzContext.VecInfo);
     }
 
     public bool Run()

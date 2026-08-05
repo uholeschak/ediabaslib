@@ -1573,7 +1573,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, PsdzContext, controlId, parametersDict);
+                TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, controlId, parametersDict);
                 if (!testModuleRunner.Run())
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed for controlId: {0}", controlId);

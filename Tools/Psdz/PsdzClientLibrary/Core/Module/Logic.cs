@@ -46,6 +46,12 @@ namespace BMW.Rheingold.RheingoldSessionController
 
         //private readonly FaultFilter faultFilterSettings;
 
+        [PreserveSource(Added = true)]
+        private readonly ClientContext clientContext;
+
+        [PreserveSource(Added = true)]
+        private readonly ProgrammingJobs programmingJobs;
+
         private readonly PsdzDatabase database;
 
         //protected MultidimensionalApplicationState applicationState;
@@ -373,6 +379,12 @@ namespace BMW.Rheingold.RheingoldSessionController
                 OnPropertyChanged("ProgrammingSession");
             }
         }
+
+        [PreserveSource(Added = true)]
+        public ClientContext ClientContext => clientContext;
+
+        [PreserveSource(Added = true)]
+        public ProgrammingJobs ProgrammingJobs => programmingJobs;
 #if false
         public IKmmService KmmService => ServiceLocator.Current.GetService<IKmmService>();
 #endif
@@ -482,11 +494,13 @@ namespace BMW.Rheingold.RheingoldSessionController
         {
         }
 
-        public Logic(PsdzDatabase database, IFasta2Service fasta2)
+        public Logic(ClientContext clientContext, ProgrammingJobs programmingJobs)
         {
             Lang = new List<string>();
             Lang.Add("de-DE");
-            this.database = database;
+            this.clientContext = clientContext;
+            this.programmingJobs = programmingJobs;
+            this.database = clientContext.Database;
             FaultPatternImportedFromPuk = new HashSet<decimal>();
             PukCaseInfoGuid = new List<string>();
             Services = null;
@@ -496,7 +510,7 @@ namespace BMW.Rheingold.RheingoldSessionController
             LogVersionInfo();
             //SessionLogic = null;
             //Factory = InfoObjectFactory.Instance;
-            Fasta2Service = fasta2;
+            //Fasta2Service = fasta2;
             if (Fasta2Service == null)
             {
                 Fasta2Service = new Fasta2ServiceNop();

@@ -11,6 +11,7 @@ using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using PsdzClient;
+using PsdzClient.Programming;
 
 namespace BMW.Rheingold.CoreFramework
 {
@@ -76,6 +77,12 @@ namespace BMW.Rheingold.CoreFramework
         IProgrammingSessionExt ProgrammingSession { get; set; }
 
         IProgrammingService ProgrammingService { get; }
+
+        [PreserveSource(Added = true)]
+        ClientContext ClientContext { get; }
+
+        [PreserveSource(Added = true)]
+        ProgrammingJobs ProgrammingJobs { get; }
 
         //IKmmService KmmService { get; }
 
