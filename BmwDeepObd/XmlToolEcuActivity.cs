@@ -730,14 +730,14 @@ namespace BmwDeepObd
             _buttonBmwCoding.Enabled = bmwCodingEnabled;
             _buttonBmwCoding.Click += (sender, args) =>
             {
-                if (ActivityCommon.UseBmwDatabase)
-                {
-                    StartBmwRpcCoding();
-                }
-                else
+#if DEBUG
+                if (ActivityCommon.CollectDebugInfo)
                 {
                     StartBmwCoding();
+                    return;
                 }
+#endif
+                StartBmwRpcCoding();
             };
 
             bool vagCodingEnabled = _ecuInfo.HasVagCoding();
