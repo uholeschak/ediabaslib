@@ -1771,14 +1771,14 @@ namespace BmwDeepObd
                         return true;
                     }
 
-                    if (ActivityCommon.UseBmwDatabase)
-                    {
-                        StartBmwRpcCoding();
-                    }
-                    else
+#if DEBUG
+                    if (ActivityCommon.CollectDebugInfo)
                     {
                         StartBmwCoding();
+                        return true;
                     }
+#endif
+                    StartBmwRpcCoding();
                     return true;
                 }
 
