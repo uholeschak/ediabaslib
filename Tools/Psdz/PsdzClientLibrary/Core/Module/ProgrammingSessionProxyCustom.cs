@@ -3,8 +3,11 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient;
 using PsdzClient.Contracts;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
@@ -13,7 +16,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using PsdzClient;
 
 #pragma warning disable CS0067, CS0618, CS0649
 namespace BMW.Rheingold.Module.ISTA
@@ -33,9 +35,21 @@ namespace BMW.Rheingold.Module.ISTA
 
         internal IProgrammingSession ProgrammingSession => programmingSession;
 
-        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaCurrent => programmingSession.FaCurrent;
+        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaCurrent
+        {
+            get
+            {
+                return ProgrammingUtils.BuildFa(programmingJobs.PsdzContext.FaActual);
+            }
+        }
 
-        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaTarget => programmingSession.FaTarget;
+        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaTarget
+        {
+            get
+            {
+                return ProgrammingUtils.BuildFa(programmingJobs.PsdzContext.FaTarget);
+            }
+        }
 
         public string IntegrationLevelTarget => programmingSession.IntegrationLevelTarget;
 
@@ -45,11 +59,11 @@ namespace BMW.Rheingold.Module.ISTA
 
         public IPsdzInfo Psdz => programmingSession.Psdz;
 
-        public IPsdzContext PsdzContext => programmingSession.PsdzContext;
+        public IPsdzContext PsdzContext => programmingJobs.PsdzContext;
 
-        public ISvt SvtCurrent => programmingSession.SvtCurrent;
+        public ISvt SvtCurrent => programmingJobs.PsdzContext.SvtCurrent;
 
-        public ISvt SvtTarget => programmingSession.SvtTarget;
+        public ISvt SvtTarget => programmingJobs.PsdzContext.SvtTarget;
 
         public string TalAsXml => programmingSession.TalAsXml;
 
@@ -163,12 +177,16 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void SetFaCurrent(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa)
         {
-            programmingSession.SetFaCurrent(fa);
+            string vin = programmingJobs.PsdzContext.FaActual.Vin;
+            IPsdzFa psdzFa = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildFa(fa, vin);
+            programmingJobs.PsdzContext.SetFaActual(psdzFa);
         }
 
         public void SetFaTarget(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa)
         {
-            programmingSession.SetFaTarget(fa, null);
+            string vin = programmingJobs.PsdzContext.FaActual.Vin;
+            IPsdzFa psdzFa = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildFa(fa, vin);
+            programmingJobs.PsdzContext.SetFaTarget(psdzFa);
         }
 
         public void SetSvtCurrent(ISvt svt)
