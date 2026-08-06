@@ -1,13 +1,14 @@
-﻿using BMW.Rheingold.CoreFramework;
+﻿using BMW.ISPI.IstaOperation.Impl;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.RheingoldSessionController;
 using EdiabasLib;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
+using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using BMW.Rheingold.RheingoldSessionController;
-using PsdzClient.Programming;
 
 namespace PsdzClientLibrary;
 
@@ -18,6 +19,7 @@ public class TestModuleRunner
     private readonly ProgrammingJobs _programmingJobs;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly ILogic _logic;
+    private readonly ServiceProgramController _serviceProgramController;
     private readonly string _moduleName;
     private readonly string _moduleTypeName;
     private readonly ModuleParameter _moduleParameters;
@@ -35,6 +37,7 @@ public class TestModuleRunner
         }
 
         _logic = new Logic(clientContext, programmingJobs);
+        _serviceProgramController = new ServiceProgramController();
         _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
 
@@ -42,6 +45,7 @@ public class TestModuleRunner
         _moduleParameters = new ModuleParameter(useParametersDict);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Logic, _logic);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, programmingJobs.PsdzContext.VecInfo);
+        _moduleParameters.setParameter(ModuleParameter.ParameterName.ServiceProgramController, _serviceProgramController);
     }
 
     public bool Run()
