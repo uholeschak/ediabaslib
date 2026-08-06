@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading;
 using PsdzClient;
 
+#pragma warning disable CS0169
 namespace BMW.ISPI.IstaOperation.Impl
 {
     [PreserveSource(Hint="No update", SuppressWarning = true)]
