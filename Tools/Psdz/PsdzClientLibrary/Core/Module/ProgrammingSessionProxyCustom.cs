@@ -215,7 +215,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void UpdateTalFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions)
         {
-            programmingSession.UpdateTalFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions);
+            programmingJobs.UpdateTalFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions);
         }
 
         public void UpdateTalFilterForSelectedEcuOnSweLevel(int diagAddress, TaCategories taCategory, string processClass, TalFilterOptions talFilterOptions, IDictionary<string, TalFilterOptions> sweFilter)
