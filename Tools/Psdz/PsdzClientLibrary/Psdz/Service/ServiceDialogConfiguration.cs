@@ -4,35 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using PsdzClient;
 
 namespace BMW.Rheingold.Module.ISTA
 {
     public class ServiceDialogConfiguration
     {
         private static Dictionary<string, ServiceDialogConfiguration> registry;
-
         private static Dictionary<decimal, string> controlId2Name;
-
         public ITextContentManager TextCollection { get; set; }
-
         public decimal ControlId { get; private set; }
-
         public string Name { get; private set; }
-
         public Type DialogType { get; private set; }
-
         public Type DialogUIType { get; private set; }
-
         public bool IsShowingGui { get; private set; }
-
         public Type ControllerType { get; private set; }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         private ServiceDialogConfiguration(decimal id, string name, Type dialog, Type dialogUI, Type controller, bool gui)
         {
             if (dialog == null)
             {
                 throw new ArgumentException("Parameter dialog must not be null.");
             }
+
             if (name == null)
             {
                 Name = dialog.Name;
@@ -41,10 +36,12 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Name = name;
             }
+
             if (controller != null && !typeof(IServiceDialog).IsAssignableFrom(controller))
             {
                 throw new ArgumentException($"The registered controller type {controller} of service dialog {Name} is no IServiceDialog.");
             }
+
             ControlId = id;
             DialogType = dialog;
             DialogUIType = dialogUI;
@@ -52,6 +49,7 @@ namespace BMW.Rheingold.Module.ISTA
             IsShowingGui = gui;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         static ServiceDialogConfiguration()
         {
             registry = new Dictionary<string, ServiceDialogConfiguration>();
@@ -132,6 +130,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Service dialog {0} is already registered to {1}.", serviceDialogConfiguration, registry[serviceDialogConfiguration.Name]));
             }
+
             registry.Add(serviceDialogConfiguration.Name, serviceDialogConfiguration);
             controlId2Name.Add(serviceDialogConfiguration.ControlId, serviceDialogConfiguration.Name);
         }
@@ -147,6 +146,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 throw new ArgumentException($"No definition registered for service dialog name {serviceDialog}.");
             }
+
             return registry[serviceDialog];
         }
 
@@ -156,6 +156,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return null;
             }
+
             return GetRegisteredConfiguration(controlId2Name[serviceDialogId]);
         }
 
