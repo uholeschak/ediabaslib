@@ -324,8 +324,8 @@ namespace BMW.Rheingold.Module.ISTA
 
         public bool IsTargetILevelSetToBackIlevel()
         {
-            bool result = programmingSession.IsTargetILevelSetToBackIlevel(null);
-            return result;
+            programmingJobs.PsdzContext.VecInfo.TargetILevel = programmingJobs.PsdzContext.VecInfo.ILevel;
+            return true;
         }
 
         public IBoolResultObject AddTechnicalActionResultToProtocoll(string taNummer, string taBezeichnung, IList<string> mindestIStufens, bool abArbeitungsstatus, string diagnosisCodeTitle, string diagnoseCodes)
