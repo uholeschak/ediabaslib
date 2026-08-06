@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using System;
 
+#pragma warning disable CS0169
 namespace BMW.Rheingold.Module.ISTA
 {
     internal class SidisPanel
