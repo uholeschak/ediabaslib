@@ -21,6 +21,10 @@ namespace BMW.Rheingold.Module.ISTA
     [PreserveSource(Hint = "Adapted from ProgrammingSessionProxy", SuppressWarning = true)]
     internal class ProgrammingSessionProxyCustom : IProgrammingSession, INotifyPropertyChanged, IDisposable
     {
+        private readonly ClientContext clientContext;
+
+        private readonly ProgrammingJobs programmingJobs;
+
         private readonly IProgrammingSessionExt programmingSession;
 
         private readonly IProgrammingApi programmingApi;
@@ -87,21 +91,10 @@ namespace BMW.Rheingold.Module.ISTA
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ProgrammingSessionProxyCustom(IProgrammingSessionExt programmingSession)
+        public ProgrammingSessionProxyCustom(ClientContext clientContext, ProgrammingJobs programmingJobs)
         {
-            this.programmingSession = programmingSession;
-            if (programmingSession == null)
-            {
-                throw new ArgumentNullException("programmingSession");
-            }
-            if (programmingSession.ProgrammingApi != null)
-            {
-               //[-] programmingApi = new ProgrammingApiProxy(programmingSession.ProgrammingApi, fasta);
-            }
-            if (programmingSession.APISecurity != null)
-            {
-                //[-] apiSecurity = new APISecurityProxy(programmingSession.APISecurity, fasta);
-            }
+            this.clientContext = clientContext;
+            this.programmingJobs = programmingJobs;
         }
 
         public IList<string> GetServiceProgramsForSwiAction(string swiActionName)

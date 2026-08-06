@@ -47,7 +47,8 @@ namespace BMW.Rheingold.Module.ISTA
     [AuthorAPIFlowBase]
     public abstract class ISTAModule : IstaModuleBase, IAuthoringModule, IHideObjectMembers
     {
-        private ProgrammingSessionProxy programmingSessionProxy;
+        [PreserveSource(Hint = "ProgrammingSessionProxy", Placeholder = true)]
+        private ProgrammingSessionProxyCustom programmingSessionProxy;
         private object onTheFlyCompileLock = new object ();
         private readonly IFeedbackViewHeaderTitleHelper feedbackViewHeaderHelper;
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -298,9 +299,13 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (logic != null)
                 {
-                    if (programmingSessionProxy == null || programmingSessionProxy.Fasta != FastaProtocoler || logic.ProgrammingSession != programmingSessionProxy.ProgrammingSession)
+                    //[-] if (programmingSessionProxy == null || programmingSessionProxy.Fasta != FastaProtocoler || logic.ProgrammingSession != programmingSessionProxy.ProgrammingSession)
+                    //[+] if (programmingSessionProxy == null)
+                    if (programmingSessionProxy == null)
                     {
-                        programmingSessionProxy = new ProgrammingSessionProxy(logic.ProgrammingSession, FastaProtocoler);
+                        //[-] programmingSessionProxy = new ProgrammingSessionProxyCustom(logic.ClientContext, logic.ProgrammingJobs);
+                        //[+] programmingSessionProxy = new ProgrammingSessionProxyCustom(logic.ClientContext, logic.ProgrammingJobs);
+                        programmingSessionProxy = new ProgrammingSessionProxyCustom(logic.ClientContext, logic.ProgrammingJobs);
                     }
                     return programmingSessionProxy;
                 }
