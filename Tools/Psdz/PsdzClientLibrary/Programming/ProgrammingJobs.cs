@@ -3599,6 +3599,12 @@ namespace PsdzClient.Programming
             }
         }
 
+        public void UpdateTalFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions)
+        {
+            PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(taCategories, talFilterOptions, PsdzContext.TalFilter));
+            PsdzContext.SetTalFilterForIndividualDataTal(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(taCategories, talFilterOptions, PsdzContext.TalFilterForIndividualDataTal));
+        }
+
         public void UpdateTalFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions)
         {
             PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilter));

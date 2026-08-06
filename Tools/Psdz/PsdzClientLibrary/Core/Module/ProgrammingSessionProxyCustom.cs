@@ -200,17 +200,17 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void UpdateTalFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions)
         {
-            programmingSession.UpdateTalFilterForAllEcus(taCategories, talFilterOptions);
+            programmingJobs.UpdateTalFilterForAllEcus(taCategories, talFilterOptions);
         }
 
         public void UpdateSFATalFilterForAllEcus(ISfaPerEcuOptions ecuOptions)
         {
-            programmingSession.UpdateSFATalFilterForAllEcus(ecuOptions);
+            //programmingSession.UpdateSFATalFilterForAllEcus(ecuOptions);
         }
 
         public void UpdateSFATalFilterForSelectedEcus(IDictionary<int, ISfaPerEcuOptions> ecuOptions)
         {
-            programmingSession.UpdateSFATalFilterForSelectedEcus(ecuOptions);
+            //programmingSession.UpdateSFATalFilterForSelectedEcus(ecuOptions);
         }
 
         public void UpdateTalFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions)
@@ -220,50 +220,53 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void UpdateTalFilterForSelectedEcuOnSweLevel(int diagAddress, TaCategories taCategory, string processClass, TalFilterOptions talFilterOptions, IDictionary<string, TalFilterOptions> sweFilter)
         {
-            programmingSession.UpdateTalFilterForSelectedEcuOnSweLevel(diagAddress, taCategory, processClass, talFilterOptions, sweFilter);
+            //programmingSession.UpdateTalFilterForSelectedEcuOnSweLevel(diagAddress, taCategory, processClass, talFilterOptions, sweFilter);
         }
 
         public void UpdateTalFilterForSelectedEcuOnSweLevel(int diagAddress, TaCategories taCategory, string processClass, TalFilterOptions talFilterOptions, List<string> sgbmIds, List<TalFilterOptions> sweTalFilterOptions)
         {
-            programmingSession.UpdateTalFilterForSelectedEcuOnSweLevel(diagAddress, taCategory, processClass, talFilterOptions, sgbmIds, sweTalFilterOptions);
+            //programmingSession.UpdateTalFilterForSelectedEcuOnSweLevel(diagAddress, taCategory, processClass, talFilterOptions, sgbmIds, sweTalFilterOptions);
         }
 
         public void DisableCodingSelection(string da)
         {
-            programmingSession.DisableCodingSelection(da);
+            //programmingSession.DisableCodingSelection(da);
         }
 
         public void DisableProgrammingSelection(string da)
         {
-            programmingSession.DisableProgrammingSelection(da);
+            //programmingSession.DisableProgrammingSelection(da);
         }
 
         public void SetConnectionToDCan()
         {
-            programmingSession.SetConnectionToDCan();
+            //programmingSession.SetConnectionToDCan();
         }
 
         public void SetConnectionPort(int port)
         {
-            programmingSession.SetConnectionPort(port);
+            //programmingSession.SetConnectionPort(port);
         }
 
         public int GetConnectionPort()
         {
-            int connectionPort = programmingSession.GetConnectionPort();
-            return connectionPort;
+            //int connectionPort = programmingSession.GetConnectionPort();
+            //return connectionPort;
+            return 0;
         }
 
         public IHttpServerResponse RequestProgrammingHttpServer()
         {
-            IHttpServerResponse httpServerResponse = programmingSession.RequestProgrammingHttpServer();
-            return httpServerResponse;
+            //IHttpServerResponse httpServerResponse = programmingSession.RequestProgrammingHttpServer();
+            //return httpServerResponse;
+            return null;
         }
 
         public bool IsHddUpdateUrlReachableByVehicle()
         {
-            bool result = programmingSession.IsHddUpdateUrlReachableByVehicle();
-            return result;
+            //bool result = programmingSession.IsHddUpdateUrlReachableByVehicle();
+            //return result;
+            return false;
         }
 
         public void SetPsdzPreferredFlashprotocolUDS(int diagAddress)
