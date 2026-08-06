@@ -7,6 +7,7 @@ using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient;
 using PsdzClient.Contracts;
 using PsdzClient.Core.Container;
@@ -155,12 +156,14 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void ClearTalFilter()
         {
-            programmingSession.ClearTalFilter();
+            IPsdzTalFilter psdzTalFilter = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
+            programmingJobs.PsdzContext.SetTalFilter(psdzTalFilter);
         }
 
         public void RestoreDefaultTalFilter()
         {
-            programmingSession.RestoreDefaultTalFilter();
+            IPsdzTalFilter psdzTalFilter = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
+            programmingJobs.PsdzContext.SetTalFilter(psdzTalFilter);
         }
 
         public void SetFaCurrent(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa)
