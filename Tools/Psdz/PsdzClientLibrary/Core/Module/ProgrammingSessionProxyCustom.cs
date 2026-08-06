@@ -191,7 +191,9 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void SetSvtCurrent(ISvt svt)
         {
-            programmingSession.SetSvtCurrent(svt);
+            string vin = programmingJobs.PsdzContext.FaActual.Vin;
+            IPsdzSvt psdzSvt = programmingJobs.ProgrammingService?.Psdz?.ObjectBuilder?.BuildSvt(svt, vin);
+            programmingJobs.PsdzContext.SetSvtCurrent(programmingJobs.ProgrammingService, psdzSvt, vin);
         }
 
         public void SetVehicleUpdate(IVehicleUpdate vehicleUpdate)
