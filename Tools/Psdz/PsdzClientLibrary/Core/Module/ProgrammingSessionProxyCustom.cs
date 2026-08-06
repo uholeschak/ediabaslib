@@ -28,25 +28,25 @@ namespace BMW.Rheingold.Module.ISTA
 
         private readonly ProgrammingJobs programmingJobs;
 
-        private readonly IProgrammingSessionExt programmingSession;
+        //private readonly IProgrammingSessionExt programmingSession;
 
         private readonly IProgrammingApi programmingApi;
 
         private readonly IAPISecurity apiSecurity;
 
-        internal IProgrammingSession ProgrammingSession => programmingSession;
+        //internal IProgrammingSession ProgrammingSession => programmingSession;
 
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaCurrent => ProgrammingUtils.BuildFa(programmingJobs.PsdzContext.FaActual);
 
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaTarget => ProgrammingUtils.BuildFa(programmingJobs.PsdzContext.FaTarget);
 
-        public string IntegrationLevelTarget => programmingSession.IntegrationLevelTarget;
+        public string IntegrationLevelTarget => programmingJobs.PsdzContext.VecInfo.TargetILevel;
 
         public IProgrammingApi ProgrammingApi => programmingApi;
 
         public IAPISecurity APISecurity => apiSecurity;
 
-        public IPsdzInfo Psdz => programmingSession.Psdz;
+        public IPsdzInfo Psdz => programmingJobs.ProgrammingService.Psdz;
 
         public IPsdzContext PsdzContext => programmingJobs.PsdzContext;
 
@@ -58,39 +58,39 @@ namespace BMW.Rheingold.Module.ISTA
 
         public string TalFilterAsXml => programmingJobs.PsdzContext.TalFilter?.AsXml;
 
-        public double TimeLeftSec => programmingSession.TimeLeftSec;
+        public double TimeLeftSec => 0;
 
         public bool UseReferenceSvtAsTarget
         {
             get
             {
-                return programmingSession.UseReferenceSvtAsTarget;
+                return false;
             }
             set
             {
-                programmingSession.UseReferenceSvtAsTarget = value;
+                //programmingSession.UseReferenceSvtAsTarget = value;
             }
         }
 
-        public ITherapyPlanApi TherapyPlanApi => programmingSession.TherapyPlanApi;
+        public ITherapyPlanApi TherapyPlanApi => null;
 
-        public ISecureEcuModeService SecureEcuModeService => programmingSession.SecureEcuModeService;
+        public ISecureEcuModeService SecureEcuModeService => null;
 
-        public ISecManagementService SecurityManagementService => programmingSession.SecurityManagementService;
+        public ISecManagementService SecurityManagementService => null;
 
-        public IComponentTheftProtectionService ComponentTheftProtectionService => programmingSession.ComponentTheftProtectionService;
+        public IComponentTheftProtectionService ComponentTheftProtectionService => null;
 
-        public IValidityCondition ValidityCondition => programmingSession.ValidityCondition;
+        public IValidityCondition ValidityCondition => null;
 
-        public IFeatureSpecificField FeatureSpecificField => programmingSession.FeatureSpecificField;
+        public IFeatureSpecificField FeatureSpecificField => null;
 
-        public IDictionary<IEcu, ProgrammingActionType> FailedProgrammingEcus => programmingSession.FailedProgrammingEcus;
+        public IDictionary<IEcu, ProgrammingActionType> FailedProgrammingEcus => null;
 
-        public IDictionary<IEcu, HashSet<ProgrammingActionType>> FailedProgrammingEcusActions => programmingSession.FailedProgrammingEcusActions;
+        public IDictionary<IEcu, HashSet<ProgrammingActionType>> FailedProgrammingEcusActions => null;
 
-        public ISet<ISmartActuatorEcu> FailedProgrammingSmartActuators => programmingSession.FailedProgrammingSmartActuators;
+        public ISet<ISmartActuatorEcu> FailedProgrammingSmartActuators => null;
 
-        public ISet<ISmartActuatorMasterEcu> FailedProgrammingSmartActuatorMasters => programmingSession.FailedProgrammingSmartActuatorMasters;
+        public ISet<ISmartActuatorMasterEcu> FailedProgrammingSmartActuatorMasters => null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -102,8 +102,9 @@ namespace BMW.Rheingold.Module.ISTA
 
         public IList<string> GetServiceProgramsForSwiAction(string swiActionName)
         {
-            IList<string> serviceProgramsForSwiAction = programmingSession.GetServiceProgramsForSwiAction(swiActionName);
-            return serviceProgramsForSwiAction;
+            //IList<string> serviceProgramsForSwiAction = programmingSession.GetServiceProgramsForSwiAction(swiActionName);
+            //return serviceProgramsForSwiAction;
+            return null;
         }
 
         public bool? IsSoftwareUpToDate(string ecu)
@@ -282,19 +283,21 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void SetPsdzPreferredFlashprotocolUDS(int diagAddress)
         {
-            programmingSession.SetPsdzPreferredFlashprotocolUDS(diagAddress);
+            //programmingSession.SetPsdzPreferredFlashprotocolUDS(diagAddress);
         }
 
         public bool SetPreExchangeSelectionForEcu(int diagAddress, bool activateSelection)
         {
-            bool result = programmingSession.SetPreExchangeSelectionForEcu(diagAddress, activateSelection);
-            return result;
+            //bool result = programmingSession.SetPreExchangeSelectionForEcu(diagAddress, activateSelection);
+            //return result;
+            return false;
         }
 
         public bool SetPostExchangeSelectionForEcu(int diagAddress, bool activateSelection)
         {
-            bool result = programmingSession.SetPostExchangeSelectionForEcu(diagAddress, activateSelection);
-            return result;
+            //bool result = programmingSession.SetPostExchangeSelectionForEcu(diagAddress, activateSelection);
+            //return result;
+            return false;
         }
 
         public bool SetTargetToBackupILevel()
@@ -311,128 +314,147 @@ namespace BMW.Rheingold.Module.ISTA
 
         public IBoolResultObject SetTargetContext(string newTargetILevel, BMW.Rheingold.CoreFramework.Contracts.Programming.IFa targetFa)
         {
-            IBoolResultObject boolResultObject = programmingSession.SetTargetContext(newTargetILevel, targetFa);
-            return boolResultObject;
+            //IBoolResultObject boolResultObject = programmingSession.SetTargetContext(newTargetILevel, targetFa);
+            //return boolResultObject;
+            return null;
         }
 
         public IBoolResultObject PlanVehicleModifications(List<IPlannedSwiAction> plannedSwiActions)
         {
-            IBoolResultObject boolResultObject = programmingSession.PlanVehicleModifications(plannedSwiActions);
-            return boolResultObject;
+            //IBoolResultObject boolResultObject = programmingSession.PlanVehicleModifications(plannedSwiActions);
+            //return boolResultObject;
+            return null;
         }
 
         public IBoolResultObject DeselectVehicleModifications(List<string> swiActionsToDeselect)
         {
-            IBoolResultObject boolResultObject = programmingSession.DeselectVehicleModifications(swiActionsToDeselect);
-            return boolResultObject;
+            //IBoolResultObject boolResultObject = programmingSession.DeselectVehicleModifications(swiActionsToDeselect);
+            //return boolResultObject;
+            return null;
         }
 
         public bool IsTargetILevelSetToBackIlevel()
         {
-            programmingJobs.PsdzContext.VecInfo.TargetILevel = programmingJobs.PsdzContext.VecInfo.ILevel;
-            return true;
+            return programmingJobs.PsdzContext.VecInfo.TargetILevel.Equals(programmingJobs.PsdzContext.VecInfo.ILevelBackup);
         }
 
         public IBoolResultObject AddTechnicalActionResultToProtocoll(string taNummer, string taBezeichnung, IList<string> mindestIStufens, bool abArbeitungsstatus, string diagnosisCodeTitle, string diagnoseCodes)
         {
-            IBoolResultObject boolResultObject = programmingSession.AddTechnicalActionResultToProtocoll(taNummer, taBezeichnung, mindestIStufens, abArbeitungsstatus, diagnosisCodeTitle, diagnoseCodes);
-            return boolResultObject;
+            //IBoolResultObject boolResultObject = programmingSession.AddTechnicalActionResultToProtocoll(taNummer, taBezeichnung, mindestIStufens, abArbeitungsstatus, diagnosisCodeTitle, diagnoseCodes);
+            //return boolResultObject;
+            return null;
         }
 
         public IBoolResultObject SwtDeactivationWhiteListFill(string minDiagAdress, string maxDiagAdress, string minAppNumber, string maxAppNumber, string minUpgradeIndex, string maxUpgradeIndex)
         {
-            IBoolResultObject boolResultObject = programmingSession.SwtDeactivationWhiteListFill(minDiagAdress, maxDiagAdress, minAppNumber, maxAppNumber, minUpgradeIndex, maxUpgradeIndex);
-            return boolResultObject;
+            //IBoolResultObject boolResultObject = programmingSession.SwtDeactivationWhiteListFill(minDiagAdress, maxDiagAdress, minAppNumber, maxAppNumber, minUpgradeIndex, maxUpgradeIndex);
+            //return boolResultObject;
+            return null;
         }
 
         public IBoolResultObject SwtDeactivationWhiteListClear()
         {
-            IBoolResultObject boolResultObject = programmingSession.SwtDeactivationWhiteListClear();
-            return boolResultObject;
+            //IBoolResultObject boolResultObject = programmingSession.SwtDeactivationWhiteListClear();
+            //return boolResultObject;
+            return null;
         }
 
         public IBoolResultObject AddRxSwinListToProtocol(List<IRxSwinObject> rxSwinList, bool updateActualContext)
         {
-            IBoolResultObject boolResultObject = programmingSession.AddRxSwinListToProtocol(rxSwinList, updateActualContext);
-            return boolResultObject;
+            //IBoolResultObject boolResultObject = programmingSession.AddRxSwinListToProtocol(rxSwinList, updateActualContext);
+            //return boolResultObject;
+            return null;
         }
 
         public IBoolResultObject StartVehicleOrderImport()
         {
-            IBoolResultObject result = programmingSession.StartVehicleOrderImport();
-            return result;
+            //IBoolResultObject result = programmingSession.StartVehicleOrderImport();
+            //return result;
+            return null;
         }
 
         public IBoolResultObject StartVehicleOrderImportOnlyOnlineOption()
         {
-            IBoolResultObject result = programmingSession.StartVehicleOrderImportOnlyOnlineOption();
-            return result;
+            //IBoolResultObject result = programmingSession.StartVehicleOrderImportOnlyOnlineOption();
+            //return result;
+            return null;
         }
 
         public IBoolResultObject StartVehicleOrderImportOnlyManualOption()
         {
-            IBoolResultObject result = programmingSession.StartVehicleOrderImportOnlyManualOption();
-            return result;
+            //IBoolResultObject result = programmingSession.StartVehicleOrderImportOnlyManualOption();
+            //return result;
+            return null;
         }
 
         public IBoolResultObject ImportSecureToken()
         {
-            IBoolResultObject result = programmingSession.ImportSecureToken();
-            return result;
+            //IBoolResultObject result = programmingSession.ImportSecureToken();
+            //return result;
+            return null;
         }
 
         public IBoolResultObject<ISdpPatchResult> SdpPatchAvailable()
         {
-            IBoolResultObject<ISdpPatchResult> result = programmingSession.SdpPatchAvailable();
-            return result;
+            //IBoolResultObject<ISdpPatchResult> result = programmingSession.SdpPatchAvailable();
+            //return result;
+            return null;
         }
 
         public IList<ISdpPatchResult> GetAvailableSdpPatches()
         {
-            IList<ISdpPatchResult> availableSdpPatches = programmingSession.GetAvailableSdpPatches();
-            return availableSdpPatches;
+            //IList<ISdpPatchResult> availableSdpPatches = programmingSession.GetAvailableSdpPatches();
+            //return availableSdpPatches;
+            return null;
         }
 
         public IBoolResultObject<IList<ISdpPatchResult>> AvailableSdpPatches()
         {
-            IBoolResultObject<IList<ISdpPatchResult>> result = programmingSession.AvailableSdpPatches();
-            return result;
+            //IBoolResultObject<IList<ISdpPatchResult>> result = programmingSession.AvailableSdpPatches();
+            //return result;
+            return null;
         }
 
         public IBoolResultObject SdpPatchDownload(string swiDataTarget)
         {
-            IBoolResultObject result = programmingSession.SdpPatchDownload(swiDataTarget);
-            return result;
+            //IBoolResultObject result = programmingSession.SdpPatchDownload(swiDataTarget);
+            //return result;
+            return null;
         }
 
         public IBoolResultObject SdpPatchDownload(string swiDataTarget, string newTargetILevel)
         {
-            IBoolResultObject result = programmingSession.SdpPatchDownload(swiDataTarget, newTargetILevel);
-            return result;
+            //IBoolResultObject result = programmingSession.SdpPatchDownload(swiDataTarget, newTargetILevel);
+            //return result;
+            return null;
         }
 
         public IBoolResultObject CheckAvailabilityOfPsdzConnection()
         {
-            IBoolResultObject result = programmingSession.CheckAvailabilityOfPsdzConnection();
-            return result;
+            //IBoolResultObject result = programmingSession.CheckAvailabilityOfPsdzConnection();
+            //return result;
+            return null;
         }
 
         public IBoolResultObject<IEcuFailureResponseSet> ResetEcus(List<string> hexEcuAddress)
         {
-            IBoolResultObject<IEcuFailureResponseSet> result = programmingSession.ResetEcus(hexEcuAddress);
-            return result;
+            //IBoolResultObject<IEcuFailureResponseSet> result = programmingSession.ResetEcus(hexEcuAddress);
+            //return result;
+            return null;
         }
 
         public IBoolResultObject CheckAvailabilityOfSdpPatchStorage()
         {
-            IBoolResultObject result = programmingSession.CheckAvailabilityOfSdpPatchStorage();
-            return result;
+            //IBoolResultObject result = programmingSession.CheckAvailabilityOfSdpPatchStorage();
+            //return result;
+            return null;
         }
 
         public IBoolResultObject<long> GetDurationOfWenToken()
         {
-            IBoolResultObject<long> durationOfWenToken = programmingSession.GetDurationOfWenToken();
-            return durationOfWenToken;
+            //IBoolResultObject<long> durationOfWenToken = programmingSession.GetDurationOfWenToken();
+            //return durationOfWenToken;
+            return null;
         }
 
         private string LogArray<T>(T[] array)
