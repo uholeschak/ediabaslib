@@ -303,10 +303,11 @@ namespace BMW.Rheingold.Module.ISTA
                     //[+] if (programmingSessionProxy == null)
                     if (programmingSessionProxy == null)
                     {
-                        //[-] programmingSessionProxy = new ProgrammingSessionProxyCustom(logic.ClientContext, logic.ProgrammingJobs);
+                        //[-] programmingSessionProxy = new ProgrammingSessionProxy(logic.ProgrammingSession, FastaProtocoler);
                         //[+] programmingSessionProxy = new ProgrammingSessionProxyCustom(logic.ClientContext, logic.ProgrammingJobs);
                         programmingSessionProxy = new ProgrammingSessionProxyCustom(logic.ClientContext, logic.ProgrammingJobs);
                     }
+
                     return programmingSessionProxy;
                 }
 
@@ -384,6 +385,7 @@ namespace BMW.Rheingold.Module.ISTA
         [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
         public override PsdzDatabase DBProvider => ClientContext.GetDatabase(vehicle);
         public IProtocolBasicBase FastaProtocolerBase => FastaProtocoler;
+
         [PreserveSource(Hint = "SessionInfoAccessor replaced", Placeholder = true)]
         public SessionInfo SessionInfo => ClientContext.GetClientContext(vehicle)?.SessionInfo;
 
@@ -553,16 +555,16 @@ namespace BMW.Rheingold.Module.ISTA
             string output = string.Empty;
             if (FastaProtocoler != null)
             {
-                //[-] IAction<IUiDialog> action = FastaProtocoler.CreateAndAddUiDialogFromServiceProgram("EnterPopup", "TODO");
-                //[-] action.StartTime = now;
-                //[-] IList<LocalizedText> messageTextList = ((!string.IsNullOrEmpty(textContent.FormattedText) && textContent.FormattedText.Length != 0) ? __Text().TextContent.Concat(textContent).Concat(textContent2).GetTextForUI(logic.Lang) : textContent2.GetTextForUI(logic.Lang));
-                //[-] action.SpecialAction.CreateAndAddMessageText(messageTextList);
-                //[-] if (output != null)
-                //[-] {
-                //[-] List<LocalizedText> list = new List<LocalizedText>();
-                //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText(output, x)));
-                //[-] action.SpecialAction.AddAnswer(list, "UserInput");
-                //[-] }
+            //[-] IAction<IUiDialog> action = FastaProtocoler.CreateAndAddUiDialogFromServiceProgram("EnterPopup", "TODO");
+            //[-] action.StartTime = now;
+            //[-] IList<LocalizedText> messageTextList = ((!string.IsNullOrEmpty(textContent.FormattedText) && textContent.FormattedText.Length != 0) ? __Text().TextContent.Concat(textContent).Concat(textContent2).GetTextForUI(logic.Lang) : textContent2.GetTextForUI(logic.Lang));
+            //[-] action.SpecialAction.CreateAndAddMessageText(messageTextList);
+            //[-] if (output != null)
+            //[-] {
+            //[-] List<LocalizedText> list = new List<LocalizedText>();
+            //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText(output, x)));
+            //[-] action.SpecialAction.AddAnswer(list, "UserInput");
+            //[-] }
             }
             else
             {
@@ -1297,6 +1299,7 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             assembly = GetModuleAssembly(text2);
                         }
+
                         IModuleStep moduleStep = null;
                         bool flag = false;
                         if (inParameters.Parameter.ContainsKey("PreventProtocol"))
