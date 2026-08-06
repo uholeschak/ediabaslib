@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
+using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge;
 using PsdzClient;
 
 namespace BMW.Rheingold.Module.ISTA
@@ -84,7 +85,7 @@ namespace BMW.Rheingold.Module.ISTA
             object obj = ServiceDialogConfig.DialogType.CreateInstance(constructorParamType, constructorParam);
             dialogImpl = (ISTAServiceDialog)obj;
             dialogImpl.SetResultSetFromServiceProgram(CallingModule.ResultSet);
-            //[-] IServiceDlgImplBase<ServiceDialogModelBase> serviceDlgImplBase = dialogImpl as IServiceDlgImplBase<ServiceDialogModelBase>;
+            IServiceDlgImplBase<ServiceDialogModelBase> serviceDlgImplBase = dialogImpl as IServiceDlgImplBase<ServiceDialogModelBase>;
             //[-] dialogImpl.ServiceDialogUI = serviceDlgImplBase?.Model;
             //[-] CurrentStep = serviceDlgImplBase?.Model;
         }
