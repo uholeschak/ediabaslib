@@ -3599,6 +3599,38 @@ namespace PsdzClient.Programming
             }
         }
 
+        public int? RetrieveDiagnosisAddress(string ecu)
+        {
+            int? result = null;
+            if (string.IsNullOrEmpty(ecu))
+            {
+                return null;
+            }
+            if (int.TryParse(ecu.Replace("0x", ""), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var result2))
+            {
+                result = result2;
+            }
+            else
+            {
+                try
+                {
+                    IEcuProgrammingInfo ecuProgrammingInfo = ProgrammingService.ProgrammingInfos.SingleOrDefault((IEcuProgrammingInfo x) => ecu.Equals(x.Ecu.ECU_GRUPPE, StringComparison.OrdinalIgnoreCase) || ecu.Equals(x.Ecu.VARIANTE, StringComparison.OrdinalIgnoreCase));
+                    if (ecuProgrammingInfo != null && int.TryParse(ecuProgrammingInfo.Ecu.ECU_ADR.Replace("0x", ""), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out result2))
+                    {
+                        result = result2;
+                        return result;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Log.Error("ProgramminSession.IsSoftwareUpToDate()", "More than one ECU found with the parameterdata '{0}'.", ecu);
+                    Log.ErrorException("ProgramminSession.IsSoftwareUpToDate()", exception);
+                }
+            }
+            return result;
+        }
+
+
         public void UpdateTalFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions)
         {
             PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(taCategories, talFilterOptions, PsdzContext.TalFilter));

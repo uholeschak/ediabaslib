@@ -108,50 +108,60 @@ namespace BMW.Rheingold.Module.ISTA
 
         public bool? IsSoftwareUpToDate(string ecu)
         {
-            bool? result = programmingSession.IsSoftwareUpToDate(ecu);
-            return result;
+            int? diagnosisAddress = programmingJobs.RetrieveDiagnosisAddress(ecu);
+            if (!diagnosisAddress.HasValue)
+            {
+                return null;
+            }
+            return programmingJobs.PsdzContext.IsSoftwareUpToDate(diagnosisAddress.Value);
         }
 
         public IEnumerable<ISgbmIdChange> GetDifferentSgbmIds(string ecu)
         {
-            IEnumerable<ISgbmIdChange> differentSgbmIds = programmingSession.GetDifferentSgbmIds(ecu);
-            return differentSgbmIds;
+            int? diagnosisAddress = programmingJobs.RetrieveDiagnosisAddress(ecu);
+            if (!diagnosisAddress.HasValue)
+            {
+                return null;
+            }
+            return programmingJobs.PsdzContext.GetDifferentSgbmIds(diagnosisAddress.Value);
         }
 
         public bool GetProgrammingModeSwitchFromTALExecution()
         {
-            bool programmingModeSwitchFromTALExecution = programmingSession.GetProgrammingModeSwitchFromTALExecution();
-            return programmingModeSwitchFromTALExecution;
+            //bool programmingModeSwitchFromTALExecution = programmingSession.GetProgrammingModeSwitchFromTALExecution();
+            //return programmingModeSwitchFromTALExecution;
+            return false;
         }
 
         public void SetProgrammingModeSwitchFromTALExecution(bool value)
         {
-            programmingSession.SetProgrammingModeSwitchFromTALExecution(value);
+            //programmingSession.SetProgrammingModeSwitchFromTALExecution(value);
         }
 
         public void SetECUsNotToSwitchToProgrammingMode(IList<string> ecus)
         {
-            programmingSession.SetECUsNotToSwitchToProgrammingMode(ecus);
+            //programmingSession.SetECUsNotToSwitchToProgrammingMode(ecus);
         }
 
         public void SetECUsToPreventUDSFallback(IList<string> ecus)
         {
-            programmingSession.SetECUsToPreventUDSFallback(ecus);
+            //programmingSession.SetECUsToPreventUDSFallback(ecus);
         }
 
         public bool? GetParallelFlashFromTALExecution()
         {
-            return programmingSession.GetParallelFlashFromTALExecution();
+            //return programmingSession.GetParallelFlashFromTALExecution();
+            return null;
         }
 
         public void SetParallelFlashFromTALExecution(bool valueToSet)
         {
-            programmingSession.SetParallelFlashFromTALExecution(valueToSet);
+            //programmingSession.SetParallelFlashFromTALExecution(valueToSet);
         }
 
         public void SetBackProgrammingModeSwitchFromTALExecution()
         {
-            programmingSession.SetBackProgrammingModeSwitchFromTALExecution();
+            //programmingSession.SetBackProgrammingModeSwitchFromTALExecution();
         }
 
         public void ClearTalFilter()
@@ -189,13 +199,14 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void SetVehicleUpdate(IVehicleUpdate vehicleUpdate)
         {
-            programmingSession.SetVehicleUpdate(vehicleUpdate);
+            //programmingSession.SetVehicleUpdate(vehicleUpdate);
         }
 
         public IVehicleUpdate SpecialPlanRequired(string swiActionName)
         {
-            IVehicleUpdate result = programmingSession.SpecialPlanRequired(swiActionName);
-            return result;
+            //IVehicleUpdate result = programmingSession.SpecialPlanRequired(swiActionName);
+            //return result;
+            return null;
         }
 
         public void UpdateTalFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions)
