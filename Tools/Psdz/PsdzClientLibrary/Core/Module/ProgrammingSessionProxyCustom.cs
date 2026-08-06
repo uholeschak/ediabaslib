@@ -294,14 +294,14 @@ namespace BMW.Rheingold.Module.ISTA
 
         public bool SetTargetToBackupILevel()
         {
-            bool result = programmingSession.SetTargetToBackupILevel(null);
-            return result;
+            programmingJobs.PsdzContext.VecInfo.TargetILevel = programmingJobs.PsdzContext.VecInfo.ILevelBackup;
+            return true;
         }
 
         public bool SetTargetToDefinedILevel(string targetILevel)
         {
-            bool result = programmingSession.SetTargetToDefinedILevel(null, targetILevel);
-            return result;
+            programmingJobs.PsdzContext.VecInfo.TargetILevel = targetILevel;
+            return true;
         }
 
         public IBoolResultObject SetTargetContext(string newTargetILevel, BMW.Rheingold.CoreFramework.Contracts.Programming.IFa targetFa)
