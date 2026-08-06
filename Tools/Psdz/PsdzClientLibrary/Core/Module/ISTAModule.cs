@@ -403,7 +403,7 @@ namespace BMW.Rheingold.Module.ISTA
             Log.Info("ISTAModule.ISTAModule()", "called for {0}, total instances: {1}", GetType().Name, instances);
             CallingModule = GetType().Name;
             base.textContentManager = textContentManager;
-            //[-] Factory = new ServiceDialogFactory();
+            Factory = new ServiceDialogFactory();
             //[-] logger = new Logger(GetType().Name);
             //[+] logger = new NugetLogger();
             logger = new NugetLogger();
