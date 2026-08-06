@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge.Multisession;
 using PsdzClient;
 
 namespace BMW.Rheingold.Module.ISTA
@@ -80,7 +81,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(70704210955m, null, typeof(ISTA_Zeit), typeof(IstaZeitCmd), hasGui: false);
             //[-] Register(51892235m, "MeasuringServiceDlg", typeof(MeasuringServiceDlgImpl), typeof(IstaOperationServiceDialogUi), typeof(MeasuringServiceDlgCmd));
             //[-] Register(68904586891m, "Meldung_Neu", typeof(MeldungNeuImpl), typeof(IstaOperationServiceDialogUi), null);
-            //[-] Register(51915403m, "MessageServiceDlg", typeof(MessageServiceDlgImpl), typeof(IstaOperationServiceDialogUi), typeof(MessageServiceDlgCmd));
+            Register(51915403m, "MessageServiceDlg", typeof(MessageServiceDlgImpl), typeof(IstaOperationServiceDialogUi), typeof(MessageServiceDlgCmd));
             //[-] Register(57410849547m, "Dialog_Messwertanzeige_H", typeof(MesswertanzeigeHorizontalImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(55479872651m, "Dialog_Messwertanzeige_V", typeof(MesswertanzeigeVerticalImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(53397493003m, null, typeof(Messwerte_Generator1), typeof(MesswerteGenerator1Cmd), hasGui: false);
