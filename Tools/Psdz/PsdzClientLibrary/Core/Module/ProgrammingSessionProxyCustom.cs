@@ -35,21 +35,9 @@ namespace BMW.Rheingold.Module.ISTA
 
         internal IProgrammingSession ProgrammingSession => programmingSession;
 
-        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaCurrent
-        {
-            get
-            {
-                return ProgrammingUtils.BuildFa(programmingJobs.PsdzContext.FaActual);
-            }
-        }
+        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaCurrent => ProgrammingUtils.BuildFa(programmingJobs.PsdzContext.FaActual);
 
-        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaTarget
-        {
-            get
-            {
-                return ProgrammingUtils.BuildFa(programmingJobs.PsdzContext.FaTarget);
-            }
-        }
+        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaTarget => ProgrammingUtils.BuildFa(programmingJobs.PsdzContext.FaTarget);
 
         public string IntegrationLevelTarget => programmingSession.IntegrationLevelTarget;
 
@@ -65,9 +53,9 @@ namespace BMW.Rheingold.Module.ISTA
 
         public ISvt SvtTarget => programmingJobs.PsdzContext.SvtTarget;
 
-        public string TalAsXml => programmingSession.TalAsXml;
+        public string TalAsXml => programmingJobs.PsdzContext.Tal?.AsXml;
 
-        public string TalFilterAsXml => programmingSession.TalFilterAsXml;
+        public string TalFilterAsXml => programmingJobs.PsdzContext.TalFilter?.AsXml;
 
         public double TimeLeftSec => programmingSession.TimeLeftSec;
 
