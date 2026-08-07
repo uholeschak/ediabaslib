@@ -48,6 +48,29 @@ public class TestModuleRunner
         _moduleParameters.setParameter(ModuleParameter.ParameterName.ServiceProgramController, _serviceProgramController);
     }
 
+    public bool IsValid()
+    {
+        try
+        {
+            Assembly assembly = GetModuleAssembly(_moduleName);
+            if (assembly == null)
+            {
+                return false;
+            }
+
+            Type type = assembly.GetType(_moduleTypeName, throwOnError: false);
+            if (type == null)
+            {
+                return false;
+            }
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     public bool Run()
     {
         try
