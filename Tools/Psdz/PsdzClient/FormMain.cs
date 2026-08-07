@@ -736,6 +736,8 @@ namespace PsdzClient
             LoadSettings();
             UpdateDisplay();
             UpdateStatus();
+
+            timerUpdate.Interval = 500;
             timerUpdate.Enabled = true;
             labelProgressEvent.Text = string.Empty;
 
