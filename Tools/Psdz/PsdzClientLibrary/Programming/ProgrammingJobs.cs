@@ -2902,6 +2902,24 @@ namespace PsdzClient.Programming
                                                 {
                                                     if (infoInfoObj.LinkType == PsdzDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                                                     {
+#if FA_TESTMODULES
+                                                        try
+                                                        {
+                                                            TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, infoInfoObj.ControlId);
+                                                            if (testModuleRunner.IsValid())
+                                                            {
+                                                                testModuleValid = true;
+                                                            }
+                                                            else
+                                                            {
+                                                                log.ErrorFormat(CultureInfo.InvariantCulture, "Ignoring invalid test module: {0}", infoInfoObj.ModuleName);
+                                                            }
+                                                        }
+                                                        catch (Exception e)
+                                                        {
+                                                            log.ErrorFormat(CultureInfo.InvariantCulture, "Check test module exception for module name: {0}, Exception: {1}", infoInfoObj.ModuleName, e);
+                                                        }
+#else
                                                         string moduleName = infoInfoObj.ModuleName;
                                                         PsdzDatabase.TestModuleData testModuleData = ProgrammingService.PsdzDatabase.GetTestModuleData(moduleName);
                                                         if (testModuleData != null)
@@ -2911,6 +2929,7 @@ namespace PsdzClient.Programming
                                                         }
 
                                                         log.ErrorFormat(CultureInfo.InvariantCulture, "Ignoring invalid test module: {0}", moduleName ?? string.Empty);
+#endif
                                                     }
                                                 }
                                             }
@@ -3536,7 +3555,7 @@ namespace PsdzClient.Programming
                     {
                         if (infoInfoObj.LinkType == PsdzDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                         {
-#if true
+#if FA_TESTMODULES
                             try
                             {
                                 TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, infoInfoObj.ControlId);
