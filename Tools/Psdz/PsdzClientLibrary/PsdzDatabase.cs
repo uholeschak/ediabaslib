@@ -1796,11 +1796,11 @@ namespace PsdzClient
             return DatabaseFunctions.GetNodeClassNameById(_mDbConnection, nodeClassId);
         }
 
-        public List<LocalizedText> GetTextCollectionById(string idInfoObject, IList<string> lang = null)
+        public List<LocalizedText> GetTextCollectionById(string id, IList<string> lang = null)
         {
-            log.InfoFormat("GetTextCollectionById Id: {0}", idInfoObject);
+            log.InfoFormat("GetTextCollectionById Id: {0}", id);
 
-            if (string.IsNullOrEmpty(idInfoObject))
+            if (string.IsNullOrEmpty(id))
             {
                 log.ErrorFormat("GetTextCollectionById No Info Object ID");
                 return null;
@@ -1810,7 +1810,7 @@ namespace PsdzClient
             try
             {
                 EcuTranslation xmlTranslation = null;
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, INFOOBJECT_ID, " + SqlXmlItems + " FROM XEP_REFSPTEXTCOLL WHERE (INFOOBJECT_ID = '{0}')", idInfoObject);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, INFOOBJECT_ID, " + SqlXmlItems + " FROM XEP_REFSPTEXTCOLL WHERE (INFOOBJECT_ID = '{0}')", id);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;

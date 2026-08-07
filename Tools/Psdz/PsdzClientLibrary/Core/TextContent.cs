@@ -350,8 +350,8 @@ namespace PsdzClient.Core
                         }
 
                         //[-] string textItem = database.GetTextCollectionById(Convert.ToDecimal(xmlText, CultureInfo.InvariantCulture), new string[1] { language })[0].TextItem;
-                        //[+] string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
-                        string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
+                        //[+] string textItem = database.GetTextCollectionById(xmlText, new string[1] { language })[0].TextItem;
+                        string textItem = database.GetTextCollectionById(xmlText, new string[1] { language })[0].TextItem;
                         if (!string.IsNullOrEmpty(textItem))
                         {
                             result = ReplaceTextReferences(textItem, database, language);
