@@ -2455,8 +2455,7 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, ServiceModuleData> moduleDataDict = lastServiceModules?.ModuleDataDict;
-                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict =
-                    lastServiceModules?.ModuleTextDict;
+                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = lastServiceModules?.ModuleTextDict;
                 int lastFailCount = 0;
                 if (lastServiceModules != null)
                 {
@@ -2492,17 +2491,13 @@ namespace PsdzClient
                         string key = moduleName.ToUpperInvariant();
                         if (!moduleDataDict.ContainsKey(key))
                         {
-                            ServiceModuleData moduleData = ReadServiceModule(moduleName, swiInfoObj, moduleTextDict,
-                                out bool failure);
+                            ServiceModuleData moduleData = ReadServiceModule(moduleName, swiInfoObj, moduleTextDict, out bool failure);
                             if (moduleData == null)
                             {
-                                log.ErrorFormat("ConvertAllServiceModules ReadServiceModule failed for: {0}",
-                                    moduleName);
+                                log.ErrorFormat("ConvertAllServiceModules ReadServiceModule failed for: {0}", moduleName);
                                 if (failure)
                                 {
-                                    log.ErrorFormat(
-                                        "ConvertAllServiceModules ReadServiceModule generation failure for: {0}",
-                                        moduleName);
+                                    log.ErrorFormat("ConvertAllServiceModules ReadServiceModule generation failure for: {0}", moduleName);
                                     failCount++;
                                 }
                             }
@@ -2524,8 +2519,7 @@ namespace PsdzClient
                         }
                         else
                         {
-                            log.ErrorFormat("ConvertAllServiceModules ReadServiceModule Module present: {0}",
-                                moduleName);
+                            log.ErrorFormat("ConvertAllServiceModules ReadServiceModule Module present: {0}", moduleName);
                         }
                     }
 
@@ -2551,10 +2545,8 @@ namespace PsdzClient
                 }
 
                 DbInfo dbInfo = GetDbInfo();
-                VehicleStructsBmw.VersionInfo versionInfo =
-                    new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed, percentFinish,
-                    failCount + lastFailCount);
+                VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed, percentFinish, failCount + lastFailCount);
             }
             catch (Exception e)
             {
