@@ -1,6 +1,6 @@
 ﻿<Project>
    <PropertyGroup>
        <!-- Activate these swithes for old Psdz hosts -->
-       <DefineConstants>$(DefineConstants);_OLD_PSDZ_BUS;_OLD_PSDZ_FA;FA_TESTMODULES</DefineConstants>
+       <DefineConstants>$(DefineConstants);_OLD_PSDZ_BUS;_OLD_PSDZ_FA;_OLD_TSTMOD_DATA</DefineConstants>
    </PropertyGroup>
 </Project>

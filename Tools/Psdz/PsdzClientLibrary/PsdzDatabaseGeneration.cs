@@ -1699,6 +1699,7 @@ namespace PsdzClient
             }
         }
 
+#if OLD_TSTMOD_DATA
         public TestModuleData GetTestModuleData(string moduleName)
         {
             log.InfoFormat("GetTestModuleData Name: {0}", moduleName);
@@ -1891,7 +1892,7 @@ namespace PsdzClient
                 return null;
             }
         }
-
+#endif
         private bool PatchCommonMethods(Assembly coreFrameworkAssembly, Type istaModuleType)
         {
             try
@@ -3743,6 +3744,7 @@ namespace PsdzClient
             return ecuTranslationVehicle;
         }
 
+#if OLD_TSTMOD_DATA
         public bool GenerateTestModuleData(ProgressDelegate progressHandler, bool checkOnly)
         {
             try
@@ -3970,7 +3972,7 @@ namespace PsdzClient
                 return null;
             }
         }
-
+#endif
         public bool GenerateEcuCharacteristicsData()
         {
             try

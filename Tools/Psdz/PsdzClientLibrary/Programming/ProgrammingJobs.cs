@@ -713,6 +713,7 @@ namespace PsdzClient.Programming
                         }
                     }
 #endif
+#if OLD_TSTMOD_DATA
                     bool checkOnlyTest = _executionMode != ExecutionMode.GenerateTestModules;
                     for (int loop = 0;; loop++)
                     {
@@ -825,7 +826,7 @@ namespace PsdzClient.Programming
                             return true;
                         }
                     }
-
+#endif
                     bool resultEcuCharacteristics = true;
                     if (!ProgrammingService.PsdzDatabase.GenerateEcuCharacteristicsData())
                     {
@@ -2902,7 +2903,17 @@ namespace PsdzClient.Programming
                                                 {
                                                     if (infoInfoObj.LinkType == PsdzDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                                                     {
-#if FA_TESTMODULES
+#if OLD_TSTMOD_DATA
+                                                        string moduleName = infoInfoObj.ModuleName;
+                                                        PsdzDatabase.TestModuleData testModuleData = ProgrammingService.PsdzDatabase.GetTestModuleData(moduleName);
+                                                        if (testModuleData != null)
+                                                        {
+                                                            testModuleValid = true;
+                                                            break;
+                                                        }
+
+                                                        log.ErrorFormat(CultureInfo.InvariantCulture, "Ignoring invalid test module: {0}", moduleName ?? string.Empty);
+#else
                                                         try
                                                         {
                                                             TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, infoInfoObj.ControlId);
@@ -2919,16 +2930,6 @@ namespace PsdzClient.Programming
                                                         {
                                                             log.ErrorFormat(CultureInfo.InvariantCulture, "Check test module exception for module name: {0}, Exception: {1}", infoInfoObj.ModuleName, e);
                                                         }
-#else
-                                                        string moduleName = infoInfoObj.ModuleName;
-                                                        PsdzDatabase.TestModuleData testModuleData = ProgrammingService.PsdzDatabase.GetTestModuleData(moduleName);
-                                                        if (testModuleData != null)
-                                                        {
-                                                            testModuleValid = true;
-                                                            break;
-                                                        }
-
-                                                        log.ErrorFormat(CultureInfo.InvariantCulture, "Ignoring invalid test module: {0}", moduleName ?? string.Empty);
 #endif
                                                     }
                                                 }
@@ -3555,27 +3556,7 @@ namespace PsdzClient.Programming
                     {
                         if (infoInfoObj.LinkType == PsdzDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                         {
-#if FA_TESTMODULES
-                            try
-                            {
-                                TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, infoInfoObj.ControlId);
-                                if (!testModuleRunner.Run())
-                                {
-                                    log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa TestModuleRunner failed for module name: {0}", infoInfoObj.ModuleName);
-                                    optionsItem.Invalid = true;
-                                }
-                                else
-                                {
-                                    optionsItem.Invalid = false;
-                                }
-                                ProgrammingService.PsdzDatabase.ResetXepRules();
-                            }
-                            catch (Exception e)
-                            {
-                                log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa TestModuleRunner exception for module name: {0}, Exception: {1}", infoInfoObj.ModuleName, e);
-                                optionsItem.Invalid = true;
-                            }
-#else
+#if OLD_TSTMOD_DATA
                             string moduleName = infoInfoObj.ModuleName;
                             PsdzDatabase.TestModuleData testModuleData = ProgrammingService.PsdzDatabase.GetTestModuleData(moduleName);
                             if (testModuleData == null)
@@ -3618,6 +3599,26 @@ namespace PsdzClient.Programming
                                 IPsdzFa psdzFaTarget = ProgrammingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, PsdzContext.FaActual.Vin);
                                 PsdzContext.SetFaTarget(psdzFaTarget);
                                 ProgrammingService.PsdzDatabase.ResetXepRules();
+                            }
+#else
+                            try
+                            {
+                                TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, infoInfoObj.ControlId);
+                                if (!testModuleRunner.Run())
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa TestModuleRunner failed for module name: {0}", infoInfoObj.ModuleName);
+                                    optionsItem.Invalid = true;
+                                }
+                                else
+                                {
+                                    optionsItem.Invalid = false;
+                                }
+                                ProgrammingService.PsdzDatabase.ResetXepRules();
+                            }
+                            catch (Exception e)
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa TestModuleRunner exception for module name: {0}, Exception: {1}", infoInfoObj.ModuleName, e);
+                                optionsItem.Invalid = true;
                             }
 #endif
                         }
