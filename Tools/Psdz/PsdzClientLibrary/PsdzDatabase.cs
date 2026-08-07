@@ -1502,6 +1502,7 @@ namespace PsdzClient
         private Dictionary<string, XepRule> _xepRuleDict;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
+        private bool _redirectGetTextCollectionById = false;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
@@ -1798,6 +1799,12 @@ namespace PsdzClient
 
         public List<LocalizedText> GetTextCollectionById(string id, IList<string> lang = null)
         {
+            if (_redirectGetTextCollectionById)
+            {
+                log.InfoFormat("GetTextCollectionById redirected to GetTextListById Id: {0}", id);
+                return GetTextListById(id, lang);
+            }
+
             log.InfoFormat("GetTextCollectionById Id: {0}", id);
 
             if (string.IsNullOrEmpty(id))
@@ -1890,13 +1897,13 @@ namespace PsdzClient
             return textList;
         }
 
-        public List<LocalizedText> GetTextById(string id, IList<string> lang = null)
+        public List<LocalizedText> GetTextListById(string id, IList<string> lang = null)
         {
-            log.InfoFormat("GetTextById Id: {0}", id);
+            log.InfoFormat("GetTextListById Id: {0}", id);
 
             if (string.IsNullOrEmpty(id))
             {
-                log.ErrorFormat("GetTextById No ID");
+                log.ErrorFormat("GetTextListById No ID");
                 return null;
             }
 
@@ -1923,7 +1930,7 @@ namespace PsdzClient
 
                 if (xmlTranslation == null)
                 {
-                    log.ErrorFormat("GetTextById No translations");
+                    log.ErrorFormat("GetTextListById No translations");
                     return null;
                 }
 
@@ -1967,7 +1974,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("GetTextById Exception: '{0}'", e.Message);
+                log.ErrorFormat("GetTextListById Exception: '{0}'", e.Message);
                 return null;
             }
 

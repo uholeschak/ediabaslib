@@ -2440,7 +2440,8 @@ namespace PsdzClient
             {
                 RestartRequired = true;
 
-                List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { AblFilter });
+                List<SwiDiagObj> diagObjsNodeClass =
+                    GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { AblFilter });
                 if (diagObjsNodeClass == null)
                 {
                     log.ErrorFormat("ConvertAllServiceModules GetInfoObjectsTreeForNodeclassName failed");
@@ -2454,7 +2455,8 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, ServiceModuleData> moduleDataDict = lastServiceModules?.ModuleDataDict;
-                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = lastServiceModules?.ModuleTextDict;
+                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict =
+                    lastServiceModules?.ModuleTextDict;
                 int lastFailCount = 0;
                 if (lastServiceModules != null)
                 {
@@ -2490,13 +2492,17 @@ namespace PsdzClient
                         string key = moduleName.ToUpperInvariant();
                         if (!moduleDataDict.ContainsKey(key))
                         {
-                            ServiceModuleData moduleData = ReadServiceModule(moduleName, swiInfoObj, moduleTextDict, out bool failure);
+                            ServiceModuleData moduleData = ReadServiceModule(moduleName, swiInfoObj, moduleTextDict,
+                                out bool failure);
                             if (moduleData == null)
                             {
-                                log.ErrorFormat("ConvertAllServiceModules ReadServiceModule failed for: {0}", moduleName);
+                                log.ErrorFormat("ConvertAllServiceModules ReadServiceModule failed for: {0}",
+                                    moduleName);
                                 if (failure)
                                 {
-                                    log.ErrorFormat("ConvertAllServiceModules ReadServiceModule generation failure for: {0}", moduleName);
+                                    log.ErrorFormat(
+                                        "ConvertAllServiceModules ReadServiceModule generation failure for: {0}",
+                                        moduleName);
                                     failCount++;
                                 }
                             }
@@ -2518,7 +2524,8 @@ namespace PsdzClient
                         }
                         else
                         {
-                            log.ErrorFormat("ConvertAllServiceModules ReadServiceModule Module present: {0}", moduleName);
+                            log.ErrorFormat("ConvertAllServiceModules ReadServiceModule Module present: {0}",
+                                moduleName);
                         }
                     }
 
@@ -2544,13 +2551,19 @@ namespace PsdzClient
                 }
 
                 DbInfo dbInfo = GetDbInfo();
-                VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed, percentFinish, failCount + lastFailCount);
+                VehicleStructsBmw.VersionInfo versionInfo =
+                    new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed, percentFinish,
+                    failCount + lastFailCount);
             }
             catch (Exception e)
             {
                 log.ErrorFormat("ConvertAllServiceModules Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
+            }
+            finally
+            {
+                _redirectGetTextCollectionById = false;
             }
         }
 
@@ -3458,23 +3471,31 @@ namespace PsdzClient
                                         log.InfoFormat("ReadServiceModule Text Id: {0}", textId);
                                         try
                                         {
+                                            _redirectGetTextCollectionById = true;
                                             ITextLocator textLocator = textCollection.__Text(textId);
                                             TextContent textContent = textLocator?.TextContent as TextContent;
-                                            IList<LocalizedText> textItems = textContent?.CreatePlainText(textCollection.Langs);
+                                            IList<LocalizedText> textItems =
+                                                textContent?.CreatePlainText(textCollection.Langs);
                                             if (textItems != null)
                                             {
                                                 foreach (LocalizedText textItem in textItems)
                                                 {
                                                     if (!string.IsNullOrWhiteSpace(textItem.TextItem))
                                                     {
-                                                        log.InfoFormat("ReadServiceModule Text Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
+                                                        log.InfoFormat("ReadServiceModule Text Lang: {0}, Text: '{1}'",
+                                                            textItem.Language, textItem.TextItem);
                                                     }
                                                 }
                                             }
                                         }
                                         catch (Exception e)
                                         {
-                                            log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, EdiabasLib.EdiabasNet.GetExceptionText(e));
+                                            log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId,
+                                                EdiabasLib.EdiabasNet.GetExceptionText(e));
+                                        }
+                                        finally
+                                        {
+                                            _redirectGetTextCollectionById = false;
                                         }
                                     }
                                 }
