@@ -587,8 +587,8 @@ namespace PsdzClient.Core
                 }
 
                 //[-] IList<LocalizedText> textCollectionById = db.GetTextCollectionById(Convert.ToDecimal(xmlText, CultureInfo.InvariantCulture), lang);
-                //[+] IList<LocalizedText> textCollectionById = db.GetTextById(xmlText, lang);
-                IList<LocalizedText> textCollectionById = db.GetTextById(xmlText, lang);
+                //[+] IList<LocalizedText> textCollectionById = db.GetTextCollectionById(xmlText, lang);
+                IList<LocalizedText> textCollectionById = db.GetTextCollectionById(xmlText, lang);
                 return ReplaceTextReferencesAndHandleParameter(textCollectionById, paramArray);
             }
 
