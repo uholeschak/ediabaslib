@@ -25,6 +25,7 @@ namespace PsdzClient
 {
     public partial class PsdzDatabase
     {
+#if OLD_TSTMOD_DATA
         [XmlInclude(typeof(TestModuleData))]
         [XmlType("TestModules")]
         public class TestModules
@@ -64,7 +65,7 @@ namespace PsdzClient
 
             [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set; }
         }
-
+#endif
         [XmlInclude(typeof(ServiceModuleData))]
         [XmlInclude(typeof(ServiceModuleTextData))]
         [XmlType("ServiceModules")]

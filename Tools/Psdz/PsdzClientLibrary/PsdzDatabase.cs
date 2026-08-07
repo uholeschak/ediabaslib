@@ -1505,7 +1505,9 @@ namespace PsdzClient
         private bool _redirectGetTextCollectionById = false;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
+#if OLD_TSTMOD_DATA
         public TestModules TestModuleStorage { get; private set; }
+#endif
         public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
         public bool UseIsAtLeastOnePathToRootValid { get; set; }
         public bool AllowDbGeneration { get; set; }
