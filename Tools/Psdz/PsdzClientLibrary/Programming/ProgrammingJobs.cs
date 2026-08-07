@@ -3536,6 +3536,27 @@ namespace PsdzClient.Programming
                     {
                         if (infoInfoObj.LinkType == PsdzDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                         {
+#if true
+                            try
+                            {
+                                TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, infoInfoObj.ControlId);
+                                if (!testModuleRunner.Run())
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa TestModuleRunner failed for module name: {0}", infoInfoObj.ModuleName);
+                                    optionsItem.Invalid = true;
+                                }
+                                else
+                                {
+                                    optionsItem.Invalid = false;
+                                }
+                                ProgrammingService.PsdzDatabase.ResetXepRules();
+                            }
+                            catch (Exception e)
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa TestModuleRunner exception for module name: {0}, Exception: {1}", infoInfoObj.ModuleName, e);
+                                optionsItem.Invalid = true;
+                            }
+#else
                             string moduleName = infoInfoObj.ModuleName;
                             PsdzDatabase.TestModuleData testModuleData = ProgrammingService.PsdzDatabase.GetTestModuleData(moduleName);
                             if (testModuleData == null)
@@ -3579,6 +3600,7 @@ namespace PsdzClient.Programming
                                 PsdzContext.SetFaTarget(psdzFaTarget);
                                 ProgrammingService.PsdzDatabase.ResetXepRules();
                             }
+#endif
                         }
                     }
                 }
