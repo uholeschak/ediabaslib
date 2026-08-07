@@ -17,5 +17,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PsdzRpcClientLibrary\PsdzRpcClientLibrary.csproj" />
+    <ProjectReference Include="..\Testmodules\TestmodulesAblAus\TestmodulesAblAus.csproj" />
+    <ProjectReference Include="..\Testmodules\TestmodulesAblGen\TestmodulesAblGen.csproj" />
+    <ProjectReference Include="..\Testmodules\TestmodulesAblLif\TestmodulesAblLif.csproj" />
   </ItemGroup>
 </Project>
