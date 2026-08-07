@@ -1841,9 +1841,11 @@ namespace PsdzClient
                     {
                         foreach (string requestLang in lang)
                         {
-                            if (language.StartsWith(requestLang, StringComparison.OrdinalIgnoreCase))
+                            string[] requestLangs = requestLang.Split('-');
+                            if (requestLangs.Length > 0 &&
+                                language.StartsWith(requestLangs[0], StringComparison.OrdinalIgnoreCase))
                             {
-                                langName = requestLang;
+                                langName = language;
                                 break;
                             }
                         }
@@ -1859,14 +1861,24 @@ namespace PsdzClient
                     }
 
                     string xmlId = xmlTranslation.GetTitle(language);
+                    string xmlText = $"<spe:TEXTCOLLECTION  xmlns:spe='http://bmw.com/2014/Spe_Text_2.0' LANGUAGE='{langName}'/>";
                     if (!string.IsNullOrEmpty(xmlId))
                     {
                         string xmlData = GetXmlValuePrimitivesById(xmlId, EcuTranslation.GetDbLanguage(language));
                         if (!string.IsNullOrEmpty(xmlData))
                         {
-                            textList.Add(new LocalizedText(xmlData, langName));
+                            xmlText = xmlData;
+                        }
+                        else
+                        {
+                            log.ErrorFormat("GetTextCollectionById No XML data for ID {0}, XML ID {1} and language {2}", id, xmlId, langName);
                         }
                     }
+                    else
+                    {
+                        log.ErrorFormat("GetTextCollectionById No XML ID for ID {0} and language {1}", id, langName);
+                    }
+                    textList.Add(new LocalizedText(xmlText, langName));
                 }
             }
             catch (Exception e)
@@ -1923,9 +1935,11 @@ namespace PsdzClient
                     {
                         foreach (string requestLang in lang)
                         {
-                            if (language.StartsWith(requestLang, StringComparison.OrdinalIgnoreCase))
+                            string[] requestLangs = requestLang.Split('-');
+                            if (requestLangs.Length > 0 &&
+                                language.StartsWith(requestLangs[0], StringComparison.OrdinalIgnoreCase))
                             {
-                                langName = requestLang;
+                                langName = language;
                                 break;
                             }
                         }
