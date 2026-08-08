@@ -357,7 +357,7 @@ namespace PsdzRpcServer
 
         public Task<bool> IsPsdzInitialized()
         {
-            bool isInitialized = _programmingJobs.ProgrammingService?.Psdz?.IsPsdzInitialized ?? false;
+            bool isInitialized = _programmingJobs.PsdzInitialized;
             return Task.FromResult(isInitialized);
         }
 
@@ -382,7 +382,7 @@ namespace PsdzRpcServer
         public Task<PsdzRpcStatusInfo> GetStatusInfo()
         {
             PsdzRpcStatusInfo statusInfo = new PsdzRpcStatusInfo(
-                _programmingJobs.ProgrammingService?.Psdz?.IsPsdzInitialized ?? false,
+                _programmingJobs.PsdzInitialized,
                 IsVehicleConnectedInternal(),
                 _programmingJobs.PsdzContext?.Tal != null,
                 _programmingJobs.OptionsDict != null,

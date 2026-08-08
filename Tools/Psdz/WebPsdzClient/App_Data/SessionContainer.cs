@@ -2755,7 +2755,7 @@ namespace WebPsdzClient.App_Data
             bool psdzInitialized = false;
             if (ProgrammingJobs.ProgrammingService?.Psdz != null)
             {
-                psdzInitialized = ProgrammingJobs.ProgrammingService.Psdz.IsPsdzInitialized;
+                psdzInitialized = ProgrammingJobs.PsdzInitialized;
             }
 
             return psdzInitialized;

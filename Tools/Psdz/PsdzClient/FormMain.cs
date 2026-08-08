@@ -120,7 +120,7 @@ namespace PsdzClient
             {
                 if (_programmingJobs.ProgrammingService?.Psdz != null)
                 {
-                    hostRunning = _programmingJobs.ProgrammingService.Psdz.IsPsdzInitialized;
+                    hostRunning = _programmingJobs.PsdzInitialized;
                 }
             }
 

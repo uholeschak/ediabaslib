@@ -456,6 +456,26 @@ namespace PsdzClient.Programming
             }
         }
 
+        private bool _psdzInitialized;
+        public bool PsdzInitialized
+        {
+            get
+            {
+                lock (_cacheLock)
+                {
+                    return _psdzInitialized;
+                }
+            }
+
+            private set
+            {
+                lock (_cacheLock)
+                {
+                    _psdzInitialized = value;
+                }
+            }
+        }
+
         public ProgrammingJobs(string dealerId, ExecutionMode executionMode = ExecutionMode.Normal)
         {
             ClientContext = new ClientContext();
@@ -866,12 +886,14 @@ namespace PsdzClient.Programming
                     if (!ProgrammingService.StartPsdzService())
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, "Host start failed");
+                        PsdzInitialized = false;
                         sbResult.AppendLine(Strings.HostStartFailed);
                         UpdateStatus(sbResult.ToString());
                         return false;
                     }
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "Host started");
+                    PsdzInitialized = true;
                 }
 
                 EnableLogTrace(true);
@@ -898,6 +920,11 @@ namespace PsdzClient.Programming
                         log.ErrorFormat(CultureInfo.InvariantCulture, "StartProgrammingService IsPsdzInitialized false, disposing");
                         ProgrammingService.Dispose();
                         ProgrammingService = null;
+                        PsdzInitialized = false;
+                    }
+                    else
+                    {
+                        PsdzInitialized = true;
                     }
                 }
             }
@@ -922,6 +949,7 @@ namespace PsdzClient.Programming
 
                     ProgrammingService.Dispose();
                     ProgrammingService = null;
+                    PsdzInitialized = false;
                     ClientContext.Database = null;
                     ClearProgrammingObjects();
                 }
