@@ -165,10 +165,10 @@ public class TestModuleRunner
             return null;
         }
 
-        string testModulesPath = System.IO.Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodules");
-        string sourcePath = System.IO.Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
-        string assemblyPath = System.IO.Path.Combine(testModulesPath, cleanIstaModuleName + ".dll");
-        if (!System.IO.File.Exists(sourcePath))
+        string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodules");
+        string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
+        string assemblyPath = Path.Combine(testModulesPath, cleanIstaModuleName + ".dll");
+        if (!File.Exists(sourcePath))
         {
             return null;
         }
