@@ -180,7 +180,14 @@ public class TestModuleRunner
             DateTime assemblyTimeUtc = File.GetLastWriteTimeUtc(assemblyPath);
             if (sourceTimeUtc > assemblyTimeUtc)
             {
-                File.Delete(assemblyPath);
+                try
+                {
+                    File.Delete(assemblyPath);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 
@@ -192,7 +199,14 @@ public class TestModuleRunner
             }
             catch (Exception)
             {
-                File.Delete(assemblyPath);
+                try
+                {
+                    File.Delete(assemblyPath);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 
