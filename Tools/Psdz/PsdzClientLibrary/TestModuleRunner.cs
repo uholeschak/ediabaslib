@@ -8,6 +8,7 @@ using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -55,7 +56,7 @@ public class TestModuleRunner
     {
         try
         {
-            Assembly assembly = GetModuleAssembly(_moduleName);
+            Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
             if (assembly == null)
             {
                 return false;
@@ -84,7 +85,7 @@ public class TestModuleRunner
 
             //Vehicle vehicle = _moduleParameters.getParameter(ModuleParameter.ParameterName.Vehicle) as Vehicle;
 
-            Assembly assembly = GetModuleAssembly(_moduleName);
+            Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
             if (assembly == null)
             {
                 return false;
@@ -115,7 +116,7 @@ public class TestModuleRunner
         return true;
     }
 
-    public static Assembly GetModuleAssembly(string cleanIstaModuleName)
+    public static Assembly GetModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
         if (string.IsNullOrEmpty(cleanIstaModuleName))
         {
@@ -151,7 +152,7 @@ public class TestModuleRunner
         return Assembly.LoadFrom(assemblyPath);
     }
 
-    public static Assembly CompileModuleAssembly(string cleanIstaModuleName, string testModulesPath)
+    public static Assembly CompileModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
         if (string.IsNullOrEmpty(cleanIstaModuleName))
         {
@@ -164,6 +165,7 @@ public class TestModuleRunner
             return null;
         }
 
+        string testModulesPath = System.IO.Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodules");
         string sourcePath = System.IO.Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
         string assemblyPath = System.IO.Path.Combine(testModulesPath, cleanIstaModuleName + ".dll");
         if (!System.IO.File.Exists(sourcePath))
@@ -171,14 +173,26 @@ public class TestModuleRunner
             return null;
         }
 
+        if (File.Exists(assemblyPath))
+        {
+            try
+            {
+                return Assembly.LoadFrom(assemblyPath);
+            }
+            catch (Exception)
+            {
+                File.Delete(assemblyPath);
+            }
+        }
+
         try
         {
-            string sourceCode = System.IO.File.ReadAllText(sourcePath);
+            string sourceCode = File.ReadAllText(sourcePath);
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
 
             // Referenzen: aktuell geladene Assembly + Basis-Laufzeitreferenzen
             Assembly currentAssembly = typeof(TestModuleRunner).Assembly;
-            var references = new List<MetadataReference>
+            List<MetadataReference> references = new List<MetadataReference>
             {
                 MetadataReference.CreateFromFile(currentAssembly.Location),
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
@@ -188,8 +202,8 @@ public class TestModuleRunner
             string runtimeDir = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
             foreach (string name in new[] { "System.Runtime.dll", "System.Collections.dll", "netstandard.dll", "mscorlib.dll" })
             {
-                string refPath = System.IO.Path.Combine(runtimeDir, name);
-                if (System.IO.File.Exists(refPath))
+                string refPath = Path.Combine(runtimeDir, name);
+                if (File.Exists(refPath))
                 {
                     references.Add(MetadataReference.CreateFromFile(refPath));
                 }

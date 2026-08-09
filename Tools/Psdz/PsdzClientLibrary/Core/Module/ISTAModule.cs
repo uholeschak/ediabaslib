@@ -1449,8 +1449,8 @@ namespace BMW.Rheingold.Module.ISTA
 
         private Assembly GetModuleAssembly(string cleanIstaModuleName)
         {
-            //[+] return TestModuleRunner.GetModuleAssembly(cleanIstaModuleName);
-            return TestModuleRunner.GetModuleAssembly(cleanIstaModuleName);
+            //[+] return TestModuleRunner.GetModuleAssembly(logic.ClientContext, cleanIstaModuleName);
+            return TestModuleRunner.GetModuleAssembly(logic.ClientContext, cleanIstaModuleName);
             Assembly assembly = null;
             bool flag = false;
             string configString = ConfigSettings.getConfigString("BMW.Rheingold.Diagnostics.Module.ISTA.ISTATabModuleCore.TestmoduleType", "SingleAssemblyContainer");
