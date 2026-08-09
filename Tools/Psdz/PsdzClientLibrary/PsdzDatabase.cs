@@ -1503,7 +1503,6 @@ namespace PsdzClient
         private Dictionary<string, string> _xmlValuePrimitivesCache;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
-        private bool _redirectGetTextCollectionById = false;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         private Dictionary<string, string> XmlValuePrimitivesCache => _xmlValuePrimitivesCache;
         public SwiRegister SwiRegisterTree { get; private set; }
@@ -1804,12 +1803,6 @@ namespace PsdzClient
 
         public List<LocalizedText> GetTextCollectionById(string id, IList<string> lang = null)
         {
-            if (_redirectGetTextCollectionById)
-            {
-                log.InfoFormat("GetTextCollectionById redirected to GetTextListById Id: {0}", id);
-                return GetTextListById(id, lang);
-            }
-
             log.InfoFormat("GetTextCollectionById Id: {0}", id);
 
             if (string.IsNullOrEmpty(id))

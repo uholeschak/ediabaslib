@@ -2555,10 +2555,6 @@ namespace PsdzClient
                 log.ErrorFormat("ConvertAllServiceModules Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
-            finally
-            {
-                _redirectGetTextCollectionById = false;
-            }
         }
 
         public ServiceModuleData ReadServiceModule(string moduleName, SwiInfoObj swiInfoObj, SerializableDictionary<string, ServiceModuleTextData> moduleTextDict, out bool failure)
@@ -2567,7 +2563,7 @@ namespace PsdzClient
             failure = false;
             try
             {
-                _redirectGetTextCollectionById = true;
+                //_redirectGetTextCollectionById = true;
                 if (string.IsNullOrEmpty(moduleName))
                 {
                     return null;
@@ -3575,10 +3571,6 @@ namespace PsdzClient
                 }
 
                 return null;
-            }
-            finally
-            {
-                _redirectGetTextCollectionById = false;
             }
         }
 
