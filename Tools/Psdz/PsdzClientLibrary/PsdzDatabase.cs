@@ -1504,6 +1504,11 @@ namespace PsdzClient
         private Dictionary<string, SwiInfoObj> _infoObjectByControlIdCache;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
+
+        public string DatabasePath => _databasePath;
+        public string DatabaseExtractPath => _databaseExtractPath;
+        public string TestModulePath => _testModulePath;
+        public string FrameworkPath => _frameworkPath;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         private Dictionary<string, string> XmlValuePrimitivesCache => _xmlValuePrimitivesCache;
         private Dictionary<string, SwiInfoObj> InfoObjectByControlIdCache => _infoObjectByControlIdCache;
