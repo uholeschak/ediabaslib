@@ -1895,7 +1895,7 @@ namespace PsdzClient
             return textList;
         }
 
-        public List<LocalizedText> GetTextListById(string id, IList<string> lang = null)
+        public string GetTextById(string id, string lang)
         {
             log.InfoFormat("GetTextListById Id: {0}", id);
 
@@ -1905,7 +1905,13 @@ namespace PsdzClient
                 return null;
             }
 
-            List<LocalizedText> textList = new List<LocalizedText>();
+            if (string.IsNullOrEmpty(lang))
+            {
+                log.ErrorFormat("GetTextListById No language");
+                return null;
+            }
+
+            string result = string.Empty;
             try
             {
                 EcuTranslation xmlTranslation = null;
@@ -1936,22 +1942,11 @@ namespace PsdzClient
                 foreach (string language in languages)
                 {
                     string langName = string.Empty;
-                    if (lang != null)
+                    string[] requestLangs = lang.Split('-');
+                    if (requestLangs.Length > 0 &&
+                        language.StartsWith(requestLangs[0], StringComparison.OrdinalIgnoreCase))
                     {
-                        foreach (string requestLang in lang)
-                        {
-                            string[] requestLangs = requestLang.Split('-');
-                            if (requestLangs.Length > 0 &&
-                                language.StartsWith(requestLangs[0], StringComparison.OrdinalIgnoreCase))
-                            {
-                                langName = language;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        langName = language.ToUpperInvariant();
+                        langName = language;
                     }
 
                     if (string.IsNullOrEmpty(langName))
@@ -1965,9 +1960,11 @@ namespace PsdzClient
                         string xmlData = GetXmlValuePrimitivesById(xmlId, EcuTranslation.GetDbLanguage(language));
                         if (!string.IsNullOrEmpty(xmlData))
                         {
-                            textList.Add(new LocalizedText(xmlData, langName));
+                            result = xmlData;
                         }
                     }
+
+                    break;
                 }
             }
             catch (Exception e)
@@ -1976,7 +1973,7 @@ namespace PsdzClient
                 return null;
             }
 
-            return textList;
+            return result;
         }
 
         public EcuTranslation GetSpTextItemsByControlId(string controlId)
