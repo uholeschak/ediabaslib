@@ -1500,10 +1500,12 @@ namespace PsdzClient
         private string _tableForFTSSearch = string.Empty;
         private bool? _doesXMLValuePrimitiveTableHaveFTS;
         private Dictionary<string, XepRule> _xepRuleDict;
+        private Dictionary<string, string> _xmlValuePrimitivesCache;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
         private bool _redirectGetTextCollectionById = false;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
+        private Dictionary<string, string> XmlValuePrimitivesCache => _xmlValuePrimitivesCache;
         public SwiRegister SwiRegisterTree { get; private set; }
 #if OLD_TSTMOD_DATA
         public TestModules TestModuleStorage { get; private set; }
@@ -1631,6 +1633,7 @@ namespace PsdzClient
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
             _xepRuleDict = null;
+            _xmlValuePrimitivesCache = new Dictionary<string, string>();
             _diagObjRootNodes = null;
             _diagObjRootNodeIdSet = null;
             SwiRegisterTree = null;
@@ -2033,6 +2036,13 @@ namespace PsdzClient
         {
             log.InfoFormat("GetXmlValuePrimitivesById Id: {0}, Lang: {1}", id, languageExtension);
 
+            string key = id + "_" + languageExtension;
+            if (_xmlValuePrimitivesCache.TryGetValue(key, out string cachedData))
+            {
+                log.InfoFormat("GetXmlValuePrimitivesById Cache hit for Id: {0}, Lang: {1}", id, languageExtension);
+                return cachedData;
+            }
+
             string data = GetXmlValuePrimitivesByIdSingle(id, languageExtension);
             if (string.IsNullOrEmpty(data) && string.Compare(languageExtension, "ENGB", StringComparison.OrdinalIgnoreCase) != 0)
             {
@@ -2047,9 +2057,14 @@ namespace PsdzClient
             if (string.IsNullOrEmpty(data))
             {
                 data = string.Empty;
+                log.ErrorFormat("GetXmlValuePrimitivesById No data found");
+            }
+            else
+            {
+                log.InfoFormat("GetXmlValuePrimitivesById OK");
             }
 
-            log.InfoFormat("GetXmlValuePrimitivesById OK");
+            _xmlValuePrimitivesCache[key] = data;
             return data;
         }
 
