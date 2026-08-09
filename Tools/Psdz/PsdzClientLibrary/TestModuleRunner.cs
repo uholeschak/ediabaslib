@@ -175,6 +175,17 @@ public class TestModuleRunner
 
         if (File.Exists(assemblyPath))
         {
+            // Neukompilierung erzwingen, wenn die Quelldatei neuer ist als die Assembly
+            DateTime sourceTimeUtc = File.GetLastWriteTimeUtc(sourcePath);
+            DateTime assemblyTimeUtc = File.GetLastWriteTimeUtc(assemblyPath);
+            if (sourceTimeUtc > assemblyTimeUtc)
+            {
+                File.Delete(assemblyPath);
+            }
+        }
+
+        if (File.Exists(assemblyPath))
+        {
             try
             {
                 return Assembly.LoadFrom(assemblyPath);
