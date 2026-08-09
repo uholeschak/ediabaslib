@@ -2036,7 +2036,7 @@ namespace PsdzClient
         {
             log.InfoFormat("GetXmlValuePrimitivesById Id: {0}, Lang: {1}", id, languageExtension);
 
-            string key = id + "_" + languageExtension;
+            string key = $"{id}_{languageExtension}".ToUpperInvariant();
             if (_xmlValuePrimitivesCache.TryGetValue(key, out string cachedData))
             {
                 log.InfoFormat("GetXmlValuePrimitivesById Cache hit for Id: {0}, Lang: {1}", id, languageExtension);
