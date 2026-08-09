@@ -151,7 +151,7 @@ public class TestModuleRunner
         return Assembly.LoadFrom(assemblyPath);
     }
 
-    public static Assembly CompileModuleAssembly(string cleanIstaModuleName)
+    public static Assembly CompileModuleAssembly(string cleanIstaModuleName, string testModulesPath)
     {
         if (string.IsNullOrEmpty(cleanIstaModuleName))
         {
@@ -164,8 +164,8 @@ public class TestModuleRunner
             return null;
         }
 
-        string sourcePath = System.IO.Path.Combine(appDir, cleanIstaModuleName + ".cs");
-        string assemblyPath = System.IO.Path.Combine(appDir, cleanIstaModuleName + ".dll");
+        string sourcePath = System.IO.Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
+        string assemblyPath = System.IO.Path.Combine(testModulesPath, cleanIstaModuleName + ".dll");
         if (!System.IO.File.Exists(sourcePath))
         {
             return null;
