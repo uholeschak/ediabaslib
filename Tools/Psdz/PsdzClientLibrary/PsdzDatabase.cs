@@ -2057,7 +2057,15 @@ namespace PsdzClient
                 log.InfoFormat("GetXmlValuePrimitivesById OK");
             }
 
-            _xmlValuePrimitivesCache[key] = data;
+            if (data.Length < 0x10000)
+            {
+                log.InfoFormat("GetXmlValuePrimitivesById Caching data");
+                _xmlValuePrimitivesCache[key] = data;
+            }
+            else
+            {
+                log.WarnFormat("GetXmlValuePrimitivesById Data too large to cache");
+            }
             return data;
         }
 
