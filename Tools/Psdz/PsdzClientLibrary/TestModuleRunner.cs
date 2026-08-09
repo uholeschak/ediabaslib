@@ -9,6 +9,9 @@ using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace PsdzClientLibrary;
 
@@ -146,6 +149,77 @@ public class TestModuleRunner
 
         string assemblyPath = System.IO.Path.Combine(appDir, assemblyModuleName);
         return Assembly.LoadFrom(assemblyPath);
+    }
+
+    public static Assembly CompileModuleAssembly(string cleanIstaModuleName)
+    {
+        if (string.IsNullOrEmpty(cleanIstaModuleName))
+        {
+            return null;
+        }
+
+        string appDir = EdiabasNet.AssemblyDirectory;
+        if (string.IsNullOrEmpty(appDir))
+        {
+            return null;
+        }
+
+        string sourcePath = System.IO.Path.Combine(appDir, cleanIstaModuleName + ".cs");
+        string assemblyPath = System.IO.Path.Combine(appDir, cleanIstaModuleName + ".dll");
+        if (!System.IO.File.Exists(sourcePath))
+        {
+            return null;
+        }
+
+        try
+        {
+            string sourceCode = System.IO.File.ReadAllText(sourcePath);
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+
+            // Referenzen: aktuell geladene Assembly + Basis-Laufzeitreferenzen
+            Assembly currentAssembly = typeof(TestModuleRunner).Assembly;
+            var references = new List<MetadataReference>
+            {
+                MetadataReference.CreateFromFile(currentAssembly.Location),
+                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+            };
+
+            // Zusätzliche Kern-Assemblies (nötig bei .NET Core/.NET 10, harmlos bei .NET FW)
+            string runtimeDir = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
+            foreach (string name in new[] { "System.Runtime.dll", "System.Collections.dll", "netstandard.dll", "mscorlib.dll" })
+            {
+                string refPath = System.IO.Path.Combine(runtimeDir, name);
+                if (System.IO.File.Exists(refPath))
+                {
+                    references.Add(MetadataReference.CreateFromFile(refPath));
+                }
+            }
+
+#if DEBUG
+            OptimizationLevel optimizationLevel = OptimizationLevel.Debug;
+#else
+            OptimizationLevel optimizationLevel = OptimizationLevel.Release;
+#endif
+            CSharpCompilation compilation = CSharpCompilation.Create(
+                cleanIstaModuleName,
+                new[] { syntaxTree },
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
+                    optimizationLevel: optimizationLevel));
+
+            EmitResult result = compilation.Emit(assemblyPath);
+            if (!result.Success)
+            {
+                // Optional: result.Diagnostics auswerten/loggen
+                return null;
+            }
+
+            return Assembly.LoadFrom(assemblyPath);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     private ParameterContainer SetUpModuleInParameters()
