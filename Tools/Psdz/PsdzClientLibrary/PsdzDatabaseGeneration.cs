@@ -2567,6 +2567,7 @@ namespace PsdzClient
             failure = false;
             try
             {
+                _redirectGetTextCollectionById = true;
                 if (string.IsNullOrEmpty(moduleName))
                 {
                     return null;
@@ -3465,7 +3466,6 @@ namespace PsdzClient
                                         log.InfoFormat("ReadServiceModule Text Id: {0}", textId);
                                         try
                                         {
-                                            _redirectGetTextCollectionById = true;
                                             ITextLocator textLocator = textCollection.__Text(textId);
                                             TextContent textContent = textLocator?.TextContent as TextContent;
                                             IList<LocalizedText> textItems =
@@ -3486,10 +3486,6 @@ namespace PsdzClient
                                         {
                                             log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId,
                                                 EdiabasLib.EdiabasNet.GetExceptionText(e));
-                                        }
-                                        finally
-                                        {
-                                            _redirectGetTextCollectionById = false;
                                         }
                                     }
                                 }
@@ -3579,6 +3575,10 @@ namespace PsdzClient
                 }
 
                 return null;
+            }
+            finally
+            {
+                _redirectGetTextCollectionById = false;
             }
         }
 
