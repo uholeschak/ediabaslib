@@ -1501,10 +1501,12 @@ namespace PsdzClient
         private bool? _doesXMLValuePrimitiveTableHaveFTS;
         private Dictionary<string, XepRule> _xepRuleDict;
         private Dictionary<string, string> _xmlValuePrimitivesCache;
+        private Dictionary<string, SwiInfoObj> _infoObjectByControlIdCache;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         private Dictionary<string, string> XmlValuePrimitivesCache => _xmlValuePrimitivesCache;
+        private Dictionary<string, SwiInfoObj> InfoObjectByControlIdCache => _infoObjectByControlIdCache;
         public SwiRegister SwiRegisterTree { get; private set; }
 #if OLD_TSTMOD_DATA
         public TestModules TestModuleStorage { get; private set; }
@@ -1633,6 +1635,7 @@ namespace PsdzClient
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
             _xepRuleDict = null;
             _xmlValuePrimitivesCache = new Dictionary<string, string>();
+            _infoObjectByControlIdCache = new Dictionary<string, SwiInfoObj>();
             _diagObjRootNodes = null;
             _diagObjRootNodeIdSet = null;
             SwiRegisterTree = null;
@@ -4296,6 +4299,11 @@ namespace PsdzClient
                 return null;
             }
 
+            if (_infoObjectByControlIdCache.TryGetValue(controlId, out SwiInfoObj cachedInfoObj))
+            {
+                return cachedInfoObj;
+            }
+
             SwiInfoObj swiInfoObj = null;
             try
             {
@@ -4323,6 +4331,7 @@ namespace PsdzClient
                 return null;
             }
 
+            _infoObjectByControlIdCache[controlId] = swiInfoObj;
             return swiInfoObj;
         }
 
