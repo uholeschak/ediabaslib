@@ -11,6 +11,7 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -21,6 +22,8 @@ namespace PsdzClientLibrary;
 public class TestModuleRunner
 {
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
+    private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
+        new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
     private static readonly string[] additionalAssemblies =
     {
         "mscorlib.dll",
@@ -220,21 +223,10 @@ public class TestModuleRunner
             return null;
         }
 
-        foreach (Assembly loadedAssembly in AppDomain.CurrentDomain.GetAssemblies())
+        if (assemblyCache.TryGetValue(assemblyPath, out Assembly cachedAssembly))
         {
-            try
-            {
-                if (!loadedAssembly.IsDynamic &&
-                    string.Equals(loadedAssembly.Location, assemblyPath, StringComparison.OrdinalIgnoreCase))
-                {
-                    log.InfoFormat("CompileModuleAssembly: Assembly already loaded: {0}", assemblyPath);
-                    return loadedAssembly;
-                }
-            }
-            catch (Exception)
-            {
-                // Assemblies ohne Location überspringen
-            }
+            log.InfoFormat("CompileModuleAssembly: Assembly found in cache: {0}", assemblyPath);
+            return cachedAssembly;
         }
 
         if (File.Exists(assemblyPath))
@@ -260,7 +252,9 @@ public class TestModuleRunner
         {
             try
             {
-                return Assembly.LoadFrom(assemblyPath);
+                Assembly existingAssembly = Assembly.LoadFrom(assemblyPath);
+                assemblyCache.TryAdd(assemblyPath, existingAssembly);
+                return existingAssembly;
             }
             catch (Exception ex)
             {
@@ -389,7 +383,9 @@ public class TestModuleRunner
                 return null;
             }
 
-            return Assembly.LoadFrom(assemblyPath);
+            Assembly compiledAssembly = Assembly.LoadFrom(assemblyPath);
+            assemblyCache.TryAdd(assemblyPath, compiledAssembly);
+            return compiledAssembly;
         }
         catch (Exception ex)
         {
