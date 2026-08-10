@@ -21,6 +21,17 @@ namespace PsdzClientLibrary;
 public class TestModuleRunner
 {
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
+    private static readonly string[] additionalAssemblies =
+    {
+        "mscorlib.dll",
+        "netstandard.dll",
+        "System.dll",
+        "System.Core.dll",
+        "System.Runtime.dll",
+        "System.Collections.dll",
+        "System.Xml.dll"
+    };
+
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
@@ -129,11 +140,6 @@ public class TestModuleRunner
     public static Assembly GetModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
         Assembly compiledAssembly = CompileModuleAssembly(clientContext, cleanIstaModuleName);
-        if (compiledAssembly == null)
-        {
-            return null;
-        }
-
         return compiledAssembly;
     }
 
@@ -214,6 +220,23 @@ public class TestModuleRunner
             return null;
         }
 
+        foreach (Assembly loadedAssembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            try
+            {
+                if (!loadedAssembly.IsDynamic &&
+                    string.Equals(loadedAssembly.Location, assemblyPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    log.InfoFormat("CompileModuleAssembly: Assembly already loaded: {0}", assemblyPath);
+                    return loadedAssembly;
+                }
+            }
+            catch (Exception)
+            {
+                // Assemblies ohne Location überspringen
+            }
+        }
+
         if (File.Exists(assemblyPath))
         {
             // Neukompilierung erzwingen, wenn die Quelldatei neuer ist als die Assembly
@@ -285,17 +308,6 @@ public class TestModuleRunner
                 log.ErrorFormat("CompileModuleAssembly: Runtime directory is null or empty");
                 return null;
             }
-
-            string[] additionalAssemblies =
-            {
-                "mscorlib.dll",
-                "netstandard.dll",
-                "System.dll",
-                "System.Core.dll",
-                "System.Runtime.dll",
-                "System.Collections.dll",
-                "System.Xml.dll"
-            };
 
             foreach (string assembly in additionalAssemblies)
             {
