@@ -39,6 +39,7 @@ public class TestModuleRunner
         _swiInfoObj = _clientContext?.Database?.GetInfoObjectByControlId(controlId);
         if (_swiInfoObj == null)
         {
+            log.ErrorFormat("TestModuleRunner: No SwiInfoObj found for controlId: {0}", controlId);
             throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
         }
 
@@ -61,21 +62,21 @@ public class TestModuleRunner
             Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
             if (assembly == null)
             {
-                log.ErrorFormat("IsValid GetModuleAssembly returned null for: {0}", _moduleName);
+                log.ErrorFormat("IsValid: GetModuleAssembly returned null for: {0}", _moduleName);
                 return false;
             }
 
             Type type = assembly.GetType(_moduleTypeName, throwOnError: false);
             if (type == null)
             {
-                log.ErrorFormat("IsValid GetType returned null for: {0}", _moduleTypeName);
+                log.ErrorFormat("IsValid: GetType returned null for: {0}", _moduleTypeName);
                 return false;
             }
             return true;
         }
         catch (Exception ex)
         {
-            log.ErrorFormat("IsValid Exception: {0}", ex);
+            log.ErrorFormat("IsValid: Exception: {0}", ex);
             return false;
         }
     }
@@ -93,6 +94,7 @@ public class TestModuleRunner
             Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
             if (assembly == null)
             {
+                log.ErrorFormat("Run: GetModuleAssembly returned null for: {0}", _moduleName);
                 return false;
             }
 
@@ -100,12 +102,14 @@ public class TestModuleRunner
             IIstaModule instance = type?.CreateInstance(new Type[1] { typeof(ParameterContainer) }, new object[1] { inParameters }) as IIstaModule;
             if (instance == null)
             {
+                log.ErrorFormat("Run: CreateInstance returned null for: {0}", _moduleTypeName);
                 return false;
             }
 
             MethodInfo method = instance.GetType().GetMethod("run");
             if (method == null)
             {
+                log.ErrorFormat("Run: GetMethod run returned null for: {0}", _moduleTypeName);
                 return false;
             }
             method.Invoke(instance, new object[3] { inParameters, outParameters, inAndOutParameters });
@@ -114,8 +118,9 @@ public class TestModuleRunner
             _moduleParameters.setParameter(ModuleParameter.ParameterName.InAndOutParameters, inAndOutParameters);
             _moduleParameters.setParameter(ModuleParameter.ParameterName.ResultSet, instance.ResultSet);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            log.ErrorFormat("Run: Exception: {0}", ex);
             return false;
         }
         return true;
@@ -153,7 +158,7 @@ public class TestModuleRunner
             return null;
         }
 
-        string assemblyPath = System.IO.Path.Combine(appDir, assemblyModuleName);
+        string assemblyPath = Path.Combine(appDir, assemblyModuleName);
         return Assembly.LoadFrom(assemblyPath);
     }
 
