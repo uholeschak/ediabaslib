@@ -166,8 +166,20 @@ public class TestModuleRunner
         }
 
         string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodule");
+#if DEBUG
+        OptimizationLevel optimizationLevel = OptimizationLevel.Debug;
+        string outputPath = Path.Combine(testModulesPath, "Debug");
+#else
+        OptimizationLevel optimizationLevel = OptimizationLevel.Release;
+        string outputPath = Path.Combine(testModulesPath, "Release");
+#endif
+        if (!Directory.Exists(outputPath))
+        {
+            Directory.CreateDirectory(outputPath);
+        }
+
         string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
-        string assemblyPath = Path.Combine(testModulesPath, cleanIstaModuleName + ".dll");
+        string assemblyPath = Path.Combine(outputPath, cleanIstaModuleName + ".dll");
         if (!File.Exists(sourcePath))
         {
             return null;
@@ -224,7 +236,7 @@ public class TestModuleRunner
             };
 
             // Zusätzliche Kern-Assemblies (nötig bei .NET Core/.NET 10, harmlos bei .NET FW)
-            string runtimeDir = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
+            string runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
             foreach (string name in new[] { "System.Runtime.dll", "System.Collections.dll", "netstandard.dll", "mscorlib.dll" })
             {
                 string refPath = Path.Combine(runtimeDir, name);
@@ -234,11 +246,6 @@ public class TestModuleRunner
                 }
             }
 
-#if DEBUG
-            OptimizationLevel optimizationLevel = OptimizationLevel.Debug;
-#else
-            OptimizationLevel optimizationLevel = OptimizationLevel.Release;
-#endif
             CSharpCompilation compilation = CSharpCompilation.Create(
                 cleanIstaModuleName,
                 new[] { syntaxTree },
