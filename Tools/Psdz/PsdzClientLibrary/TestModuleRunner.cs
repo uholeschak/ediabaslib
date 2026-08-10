@@ -2,6 +2,10 @@
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.RheingoldSessionController;
 using EdiabasLib;
+using log4net;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
@@ -10,15 +14,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
 
 namespace PsdzClientLibrary;
 
 [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
 public class TestModuleRunner
 {
+    private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
@@ -59,18 +61,21 @@ public class TestModuleRunner
             Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
             if (assembly == null)
             {
+                log.ErrorFormat("IsValid GetModuleAssembly returned null for: {0}", _moduleName);
                 return false;
             }
 
             Type type = assembly.GetType(_moduleTypeName, throwOnError: false);
             if (type == null)
             {
+                log.ErrorFormat("IsValid GetType returned null for: {0}", _moduleTypeName);
                 return false;
             }
             return true;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            log.ErrorFormat("IsValid Exception: {0}", ex);
             return false;
         }
     }
