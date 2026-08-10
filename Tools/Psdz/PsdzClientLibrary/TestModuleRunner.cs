@@ -167,6 +167,7 @@ public class TestModuleRunner
 
         string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
         string assemblyPath = Path.Combine(outputPath, cleanIstaModuleName + ".dll");
+        string logFilePath = Path.Combine(outputPath, cleanIstaModuleName + ".log");
         if (!File.Exists(sourcePath))
         {
             log.ErrorFormat("CompileModuleAssembly: Source file does not exist: {0}", sourcePath);
@@ -215,6 +216,11 @@ public class TestModuleRunner
 
         try
         {
+            if (File.Exists(logFilePath))
+            {
+                File.Delete(logFilePath);
+            }
+
             string sourceCode = File.ReadAllText(sourcePath);
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
 
@@ -293,12 +299,29 @@ public class TestModuleRunner
 
             if (!result.Success)
             {
+                log.ErrorFormat("CompileModuleAssembly: Compilation of '{0}' failed", sourcePath);
+
+                List<string> errorLines = new List<string>
+                {
+                    $"Compilation of '{sourcePath}' failed at {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                    string.Empty
+                };
+
                 foreach (Diagnostic diagnostic in result.Diagnostics)
                 {
                     if (diagnostic.Severity == DiagnosticSeverity.Error)
                     {
-                        log.ErrorFormat("CompileModuleAssembly: Diagnostic: {0}", diagnostic);
+                        errorLines.Add(diagnostic.ToString());
                     }
+                }
+
+                try
+                {
+                    File.WriteAllLines(logFilePath, errorLines);
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("CompileModuleAssembly: Writing log file Exception: {0}", ex);
                 }
 
                 try

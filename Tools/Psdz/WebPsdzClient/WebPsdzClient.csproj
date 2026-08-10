@@ -59,9 +59,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\EdiabasLib\ApiInternal\ApiInternal.csproj" />
     <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
-    <ProjectReference Include="..\Testmodules\TestmodulesAblAus\TestmodulesAblAus.csproj" />
-    <ProjectReference Include="..\Testmodules\TestmodulesAblGen\TestmodulesAblGen.csproj" />
-    <ProjectReference Include="..\Testmodules\TestmodulesAblLif\TestmodulesAblLif.csproj" />
     <ProjectReference Include="..\PsdzClientLibrary\PsdzClientLibrary.csproj" Condition="'$(UseRpcClient)' != 'true'" />
     <ProjectReference Include="..\PsdzRpcClientLibrary\PsdzRpcClientLibrary.csproj" Condition="'$(UseRpcClient)' == 'true'" />
   </ItemGroup>
