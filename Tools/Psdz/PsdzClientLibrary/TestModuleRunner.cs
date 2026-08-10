@@ -128,38 +128,49 @@ public class TestModuleRunner
 
     public static Assembly GetModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
-        if (string.IsNullOrEmpty(cleanIstaModuleName))
+        try
         {
+            if (string.IsNullOrEmpty(cleanIstaModuleName))
+            {
+                log.ErrorFormat("GetModuleAssembly: cleanIstaModuleName is null or empty");
+                return null;
+            }
+
+            string assemblyModuleName = null;
+            if (cleanIstaModuleName.StartsWith("ABL_AUS_"))
+            {
+                assemblyModuleName = "TestmodulesAblAus.dll";
+            }
+            else if (cleanIstaModuleName.StartsWith("ABL_GEN_"))
+            {
+                assemblyModuleName = "TestmodulesAblGen.dll";
+            }
+            else if (cleanIstaModuleName.StartsWith("ABL_LIF_"))
+            {
+                assemblyModuleName = "TestmodulesAblLif.dll";
+            }
+
+            if (string.IsNullOrEmpty(assemblyModuleName))
+            {
+                log.ErrorFormat("GetModuleAssembly: Test module type not supported: {0}", cleanIstaModuleName);
+                return null;
+            }
+
+            string appDir = EdiabasNet.AssemblyDirectory;
+            if (string.IsNullOrEmpty(appDir))
+            {
+                log.ErrorFormat("GetModuleAssembly: AssemblyDirectory is null or empty");
+                return null;
+            }
+
+            string assemblyPath = Path.Combine(appDir, assemblyModuleName);
+            return Assembly.LoadFrom(assemblyPath);
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("GetModuleAssembly: Exception: {0}", ex);
             return null;
         }
-
-        string assemblyModuleName = null;
-        if (cleanIstaModuleName.StartsWith("ABL_AUS_"))
-        {
-            assemblyModuleName = "TestmodulesAblAus.dll";
-        }
-        else if (cleanIstaModuleName.StartsWith("ABL_GEN_"))
-        {
-            assemblyModuleName = "TestmodulesAblGen.dll";
-        }
-        else if (cleanIstaModuleName.StartsWith("ABL_LIF_"))
-        {
-            assemblyModuleName = "TestmodulesAblLif.dll";
-        }
-
-        if (string.IsNullOrEmpty(assemblyModuleName))
-        {
-            return null;
-        }
-
-        string appDir = EdiabasNet.AssemblyDirectory;
-        if (string.IsNullOrEmpty(appDir))
-        {
-            return null;
-        }
-
-        string assemblyPath = Path.Combine(appDir, assemblyModuleName);
-        return Assembly.LoadFrom(assemblyPath);
     }
 
     public static Assembly CompileModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
