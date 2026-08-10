@@ -137,6 +137,46 @@ public class TestModuleRunner
         return compiledAssembly;
     }
 
+    /*
+        Filter:
+        <Compile Remove="$(Src)\ABL_GEN_AG*.cs" />
+        <Compile Remove="$(Src)\ABL_GEN_AT*.cs" />
+        <Compile Remove="$(Src)\ABL_GEN_AU*.cs" />
+        <Compile Remove="$(Src)\ABL_GEN_G*.cs" />
+        <Compile Remove="$(Src)\ABL_GEN_G*.cs" />
+        <Compile Remove="$(Src)\ABL_GEN_BIKE_SET_SERVICEDATA*" />
+        <Compile Remove="$(Src)\ABL_GEN_LIB_BIKE_UXP_COMPLETECODING.cs" />
+        <Compile Remove="$(Src)\ABL_GEN_RESTOREINDIVDATA.cs" />
+
+        <Compile Remove="$(Src)\ABL_LIF_ASEC__LCS_STATUS*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_AUTHORING*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_BACK*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_BIKE*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_CERT*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_CLEARERRORINFOMEMORY*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_DATA*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_DOC*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_EOS*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_GET__DISPLAYTEXT_DOB*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_GET__EFUSE_VERBRAUCHERLISTE*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_GETIBOOLRESULTOBJECTPROPERTIES*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_IDENTIFY_ISTA_OPERATIONALMODE*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_KOMPONENTENDIEBSTAHLSCHUTZ*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_KI__RANDOMFOREST*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_OBFCM*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_POLYNOM*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_PARALLELGENERIERUNG_SECURETOKEN*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_PROVISIONING*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_PC__SOUNDPLAYER*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_QDM*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_QMD*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_SEND_SPEEDLINKDATA*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_SPEZIAL*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_SWITCH_ECUS_TO_FIELDMODE*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_WRITESECURETOKENAUTOMATIK*.cs" />
+        <Compile Remove="$(Src)\ABL_LIF_WRITE_PRG*.cs" />
+     */
+
     public static Assembly CompileModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
         if (string.IsNullOrEmpty(cleanIstaModuleName))
