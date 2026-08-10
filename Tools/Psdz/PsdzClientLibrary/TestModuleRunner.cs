@@ -218,6 +218,18 @@ public class TestModuleRunner
             string sourceCode = File.ReadAllText(sourcePath);
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
 
+            string assemblyInfo = $"""
+                                   using System.Reflection;
+                                   [assembly: AssemblyTitle("{cleanIstaModuleName}")]
+                                   [assembly: AssemblyProduct("ISTA test module")]
+                                   [assembly: AssemblyDescription("Compiled from {cleanIstaModuleName}.cs")]
+                                   [assembly: AssemblyCompany("EdiabasLib")]
+                                   [assembly: AssemblyVersion("1.0.0.0")]
+                                   [assembly: AssemblyFileVersion("1.0.0.0")]
+                                   [assembly: AssemblyInformationalVersion("Compiled {DateTime.Now:yyyy-MM-dd HH:mm:ss}")]
+                                   """;
+            SyntaxTree assemblyInfoTree = CSharpSyntaxTree.ParseText(assemblyInfo);
+
             List<MetadataReference> references = new List<MetadataReference>();
             HashSet<string> addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -261,12 +273,24 @@ public class TestModuleRunner
 
             CSharpCompilation compilation = CSharpCompilation.Create(
                 cleanIstaModuleName,
-                new[] { syntaxTree },
+                new[] { syntaxTree, assemblyInfoTree },
                 references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                     optimizationLevel: optimizationLevel));
 
-            EmitResult result = compilation.Emit(assemblyPath);
+            EmitResult result;
+            using (Stream win32Resources = compilation.CreateDefaultWin32Resources(
+                       versionResource: true,
+                       noManifest: true,
+                       manifestContents: null,
+                       iconInIcoFormat: null))
+            {
+                using (FileStream peStream = new FileStream(assemblyPath, FileMode.Create, FileAccess.ReadWrite))
+                {
+                    result = compilation.Emit(peStream, win32Resources: win32Resources);
+                }
+            }
+
             if (!result.Success)
             {
                 foreach (Diagnostic diagnostic in result.Diagnostics)
@@ -286,6 +310,7 @@ public class TestModuleRunner
                     log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
                     return null;
                 }
+
                 return null;
             }
 
