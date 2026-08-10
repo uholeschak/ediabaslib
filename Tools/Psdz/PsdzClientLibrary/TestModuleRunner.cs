@@ -165,7 +165,7 @@ public class TestModuleRunner
             return null;
         }
 
-        string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodules");
+        string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodule");
         string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
         string assemblyPath = Path.Combine(testModulesPath, cleanIstaModuleName + ".dll");
         if (!File.Exists(sourcePath))
