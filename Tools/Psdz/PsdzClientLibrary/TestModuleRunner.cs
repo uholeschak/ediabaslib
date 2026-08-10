@@ -128,49 +128,13 @@ public class TestModuleRunner
 
     public static Assembly GetModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
-        try
+        Assembly compiledAssembly = CompileModuleAssembly(clientContext, cleanIstaModuleName);
+        if (compiledAssembly == null)
         {
-            if (string.IsNullOrEmpty(cleanIstaModuleName))
-            {
-                log.ErrorFormat("GetModuleAssembly: cleanIstaModuleName is null or empty");
-                return null;
-            }
-
-            string assemblyModuleName = null;
-            if (cleanIstaModuleName.StartsWith("ABL_AUS_"))
-            {
-                assemblyModuleName = "TestmodulesAblAus.dll";
-            }
-            else if (cleanIstaModuleName.StartsWith("ABL_GEN_"))
-            {
-                assemblyModuleName = "TestmodulesAblGen.dll";
-            }
-            else if (cleanIstaModuleName.StartsWith("ABL_LIF_"))
-            {
-                assemblyModuleName = "TestmodulesAblLif.dll";
-            }
-
-            if (string.IsNullOrEmpty(assemblyModuleName))
-            {
-                log.ErrorFormat("GetModuleAssembly: Test module type not supported: {0}", cleanIstaModuleName);
-                return null;
-            }
-
-            string appDir = EdiabasNet.AssemblyDirectory;
-            if (string.IsNullOrEmpty(appDir))
-            {
-                log.ErrorFormat("GetModuleAssembly: AssemblyDirectory is null or empty");
-                return null;
-            }
-
-            string assemblyPath = Path.Combine(appDir, assemblyModuleName);
-            return Assembly.LoadFrom(assemblyPath);
-        }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("GetModuleAssembly: Exception: {0}", ex);
             return null;
         }
+
+        return compiledAssembly;
     }
 
     public static Assembly CompileModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
@@ -254,22 +218,44 @@ public class TestModuleRunner
             string sourceCode = File.ReadAllText(sourcePath);
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
 
-            // Referenzen: aktuell geladene Assembly + Basis-Laufzeitreferenzen
-            Assembly currentAssembly = typeof(TestModuleRunner).Assembly;
-            List<MetadataReference> references = new List<MetadataReference>
+            List<MetadataReference> references = new List<MetadataReference>();
+            HashSet<string> addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            string runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
+            if (string.IsNullOrEmpty(runtimeDir))
             {
-                MetadataReference.CreateFromFile(currentAssembly.Location),
-                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+                log.ErrorFormat("CompileModuleAssembly: Runtime directory is null or empty");
+                return null;
+            }
+
+            string[] additionalAssemblies =
+            {
+                "mscorlib.dll",
+                "netstandard.dll",
+                "System.dll",
+                "System.Core.dll",
+                "System.Runtime.dll",
+                "System.Collections.dll",
+                "System.Xml.dll"
             };
 
-            // Zusätzliche Kern-Assemblies (nötig bei .NET Core/.NET 10, harmlos bei .NET FW)
-            string runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
-            foreach (string name in new[] { "System.Runtime.dll", "System.Collections.dll", "netstandard.dll", "mscorlib.dll" })
+            foreach (string assembly in additionalAssemblies)
             {
-                string refPath = Path.Combine(runtimeDir, name);
-                if (File.Exists(refPath))
+                AddReference(ref references, ref addedPaths, Path.Combine(runtimeDir, assembly));
+            }
+
+            foreach (Assembly loaded in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
                 {
-                    references.Add(MetadataReference.CreateFromFile(refPath));
+                    if (!loaded.IsDynamic)
+                    {
+                        AddReference(ref references, ref addedPaths, loaded.Location);
+                    }
+                }
+                catch (Exception)
+                {
+                    // Assemblies ohne Location überspringen
                 }
             }
 
@@ -283,9 +269,22 @@ public class TestModuleRunner
             EmitResult result = compilation.Emit(assemblyPath);
             if (!result.Success)
             {
-                foreach (var diagnostic in result.Diagnostics)
+                foreach (Diagnostic diagnostic in result.Diagnostics)
                 {
-                    log.ErrorFormat("CompileModuleAssembly: Diagnostic: {0}", diagnostic);
+                    if (diagnostic.Severity == DiagnosticSeverity.Error)
+                    {
+                        log.ErrorFormat("CompileModuleAssembly: Diagnostic: {0}", diagnostic);
+                    }
+                }
+
+                try
+                {
+                    File.Delete(assemblyPath);
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
+                    return null;
                 }
                 return null;
             }
@@ -296,6 +295,14 @@ public class TestModuleRunner
         {
             log.ErrorFormat("CompileModuleAssembly: Exception: {0}", ex);
             return null;
+        }
+    }
+
+    private static void AddReference(ref List<MetadataReference> references, ref HashSet<string> addedPaths, string path)
+    {
+        if (!string.IsNullOrEmpty(path) && File.Exists(path) && addedPaths.Add(path))
+        {
+            references.Add(MetadataReference.CreateFromFile(path));
         }
     }
 
