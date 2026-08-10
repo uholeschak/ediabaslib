@@ -177,12 +177,14 @@ public class TestModuleRunner
     {
         if (string.IsNullOrEmpty(cleanIstaModuleName))
         {
+            log.ErrorFormat("CompileModuleAssembly: cleanIstaModuleName is null or empty");
             return null;
         }
 
         string appDir = EdiabasNet.AssemblyDirectory;
         if (string.IsNullOrEmpty(appDir))
         {
+            log.ErrorFormat("CompileModuleAssembly: AssemblyDirectory is null or empty");
             return null;
         }
 
@@ -203,6 +205,7 @@ public class TestModuleRunner
         string assemblyPath = Path.Combine(outputPath, cleanIstaModuleName + ".dll");
         if (!File.Exists(sourcePath))
         {
+            log.ErrorFormat("CompileModuleAssembly: Source file does not exist: {0}", sourcePath);
             return null;
         }
 
@@ -217,8 +220,9 @@ public class TestModuleRunner
                 {
                     File.Delete(assemblyPath);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
                     return null;
                 }
             }
@@ -230,14 +234,16 @@ public class TestModuleRunner
             {
                 return Assembly.LoadFrom(assemblyPath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.ErrorFormat("CompileModuleAssembly: Assembly.LoadFrom Exception: {0}", ex);
                 try
                 {
                     File.Delete(assemblyPath);
                 }
-                catch (Exception)
+                catch (Exception ex2)
                 {
+                    log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex2);
                     return null;
                 }
             }
@@ -277,14 +283,18 @@ public class TestModuleRunner
             EmitResult result = compilation.Emit(assemblyPath);
             if (!result.Success)
             {
-                // Optional: result.Diagnostics auswerten/loggen
+                foreach (var diagnostic in result.Diagnostics)
+                {
+                    log.ErrorFormat("CompileModuleAssembly: Diagnostic: {0}", diagnostic);
+                }
                 return null;
             }
 
             return Assembly.LoadFrom(assemblyPath);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            log.ErrorFormat("CompileModuleAssembly: Exception: {0}", ex);
             return null;
         }
     }
