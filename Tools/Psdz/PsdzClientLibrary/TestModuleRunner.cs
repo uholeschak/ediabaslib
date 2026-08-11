@@ -23,15 +23,15 @@ namespace PsdzClientLibrary;
 public class TestModuleRunner
 {
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
-    private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
-        new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
-    private static string TestModuleDir = "Testmodule";
+    public static string TestModuleDir = "Testmodule";
 #if DEBUG
-    private static string OutputSubDir = "Debug";
+    public static OptimizationLevel OptimizationLevel = OptimizationLevel.Debug;
+    public static string OutputSubDir = "Debug";
 #else
-    private static string OutputSubDir = "Release";
+    public static string OutputSubDir = "Release";
+    public static OptimizationLevel OptimizationLevel = OptimizationLevel.Release;
 #endif
-    private static readonly string[] AdditionalAssemblies =
+    public static readonly string[] AdditionalAssemblies =
     {
         "mscorlib.dll",
         "netstandard.dll",
@@ -41,6 +41,8 @@ public class TestModuleRunner
         "System.Collections.dll",
         "System.Xml.dll"
     };
+    private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
+        new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
 
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
@@ -195,39 +197,47 @@ public class TestModuleRunner
 
     public static bool CompileAllModules(ClientContext clientContext)
     {
-        string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
-        if (!Directory.Exists(testModulesPath))
+        try
         {
-            log.ErrorFormat("CompileAllModules: Test modules directory does not exist: {0}", testModulesPath);
+            string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
+            if (!Directory.Exists(testModulesPath))
+            {
+                log.ErrorFormat("CompileAllModules: Test modules directory does not exist: {0}", testModulesPath);
+                return false;
+            }
+
+            string outputDir = Path.Combine(testModulesPath, OutputSubDir);
+            if (Directory.Exists(outputDir))
+            {
+                int csCount = Directory.EnumerateFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly).Count();
+                int outputCount = Directory.EnumerateFiles(outputDir, "*.*", SearchOption.TopDirectoryOnly).Count();
+                if (outputCount >= csCount)
+                {
+                    log.InfoFormat("CompileAllModules: All modules are already compiled. OutputCount={0}, CsCount={1}", outputCount, csCount);
+                    return true;
+                }
+            }
+
+            bool result = true;
+            string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
+            foreach (string sourceFile in sourceFiles)
+            {
+                string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
+                string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
+                string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
+                if (!CompileModuleAssembly(sourcePath, assemblyPath))
+                {
+                    result = false;
+                }
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("CompileAllModules: Exception: {0}", ex);
             return false;
         }
-
-        string outputDir = Path.Combine(testModulesPath, OutputSubDir);
-        if (Directory.Exists(outputDir))
-        {
-            int csCount = Directory.EnumerateFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly).Count();
-            int outputCount = Directory.EnumerateFiles(outputDir, "*.*", SearchOption.TopDirectoryOnly).Count();
-            if (outputCount >= csCount)
-            {
-                log.InfoFormat("CompileAllModules: All modules are already compiled. OutputCount={0}, CsCount={1}", outputCount, csCount);
-                return true;
-            }
-        }
-
-        bool result = true;
-        string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
-        foreach (string sourceFile in sourceFiles)
-        {
-            string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
-            string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
-            string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
-            if (!CompileModuleAssembly(sourcePath, assemblyPath))
-            {
-                result = false;
-            }
-        }
-
-        return result;
     }
 
     public static Assembly CompileAndLoadModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
@@ -389,18 +399,12 @@ public class TestModuleRunner
                 }
             }
 
-#if DEBUG
-            OptimizationLevel optimizationLevel = OptimizationLevel.Debug;
-#else
-            OptimizationLevel optimizationLevel = OptimizationLevel.Release;
-#endif
-
             CSharpCompilation compilation = CSharpCompilation.Create(
                 assemblyName,
                 new[] { syntaxTree, assemblyInfoTree },
                 references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                    optimizationLevel: optimizationLevel));
+                    optimizationLevel: OptimizationLevel));
 
             EmitResult result;
             using (Stream win32Resources = compilation.CreateDefaultWin32Resources(
