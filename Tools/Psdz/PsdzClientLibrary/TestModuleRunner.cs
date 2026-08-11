@@ -203,10 +203,8 @@ public class TestModuleRunner
 
         string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodule");
 #if DEBUG
-        OptimizationLevel optimizationLevel = OptimizationLevel.Debug;
         string outputPath = Path.Combine(testModulesPath, "Debug");
 #else
-        OptimizationLevel optimizationLevel = OptimizationLevel.Release;
         string outputPath = Path.Combine(testModulesPath, "Release");
 #endif
         if (!Directory.Exists(outputPath))
@@ -272,7 +270,7 @@ public class TestModuleRunner
 
         try
         {
-            if (!CompileModuleAssembly(sourcePath, assemblyPath, cleanIstaModuleName, optimizationLevel))
+            if (!CompileModuleAssembly(sourcePath, assemblyPath, cleanIstaModuleName))
             {
                 return null;
             }
@@ -288,7 +286,7 @@ public class TestModuleRunner
         }
     }
 
-    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, string assemblyName, OptimizationLevel optimizationLevel)
+    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, string assemblyName)
     {
         try
         {
@@ -342,6 +340,12 @@ public class TestModuleRunner
                     // Assemblies ohne Location überspringen
                 }
             }
+
+#if DEBUG
+            OptimizationLevel optimizationLevel = OptimizationLevel.Debug;
+#else
+            OptimizationLevel optimizationLevel = OptimizationLevel.Release;
+#endif
 
             CSharpCompilation compilation = CSharpCompilation.Create(
                 assemblyName,
