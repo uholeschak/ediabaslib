@@ -25,6 +25,11 @@ public class TestModuleRunner
     private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
         new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
     private static string TestModuleDir = "Testmodule";
+#if DEBUG
+    private static string OutputSubDir = "Debug";
+#else
+    private static string OutputSubDir = "Release";
+#endif
     private static readonly string[] AdditionalAssemblies =
     {
         "mscorlib.dll",
@@ -191,11 +196,7 @@ public class TestModuleRunner
     {
         bool result = true;
         string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
-#if DEBUG
-        string outputDir = Path.Combine(testModulesPath, "Debug");
-#else
-        string outputDir = Path.Combine(testModulesPath, "Release");
-#endif
+        string outputDir = Path.Combine(testModulesPath, OutputSubDir);
         string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
         foreach (string sourceFile in sourceFiles)
         {
@@ -227,11 +228,7 @@ public class TestModuleRunner
         }
 
         string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
-#if DEBUG
-        string outputDir = Path.Combine(testModulesPath, "Debug");
-#else
-        string outputDir = Path.Combine(testModulesPath, "Release");
-#endif
+        string outputDir = Path.Combine(testModulesPath, OutputSubDir);
         string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
         string assemblyPath = Path.Combine(outputDir, cleanIstaModuleName + ".dll");
         if (!File.Exists(sourcePath))
