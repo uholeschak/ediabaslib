@@ -14,6 +14,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace PsdzClientLibrary;
@@ -195,11 +196,22 @@ public class TestModuleRunner
     public static bool CompileAllModules(ClientContext clientContext)
     {
         string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
+        if (!Directory.Exists(testModulesPath))
+        {
+            log.ErrorFormat("CompileAllModules: Test modules directory does not exist: {0}", testModulesPath);
+            return false;
+        }
+
         string outputDir = Path.Combine(testModulesPath, OutputSubDir);
         if (Directory.Exists(outputDir))
         {
-            log.InfoFormat("CompileAllModules: Output directory already exists: {0}", outputDir);
-            return true;
+            int csCount = Directory.EnumerateFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly).Count();
+            int outputCount = Directory.EnumerateFiles(outputDir, "*.*", SearchOption.TopDirectoryOnly).Count();
+            if (outputCount >= csCount)
+            {
+                log.InfoFormat("CompileAllModules: All modules are already compiled. OutputCount={0}, CsCount={1}", outputCount, csCount);
+                return true;
+            }
         }
 
         bool result = true;
