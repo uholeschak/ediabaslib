@@ -194,9 +194,15 @@ public class TestModuleRunner
 
     public static bool CompileAllModules(ClientContext clientContext)
     {
-        bool result = true;
         string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
         string outputDir = Path.Combine(testModulesPath, OutputSubDir);
+        if (Directory.Exists(outputDir))
+        {
+            log.InfoFormat("CompileAllModules: Output directory already exists: {0}", outputDir);
+            return true;
+        }
+
+        bool result = true;
         string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
         foreach (string sourceFile in sourceFiles)
         {
