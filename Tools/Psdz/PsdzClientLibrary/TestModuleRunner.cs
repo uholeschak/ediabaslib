@@ -203,17 +203,12 @@ public class TestModuleRunner
 
         string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodule");
 #if DEBUG
-        string outputPath = Path.Combine(testModulesPath, "Debug");
+        string outputDir = Path.Combine(testModulesPath, "Debug");
 #else
-        string outputPath = Path.Combine(testModulesPath, "Release");
+        string outputDir = Path.Combine(testModulesPath, "Release");
 #endif
-        if (!Directory.Exists(outputPath))
-        {
-            Directory.CreateDirectory(outputPath);
-        }
-
         string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
-        string assemblyPath = Path.Combine(outputPath, cleanIstaModuleName + ".dll");
+        string assemblyPath = Path.Combine(outputDir, cleanIstaModuleName + ".dll");
         if (!File.Exists(sourcePath))
         {
             log.ErrorFormat("CompileAndLoadModuleAssembly: Source file does not exist: {0}", sourcePath);
@@ -290,6 +285,18 @@ public class TestModuleRunner
     {
         try
         {
+            string outputDir = Path.GetDirectoryName(assemblyPath);
+            if (string.IsNullOrEmpty(outputDir))
+            {
+                log.ErrorFormat("CompileModuleAssembly: Output directory is null or empty");
+                return false;
+            }
+
+            if (!Directory.Exists(outputDir))
+            {
+                Directory.CreateDirectory(outputDir);
+            }
+
             string logFilePath = Path.ChangeExtension(assemblyPath, ".log");
             if (File.Exists(logFilePath))
             {
