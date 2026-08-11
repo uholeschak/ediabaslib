@@ -216,7 +216,6 @@ public class TestModuleRunner
 
         string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
         string assemblyPath = Path.Combine(outputPath, cleanIstaModuleName + ".dll");
-        string logFilePath = Path.Combine(outputPath, cleanIstaModuleName + ".log");
         if (!File.Exists(sourcePath))
         {
             log.ErrorFormat("CompileAndLoadModuleAssembly: Source file does not exist: {0}", sourcePath);
@@ -273,7 +272,7 @@ public class TestModuleRunner
 
         try
         {
-            if (!CompileModuleAssembly(sourcePath, assemblyPath, logFilePath, cleanIstaModuleName, optimizationLevel))
+            if (!CompileModuleAssembly(sourcePath, assemblyPath, cleanIstaModuleName, optimizationLevel))
             {
                 return null;
             }
@@ -289,10 +288,11 @@ public class TestModuleRunner
         }
     }
 
-    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, string logFilePath, string assemblyName, OptimizationLevel optimizationLevel)
+    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, string assemblyName, OptimizationLevel optimizationLevel)
     {
         try
         {
+            string logFilePath = Path.ChangeExtension(assemblyPath, ".log");
             if (File.Exists(logFilePath))
             {
                 File.Delete(logFilePath);
