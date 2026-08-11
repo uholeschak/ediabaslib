@@ -265,7 +265,7 @@ public class TestModuleRunner
 
         try
         {
-            if (!CompileModuleAssembly(sourcePath, assemblyPath, cleanIstaModuleName))
+            if (!CompileModuleAssembly(sourcePath, assemblyPath))
             {
                 return null;
             }
@@ -281,10 +281,11 @@ public class TestModuleRunner
         }
     }
 
-    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, string assemblyName)
+    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath)
     {
         try
         {
+            string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
             string outputDir = Path.GetDirectoryName(assemblyPath);
             if (string.IsNullOrEmpty(outputDir))
             {
