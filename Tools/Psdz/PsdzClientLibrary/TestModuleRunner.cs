@@ -142,7 +142,7 @@ public class TestModuleRunner
 
     public static Assembly GetModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
-        Assembly compiledAssembly = CompileModuleAssembly(clientContext, cleanIstaModuleName);
+        Assembly compiledAssembly = CompileAndLoadModuleAssembly(clientContext, cleanIstaModuleName);
         return compiledAssembly;
     }
 
@@ -186,18 +186,18 @@ public class TestModuleRunner
         <Compile Remove="$(Src)\ABL_LIF_WRITE_PRG*.cs" />
      */
 
-    public static Assembly CompileModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
+    public static Assembly CompileAndLoadModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
         if (string.IsNullOrEmpty(cleanIstaModuleName))
         {
-            log.ErrorFormat("CompileModuleAssembly: cleanIstaModuleName is null or empty");
+            log.ErrorFormat("CompileAndLoadModuleAssembly: cleanIstaModuleName is null or empty");
             return null;
         }
 
         string appDir = EdiabasNet.AssemblyDirectory;
         if (string.IsNullOrEmpty(appDir))
         {
-            log.ErrorFormat("CompileModuleAssembly: AssemblyDirectory is null or empty");
+            log.ErrorFormat("CompileAndLoadModuleAssembly: AssemblyDirectory is null or empty");
             return null;
         }
 
@@ -219,13 +219,13 @@ public class TestModuleRunner
         string logFilePath = Path.Combine(outputPath, cleanIstaModuleName + ".log");
         if (!File.Exists(sourcePath))
         {
-            log.ErrorFormat("CompileModuleAssembly: Source file does not exist: {0}", sourcePath);
+            log.ErrorFormat("CompileAndLoadModuleAssembly: Source file does not exist: {0}", sourcePath);
             return null;
         }
 
         if (assemblyCache.TryGetValue(assemblyPath, out Assembly cachedAssembly))
         {
-            log.InfoFormat("CompileModuleAssembly: Assembly found in cache: {0}", assemblyPath);
+            log.InfoFormat("CompileAndLoadModuleAssembly: Assembly found in cache: {0}", assemblyPath);
             return cachedAssembly;
         }
 
@@ -242,7 +242,7 @@ public class TestModuleRunner
                 }
                 catch (Exception ex)
                 {
-                    log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
+                    log.ErrorFormat("CompileAndLoadModuleAssembly: File.Delete Exception: {0}", ex);
                     return null;
                 }
             }
@@ -258,19 +258,39 @@ public class TestModuleRunner
             }
             catch (Exception ex)
             {
-                log.ErrorFormat("CompileModuleAssembly: Assembly.LoadFrom Exception: {0}", ex);
+                log.ErrorFormat("CompileAndLoadModuleAssembly: Assembly.LoadFrom Exception: {0}", ex);
                 try
                 {
                     File.Delete(assemblyPath);
                 }
                 catch (Exception ex2)
                 {
-                    log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex2);
+                    log.ErrorFormat("CompileAndLoadModuleAssembly: File.Delete Exception: {0}", ex2);
                     return null;
                 }
             }
         }
 
+        try
+        {
+            if (!CompileModuleAssembly(sourcePath, assemblyPath, logFilePath, cleanIstaModuleName, optimizationLevel))
+            {
+                return null;
+            }
+
+            Assembly compiledAssembly = Assembly.LoadFrom(assemblyPath);
+            assemblyCache.TryAdd(assemblyPath, compiledAssembly);
+            return compiledAssembly;
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("CompileAndLoadModuleAssembly: Exception: {0}", ex);
+            return null;
+        }
+    }
+
+    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, string logFilePath, string assemblyName, OptimizationLevel optimizationLevel)
+    {
         try
         {
             if (File.Exists(logFilePath))
@@ -283,9 +303,9 @@ public class TestModuleRunner
 
             string assemblyInfo = $"""
                                    using System.Reflection;
-                                   [assembly: AssemblyTitle("{cleanIstaModuleName}")]
+                                   [assembly: AssemblyTitle("{assemblyName}")]
                                    [assembly: AssemblyProduct("ISTA test module")]
-                                   [assembly: AssemblyDescription("Compiled from {cleanIstaModuleName}.cs")]
+                                   [assembly: AssemblyDescription("Compiled from {assemblyName}.cs")]
                                    [assembly: AssemblyCompany("EdiabasLib")]
                                    [assembly: AssemblyVersion("1.0.0.0")]
                                    [assembly: AssemblyFileVersion("1.0.0.0")]
@@ -300,7 +320,7 @@ public class TestModuleRunner
             if (string.IsNullOrEmpty(runtimeDir))
             {
                 log.ErrorFormat("CompileModuleAssembly: Runtime directory is null or empty");
-                return null;
+                return false;
             }
 
             foreach (string assembly in additionalAssemblies)
@@ -324,7 +344,7 @@ public class TestModuleRunner
             }
 
             CSharpCompilation compilation = CSharpCompilation.Create(
-                cleanIstaModuleName,
+                assemblyName,
                 new[] { syntaxTree, assemblyInfoTree },
                 references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
@@ -377,21 +397,19 @@ public class TestModuleRunner
                 catch (Exception ex)
                 {
                     log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
-                    return null;
+                    return false;
                 }
 
-                return null;
+                return false;
             }
-
-            Assembly compiledAssembly = Assembly.LoadFrom(assemblyPath);
-            assemblyCache.TryAdd(assemblyPath, compiledAssembly);
-            return compiledAssembly;
         }
         catch (Exception ex)
         {
             log.ErrorFormat("CompileModuleAssembly: Exception: {0}", ex);
-            return null;
+            return false;
         }
+
+        return true;
     }
 
     private static void AddReference(ref List<MetadataReference> references, ref HashSet<string> addedPaths, string path)
