@@ -24,7 +24,8 @@ public class TestModuleRunner
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
     private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
         new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
-    private static readonly string[] additionalAssemblies =
+    private static string TestModuleDir = "Testmodule";
+    private static readonly string[] AdditionalAssemblies =
     {
         "mscorlib.dll",
         "netstandard.dll",
@@ -186,6 +187,30 @@ public class TestModuleRunner
         <Compile Remove="$(Src)\ABL_LIF_WRITE_PRG*.cs" />
      */
 
+    public static bool CompileAllModules(ClientContext clientContext)
+    {
+        bool result = true;
+        string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
+#if DEBUG
+        string outputDir = Path.Combine(testModulesPath, "Debug");
+#else
+        string outputDir = Path.Combine(testModulesPath, "Release");
+#endif
+        string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
+        foreach (string sourceFile in sourceFiles)
+        {
+            string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
+            string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
+            string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
+            if (!CompileModuleAssembly(sourcePath, assemblyPath))
+            {
+                result = false;
+            }
+        }
+
+        return result;
+    }
+
     public static Assembly CompileAndLoadModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
         if (string.IsNullOrEmpty(cleanIstaModuleName))
@@ -201,7 +226,7 @@ public class TestModuleRunner
             return null;
         }
 
-        string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, "Testmodule");
+        string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
 #if DEBUG
         string outputDir = Path.Combine(testModulesPath, "Debug");
 #else
@@ -329,7 +354,7 @@ public class TestModuleRunner
                 return false;
             }
 
-            foreach (string assembly in additionalAssemblies)
+            foreach (string assembly in AdditionalAssemblies)
             {
                 AddReference(ref references, ref addedPaths, Path.Combine(runtimeDir, assembly));
             }
