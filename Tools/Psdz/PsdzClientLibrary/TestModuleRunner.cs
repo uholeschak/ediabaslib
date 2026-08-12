@@ -22,6 +22,8 @@ namespace PsdzClientLibrary;
 [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
 public class TestModuleRunner
 {
+    public delegate bool ProgressDelegate(int progress, int failures);
+
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
     public static string TestModuleDir = "Testmodule";
 #if DEBUG
@@ -195,7 +197,7 @@ public class TestModuleRunner
         <Compile Remove="$(Src)\ABL_LIF_WRITE_PRG*.cs" />
      */
 
-    public static bool CompileAllModules(ClientContext clientContext)
+    public static bool CompileAllModules(ClientContext clientContext, ProgressDelegate progressDelegate = null)
     {
         try
         {
@@ -220,18 +222,34 @@ public class TestModuleRunner
 
             bool result = true;
             string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
+
+            int sourceFilesCount = sourceFiles.Length;
+            int index = 0;
+            int errorCount = 0;
             foreach (string sourceFile in sourceFiles)
             {
+                if (progressDelegate != null)
+                {
+                    int progress = (int)((index + 1) * 100.0 / sourceFilesCount);
+                    if (!progressDelegate(progress, errorCount))
+                    {
+                        log.InfoFormat("CompileAllModules: Compilation cancelled by progress delegate at {0}%", progress);
+                        return false;
+                    }
+                }
+
                 string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
                 string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
                 string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
                 if (!CompileModuleAssembly(sourcePath, assemblyPath))
                 {
-                    result = false;
+                    errorCount++;
                 }
+
+                index++;
             }
 
-            return result;
+            return errorCount == 0;
         }
         catch (Exception ex)
         {
