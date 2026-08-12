@@ -50,6 +50,7 @@ public class TestModuleRunner
 
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
+    private readonly PsdzDatabase.DbInfo _dbInfo;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly ILogic _logic;
     private readonly ServiceProgramController _serviceProgramController;
@@ -63,6 +64,13 @@ public class TestModuleRunner
     {
         _clientContext = clientContext;
         _programmingJobs = programmingJobs;
+        _dbInfo = _clientContext?.Database?.GetDbInfo();
+        if (_dbInfo == null)
+        {
+            log.Error("TestModuleRunner: Database info is null");
+            throw new ArgumentException("Database info is null");
+        }
+
         _swiInfoObj = _clientContext?.Database?.GetInfoObjectByControlId(controlId);
         if (_swiInfoObj == null)
         {
