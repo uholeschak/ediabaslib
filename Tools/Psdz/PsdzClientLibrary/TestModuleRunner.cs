@@ -14,7 +14,6 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -50,7 +49,7 @@ public class TestModuleRunner
 
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
-    private readonly PsdzDatabase.DbInfo _dbInfo;
+    private readonly Version _dbVersion;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly ILogic _logic;
     private readonly ServiceProgramController _serviceProgramController;
@@ -64,11 +63,17 @@ public class TestModuleRunner
     {
         _clientContext = clientContext;
         _programmingJobs = programmingJobs;
-        _dbInfo = _clientContext?.Database?.GetDbInfo();
-        if (_dbInfo == null)
+        PsdzDatabase.DbInfo dbInfo = _clientContext?.Database?.GetDbInfo();
+        if (dbInfo == null)
         {
             log.Error("TestModuleRunner: Database info is null");
             throw new ArgumentException("Database info is null");
+        }
+
+        if (!Version.TryParse(dbInfo.Version, out _dbVersion))
+        {
+            log.ErrorFormat("GetGeneratedCodeVersion: Invalid version '{0}'", dbInfo.Version);
+            throw new ArgumentException("Invalid version");
         }
 
         _swiInfoObj = _clientContext?.Database?.GetInfoObjectByControlId(controlId);
@@ -90,6 +95,23 @@ public class TestModuleRunner
         _moduleParameters.setParameter(ModuleParameter.ParameterName.ServiceProgramController, _serviceProgramController);
     }
 
+    public bool CheckModuleAssemblyVersion(Assembly assembly)
+    {
+        Version moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
+        if (moduleVersion == null)
+        {
+            log.ErrorFormat("CheckModuleAssemblyVersion: GetGeneratedCodeVersion returned null for: {0}", _moduleTypeName);
+            return false;
+        }
+
+        if (moduleVersion.Major != _dbVersion.Major || moduleVersion.Minor != _dbVersion.Minor)
+        {
+            log.ErrorFormat("CheckModuleAssemblyVersion: Invalid module version {0} for: {1}", moduleVersion, _moduleTypeName);
+            return false;
+        }
+        return true;
+    }
+
     public bool IsValid()
     {
         try
@@ -108,12 +130,12 @@ public class TestModuleRunner
                 return false;
             }
 
-            Version moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
-            if (moduleVersion == null)
+            if (!CheckModuleAssemblyVersion(assembly))
             {
-                log.ErrorFormat("IsValid: GetGeneratedCodeVersion returned null for: {0}", _moduleTypeName);
+                log.ErrorFormat("IsValid: CheckModuleAssemblyVersion failed for: {0}", _moduleTypeName);
                 return false;
             }
+
             return true;
         }
         catch (Exception ex)
@@ -148,10 +170,9 @@ public class TestModuleRunner
                 return false;
             }
 
-            Version moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
-            if (moduleVersion == null)
+            if (!CheckModuleAssemblyVersion(assembly))
             {
-                log.ErrorFormat("Run: GetGeneratedCodeVersion returned null for: {0}", _moduleTypeName);
+                log.ErrorFormat("Run: CheckModuleAssemblyVersion failed for: {0}", _moduleTypeName);
                 return false;
             }
 
