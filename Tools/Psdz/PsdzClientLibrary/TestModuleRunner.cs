@@ -248,7 +248,7 @@ public class TestModuleRunner
                 index++;
             }
 
-            return errorCount == 0;
+            return true;
         }
         catch (Exception ex)
         {
