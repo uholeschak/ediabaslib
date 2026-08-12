@@ -415,7 +415,11 @@ public class TestModuleRunner
             {
                 using (FileStream peStream = new FileStream(assemblyPath, FileMode.Create, FileAccess.ReadWrite))
                 {
-                    EmitOptions emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb);
+                    EmitOptions emitOptions = null;
+                    if (OptimizationLevel == OptimizationLevel.Debug)
+                    {
+                        emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb);
+                    }
                     result = compilation.Emit(peStream, win32Resources: win32Resources, options: emitOptions);
                 }
             }
