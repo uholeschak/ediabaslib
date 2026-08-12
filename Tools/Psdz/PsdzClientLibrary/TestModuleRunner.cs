@@ -100,10 +100,10 @@ public class TestModuleRunner
                 return false;
             }
 
-            string moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
-            if (string.IsNullOrEmpty(moduleVersion))
+            Version moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
+            if (moduleVersion == null)
             {
-                log.ErrorFormat("IsValid: GetGeneratedCodeVersion returned null or empty for: {0}", _moduleTypeName);
+                log.ErrorFormat("IsValid: GetGeneratedCodeVersion returned null for: {0}", _moduleTypeName);
                 return false;
             }
             return true;
@@ -140,10 +140,10 @@ public class TestModuleRunner
                 return false;
             }
 
-            string moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
-            if (string.IsNullOrEmpty(moduleVersion))
+            Version moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
+            if (moduleVersion == null)
             {
-                log.ErrorFormat("Run: GetGeneratedCodeVersion returned null or empty for: {0}", _moduleTypeName);
+                log.ErrorFormat("Run: GetGeneratedCodeVersion returned null for: {0}", _moduleTypeName);
                 return false;
             }
 
@@ -173,7 +173,7 @@ public class TestModuleRunner
         return compiledAssembly;
     }
 
-    public static string GetGeneratedCodeVersion(Assembly assembly, string moduleTypeName)
+    public static Version GetGeneratedCodeVersion(Assembly assembly, string moduleTypeName)
     {
         try
         {
@@ -191,7 +191,13 @@ public class TestModuleRunner
                 return null;
             }
 
-            return attribute.Version;
+            if (!Version.TryParse(attribute.Version, out Version version))
+            {
+                log.ErrorFormat("GetGeneratedCodeVersion: Invalid version '{0}' for: {1}", attribute.Version, moduleTypeName);
+                return null;
+            }
+
+            return version;
         }
         catch (Exception ex)
         {
