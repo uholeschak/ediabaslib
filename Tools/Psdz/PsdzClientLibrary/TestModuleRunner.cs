@@ -13,6 +13,7 @@ using PsdzClient.Programming;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,7 +23,7 @@ namespace PsdzClientLibrary;
 [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
 public class TestModuleRunner
 {
-    public delegate bool ProgressDelegate(int progress, int failures);
+    public delegate bool ProgressDelegate(bool start, int progress, int failures);
 
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
     public static string TestModuleDir = "Testmodule";
@@ -225,14 +226,23 @@ public class TestModuleRunner
             int index = 0;
             int errorCount = 0;
 
+            if (progressDelegate != null)
+            {
+                if (progressDelegate(true, 0, 0))
+                {
+                    log.InfoFormat("CompileAllModules: Compilation cancelled");
+                    return false;
+                }
+            }
+
             foreach (string sourceFile in sourceFiles)
             {
                 if (progressDelegate != null)
                 {
                     int progress = (int)((index + 1) * 100.0 / sourceFilesCount);
-                    if (!progressDelegate(progress, errorCount))
+                    if (progressDelegate(false, progress, errorCount))
                     {
-                        log.InfoFormat("CompileAllModules: Compilation cancelled by progress delegate at {0}%", progress);
+                        log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
                         return false;
                     }
                 }

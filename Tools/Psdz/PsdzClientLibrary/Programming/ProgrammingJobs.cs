@@ -846,6 +846,26 @@ namespace PsdzClient.Programming
                             return true;
                         }
                     }
+#else
+                    TestModuleRunner.CompileAllModules(ClientContext, (start, progress, errorCount) =>
+                    {
+                        if (start)
+                        {
+                            sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        else
+                        {
+                            string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, errorCount);
+                            ProgressEvent?.Invoke(progress, false, message);
+                        }
+
+                        if (cts != null)
+                        {
+                            return cts.Token.IsCancellationRequested;
+                        }
+                        return false;
+                    });
 #endif
                     bool resultEcuCharacteristics = true;
                     if (!ProgrammingService.PsdzDatabase.GenerateEcuCharacteristicsData())
