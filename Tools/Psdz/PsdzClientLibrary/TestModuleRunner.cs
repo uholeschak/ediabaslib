@@ -11,6 +11,7 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -98,6 +99,13 @@ public class TestModuleRunner
                 log.ErrorFormat("IsValid: GetType returned null for: {0}", _moduleTypeName);
                 return false;
             }
+
+            string moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
+            if (string.IsNullOrEmpty(moduleVersion))
+            {
+                log.ErrorFormat("IsValid: GetGeneratedCodeVersion returned null or empty for: {0}", _moduleTypeName);
+                return false;
+            }
             return true;
         }
         catch (Exception ex)
@@ -132,6 +140,13 @@ public class TestModuleRunner
                 return false;
             }
 
+            string moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
+            if (string.IsNullOrEmpty(moduleVersion))
+            {
+                log.ErrorFormat("Run: GetGeneratedCodeVersion returned null or empty for: {0}", _moduleTypeName);
+                return false;
+            }
+
             MethodInfo method = instance.GetType().GetMethod("run");
             if (method == null)
             {
@@ -156,6 +171,33 @@ public class TestModuleRunner
     {
         Assembly compiledAssembly = CompileAndLoadModuleAssembly(clientContext, cleanIstaModuleName);
         return compiledAssembly;
+    }
+
+    public static string GetGeneratedCodeVersion(Assembly assembly, string moduleTypeName)
+    {
+        try
+        {
+            Type type = assembly?.GetType(moduleTypeName, throwOnError: false);
+            if (type == null)
+            {
+                log.ErrorFormat("GetGeneratedCodeVersion: GetType returned null for: {0}", moduleTypeName);
+                return null;
+            }
+
+            GeneratedCodeAttribute attribute = type.GetCustomAttribute<GeneratedCodeAttribute>();
+            if (attribute == null)
+            {
+                log.ErrorFormat("GetGeneratedCodeVersion: No GeneratedCodeAttribute found for: {0}", moduleTypeName);
+                return null;
+            }
+
+            return attribute.Version;
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("GetGeneratedCodeVersion: Exception: {0}", ex);
+            return null;
+        }
     }
 
     /*
