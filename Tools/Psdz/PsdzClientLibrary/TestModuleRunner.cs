@@ -220,12 +220,11 @@ public class TestModuleRunner
                 }
             }
 
-            bool result = true;
             string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
-
             int sourceFilesCount = sourceFiles.Length;
             int index = 0;
             int errorCount = 0;
+
             foreach (string sourceFile in sourceFiles)
             {
                 if (progressDelegate != null)
