@@ -250,7 +250,7 @@ public class TestModuleRunner
                 string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
                 string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
                 string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
-                if (!CompileModuleAssembly(sourcePath, assemblyPath))
+                if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
                 {
                     errorCount++;
                 }
@@ -358,7 +358,7 @@ public class TestModuleRunner
         }
     }
 
-    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath)
+    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false)
     {
         try
         {
@@ -373,6 +373,29 @@ public class TestModuleRunner
             if (!Directory.Exists(outputDir))
             {
                 Directory.CreateDirectory(outputDir);
+            }
+
+            if (File.Exists(assemblyPath))
+            {
+                if (checkDate)
+                {
+                    DateTime sourceTimeUtc = File.GetLastWriteTimeUtc(sourcePath);
+                    DateTime assemblyTimeUtc = File.GetLastWriteTimeUtc(assemblyPath);
+                    if (sourceTimeUtc < assemblyTimeUtc)
+                    {
+                        return true;
+                    }
+                }
+
+                try
+                {
+                    File.Delete(assemblyPath);
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
+                    return false;
+                }
             }
 
             string logFilePath = Path.ChangeExtension(assemblyPath, ".log");
@@ -485,7 +508,6 @@ public class TestModuleRunner
                 catch (Exception ex)
                 {
                     log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
-                    return false;
                 }
 
                 return false;
