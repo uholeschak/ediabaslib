@@ -27,7 +27,7 @@ public class TestModuleRunner
     public delegate bool ProgressDelegate(bool start, int progress, int failures);
 
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
-    public static string FailedAssembliesFile = "FailedAssemblies.txt";
+    public static string IgnoreAssembliesFile = "IgnoreAssemblies.txt";
     public static string TestModuleDir = "Testmodule";
 #if DEBUG
     public static OptimizationLevel OptimizationLevel = OptimizationLevel.Debug;
@@ -322,7 +322,7 @@ public class TestModuleRunner
             }
 
             List<string> ignoreAssemblies = new List<string>();
-            string ignoreAssembliesPath = Path.Combine(testModulesPath, FailedAssembliesFile);
+            string ignoreAssembliesPath = Path.Combine(testModulesPath, IgnoreAssembliesFile);
             if (File.Exists(ignoreAssembliesPath))
             {
                 ignoreAssemblies.AddRange(File.ReadAllLines(ignoreAssembliesPath));
@@ -384,12 +384,12 @@ public class TestModuleRunner
 
             try
             {
-                File.WriteAllText(Path.Combine(outputDir, FailedAssembliesFile),
+                File.WriteAllText(Path.Combine(outputDir, IgnoreAssembliesFile),
                     string.Join(Environment.NewLine, failedAssemblies));
             }
             catch (Exception e)
             {
-                log.ErrorFormat("CompileAllModules: Failed to write {0}: {1}", FailedAssembliesFile, e);
+                log.ErrorFormat("CompileAllModules: Failed to write {0}: {1}", IgnoreAssembliesFile, e);
             }
 
             return errorCount == 0;
