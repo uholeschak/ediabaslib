@@ -5,6 +5,7 @@ using EdiabasLib;
 using log4net;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
 using PsdzClient;
 using PsdzClient.Core;
@@ -235,6 +236,48 @@ public class TestModuleRunner
         }
     }
 
+    public static Version GetGeneratedCodeVersion(SyntaxTree syntaxTree)
+    {
+        try
+        {
+            AttributeSyntax attribute = syntaxTree.GetRoot()
+                .DescendantNodes()
+                .OfType<AttributeSyntax>()
+                .FirstOrDefault(a =>
+                {
+                    string name = a.Name.ToString();
+                    return string.CompareOrdinal(name, "GeneratedCode") == 0;
+                });
+
+            if (attribute?.ArgumentList == null || attribute.ArgumentList.Arguments.Count < 2)
+            {
+                log.ErrorFormat("GetGeneratedCodeVersion: No GeneratedCodeAttribute found in source: {0}", syntaxTree.FilePath);
+                return null;
+            }
+
+            if (attribute.ArgumentList.Arguments[1].Expression is not LiteralExpressionSyntax literal ||
+                !literal.IsKind(SyntaxKind.StringLiteralExpression))
+            {
+                log.ErrorFormat("GetGeneratedCodeVersion: Version argument is no string literal in source: {0}", syntaxTree.FilePath);
+                return null;
+            }
+
+            string versionString = literal.Token.ValueText;
+            if (!Version.TryParse(versionString, out Version version))
+            {
+                log.ErrorFormat("GetGeneratedCodeVersion: Invalid version '{0}' in source: {1}", versionString, syntaxTree.FilePath);
+                return null;
+            }
+
+            return version;
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("GetGeneratedCodeVersion: Exception: {0}", ex);
+            return null;
+        }
+    }
+
     /*
         Filter:
         <Compile Remove="$(Src)\ABL_GEN_AG*.cs" />
@@ -435,7 +478,7 @@ public class TestModuleRunner
         }
     }
 
-    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false)
+    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false, Version dbVersion = null)
     {
         try
         {
@@ -483,6 +526,22 @@ public class TestModuleRunner
 
             string sourceCode = File.ReadAllText(sourcePath);
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+
+            if (dbVersion != null)
+            {
+                Version generatedCodeVersion = GetGeneratedCodeVersion(syntaxTree);
+                if (generatedCodeVersion == null)
+                {
+                    log.ErrorFormat("CompileModuleAssembly: GetGeneratedCodeVersion returned null for: {0}", sourcePath);
+                    return false;
+                }
+
+                if (generatedCodeVersion.Major != dbVersion.Major || generatedCodeVersion.Minor != dbVersion.Minor)
+                {
+                    log.ErrorFormat("CompileModuleAssembly: Invalid generated code version {0} for: {1}", generatedCodeVersion, sourcePath);
+                    return false;
+                }
+            }
 
             string assemblyInfo = $"""
                                    using System.Reflection;
