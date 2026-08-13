@@ -321,8 +321,15 @@ public class TestModuleRunner
                 return false;
             }
 
+            string appDir = EdiabasNet.AssemblyDirectory;
+            if (string.IsNullOrEmpty(appDir))
+            {
+                log.ErrorFormat("CompileAllModules: AssemblyDirectory is null or empty");
+                return false;
+            }
+
             List<string> ignoreAssemblies = new List<string>();
-            string ignoreAssembliesPath = Path.Combine(testModulesPath, IgnoreAssembliesFile);
+            string ignoreAssembliesPath = Path.Combine(appDir, IgnoreAssembliesFile);
             if (File.Exists(ignoreAssembliesPath))
             {
                 ignoreAssemblies.AddRange(File.ReadAllLines(ignoreAssembliesPath));
