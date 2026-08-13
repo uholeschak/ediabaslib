@@ -109,10 +109,10 @@ namespace BMW.Authoring.API
 
         private double Predict(double[] testData)
         {
-            if (model != null)
-            {
-                return model.Predict(testData);
-            }
+            //[-] if (model != null)
+            //[-] {
+            //[-]   return model.Predict(testData);
+            //[-] }
             throw new InvalidOperationException("The random forest model has not been initialized.");
         }
 
