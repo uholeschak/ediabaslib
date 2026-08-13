@@ -27,6 +27,7 @@ public class TestModuleRunner
     public delegate bool ProgressDelegate(bool start, int progress, int failures);
 
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
+    public static string FailedAssembliesFile = "FailedAssemblies.txt";
     public static string TestModuleDir = "Testmodule";
 #if DEBUG
     public static OptimizationLevel OptimizationLevel = OptimizationLevel.Debug;
@@ -364,8 +365,9 @@ public class TestModuleRunner
             if (Directory.Exists(outputDir))
             {
                 int csCount = Directory.EnumerateFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly).Count();
-                int outputCount = Directory.EnumerateFiles(outputDir, "*.*", SearchOption.TopDirectoryOnly).Count();
-                if (outputCount >= csCount)
+                int outputCount = Directory.EnumerateFiles(outputDir, "*.dll", SearchOption.TopDirectoryOnly).Count();
+                int logCount = Directory.EnumerateFiles(outputDir, "*.log", SearchOption.TopDirectoryOnly).Count();
+                if (outputCount + logCount >= csCount)
                 {
                     log.InfoFormat("CompileAllModules: All modules are already compiled. OutputCount={0}, CsCount={1}", outputCount, csCount);
                     return true;
@@ -375,7 +377,6 @@ public class TestModuleRunner
             string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
             int sourceFilesCount = sourceFiles.Length;
             int index = 0;
-            int errorCount = 0;
 
             if (progressDelegate != null)
             {
@@ -386,12 +387,13 @@ public class TestModuleRunner
                 }
             }
 
+            List<string> failedAssemblies = new List<string>();
             foreach (string sourceFile in sourceFiles)
             {
                 if (progressDelegate != null)
                 {
                     int progress = (int)((index + 1) * 100.0 / sourceFilesCount);
-                    if (progressDelegate(false, progress, errorCount))
+                    if (progressDelegate(false, progress, failedAssemblies.Count))
                     {
                         log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
                         return false;
@@ -403,10 +405,20 @@ public class TestModuleRunner
                 string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
                 if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
                 {
-                    errorCount++;
+                    failedAssemblies.Add(assemblyName);
                 }
 
                 index++;
+            }
+
+            try
+            {
+                File.WriteAllText(Path.Combine(outputDir, FailedAssembliesFile),
+                    string.Join(Environment.NewLine, failedAssemblies));
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("CompileAllModules: Failed to write {0}: {1}", FailedAssembliesFile, e);
             }
 
             return true;
