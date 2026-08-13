@@ -47,10 +47,10 @@ public class TestModuleRunner
     };
     private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
         new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
+    private static Version dbVersion;
 
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
-    private readonly Version _dbVersion;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly ILogic _logic;
     private readonly ServiceProgramController _serviceProgramController;
@@ -64,8 +64,12 @@ public class TestModuleRunner
     {
         _clientContext = clientContext;
         _programmingJobs = programmingJobs;
-        _dbVersion = GetDbVersion(_clientContext);
-        if (_dbVersion == null)
+        if (dbVersion == null)
+        {
+            dbVersion = GetDbVersion(_clientContext);
+        }
+
+        if (dbVersion == null)
         {
             log.Error("TestModuleRunner: Database version is null");
             throw new ArgumentException("Database version is null");
@@ -99,7 +103,7 @@ public class TestModuleRunner
             return false;
         }
 
-        if (moduleVersion.Major != _dbVersion.Major || moduleVersion.Minor != _dbVersion.Minor)
+        if (moduleVersion.Major != dbVersion.Major || moduleVersion.Minor != dbVersion.Minor)
         {
             log.ErrorFormat("CheckModuleAssemblyVersion: Invalid module version {0} for: {1}", moduleVersion, _moduleTypeName);
             return false;
@@ -338,7 +342,11 @@ public class TestModuleRunner
     {
         try
         {
-            Version dbVersion = GetDbVersion(clientContext);
+            if (dbVersion == null)
+            {
+                dbVersion = GetDbVersion(clientContext);
+            }
+
             if (dbVersion == null)
             {
                 log.Error("CompileAllModules: Database version is null");
@@ -393,7 +401,7 @@ public class TestModuleRunner
                 string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
                 string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
                 string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
-                if (!CompileModuleAssembly(sourcePath, assemblyPath, true, dbVersion))
+                if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
                 {
                     errorCount++;
                 }
@@ -412,6 +420,17 @@ public class TestModuleRunner
 
     public static Assembly CompileAndLoadModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
+        if (dbVersion == null)
+        {
+            dbVersion = GetDbVersion(clientContext);
+        }
+
+        if (dbVersion == null)
+        {
+            log.Error("CompileAllModules: Database version is null");
+            return null;
+        }
+
         if (string.IsNullOrEmpty(cleanIstaModuleName))
         {
             log.ErrorFormat("CompileAndLoadModuleAssembly: cleanIstaModuleName is null or empty");
@@ -501,7 +520,7 @@ public class TestModuleRunner
         }
     }
 
-    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false, Version dbVersion = null)
+    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false)
     {
         try
         {
