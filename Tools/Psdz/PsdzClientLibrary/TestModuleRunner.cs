@@ -299,46 +299,6 @@ public class TestModuleRunner
         }
     }
 
-    /*
-        Filter:
-        <Compile Remove="$(Src)\ABL_GEN_AG*.cs" />
-        <Compile Remove="$(Src)\ABL_GEN_AT*.cs" />
-        <Compile Remove="$(Src)\ABL_GEN_AU*.cs" />
-        <Compile Remove="$(Src)\ABL_GEN_G*.cs" />
-        <Compile Remove="$(Src)\ABL_GEN_G*.cs" />
-        <Compile Remove="$(Src)\ABL_GEN_BIKE_SET_SERVICEDATA*" />
-        <Compile Remove="$(Src)\ABL_GEN_LIB_BIKE_UXP_COMPLETECODING.cs" />
-        <Compile Remove="$(Src)\ABL_GEN_RESTOREINDIVDATA.cs" />
-
-        <Compile Remove="$(Src)\ABL_LIF_ASEC__LCS_STATUS*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_AUTHORING*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_BACK*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_BIKE*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_CERT*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_CLEARERRORINFOMEMORY*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_DATA*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_DOC*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_EOS*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_GET__DISPLAYTEXT_DOB*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_GET__EFUSE_VERBRAUCHERLISTE*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_GETIBOOLRESULTOBJECTPROPERTIES*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_IDENTIFY_ISTA_OPERATIONALMODE*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_KOMPONENTENDIEBSTAHLSCHUTZ*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_KI__RANDOMFOREST*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_OBFCM*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_POLYNOM*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_PARALLELGENERIERUNG_SECURETOKEN*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_PROVISIONING*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_PC__SOUNDPLAYER*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_QDM*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_QMD*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_SEND_SPEEDLINKDATA*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_SPEZIAL*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_SWITCH_ECUS_TO_FIELDMODE*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_WRITESECURETOKENAUTOMATIK*.cs" />
-        <Compile Remove="$(Src)\ABL_LIF_WRITE_PRG*.cs" />
-     */
-
     public static bool CompileAllModules(ClientContext clientContext, ProgressDelegate progressDelegate = null)
     {
         try
@@ -361,13 +321,19 @@ public class TestModuleRunner
                 return false;
             }
 
+            List<string> ignoreAssemblies = new List<string>();
+            string ignoreAssembliesPath = Path.Combine(testModulesPath, FailedAssembliesFile);
+            if (File.Exists(ignoreAssembliesPath))
+            {
+                ignoreAssemblies.AddRange(File.ReadAllLines(ignoreAssembliesPath));
+            }
+
             string outputDir = Path.Combine(testModulesPath, OutputSubDir);
             if (Directory.Exists(outputDir))
             {
                 int csCount = Directory.EnumerateFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly).Count();
                 int outputCount = Directory.EnumerateFiles(outputDir, "*.dll", SearchOption.TopDirectoryOnly).Count();
-                int logCount = Directory.EnumerateFiles(outputDir, "*.log", SearchOption.TopDirectoryOnly).Count();
-                if (outputCount + logCount >= csCount)
+                if (outputCount + ignoreAssemblies.Count >= csCount)
                 {
                     log.InfoFormat("CompileAllModules: All modules are already compiled. OutputCount={0}, CsCount={1}", outputCount, csCount);
                     return true;
@@ -387,13 +353,14 @@ public class TestModuleRunner
                 }
             }
 
+            int errorCount = 0;
             List<string> failedAssemblies = new List<string>();
             foreach (string sourceFile in sourceFiles)
             {
                 if (progressDelegate != null)
                 {
                     int progress = (int)((index + 1) * 100.0 / sourceFilesCount);
-                    if (progressDelegate(false, progress, failedAssemblies.Count))
+                    if (progressDelegate(false, progress, errorCount))
                     {
                         log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
                         return false;
@@ -406,6 +373,10 @@ public class TestModuleRunner
                 if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
                 {
                     failedAssemblies.Add(assemblyName);
+                    if (!ignoreAssemblies.Contains(assemblyName))
+                    {
+                        errorCount++;
+                    }
                 }
 
                 index++;
@@ -421,7 +392,7 @@ public class TestModuleRunner
                 log.ErrorFormat("CompileAllModules: Failed to write {0}: {1}", FailedAssembliesFile, e);
             }
 
-            return true;
+            return errorCount == 0;
         }
         catch (Exception ex)
         {
