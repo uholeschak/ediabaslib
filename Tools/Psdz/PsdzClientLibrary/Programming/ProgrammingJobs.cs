@@ -847,7 +847,7 @@ namespace PsdzClient.Programming
                         }
                     }
 #else
-                    TestModuleRunner.CompileAllModules(ClientContext, (start, progress, errorCount) =>
+                    bool resultCompile = TestModuleRunner.CompileAllModules(ClientContext, (start, progress, errorCount) =>
                     {
                         if (start)
                         {
@@ -866,6 +866,14 @@ namespace PsdzClient.Programming
                         }
                         return false;
                     });
+
+                    if (!resultCompile)
+                    {
+                        log.ErrorFormat("CompileAllModules failed");
+                        sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
 #endif
                     bool resultEcuCharacteristics = true;
                     if (!ProgrammingService.PsdzDatabase.GenerateEcuCharacteristicsData())
