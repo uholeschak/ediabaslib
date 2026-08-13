@@ -7,6 +7,7 @@ using System.Text;
 using PsdzClient;
 using SharpLearning.Containers.Matrices;
 
+#pragma warning disable CS0169
 namespace BMW.Authoring.API
 {
     public class RandomForest : IRandomForest, IHideObjectMembers

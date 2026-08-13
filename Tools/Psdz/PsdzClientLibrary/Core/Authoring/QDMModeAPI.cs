@@ -6,6 +6,7 @@ using BMW.Rheingold.CoreFramework.Interaction.Models;
 using PsdzClient;
 using PsdzClient.Core;
 
+#pragma warning disable CS0162, CS0169
 namespace BMW.Authoring.API
 {
     public class QDMModeAPI : IQDMModeAPI, IHideObjectMembers
