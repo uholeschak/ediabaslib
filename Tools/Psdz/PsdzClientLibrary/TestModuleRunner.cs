@@ -64,17 +64,11 @@ public class TestModuleRunner
     {
         _clientContext = clientContext;
         _programmingJobs = programmingJobs;
-        PsdzDatabase.DbInfo dbInfo = _clientContext?.Database?.GetDbInfo();
-        if (dbInfo == null)
+        _dbVersion = GetDbVersion(_clientContext);
+        if (_dbVersion == null)
         {
-            log.Error("TestModuleRunner: Database info is null");
-            throw new ArgumentException("Database info is null");
-        }
-
-        if (!Version.TryParse(dbInfo.Version, out _dbVersion))
-        {
-            log.ErrorFormat("GetGeneratedCodeVersion: Invalid version '{0}'", dbInfo.Version);
-            throw new ArgumentException("Invalid version");
+            log.Error("TestModuleRunner: Database version is null");
+            throw new ArgumentException("Database version is null");
         }
 
         _swiInfoObj = _clientContext?.Database?.GetInfoObjectByControlId(controlId);
@@ -197,6 +191,24 @@ public class TestModuleRunner
         return true;
     }
 
+    public static Version GetDbVersion(ClientContext clientContext)
+    {
+        PsdzDatabase.DbInfo dbInfo = clientContext?.Database?.GetDbInfo();
+        if (dbInfo == null)
+        {
+            log.Error("GetDbVersion: Database info is null");
+            return null;
+        }
+
+        if (!Version.TryParse(dbInfo.Version, out Version dbVersion))
+        {
+            log.ErrorFormat("GetDbVersion: Invalid version '{0}'", dbInfo.Version);
+            return null;
+        }
+
+        return dbVersion;
+    }
+
     public static Assembly GetModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
         Assembly compiledAssembly = CompileAndLoadModuleAssembly(clientContext, cleanIstaModuleName);
@@ -246,6 +258,10 @@ public class TestModuleRunner
                 .FirstOrDefault(a =>
                 {
                     string name = a.Name.ToString();
+                    if (name == null)
+                    {
+                        return false;
+                    }
                     return string.CompareOrdinal(name, "GeneratedCode") == 0;
                 });
 
@@ -322,6 +338,13 @@ public class TestModuleRunner
     {
         try
         {
+            Version dbVersion = GetDbVersion(clientContext);
+            if (dbVersion == null)
+            {
+                log.Error("CompileAllModules: Database version is null");
+                return false;
+            }
+
             string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
             if (!Directory.Exists(testModulesPath))
             {
@@ -370,7 +393,7 @@ public class TestModuleRunner
                 string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
                 string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
                 string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
-                if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
+                if (!CompileModuleAssembly(sourcePath, assemblyPath, true, dbVersion))
                 {
                     errorCount++;
                 }
