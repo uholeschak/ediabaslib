@@ -11,9 +11,7 @@ namespace BMW.Authoring.API
     public static class AuthoringApiFactory
     {
         private static RandomForestObjectCreator<RandomForest> RandomForestCreator = new RandomForestObjectCreator<RandomForest>();
-
         private static IQDMModeAPI QDMModeAPI;
-
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public static RandomForest GetRandomForest(string name)
         {
@@ -27,15 +25,15 @@ namespace BMW.Authoring.API
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public static Vehicle GetVehicle(IAuthoringModule istaModule)
+        public static BMW.Authoring.Vehicle.Vehicle GetVehicle(IAuthoringModule istaModule)
         {
-            return new Vehicle(istaModule);
+            return new BMW.Authoring.Vehicle.Vehicle(istaModule);
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public static BMW.Authoring.Session.ISession GetSession(IAuthoringModule istaModule)
         {
-            //[-] return new Session(istaModule);
+            //[-] return new BMW.Authoring.Session.Session(istaModule);
             //[+] return null;
             return null;
         }
