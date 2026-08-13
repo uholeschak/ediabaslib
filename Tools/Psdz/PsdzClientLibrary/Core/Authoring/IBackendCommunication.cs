@@ -1,5 +1,7 @@
-﻿using PsdzClient.Core;
-using PsdzClient;
+﻿using PsdzClient;
+using PsdzClient.Core;
+using System.ComponentModel;
+using BMW.Authoring.API.ServiceRide;
 
 namespace BMW.Authoring.API
 {
@@ -7,5 +9,7 @@ namespace BMW.Authoring.API
     [PreserveSource(Hint = "Dummy class", SuppressWarning = true)]
     public interface IBackendCommunication : IHideObjectMembers
     {
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        IServiceRideDataHandler GetServiceRideDataHandler();
     }
 }
