@@ -47,7 +47,7 @@ public class TestModuleRunner
     };
     private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
         new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
-    private static Version dbVersion;
+    private static Version dbVersionCache;
 
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
@@ -64,12 +64,12 @@ public class TestModuleRunner
     {
         _clientContext = clientContext;
         _programmingJobs = programmingJobs;
-        if (dbVersion == null)
+        if (dbVersionCache == null)
         {
-            dbVersion = GetDbVersion(_clientContext);
+            dbVersionCache = GetDbVersion(_clientContext);
         }
 
-        if (dbVersion == null)
+        if (dbVersionCache == null)
         {
             log.Error("TestModuleRunner: Database version is null");
             throw new ArgumentException("Database version is null");
@@ -103,7 +103,7 @@ public class TestModuleRunner
             return false;
         }
 
-        if (moduleVersion.Major != dbVersion.Major || moduleVersion.Minor != dbVersion.Minor)
+        if (moduleVersion.Major != dbVersionCache.Major || moduleVersion.Minor != dbVersionCache.Minor)
         {
             log.ErrorFormat("CheckModuleAssemblyVersion: Invalid module version {0} for: {1}", moduleVersion, _moduleTypeName);
             return false;
@@ -342,12 +342,12 @@ public class TestModuleRunner
     {
         try
         {
-            if (dbVersion == null)
+            if (dbVersionCache == null)
             {
-                dbVersion = GetDbVersion(clientContext);
+                dbVersionCache = GetDbVersion(clientContext);
             }
 
-            if (dbVersion == null)
+            if (dbVersionCache == null)
             {
                 log.Error("CompileAllModules: Database version is null");
                 return false;
@@ -420,12 +420,12 @@ public class TestModuleRunner
 
     public static Assembly CompileAndLoadModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
     {
-        if (dbVersion == null)
+        if (dbVersionCache == null)
         {
-            dbVersion = GetDbVersion(clientContext);
+            dbVersionCache = GetDbVersion(clientContext);
         }
 
-        if (dbVersion == null)
+        if (dbVersionCache == null)
         {
             log.Error("CompileAllModules: Database version is null");
             return null;
@@ -569,7 +569,7 @@ public class TestModuleRunner
             string sourceCode = File.ReadAllText(sourcePath);
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
 
-            if (dbVersion != null)
+            if (dbVersionCache != null)
             {
                 Version generatedCodeVersion = GetGeneratedCodeVersion(syntaxTree);
                 if (generatedCodeVersion == null)
@@ -578,7 +578,7 @@ public class TestModuleRunner
                     return false;
                 }
 
-                if (generatedCodeVersion.Major != dbVersion.Major || generatedCodeVersion.Minor != dbVersion.Minor)
+                if (generatedCodeVersion.Major != dbVersionCache.Major || generatedCodeVersion.Minor != dbVersionCache.Minor)
                 {
                     log.ErrorFormat("CompileModuleAssembly: Invalid generated code version {0} for: {1}", generatedCodeVersion, sourcePath);
                     return false;
