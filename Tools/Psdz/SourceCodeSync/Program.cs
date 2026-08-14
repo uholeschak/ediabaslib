@@ -115,7 +115,7 @@ namespace SourceCodeSync
             "Authoring",
         ];
 
-        private static readonly Dictionary<string, string> _textReplacements = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> _commonTextReplacements = new Dictionary<string, string>
         {
             { "BMW.Rheingold.CoreFramework.Extensions.AddRange", "Extensions.AddRange" },
             { "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService", "IProgrammingService" },
@@ -126,13 +126,18 @@ namespace SourceCodeSync
             { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"},
             { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", "BusType"},
             { "BMW.Rheingold.ISTA.CoreFramework.ILogger", "ILogger" },
+        };
+
+        private static readonly Dictionary<string, string> _standardTextReplacements = new Dictionary<string, string>
+        {
             { "BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle", "Vehicle"},
         };
 
         private static readonly Dictionary<string, string> _moduleTextReplacements = new Dictionary<string, string>
         {
             { "using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;", "" },
-            { "GetProperty(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")", "GetProperty<string>(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")" }
+            { "GetProperty(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")", "GetProperty<string>(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")" },
+            { "BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle", "PsdzClient.Core.Vehicle"},
         };
 
         private static readonly List<string> _moduleTextInsertions = new List<string>
@@ -376,8 +381,14 @@ namespace SourceCodeSync
                     decompileAssemblies1.Add(assemblyPath);
                 }
 
+                Dictionary<string, string> standardReplacements = new Dictionary<string, string>(_commonTextReplacements);
+                foreach (KeyValuePair<string, string> kvp in _standardTextReplacements)
+                {
+                    standardReplacements.Add(kvp.Key, kvp.Value);
+                }
+
                 string sourceSubDir1 = Path.Combine(sourceDir, "Source1");
-                if (!DecompileAssemblies(decompileAssemblies1, sourceSubDir1, overwrite, searchList, _textReplacements))
+                if (!DecompileAssemblies(decompileAssemblies1, sourceSubDir1, overwrite, searchList, standardReplacements))
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
                     {
@@ -395,7 +406,7 @@ namespace SourceCodeSync
                 }
 
                 string sourceSubDir2 = Path.Combine(sourceDir, "Source2");
-                if (!DecompileAssemblies(decompileAssemblies2, sourceSubDir2, overwrite, searchList, _textReplacements))
+                if (!DecompileAssemblies(decompileAssemblies2, sourceSubDir2, overwrite, searchList, standardReplacements))
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
                     {
@@ -435,7 +446,7 @@ namespace SourceCodeSync
                     }
 
                     string testmoduleSourceDir = Path.Combine(sourceDir, "Testmodule");
-                    Dictionary<string, string> moduleReplacements = new Dictionary<string, string>(_textReplacements);
+                    Dictionary<string, string> moduleReplacements = new Dictionary<string, string>(_commonTextReplacements);
                     foreach (KeyValuePair<string, string> kvp in _moduleTextReplacements)
                     {
                         moduleReplacements.Add(kvp.Key, kvp.Value);
