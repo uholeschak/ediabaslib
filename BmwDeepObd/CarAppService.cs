@@ -963,7 +963,7 @@ namespace BmwDeepObd
                             // Android 14+: Background-Activity-Start beim Senden explizit erlauben
                             Android.App.ActivityOptions activityOptions = Android.App.ActivityOptions.MakeBasic();
                             activityOptions?.SetPendingIntentBackgroundActivityStartMode(Android.App.BackgroundActivityStartMode.Allowed);
-                            pendingIntent.Send(CarContext, 0, null, null, null, null, activityOptions?.ToBundle());
+                            pendingIntent.Send(activityOptions?.ToBundle());
                         }
                         else
                         {
