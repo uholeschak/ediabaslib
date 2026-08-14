@@ -71,7 +71,6 @@ namespace BmwDeepObd
             RequestAppDetailBtSettings,
             RequestLocationSettings,
             RequestAppSettingsAccessFiles,
-            RequestOverlayPermissions,
             RequestNotificationSettingsApp,
             RequestNotificationSettingsChannel,
             RequestSelectDevice,
@@ -208,8 +207,6 @@ namespace BmwDeepObd
         private bool _notificationGranted;
         private bool _locationPermissionRequested;
         private bool _locationPermissionGranted;
-        private bool _overlayPermissionRequested;
-        private bool _overlayPermissionGranted;
         private bool _storageManagerPermissionRequested;
         private bool _storageManagerPermissionGranted;
         private bool _createTabsPending;
@@ -700,8 +697,6 @@ namespace BmwDeepObd
             _notificationGranted = false;
             _locationPermissionRequested = false;
             _locationPermissionGranted = false;
-            _overlayPermissionRequested = false;
-            _overlayPermissionGranted = false;
             _storageManagerPermissionRequested = false;
             _storageManagerPermissionGranted = false;
             _activityCommon?.StartMtcService();
@@ -1010,20 +1005,6 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestAppSettingsAccessFiles:
                     StoragePermissionGranted();
                     UpdateOptionsMenu();
-                    break;
-
-                case ActivityRequest.RequestOverlayPermissions:
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
-                    {
-                        _overlayPermissionGranted = Android.Provider.Settings.CanDrawOverlays(this);
-                        if (_overlayPermissionGranted && _instanceData.AutoStart)
-                        {
-                            ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto));
-                            break;
-                        }
-                    }
-
-                    _instanceData.AutoStart = false;
                     break;
 
                 case ActivityRequest.RequestNotificationSettingsApp:
@@ -2147,19 +2128,6 @@ namespace BmwDeepObd
 
                 if (UseCommService())
                 {
-                    if (RequestOverlayPermissions((o, args) =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-                        ConnectAction(sender, connectActionArgs, recursionLevel++);
-                    }))
-                    {
-                        connectStarted = true;
-                        return;
-                    }
-
                     if (RequestNotificationPermissions((o, args) =>
                     {
                         if (_activityCommon == null)
@@ -2913,74 +2881,6 @@ namespace BmwDeepObd
                 _instanceData.LastSelectedJobIndex = selectedJobIndex;
                 StoreSettings();
             }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        private bool RequestOverlayPermissions(EventHandler<EventArgs> handler)
-        {
-            if (_overlayPermissionRequested || _overlayPermissionGranted)
-            {
-                return false;
-            }
-
-            if (Build.VERSION.SdkInt < BuildVersionCodes.S)
-            {
-                return false;
-            }
-
-            if (Android.Provider.Settings.CanDrawOverlays(Android.App.Application.Context))
-            {
-                _overlayPermissionGranted = true;
-            }
-
-            if (!_overlayPermissionGranted && !_overlayPermissionRequested)
-            {
-                _overlayPermissionRequested = true;
-                bool yesSelected = false;
-                AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .SetPositiveButton(Resource.String.button_yes, (s, a) =>
-                    {
-                        try
-                        {
-                            Intent intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission,
-                                Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
-                            StartActivityForResult(intent, (int)ActivityRequest.RequestOverlayPermissions);
-                            if (handler != null)
-                            {
-                                _instanceData.AutoStart = true;
-                            }
-                            yesSelected = true;
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    })
-                    .SetNegativeButton(Resource.String.button_no, (s, a) =>
-                    {
-                    })
-                    .SetCancelable(true)
-                    .SetMessage(Resource.String.overlay_permission_denied)
-                    .SetTitle(Resource.String.alert_title_warning)
-                    .Show();
-                if (alertDialog != null)
-                {
-                    alertDialog.DismissEvent += (o, eventArgs) =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-                        if (!yesSelected)
-                        {
-                            handler?.Invoke(o, eventArgs);
-                        }
-                    };
-                }
-                return true;
-            }
-
-            return false;
         }
 
         private bool RequestNotificationPermissions(EventHandler<EventArgs> handler)
