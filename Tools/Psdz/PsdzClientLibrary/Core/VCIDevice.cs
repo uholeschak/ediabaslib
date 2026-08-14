@@ -1673,7 +1673,7 @@ namespace PsdzClient.Core
         private double? GetVoltageForString(string voltage)
         {
             bool flag = Regex.IsMatch(voltage, "\\d+([,.]\\d+)? *(mV||MV|mv|Mv)?");
-            if (!string.IsNullOrEmpty(voltage) && flag)
+            if (!string.IsNullOrEmpty(voltage) & flag)
             {
                 try
                 {
@@ -1871,7 +1871,7 @@ namespace PsdzClient.Core
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         [PreserveSource(Added = true)]

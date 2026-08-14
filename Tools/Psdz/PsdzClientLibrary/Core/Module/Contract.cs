@@ -18,33 +18,19 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class Contract : INotifyPropertyChanged
     {
         private Brand brandField;
-
         private Product productField;
-
         private BusinessLine businessLineField;
-
         private string salesBranchField;
-
         private string internationalDealerNumberField;
-
         private string nationalDealerNumberField;
-
         private DateTime startDateField;
-
         private DateTime endContractDateField;
-
         private bool endContractDateFieldSpecified;
-
         private DateTime endServiceDateField;
-
         private bool endServiceDateFieldSpecified;
-
         private bool mobileServiceField;
-
         private bool mobileServiceFieldSpecified;
-
         private static XmlSerializer serializer;
-
         [XmlElement(Form = XmlSchemaForm.Unqualified)]
         [DataMember]
         public Brand brand
@@ -53,6 +39,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return brandField;
             }
+
             set
             {
                 if (!brandField.Equals(value))
@@ -71,6 +58,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return productField;
             }
+
             set
             {
                 if (!productField.Equals(value))
@@ -89,6 +77,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return businessLineField;
             }
+
             set
             {
                 if (!businessLineField.Equals(value))
@@ -107,6 +96,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return salesBranchField;
             }
+
             set
             {
                 if (salesBranchField != null)
@@ -133,6 +123,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return internationalDealerNumberField;
             }
+
             set
             {
                 if (internationalDealerNumberField != null)
@@ -159,6 +150,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return nationalDealerNumberField;
             }
+
             set
             {
                 if (nationalDealerNumberField != null)
@@ -185,6 +177,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return startDateField;
             }
+
             set
             {
                 if (!startDateField.Equals(value))
@@ -203,6 +196,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return endContractDateField;
             }
+
             set
             {
                 if (!endContractDateField.Equals(value))
@@ -221,6 +215,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return endContractDateFieldSpecified;
             }
+
             set
             {
                 if (!endContractDateFieldSpecified.Equals(value))
@@ -239,6 +234,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return endServiceDateField;
             }
+
             set
             {
                 if (!endServiceDateField.Equals(value))
@@ -257,6 +253,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return endServiceDateFieldSpecified;
             }
+
             set
             {
                 if (!endServiceDateFieldSpecified.Equals(value))
@@ -275,6 +272,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return mobileServiceField;
             }
+
             set
             {
                 if (!mobileServiceField.Equals(value))
@@ -293,6 +291,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return mobileServiceFieldSpecified;
             }
+
             set
             {
                 if (!mobileServiceFieldSpecified.Equals(value))
@@ -311,15 +310,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     serializer = new XmlSerializer(typeof(Contract));
                 }
+
                 return serializer;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual string Serialize()

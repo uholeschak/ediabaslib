@@ -16,7 +16,6 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
     public class SwUpdateType : INotifyPropertyChanged
     {
         private string swUpdateEntryField;
-
         [XmlAttribute]
         [DataMember]
         public string SwUpdateEntry
@@ -25,6 +24,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return swUpdateEntryField;
             }
+
             set
             {
                 if (swUpdateEntryField != null)
@@ -44,10 +44,9 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string info)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
     }
 }

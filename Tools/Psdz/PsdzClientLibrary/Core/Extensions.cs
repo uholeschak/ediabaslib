@@ -464,8 +464,7 @@ namespace PsdzClient.Core
 
         public static string[] TrimSplit(this string value, char separator)
         {
-            return (
-                from x in value?.Split(separator)select x.Trim()).ToArray();
+            return value?.Split(separator).Select((string x) => x.Trim()).ToArray();
         }
 
         private static string ThreeNonZeroDigits(double value)

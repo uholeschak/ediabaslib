@@ -34,6 +34,7 @@ namespace BMW.Rheingold.Module.ISTA
                 serviceDialogConfiguration = ServiceDialogConfiguration.GetDefault(text);
                 Log.Error("ServiceDialogFactory.CreateServiceDialog()", "Unknown service dialog {0} using type {1} instead: {2}", text, serviceDialogConfiguration.DialogType.Name, ex);
             }
+
             if (ConfigSettings.IsProgrammingEnabled() || ConfigSettings.IsLogisticBaseEnabled())
             {
                 bool flag = false;
@@ -46,6 +47,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     moduleParameter = callingModule.__RheinGoldCoreModuleParameters__;
                 }
+
                 if (moduleParameter != null && moduleParameter.getParameter(ModuleParameter.ParameterName.ForegroundThread) != null)
                 {
                     flag = (bool)moduleParameter.getParameter(ModuleParameter.ParameterName.ForegroundThread);
@@ -54,12 +56,14 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     Log.Warning("ServiceDialogFactory.CreateServiceDialog()", "No module parameter with name \"{0}\" found. Using value \"{1}\".", ModuleParameter.ParameterName.ForegroundThread, flag);
                 }
+
                 object parameter = inParameters.getParameter("Display");
                 if (flag && serviceDialogConfiguration.IsShowingGui && parameter is IConvertible && Convert.ToBoolean(parameter))
                 {
                     throw new Exception($"Module {callingModule} running in background must not create a service dialog with GUI ({text}) and Display parameter {parameter}.");
                 }
             }
+
             ServiceDialogCmdBase serviceDialogCmdBase;
             if (serviceDialogConfiguration.ControllerType == null)
             {
@@ -67,17 +71,25 @@ namespace BMW.Rheingold.Module.ISTA
             }
             else
             {
-                object[] constructorParam = new object[5] { callingModule, methodName, path, globalTabModuleISTA, elementNo };
+                object[] constructorParam = new object[5]
+                {
+                    callingModule,
+                    methodName,
+                    path,
+                    globalTabModuleISTA,
+                    elementNo
+                };
                 Type[] constructorParamType = new Type[5]
                 {
-                typeof(ISTAModule),
-                typeof(string),
-                typeof(string),
-                typeof(IModuleExecutionParent),
-                typeof(int)
+                    typeof(ISTAModule),
+                    typeof(string),
+                    typeof(string),
+                    typeof(IModuleExecutionParent),
+                    typeof(int)
                 };
                 serviceDialogCmdBase = serviceDialogConfiguration.ControllerType.CreateInstance(constructorParamType, constructorParam) as ServiceDialogCmdBase;
             }
+
             serviceDialogCmdBase.ServiceDialogConfig = serviceDialogConfiguration;
             Exception ex2 = null;
             try
@@ -88,10 +100,12 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 ex2 = ex3;
             }
+
             if (ex2 != null)
             {
                 throw new Exception(string.Format(CultureInfo.InvariantCulture, "Failed to create service dialog {0}.", text), ex2);
             }
+
             return serviceDialogCmdBase;
         }
 
@@ -113,14 +127,15 @@ namespace BMW.Rheingold.Module.ISTA
                     text = idStr;
                     break;
             }
+
             try
             {
-                decimal result;
-                ServiceDialogConfiguration serviceDialogConfiguration = ((!decimal.TryParse(text, out result)) ? ServiceDialogConfiguration.GetRegisteredConfiguration(text) : ServiceDialogConfiguration.GetRegisteredConfigurationById(result));
+                ServiceDialogConfiguration serviceDialogConfiguration = ((!decimal.TryParse(text, out var result)) ? ServiceDialogConfiguration.GetRegisteredConfiguration(text) : ServiceDialogConfiguration.GetRegisteredConfigurationById(result));
                 if (serviceDialogConfiguration != null)
                 {
                     return serviceDialogConfiguration.Name;
                 }
+
                 if (logMissing)
                 {
                     Log.Warning("ServiceDialogFactory.ResolveDialogRef()", "Failed to find service dialog \"{0}\".", text);
@@ -130,6 +145,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Warning("ServiceDialogFactory.ResolveDialogRef()", "Failed to find service dialog \"{0}\": {1}", text, ex);
             }
+
             return null;
         }
     }

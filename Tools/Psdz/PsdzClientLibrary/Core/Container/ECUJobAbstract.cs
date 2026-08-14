@@ -38,6 +38,7 @@ namespace PsdzClient.Core.Container
             {
                 return ecuJobResults;
             }
+
             set
             {
                 if (ecuJobResults != value)
@@ -231,7 +232,7 @@ namespace PsdzClient.Core.Container
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

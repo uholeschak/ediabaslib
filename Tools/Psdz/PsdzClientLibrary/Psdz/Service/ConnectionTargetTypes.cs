@@ -7,6 +7,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement
     {
         VCI = 1,
         MIB = 2,
-        ALL = 3
+        ALL = VCI | MIB
     }
 }

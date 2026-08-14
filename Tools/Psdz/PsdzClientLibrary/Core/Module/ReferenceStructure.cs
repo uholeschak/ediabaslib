@@ -73,6 +73,6 @@ public abstract class ReferenceStructure : INotifyPropertyChanged
 
     public virtual void OnPropertyChanged(string propertyName)
     {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

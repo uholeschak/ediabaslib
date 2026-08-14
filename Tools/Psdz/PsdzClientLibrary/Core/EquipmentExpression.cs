@@ -66,7 +66,7 @@ namespace PsdzClient.Core
                 bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value.ToString(CultureInfo.InvariantCulture), ffmResolver);
                 //[+] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.Name, value, flag2);
                 logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.Name, value, flag2);
-                if (ffmResolver != null && flag2)
+                if ((ffmResolver != null) & flag2)
                 {
                     //[-] IEnumerable<IXepInfoObjectRuleEvaluation> infoObjectsByDiagObjectControlId = dataProvider.GetInfoObjectsByDiagObjectControlId(value, vec, ffmResolver, getHidden: true);
                     //[+] List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = database.GetInfoObjectsByDiagObjectControlId(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, getHidden: true, null);

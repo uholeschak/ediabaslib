@@ -16,7 +16,7 @@ namespace PsdzClient.Core.Container
         public new event PropertyChangedEventHandler PropertyChanged;
         public new virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -186,7 +186,7 @@ namespace PsdzClient.Core
 
             set
             {
-                this.PropertyChanged.NotifyPropertyChanged(this, () => StillProgrammable, ref stillProgrammable, value);
+                PropertyChanged.NotifyPropertyChanged(this, () => StillProgrammable, ref stillProgrammable, value);
             }
         }
 
@@ -2104,7 +2104,7 @@ namespace PsdzClient.Core
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

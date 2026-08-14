@@ -9,17 +9,11 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     public class VehicleClassification : IVehicleClassification, INotifyPropertyChanged
     {
         private readonly IVehicle vehicle;
-
         private readonly IDiagnosticsBusinessData diagnosticsBusinessData;
-
         private bool isSp2021;
-
         private bool isSp2025;
-
         private bool isNewFaultMemoryActive;
-
         private bool isNewFaultMemoryExpertModeActive;
-
         [DataMember]
         public bool IsSp2021
         {
@@ -27,6 +21,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
             {
                 return isSp2021;
             }
+
             set
             {
                 if (isSp2021 != value)
@@ -44,6 +39,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
             {
                 return isSp2025;
             }
+
             set
             {
                 if (isSp2025 != value)
@@ -61,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
             {
                 return isNewFaultMemoryActive;
             }
+
             set
             {
                 if (isNewFaultMemoryActive != value)
@@ -78,6 +75,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
             {
                 return isNewFaultMemoryExpertModeActive;
             }
+
             set
             {
                 if (isNewFaultMemoryExpertModeActive != value)
@@ -91,7 +89,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         public bool IsNCar => diagnosticsBusinessData.IsEES25Vehicle(vehicle);
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public VehicleClassification(IVehicle vec)
         {
             vehicle = vec;
@@ -118,12 +115,13 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
             {
                 return vehicle.BNType == BNType.BNK01X_MOTORBIKE;
             }
+
             return true;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

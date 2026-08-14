@@ -190,7 +190,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
                 bool num = contract.startDate < DateTime.Now;
                 bool flag = !contract.endServiceDateSpecified || contract.endServiceDate > DateTime.Now;
                 bool flag2 = !contract.endContractDateSpecified || contract.endContractDate > DateTime.Now;
-                return num && flag && flag2;
+                return num & flag & flag2;
             }
 
             return false;

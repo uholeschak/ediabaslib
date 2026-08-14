@@ -5,15 +5,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class InfoObjectExecutionCout : INotifyPropertyChanged
     {
         private int allField;
-
         private int canceledField;
-
         public int All
         {
             get
             {
                 return allField;
             }
+
             set
             {
                 if (!allField.Equals(value))
@@ -30,6 +29,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return canceledField;
             }
+
             set
             {
                 if (!canceledField.Equals(value))
@@ -41,10 +41,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

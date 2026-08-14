@@ -438,7 +438,7 @@ namespace PsdzClient.Core.Container
                 if (ConfigSettings.SelectedBrand != UiBrand.BMWMotorrad)
                 {
                     CreateEdiabasPublicKeyIfNotExist(device);
-                    if (isDoIP2 || isDoIP)
+                    if (isDoIP2 | isDoIP)
                     {
                         //[-] int id = Process.GetCurrentProcess().Id;
                         //[-] if (!flag && interactionService.RegisterAsync(new InteractionDoIpCheckModel(id)).Result.Action == InteractionButton.Yes)
@@ -521,7 +521,7 @@ namespace PsdzClient.Core.Container
                 }
 
                 CheckNonDoIpVehicleAuthentificationState(tuple.Item1, tuple.Item2, boolResultObject);
-                if (boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP))
+                if (boolResultObject.Result && boolResultObject2.Result && (isDoIP2 | isDoIP))
                 {
                     CheckDoIpVehicleAuthentificationState(boolResultObject, device, tuple.Item2);
                 }
@@ -709,7 +709,7 @@ namespace PsdzClient.Core.Container
 
         private bool InitializeIcomDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
         {
-            if (slpDoIpFromIcom || isDoIP)
+            if (slpDoIpFromIcom | isDoIP)
             {
                 return InitEdiabasForDoIP(device);
             }
@@ -1239,7 +1239,7 @@ namespace PsdzClient.Core.Container
             int num = 399;
             int num2 = api.apiErrorCode();
             bool flag2 = useSpecialEdiabasVersion && num2 == num;
-            if (!isRetry && (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase) || flag2))
+            if (!isRetry && (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase) | flag2))
             {
                 bool flag3 = CheckAuthentificationState(base.VCI);
                 if (!flag3)
@@ -1252,13 +1252,13 @@ namespace PsdzClient.Core.Container
                     Log.Info(method, "Ediabas is reinitialized with status {0}", flag);
                 }
 
-                if (flag3 && flag2)
+                if (flag3 & flag2)
                 {
                     item = true;
                     flag = true;
                 }
 
-                if (flag && flag3)
+                if (flag & flag3)
                 {
                     Log.Info(method, "Ediabas reinitialized and AuthenticationState are succesfull. DiagnoseJob will be resend.");
                     ecuJob = apiJob(ecu, jobName, param, resultFilter, cacheAdding: true, isRetry: true);

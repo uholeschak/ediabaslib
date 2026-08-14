@@ -173,7 +173,7 @@ namespace BMW.Rheingold.Psdz
         public enum DOT11_PHY_TYPE : uint
         {
             dot11_phy_type_unknown = 0u,
-            dot11_phy_type_any = 0u,
+            dot11_phy_type_any = dot11_phy_type_unknown,
             dot11_phy_type_fhss = 1u,
             dot11_phy_type_dsss = 2u,
             dot11_phy_type_irbaseband = 3u,
@@ -207,7 +207,7 @@ namespace BMW.Rheingold.Psdz
             DOT11_CIPHER_ALGO_CCMP = 4u,
             DOT11_CIPHER_ALGO_WEP104 = 5u,
             DOT11_CIPHER_ALGO_WPA_USE_GROUP = 256u,
-            DOT11_CIPHER_ALGO_RSN_USE_GROUP = 256u,
+            DOT11_CIPHER_ALGO_RSN_USE_GROUP = DOT11_CIPHER_ALGO_WPA_USE_GROUP,
             DOT11_CIPHER_ALGO_WEP = 257u,
             DOT11_CIPHER_ALGO_IHV_START = 2147483648u,
             DOT11_CIPHER_ALGO_IHV_END = uint.MaxValue

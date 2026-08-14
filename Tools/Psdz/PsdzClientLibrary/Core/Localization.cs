@@ -188,9 +188,9 @@ namespace PsdzClient.Core
             protected override void OnRowChanged(DataRowChangeEventArgs e)
             {
                 base.OnRowChanged(e);
-                if (this.ModuleRowChanged != null)
+                if (ModuleRowChanged != null)
                 {
-                    this.ModuleRowChanged(this, new ModuleRowChangeEvent((ModuleRow)e.Row, e.Action));
+                    ModuleRowChanged(this, new ModuleRowChangeEvent((ModuleRow)e.Row, e.Action));
                 }
             }
 
@@ -199,9 +199,9 @@ namespace PsdzClient.Core
             protected override void OnRowChanging(DataRowChangeEventArgs e)
             {
                 base.OnRowChanging(e);
-                if (this.ModuleRowChanging != null)
+                if (ModuleRowChanging != null)
                 {
-                    this.ModuleRowChanging(this, new ModuleRowChangeEvent((ModuleRow)e.Row, e.Action));
+                    ModuleRowChanging(this, new ModuleRowChangeEvent((ModuleRow)e.Row, e.Action));
                 }
             }
 
@@ -210,9 +210,9 @@ namespace PsdzClient.Core
             protected override void OnRowDeleted(DataRowChangeEventArgs e)
             {
                 base.OnRowDeleted(e);
-                if (this.ModuleRowDeleted != null)
+                if (ModuleRowDeleted != null)
                 {
-                    this.ModuleRowDeleted(this, new ModuleRowChangeEvent((ModuleRow)e.Row, e.Action));
+                    ModuleRowDeleted(this, new ModuleRowChangeEvent((ModuleRow)e.Row, e.Action));
                 }
             }
 
@@ -221,9 +221,9 @@ namespace PsdzClient.Core
             protected override void OnRowDeleting(DataRowChangeEventArgs e)
             {
                 base.OnRowDeleting(e);
-                if (this.ModuleRowDeleting != null)
+                if (ModuleRowDeleting != null)
                 {
-                    this.ModuleRowDeleting(this, new ModuleRowChangeEvent((ModuleRow)e.Row, e.Action));
+                    ModuleRowDeleting(this, new ModuleRowChangeEvent((ModuleRow)e.Row, e.Action));
                 }
             }
 
@@ -486,9 +486,9 @@ namespace PsdzClient.Core
             protected override void OnRowChanged(DataRowChangeEventArgs e)
             {
                 base.OnRowChanged(e);
-                if (this.LanguageRowChanged != null)
+                if (LanguageRowChanged != null)
                 {
-                    this.LanguageRowChanged(this, new LanguageRowChangeEvent((LanguageRow)e.Row, e.Action));
+                    LanguageRowChanged(this, new LanguageRowChangeEvent((LanguageRow)e.Row, e.Action));
                 }
             }
 
@@ -497,9 +497,9 @@ namespace PsdzClient.Core
             protected override void OnRowChanging(DataRowChangeEventArgs e)
             {
                 base.OnRowChanging(e);
-                if (this.LanguageRowChanging != null)
+                if (LanguageRowChanging != null)
                 {
-                    this.LanguageRowChanging(this, new LanguageRowChangeEvent((LanguageRow)e.Row, e.Action));
+                    LanguageRowChanging(this, new LanguageRowChangeEvent((LanguageRow)e.Row, e.Action));
                 }
             }
 
@@ -508,9 +508,9 @@ namespace PsdzClient.Core
             protected override void OnRowDeleted(DataRowChangeEventArgs e)
             {
                 base.OnRowDeleted(e);
-                if (this.LanguageRowDeleted != null)
+                if (LanguageRowDeleted != null)
                 {
-                    this.LanguageRowDeleted(this, new LanguageRowChangeEvent((LanguageRow)e.Row, e.Action));
+                    LanguageRowDeleted(this, new LanguageRowChangeEvent((LanguageRow)e.Row, e.Action));
                 }
             }
 
@@ -519,9 +519,9 @@ namespace PsdzClient.Core
             protected override void OnRowDeleting(DataRowChangeEventArgs e)
             {
                 base.OnRowDeleting(e);
-                if (this.LanguageRowDeleting != null)
+                if (LanguageRowDeleting != null)
                 {
-                    this.LanguageRowDeleting(this, new LanguageRowChangeEvent((LanguageRow)e.Row, e.Action));
+                    LanguageRowDeleting(this, new LanguageRowChangeEvent((LanguageRow)e.Row, e.Action));
                 }
             }
 
@@ -770,9 +770,9 @@ namespace PsdzClient.Core
             protected override void OnRowChanged(DataRowChangeEventArgs e)
             {
                 base.OnRowChanged(e);
-                if (this.TextRowChanged != null)
+                if (TextRowChanged != null)
                 {
-                    this.TextRowChanged(this, new TextRowChangeEvent((TextRow)e.Row, e.Action));
+                    TextRowChanged(this, new TextRowChangeEvent((TextRow)e.Row, e.Action));
                 }
             }
 
@@ -781,9 +781,9 @@ namespace PsdzClient.Core
             protected override void OnRowChanging(DataRowChangeEventArgs e)
             {
                 base.OnRowChanging(e);
-                if (this.TextRowChanging != null)
+                if (TextRowChanging != null)
                 {
-                    this.TextRowChanging(this, new TextRowChangeEvent((TextRow)e.Row, e.Action));
+                    TextRowChanging(this, new TextRowChangeEvent((TextRow)e.Row, e.Action));
                 }
             }
 
@@ -792,9 +792,9 @@ namespace PsdzClient.Core
             protected override void OnRowDeleted(DataRowChangeEventArgs e)
             {
                 base.OnRowDeleted(e);
-                if (this.TextRowDeleted != null)
+                if (TextRowDeleted != null)
                 {
-                    this.TextRowDeleted(this, new TextRowChangeEvent((TextRow)e.Row, e.Action));
+                    TextRowDeleted(this, new TextRowChangeEvent((TextRow)e.Row, e.Action));
                 }
             }
 
@@ -803,9 +803,9 @@ namespace PsdzClient.Core
             protected override void OnRowDeleting(DataRowChangeEventArgs e)
             {
                 base.OnRowDeleting(e);
-                if (this.TextRowDeleting != null)
+                if (TextRowDeleting != null)
                 {
-                    this.TextRowDeleting(this, new TextRowChangeEvent((TextRow)e.Row, e.Action));
+                    TextRowDeleting(this, new TextRowChangeEvent((TextRow)e.Row, e.Action));
                 }
             }
 

@@ -17,19 +17,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class Address : INotifyPropertyChanged, IAddress
     {
         private string street1Field;
-
         private string street2Field;
-
         private string postalCodeField;
-
         private string town1Field;
-
         private string town2Field;
-
         private string countryField;
-
         private static XmlSerializer serializer;
-
         [XmlAttribute]
         [DataMember]
         public string street1
@@ -38,6 +31,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return street1Field;
             }
+
             set
             {
                 if (street1Field != null)
@@ -64,6 +58,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return street2Field;
             }
+
             set
             {
                 if (street2Field != null)
@@ -90,6 +85,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return postalCodeField;
             }
+
             set
             {
                 if (postalCodeField != null)
@@ -116,6 +112,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return town1Field;
             }
+
             set
             {
                 if (town1Field != null)
@@ -142,6 +139,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return town2Field;
             }
+
             set
             {
                 if (town2Field != null)
@@ -168,6 +166,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return countryField;
             }
+
             set
             {
                 if (countryField != null)
@@ -194,15 +193,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     serializer = new XmlSerializer(typeof(Address));
                 }
+
                 return serializer;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual string Serialize()

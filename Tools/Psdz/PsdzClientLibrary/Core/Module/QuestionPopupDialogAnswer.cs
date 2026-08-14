@@ -10,19 +10,17 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
     {
         [DataMember]
         private string text;
-
         [DataMember]
         private int returnValue;
-
         [DataMember]
         private string buttonId;
-
         public string Text
         {
             get
             {
                 return text;
             }
+
             set
             {
                 if (text == null || text.Equals(value))
@@ -39,6 +37,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return returnValue;
             }
+
             set
             {
                 if (returnValue != value)
@@ -55,6 +54,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return buttonId;
             }
+
             set
             {
                 if (buttonId != value)
@@ -66,7 +66,6 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public QuestionPopupDialogAnswer(string text, int returnValue, string buttonId = null)
         {
             this.text = text;
@@ -80,7 +79,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

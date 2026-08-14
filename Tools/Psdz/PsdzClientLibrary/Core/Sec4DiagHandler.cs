@@ -364,18 +364,14 @@ namespace PsdzClient.Core
             }
 
             Log.Info(method, "Certification for given Thumbprint found but not valid. Removing old once.");
-            X509Certificate2Enumerator enumerator = subCaCertificate.GetEnumerator();
-            while (enumerator.MoveNext())
+            foreach (X509Certificate2 item in subCaCertificate)
             {
-                X509Certificate2 current = enumerator.Current;
-                x509Store.Remove(current);
+                x509Store.Remove(item);
             }
 
-            enumerator = caCertificate.GetEnumerator();
-            while (enumerator.MoveNext())
+            foreach (X509Certificate2 item2 in caCertificate)
             {
-                X509Certificate2 current2 = enumerator.Current;
-                x509Store.Remove(current2);
+                x509Store.Remove(item2);
             }
 
             ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty, overrideIsMaster: true);

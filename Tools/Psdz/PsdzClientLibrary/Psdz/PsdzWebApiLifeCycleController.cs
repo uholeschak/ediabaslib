@@ -9,27 +9,24 @@ namespace BMW.Rheingold.Psdz
     internal class PsdzWebApiLifeCycleController : IDisposable
     {
         private readonly IDictionary<ILifeCycleDependencyProvider, int> _lifeCycleDependencies = new Dictionary<ILifeCycleDependencyProvider, int>();
-
-        private readonly object _threadLock = new object();
-
+        private readonly object _threadLock = new object ();
         private bool _isShutdownRequested;
-
         public bool IsIdle { get; private set; }
 
         public event EventHandler<EventArgs> SwitchToIdle;
-
         public event EventHandler<EventArgs> Shutdown;
-
         internal PsdzWebApiLifeCycleController(IEnumerable<ILifeCycleDependencyProvider> lifeCycleDependencyProviders)
         {
             if (lifeCycleDependencyProviders == null)
             {
                 throw new ArgumentNullException("lifeCycleDependencyProviders");
             }
+
             foreach (ILifeCycleDependencyProvider lifeCycleDependencyProvider in lifeCycleDependencyProviders)
             {
                 RegisterLifeCycleDependencyProvider(lifeCycleDependencyProvider);
             }
+
             IsIdle = true;
         }
 
@@ -40,7 +37,7 @@ namespace BMW.Rheingold.Psdz
             if (IsIdle)
             {
                 Log.Info(Log.CurrentMethod(), "PSdZ Web API is idle. Shutdown initiated.");
-                this.Shutdown?.Invoke(this, EventArgs.Empty);
+                Shutdown?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -70,16 +67,17 @@ namespace BMW.Rheingold.Psdz
                 {
                     Log.Debug(Log.CurrentMethod(), "PSdZ Web API State changed: [" + ConvertStateToString(isIdle) + " -> " + ConvertStateToString(IsIdle) + "]");
                 }
+
                 if (!isIdle && IsIdle)
                 {
                     if (_isShutdownRequested)
                     {
                         Log.Debug(Log.CurrentMethod(), "Shutdown initiated.");
-                        this.Shutdown?.Invoke(this, EventArgs.Empty);
+                        Shutdown?.Invoke(this, EventArgs.Empty);
                     }
                     else
                     {
-                        this.SwitchToIdle?.Invoke(this, EventArgs.Empty);
+                        SwitchToIdle?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
@@ -91,6 +89,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return "busy";
             }
+
             return "idle";
         }
 
@@ -100,11 +99,13 @@ namespace BMW.Rheingold.Psdz
             {
                 throw new ArgumentNullException("lifeCycleDependencyProvider");
             }
+
             if (_lifeCycleDependencies.ContainsKey(lifeCycleDependencyProvider))
             {
                 Log.Warning(Log.CurrentMethod(), "Provider (Name: '" + lifeCycleDependencyProvider.Name + "') is already registered.");
                 return;
             }
+
             _lifeCycleDependencies.Add(lifeCycleDependencyProvider, 0);
             lifeCycleDependencyProvider.ActiveDependencyCountChanged += OnActiveDependencyCountChanged;
             Log.Debug(Log.CurrentMethod(), "Name: '" + lifeCycleDependencyProvider.Name + "' (" + lifeCycleDependencyProvider.Description + ")");
@@ -117,6 +118,7 @@ namespace BMW.Rheingold.Psdz
             {
                 lifeCycleDependencyProvider.ActiveDependencyCountChanged -= OnActiveDependencyCountChanged;
             }
+
             Log.Debug(Log.CurrentMethod(), $"Name: '{lifeCycleDependencyProvider.Name}' Removed: {flag}");
         }
     }

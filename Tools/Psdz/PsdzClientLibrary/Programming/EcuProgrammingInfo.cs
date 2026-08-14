@@ -1022,7 +1022,7 @@ namespace PsdzClient.Programming
                         }
                     }
 
-                    this.PropertyChanged.NotifyPropertyChanged(this, () => State);
+                    PropertyChanged.NotifyPropertyChanged(this, () => State);
                     OnPropertyChanged("Item[]");
                     break;
                 case NotifyCollectionChangedAction.Remove:
@@ -1034,7 +1034,7 @@ namespace PsdzClient.Programming
                         }
                     }
 
-                    this.PropertyChanged.NotifyPropertyChanged(this, () => State);
+                    PropertyChanged.NotifyPropertyChanged(this, () => State);
                     OnPropertyChanged("Item[]");
                     break;
             }
@@ -1042,9 +1042,9 @@ namespace PsdzClient.Programming
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
@@ -1052,7 +1052,7 @@ namespace PsdzClient.Programming
         {
             if ("StateProgramming".Equals(e.PropertyName) || "IsSelected".Equals(e.PropertyName))
             {
-                this.PropertyChanged.NotifyPropertyChanged(this, () => State);
+                PropertyChanged.NotifyPropertyChanged(this, () => State);
             }
         }
     }

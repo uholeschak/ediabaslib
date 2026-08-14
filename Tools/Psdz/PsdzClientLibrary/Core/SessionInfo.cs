@@ -978,7 +978,7 @@ namespace PsdzClient.Core
 
         public virtual void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

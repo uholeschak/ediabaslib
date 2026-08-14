@@ -13,47 +13,30 @@ namespace PsdzClient.Core
     public class typeBasicFeatures : INotifyPropertyChanged
     {
         private string baureiheField;
-
         private string ereiheField;
-
         private string karosserieField;
-
         private string verkaufsBezeichnungField;
-
         private string motorField;
-
         private string getriebeField;
-
         private string countryOfAssemblyField;
-
         private string baseVersionField;
-
         private string landField;
-
         private string lenkungField;
-
         private string modelljahrField;
-
         private string modellmonatField;
-
         private string markeField;
-
         private string typeCodeField;
-
         private string prodartField;
-
         private string eMotBaureiheField;
-
         private string aEKurzbezeichnungField;
-
         private static XmlSerializer serializer;
-
         public string Baureihe
         {
             get
             {
                 return baureiheField;
             }
+
             set
             {
                 if (baureiheField != null)
@@ -78,6 +61,7 @@ namespace PsdzClient.Core
             {
                 return ereiheField;
             }
+
             set
             {
                 if (ereiheField != null)
@@ -102,6 +86,7 @@ namespace PsdzClient.Core
             {
                 return karosserieField;
             }
+
             set
             {
                 if (karosserieField != null)
@@ -126,6 +111,7 @@ namespace PsdzClient.Core
             {
                 return verkaufsBezeichnungField;
             }
+
             set
             {
                 if (verkaufsBezeichnungField != null)
@@ -150,6 +136,7 @@ namespace PsdzClient.Core
             {
                 return motorField;
             }
+
             set
             {
                 if (motorField != null)
@@ -176,6 +163,7 @@ namespace PsdzClient.Core
                 {
                     return motorField;
                 }
+
                 return EMotBaureihe;
             }
         }
@@ -186,6 +174,7 @@ namespace PsdzClient.Core
             {
                 return getriebeField;
             }
+
             set
             {
                 if (getriebeField != null)
@@ -210,6 +199,7 @@ namespace PsdzClient.Core
             {
                 return countryOfAssemblyField;
             }
+
             set
             {
                 if (countryOfAssemblyField != null)
@@ -234,6 +224,7 @@ namespace PsdzClient.Core
             {
                 return baseVersionField;
             }
+
             set
             {
                 if (baseVersionField != null)
@@ -258,6 +249,7 @@ namespace PsdzClient.Core
             {
                 return landField;
             }
+
             set
             {
                 if (landField != null)
@@ -282,6 +274,7 @@ namespace PsdzClient.Core
             {
                 return lenkungField;
             }
+
             set
             {
                 if (lenkungField != null)
@@ -306,6 +299,7 @@ namespace PsdzClient.Core
             {
                 return modelljahrField;
             }
+
             set
             {
                 if (modelljahrField != null)
@@ -330,6 +324,7 @@ namespace PsdzClient.Core
             {
                 return modellmonatField;
             }
+
             set
             {
                 if (modellmonatField != null)
@@ -354,6 +349,7 @@ namespace PsdzClient.Core
             {
                 return markeField;
             }
+
             set
             {
                 if (markeField != null)
@@ -378,6 +374,7 @@ namespace PsdzClient.Core
             {
                 return typeCodeField;
             }
+
             set
             {
                 if (typeCodeField != null)
@@ -402,6 +399,7 @@ namespace PsdzClient.Core
             {
                 return prodartField;
             }
+
             set
             {
                 if (prodartField != null)
@@ -426,6 +424,7 @@ namespace PsdzClient.Core
             {
                 return eMotBaureiheField;
             }
+
             set
             {
                 if (eMotBaureiheField != null)
@@ -450,6 +449,7 @@ namespace PsdzClient.Core
             {
                 return aEKurzbezeichnungField;
             }
+
             set
             {
                 if (aEKurzbezeichnungField != null)
@@ -476,12 +476,12 @@ namespace PsdzClient.Core
                 {
                     serializer = new XmlSerializer(typeof(typeBasicFeatures));
                 }
+
                 return serializer;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public typeBasicFeatures()
         {
             lenkungField = "LL";
@@ -489,7 +489,7 @@ namespace PsdzClient.Core
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual string Serialize()

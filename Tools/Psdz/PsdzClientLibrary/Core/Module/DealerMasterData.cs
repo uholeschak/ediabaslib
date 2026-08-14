@@ -18,15 +18,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class DealerMasterData : INotifyPropertyChanged
     {
         private DistributionPartner distributionPartnerField;
-
         private DateTime expirationDateField;
-
         private string verificationCodeField;
-
         private string hardwareIdField;
-
         private static XmlSerializer serializer;
-
         [XmlElement(Form = XmlSchemaForm.Unqualified)]
         [DataMember]
         public DistributionPartner distributionPartner
@@ -35,6 +30,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return distributionPartnerField;
             }
+
             set
             {
                 if (distributionPartnerField != null)
@@ -61,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return expirationDateField;
             }
+
             set
             {
                 if (!expirationDateField.Equals(value))
@@ -79,6 +76,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return verificationCodeField;
             }
+
             set
             {
                 if (verificationCodeField != null)
@@ -105,6 +103,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return hardwareIdField;
             }
+
             set
             {
                 if (hardwareIdField != null)
@@ -131,12 +130,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     serializer = new XmlSerializer(typeof(DealerMasterData));
                 }
+
                 return serializer;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public DealerMasterData()
         {
             distributionPartnerField = new DistributionPartner();
@@ -144,7 +143,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual string Serialize()

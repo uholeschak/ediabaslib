@@ -6,26 +6,28 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class GraphicsType : INotifyPropertyChanged
     {
-        private static List<string> supportedFormat = new List<string> { "png", "jpg", "mp3", "wmv", "mp4", "svg" };
-
+        private static List<string> supportedFormat = new List<string>
+        {
+            "png",
+            "jpg",
+            "mp3",
+            "wmv",
+            "mp4",
+            "svg"
+        };
         private const string DefaultFormat = "png";
-
         private string nameField;
-
         private string typeField;
-
         private string linkIdField;
-
         private byte[] graphicField;
-
         private bool ctordoneField;
-
         public string Name
         {
             get
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -50,6 +52,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return typeField;
             }
+
             set
             {
                 if (typeField != null)
@@ -74,6 +77,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return linkIdField;
             }
+
             set
             {
                 if (linkIdField != null)
@@ -98,6 +102,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return graphicField;
             }
+
             set
             {
                 if (graphicField != null)
@@ -123,6 +128,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ctordoneField;
             }
+
             set
             {
                 if (!ctordoneField.Equals(value))
@@ -134,18 +140,19 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public static string GetSuffixByFormat(string fileformat)
         {
             if (string.IsNullOrEmpty(fileformat))
             {
                 return "png";
             }
+
             string text = supportedFormat.FirstOrDefault((string f) => fileformat.ToLower().Contains(f));
             if (text != null)
             {
                 return text;
             }
+
             return "png";
         }
 
@@ -157,7 +164,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -13,28 +13,23 @@ namespace BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge
     {
         [DataMember]
         private readonly string id = Guid.NewGuid().ToString();
-
         [DataMember]
         private IEnumerable<IServiceProgramCustomButton> customButtons;
-
         [DataMember]
         private bool isDialogShown;
-
         [DataMember]
         private bool isInputDone;
-
         [DataMember]
         private bool isMainButtonBarVisible;
-
         [DataMember]
         private string title;
-
         public IEnumerable<IServiceProgramCustomButton> CustomButtons
         {
             get
             {
                 return customButtons;
             }
+
             set
             {
                 if (!object.Equals(customButtons, value))
@@ -51,6 +46,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge
             {
                 return isMainButtonBarVisible;
             }
+
             set
             {
                 if (!object.Equals(isMainButtonBarVisible, value))
@@ -69,6 +65,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge
             {
                 return title;
             }
+
             set
             {
                 if (!object.Equals(title, value))
@@ -85,6 +82,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge
             {
                 return isInputDone;
             }
+
             set
             {
                 if (!object.Equals(isInputDone, value))
@@ -101,6 +99,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge
             {
                 return isDialogShown;
             }
+
             set
             {
                 if (!object.Equals(isDialogShown, value))
@@ -112,7 +111,6 @@ namespace BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected ServiceDialogModelBase()
         {
             isMainButtonBarVisible = true;
@@ -130,8 +128,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
 }

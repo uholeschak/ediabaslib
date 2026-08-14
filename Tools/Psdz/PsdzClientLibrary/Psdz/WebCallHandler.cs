@@ -214,7 +214,7 @@ namespace BMW.Rheingold.Psdz
 
         private void OnActiveDependencyCountChanged(int dependencyCount)
         {
-            this.ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(dependencyCount));
+            ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(dependencyCount));
         }
 
         private bool ValidateWebserviceCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

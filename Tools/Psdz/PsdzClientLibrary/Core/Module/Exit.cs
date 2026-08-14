@@ -14,9 +14,7 @@ namespace BMW.Rheingold.Module.ISTA
     public class Exit : INotifyPropertyChanged
     {
         private int indexField;
-
         private string nextTestStepNameField;
-
         [XmlAttribute]
         [DataMember]
         public int Index
@@ -25,6 +23,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return indexField;
             }
+
             set
             {
                 if (!indexField.Equals(value))
@@ -43,6 +42,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return nextTestStepNameField;
             }
+
             set
             {
                 if (nextTestStepNameField != null)
@@ -62,10 +62,9 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

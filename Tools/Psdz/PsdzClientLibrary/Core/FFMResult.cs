@@ -18,6 +18,7 @@ namespace PsdzClient.Core
             {
                 return base.ID;
             }
+
             set
             {
                 if (base.ID != value)
@@ -34,6 +35,7 @@ namespace PsdzClient.Core
             {
                 return base.Name;
             }
+
             set
             {
                 if (base.Name != value)
@@ -50,6 +52,7 @@ namespace PsdzClient.Core
             {
                 return base.Result;
             }
+
             set
             {
                 if (base.Result != value)
@@ -66,6 +69,7 @@ namespace PsdzClient.Core
             {
                 return base.Evaluation;
             }
+
             set
             {
                 if (base.Evaluation != value)
@@ -82,6 +86,7 @@ namespace PsdzClient.Core
             {
                 return base.ReEvaluationNeeded;
             }
+
             set
             {
                 if (base.ReEvaluationNeeded != value)
@@ -93,14 +98,13 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public FFMResult()
         {
         }
 
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public FFMResult(IFfmResultRuleEvaluation ffmRuleEvaluation)
@@ -112,13 +116,11 @@ namespace PsdzClient.Core
             ReEvaluationNeeded = ffmRuleEvaluation.ReEvaluationNeeded;
         }
 
-        public FFMResult(decimal id, string name, string eval, bool? result)
-            : base(id, name, eval, result)
+        public FFMResult(decimal id, string name, string eval, bool? result) : base(id, name, eval, result)
         {
         }
 
-        public FFMResult(decimal id, string name, string eval, bool? result, bool reeval)
-            : base(id, name, eval, result, reeval)
+        public FFMResult(decimal id, string name, string eval, bool? result, bool reeval) : base(id, name, eval, result, reeval)
         {
         }
     }

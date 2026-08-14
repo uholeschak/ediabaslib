@@ -9,19 +9,17 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
     {
         [DataMember]
         private string msg = string.Empty;
-
         [DataMember]
         private bool visible;
-
         [DataMember]
         private string hidden;
-
         public string Message
         {
             get
             {
                 return msg;
             }
+
             set
             {
                 msg = value;
@@ -35,6 +33,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
             {
                 return visible;
             }
+
             set
             {
                 visible = value;
@@ -48,6 +47,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
             {
                 return hidden;
             }
+
             set
             {
                 hidden = value;
@@ -56,10 +56,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

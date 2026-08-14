@@ -274,7 +274,7 @@ namespace PsdzClient.Core
             //[+] }
             }
 
-            if (!((istaVisible.GetValueOrDefault() == default(decimal)) & istaVisible.HasValue))
+            if (!((istaVisible.GetValueOrDefault() == 0m) & istaVisible.HasValue))
             {
                 reactor.SetVerkaufsBezeichnung(characteristic.Name, DataSource.Database);
             }

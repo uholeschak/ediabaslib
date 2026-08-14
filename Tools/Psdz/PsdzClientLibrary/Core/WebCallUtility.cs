@@ -10,7 +10,7 @@ namespace PsdzClient.Core
         private const string GoogleDNSIp = "8.8.8.8";
         private const string BaiduDNSIp = "180.76.76.76";
         private const int PingRetryCount = 4;
-        [PreserveSource(Cleaned = true, OriginalHash = "626656F77045111B48E965A4C6CC6EB1")]
+        [PreserveSource(Cleaned = true, OriginalHash = "D2F0CA039B712D9F02281814FF34111A")]
         public static bool CheckForInternetConnection()
         {
             try
@@ -62,7 +62,7 @@ namespace PsdzClient.Core
 
         private static bool LogToFastaAndReturnConnectionStatus(bool connectionCheckSucceeded = false, bool dnsConnectionStatus = false, bool tricConnectionStatus = false, bool isToyota = false)
         {
-            bool flag = connectionCheckSucceeded && (dnsConnectionStatus || tricConnectionStatus);
+            bool flag = connectionCheckSucceeded && (dnsConnectionStatus | tricConnectionStatus);
             if (!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.OnlineMode", defaultValue: true))
             {
                 return flag;
@@ -71,7 +71,7 @@ namespace PsdzClient.Core
             ServiceLocator.Current.TryGetService<IFasta2Service>(out var service);
             if (flag)
             {
-                if (isToyota ? dnsConnectionStatus : (dnsConnectionStatus && tricConnectionStatus))
+                if (isToyota ? dnsConnectionStatus : (dnsConnectionStatus & tricConnectionStatus))
                 {
                     if (isToyota)
                     {

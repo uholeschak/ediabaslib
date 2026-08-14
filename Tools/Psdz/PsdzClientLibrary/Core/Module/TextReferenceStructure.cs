@@ -13,10 +13,9 @@ namespace BMW.Rheingold.Module.ISTA
     public class TextReferenceStructure : ReferenceStructure, INotifyPropertyChanged
     {
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

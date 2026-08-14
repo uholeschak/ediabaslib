@@ -17,13 +17,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class Phone : INotifyPropertyChanged
     {
         private string countryCodeField;
-
         private string areaCodeField;
-
         private string localNumberField;
-
         private static XmlSerializer serializer;
-
         [XmlAttribute]
         [DataMember]
         public string countryCode
@@ -32,6 +28,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return countryCodeField;
             }
+
             set
             {
                 if (countryCodeField != null)
@@ -58,6 +55,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return areaCodeField;
             }
+
             set
             {
                 if (areaCodeField != null)
@@ -84,6 +82,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return localNumberField;
             }
+
             set
             {
                 if (localNumberField != null)
@@ -110,15 +109,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     serializer = new XmlSerializer(typeof(Phone));
                 }
+
                 return serializer;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual string Serialize()

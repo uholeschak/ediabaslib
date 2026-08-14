@@ -10,27 +10,20 @@ namespace PsdzClient.Core
     public class EMotor : INotifyPropertyChanged
     {
         private string eMOTBaureiheField;
-
         private string eMOTArbeitsverfahrenField;
-
         private string eMOTDrehmomentField;
-
         private string eMOTLeistungsklasseField;
-
         private string eMOTUeberarbeitungField;
-
         private string eMOTBezeichnungField;
-
         private string eMOTKraftstoffartField;
-
         private string eMOTEinbaulageField;
-
         public string EMOTBaureihe
         {
             get
             {
                 return eMOTBaureiheField;
             }
+
             set
             {
                 if (eMOTBaureiheField != value)
@@ -47,6 +40,7 @@ namespace PsdzClient.Core
             {
                 return eMOTArbeitsverfahrenField;
             }
+
             set
             {
                 if (eMOTArbeitsverfahrenField != value)
@@ -63,6 +57,7 @@ namespace PsdzClient.Core
             {
                 return eMOTDrehmomentField;
             }
+
             set
             {
                 if (eMOTDrehmomentField != value)
@@ -79,6 +74,7 @@ namespace PsdzClient.Core
             {
                 return eMOTLeistungsklasseField;
             }
+
             set
             {
                 if (eMOTLeistungsklasseField != value)
@@ -95,6 +91,7 @@ namespace PsdzClient.Core
             {
                 return eMOTUeberarbeitungField;
             }
+
             set
             {
                 if (eMOTUeberarbeitungField != value)
@@ -111,6 +108,7 @@ namespace PsdzClient.Core
             {
                 return eMOTBezeichnungField;
             }
+
             set
             {
                 if (eMOTBezeichnungField != value)
@@ -127,6 +125,7 @@ namespace PsdzClient.Core
             {
                 return eMOTKraftstoffartField;
             }
+
             set
             {
                 if (eMOTKraftstoffartField != value)
@@ -143,6 +142,7 @@ namespace PsdzClient.Core
             {
                 return eMOTEinbaulageField;
             }
+
             set
             {
                 if (eMOTEinbaulageField != value)
@@ -154,10 +154,9 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

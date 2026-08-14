@@ -33,12 +33,13 @@ namespace PsdzClient.Core
             PsdzDatabase database = ClientContext.GetDatabase(vec);
             //[+] if (database == null)
             if (database == null)
-                //[+] {
+            //[+] {
             {
                 //[+] return false;
                 return false;
-                //[+] }
+            //[+] }
             }
+
             //[+] PsdzDatabase.EcuClique ecuClique = database.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));
             PsdzDatabase.EcuClique ecuClique = database.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));
             if (vec == null)
@@ -90,14 +91,14 @@ namespace PsdzClient.Core
                     }
 
                     //[-] decimal? ecuGroupId = item.EcuGroupId;
-                    //[-] if ((ecuGroupId.GetValueOrDefault() > default(decimal)) & ecuGroupId.HasValue)
+                    //[-] if ((ecuGroupId.GetValueOrDefault() > 0m) & ecuGroupId.HasValue)
                     //[+] if (!string.IsNullOrEmpty(item.EcuGroupId))
                     if (!string.IsNullOrEmpty(item.EcuGroupId))
                     {
-                        //[-] flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId.Value, ffmResolver);
-                        //[-] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", item.Name, item.EcuGroupId, flag);
-                        //[+] flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId, ffmResolver);
-                        flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId, ffmResolver);
+                            //[-] flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId.Value, ffmResolver);
+                            //[-] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", item.Name, item.EcuGroupId, flag);
+                            //[+] flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId, ffmResolver);
+                            flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId, ffmResolver);
                         //[+] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", item.Name, item.EcuGroupId, flag);
                         ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", item.Name, item.EcuGroupId, flag);
                         if (flag)

@@ -18,15 +18,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class Communication : INotifyPropertyChanged
     {
         private Phone voiceField;
-
         private Phone faxField;
-
         private string emailField;
-
         private string urlField;
-
         private static XmlSerializer serializer;
-
         [XmlElement(Form = XmlSchemaForm.Unqualified)]
         [DataMember]
         public Phone voice
@@ -35,6 +30,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return voiceField;
             }
+
             set
             {
                 if (voiceField != null)
@@ -61,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return faxField;
             }
+
             set
             {
                 if (faxField != null)
@@ -87,6 +84,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return emailField;
             }
+
             set
             {
                 if (emailField != null)
@@ -113,6 +111,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return urlField;
             }
+
             set
             {
                 if (urlField != null)
@@ -139,12 +138,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     serializer = new XmlSerializer(typeof(Communication));
                 }
+
                 return serializer;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public Communication()
         {
             faxField = new Phone();
@@ -153,7 +152,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual string Serialize()

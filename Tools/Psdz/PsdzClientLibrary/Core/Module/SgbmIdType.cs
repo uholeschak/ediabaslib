@@ -18,33 +18,19 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
     public class SgbmIdType : INotifyPropertyChanged
     {
         private List<EcuVariantType> ecuVariantField;
-
         private List<SwUpdateType> swUpdateField;
-
         private string idField;
-
         private string sWID_FscShortField;
-
         private string nameField;
-
         private string supplierField;
-
         private string sopField;
-
         private string versionField;
-
         private string mapOrderNumberBMWField;
-
         private string mapOrderNumberMINIField;
-
         private string mapOrderNumberRRField;
-
         private string successorMapOrderNumberBMWField;
-
         private string successorMapOrderNumberMINIField;
-
         private string successorMapOrderNumberRRField;
-
         [XmlElement("EcuVariant", Form = XmlSchemaForm.Unqualified)]
         [DataMember]
         public List<EcuVariantType> EcuVariant
@@ -53,6 +39,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return ecuVariantField;
             }
+
             set
             {
                 if (ecuVariantField != null)
@@ -79,6 +66,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return swUpdateField;
             }
+
             set
             {
                 if (swUpdateField != null)
@@ -105,6 +93,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return idField;
             }
+
             set
             {
                 if (idField != null)
@@ -131,6 +120,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return sWID_FscShortField;
             }
+
             set
             {
                 if (sWID_FscShortField != null)
@@ -157,6 +147,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -183,6 +174,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return supplierField;
             }
+
             set
             {
                 if (supplierField != null)
@@ -209,6 +201,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return sopField;
             }
+
             set
             {
                 if (sopField != null)
@@ -235,6 +228,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return versionField;
             }
+
             set
             {
                 if (versionField != null)
@@ -261,6 +255,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return mapOrderNumberBMWField;
             }
+
             set
             {
                 if (mapOrderNumberBMWField != null)
@@ -287,6 +282,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return mapOrderNumberMINIField;
             }
+
             set
             {
                 if (mapOrderNumberMINIField != null)
@@ -313,6 +309,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return mapOrderNumberRRField;
             }
+
             set
             {
                 if (mapOrderNumberRRField != null)
@@ -339,6 +336,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return successorMapOrderNumberBMWField;
             }
+
             set
             {
                 if (successorMapOrderNumberBMWField != null)
@@ -365,6 +363,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return successorMapOrderNumberMINIField;
             }
+
             set
             {
                 if (successorMapOrderNumberMINIField != null)
@@ -391,6 +390,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return successorMapOrderNumberRRField;
             }
+
             set
             {
                 if (successorMapOrderNumberRRField != null)
@@ -410,7 +410,6 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public SgbmIdType()
         {
             swUpdateField = new List<SwUpdateType>();
@@ -419,7 +418,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
 
         public virtual void OnPropertyChanged(string info)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
     }
 }

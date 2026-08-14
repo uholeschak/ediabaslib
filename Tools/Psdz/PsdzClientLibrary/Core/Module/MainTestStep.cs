@@ -16,7 +16,6 @@ namespace BMW.Rheingold.Module.ISTA
     public class MainTestStep : TestStep, INotifyPropertyChanged
     {
         private DeclarationListParameters parametersField;
-
         [XmlElement(Form = XmlSchemaForm.Unqualified)]
         [DataMember]
         public DeclarationListParameters Parameters
@@ -25,6 +24,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return parametersField;
             }
+
             set
             {
                 if (parametersField != null)
@@ -44,10 +44,9 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

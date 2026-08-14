@@ -16,21 +16,13 @@ namespace BMW.Rheingold.Module.ISTA
     internal class MessageServiceDlgImpl : ServiceDlgImplBase<MessageServiceDlgModel>
     {
         private int p_TIMEOUT;
-
         private bool p_WeiterButtonEnabledStack;
-
         private ISTAModule callingModule;
-
         private IList<LocalizedText> text;
-
         private IList<LocalizedText> value;
-
         private string textId;
-
         private decimal? textItemParameterValue;
-
-        public MessageServiceDlgImpl(ParameterContainer inParam)
-            : base(inParam)
+        public MessageServiceDlgImpl(ParameterContainer inParam) : base(inParam)
         {
             p_WeiterButtonEnabledStack = true;
             callingModule = inParam.getParameter("__CallingModule__") as ISTAModule;
@@ -44,6 +36,7 @@ namespace BMW.Rheingold.Module.ISTA
                 HideDialog();
                 return;
             }
+
             if ("InitializeDialog".Equals(method))
             {
                 ITextLocator txtParam = inParam.getParameter("txtParam", null) as ITextLocator;
@@ -57,6 +50,7 @@ namespace BMW.Rheingold.Module.ISTA
                 outParam.setParameter("Quit", flag);
                 return;
             }
+
             throw new NotSupportedException($"Method \"{method}\" is not supported by MessageServiceDlg.");
         }
 
@@ -74,11 +68,13 @@ namespace BMW.Rheingold.Module.ISTA
                     Log.Info("MessageServiceDlgImpl.InitializeDialog()", "override protocol flag not possible due to running loop; original flag was: {0}", Protocol);
                 }
             }
+
             bool flag = DoInitializeDialog(txtParam, WertFeld, Quittierung, TIMEOUT, Protocol, Display);
             if (Protocol)
             {
                 WriteFasta(startTime, method, loopHandling, Display, flag);
             }
+
             return flag;
         }
 
@@ -104,6 +100,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("DoInitializeDialog", exception);
             }
+
             if (WertFeld != null)
             {
                 value = ((TextContent)WertFeld.TextContent).GetTextForUI(logic.Lang);
@@ -112,6 +109,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 value = null;
             }
+
             if (Display)
             {
                 base.Model.Text = text[0].TextItem;
@@ -119,8 +117,10 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     base.Model.Value = value[0].TextItem;
                 }
+
                 return HandleGui(Quittierung);
             }
+
             return false;
         }
 
@@ -129,7 +129,7 @@ namespace BMW.Rheingold.Module.ISTA
             if (message.Descendants().Count((XElement c) => c.Name.LocalName.Equals("PARAMETER", StringComparison.OrdinalIgnoreCase)) == 1)
             {
                 string s = message.Descendants().ToList().FirstOrDefault((XElement c) => c.Name.LocalName.Equals("PARAMETER", StringComparison.OrdinalIgnoreCase))?.Attribute("ID")?.Value;
-                decimal result = default(decimal);
+                decimal result = 0m;
                 if (decimal.TryParse(s, out result))
                 {
                     textItemParameterValue = result;
@@ -145,12 +145,14 @@ namespace BMW.Rheingold.Module.ISTA
                 base.Model.IsDialogShown = true;
                 parentTab.ResetNextButtonLatency();
             }
+
             SetNextButtonEnabled(value: true);
             bool num = WaitForContinueButton(Quittierung ? (-1) : p_TIMEOUT);
             if (num)
             {
                 SetNextButtonEnabled(value: false);
             }
+
             return num;
         }
 
@@ -163,6 +165,7 @@ namespace BMW.Rheingold.Module.ISTA
                 base.Model.Value = null;
                 base.Model.IsDialogShown = false;
             }
+
             parentTab.ResetNextButtonLatency();
             p_TIMEOUT = 5000;
             FastaProtocoler.ResetCyclicJournalize();

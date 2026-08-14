@@ -19,13 +19,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class DistributionPartner : INotifyPropertyChanged
     {
         private ObservableCollection<Outlet> outletField;
-
         private string distributionPartnerNumberField;
-
         private string nameField;
-
         private static XmlSerializer serializer;
-
         [XmlElement("outlet", Form = XmlSchemaForm.Unqualified, Order = 0)]
         [DataMember]
         public ObservableCollection<Outlet> outlet
@@ -34,6 +30,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return outletField;
             }
+
             set
             {
                 if (outletField != null)
@@ -60,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return distributionPartnerNumberField;
             }
+
             set
             {
                 if (distributionPartnerNumberField != null)
@@ -86,6 +84,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -112,12 +111,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     serializer = new XmlSerializer(typeof(DistributionPartner));
                 }
+
                 return serializer;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public DistributionPartner()
         {
             outletField = new ObservableCollection<Outlet>();
@@ -125,7 +124,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual string Serialize()

@@ -32,7 +32,7 @@ namespace PsdzClient.Programming
 
             internal set
             {
-                this.PropertyChanged.NotifyPropertyChanged(this, () => SgbmIds, ref sgbmIds, value);
+                PropertyChanged.NotifyPropertyChanged(this, () => SgbmIds, ref sgbmIds, value);
                 if (ActionData != null)
                 {
                     ActionData.SetSgbmIds(value);
@@ -51,7 +51,7 @@ namespace PsdzClient.Programming
 
             internal set
             {
-                this.PropertyChanged.NotifyPropertyChanged(this, () => State, ref stateDiag, value);
+                PropertyChanged.NotifyPropertyChanged(this, () => State, ref stateDiag, value);
                 if (ActionData != null)
                 {
                     ActionData.SetState(value);
@@ -68,7 +68,7 @@ namespace PsdzClient.Programming
 
             internal set
             {
-                this.PropertyChanged.NotifyPropertyChanged(this, () => AssemblyNumberSetPoint, ref assemblyNumberSetPoint, value);
+                PropertyChanged.NotifyPropertyChanged(this, () => AssemblyNumberSetPoint, ref assemblyNumberSetPoint, value);
             }
         }
 
@@ -307,7 +307,7 @@ namespace PsdzClient.Programming
 
         internal void UpdateState(ProgrammingActionState state, bool executed)
         {
-            if (IsFailureIgnored && executed && state != ProgrammingActionState.ActionSuccessful)
+            if ((IsFailureIgnored & executed) && state != ProgrammingActionState.ActionSuccessful)
             {
                 StateProgramming = ProgrammingActionState.ActionWarning;
             }
@@ -531,9 +531,9 @@ namespace PsdzClient.Programming
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

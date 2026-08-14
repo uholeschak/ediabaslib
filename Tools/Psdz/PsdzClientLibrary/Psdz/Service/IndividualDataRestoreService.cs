@@ -140,7 +140,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 int itemCount = Interlocked.Increment(ref _activeBackupTalExecutions);
-                this.ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount));
+                ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount));
                 long startTime = DateTime.Now.Ticks / 10000;
                 Log.Debug(callingMethod, "Call 'Programming.executeAsync(connection, tal, svtTarget, fa, null, vin, talExecutionConfig)' ...");
                 text = _programmingService.ExecuteAsync(connection, tal, svtTarget, faTarget, null, vin, talExecutionSettings);
@@ -176,7 +176,7 @@ namespace BMW.Rheingold.Psdz
                 }
 
                 int itemCount2 = Interlocked.Decrement(ref _activeBackupTalExecutions);
-                this.ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount2));
+                ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount2));
                 NotifyListenerAboutFinished(listener);
             }
         }
@@ -189,7 +189,7 @@ namespace BMW.Rheingold.Psdz
             {
                 Log.Info(callingMethod, "Starting to execute TAL " + NormalizeXmlText(tal.AsXml));
                 int itemCount = Interlocked.Increment(ref _activeBackupTalExecutions);
-                this.ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount));
+                ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount));
                 long startTime = DateTime.Now.Ticks / 10000;
                 Log.Debug(callingMethod, "Call 'Macros.executeTAL(connection, tal, svtTarget, fa, null, vin, talExecutionConfig)'");
                 text = _macrosService.ExecuteTal(connection, tal, svtTarget, faTarget, null, vin, talExecutionSettings);
@@ -224,7 +224,7 @@ namespace BMW.Rheingold.Psdz
                 }
 
                 int itemCount2 = Interlocked.Decrement(ref _activeBackupTalExecutions);
-                this.ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount2));
+                ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount2));
                 NotifyListenerAboutFinished(listener);
             }
         }

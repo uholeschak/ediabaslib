@@ -16,11 +16,8 @@ namespace BMW.Rheingold.Module.ISTA
     public class DeclarationListParameters : INotifyPropertyChanged
     {
         private ObservableCollection<InputParameter> inputParametersField;
-
         private ObservableCollection<OutputParameter> outputParametersField;
-
         private ObservableCollection<InputParameter> inputAndOutputParametersField;
-
         [XmlArray(Form = XmlSchemaForm.Unqualified)]
         [XmlArrayItem("Parameter", Form = XmlSchemaForm.Unqualified, IsNullable = false)]
         [DataMember]
@@ -30,6 +27,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return inputParametersField;
             }
+
             set
             {
                 if (inputParametersField != null)
@@ -57,6 +55,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return outputParametersField;
             }
+
             set
             {
                 if (outputParametersField != null)
@@ -84,6 +83,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return inputAndOutputParametersField;
             }
+
             set
             {
                 if (inputAndOutputParametersField != null)
@@ -103,10 +103,9 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

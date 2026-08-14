@@ -16,17 +16,11 @@ namespace BMW.Rheingold.Module.ISTA
     public class TestStep : ParameterlessMethod, INotifyPropertyChanged
     {
         private TextReferenceStructure titleField;
-
         private TextReferenceStructure descriptionField;
-
         private ObservableCollection<Exit> exitsField;
-
         private int numberOfExitsField;
-
         private bool verboseLoopLogsField;
-
         private bool verboseLoopLogsFieldSpecified;
-
         [XmlElement(Form = XmlSchemaForm.Unqualified)]
         [DataMember]
         public TextReferenceStructure Title
@@ -35,6 +29,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return titleField;
             }
+
             set
             {
                 if (titleField != null)
@@ -61,6 +56,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return descriptionField;
             }
+
             set
             {
                 if (descriptionField != null)
@@ -88,6 +84,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return exitsField;
             }
+
             set
             {
                 if (exitsField != null)
@@ -114,6 +111,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return numberOfExitsField;
             }
+
             set
             {
                 if (!numberOfExitsField.Equals(value))
@@ -132,6 +130,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return verboseLoopLogsField;
             }
+
             set
             {
                 if (!verboseLoopLogsField.Equals(value))
@@ -150,6 +149,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return verboseLoopLogsFieldSpecified;
             }
+
             set
             {
                 if (!verboseLoopLogsFieldSpecified.Equals(value))
@@ -161,10 +161,9 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

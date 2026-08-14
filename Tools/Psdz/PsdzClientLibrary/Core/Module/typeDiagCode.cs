@@ -9,19 +9,16 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class typeDiagCode : INotifyPropertyChanged, IDiagCode
     {
         private string diagnoseCodeField;
-
         private string diagnoseCodeSuffixField;
-
         private ObservableCollection<string> reparaturPaketField;
-
         private string originField;
-
         public string DiagnoseCode
         {
             get
             {
                 return diagnoseCodeField;
             }
+
             set
             {
                 if (diagnoseCodeField != null)
@@ -46,6 +43,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return diagnoseCodeSuffixField;
             }
+
             set
             {
                 if (diagnoseCodeSuffixField != null)
@@ -70,6 +68,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return reparaturPaketField;
             }
+
             set
             {
                 if (reparaturPaketField != null)
@@ -94,6 +93,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return originField;
             }
+
             set
             {
                 if (originField != null)
@@ -116,7 +116,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         IEnumerable<string> IDiagCode.ReparaturPaket => ReparaturPaket;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public typeDiagCode()
         {
             reparaturPaketField = new ObservableCollection<string>();
@@ -124,7 +123,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override int GetHashCode()
@@ -133,6 +132,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return DiagnoseCode.GetHashCode();
             }
+
             return base.GetHashCode();
         }
 
@@ -142,10 +142,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (DiagnoseCode == null)
             {
                 return typeDiagCode2.DiagnoseCode == null;
             }
+
             return DiagnoseCode.Equals(typeDiagCode2.DiagnoseCode);
         }
     }

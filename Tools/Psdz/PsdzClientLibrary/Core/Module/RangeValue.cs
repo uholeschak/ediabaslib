@@ -14,9 +14,7 @@ namespace BMW.Rheingold.Module.ISTA
     public class RangeValue : INotifyPropertyChanged
     {
         private string functionalValueField;
-
         private string technicalValueField;
-
         [XmlAttribute]
         [DataMember]
         public string FunctionalValue
@@ -25,6 +23,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return functionalValueField;
             }
+
             set
             {
                 if (functionalValueField != null)
@@ -51,6 +50,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return technicalValueField;
             }
+
             set
             {
                 if (technicalValueField != null)
@@ -70,10 +70,9 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -278,8 +278,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
             IEcuJob ecuJob = null;
             if (string.Compare(ecu, "FA", StringComparison.OrdinalIgnoreCase) == 0 && string.Compare(job, "FA_STREAM2STRUCT", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                int len;
-                byte[] param2 = FormatConverter.Ascii2ByteArray(param, out len);
+                byte[] param2 = FormatConverter.Ascii2ByteArray(param, out var len);
                 ecuJob = apiJobData("FA", "FA_STREAM2STRUCT", param2, len, string.Empty, callerMember);
             }
             else
@@ -375,7 +374,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
                 return obj2;
             }
 
-            if (communicationMode == CommMode.CacheFirst && cacheAdding)
+            if ((communicationMode == CommMode.CacheFirst) & cacheAdding)
             {
                 lastJobExecution = DateTime.MinValue;
                 IEcuJob ecuJob2 = ApiJobSim(ecu, jobName, param, resultFilter);
@@ -768,7 +767,7 @@ public abstract class ECUKomBase : IEcuKom, IEcuKomApi
 
     public virtual void AddJobInCache(IEcuJob job, bool cacheCondition = true)
     {
-        if (!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.JobResultsCachingDisabled", defaultValue: false) && jobList != null && cacheCondition)
+        if ((!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.JobResultsCachingDisabled", defaultValue: false) && jobList != null) & cacheCondition)
         {
             string msg = "Store in Cache: EcuName:" + job.EcuName + ", JobName:" + job.JobName + ", JobParam:" + job.JobParam;
             Log.Info("ECUKom.AddJobInCache()", msg);

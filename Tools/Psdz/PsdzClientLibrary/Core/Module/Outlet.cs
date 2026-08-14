@@ -19,23 +19,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class Outlet : INotifyPropertyChanged
     {
         private Address addressField;
-
         private Communication contactField;
-
         private BusinessRelationship businessRelationshipField;
-
         private ObservableCollection<string> marketLanguageField;
-
         private ObservableCollection<Contract> contractField;
-
         private string outletNumberField;
-
         private string nameField;
-
         private bool protectionVehicleServiceField;
-
         private static XmlSerializer serializer;
-
         [XmlElement(Form = XmlSchemaForm.Unqualified, Order = 0)]
         [DataMember]
         public Address address
@@ -44,6 +35,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return addressField;
             }
+
             set
             {
                 if (addressField != null)
@@ -70,6 +62,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return contactField;
             }
+
             set
             {
                 if (contactField != null)
@@ -96,6 +89,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return businessRelationshipField;
             }
+
             set
             {
                 if (!businessRelationshipField.Equals(value))
@@ -114,6 +108,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return marketLanguageField;
             }
+
             set
             {
                 if (marketLanguageField != null)
@@ -140,6 +135,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return contractField;
             }
+
             set
             {
                 if (contractField != null)
@@ -166,6 +162,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return outletNumberField;
             }
+
             set
             {
                 if (outletNumberField != null)
@@ -192,6 +189,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -218,6 +216,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return protectionVehicleServiceField;
             }
+
             set
             {
                 if (!protectionVehicleServiceField.Equals(value))
@@ -236,12 +235,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     serializer = new XmlSerializer(typeof(Outlet));
                 }
+
                 return serializer;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public Outlet()
         {
             contractField = new ObservableCollection<Contract>();
@@ -252,7 +251,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual string Serialize()

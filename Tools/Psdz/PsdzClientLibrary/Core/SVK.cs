@@ -16,6 +16,7 @@ namespace PsdzClient.Core
         private ICollection<int> prozessklasseWert;
         [XmlIgnore]
         IEnumerable<string> ISvk.XWE_SGBMID => XWE_SGBMID;
+
         [XmlIgnore]
         IEnumerable<string> IEcuTreeSvk.XWE_SGBMID => XWE_SGBMID;
 
@@ -160,7 +161,7 @@ namespace PsdzClient.Core
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

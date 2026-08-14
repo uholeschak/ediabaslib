@@ -16,9 +16,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
     public class EcuVariantType : INotifyPropertyChanged
     {
         private string compatibilityIdentifierField;
-
         private string formatField;
-
         [XmlAttribute]
         [DataMember]
         public string CompatibilityIdentifier
@@ -27,6 +25,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return compatibilityIdentifierField;
             }
+
             set
             {
                 if (compatibilityIdentifierField != null)
@@ -53,6 +52,7 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
             {
                 return formatField;
             }
+
             set
             {
                 if (formatField != null)
@@ -72,10 +72,9 @@ namespace BMW.Rheingold.InfoProvider.HDD.HDDLookup
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string info)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
     }
 }

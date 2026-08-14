@@ -9,45 +9,25 @@ namespace PsdzClient.Core
     public class CurrentSessionState : INotifyPropertyChanged
     {
         private ObservableCollection<BackendServiceType> backendsFailedToResponse = new ObservableCollection<BackendServiceType>();
-
         private ObservableCollection<BackendServiceType> requestedBackends = new ObservableCollection<BackendServiceType>();
-
         private bool internetAccessable;
-
         private bool lanAvailable;
-
         private int wiFiStrength;
-
         private bool switchConfigured;
-
         private bool iCOMConfigured;
-
         private bool iCOMUpdateAvailable;
-
         private bool isCarInfosession;
-
         private bool isMotorcycleInfoSession;
-
         private bool isPTTConfigured;
-
         private bool isIMIBMAConfigured;
-
         private bool isICOMOverLan;
-
         private bool isIMIBOverLan;
-
         private bool isDirectConnection;
-
         private bool isOfflineMode;
-
         private bool isConnectedToSwitchOverLan;
-
         private bool eOSTest;
-
         private bool isCarSession;
-
         private bool isSimulation;
-
         [DataMember]
         public ObservableCollection<BackendServiceType> BackendsFailedToResponse
         {
@@ -55,6 +35,7 @@ namespace PsdzClient.Core
             {
                 return backendsFailedToResponse;
             }
+
             set
             {
                 backendsFailedToResponse = value;
@@ -69,6 +50,7 @@ namespace PsdzClient.Core
             {
                 return requestedBackends;
             }
+
             set
             {
                 requestedBackends = value;
@@ -83,6 +65,7 @@ namespace PsdzClient.Core
             {
                 return internetAccessable;
             }
+
             set
             {
                 internetAccessable = value;
@@ -97,6 +80,7 @@ namespace PsdzClient.Core
             {
                 return lanAvailable;
             }
+
             set
             {
                 lanAvailable = value;
@@ -111,6 +95,7 @@ namespace PsdzClient.Core
             {
                 return wiFiStrength;
             }
+
             set
             {
                 wiFiStrength = value;
@@ -125,6 +110,7 @@ namespace PsdzClient.Core
             {
                 return switchConfigured;
             }
+
             set
             {
                 switchConfigured = value;
@@ -139,6 +125,7 @@ namespace PsdzClient.Core
             {
                 return iCOMConfigured;
             }
+
             set
             {
                 iCOMConfigured = value;
@@ -153,6 +140,7 @@ namespace PsdzClient.Core
             {
                 return iCOMUpdateAvailable;
             }
+
             set
             {
                 iCOMUpdateAvailable = value;
@@ -167,6 +155,7 @@ namespace PsdzClient.Core
             {
                 return isCarInfosession;
             }
+
             set
             {
                 isCarInfosession = value;
@@ -181,6 +170,7 @@ namespace PsdzClient.Core
             {
                 return isMotorcycleInfoSession;
             }
+
             set
             {
                 isMotorcycleInfoSession = value;
@@ -195,6 +185,7 @@ namespace PsdzClient.Core
             {
                 return isPTTConfigured;
             }
+
             set
             {
                 isPTTConfigured = value;
@@ -209,6 +200,7 @@ namespace PsdzClient.Core
             {
                 return isIMIBMAConfigured;
             }
+
             set
             {
                 isIMIBMAConfigured = value;
@@ -223,6 +215,7 @@ namespace PsdzClient.Core
             {
                 return isICOMOverLan;
             }
+
             set
             {
                 isICOMOverLan = value;
@@ -237,6 +230,7 @@ namespace PsdzClient.Core
             {
                 return isIMIBOverLan;
             }
+
             set
             {
                 isIMIBOverLan = value;
@@ -251,6 +245,7 @@ namespace PsdzClient.Core
             {
                 return isDirectConnection;
             }
+
             set
             {
                 isDirectConnection = value;
@@ -265,6 +260,7 @@ namespace PsdzClient.Core
             {
                 return isOfflineMode;
             }
+
             set
             {
                 isOfflineMode = value;
@@ -279,6 +275,7 @@ namespace PsdzClient.Core
             {
                 return isConnectedToSwitchOverLan;
             }
+
             set
             {
                 isConnectedToSwitchOverLan = value;
@@ -293,6 +290,7 @@ namespace PsdzClient.Core
             {
                 return eOSTest;
             }
+
             set
             {
                 eOSTest = value;
@@ -307,6 +305,7 @@ namespace PsdzClient.Core
             {
                 return isCarSession;
             }
+
             set
             {
                 isCarSession = value;
@@ -321,6 +320,7 @@ namespace PsdzClient.Core
             {
                 return isSimulation;
             }
+
             set
             {
                 isSimulation = value;
@@ -329,11 +329,9 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
 }

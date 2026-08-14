@@ -10,11 +10,8 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
     public class EcuKomProxy : IEcuKomApi
     {
         private readonly IEcuKom ecuKom;
-
         private readonly IProtocolBasic fastaService;
-
         public IProtocolBasic FastaService => fastaService;
-
         public IEcuKom EcuKom => ecuKom;
 
         public EcuKomProxy(IEcuKom ecuKom, IProtocolBasic fastaService)
@@ -23,6 +20,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
             {
                 throw new ArgumentNullException("ecuKom");
             }
+
             this.ecuKom = ecuKom;
             this.fastaService = fastaService;
         }
@@ -33,21 +31,22 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
             Log.Info("EcuKomProxy.ApiJob", "Method ApiJob() called with parameter ecu: {0} - job name: {1} - param: {2} - result filter: {3} - retries: {4}", ecu, job, param, resultFilter, retries);
             DateTime now = DateTime.Now;
             IEcuJob ecuJob = ecuKom.ApiJob(ecu, job, param, resultFilter, retries, fastaActive);
-            if (fastaService != null && fastaActive)
+            if ((fastaService != null) & fastaActive)
             {
-                //[-] fastaService.AddMethodCall("ApiJob", new Dictionary<string, string>
-                //[-] {
-                //[-] { "ecu", ecu },
-                //[-] { "job", job },
-                //[-] { "param", param },
-                //[-] { "resultFilter", resultFilter },
-                //[-] {
-                //[-] "retries",
-                //[-] retries.ToString(CultureInfo.InvariantCulture)
-                //[-] }
-                //[-] }, now).EndTime = DateTime.Now;
-                //[-] fastaService.CreateAndAddEcuCommunication(ecu, new Collection<IEcuJob> { ecuJob }, doFastaRelevantFiltering: false, LayoutGroup.X);
+            //[-] fastaService.AddMethodCall("ApiJob", new Dictionary<string, string>
+            //[-] {
+            //[-] { "ecu", ecu },
+            //[-] { "job", job },
+            //[-] { "param", param },
+            //[-] { "resultFilter", resultFilter },
+            //[-] {
+            //[-] "retries",
+            //[-] retries.ToString(CultureInfo.InvariantCulture)
+            //[-] }
+            //[-] }, now).EndTime = DateTime.Now;
+            //[-] fastaService.CreateAndAddEcuCommunication(ecu, new Collection<IEcuJob> { ecuJob }, doFastaRelevantFiltering: false, LayoutGroup.X);
             }
+
             return ecuJob;
         }
 
@@ -59,26 +58,36 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
             if (fastaService != null)
             {
                 IDictionary<string, string> parameter = new Dictionary<string, string>
-            {
-                { "ecu", ecu },
-                { "job", job },
                 {
-                    "param",
-                    param.ToStringItems()
-                },
-                {
-                    "paramlength",
-                    paramlen.ToString(CultureInfo.InvariantCulture)
-                },
-                { "resultFilter", resultFilter },
-                {
-                    "retries",
-                    retries.ToString(CultureInfo.InvariantCulture)
-                }
-            };
-                //[-] fastaService.AddMethodCall("ApiJob", parameter, now).EndTime = DateTime.Now;
-                //[-] fastaService.CreateAndAddEcuCommunication(ecu, new Collection<IEcuJob> { ecuJob }, doFastaRelevantFiltering: false, LayoutGroup.X);
+                    {
+                        "ecu",
+                        ecu
+                    },
+                    {
+                        "job",
+                        job
+                    },
+                    {
+                        "param",
+                        param.ToStringItems()
+                    },
+                    {
+                        "paramlength",
+                        paramlen.ToString(CultureInfo.InvariantCulture)
+                    },
+                    {
+                        "resultFilter",
+                        resultFilter
+                    },
+                    {
+                        "retries",
+                        retries.ToString(CultureInfo.InvariantCulture)
+                    }
+                };
+            //[-] fastaService.AddMethodCall("ApiJob", parameter, now).EndTime = DateTime.Now;
+            //[-] fastaService.CreateAndAddEcuCommunication(ecu, new Collection<IEcuJob> { ecuJob }, doFastaRelevantFiltering: false, LayoutGroup.X);
             }
+
             return ecuJob;
         }
 

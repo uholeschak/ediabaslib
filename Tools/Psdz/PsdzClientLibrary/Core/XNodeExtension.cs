@@ -10,8 +10,9 @@ namespace PsdzClient.Core
             string text = node.Value;
             if (string.IsNullOrWhiteSpace(text))
             {
-                text = ((text == null || removeWhiteSpace) ? string.Empty : " ");
+                text = (((text == null) | removeWhiteSpace) ? string.Empty : " ");
             }
+
             return text;
         }
 
@@ -21,16 +22,19 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("node");
             }
+
             string text = node.ToString(SaveOptions.DisableFormatting | SaveOptions.OmitDuplicateNamespaces);
             if (string.IsNullOrWhiteSpace(text))
             {
                 Log.Info("XNodeExtension.Print()", "Print white spaces of \"{0}\" with parameter removeWhiteSpace={1}.", node.Parent?.Name?.LocalName, removeWhiteSpace);
-                if (!(text == null || removeWhiteSpace))
+                if (!((text == null) | removeWhiteSpace))
                 {
                     return " ";
                 }
+
                 return string.Empty;
             }
+
             return text;
         }
     }

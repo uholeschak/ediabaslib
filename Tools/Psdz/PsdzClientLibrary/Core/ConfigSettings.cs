@@ -73,9 +73,9 @@ namespace PsdzClient.Core
                 {
                     Thread.CurrentThread.CurrentUICulture = new CultureInfo(currentUiCulture);
                     Thread.CurrentThread.CurrentCulture = new CultureInfo(currentUiCulture);
-                    if (ConfigSettings.LanguageChangedEventhandler != null)
+                    if (LanguageChangedEventhandler != null)
                     {
-                        ConfigSettings.LanguageChangedEventhandler(Thread.CurrentThread.CurrentUICulture, new EventArgs());
+                        LanguageChangedEventhandler(Thread.CurrentThread.CurrentUICulture, new EventArgs());
                     }
                 }
                 catch (Exception exception)
@@ -1450,7 +1450,7 @@ namespace PsdzClient.Core
 
         public static bool putConfigString(string key, string value, bool overrideIsMaster = false)
         {
-            if (isMaster || overrideIsMaster)
+            if (isMaster | overrideIsMaster)
             {
                 return putConfigString("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, value);
             }

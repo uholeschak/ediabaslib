@@ -13,19 +13,12 @@ namespace PsdzClient.Core.Container
     public class Unit : INotifyPropertyChanged
     {
         private string nameField;
-
         private string titleField;
-
         private string titleIdField;
-
         private string commentField;
-
         private string commentIdField;
-
         private FactorPrefix factorPrefixField;
-
         private string measureField;
-
         [XmlAttribute]
         [DataMember]
         public string Name
@@ -34,6 +27,7 @@ namespace PsdzClient.Core.Container
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -60,6 +54,7 @@ namespace PsdzClient.Core.Container
             {
                 return titleField;
             }
+
             set
             {
                 if (titleField != null)
@@ -86,6 +81,7 @@ namespace PsdzClient.Core.Container
             {
                 return titleIdField;
             }
+
             set
             {
                 if (titleIdField != null)
@@ -112,6 +108,7 @@ namespace PsdzClient.Core.Container
             {
                 return commentField;
             }
+
             set
             {
                 if (commentField != null)
@@ -138,6 +135,7 @@ namespace PsdzClient.Core.Container
             {
                 return commentIdField;
             }
+
             set
             {
                 if (commentIdField != null)
@@ -165,6 +163,7 @@ namespace PsdzClient.Core.Container
             {
                 return factorPrefixField;
             }
+
             set
             {
                 if (!factorPrefixField.Equals(value))
@@ -183,6 +182,7 @@ namespace PsdzClient.Core.Container
             {
                 return measureField;
             }
+
             set
             {
                 if (measureField != null)
@@ -202,7 +202,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public Unit()
         {
             factorPrefixField = FactorPrefix.None;
@@ -210,7 +209,7 @@ namespace PsdzClient.Core.Container
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

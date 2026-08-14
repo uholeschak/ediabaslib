@@ -207,7 +207,7 @@ namespace PsdzClient.Programming
                 IEnumerable<IPsdzTalLine> source = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(ecuId));
                 bool flag2 = source.Any((IPsdzTalLine a) => a.BlFlash != null);
                 bool flag3 = source.Any((IPsdzTalLine a) => a.SwDeploy != null);
-                flag = flag2 && flag3;
+                flag = flag2 & flag3;
             }
 
             bool flag4 = false;
@@ -216,10 +216,10 @@ namespace PsdzClient.Programming
                 IEnumerable<IPsdzTalLine> source2 = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(ecuId));
                 bool flag5 = source2.Any((IPsdzTalLine a) => a.BlFlash != null);
                 bool flag6 = source2.Any((IPsdzTalLine a) => a.EcuMirrorDeploy != null);
-                flag4 = flag5 && flag6;
+                flag4 = flag5 & flag6;
             }
 
-            return flag || flag4;
+            return flag | flag4;
         }
 
         private void UpdateProgrammingProgress(IPsdzTransactionProgressEvent psdzEvent)

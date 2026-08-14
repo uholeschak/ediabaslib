@@ -191,7 +191,7 @@ namespace PsdzClient.Core
             if (!IsDisposing)
             {
                 IsDisposing = true;
-                this.Disposed?.Invoke(this, new EventArgs());
+                Disposed?.Invoke(this, new EventArgs());
             }
         }
 
@@ -221,12 +221,12 @@ namespace PsdzClient.Core
         internal virtual void OnClosing()
         {
             Log.Info("InteractionModel.OnClosing()", "Model was closed by button.");
-            this.ModelClosedByUser?.Invoke(this, new EventArgs());
+            ModelClosedByUser?.Invoke(this, new EventArgs());
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
