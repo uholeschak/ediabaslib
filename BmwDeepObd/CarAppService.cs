@@ -927,6 +927,7 @@ namespace BmwDeepObd
                 }
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
             private bool ShowMainActivity(string commOption = null, string storeOption = null)
             {
                 try
@@ -955,7 +956,20 @@ namespace BmwDeepObd
 
                     Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(
                         CarContext, 0, intent, intentFlags);
-                    pendingIntent?.Send();
+                    if (pendingIntent != null)
+                    {
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake)
+                        {
+                            // Android 14+: Background-Activity-Start beim Senden explizit erlauben
+                            Android.App.ActivityOptions activityOptions = Android.App.ActivityOptions.MakeBasic();
+                            activityOptions?.SetPendingIntentBackgroundActivityStartMode(Android.App.BackgroundActivityStartMode.Allowed);
+                            pendingIntent.Send(CarContext, 0, null, null, null, null, activityOptions?.ToBundle());
+                        }
+                        else
+                        {
+                            pendingIntent.Send();
+                        }
+                    }
 
                     return true;
                 }
