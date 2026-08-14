@@ -927,6 +927,7 @@ namespace BmwDeepObd
                 }
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
             private bool ShowMainActivity(string commOption = null, string storeOption = null)
             {
                 try
