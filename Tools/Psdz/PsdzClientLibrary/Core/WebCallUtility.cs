@@ -1,7 +1,5 @@
-﻿using PsdzClient;
-using System;
+﻿using System;
 using System.Net.NetworkInformation;
-using System.Text.RegularExpressions;
 
 namespace PsdzClient.Core
 {
