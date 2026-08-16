@@ -5,6 +5,7 @@ using ICSharpCode.Decompiler.Metadata;
 using System.Collections.Generic;
 using System.IO;
 using System.Resources.Extensions;
+using System.Text;
 using ICSharpCode.Decompiler.TypeSystem;
 
 namespace SourceCodeSync;
@@ -104,10 +105,14 @@ public class DecompilerHelper
 
             if (textInsertions != null)
             {
+                StringBuilder sbInsertions = new StringBuilder();
                 foreach (string insertion in textInsertions)
                 {
-                    typeCode = insertion + System.Environment.NewLine + typeCode;
+                    sbInsertions.AppendLine(insertion);
                 }
+
+                sbInsertions.Append(typeCode);
+                typeCode = sbInsertions.ToString();
             }
 
             // Remove comments
