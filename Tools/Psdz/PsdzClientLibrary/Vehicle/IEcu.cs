@@ -196,8 +196,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string EcuUid { get; set; }
 
-        [PreserveSource(Hint = "ILcSwitchList", Placeholder = true)]
-        PlaceholderType LCSwitchList { get; set; }
+        ILcSwitchList LCSwitchList { get; set; }
 
         bool IsSmartActuator { get; }
 

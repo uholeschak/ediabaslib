@@ -227,9 +227,8 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public PlaceholderType XepEcuVariant { get; set; }
 
-        [PreserveSource(Hint = "ILcSwitchList", Placeholder = true)]
         [XmlIgnore]
-        public PlaceholderType LCSwitchList { get; set; }
+        public ILcSwitchList LCSwitchList { get; set; }
 
         [XmlIgnore]
         public string EcuRep
