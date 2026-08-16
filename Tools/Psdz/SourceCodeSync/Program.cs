@@ -137,7 +137,6 @@ namespace SourceCodeSync
         {
             { "using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;", "" },
             { "GetProperty(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")", "GetProperty<string>(\"GLOBALKEY_AE_01_AE_REPAIRFLASH\")" },
-            { "BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle", "PsdzClient.Core.Vehicle"},
         };
 
         private static readonly List<string> _moduleTextInsertions = new List<string>
@@ -147,6 +146,7 @@ namespace SourceCodeSync
             "using PsdzClient.Contracts;",
             "using PsdzClient.Programming;",
             "using BMW.Rheingold.Psdz;",
+            "using Vehicle = BMW.Authoring.Vehicle.Vehicle;"
         };
 
         private const string _commentedRemoveCodeMarker = "//[-]";
