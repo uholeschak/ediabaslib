@@ -10,6 +10,7 @@ using PsdzClient.Programming;
 using System;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 #pragma warning disable CS0169, CS0612
 namespace PsdzClient.Psdz

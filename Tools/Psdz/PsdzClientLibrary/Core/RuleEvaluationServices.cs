@@ -1,4 +1,6 @@
-﻿namespace PsdzClient.Core
+﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
+
+namespace PsdzClient.Core
 {
     public class RuleEvaluationServices : IRuleEvaluationServices
     {

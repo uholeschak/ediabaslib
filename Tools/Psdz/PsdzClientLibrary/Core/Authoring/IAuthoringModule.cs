@@ -10,7 +10,7 @@ using System;
 
 namespace BMW.Authoring.API
 {
-    using Vehicle = PsdzClient.Core.Vehicle;
+    using Vehicle = BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle;
 
     [AuthorAPI(SelectableTypeDeclaration = false)]
     public interface IAuthoringModule : IHideObjectMembers

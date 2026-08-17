@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Core;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Feedback;
 
 namespace BMW.Rheingold.CoreFramework

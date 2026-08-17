@@ -1,6 +1,7 @@
 ﻿using PsdzClient.Core;
 using PsdzClient.Programming;
 using System.Globalization;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClient.Programming
 {

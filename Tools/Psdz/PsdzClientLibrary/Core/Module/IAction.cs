@@ -12,7 +12,7 @@ using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 {
-    using Vehicle = PsdzClient.Core.Vehicle;
+    using Vehicle = BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle;
 
     public interface IAction<out T> : IJournalizeManager, IProtocolTransaction
     {

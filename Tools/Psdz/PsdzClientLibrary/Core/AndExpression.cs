@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 #pragma warning disable CA2022
 namespace PsdzClient.Core

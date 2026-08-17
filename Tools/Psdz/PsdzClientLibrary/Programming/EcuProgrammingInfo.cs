@@ -13,6 +13,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClient.Programming
 {

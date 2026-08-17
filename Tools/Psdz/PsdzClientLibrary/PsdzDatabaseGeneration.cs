@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClient
 {

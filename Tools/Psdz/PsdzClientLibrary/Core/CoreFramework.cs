@@ -1,9 +1,11 @@
 ﻿using System.Reflection;
 using System;
 using BMW.Rheingold.CoreFramework.InteropHelper;
+using PsdzClient;
+using PsdzClient.Core;
 
 #pragma warning disable CS0649
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     public sealed class CoreFramework
     {

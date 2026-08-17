@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Psdz.Model.Ecu;

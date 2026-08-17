@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient.Utility;
 
 namespace PsdzClient.Core

@@ -7,8 +7,6 @@ using System.ComponentModel;
 
 namespace BMW.Authoring.Vehicle.Interface
 {
-    using Vehicle = PsdzClient.Core.Vehicle;
-
     [AuthorAPI(SelectableTypeDeclaration = true)]
     [EditorBrowsable(EditorBrowsableState.Always)]
     public interface ICentralErrorMemory : IHideObjectMembers

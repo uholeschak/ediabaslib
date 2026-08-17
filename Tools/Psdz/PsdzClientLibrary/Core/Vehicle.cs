@@ -1,7 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
-using BMW.Rheingold.Psdz;
 using PsdzClient.Contracts;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
@@ -17,9 +15,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
+using PsdzClient;
+using PsdzClient.Core;
 
 #pragma warning disable CS0169, CS0649, CS0618, CS0612
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class Vehicle : IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle, IEcuTreeVehicle
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 #pragma warning disable CA2022
 namespace PsdzClient.Core

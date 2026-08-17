@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Globalization;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClient.Core
 {

@@ -15,6 +15,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
+using BMW.Rheingold.CoreFramework;
 
 #pragma warning disable SYSLIB0005
 namespace PsdzClient.Core

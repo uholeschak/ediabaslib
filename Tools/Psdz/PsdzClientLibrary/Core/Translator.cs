@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using System;
 using System.Globalization;
 using System.Linq;
+using BMW.Rheingold.CoreFramework;
 
 namespace PsdzClient.Core
 {
