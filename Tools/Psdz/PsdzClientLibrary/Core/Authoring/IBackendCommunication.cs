@@ -10,6 +10,9 @@ namespace BMW.Authoring.API
     public interface IBackendCommunication : IHideObjectMembers
     {
         [EditorBrowsable(EditorBrowsableState.Advanced)]
+        IApiResult SendCustomerSimDataToBackend(string eid, string imei, string euicc);
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
         IServiceRideDataHandler GetServiceRideDataHandler();
     }
 }
