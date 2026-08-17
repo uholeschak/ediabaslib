@@ -10,14 +10,12 @@ using System;
 
 namespace BMW.Authoring.API
 {
-    using Vehicle = BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle;
-
     [AuthorAPI(SelectableTypeDeclaration = false)]
     public interface IAuthoringModule : IHideObjectMembers
     {
         ILogic IstaOperationLogic { get; }
 
-        Vehicle Vehicle { get; }
+        BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle Vehicle { get; }
 
         IFFMDynamicResolver FFMDynamicResolver { get; }
 
@@ -39,6 +37,6 @@ namespace BMW.Authoring.API
 
         IRitaFunctionsProvider RitaFunctionsProvider { get; }
 
-        Vehicle VehicleDeepClone(Vehicle vehicle);
+        BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle VehicleDeepClone(BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle vehicle);
     }
 }

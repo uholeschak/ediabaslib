@@ -73,7 +73,7 @@ namespace BMW.Rheingold.Module.ISTA
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected IDiagnosticDeviceResult dscSynchronResult;
         private IVehicleAdapters vehicleAdapters;
-        private Vehicle vehicle;
+        private BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle vehicle;
         private Lazy<BMW.Authoring.Vehicle.IVehicle> authoringVehicle;
         private ISPEUserInterface _SPEUserInterface;
         private static int instances;
@@ -117,7 +117,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
-        public override Vehicle Vehicle => vehicle;
+        public override BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle Vehicle => vehicle;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
@@ -1169,7 +1169,7 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         __RheinGoldCoreModuleParameters__ = moduleParameter;
                         logic = moduleParameter.getParameter(ModuleParameter.ParameterName.Logic) as ILogic;
-                        vehicle = moduleParameter.getParameter(ModuleParameter.ParameterName.Vehicle) as Vehicle;
+                        vehicle = moduleParameter.getParameter(ModuleParameter.ParameterName.Vehicle) as BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle;
                         authoringVehicle = new Lazy<BMW.Authoring.Vehicle.IVehicle>(() => new BMW.Authoring.Vehicle.Vehicle(this));
                         //[-] _ISOCAccessor = new SOCAccessor(vehicle, LicenseHelper.DealerInstance);
                         _globalModuleInParameter.setParameter("__RheinGoldSOCAccessor__", _ISOCAccessor);
@@ -2263,7 +2263,7 @@ namespace BMW.Rheingold.Module.ISTA
             FastaProtocoler.AddServiceCode(aNA08_TestmodulesUsingNotAllowedIstaFunctions_nu_LF, "Module: " + callingModule + ", interface: " + interfaceName, LayoutGroup.D, allowMultipleEntries: true);
         }
 
-        public virtual Vehicle VehicleDeepClone(Vehicle vehicle)
+        public virtual BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle VehicleDeepClone(BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle vehicle)
         {
             return vehicle.DeepClone();
         }
