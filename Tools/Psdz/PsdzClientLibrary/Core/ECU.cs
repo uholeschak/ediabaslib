@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Core
