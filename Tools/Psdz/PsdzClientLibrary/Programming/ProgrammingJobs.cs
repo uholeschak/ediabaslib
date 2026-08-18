@@ -1632,6 +1632,13 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
+                List<PsdzDatabase.SwiInfoObj> completeInfoObjects = ClientContext.Database.GetAllServiceInfoObjs(PsdzContext.VecInfo, new List<string> { PsdzDatabase.AblFilter });
+                if (completeInfoObjects == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed: completeInfoObjects is null");
+                    return false;
+                }
+
                 TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, controlId, parametersDict);
                 if (!testModuleRunner.Run())
                 {

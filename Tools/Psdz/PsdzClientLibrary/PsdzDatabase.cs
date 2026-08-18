@@ -4406,7 +4406,7 @@ namespace PsdzClient
             return diagObjsRoot;
         }
 
-        List<SwiInfoObj> GetAllServiceInfoObjs(Vehicle vehicle = null, List<string> typeFilter = null)
+        public List<SwiInfoObj> GetAllServiceInfoObjs(Vehicle vehicle = null, List<string> typeFilter = null)
         {
             List<SwiDiagObj> diagObjsNodeClass =
                 GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, vehicle, typeFilter);
