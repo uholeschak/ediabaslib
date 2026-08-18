@@ -1642,7 +1642,12 @@ namespace PsdzClient.Programming
                 string controlId = null;
                 foreach (PsdzDatabase.SwiInfoObj infoObj in completeInfoObjects)
                 {
-                    string title = infoObj.GetTitleTranslated(ClientContext.Language);
+                    if (string.IsNullOrEmpty(infoObj.ControlId))
+                    {
+                        continue;
+                    }
+
+                    string title = infoObj.EcuTranslation.GetTitleTranslated(ClientContext.Language);
                     if (string.IsNullOrEmpty(title))
                     {
                         continue;

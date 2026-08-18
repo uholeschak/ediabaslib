@@ -1750,8 +1750,8 @@ namespace BMW.Rheingold.Module.ISTA
         {
             List<LocalizedText> list = new List<LocalizedText>();
             //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetLocalizedInfoObjectTitle(x) : fastaTitle, x)));
-            //[+] list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetTitleTranslated(x) : fastaTitle, x)));
-            list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetTitleTranslated(x) : fastaTitle, x)));
+            //[+] list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.EcuTranslation.GetTitleTranslated(x) : fastaTitle, x)));
+            list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.EcuTranslation.GetTitleTranslated(x) : fastaTitle, x)));
             return list;
         }
 

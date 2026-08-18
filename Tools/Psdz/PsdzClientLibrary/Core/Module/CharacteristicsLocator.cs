@@ -110,8 +110,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
 
                 //[-] return characteristicsContainer.Title;
-                //[+] return characteristicsContainer.GetTitleTranslated(clientContext.Language);
-                return characteristicsContainer.GetTitleTranslated(clientContext.Language);
+                //[+] return characteristicsContainer.EcuTranslation.GetTitleTranslated(clientContext.Language);
+                return characteristicsContainer.EcuTranslation.GetTitleTranslated(clientContext.Language);
             }
         }
 
@@ -295,8 +295,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return characteristicsContainer.ParentId.ToString();
                 case "TITLE":
                     //[-] return characteristicsContainer.Title;
-                    //[+] return characteristicsContainer.GetTitleTranslated(clientContext.Language);
-                    return characteristicsContainer.GetTitleTranslated(clientContext.Language);
+                    //[+] return characteristicsContainer.EcuTranslation.GetTitleTranslated(clientContext.Language);
+                    return characteristicsContainer.EcuTranslation.GetTitleTranslated(clientContext.Language);
                 case "NAME":
                     return characteristicsContainer.Name;
                 case "LEGACY_NAME":
