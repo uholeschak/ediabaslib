@@ -643,15 +643,15 @@ namespace PsdzClient
             return _programmingJobs.ExecuteContainerXml(_cts, configurationContainerXml, runOverrideDict);
         }
 
-        private async Task<bool> RunTestModuleTask(string controlId, Dictionary<string, object> parametersDict = null)
+        private async Task<bool> RunTestModuleTask(string titleFilter, Dictionary<string, object> parametersDict = null)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => RunTestModule(controlId, parametersDict)).ConfigureAwait(false);
+            return await Task.Run(() => RunTestModule(titleFilter, parametersDict)).ConfigureAwait(false);
         }
 
-        private bool RunTestModule(string controlId, Dictionary<string, object> parametersDict = null)
+        private bool RunTestModule(string titleFilter, Dictionary<string, object> parametersDict = null)
         {
-            return _programmingJobs.RunTestModule(_cts, controlId, parametersDict);
+            return _programmingJobs.RunTestModule(_cts, titleFilter, parametersDict);
         }
 
         private async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom)
@@ -1098,6 +1098,43 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
+        private static string ShowInputDialog(string title, string prompt, string defaultValue = "")
+        {
+            using (Form form = new Form())
+            using (Label label = new Label())
+            using (TextBox textBox = new TextBox())
+            using (Button buttonOk = new Button())
+            using (Button buttonCancel = new Button())
+            {
+                form.Text = title;
+                form.ClientSize = new System.Drawing.Size(360, 110);
+                form.FormBorderStyle = FormBorderStyle.FixedDialog;
+                form.StartPosition = FormStartPosition.CenterParent;
+                form.MinimizeBox = false;
+                form.MaximizeBox = false;
+
+                label.Text = prompt;
+                label.SetBounds(10, 10, 340, 15);
+
+                textBox.Text = defaultValue;
+                textBox.SetBounds(10, 30, 340, 23);
+
+                buttonOk.Text = "OK";
+                buttonOk.DialogResult = DialogResult.OK;
+                buttonOk.SetBounds(190, 70, 75, 25);
+
+                buttonCancel.Text = "Cancel";
+                buttonCancel.DialogResult = DialogResult.Cancel;
+                buttonCancel.SetBounds(275, 70, 75, 25);
+
+                form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
+                form.AcceptButton = buttonOk;
+                form.CancelButton = buttonCancel;
+
+                return form.ShowDialog() == DialogResult.OK ? textBox.Text : null;
+            }
+        }
+
         private void buttonTestModule_Click(object sender, EventArgs e)
         {
             if (TaskActive)
@@ -1105,10 +1142,16 @@ namespace PsdzClient
                 return;
             }
 
+            string titleFilter = ShowInputDialog("Test module", "Title filter:");
+            if (string.IsNullOrEmpty(titleFilter))
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             UpdateStatus(sb.ToString());
             _cts = new CancellationTokenSource();
-            RunTestModuleTask("20000370015209").ContinueWith(task =>
+            RunTestModuleTask(titleFilter).ContinueWith(task =>
             {
                 TaskActive = false;
                 _cts.Dispose();
