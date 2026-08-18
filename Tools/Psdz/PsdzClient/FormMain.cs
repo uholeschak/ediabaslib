@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,6 +66,7 @@ namespace PsdzClient
         private CancellationTokenSource _cts;
         private string _lastTestFileName;
         private string _lastDecryptFileName;
+        private string _lastTestModuleFilter;
         private bool _decryptEditMode;
 
         private readonly ProgrammingJobs.ExecutionMode _executionMode;
@@ -174,6 +173,7 @@ namespace PsdzClient
                 checkBoxGenServiceModules.Checked = Properties.Settings.Default.GenServiceModules;
                 _lastTestFileName = Properties.Settings.Default.TestFileName;
                 _lastDecryptFileName = Properties.Settings.Default.DecryptFileName;
+                _lastTestModuleFilter = Properties.Settings.Default.TestModuleFilter;
 
                 if (string.IsNullOrWhiteSpace(ipAddressControlVehicleIp.Text.Trim('.')))
                 {
@@ -213,6 +213,7 @@ namespace PsdzClient
                 Properties.Settings.Default.GenServiceModules = checkBoxGenServiceModules.Checked;
                 Properties.Settings.Default.TestFileName = _lastTestFileName ?? string.Empty;
                 Properties.Settings.Default.DecryptFileName = _lastDecryptFileName ?? string.Empty;
+                Properties.Settings.Default.TestModuleFilter = _lastTestModuleFilter ?? string.Empty;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
@@ -1142,12 +1143,13 @@ namespace PsdzClient
                 return;
             }
 
-            string titleFilter = ShowInputDialog("Test module", "Title filter:");
+            string titleFilter = ShowInputDialog("Test module", "Title filter:", _lastTestModuleFilter);
             if (string.IsNullOrEmpty(titleFilter))
             {
                 return;
             }
 
+            _lastTestModuleFilter = titleFilter;
             StringBuilder sb = new StringBuilder();
             UpdateStatus(sb.ToString());
             _cts = new CancellationTokenSource();
