@@ -2443,18 +2443,11 @@ namespace PsdzClient
             {
                 RestartRequired = true;
 
-                List<SwiDiagObj> diagObjsNodeClass =
-                    GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { AblFilter });
-                if (diagObjsNodeClass == null)
+                List<SwiInfoObj> completeInfoObjects = GetAllServiceInfoObjs(null, new List<string> { AblFilter });
+                if (completeInfoObjects == null)
                 {
-                    log.ErrorFormat("ConvertAllServiceModules GetInfoObjectsTreeForNodeclassName failed");
+                    log.ErrorFormat("ConvertAllServiceModules GetAllServiceInfoObjs failed");
                     return null;
-                }
-
-                List<SwiInfoObj> completeInfoObjects = new List<SwiInfoObj>();
-                foreach (SwiDiagObj swiDiagObj in diagObjsNodeClass)
-                {
-                    completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
                 }
 
                 SerializableDictionary<string, ServiceModuleData> moduleDataDict = lastServiceModules?.ModuleDataDict;

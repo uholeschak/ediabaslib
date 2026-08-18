@@ -4406,6 +4406,25 @@ namespace PsdzClient
             return diagObjsRoot;
         }
 
+        List<SwiInfoObj> GetAllServiceInfoObjs(Vehicle vehicle = null, List<string> typeFilter = null)
+        {
+            List<SwiDiagObj> diagObjsNodeClass =
+                GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, vehicle, typeFilter);
+            if (diagObjsNodeClass == null)
+            {
+                log.ErrorFormat("GetAllServiceDiagObjs GetInfoObjectsTreeForNodeclassName failed");
+                return null;
+            }
+
+            List<SwiInfoObj> completeInfoObjects = new List<SwiInfoObj>();
+            foreach (SwiDiagObj swiDiagObj in diagObjsNodeClass)
+            {
+                completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
+            }
+
+            return completeInfoObjects;
+        }
+
         public List<SwiDiagObj> GetDiagObjectsByNodeclassName(string nodeclassName)
         {
             if (string.IsNullOrEmpty(nodeclassName))
