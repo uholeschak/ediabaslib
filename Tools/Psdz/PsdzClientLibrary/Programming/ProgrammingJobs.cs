@@ -1615,14 +1615,14 @@ namespace PsdzClient.Programming
             return result;
         }
 
-        public bool RunTestModule(CancellationTokenSource cts, string controlId, Dictionary<string, object> parametersDict = null)
+        public bool RunTestModule(CancellationTokenSource cts, string titleFilter, Dictionary<string, object> parametersDict = null)
         {
             SetThreadContextId();
             try
             {
-                if (string.IsNullOrEmpty(controlId))
+                if (string.IsNullOrEmpty(titleFilter))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed: controlId is null or empty");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed: titleFilter is null or empty");
                     return false;
                 }
 
@@ -1636,6 +1636,28 @@ namespace PsdzClient.Programming
                 if (completeInfoObjects == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed: completeInfoObjects is null");
+                    return false;
+                }
+
+                string controlId = null;
+                foreach (PsdzDatabase.SwiInfoObj infoObj in completeInfoObjects)
+                {
+                    string title = infoObj.GetTitleTranslated(ClientContext.Language);
+                    if (string.IsNullOrEmpty(title))
+                    {
+                        continue;
+                    }
+
+                    if (title.IndexOf(titleFilter, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        controlId = infoObj.ControlId;
+                        break;
+                    }
+                }
+
+                if (controlId == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed: No controlId found for titleFilter: {0}", titleFilter);
                     return false;
                 }
 
