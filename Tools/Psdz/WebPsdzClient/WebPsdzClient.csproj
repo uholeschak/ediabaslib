@@ -111,7 +111,7 @@
     <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.2.3" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="7.0.0">
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="7.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
