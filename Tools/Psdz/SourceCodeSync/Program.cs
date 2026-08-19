@@ -437,6 +437,11 @@ namespace SourceCodeSync
                             nameValid = true;
                         }
 
+                        if (fileBaseName.StartsWith("ABL_DIT_", StringComparison.OrdinalIgnoreCase))
+                        {
+                            nameValid = true;
+                        }
+
                         if (nameValid)
                         {
                             testmoduleFiles.Add(fileName);
