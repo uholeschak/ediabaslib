@@ -590,6 +590,7 @@ namespace SourceCodeSync
 
         public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList, Dictionary<string, string> textReplacements = null, List<string> textInsertions = null, bool noSubdirectories = false)
         {
+            bool progressDisplayed = false;
             bool result = true;
             int total = decompileAssemblies.Count;
             int current = 0;
@@ -659,6 +660,7 @@ namespace SourceCodeSync
                         if (!Console.IsOutputRedirected && _verbosity >= Options.VerbosityOption.Important && total > 0)
                         {
                             Console.Write("\r{0,3}% ({1}/{2})", current * 100 / total, current, total);
+                            progressDisplayed = true;
                         }
 
                         if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, textInsertions, noSubdirectories))
@@ -689,7 +691,7 @@ namespace SourceCodeSync
                 }
             }
 
-            if (!Console.IsOutputRedirected && _verbosity >= Options.VerbosityOption.Important)
+            if (progressDisplayed)
             {
                 Console.WriteLine();
             }
