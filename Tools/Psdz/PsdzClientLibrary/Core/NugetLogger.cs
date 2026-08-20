@@ -64,5 +64,11 @@ namespace PsdzClient.Core
         {
             Log.Error("General", msg, parmArray);
         }
+
+        [PreserveSource(Hint = "For test modules", Added = true)]
+        public void WriteFatalError(string msg, params object[] parmArray)
+        {
+            Log.Fatal("General", msg, parmArray);
+        }
     }
 }

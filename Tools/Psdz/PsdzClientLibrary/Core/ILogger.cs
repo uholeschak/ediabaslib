@@ -21,5 +21,8 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "For test modules", Added = true)]
         public void WriteError(string msg, params object[] parmArray);
+
+        [PreserveSource(Hint = "For test modules", Added = true)]
+        public void WriteFatalError(string msg, params object[] parmArray);
     }
 }
