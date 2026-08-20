@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle

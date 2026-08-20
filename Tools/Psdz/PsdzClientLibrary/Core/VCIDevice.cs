@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 
 #pragma warning disable CS0414
 namespace PsdzClient.Core
@@ -272,7 +273,7 @@ namespace PsdzClient.Core
 
                 if ("2".Equals(NetworkType))
                 {
-                    LocalAdapterNetworkType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.directLAN;
+                    LocalAdapterNetworkType = BMW.ISPI.TRIC.ISTA.Contracts.Enums.NetworkType.directLAN;
                     return "directLAN";
                 }
 
@@ -299,7 +300,7 @@ namespace PsdzClient.Core
             {
                 if (NetworkType == "0" || NetworkType == "2")
                 {
-                    if (LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.LAN && LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.directLAN)
+                    if (LocalAdapterNetworkType != BMW.ISPI.TRIC.ISTA.Contracts.Enums.NetworkType.LAN && LocalAdapterNetworkType != BMW.ISPI.TRIC.ISTA.Contracts.Enums.NetworkType.directLAN)
                     {
                         return false;
                     }

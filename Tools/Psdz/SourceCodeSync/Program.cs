@@ -121,7 +121,6 @@ namespace SourceCodeSync
             { "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService", "IProgrammingService" },
             { "BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore", "DiagnosticsBusinessDataCore" },
             { "BMW.Rheingold.CoreFramework.Extensions", "Extensions" },
-            { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.NetworkType", "BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType"},
             { "BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic", "MultisourceLogic"},
             { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"},
             { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", "BusType"},
