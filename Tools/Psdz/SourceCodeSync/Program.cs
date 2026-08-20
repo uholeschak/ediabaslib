@@ -421,22 +421,7 @@ namespace SourceCodeSync
                     {
                         bool nameValid = false;
                         string fileBaseName = Path.GetFileName(fileName);
-                        if (fileBaseName.StartsWith("ABL_AUS_", StringComparison.OrdinalIgnoreCase))
-                        {
-                            nameValid = true;
-                        }
-
-                        if (fileBaseName.StartsWith("ABL_GEN_", StringComparison.OrdinalIgnoreCase))
-                        {
-                            nameValid = true;
-                        }
-
-                        if (fileBaseName.StartsWith("ABL_LIF_", StringComparison.OrdinalIgnoreCase))
-                        {
-                            nameValid = true;
-                        }
-
-                        if (fileBaseName.StartsWith("ABL_DIT_", StringComparison.OrdinalIgnoreCase))
+                        if (fileBaseName.StartsWith("ABL_", StringComparison.OrdinalIgnoreCase))
                         {
                             nameValid = true;
                         }
@@ -611,11 +596,6 @@ namespace SourceCodeSync
             foreach (string assemblyPath in decompileAssemblies)
             {
                 current++;
-                if (!Console.IsOutputRedirected && _verbosity >= Options.VerbosityOption.Info && total > 0)
-                {
-                    Console.Write("\r{0,3}% ({1}/{2})", current * 100 / total, current, total);
-                }
-
                 if (File.Exists(assemblyPath))
                 {
                     string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
@@ -676,6 +656,11 @@ namespace SourceCodeSync
 
                     try
                     {
+                        if (!Console.IsOutputRedirected && _verbosity >= Options.VerbosityOption.Important && total > 0)
+                        {
+                            Console.Write("\r{0,3}% ({1}/{2})", current * 100 / total, current, total);
+                        }
+
                         if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, textInsertions, noSubdirectories))
                         {
                             result = false;
@@ -704,7 +689,7 @@ namespace SourceCodeSync
                 }
             }
 
-            if (!Console.IsOutputRedirected && _verbosity >= Options.VerbosityOption.Info)
+            if (!Console.IsOutputRedirected && _verbosity >= Options.VerbosityOption.Important)
             {
                 Console.WriteLine();
             }
