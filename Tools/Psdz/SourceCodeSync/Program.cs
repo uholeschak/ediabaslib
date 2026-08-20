@@ -607,8 +607,16 @@ namespace SourceCodeSync
         public static bool DecompileAssemblies(List<string> decompileAssemblies, string sourceDir, bool overwrite, List<string> searchList, Dictionary<string, string> textReplacements = null, List<string> textInsertions = null, bool noSubdirectories = false)
         {
             bool result = true;
+            int total = decompileAssemblies.Count;
+            int current = 0;
             foreach (string assemblyPath in decompileAssemblies)
             {
+                current++;
+                if (!Console.IsOutputRedirected && _verbosity >= Options.VerbosityOption.Info && total > 0)
+                {
+                    Console.Write("\r{0,3}% ({1}/{2})", current * 100 / total, current, total);
+                }
+
                 if (File.Exists(assemblyPath))
                 {
                     string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
@@ -695,6 +703,11 @@ namespace SourceCodeSync
                         Console.WriteLine("*** Assembly not found for decompilation: {0}", assemblyPath);
                     }
                 }
+            }
+
+            if (!Console.IsOutputRedirected && _verbosity >= Options.VerbosityOption.Info)
+            {
+                Console.WriteLine();
             }
 
             return result;
