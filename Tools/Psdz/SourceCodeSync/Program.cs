@@ -2113,15 +2113,17 @@ namespace SourceCodeSync
                 if (_verbosity >= Options.VerbosityOption.Error)
                 {
                     string memberName = GetMemberName(sourceMember);
-                    WriteLine($"*** Parsing errors in merged code for member {memberName}:");
+                    StringBuilder sbMessage = new StringBuilder();
+                    sbMessage.AppendLine($"*** Parsing errors in merged code for member {memberName}:");
                     foreach (var error in errors)
                     {
-                        WriteLine($"    {error.GetMessage()}");
+                        sbMessage.AppendLine($"    {error.GetMessage()}");
                     }
 
-                    WriteLine("-------------------------------");
-                    Console.Write(mergedCode);
-                    WriteLine("-------------------------------");
+                    sbMessage.AppendLine("-------------------------------");
+                    sbMessage.Append(mergedCode);
+                    sbMessage.Append("-------------------------------");
+                    WriteLine(sbMessage.ToString());
                 }
 
                 // Return original source member if parsing failed
