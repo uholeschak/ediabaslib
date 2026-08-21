@@ -240,15 +240,16 @@ namespace SourceCodeSync
             if (format == null)
             {
                 Console.WriteLine();
+                return;
             }
-            else if (args is { Length: > 0 })
+
+            if (args is { Length: > 0 })
             {
                 Console.WriteLine(format, args);
+                return;
             }
-            else
-            {
-                Console.WriteLine(format);
-            }
+
+            Console.WriteLine(format);
         }
 
         // Ausgabemethode mit Verbosity-Prüfung
