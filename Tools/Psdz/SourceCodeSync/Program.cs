@@ -594,6 +594,22 @@ namespace SourceCodeSync
             bool result = true;
             int total = decompileAssemblies.Count;
             int current = 0;
+
+            void WriteLine(Options.VerbosityOption verbosity, string format, params object[] args)
+            {
+                if (_verbosity < verbosity)
+                {
+                    return;
+                }
+
+                if (progressDisplayed)
+                {
+                    Console.WriteLine();
+                    progressDisplayed = false;
+                }
+                Console.WriteLine(format, args);
+            }
+
             foreach (string assemblyPath in decompileAssemblies)
             {
                 current++;
@@ -602,10 +618,7 @@ namespace SourceCodeSync
                     string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
                     if (string.IsNullOrEmpty(assemblyName))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            Console.WriteLine("*** Invalid assembly name: {0}", assemblyPath);
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "*** Invalid assembly name: {0}", assemblyPath);
                         result = false;
                         continue;
                     }
@@ -622,10 +635,7 @@ namespace SourceCodeSync
                             }
                             else
                             {
-                                if (_verbosity >= Options.VerbosityOption.Info)
-                                {
-                                    Console.WriteLine("Source directory already exists, skipping decompilation: {0}", outputPath);
-                                }
+                                WriteLine(Options.VerbosityOption.Info, "Source directory already exists, skipping decompilation: {0}", outputPath);
                                 continue;
                             }
                         }
@@ -641,19 +651,13 @@ namespace SourceCodeSync
                             }
                             else
                             {
-                                if (_verbosity >= Options.VerbosityOption.Info)
-                                {
-                                    Console.WriteLine("Source file already exists, skipping decompilation: {0}", outputFile);
-                                }
+                                WriteLine(Options.VerbosityOption.Info, "Source file already exists, skipping decompilation: {0}", outputFile);
                                 continue;
                             }
                         }
                     }
 
-                    if (_verbosity >= Options.VerbosityOption.Info)
-                    {
-                        Console.WriteLine("Decompiling assembly: {0}", assemblyPath);
-                    }
+                    WriteLine(Options.VerbosityOption.Info, "Decompiling assembly: {0}", assemblyPath);
 
                     try
                     {
@@ -666,28 +670,19 @@ namespace SourceCodeSync
                         if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, textInsertions, noSubdirectories))
                         {
                             result = false;
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("*** Decompilation failed for assembly: {0}", assemblyPath);
-                            }
+                            WriteLine(Options.VerbosityOption.Error, "*** Decompilation failed for assembly: {0}", assemblyPath);
                         }
                     }
                     catch (Exception ex)
                     {
                         result = false;
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            Console.WriteLine("*** Decompilation failed for assembly: {0}, Exception: {1}", assemblyPath, ex.Message);
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "*** Decompilation failed for assembly: {0}, Exception: {1}", assemblyPath, ex.Message);
                     }
                 }
                 else
                 {
                     result = false;
-                    if (_verbosity >= Options.VerbosityOption.Error)
-                    {
-                        Console.WriteLine("*** Assembly not found for decompilation: {0}", assemblyPath);
-                    }
+                    WriteLine(Options.VerbosityOption.Error, "*** Assembly not found for decompilation: {0}", assemblyPath);
                 }
             }
 
