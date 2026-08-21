@@ -233,7 +233,7 @@ namespace SourceCodeSync
             }
         }
 
-        // Zentrale Ausgabemethode, schließt eine offene Fortschrittszeile ab
+        // Zentrale Ausgabemethode, schlieï¿½t eine offene Fortschrittszeile ab
         public static void WriteLine(string format = null, params object[] args)
         {
             FinishProgress();
@@ -252,7 +252,7 @@ namespace SourceCodeSync
             Console.WriteLine(format);
         }
 
-        // Ausgabemethode mit Verbosity-Prüfung
+        // Ausgabemethode mit Verbosity-Prï¿½fung
         public static void WriteLine(Options.VerbosityOption verbosity, string format, params object[] args)
         {
             if (_verbosity < verbosity)
@@ -325,10 +325,7 @@ namespace SourceCodeSync
 
                 if (string.IsNullOrEmpty(sourceDir))
                 {
-                    if (_verbosity >= Options.VerbosityOption.Error)
-                    {
-                        WriteLine("Source directory missing");
-                    }
+                    WriteLine(Options.VerbosityOption.Error, "Source directory missing");
                     return 1;
                 }
 
@@ -337,18 +334,12 @@ namespace SourceCodeSync
                     if (!Path.IsPathRooted(testmoduleDir))
                     {
                         testmoduleDir = Path.GetFullPath(Path.Combine(assemblyDir, testmoduleDir));
-                        if (_verbosity >= Options.VerbosityOption.Info)
-                        {
-                            WriteLine("Test module directory is relative, combined with assembly directory: {0}", testmoduleDir);
-                        }
+                        WriteLine(Options.VerbosityOption.Info, "Test module directory is relative, combined with assembly directory: {0}", testmoduleDir);
                     }
 
                     if (!Directory.Exists(testmoduleDir))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            WriteLine("Test module directory not existing: {0}", testmoduleDir);
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "Test module directory not existing: {0}", testmoduleDir);
                         return 1;
                     }
                 }
@@ -357,10 +348,7 @@ namespace SourceCodeSync
                 {
                     // sourceDir is relative, combine it with assemblyDir
                     sourceDir = Path.GetFullPath(Path.Combine(assemblyDir, sourceDir));
-                    if (_verbosity >= Options.VerbosityOption.Info)
-                    {
-                        WriteLine("Source directory is relative, combined with assembly directory: {0}", sourceDir);
-                    }
+                    WriteLine(Options.VerbosityOption.Info, "Source directory is relative, combined with assembly directory: {0}", sourceDir);
 
                     if (!Directory.Exists(sourceDir))
                     {
@@ -370,10 +358,7 @@ namespace SourceCodeSync
                         }
                         catch (Exception e)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                WriteLine("Create source directory failed: {0}, Exception: {1}", sourceDir, e.Message);
-                            }
+                            WriteLine(Options.VerbosityOption.Error, "Create source directory failed: {0}, Exception: {1}", sourceDir, e.Message);
                             return 1;
                         }
                     }
@@ -382,29 +367,20 @@ namespace SourceCodeSync
                 {
                     if (!Directory.Exists(sourceDir))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            WriteLine("Source directory not existing: {0}", sourceDir);
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "Source directory not existing: {0}", sourceDir);
                         return 1;
                     }
                 }
 
                 if (string.IsNullOrEmpty(assemblyDir) || !Directory.Exists(assemblyDir))
                 {
-                    if (_verbosity >= Options.VerbosityOption.Error)
-                    {
-                        WriteLine("Assembly directory not existing: {0}", assemblyDir);
-                    }
+                    WriteLine(Options.VerbosityOption.Error, "Assembly directory not existing: {0}", assemblyDir);
                     return 1;
                 }
 
                 if (string.IsNullOrEmpty(destDir) || !Directory.Exists(destDir))
                 {
-                    if (_verbosity >= Options.VerbosityOption.Error)
-                    {
-                        WriteLine("Destination directory not existing: {0}", destDir);
-                    }
+                    WriteLine(Options.VerbosityOption.Error, "Destination directory not existing: {0}", destDir);
                     return 1;
                 }
 
@@ -440,10 +416,7 @@ namespace SourceCodeSync
                 string sourceSubDir1 = Path.Combine(sourceDir, "Source1");
                 if (!DecompileAssemblies(decompileAssemblies1, sourceSubDir1, overwrite, searchList, standardReplacements))
                 {
-                    if (_verbosity >= Options.VerbosityOption.Error)
-                    {
-                        WriteLine("*** Decompile assemblies failed");
-                    }
+                    WriteLine(Options.VerbosityOption.Error, "*** Decompile assemblies failed");
                     return 1;
                 }
 
@@ -458,10 +431,7 @@ namespace SourceCodeSync
                 string sourceSubDir2 = Path.Combine(sourceDir, "Source2");
                 if (!DecompileAssemblies(decompileAssemblies2, sourceSubDir2, overwrite, searchList, standardReplacements))
                 {
-                    if (_verbosity >= Options.VerbosityOption.Error)
-                    {
-                        WriteLine("*** Decompile assemblies part 2 failed");
-                    }
+                    WriteLine(Options.VerbosityOption.Error, "*** Decompile assemblies part 2 failed");
                     return 1;
                 }
 
@@ -494,10 +464,7 @@ namespace SourceCodeSync
 
                     if (!DecompileAssemblies(testmoduleFiles, testmoduleSourceDir, overwrite, searchList, moduleReplacements, _moduleTextInsertions, true))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            WriteLine("*** Decompile test modules failed");
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "*** Decompile test modules failed");
                         return 1;
                     }
                 }
@@ -535,18 +502,12 @@ namespace SourceCodeSync
 
                         if (sourceXmlFiles.Length > 1)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                WriteLine("*** Multiple source XML files found for: {0}", xmlFileName);
-                            }
+                            WriteLine(Options.VerbosityOption.Error, "*** Multiple source XML files found for: {0}", xmlFileName);
                             continue;
                         }
 
                         File.Copy(sourceXmlFiles[0], destXmlFile, true);
-                        if (_verbosity >= Options.VerbosityOption.Info)
-                        {
-                            WriteLine("Updated XML file: {0}", destXmlFile);
-                        }
+                        WriteLine(Options.VerbosityOption.Info, "Updated XML file: {0}", destXmlFile);
                     }
 
                     string[] sourceFiles = Directory.GetFiles(sourceSubDir, "*.cs", SearchOption.AllDirectories);
@@ -554,10 +515,7 @@ namespace SourceCodeSync
                     {
                         if (!GetFileSource(file))
                         {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                WriteLine("*** Get file source failed: {0}", file);
-                            }
+                            WriteLine(Options.VerbosityOption.Error, "*** Get file source failed: {0}", file);
                         }
                     }
 
@@ -621,20 +579,14 @@ namespace SourceCodeSync
 
                         if (!UpdateFile(file))
                         {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                WriteLine("*** Update file failed: {0}", file);
-                            }
+                            WriteLine(Options.VerbosityOption.Error, "*** Update file failed: {0}", file);
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                if (_verbosity >= Options.VerbosityOption.Error)
-                {
-                    WriteLine("*** Exception: {0}", e.Message);
-                }
+                WriteLine(Options.VerbosityOption.Error, "*** Exception: {0}", e.Message);
                 return 1;
             }
 
@@ -812,17 +764,11 @@ namespace SourceCodeSync
                                 {
                                     if (isFullName)
                                     {
-                                        if (_verbosity >= Options.VerbosityOption.Error)
-                                        {
-                                            WriteLine("*** Warning: Duplicate class name with different source: {0}", name);
-                                        }
+                                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate class name with different source: {0}", name);
                                     }
                                     else
                                     {
-                                        if (_verbosity >= Options.VerbosityOption.Warning)
-                                        {
-                                            WriteLine("Warning: Duplicate bare class name with different source: {0}", name);
-                                        }
+                                        WriteLine(Options.VerbosityOption.Warning, "Warning: Duplicate bare class name with different source: {0}", name);
                                     }
 
                                     dict[name] = null;
@@ -834,10 +780,7 @@ namespace SourceCodeSync
                             classCopy = RemoveGetMethods(classCopy);
                             if (!dict.TryAdd(name, classCopy))
                             {
-                                if (_verbosity >= Options.VerbosityOption.Error)
-                                {
-                                    WriteLine("*** Warning: Add class failed: {0}", name);
-                                }
+                                WriteLine(Options.VerbosityOption.Error, "*** Warning: Add class failed: {0}", name);
                             }
                         }
                     }
@@ -921,17 +864,11 @@ namespace SourceCodeSync
                                 {
                                     if (isFullName)
                                     {
-                                        if (_verbosity >= Options.VerbosityOption.Error)
-                                        {
-                                            WriteLine("*** Warning: Duplicate interface name with different source: {0}", name);
-                                        }
+                                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate interface name with different source: {0}", name);
                                     }
                                     else
                                     {
-                                        if (_verbosity >= Options.VerbosityOption.Warning)
-                                        {
-                                            WriteLine("Warning: Duplicate bare interface name with different source: {0}", name);
-                                        }
+                                        WriteLine(Options.VerbosityOption.Warning, "Warning: Duplicate bare interface name with different source: {0}", name);
                                     }
 
                                     dict[name] = null;
@@ -942,10 +879,7 @@ namespace SourceCodeSync
                         {
                             if (!dict.TryAdd(name, interfaceCopy))
                             {
-                                if (_verbosity >= Options.VerbosityOption.Error)
-                                {
-                                    WriteLine("*** Warning: Add interface failed: {0}", name);
-                                }
+                                WriteLine(Options.VerbosityOption.Error, "*** Warning: Add interface failed: {0}", name);
                             }
                         }
                     }
@@ -1028,17 +962,11 @@ namespace SourceCodeSync
                                 {
                                     if (isFullName)
                                     {
-                                        if (_verbosity >= Options.VerbosityOption.Error)
-                                        {
-                                            WriteLine("*** Warning: Duplicate enum name with different source: {0}", name);
-                                        }
+                                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate enum name with different source: {0}", name);
                                     }
                                     else
                                     {
-                                        if (_verbosity >= Options.VerbosityOption.Warning)
-                                        {
-                                            WriteLine("Warning: Duplicate bare enum name with different source: {0}", name);
-                                        }
+                                        WriteLine(Options.VerbosityOption.Warning, "Warning: Duplicate bare enum name with different source: {0}", name);
                                     }
                                     dict[name] = null;
                                 }
@@ -1048,10 +976,7 @@ namespace SourceCodeSync
                         {
                             if (!dict.TryAdd(name, enumCopy))
                             {
-                                if (_verbosity >= Options.VerbosityOption.Error)
-                                {
-                                    WriteLine("*** Warning: Add enum failed: {0}", name);
-                                }
+                                WriteLine(Options.VerbosityOption.Error, "*** Warning: Add enum failed: {0}", name);
                             }
                         }
                     }
@@ -1059,10 +984,7 @@ namespace SourceCodeSync
             }
             catch (Exception e)
             {
-                if (_verbosity >= Options.VerbosityOption.Error)
-                {
-                    WriteLine("*** Error parsing file: {0}, Exception {1}", fileName, e.Message);
-                }
+                WriteLine(Options.VerbosityOption.Error, "*** Error parsing file: {0}, Exception {1}", fileName, e.Message);
                 return false;
             }
             return true;
@@ -1098,10 +1020,7 @@ namespace SourceCodeSync
 
                     if (HasSpecialTrivia(cls, out string reason, out Options.VerbosityOption verbosity))
                     {
-                        if (_verbosity >= verbosity)
-                        {
-                            WriteLine("Skipping class {0}:{1} reason: {2}", namespaceName, classNameFull, reason);
-                        }
+                        WriteLine(verbosity, "Skipping class {0}:{1} reason: {2}", namespaceName, classNameFull, reason);
                         continue;
                     }
 
@@ -1123,10 +1042,7 @@ namespace SourceCodeSync
                             bool sourceHasContract = HasContractAttribute(sourceClassCopy.AttributeLists);
                             if (hasContract && !sourceHasContract)
                             {
-                                if (_verbosity >= Options.VerbosityOption.Important)
-                                {
-                                    WriteLine("Skipping class {0}:{1} with removed Contract from file: {2}", namespaceName, classNameFull, Path.GetFileName(fileName));
-                                }
+                                WriteLine(Options.VerbosityOption.Important, "Skipping class {0}:{1} with removed Contract from file: {2}", namespaceName, classNameFull, Path.GetFileName(fileName));
                                 continue;
                             }
                         }
@@ -1134,10 +1050,7 @@ namespace SourceCodeSync
                         bool specialAttribute = HasSpecialSourceAttribute(cls.AttributeLists);
                         if (specialAttribute)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
-                            {
-                                WriteLine("Class {0}:{1} special attribute detected", namespaceName, classNameFull);
-                            }
+                            WriteLine(Options.VerbosityOption.Info, "Class {0}:{1} special attribute detected", namespaceName, classNameFull);
 
                             // Update modifiers and attributes from destination class
                             sourceClassCopy = sourceClassCopy.WithAttributeLists(cls.AttributeLists);
@@ -1153,10 +1066,7 @@ namespace SourceCodeSync
                             {
                                 sourceClassCopy = sourceClassCopy.WithBaseList(cls.BaseList);
 
-                                if (_verbosity >= Options.VerbosityOption.Info)
-                                {
-                                    WriteLine("Class {0}:{1} inheritance updated", namespaceName, classNameFull);
-                                }
+                                WriteLine(Options.VerbosityOption.Info, "Class {0}:{1} inheritance updated", namespaceName, classNameFull);
                             }
                         }
 
@@ -1197,20 +1107,14 @@ namespace SourceCodeSync
                         string mergedClassStr = mergedClass.NormalizeWhitespace().ToFullString();
                         if (classSource != mergedClassStr)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
-                            {
-                                WriteLine($"Updating class: {namespaceName}:{classNameFull}");
-                            }
+                            WriteLine(Options.VerbosityOption.Info, $"Updating class: {namespaceName}:{classNameFull}");
                             newRoot = newRoot.ReplaceNode(cls, mergedClass);
                             fileModified = true;
                         }
                     }
                     else
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            WriteLine("*** Warning: Class not found in source files: {0}:{1}", namespaceName, classNameFull);
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Class not found in source files: {0}:{1}", namespaceName, classNameFull);
                     }
                 }
 
@@ -1239,10 +1143,7 @@ namespace SourceCodeSync
 
                     if (HasSpecialTrivia(interfaceDecl, out string reason, out Options.VerbosityOption verbosity))
                     {
-                        if (_verbosity >= verbosity)
-                        {
-                            WriteLine("Skipping interface {0}:{1}, reason: {2}", namespaceName, interfaceNameFull, reason);
-                        }
+                        WriteLine(verbosity, "Skipping interface {0}:{1}, reason: {2}", namespaceName, interfaceNameFull, reason);
                         continue;
                     }
 
@@ -1260,10 +1161,7 @@ namespace SourceCodeSync
                         bool specialAttribute = HasSpecialSourceAttribute(interfaceDecl.AttributeLists);
                         if (specialAttribute)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
-                            {
-                                WriteLine("Interface {0}:{1} special attribute detected", namespaceName, interfaceNameFull);
-                            }
+                            WriteLine(Options.VerbosityOption.Info, "Interface {0}:{1} special attribute detected", namespaceName, interfaceNameFull);
 
                             // Update modifiers and attributes from destination interface
                             sourceInterfaceCopy = sourceInterfaceCopy.WithAttributeLists(interfaceDecl.AttributeLists);
@@ -1279,10 +1177,7 @@ namespace SourceCodeSync
                             {
                                 sourceInterfaceCopy = sourceInterfaceCopy.WithBaseList(interfaceDecl.BaseList);
 
-                                if (_verbosity >= Options.VerbosityOption.Info)
-                                {
-                                    WriteLine("Interface {0}:{1} inheritance updated", namespaceName, interfaceNameFull);
-                                }
+                                WriteLine(Options.VerbosityOption.Info, "Interface {0}:{1} inheritance updated", namespaceName, interfaceNameFull);
                             }
                         }
 
@@ -1308,20 +1203,14 @@ namespace SourceCodeSync
                         string mergedInterfaceStr = mergedInterface.NormalizeWhitespace().ToFullString();
                         if (interfaceSource != mergedInterfaceStr)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
-                            {
-                                WriteLine($"Updating interface: {namespaceName}:{interfaceNameFull}");
-                            }
+                            WriteLine(Options.VerbosityOption.Info, $"Updating interface: {namespaceName}:{interfaceNameFull}");
                             newRoot = newRoot.ReplaceNode(interfaceDecl, mergedInterface);
                             fileModified = true;
                         }
                     }
                     else
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            WriteLine("*** Warning: Interface not found in source files: {0}:{1}", namespaceName, interfaceNameFull);
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Interface not found in source files: {0}:{1}", namespaceName, interfaceNameFull);
                     }
                 }
 
@@ -1343,10 +1232,7 @@ namespace SourceCodeSync
 
                     if (HasSpecialTrivia(enumDecl, out string reason, out Options.VerbosityOption verbosity))
                     {
-                        if (_verbosity >= verbosity)
-                        {
-                            WriteLine("Skipping enum {0}:{1} reason: {2}", namespaceName, enumName, reason);
-                        }
+                        WriteLine(verbosity, "Skipping enum {0}:{1} reason: {2}", namespaceName, enumName, reason);
                         continue;
                     }
 
@@ -1364,10 +1250,7 @@ namespace SourceCodeSync
                         bool specialAttribute = HasSpecialSourceAttribute(enumDecl.AttributeLists);
                         if (specialAttribute)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
-                            {
-                                WriteLine("Enum {0}:{1} special attribute detected", namespaceName, enumName);
-                            }
+                            WriteLine(Options.VerbosityOption.Info, "Enum {0}:{1} special attribute detected", namespaceName, enumName);
                             // Update modifiers and attributes from destination enum
                             sourceEnumCopy = sourceEnumCopy
                                 .WithModifiers(enumDecl.Modifiers)
@@ -1378,20 +1261,14 @@ namespace SourceCodeSync
                         string sourceEnumStr = sourceEnumCopy.NormalizeWhitespace().ToFullString();
                         if (enumSource != sourceEnumStr)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
-                            {
-                                WriteLine($"Updating enum: {namespaceName}:{enumName}");
-                            }
+                            WriteLine(Options.VerbosityOption.Info, $"Updating enum: {namespaceName}:{enumName}");
                             newRoot = newRoot.ReplaceNode(enumDecl, sourceEnumCopy);
                             fileModified = true;
                         }
                     }
                     else
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            WriteLine("*** Warning: Enum not found in source files: {0}:{1}", namespaceName, enumName);
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Enum not found in source files: {0}:{1}", namespaceName, enumName);
                     }
                 }
 
@@ -1401,10 +1278,7 @@ namespace SourceCodeSync
                     string modifiedContent = newRoot.NormalizeWhitespace().ToFullString();
 
                     File.WriteAllText(fileName, modifiedContent, new UTF8Encoding(true));
-                    if (_verbosity >= Options.VerbosityOption.Info)
-                    {
-                        WriteLine($"File updated: {fileName}");
-                    }
+                    WriteLine(Options.VerbosityOption.Info, $"File updated: {fileName}");
                 }
             }
             catch (Exception e)
@@ -1985,10 +1859,7 @@ namespace SourceCodeSync
                     if (GetAttributeBoolPropertyFromAttributeLists(matchingPreservedMember.AttributeLists, _signatureModifiedProperty))
                     {
                         memberToAdd = MergeMemberSignatureWithBody(sourceMember, matchingPreservedMember);
-                        if (_verbosity >= Options.VerbosityOption.Info)
-                        {
-                            WriteLine($"Member {sourceMemberName} signature preserved, body updated");
-                        }
+                        WriteLine(Options.VerbosityOption.Info, $"Member {sourceMemberName} signature preserved, body updated");
 
                         if (destMember != null)
                         {
@@ -2504,10 +2375,7 @@ namespace SourceCodeSync
 
                     if (!lineRemoved)
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            WriteLine($"No matching line found in '{locationInfo}' to remove: {trimmedLine}");
-                        }
+                        WriteLine(Options.VerbosityOption.Error, $"No matching line found in '{locationInfo}' to remove: {trimmedLine}");
                     }
 
                     continue;
@@ -2607,10 +2475,7 @@ namespace SourceCodeSync
                     }
                     else
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            WriteLine($"No valid insertion point found in '{locationInfo}': {trimmedLine}");
-                        }
+                        WriteLine(Options.VerbosityOption.Error, $"No valid insertion point found in '{locationInfo}': {trimmedLine}");
                     }
                 }
             }
