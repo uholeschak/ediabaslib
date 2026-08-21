@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using PsdzClient.Core;
+using PsdzClient.Core.Container;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IDiagnosticDeviceResult

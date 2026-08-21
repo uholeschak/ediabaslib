@@ -1,4 +1,5 @@
 ﻿using System;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace PsdzClient.Core.Container
 {
