@@ -701,7 +701,7 @@ namespace SourceCodeSync
                         sbMessage.AppendLine("Source:");
                         sbMessage.AppendLine(classSource);
                         sbMessage.Append(new string('-', 80));
-                        WriteLine(sbMessage.ToString());
+                        WriteLine(Options.VerbosityOption.Debug, sbMessage.ToString());
                     }
 
                     if (_compiledIgnoreNamespaces.Any(regex => regex.IsMatch(namespaceName)))
@@ -805,7 +805,7 @@ namespace SourceCodeSync
                         sbMessage.AppendLine("Source:");
                         sbMessage.AppendLine(interfaceSource);
                         sbMessage.Append(new string('-', 80));
-                        WriteLine(sbMessage.ToString());
+                        WriteLine(Options.VerbosityOption.Debug, sbMessage.ToString());
                     }
 
                     if (_compiledIgnoreNamespaces.Any(regex => regex.IsMatch(namespaceName)))
@@ -900,11 +900,13 @@ namespace SourceCodeSync
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        WriteLine($"Enum: {enumNameFull}");
-                        WriteLine($"Namespace: {namespaceName}");
-                        WriteLine("Source:");
-                        WriteLine(enumSource);
-                        WriteLine(new string('-', 80));
+                        StringBuilder sbMessage = new StringBuilder();
+                        sbMessage.AppendLine($"Enum: {enumNameFull}");
+                        sbMessage.AppendLine($"Namespace: {namespaceName}");
+                        sbMessage.AppendLine("Source:");
+                        sbMessage.AppendLine(enumSource);
+                        sbMessage.Append(new string('-', 80));
+                        WriteLine(Options.VerbosityOption.Debug, sbMessage.ToString());
                     }
 
                     if (_compiledIgnoreNamespaces.Any(regex => regex.IsMatch(namespaceName)))
@@ -1017,13 +1019,12 @@ namespace SourceCodeSync
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        WriteLine($"Class: {classNameFull}");
                         StringBuilder sbMessage = new StringBuilder();
                         sbMessage.AppendLine($"Class: {classNameFull}");
                         sbMessage.AppendLine("Source:");
                         sbMessage.AppendLine(classSource);
                         sbMessage.Append(new string('-', 80));
-                        WriteLine(sbMessage.ToString());
+                        WriteLine(Options.VerbosityOption.Debug, sbMessage.ToString());
                     }
 
                     if (HasSpecialTrivia(cls, out string reason, out Options.VerbosityOption verbosity))
@@ -1101,8 +1102,8 @@ namespace SourceCodeSync
 
                             if (sbMembers.Length > 0)
                             {
-                                WriteLine($"Merging class {namespaceName}:{classNameFull} while preserving member(s):");
-                                WriteLine(sbMembers.ToString());
+                                WriteLine(Options.VerbosityOption.Info, $"Merging class {namespaceName}:{classNameFull} while preserving member(s):");
+                                WriteLine(Options.VerbosityOption.Info, sbMembers.ToString());
                             }
                         }
                         else
@@ -1148,7 +1149,7 @@ namespace SourceCodeSync
                         sbMessage.AppendLine("Source:");
                         sbMessage.AppendLine(interfaceSource);
                         sbMessage.Append(new string('-', 80));
-                        WriteLine(sbMessage.ToString());
+                        WriteLine(Options.VerbosityOption.Debug, sbMessage.ToString());
                     }
 
                     if (HasSpecialTrivia(interfaceDecl, out string reason, out Options.VerbosityOption verbosity))
@@ -1198,11 +1199,8 @@ namespace SourceCodeSync
                         if (hasPreservedMembers)
                         {
                             mergedInterface = MergeInterfacePreservingMarked(interfaceDecl, sourceInterfaceCopy);
-                            if (_verbosity >= Options.VerbosityOption.Info)
-                            {
-                                int preservedCount = interfaceDecl.Members.Count(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _));
-                                WriteLine($"Merging interface {namespaceName}:{interfaceNameFull} while preserving {preservedCount} marked member(s)");
-                            }
+                            int preservedCount = interfaceDecl.Members.Count(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _));
+                            WriteLine(Options.VerbosityOption.Info, $"Merging interface {namespaceName}:{interfaceNameFull} while preserving {preservedCount} marked member(s)");
                         }
                         else
                         {
@@ -1239,7 +1237,7 @@ namespace SourceCodeSync
                         sbMessage.AppendLine("Source:");
                         sbMessage.AppendLine(enumSource);
                         sbMessage.Append(new string('-', 80));
-                        WriteLine(sbMessage.ToString());
+                        WriteLine(Options.VerbosityOption.Debug, sbMessage.ToString());
                     }
 
                     if (HasSpecialTrivia(enumDecl, out string reason, out Options.VerbosityOption verbosity))
@@ -1295,7 +1293,7 @@ namespace SourceCodeSync
             }
             catch (Exception e)
             {
-                WriteLine("*** Error parsing file: {0}, Exception {1}", fileName, e.Message);
+                WriteLine(Options.VerbosityOption.Error, "*** Error parsing file: {0}, Exception {1}", fileName, e.Message);
                 return false;
             }
             return true;
@@ -1859,11 +1857,8 @@ namespace SourceCodeSync
 
                         if (currentHash != null && string.Compare(currentHash, originalHash, StringComparison.Ordinal) != 0)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                string className = GetClassName(sourceClass);
-                                WriteLine($"Class {className}, Member {sourceMemberName}, hash mismatch: '{currentHash}'");
-                            }
+                            string className = GetClassName(sourceClass);
+                            WriteLine(Options.VerbosityOption.Error, $"Class {className}, Member {sourceMemberName}, hash mismatch: '{currentHash}'");
                         }
                     }
 
@@ -2128,7 +2123,7 @@ namespace SourceCodeSync
                     sbMessage.AppendLine("-------------------------------");
                     sbMessage.Append(mergedCode);
                     sbMessage.Append("-------------------------------");
-                    WriteLine(sbMessage.ToString());
+                    WriteLine(Options.VerbosityOption.Error, sbMessage.ToString());
                 }
 
                 // Return original source member if parsing failed
