@@ -694,11 +694,14 @@ namespace SourceCodeSync
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        WriteLine($"Class: {classNameFull}");
-                        WriteLine($"Namespace: {namespaceName}");
-                        WriteLine("Source:");
-                        WriteLine(classSource);
-                        WriteLine(new string('-', 80));
+                        StringBuilder sbMessage = new StringBuilder();
+                        sbMessage.AppendLine();
+                        sbMessage.AppendLine($"Class: {classNameFull}");
+                        sbMessage.AppendLine($"Namespace: {namespaceName}");
+                        sbMessage.AppendLine("Source:");
+                        sbMessage.AppendLine(classSource);
+                        sbMessage.Append(new string('-', 80));
+                        WriteLine(sbMessage.ToString());
                     }
 
                     if (_compiledIgnoreNamespaces.Any(regex => regex.IsMatch(namespaceName)))
@@ -796,11 +799,13 @@ namespace SourceCodeSync
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        WriteLine($"Interface: {interfaceNameFull}");
-                        WriteLine($"Namespace: {namespaceName}");
-                        WriteLine("Source:");
-                        WriteLine(interfaceSource);
-                        WriteLine(new string('-', 80));
+                        StringBuilder sbMessage = new StringBuilder();
+                        sbMessage.AppendLine($"Interface: {interfaceNameFull}");
+                        sbMessage.AppendLine($"Namespace: {namespaceName}");
+                        sbMessage.AppendLine("Source:");
+                        sbMessage.AppendLine(interfaceSource);
+                        sbMessage.Append(new string('-', 80));
+                        WriteLine(sbMessage.ToString());
                     }
 
                     if (_compiledIgnoreNamespaces.Any(regex => regex.IsMatch(namespaceName)))
@@ -1135,10 +1140,12 @@ namespace SourceCodeSync
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        WriteLine($"Interface: {interfaceNameFull}");
-                        WriteLine("Source:");
-                        WriteLine(interfaceSource);
-                        WriteLine(new string('-', 80));
+                        StringBuilder sbMessage = new StringBuilder();
+                        sbMessage.AppendLine($"Interface: {interfaceNameFull}");
+                        sbMessage.AppendLine("Source:");
+                        sbMessage.AppendLine(interfaceSource);
+                        sbMessage.Append(new string('-', 80));
+                        WriteLine(sbMessage.ToString());
                     }
 
                     if (HasSpecialTrivia(interfaceDecl, out string reason, out Options.VerbosityOption verbosity))
