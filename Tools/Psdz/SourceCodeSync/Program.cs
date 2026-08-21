@@ -1231,10 +1231,12 @@ namespace SourceCodeSync
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        WriteLine($"Enum: {enumName}");
-                        WriteLine("Source:");
-                        WriteLine(enumSource);
-                        WriteLine(new string('-', 80));
+                        StringBuilder sbMessage = new StringBuilder();
+                        sbMessage.AppendLine($"Enum: {enumName}");
+                        sbMessage.AppendLine("Source:");
+                        sbMessage.AppendLine(enumSource);
+                        sbMessage.Append(new string('-', 80));
+                        WriteLine(sbMessage.ToString());
                     }
 
                     if (HasSpecialTrivia(enumDecl, out string reason, out Options.VerbosityOption verbosity))
