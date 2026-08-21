@@ -1018,9 +1018,12 @@ namespace SourceCodeSync
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
                         WriteLine($"Class: {classNameFull}");
-                        WriteLine("Source:");
-                        WriteLine(classSource);
-                        WriteLine(new string('-', 80));
+                        StringBuilder sbMessage = new StringBuilder();
+                        sbMessage.AppendLine($"Class: {classNameFull}");
+                        sbMessage.AppendLine("Source:");
+                        sbMessage.AppendLine(classSource);
+                        sbMessage.Append(new string('-', 80));
+                        WriteLine(sbMessage.ToString());
                     }
 
                     if (HasSpecialTrivia(cls, out string reason, out Options.VerbosityOption verbosity))
