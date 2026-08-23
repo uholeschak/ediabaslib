@@ -1,6 +1,4 @@
-﻿using BMW.Authoring;
-using BMW.Authoring.API;
-using PsdzClient.Core;
+﻿using PsdzClient.Core;
 using System;
 using System.ComponentModel;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models.BatteryDemandService;
