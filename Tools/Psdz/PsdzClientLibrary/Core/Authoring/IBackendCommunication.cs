@@ -1,7 +1,8 @@
-﻿using PsdzClient;
+﻿using BMW.Authoring.API.ServiceDemand;
+using BMW.Authoring.API.ServiceRide;
+using PsdzClient;
 using PsdzClient.Core;
 using System.ComponentModel;
-using BMW.Authoring.API.ServiceRide;
 
 namespace BMW.Authoring.API
 {
@@ -11,6 +12,9 @@ namespace BMW.Authoring.API
     {
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IApiResult SendCustomerSimDataToBackend(string eid, string imei, string euicc);
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        IServiceDemandDataHandler GetServiceDemandDataHandler();
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IServiceRideDataHandler GetServiceRideDataHandler();
