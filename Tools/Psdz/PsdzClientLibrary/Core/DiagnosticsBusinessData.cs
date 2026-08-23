@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.VehicleCommunication;
 
 #pragma warning disable CS0414
 namespace PsdzClient.Core

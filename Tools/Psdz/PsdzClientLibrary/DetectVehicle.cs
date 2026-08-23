@@ -18,6 +18,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.VehicleCommunication;
 
 namespace PsdzClient
 {

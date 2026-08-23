@@ -17,10 +17,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using PsdzClient;
+using PsdzClient.Core;
+using PsdzClient.Core.Container;
 using PsdzClient.Psdz;
 
 #pragma warning disable CS0169, CS0649
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.VehicleCommunication
 {
     public class ECUKom : ECUKomBase
     {

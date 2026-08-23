@@ -5,8 +5,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.VehicleCommunication
 {
     [Serializable]
     [KnownType(typeof(ECUResult))]

@@ -3,8 +3,9 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml.Serialization;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.VehicleCommunication
 {
     [Serializable]
     [GeneratedCode("System.Xml", "2.0.50727.3082")]

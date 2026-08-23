@@ -6,9 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using BMW.Rheingold.VehicleCommunication;
+using PsdzClient.Core;
+using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.VehicleCommunication
 {
     public class ECUJob : ECUJobAbstract, IEcuJob, INotifyPropertyChanged
     {

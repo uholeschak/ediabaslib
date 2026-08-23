@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.VehicleCommunication;
 using PsdzClient.Utility;
 
 namespace PsdzClient.Core.Container

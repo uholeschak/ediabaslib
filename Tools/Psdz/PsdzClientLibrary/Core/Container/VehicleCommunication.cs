@@ -1,7 +1,8 @@
 ﻿using System;
 using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.VehicleCommunication
 {
     public sealed class VehicleCommunication
     {
