@@ -1,15 +1,27 @@
-﻿using PsdzClient.Core;
+﻿using PsdzClient;
+using PsdzClient.Core;
+using System.Collections.Generic;
 using System.ComponentModel;
-using PsdzClient;
 
 namespace BMW.Authoring.Database
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     [EditorBrowsable(EditorBrowsableState.Always)]
-    [PreserveSource(Hint = "Dummy class", SuppressWarning = true)]
     public interface IDbAccess : IHideObjectMembers
     {
         [EditorBrowsable(EditorBrowsableState.Always)]
+        IDbCCMessage GetCCMessageByID(int ID);
+
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        List<IDbCCMessage> GetCCMessagesListByID(int ID, params int[] ID_);
+
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        List<IDbCCMessage> GetCCMessagesListByID(params int[] ID);
+
+        [EditorBrowsable(EditorBrowsableState.Always)]
         IDbDtc GetDtcByCodeAndVariant(long Code, string Variante);
+
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        IDbComponent GetComponentByGrobzeichen(string Grobzeichen);
     }
 }
