@@ -9,5 +9,7 @@ namespace BMW.Authoring.Database
     [PreserveSource(Hint = "Dummy class", SuppressWarning = true)]
     public interface IDbAccess : IHideObjectMembers
     {
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        IDbDtc GetDtcByCodeAndVariant(long Code, string Variante);
     }
 }
