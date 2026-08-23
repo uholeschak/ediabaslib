@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Common
 {
     public static class GearboxHelper
     {

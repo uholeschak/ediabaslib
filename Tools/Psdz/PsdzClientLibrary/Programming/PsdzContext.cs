@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BmwFileReader;
 

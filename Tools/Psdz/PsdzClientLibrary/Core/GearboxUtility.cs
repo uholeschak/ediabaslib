@@ -4,9 +4,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility
 {
     public static class GearboxUtility
     {
