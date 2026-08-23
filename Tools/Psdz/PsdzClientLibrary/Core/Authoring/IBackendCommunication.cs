@@ -1,5 +1,6 @@
 ﻿using BMW.Authoring.API.ServiceDemand;
 using BMW.Authoring.API.ServiceRide;
+using BMW.Authoring.API.VPS;
 using PsdzClient;
 using PsdzClient.Core;
 using System.ComponentModel;
@@ -18,5 +19,8 @@ namespace BMW.Authoring.API
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IServiceRideDataHandler GetServiceRideDataHandler();
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)] 
+        IVPSDataHandler GetVPSDataHandler();
     }
 }
