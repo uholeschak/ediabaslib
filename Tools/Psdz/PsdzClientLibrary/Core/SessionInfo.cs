@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 
 namespace PsdzClient.Core
 {
