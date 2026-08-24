@@ -6,15 +6,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class typeFArtExt : IFArtExt, INotifyPropertyChanged
     {
         private long f_ART_NRField;
-
         private string f_ART_TEXTField;
-
         public long F_ART_NR
         {
             get
             {
                 return f_ART_NRField;
             }
+
             set
             {
                 if (!f_ART_NRField.Equals(value))
@@ -31,6 +30,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_ART_TEXTField;
             }
+
             set
             {
                 if (f_ART_TEXTField != null)
@@ -50,13 +50,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public override bool Equals(object obj)
         {
             if (obj is typeFArtExt typeFArtExt2 && F_ART_NR.Equals(typeFArtExt2.F_ART_NR))
             {
                 return true;
             }
+
             return false;
         }
 
@@ -67,7 +67,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

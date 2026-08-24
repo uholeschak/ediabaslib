@@ -6,29 +6,21 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class F_UW : IDtcUmwelt, INotifyPropertyChanged
     {
         private long? f_UW_NRField;
-
         private string f_UW_TEXTField;
-
         private object f_UW_WERTField;
-
         private string f_UW_EINHField;
-
         private byte[] f_UW_DATAField;
-
         private string f_UW_NAMEField;
-
         private object f_UW_RAWField;
-
         private UwType f_UW_TYPField;
-
         private bool ctordoneField;
-
         public long? F_UW_NR
         {
             get
             {
                 return f_UW_NRField;
             }
+
             set
             {
                 if (f_UW_NRField.HasValue)
@@ -53,6 +45,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_NAMEField;
             }
+
             set
             {
                 if (f_UW_NAMEField != null)
@@ -77,6 +70,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_TYPField;
             }
+
             set
             {
                 _ = f_UW_TYPField;
@@ -94,6 +88,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_RAWField;
             }
+
             set
             {
                 if (f_UW_RAWField != null)
@@ -118,6 +113,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_DATAField;
             }
+
             set
             {
                 if (f_UW_DATAField != null)
@@ -142,6 +138,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_TEXTField;
             }
+
             set
             {
                 if (f_UW_TEXTField != null)
@@ -166,6 +163,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_WERTField;
             }
+
             set
             {
                 if (f_UW_WERTField != null)
@@ -190,6 +188,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_EINHField;
             }
+
             set
             {
                 if (f_UW_EINHField != null)
@@ -215,6 +214,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ctordoneField;
             }
+
             set
             {
                 if (!ctordoneField.Equals(value))
@@ -226,7 +226,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public F_UW()
         {
             ctordoneField = true;
@@ -234,7 +233,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

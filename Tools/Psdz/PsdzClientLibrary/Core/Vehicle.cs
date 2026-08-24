@@ -1388,7 +1388,31 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        public ObservableCollection<DTC> CombinedFaults;
+        public ObservableCollection<DTC> CombinedFaults
+        {
+            get
+            {
+                return combinedFaultsField;
+            }
+
+            set
+            {
+                if (combinedFaultsField != null)
+                {
+                    if (!combinedFaultsField.Equals(value))
+                    {
+                        combinedFaultsField = value;
+                        OnPropertyChanged("CombinedFaults");
+                    }
+                }
+                else
+                {
+                    combinedFaultsField = value;
+                    OnPropertyChanged("CombinedFaults");
+                }
+            }
+        }
+
         public ObservableCollection<decimal> InstalledAdapters
         {
             get

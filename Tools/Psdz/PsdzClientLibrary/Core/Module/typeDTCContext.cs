@@ -12,17 +12,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class typeDTCContext : IDtcContext, INotifyPropertyChanged
     {
         private long? f_UW_KMField;
-
         private double? f_UW_KM_SUPREMEField;
-
         private double? f_UW_ZEIT_SUPREMEField;
-
         private long? f_UW_ZEITField;
-
         private int? f_UW_ANZField;
-
         private ObservableCollection<F_UW> f_UWField;
-
         [XmlIgnore]
         IEnumerable<IDtcUmwelt> IDtcContext.F_UW => F_UW;
 
@@ -35,10 +29,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return F_UW_KM_SUPREME.Value;
                 }
+
                 if (F_UW_KM.HasValue)
                 {
                     return F_UW_KM.Value;
                 }
+
                 return -1.0;
             }
         }
@@ -52,6 +48,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_KMField;
             }
+
             set
             {
                 if (f_UW_KMField.HasValue)
@@ -76,6 +73,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_KM_SUPREMEField;
             }
+
             set
             {
                 if (f_UW_KM_SUPREMEField.HasValue)
@@ -100,6 +98,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_ZEITField;
             }
+
             set
             {
                 if (f_UW_ZEITField.HasValue)
@@ -124,6 +123,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_ZEIT_SUPREMEField;
             }
+
             set
             {
                 if (f_UW_ZEIT_SUPREMEField.HasValue)
@@ -148,6 +148,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UW_ANZField;
             }
+
             set
             {
                 if (f_UW_ANZField.HasValue)
@@ -172,6 +173,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UWField;
             }
+
             set
             {
                 if (f_UWField != null)
@@ -191,7 +193,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public void SetCurrentMileage(Vehicle vec)
         {
             if (vec.Gwsz.HasValue)
@@ -228,6 +229,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     stringBuilder.Append("F_UW.Count: null, ");
                 }
+
                 if (F_UW_ANZ.HasValue)
                 {
                     stringBuilder.AppendFormat("F_UW_ANZ: {0}, ", F_UW_ANZ);
@@ -236,6 +238,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     stringBuilder.Append("F_UW_ANZ: null, ");
                 }
+
                 if (F_UW_KM.HasValue)
                 {
                     stringBuilder.AppendFormat("F_UW_KM: {0}, ", F_UW_KM);
@@ -244,6 +247,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     stringBuilder.Append("F_UW_KM: null, ");
                 }
+
                 if (F_UW_KM_SUPREME.HasValue)
                 {
                     stringBuilder.AppendFormat("F_UW_KM_SUPREME: {0}, ", F_UW_KM_SUPREME);
@@ -252,6 +256,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     stringBuilder.Append("F_UW_KM_SUPREME: null, ");
                 }
+
                 if (F_UW_ZEIT.HasValue)
                 {
                     stringBuilder.AppendFormat("F_UW_ZEIT: {0}", F_UW_ZEIT);
@@ -260,6 +265,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     stringBuilder.Append("F_UW_ZEIT: null ");
                 }
+
                 if (F_UW_ZEIT_SUPREME.HasValue)
                 {
                     stringBuilder.AppendFormat("F_UW_ZEIT_SUPREME: {0}", F_UW_ZEIT_SUPREME);
@@ -273,6 +279,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("typeDTCContext.ToString()", exception);
             }
+
             return stringBuilder.ToString();
         }
 
@@ -286,7 +293,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

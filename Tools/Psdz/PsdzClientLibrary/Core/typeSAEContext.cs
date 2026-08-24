@@ -5,17 +5,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class typeSAEContext : INotifyPropertyChanged
     {
         private string SAECodeField;
-
         private string SAETextField;
-
         private int? SAEStatusField = -1;
-
         public string SAECode
         {
             get
             {
                 return SAECodeField;
             }
+
             set
             {
                 if (SAECodeField != null)
@@ -40,6 +38,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return SAETextField;
             }
+
             set
             {
                 if (SAETextField != null)
@@ -64,6 +63,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return SAEStatusField;
             }
+
             set
             {
                 if (SAEStatusField.HasValue)
@@ -83,10 +83,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

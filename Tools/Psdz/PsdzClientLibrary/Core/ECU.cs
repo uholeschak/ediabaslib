@@ -61,18 +61,14 @@ namespace PsdzClient.Core
         private long iD_SG_ADRField;
         private long? iD_LIN_SLAVE_ADRField;
         private int f_ANZField;
-        [PreserveSource(Hint = "private ObservableCollection<DTC>", Placeholder = true)]
-        private PlaceholderType fEHLERField;
+        private ObservableCollection<DTC> fEHLERField;
         private int i_ANZField;
-        [PreserveSource(Hint = "private ObservableCollection<DTC>", Placeholder = true)]
-        private PlaceholderType iNFOField;
+        private ObservableCollection<DTC> iNFOField;
         private SVK sVKField;
         private string pHYSIKALISCHE_HW_NRField;
         private ObservableCollection<typeECU_Transaction> tALField;
-        [PreserveSource(Hint = "private DTC", Placeholder = true)]
-        private PlaceholderType selectedDTCField;
-        [PreserveSource(Hint = "private DTC", Placeholder = true)]
-        private PlaceholderType selectedINFOField;
+        private DTC selectedDTCField;
+        private DTC selectedINFOField;
         private string hARDWARE_REFERENZField;
         private int? hW_REF_STATUSField;
         private ObservableCollection<typeSWTStatus> sWTStatusField;
@@ -1228,7 +1224,33 @@ namespace PsdzClient.Core
             }
         }
 
-        public ObservableCollection<DTC> FEHLER;
+        public ObservableCollection<DTC> FEHLER
+        {
+            get
+            {
+                return fEHLERField;
+            }
+
+            set
+            {
+                if (fEHLERField != null)
+                {
+                    if (!fEHLERField.Equals(value))
+                    {
+                        fEHLERField = value;
+                        OnPropertyChanged("FEHLER");
+                        FEHLER.CollectionChanged += FEHLER_CollectionChanged;
+                    }
+                }
+                else
+                {
+                    fEHLERField = value;
+                    OnPropertyChanged("FEHLER");
+                    FEHLER.CollectionChanged += FEHLER_CollectionChanged;
+                }
+            }
+        }
+
         public int I_ANZ
         {
             get
@@ -1246,7 +1268,31 @@ namespace PsdzClient.Core
             }
         }
 
-        public ObservableCollection<DTC> INFO;
+        public ObservableCollection<DTC> INFO
+        {
+            get
+            {
+                return iNFOField;
+            }
+
+            set
+            {
+                if (iNFOField != null)
+                {
+                    if (!iNFOField.Equals(value))
+                    {
+                        iNFOField = value;
+                        OnPropertyChanged("INFO");
+                    }
+                }
+                else
+                {
+                    iNFOField = value;
+                    OnPropertyChanged("INFO");
+                }
+            }
+        }
+
         public SVK SVK
         {
             get

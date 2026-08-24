@@ -15,100 +15,54 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class DTC : ICloneable, IDtc, INotifyPropertyChanged, IDtcVehicle
     {
         private ObservableCollection<int> relevanceFaultCode;
-
         private readonly ObservableCollectionEx<F_UW_Display> f_UW_Display = new ObservableCollectionEx<F_UW_Display>();
-
         private ObservableCollection<typeSAEContext> SAEContextField;
-
         private int StateWarningLightField;
-
         private long? f_VERSIONField;
-
         private long? f_ARTField;
-
         private ObservableCollection<typeFArtExt> f_ART_EXTField;
-
         private long? f_ORTField;
-
         private string f_ORT_TEXTField;
-
         private int? f_EREIGNIS_DTCField;
-
         private int? f_FEHLERKLASSE_NRField;
-
         private string f_FEHLERKLASSE_TEXTField;
-
         private ObservableCollection<typeDTCContext> dTCContextField;
-
         private int? f_SYMPTOM_NRField;
-
         private string f_SYMPTOM_TEXTField;
-
         private int? f_READY_NRField;
-
         private string f_READY_TEXTField;
-
         private int? f_VORHANDEN_NRField;
-
         private string f_VORHANDEN_TEXTField;
-
         private int? f_WARNUNG_NRField;
-
         private string f_WARNUNG_TEXTField;
-
         private long? f_HFKField;
-
         private long? f_HLZField;
-
         private long? f_UEBERLAUFField;
-
         private byte[] f_HEX_CODEField;
-
         private bool? relevanceField;
-
         private ushort? f_PCODEField;
-
         private string f_PCODE_STRINGField;
-
         private string f_PCODE_TEXTField;
-
         private uint? f_SAE_CODEField;
-
         private string f_SAE_CODE_STRINGField;
-
         private string f_SAE_CODE_TEXTField;
-
         private long? f_LZField;
-
         private string f_CODEField;
-
         private decimal? idField;
-
         private bool fS_LESEN_SUCCESSFULLYField;
-
         private bool fS_LESEN_DETAIL_SUCCESSFULLYField;
-
         private bool isVirtualField;
-
         private bool isCombinedField;
-
         private string ecuDTCTypeField;
-
         private int faultClass;
-
         private int faultGroup;
-
         private ObservableCollection<DTC> combinedFaultsRelatedDtcs;
-
         [XmlIgnore]
         private static Random rnd = new Random();
-
         [XmlIgnore]
         private static bool showWarningLights = ConfigSettings.getConfigStringAsBoolean("TesterGUI.ShowTestWarningLights", defaultValue: false);
-
         [XmlIgnore]
         private decimal fcId;
-
         [XmlIgnore]
         public bool IsFSLesenExpert { get; set; }
 
@@ -122,6 +76,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return relevanceFaultCode;
             }
+
             set
             {
                 relevanceFaultCode = value;
@@ -138,6 +93,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     result = DTCContext[DTCContext.Count - 1];
                 }
+
                 return result;
             }
         }
@@ -155,6 +111,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     result = DTCContext[0];
                 }
+
                 return result;
             }
         }
@@ -169,6 +126,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     result = DTCContext[1];
                 }
+
                 return result;
             }
         }
@@ -185,6 +143,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return Current.F_UW_KM.Value;
                 }
+
                 return null;
             }
         }
@@ -198,6 +157,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return Current.F_UW_KM_SUPREME;
                 }
+
                 return null;
             }
         }
@@ -233,6 +193,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         }
                     }
                 }
+
                 return num;
             }
         }
@@ -247,6 +208,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     result = Current.F_UW_ZEIT.Value;
                 }
+
                 return result;
             }
         }
@@ -261,6 +223,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     value = Current.F_UW_ZEIT_SUPREME.Value;
                 }
+
                 return value;
             }
         }
@@ -286,7 +249,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         [XmlIgnore]
         IDtcContext IDtc.Second => Second;
-
         public string ecuAddress { get; set; }
 
         public string dtcId
@@ -295,6 +257,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return Id.ToString();
             }
+
             set
             {
                 if (value != null && decimal.TryParse(value, out var result))
@@ -310,6 +273,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return Relevance;
             }
+
             set
             {
                 Relevance = value;
@@ -322,6 +286,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return F_ORT;
             }
+
             set
             {
                 F_ORT = (long)value.Value;
@@ -337,6 +302,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return faultClass;
             }
+
             set
             {
                 if (faultClass != value)
@@ -354,6 +320,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return faultGroup;
             }
+
             set
             {
                 if (faultGroup != value)
@@ -370,6 +337,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return SAEContextField;
             }
+
             set
             {
                 if (SAEContextField != null)
@@ -394,6 +362,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_VERSIONField;
             }
+
             set
             {
                 if (f_VERSIONField.HasValue)
@@ -418,6 +387,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_ARTField;
             }
+
             set
             {
                 if (f_ARTField.HasValue)
@@ -442,6 +412,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_ART_EXTField;
             }
+
             set
             {
                 if (f_ART_EXTField != null)
@@ -466,6 +437,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_ORTField;
             }
+
             set
             {
                 if (f_ORTField.HasValue)
@@ -490,6 +462,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_ORT_TEXTField;
             }
+
             set
             {
                 if (f_ORT_TEXTField != null)
@@ -514,6 +487,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_EREIGNIS_DTCField;
             }
+
             set
             {
                 if (f_EREIGNIS_DTCField.HasValue)
@@ -538,6 +512,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_FEHLERKLASSE_NRField;
             }
+
             set
             {
                 if (f_FEHLERKLASSE_NRField != value)
@@ -555,6 +530,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_FEHLERKLASSE_TEXTField;
             }
+
             set
             {
                 if (f_FEHLERKLASSE_TEXTField != null)
@@ -579,6 +555,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return dTCContextField;
             }
+
             set
             {
                 if (dTCContextField != null)
@@ -605,6 +582,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_SYMPTOM_NRField;
             }
+
             set
             {
                 if (f_SYMPTOM_NRField.HasValue)
@@ -629,6 +607,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return StateWarningLightField;
             }
+
             set
             {
                 _ = StateWarningLightField;
@@ -646,6 +625,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_SYMPTOM_TEXTField;
             }
+
             set
             {
                 if (f_SYMPTOM_TEXTField != null)
@@ -670,6 +650,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_READY_NRField;
             }
+
             set
             {
                 if (f_READY_NRField.HasValue)
@@ -694,6 +675,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_READY_TEXTField;
             }
+
             set
             {
                 if (f_READY_TEXTField != null)
@@ -718,6 +700,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_VORHANDEN_NRField;
             }
+
             set
             {
                 if (f_VORHANDEN_NRField.HasValue)
@@ -742,6 +725,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_VORHANDEN_TEXTField;
             }
+
             set
             {
                 if (f_VORHANDEN_TEXTField != null)
@@ -766,6 +750,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_WARNUNG_NRField;
             }
+
             set
             {
                 if (f_WARNUNG_NRField.HasValue)
@@ -790,6 +775,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_WARNUNG_TEXTField;
             }
+
             set
             {
                 if (f_WARNUNG_TEXTField != null)
@@ -814,6 +800,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_HFKField;
             }
+
             set
             {
                 if (f_HFKField.HasValue)
@@ -838,6 +825,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_HLZField;
             }
+
             set
             {
                 if (f_HLZField.HasValue)
@@ -862,6 +850,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_UEBERLAUFField;
             }
+
             set
             {
                 if (f_UEBERLAUFField.HasValue)
@@ -886,6 +875,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_HEX_CODEField;
             }
+
             set
             {
                 if (f_HEX_CODEField != null)
@@ -910,6 +900,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return relevanceField;
             }
+
             set
             {
                 if (relevanceField.HasValue)
@@ -934,6 +925,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_PCODEField;
             }
+
             set
             {
                 if (f_PCODEField.HasValue)
@@ -958,6 +950,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_PCODE_STRINGField;
             }
+
             set
             {
                 if (f_PCODE_STRINGField != null)
@@ -982,6 +975,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_PCODE_TEXTField;
             }
+
             set
             {
                 if (f_PCODE_TEXTField != null)
@@ -1006,6 +1000,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_SAE_CODEField;
             }
+
             set
             {
                 if (f_SAE_CODEField.HasValue)
@@ -1030,6 +1025,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_SAE_CODE_STRINGField;
             }
+
             set
             {
                 if (f_SAE_CODE_STRINGField != null)
@@ -1054,6 +1050,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_SAE_CODE_TEXTField;
             }
+
             set
             {
                 if (f_SAE_CODE_TEXTField != null)
@@ -1078,6 +1075,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_LZField;
             }
+
             set
             {
                 if (f_LZField.HasValue)
@@ -1102,6 +1100,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return f_CODEField;
             }
+
             set
             {
                 if (f_CODEField != null)
@@ -1126,6 +1125,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return idField;
             }
+
             set
             {
                 if (idField.HasValue)
@@ -1151,6 +1151,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return fS_LESEN_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!fS_LESEN_SUCCESSFULLYField.Equals(value))
@@ -1168,6 +1169,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return fS_LESEN_DETAIL_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!fS_LESEN_DETAIL_SUCCESSFULLYField.Equals(value))
@@ -1185,6 +1187,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return isVirtualField;
             }
+
             set
             {
                 if (!isVirtualField.Equals(value))
@@ -1202,6 +1205,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return isCombinedField;
             }
+
             set
             {
                 if (!isCombinedField.Equals(value))
@@ -1219,6 +1223,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ecuDTCTypeField;
             }
+
             set
             {
                 if (ecuDTCTypeField != null)
@@ -1243,6 +1248,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return combinedFaultsRelatedDtcs;
             }
+
             set
             {
                 if (combinedFaultsRelatedDtcs != value)
@@ -1259,6 +1265,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return fcId;
             }
+
             set
             {
                 _ = fcId;
@@ -1270,7 +1277,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public object Clone()
         {
             return MemberwiseClone();
@@ -1290,14 +1296,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             //[-] dTC.SetVirtualDtcFaultClassAndGroup(vFaultCode.ECUNOANSWER);
             try
             {
-                //[-] string value = vFaultCode.CODE.TrimStart('S', ' ');
-                //[-] dTC.F_ORT = Convert.ToInt64(value, 16);
+            //[-] string value = vFaultCode.CODE.TrimStart('S', ' ');
+            //[-] dTC.F_ORT = Convert.ToInt64(value, 16);
             }
             catch (Exception exception)
             {
                 Log.WarningException("DTC.GetDTCByFaultCode(XEP_VIRTUALFAULTCODES)", exception);
                 return null;
             }
+
             dTC.FS_LESEN_SUCCESSFULLY = true;
             dTC.F_HEX_CODE = new byte[0];
             return dTC;
@@ -1309,10 +1316,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return Id.GetHashCode();
             }
+
             if (F_ORT.HasValue)
             {
                 return F_ORT.GetHashCode();
             }
+
             return base.GetHashCode();
         }
 
@@ -1327,17 +1336,21 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return true;
                     }
+
                     return false;
                 }
+
                 if (F_ORT.HasValue)
                 {
                     if (F_ORT == dTC.F_ORT)
                     {
                         return true;
                     }
+
                     return false;
                 }
             }
+
             return false;
         }
 
@@ -1359,6 +1372,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return;
             }
+
             decimal value = ecuNoAnswer.Value;
             if (!(value == 0m))
             {
@@ -1398,6 +1412,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return null;
             }
+
             int? result = null;
             string text = value.Value.ToString("X8");
             string text2 = text.Substring(2, 2);
@@ -1421,6 +1436,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         break;
                 }
             }
+
             if (!result.HasValue && text3 != "00")
             {
                 switch (text3)
@@ -1451,6 +1467,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         break;
                 }
             }
+
             if (!result.HasValue && text4 != "0")
             {
                 switch (text4)
@@ -1469,6 +1486,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         break;
                 }
             }
+
             return result;
         }
 
@@ -1535,6 +1553,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return;
             }
+
             foreach (typeDTCContext newItem in e.NewItems)
             {
                 typeDTCContext typeDTCContext2 = dTCContextField.LastOrDefault((typeDTCContext cf) => cf.UniqueId == newItem.UniqueId && cf != newItem);
@@ -1547,7 +1566,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
