@@ -26,8 +26,7 @@ namespace BMW.ISPI.TRIC.ISTA.Contracts.Models.SeamLM2
 
         public DateTimeOffset? updatedAt { get; set; }
 
-        [PreserveSource(Hint = "ServiceDemandDetails", Placeholder = true)]
-        public PlaceholderType details { get; set; }
+        public ServiceDemandDetails details { get; set; }
 
         public int? counter { get; set; }
 
