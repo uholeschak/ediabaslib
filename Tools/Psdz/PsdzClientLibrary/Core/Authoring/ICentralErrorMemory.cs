@@ -2,6 +2,7 @@
 using PsdzClient.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Authoring.Vehicle.Enums;
 
 namespace BMW.Authoring.Vehicle.Interface
 {
