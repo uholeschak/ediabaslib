@@ -58,6 +58,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         [PreserveSource(Hint = "f_UW_TEXT_EnvCondLabels.Uwident", Placeholder = true)]
         public string F_UW_IDENT => string.Empty;
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public F_UW_Display()
         {
         }
