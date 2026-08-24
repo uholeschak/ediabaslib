@@ -7,6 +7,7 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClientLibrary.Core.Module;
 using System;
+using BMW.Authoring.API.Interface.Sfa;
 
 namespace BMW.Authoring.API
 {
