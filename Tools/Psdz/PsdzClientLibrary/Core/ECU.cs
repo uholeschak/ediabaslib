@@ -133,13 +133,11 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public string EcuUid { get; set; }
 
-        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IEcu.FEHLER => FEHLER;
+        IEnumerable<IDtc> IEcu.FEHLER => FEHLER;
 
-        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IEcu.INFO => INFO;
+        IEnumerable<IDtc> IEcu.INFO => INFO;
 
         [PreserveSource(Hint = "IEnumerable<IJob>", Placeholder = true)]
         [XmlIgnore]
@@ -1230,8 +1228,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
-        public PlaceholderType FEHLER;
+        public ObservableCollection<DTC> FEHLER;
         public int I_ANZ
         {
             get
@@ -1249,8 +1246,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
-        public PlaceholderType INFO;
+        public ObservableCollection<DTC> INFO;
         public SVK SVK
         {
             get

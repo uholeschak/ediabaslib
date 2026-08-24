@@ -129,8 +129,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private string motorarbeitsverfahrenField;
         private string drehmomentField;
         private string hybridkennzeichenField;
-        [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
-        private PlaceholderType combinedFaultsField;
+        private ObservableCollection<DTC> combinedFaultsField;
         private ObservableCollection<decimal> installedAdaptersField;
         private string vIN17_OEMField;
         private string mOTKraftstoffartField;
@@ -1389,8 +1388,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
-        public PlaceholderType CombinedFaults;
+        public ObservableCollection<DTC> CombinedFaults;
         public ObservableCollection<decimal> InstalledAdapters
         {
             get
@@ -2547,9 +2545,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         [XmlIgnore]
         PlaceholderType IVehicle.CBS => CBS;
 
-        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.CombinedFaults => CombinedFaults;
+        IEnumerable<IDtc> IVehicle.CombinedFaults => CombinedFaults;
 
         [XmlIgnore]
         IEnumerable<IDiagCode> IVehicle.DiagCodes => DiagCodes;
@@ -2773,7 +2770,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             _clientContext = clientContext;
             //[-] perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
             //[-] installedAdaptersField = new ObservableCollection<decimal>();
-            //[-] combinedFaultsField = new ObservableCollection<DTC>();
+            combinedFaultsField = new ObservableCollection<DTC>();
             //[-] diagCodesField = new ObservableCollection<typeDiagCode>();
             //[-] serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
             //[-] technicalCampaignsField = new ObservableCollection<technicalCampaignType>();

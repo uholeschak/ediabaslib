@@ -105,8 +105,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         string ECU_NAME { get; }
         new string ECU_SGBD { get; }
 
-        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
-        PlaceholderType FEHLER { get; }
+        IEnumerable<IDtc> FEHLER { get; }
 
         int FLASH_STATE { get; }
 
@@ -163,8 +162,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         int? ID_VAR_INDEX { get; }
 
-        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
-        PlaceholderType INFO { get; }
+        IEnumerable<IDtc> INFO { get; }
 
         bool IS_SUCCESSFULLY { get; }
 

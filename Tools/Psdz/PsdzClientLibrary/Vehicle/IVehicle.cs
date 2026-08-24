@@ -6,11 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 #pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
@@ -47,8 +42,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         ChassisType ChassisType { get; }
 
-        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
-        PlaceholderType CombinedFaults { get; }
+        IEnumerable<IDtc> CombinedFaults { get; }
 
         [Obsolete]
         VisibilityType ConnectIMIBIPState { get; }
