@@ -1,8 +1,9 @@
-﻿using PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient;
+using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
-using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 {
@@ -14,10 +15,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 
         void AddArgument(string jobParam);
 
-        [PreserveSource(Hint = "IEnumerable<DTC> ", Placeholder = true)]
-        void AddJobResults(IEcuJob ecuJob, IEnumerable<PlaceholderType> dtcs, bool filterRelevantOnly);
+        void AddJobResults(IEcuJob ecuJob, IEnumerable<DTC> dtcs, bool filterRelevantOnly);
 
-        [PreserveSource(Hint = "IEnumerable<DTC> ", Placeholder = true)]
-        void AddJobResults(IEcuJob ecuJob, Predicate<IEcuResult> ecuResultSetFilter, IEnumerable<PlaceholderType> dtcs, bool reduceZeroKmEntries);
+        void AddJobResults(IEcuJob ecuJob, Predicate<IEcuResult> ecuResultSetFilter, IEnumerable<DTC> dtcs, bool reduceZeroKmEntries);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using PsdzClient.Core.Container;
 using System.Collections.Generic;
@@ -11,8 +12,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 
         IEcuFunction CreateAndAddFunction(string jobName, JobStatus jobStatus);
 
-        [PreserveSource(Hint = "IEnumerable<DTC> ", Placeholder = true)]
-        void AddEcuJob(IEcuJob ecuJob, IEnumerable<PlaceholderType> dtcs, bool doFastaRelevantFiltering);
+        void AddEcuJob(IEcuJob ecuJob, IEnumerable<DTC> dtcs, bool doFastaRelevantFiltering);
 
         void Initialize(IEcu ecu, IEnumerable<IEcuJob> ecuJobs, bool doFastaRelevantFiltering);
 

@@ -2117,12 +2117,12 @@ namespace PsdzClient.Core
         {
             subBUSField = new ObservableCollection<BusType>();
             sWTStatusField = new ObservableCollection<typeSWTStatus>();
-            //[-] selectedINFOField = new DTC();
-            //[-] selectedDTCField = new DTC();
+            selectedINFOField = new DTC();
+            selectedDTCField = new DTC();
             tALField = new ObservableCollection<typeECU_Transaction>();
             sVKField = new SVK();
-            //[-] iNFOField = new ObservableCollection<DTC>();
-            //[-] FEHLER = new ObservableCollection<DTC>();
+            iNFOField = new ObservableCollection<DTC>();
+            FEHLER = new ObservableCollection<DTC>();
             aIFField = new ObservableCollection<AIF>();
             //[-] jOBSField = new ObservableCollection<JOB>();
             bUSField = BusType.UNKNOWN;
