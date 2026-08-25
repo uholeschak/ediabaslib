@@ -1,7 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.FASTA;
-using PsdzClient;
-using System;
-using System.Collections.Generic;
 
 namespace PsdzClient.Core.Container
 {
@@ -9,5 +6,6 @@ namespace PsdzClient.Core.Container
     public interface IProtocolBasic : IProtocolBasicBase, IFastaGroupingBase, IFastaGrouping
     {
         //object AddMultiLanguageEFuseInfoTable(string infoTitle, Dictionary<string, TableData> multiLanguageTableData, DateTime startTime);
+        IAction<IUiDialog> CreateAndAddUiDialogFromServiceProgram(string type, string methodName);
     }
 }

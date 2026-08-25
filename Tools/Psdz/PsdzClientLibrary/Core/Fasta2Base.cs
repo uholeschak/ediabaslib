@@ -215,6 +215,11 @@ namespace PsdzClient.Core
         {
         }
 
+        public IAction<IUiDialog> CreateAndAddUiDialogFromServiceProgram(string type, string methodName)
+        {
+            return null;
+        }
+
         public void Dispose()
         {
             Dispose(disposing: true);

@@ -6,6 +6,7 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
+using BMW.Rheingold.FASTA.Model;
 
 namespace BMW.Rheingold.FASTA
 {
@@ -145,6 +146,14 @@ namespace BMW.Rheingold.FASTA
             Log.Debug("Fasta2ServiceNop.CreateAndAddEcuCommunications()", "Not implemented.");
         }
 
+        public IAction<IUiDialog> CreateAndAddUiDialogFromServiceProgram(string type, string methodName)
+        {
+            Log.Debug("Fasta2ServiceNop.CreateAndAddUiDialogFromServiceProgram()", "Not operation executed.");
+            return new ActionNop<IUiDialog>
+            {
+                SpecialAction = new UiDialogNop()
+            };
+        }
 
         public IFastaGrouping CreateSubGroup(BMW.Rheingold.CoreFramework.Contracts.FASTA.GroupingType groupingType, IList<LocalizedText> subgroupTitleList)
         {
