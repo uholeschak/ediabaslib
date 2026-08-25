@@ -7,21 +7,24 @@ namespace BMW.Rheingold.CoreFramework
     public class FaultFilter : INotifyPropertyChanged
     {
         private IList<string> faultClassHidden;
-
         private IList<int> faultGroupNumbers;
-
         private long? lowerKMBound;
-
         private long? upperKMBound;
-
-        private List<int> defaultGroups = new List<int> { 1, 2, 3, 4, 5 };
-
+        private List<int> defaultGroups = new List<int>
+        {
+            1,
+            2,
+            3,
+            4,
+            5
+        };
         public IList<string> FaultClassHidden
         {
             get
             {
                 return faultClassHidden;
             }
+
             set
             {
                 if (value != faultClassHidden)
@@ -38,6 +41,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return faultGroupNumbers;
             }
+
             set
             {
                 if (value != faultGroupNumbers)
@@ -56,6 +60,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return FaultGroupNumbers.SequenceEqual(GetDefaultFaultGroups());
                 }
+
                 return false;
             }
         }
@@ -66,6 +71,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return lowerKMBound;
             }
+
             set
             {
                 if (value != lowerKMBound)
@@ -82,6 +88,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return upperKMBound;
             }
+
             set
             {
                 if (value != upperKMBound)
@@ -93,7 +100,6 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public FaultFilter()
         {
             lowerKMBound = null;
@@ -104,7 +110,7 @@ namespace BMW.Rheingold.CoreFramework
 
         public virtual void OnPropertyChanged(string info)
         {
-            PropertyChangedEventHandler propertyChangedEventHandler = this.PropertyChanged;
+            PropertyChangedEventHandler propertyChangedEventHandler = PropertyChanged;
             if (propertyChangedEventHandler != null)
             {
                 propertyChangedEventHandler(this, new PropertyChangedEventArgs(info));
