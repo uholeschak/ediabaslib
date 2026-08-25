@@ -100,6 +100,7 @@ namespace SourceCodeSync
             "RheingoldCoreContracts",
             "RheingoldCoreFramework",
             "RheingoldDiagnostics",
+            "RheingoldFASTA",
             "RheingoldInfoProvider",
             "RheingoldISPINext",
             "RheingoldISTACoreFramework",
