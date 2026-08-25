@@ -202,8 +202,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string EcuFullName { get; set; }
 
-        [PreserveSource(Hint = "IDtc", Placeholder = true)]
-        PlaceholderType GetDTCById(decimal id);
+        IDtc GetDTCById(decimal id);
         string GetNewestZusbauNoFromAif();
         new bool IsRoot();
         bool IsSet(long fOrt);

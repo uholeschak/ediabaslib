@@ -1915,26 +1915,59 @@ namespace PsdzClient.Core
             TITLE_ECUTREE = ((ecuShortName.Count == 0) ? ECU_GROBNAME : ecuShortName.First());
         }
 
-        [PreserveSource(Hint = "public DTC", Placeholder = true)]
-        public PlaceholderType getDTCbyF_ORT(int F_ORT)
+        public DTC getDTCbyF_ORT(int F_ORT)
         {
-            return PlaceholderType.Value;
-        }
-
-        [PreserveSource(Cleaned = true, OriginalHash = "B54C30A1CCDB6796BA74B03A37B86EEF")]
-        IDtc IEcu.getDTCbyF_ORT(int F_ORT)
-        {
+            try
+            {
+                if (FEHLER != null)
+                {
+                    foreach (DTC item in FEHLER)
+                    {
+                        if (item.F_ORT == F_ORT)
+                        {
+                            return item;
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ECU.getDTCbyF_ORT()", exception);
+            }
             return null;
         }
 
-        [PreserveSource(Hint = "public DTC", Placeholder = true)]
-        public PlaceholderType GetDTCById(decimal id)
+        IDtc IEcu.getDTCbyF_ORT(int F_ORT)
         {
-            return PlaceholderType.Value;
+            return getDTCbyF_ORT(F_ORT);
         }
 
-        [PreserveSource(Hint = "IDtc", Placeholder = true)]
-        PlaceholderType IEcu.GetDTCById(decimal id)
+        public DTC GetDTCById(decimal id)
+        {
+            if (FEHLER != null)
+            {
+                foreach (DTC item in FEHLER)
+                {
+                    if (id.Equals(item.Id))
+                    {
+                        return item;
+                    }
+                }
+            }
+            if (INFO != null)
+            {
+                foreach (DTC item2 in INFO)
+                {
+                    if (id.Equals(item2.Id))
+                    {
+                        return item2;
+                    }
+                }
+            }
+            return null;
+        }
+
+        IDtc IEcu.GetDTCById(decimal id)
         {
             return GetDTCById(id);
         }
