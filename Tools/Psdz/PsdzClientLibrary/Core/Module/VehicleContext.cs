@@ -147,11 +147,15 @@ namespace BMW.Rheingold.CoreFramework
                 _ = vehicle.HeatMotors;
                 if (characteristicsLocator != null)
                 {
-                    IXepCharacteristicRoots characteristicRootsById = DatabaseProviderFactory.Instance.GetCharacteristicRootsById(characteristicsLocator.ParentId);
+                    //[-] IXepCharacteristicRoots characteristicRootsById = DatabaseProviderFactory.Instance.GetCharacteristicRootsById(characteristicsLocator.ParentId);
+                    //+] PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture));
+                    PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture));
                     VehicleCharacteristicContext vehicleCharacteristicContext = new VehicleCharacteristicContext();
                     if (characteristicRootsById != null)
                     {
-                        flag = vehicleCharacteristicContext.IsSetVehicleCharacteristic(characteristicRootsById.Nodeclass.ToString(), vehicle, characteristicsLocator, characteristicRootsById);
+                        //[-] flag = vehicleCharacteristicContext.IsSetVehicleCharacteristic(characteristicRootsById.Nodeclass.ToString(), vehicle, characteristicsLocator, characteristicRootsById);
+                        //[+] flag = vehicleCharacteristicContext.IsSetVehicleCharacteristic(characteristicRootsById.NodeClass, vehicle, characteristicsLocator, characteristicRootsById);
+                        flag = vehicleCharacteristicContext.IsSetVehicleCharacteristic(characteristicRootsById.NodeClass, vehicle, characteristicsLocator, characteristicRootsById);
                         Log.Info("VehicleContext.IsSet()", "characterValueSet with Key:{0} Value:{1} Result:{2}", characteristicsLocator.DataClassName, characteristicsLocator.Name, flag);
                         return flag;
                     }
@@ -341,7 +345,9 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Info("VehicleContext.IsSet(IEquipmentLocator)", "equipment check evaluation needed for equipment: {0}/{1}", equipment.Id, equipment.Name);
                 if (ffmResolver != null)
                 {
-                    ICollection<IXepInfoObject> infoObjectsByDiagObjectControlId = DatabaseProviderFactory.Instance.GetInfoObjectsByDiagObjectControlId(equipment.SignedId, vehicle, ffmResolver, getHidden: true);
+                    //[-] ICollection<IXepInfoObject> infoObjectsByDiagObjectControlId = DatabaseProviderFactory.Instance.GetInfoObjectsByDiagObjectControlId(equipment.SignedId, vehicle, ffmResolver, getHidden: true);
+                    //[+] List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true);
+                    List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = ClientContext.GetClientContext(vehicle)?.Database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true);
                     if (infoObjectsByDiagObjectControlId != null && infoObjectsByDiagObjectControlId.Count > 0)
                     {
                         flag = ffmResolver.Resolve(equipment.SignedId, infoObjectsByDiagObjectControlId.First());
