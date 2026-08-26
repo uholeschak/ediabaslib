@@ -1175,11 +1175,11 @@ namespace BMW.Rheingold.Module.ISTA
                         //[-] _ISOCAccessor = new SOCAccessor(vehicle, LicenseHelper.DealerInstance);
                         _globalModuleInParameter.setParameter("__RheinGoldSOCAccessor__", _ISOCAccessor);
                         SetTextContentManager();
-                        //[-] if (logic != null)
-                        //[-] {
-                        //[-] ffmResolver = logic.FFMResolver;
-                        //[-] }
-                        //[-] vehicleContext = new VehicleContext(vehicle, ffmResolver);
+                        if (logic != null)
+                        {
+                            ffmResolver = logic.FFMResolver;
+                        }
+                        vehicleContext = new VehicleContext(vehicle, ffmResolver);
                         MeasurementLauncher = moduleParameter.getParameter(ModuleParameter.ParameterName.MeasurementLauncher) as IStartMeasurementServiceServer;
                     }
 
