@@ -90,6 +90,7 @@ namespace BMW.Rheingold.CoreFramework
             this.ffmResolver = ffmResolver;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(IEcuGroupLocator group)
         {
             if (group == null)
@@ -117,6 +118,7 @@ namespace BMW.Rheingold.CoreFramework
             return false;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(IEcuVariantLocator variant)
         {
             if (variant == null)
@@ -139,6 +141,7 @@ namespace BMW.Rheingold.CoreFramework
             return false;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(ICharacteristicsLocator characteristicsLocator)
         {
             bool flag = false;
@@ -173,6 +176,7 @@ namespace BMW.Rheingold.CoreFramework
             return flag;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(IDiagnosticObjectLocator diagObject)
         {
             if (diagObject != null)
@@ -188,6 +192,7 @@ namespace BMW.Rheingold.CoreFramework
             return false;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(IPerceivedSymptomsLocator perceivedSymptom)
         {
             if (perceivedSymptom == null)
@@ -207,6 +212,7 @@ namespace BMW.Rheingold.CoreFramework
             return false;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(IFaultModeLocator faultModeLocator)
         {
             if (faultModeLocator == null)
