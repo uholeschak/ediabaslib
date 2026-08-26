@@ -148,7 +148,7 @@ namespace BMW.Rheingold.CoreFramework
                 if (characteristicsLocator != null)
                 {
                     //[-] IXepCharacteristicRoots characteristicRootsById = DatabaseProviderFactory.Instance.GetCharacteristicRootsById(characteristicsLocator.ParentId);
-                    //+] PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture));
+                    //[+] PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture));
                     PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture));
                     VehicleCharacteristicContext vehicleCharacteristicContext = new VehicleCharacteristicContext();
                     if (characteristicRootsById != null)
