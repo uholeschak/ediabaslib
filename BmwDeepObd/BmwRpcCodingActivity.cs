@@ -102,7 +102,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private bool _abortCoding;
         private string _ecuDir;
-        private string _bmwPath;
+        private string _bmwDir;
         private string _appDataDir;
         private string _deviceAddress;
 #if !STATIC_RPC_CODING
@@ -621,7 +621,7 @@ namespace BmwDeepObd
 
             HandleIntent(Intent);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
-            _bmwPath = Intent.GetStringExtra(ExtraBmwDir);
+            _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
                 Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None);
@@ -1233,7 +1233,7 @@ namespace BmwDeepObd
                 EdiabasNet ediabas = _bmwRpcCoding.EdiabasProxyClient.Ediabas;
                 if (ediabas != null)
                 {
-                    DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwPath);
+                    DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwDir);
                 }
 #endif
                 try
