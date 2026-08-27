@@ -41,6 +41,7 @@ namespace SourceCodeSync
             @"^BMW\.Rheingold\.CoreFramework\.OSS$",
             @"^BMW\.Rheingold\.CoreFramework\.IndustrialCustomer\..*",
             @"^BMW\.Rheingold\.CoreFramework\.Contracts\.Programming\.TherapyPlan$",
+            @"^BMW\.Rheingold\.FASTA\.Scheme2$",
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Models\.PortalIntegration$",
             @"^BMW\.Rheingold\.InfoProvider\.(SWTOnline|Tric|Broker|igDom|service|Current|SCC|NOP|EDGE|Properties).*",
         ];
