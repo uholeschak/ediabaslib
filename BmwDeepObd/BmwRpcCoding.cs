@@ -4,6 +4,7 @@ using PsdzRpcClient;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -479,7 +480,8 @@ public class BmwRpcCoding : IDisposable
                 {
                     if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
                     {
-                        string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzAppClient.log");
+                        string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+                        string logFile = Path.Combine(serviceArgs.HostLogDir, $"PsdzAppClient-{dateString}.log");
 
                         bool result = await _psdzRpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
                         _ediabasProxyClient?.EdiabasLogFormat(EdiabasNet.EdLogLevel.Ifh, "Setup log4net result: {0}", result);
