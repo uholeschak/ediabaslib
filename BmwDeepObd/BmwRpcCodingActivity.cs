@@ -76,6 +76,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuDir = "ecu_dir";
+        public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
@@ -100,6 +101,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private bool _abortCoding;
         private string _ecuDir;
+        private string _bmwPath;
         private string _appDataDir;
         private string _deviceAddress;
 #if !STATIC_RPC_CODING
@@ -618,6 +620,7 @@ namespace BmwDeepObd
 
             HandleIntent(Intent);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
+            _bmwPath = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
                 Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None);
@@ -1225,6 +1228,13 @@ namespace BmwDeepObd
 
             Thread sendThread = new Thread(() =>
             {
+#if STATIC_RPC_CODING
+                EdiabasNet ediabas = _bmwRpcCoding.EdiabasProxyClient.Ediabas;
+                if (ediabas != null)
+                {
+                    DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwPath);
+                }
+#endif
                 try
                 {
                     MultipartFormDataContent formInfo = new MultipartFormDataContent
