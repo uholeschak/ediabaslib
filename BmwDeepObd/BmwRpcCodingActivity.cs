@@ -1251,7 +1251,7 @@ namespace BmwDeepObd
                                 _activityCommon.SetLock(ActivityCommon.LockType.None);
                             }
 
-                            string message = GetString(Resource.String.xml_tool_no_response);
+                            string message = GetString(Resource.String.bmw_rpc_coding_no_response);
                             handler.Invoke(false, false, null, null, false, message);
                         });
 

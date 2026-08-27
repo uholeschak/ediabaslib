@@ -807,6 +807,7 @@
   <string name="bmw_rpc_coding_operation_active">Kodiervorgang aktiv</string>
   <string name="bmw_rpc_coding_operation_inactive">Kein aktiver Kodiervorgang</string>
   <string name="bmw_rpc_coding_abort_action">Kodiervorgang abbrechen</string>
+  <string name="bmw_rpc_coding_no_response">Keine Antwort vom Fahrzeug.</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter Konfiguration</string>

@@ -818,6 +818,7 @@
   <string name="bmw_rpc_coding_operation_active">Операция кодирования активна</string>
   <string name="bmw_rpc_coding_operation_inactive">Нет активной операции кодирования</string>
   <string name="bmw_rpc_coding_abort_action">Прервать операцию кодирования</string>
+  <string name="bmw_rpc_coding_no_response">Автомобиль не отвечает.</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
