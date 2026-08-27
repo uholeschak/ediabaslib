@@ -2315,6 +2315,7 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraAppDataDir, _appDataDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraBmwDir, _bmwDir);
                 if (!string.IsNullOrEmpty(_instanceData.VehicleSeries))
                 {
                     serverIntent.PutExtra(XmlToolEcuActivity.ExtraVehicleSeries, _instanceData.VehicleSeries);

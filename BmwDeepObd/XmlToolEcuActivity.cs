@@ -231,6 +231,7 @@ namespace BmwDeepObd
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
+        public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraVehicleSeries = "vehicle_series";
         public const string ExtraBmwServiceFunctions = "bmw_service_functions";
         public const string ExtraSimulationDir = "simulation_dir";
@@ -322,6 +323,7 @@ namespace BmwDeepObd
         private bool _ediabasJobAbort;
         private string _appDataDir;
         private string _ecuDir;
+        private string _bmwDir;
         private string _vehicleSeries;
         private bool _bmwServiceFunctions;
         private string _simulationDir;
@@ -385,6 +387,7 @@ namespace BmwDeepObd
 
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
+            _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _vehicleSeries = Intent.GetStringExtra(ExtraVehicleSeries);
             _bmwServiceFunctions = Intent.GetBooleanExtra(ExtraBmwServiceFunctions, false);
             _simulationDir = Intent.GetStringExtra(ExtraSimulationDir);
@@ -2659,6 +2662,7 @@ namespace BmwDeepObd
                 Intent serverIntent = new Intent(this, typeof(BmwRpcCodingActivity));
                 serverIntent.PutExtra(BmwRpcCodingActivity.ExtraAppDataDir, _appDataDir);
                 serverIntent.PutExtra(BmwRpcCodingActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(BmwRpcCodingActivity.ExtraBmwDir, _bmwDir);
                 serverIntent.PutExtra(BmwRpcCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(BmwRpcCodingActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(BmwRpcCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);

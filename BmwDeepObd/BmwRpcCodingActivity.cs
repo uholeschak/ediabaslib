@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using BmwFileReader;
 
 namespace BmwDeepObd
 {
@@ -76,6 +77,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuDir = "ecu_dir";
+        public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
@@ -100,6 +102,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private bool _abortCoding;
         private string _ecuDir;
+        private string _bmwDir;
         private string _appDataDir;
         private string _deviceAddress;
 #if !STATIC_RPC_CODING
@@ -113,6 +116,7 @@ namespace BmwDeepObd
         private object _statusLock = new object();
         private bool _activityActive;
         private bool _ignoreItemSelection;
+        private bool _ediabasJobAbort;
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
@@ -618,6 +622,7 @@ namespace BmwDeepObd
 
             HandleIntent(Intent);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
+            _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
                 Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None);
@@ -1225,6 +1230,96 @@ namespace BmwDeepObd
 
             Thread sendThread = new Thread(() =>
             {
+#if STATIC_RPC_CODING
+                try
+                {
+                    EdiabasNet ediabas = _bmwRpcCoding.EdiabasProxyClient.Ediabas;
+                    if (ediabas != null)
+                    {
+                        CustomProgressDialog progressLocal = progress;
+                        _ediabasJobAbort = false;
+                        DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwDir);
+                        detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+                        detectVehicleBmw.ProgressFunc = percent =>
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                if (progressLocal != null)
+                                {
+                                    progressLocal.Progress = percent;
+                                }
+                            });
+                        };
+
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (progressLocal != null)
+                            {
+                                progressLocal.SetMessage(GetString(Resource.String.bmw_rpc_coding_checking_vehicle));
+                                progressLocal.Indeterminate = false;
+                                progressLocal.AbortClick = sender =>
+                                {
+                                    _ediabasJobAbort = true;
+                                };
+                                progressLocal.ButtonAbort.Enabled = true;
+                            }
+                        });
+
+                        bool result = detectVehicleBmw.DetectVehicleBmwFast();
+                        _bmwRpcCoding.EdiabasProxyClient.EdiabasDisconnect(0);
+                        if (!result)
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                if (progress != null)
+                                {
+                                    progress.Dismiss();
+                                    progress = null;
+                                    _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                }
+
+                                string message = GetString(Resource.String.bmw_rpc_coding_no_response);
+                                handler.Invoke(false, false, null, null, false, message);
+                            });
+
+                            return;
+                        }
+
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (progressLocal != null)
+                            {
+                                progressLocal.ButtonAbort.Enabled = true;
+                            }
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    string message = EdiabasNet.GetExceptionText(ex);
+                    handler.Invoke(false, false, null, null, false, message);
+                    return;
+                }
+#endif
                 try
                 {
                     MultipartFormDataContent formInfo = new MultipartFormDataContent
@@ -1250,6 +1345,8 @@ namespace BmwDeepObd
 
                         if (progressLocal != null)
                         {
+                            progressLocal.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+                            progressLocal.Indeterminate = true;
                             progressLocal.AbortClick = sender =>
                             {
                                 try
@@ -1269,7 +1366,7 @@ namespace BmwDeepObd
                     responseUpload.EnsureSuccessStatusCode();
                     string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
                     bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out bool enableIpv6, out string message, out string dayString, out string validSerial);
-                    handler?.Invoke(success, false, codingUrl, codingUrlTest, enableIpv6, message, dayString, validSerial);
+                    handler.Invoke(success, false, codingUrl, codingUrlTest, enableIpv6, message, dayString, validSerial);
 
                     if (progress != null)
                     {
@@ -1295,7 +1392,7 @@ namespace BmwDeepObd
                         }
 
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
-                        handler?.Invoke(false, cancelled);
+                        handler.Invoke(false, cancelled);
                     });
                 }
             });

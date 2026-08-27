@@ -601,7 +601,7 @@
   <string name="xml_tool_sel_mwtab_info">Для этого ECU найдено несколько таблиц данных.\nПожалуйста, выберите таблицу данных, которая лучше всего подходит для вашего ECU.\nСледует отдать предпочтение таблице, в названии которой присутствуют значения 7-ой и 8-ой позиции VIN-номера.</string>
   <string name="xml_tool_no_mwtab">Не обнаружено таблиц данных для этого ECU файла</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
-  <string name="xml_tool_no_response">Автомобиль не отвечает</string>
+  <string name="xml_tool_no_response">Автомобиль не отвечает.</string>
   <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nДля распознавания мотоциклов вы должны включить соответствующую опцию в меню.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB адаптер.\nЗдесь приведён список <a href='https://uholeschak.github.io/ediabaslib/docs/Configuration_Generator.html'>поддерживаемых адаптеров</a>.\nПерейти к <a href='https://uholeschak.github.io/ediabaslib/docs/Configuration_Generator.html'>ручной настройке</a>?</string>
   <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nХотите проверить соединение адаптера?</string>
   <string name="xml_tool_no_response_raw">Автомобиль не отвечает.\nАктивен режим прямой связи, это может служить источником проблемы.\nВыбрать другой адаптер?</string>
@@ -818,6 +818,8 @@
   <string name="bmw_rpc_coding_operation_active">Операция кодирования активна</string>
   <string name="bmw_rpc_coding_operation_inactive">Нет активной операции кодирования</string>
   <string name="bmw_rpc_coding_abort_action">Прервать операцию кодирования</string>
+  <string name="bmw_rpc_coding_checking_vehicle">Проверка соединения с автомобилем.</string>
+  <string name="bmw_rpc_coding_no_response">Автомобиль не отвечает.</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
