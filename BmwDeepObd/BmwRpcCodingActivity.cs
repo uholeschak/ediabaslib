@@ -116,6 +116,7 @@ namespace BmwDeepObd
         private object _statusLock = new object();
         private bool _activityActive;
         private bool _ignoreItemSelection;
+        private bool _ediabasJobAbort;
         private HttpClient _infoHttpClient;
         private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
@@ -1230,12 +1231,16 @@ namespace BmwDeepObd
             Thread sendThread = new Thread(() =>
             {
 #if STATIC_RPC_CODING
-                EdiabasNet ediabas = _bmwRpcCoding.EdiabasProxyClient.Ediabas;
-                if (ediabas != null)
+                try
                 {
-                    DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwDir);
-                    if (!detectVehicleBmw.DetectVehicleBmwFast())
+                    EdiabasNet ediabas = _bmwRpcCoding.EdiabasProxyClient.Ediabas;
+                    if (ediabas != null)
                     {
+                        _ediabasJobAbort = false;
+                        DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwDir);
+                        detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+
+                        CustomProgressDialog progressLocal = progress;
                         RunOnUiThread(() =>
                         {
                             if (_activityCommon == null)
@@ -1243,20 +1248,60 @@ namespace BmwDeepObd
                                 return;
                             }
 
-                            CustomProgressDialog progressLocal = progress;
                             if (progressLocal != null)
                             {
-                                progressLocal.Dismiss();
-                                progressLocal = null;
-                                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                progressLocal.AbortClick = sender =>
+                                {
+                                    _ediabasJobAbort = true;
+                                };
+                                progressLocal.ButtonAbort.Enabled = true;
                             }
-
-                            string message = GetString(Resource.String.bmw_rpc_coding_no_response);
-                            handler.Invoke(false, false, null, null, false, message);
                         });
 
-                        return;
+                        bool result = detectVehicleBmw.DetectVehicleBmwFast();
+                        _bmwRpcCoding.EdiabasProxyClient.EdiabasDisconnect(0);
+                        if (!result)
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                if (progress != null)
+                                {
+                                    progress.Dismiss();
+                                    progress = null;
+                                    _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                }
+
+                                string message = GetString(Resource.String.bmw_rpc_coding_no_response);
+                                handler.Invoke(false, false, null, null, false, message);
+                            });
+
+                            return;
+                        }
+
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (progressLocal != null)
+                            {
+                                progressLocal.ButtonAbort.Enabled = true;
+                            }
+                        });
                     }
+                }
+                catch (Exception ex)
+                {
+                    string message = EdiabasNet.GetExceptionText(ex);
+                    handler.Invoke(false, false, null, null, false, message);
+                    return;
                 }
 #endif
                 try
