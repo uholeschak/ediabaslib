@@ -355,7 +355,7 @@ namespace BMW.Rheingold.CoreFramework
                 if (ffmResolver != null)
                 {
                     //[-] ICollection<IXepInfoObject> infoObjectsByDiagObjectControlId = DatabaseProviderFactory.Instance.GetInfoObjectsByDiagObjectControlId(equipment.SignedId, vehicle, ffmResolver, getHidden: true);
-                    //[+] List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true);
+                    //[+] List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = ClientContext.GetClientContext(vehicle)?.Database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true);
                     List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = ClientContext.GetClientContext(vehicle)?.Database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true);
                     if (infoObjectsByDiagObjectControlId != null && infoObjectsByDiagObjectControlId.Count > 0)
                     {
