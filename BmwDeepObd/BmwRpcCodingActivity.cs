@@ -1234,6 +1234,28 @@ namespace BmwDeepObd
                 if (ediabas != null)
                 {
                     DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwDir);
+                    if (!detectVehicleBmw.DetectVehicleBmwFast())
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            CustomProgressDialog progressLocal = progress;
+                            if (progressLocal != null)
+                            {
+                                progressLocal.Dismiss();
+                                progressLocal = null;
+                                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                            }
+
+                            handler?.Invoke(false, false);
+                        });
+
+                        return;
+                    }
                 }
 #endif
                 try
