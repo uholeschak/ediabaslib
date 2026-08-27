@@ -1236,11 +1236,25 @@ namespace BmwDeepObd
                     EdiabasNet ediabas = _bmwRpcCoding.EdiabasProxyClient.Ediabas;
                     if (ediabas != null)
                     {
+                        CustomProgressDialog progressLocal = progress;
                         _ediabasJobAbort = false;
                         DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwDir);
                         detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+                        detectVehicleBmw.ProgressFunc = percent =>
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                if (progressLocal != null)
+                                {
+                                    progressLocal.Progress = percent;
+                                }
+                            });
+                        };
 
-                        CustomProgressDialog progressLocal = progress;
                         RunOnUiThread(() =>
                         {
                             if (_activityCommon == null)
@@ -1250,6 +1264,8 @@ namespace BmwDeepObd
 
                             if (progressLocal != null)
                             {
+                                progressLocal.SetMessage(GetString(Resource.String.xml_tool_analyze));
+                                progressLocal.Indeterminate = false;
                                 progressLocal.AbortClick = sender =>
                                 {
                                     _ediabasJobAbort = true;
@@ -1292,6 +1308,7 @@ namespace BmwDeepObd
 
                             if (progressLocal != null)
                             {
+                                progressLocal.Indeterminate = true;
                                 progressLocal.ButtonAbort.Enabled = true;
                             }
                         });
@@ -1329,6 +1346,8 @@ namespace BmwDeepObd
 
                         if (progressLocal != null)
                         {
+                            progressLocal.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+                            progressLocal.Indeterminate = true;
                             progressLocal.AbortClick = sender =>
                             {
                                 try
