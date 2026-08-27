@@ -113,6 +113,7 @@ namespace BMW.Rheingold.CoreFramework
             return false;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(IEcuCliqueLocator ecuClique)
         {
             return false;
@@ -296,6 +297,7 @@ namespace BMW.Rheingold.CoreFramework
             }
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(IFaultCodeLocator faultCodeLocator)
         {
             if (faultCodeLocator == null)
@@ -333,6 +335,7 @@ namespace BMW.Rheingold.CoreFramework
             return false;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public bool IsSet(IEquipmentLocator equipment)
         {
             if (equipment == null)
