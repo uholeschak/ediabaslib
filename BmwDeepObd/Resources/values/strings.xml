@@ -807,6 +807,7 @@
   <string name="bmw_rpc_coding_operation_active">Coding operation active</string>
   <string name="bmw_rpc_coding_operation_inactive">No active coding operation</string>
   <string name="bmw_rpc_coding_abort_action">Abort coding operation</string>
+  <string name="bmw_rpc_coding_checking_vehicle">Checking vehicle connection.</string>
   <string name="bmw_rpc_coding_no_response">No response from vehicle.</string>
 
   <!-- CAN Adapter Activity -->

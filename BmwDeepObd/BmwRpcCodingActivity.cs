@@ -1264,7 +1264,7 @@ namespace BmwDeepObd
 
                             if (progressLocal != null)
                             {
-                                progressLocal.SetMessage(GetString(Resource.String.xml_tool_analyze));
+                                progressLocal.SetMessage(GetString(Resource.String.bmw_rpc_coding_checking_vehicle));
                                 progressLocal.Indeterminate = false;
                                 progressLocal.AbortClick = sender =>
                                 {
@@ -1308,7 +1308,6 @@ namespace BmwDeepObd
 
                             if (progressLocal != null)
                             {
-                                progressLocal.Indeterminate = true;
                                 progressLocal.ButtonAbort.Enabled = true;
                             }
                         });
