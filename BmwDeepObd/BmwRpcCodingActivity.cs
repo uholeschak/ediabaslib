@@ -1251,7 +1251,8 @@ namespace BmwDeepObd
                                 _activityCommon.SetLock(ActivityCommon.LockType.None);
                             }
 
-                            handler?.Invoke(false, false);
+                            string message = GetString(Resource.String.xml_tool_no_response);
+                            handler.Invoke(false, false, null, null, false, message);
                         });
 
                         return;
@@ -1302,7 +1303,7 @@ namespace BmwDeepObd
                     responseUpload.EnsureSuccessStatusCode();
                     string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
                     bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out bool enableIpv6, out string message, out string dayString, out string validSerial);
-                    handler?.Invoke(success, false, codingUrl, codingUrlTest, enableIpv6, message, dayString, validSerial);
+                    handler.Invoke(success, false, codingUrl, codingUrlTest, enableIpv6, message, dayString, validSerial);
 
                     if (progress != null)
                     {
@@ -1328,7 +1329,7 @@ namespace BmwDeepObd
                         }
 
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
-                        handler?.Invoke(false, cancelled);
+                        handler.Invoke(false, cancelled);
                     });
                 }
             });
