@@ -199,6 +199,11 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
                 }
 
                 result = _ediabas.EdInterfaceClass.InterfaceConnect();
+                if (result)
+                {
+                    _ediabas.EdInterfaceClass.CommParameter = EdInterfaceBase.CommParameterBmwFast;
+                    _ediabas.EdInterfaceClass.CommAnswerLen = EdInterfaceBase.CommAnswerLenBmwFast;
+                }
             }
 
             if (result)
