@@ -1223,6 +1223,7 @@ namespace BmwDeepObd
 
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+            progress.Indeterminate = true;
             progress.ButtonAbort.Enabled = false;
             progress.Show();
             _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
@@ -1233,7 +1234,7 @@ namespace BmwDeepObd
 #if STATIC_RPC_CODING
                 try
                 {
-                    EdiabasNet ediabas = _bmwRpcCoding.EdiabasProxyClient.Ediabas;
+                    EdiabasNet ediabas = _bmwRpcCoding?.EdiabasProxyClient?.Ediabas;
                     if (ediabas != null)
                     {
                         CustomProgressDialog progressLocal = progress;
@@ -1293,7 +1294,7 @@ namespace BmwDeepObd
                                 }
 
                                 string message = GetString(Resource.String.bmw_rpc_coding_no_response);
-                                handler.Invoke(false, false, null, null, false, message);
+                                handler.Invoke(false, _ediabasJobAbort, null, null, false, message);
                             });
 
                             return;
@@ -1316,7 +1317,7 @@ namespace BmwDeepObd
                 catch (Exception ex)
                 {
                     string message = EdiabasNet.GetExceptionText(ex);
-                    handler.Invoke(false, false, null, null, false, message);
+                    handler.Invoke(false, _ediabasJobAbort, null, null, false, message);
                     return;
                 }
 #endif
