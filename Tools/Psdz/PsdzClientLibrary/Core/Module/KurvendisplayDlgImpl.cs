@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using BMW.Rheingold.PresentationFramework;
 
 namespace BMW.Rheingold.Module.ISTA
 {

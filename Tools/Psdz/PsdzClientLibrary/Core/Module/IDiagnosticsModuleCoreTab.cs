@@ -5,6 +5,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Rheingold.PresentationFramework
 {
