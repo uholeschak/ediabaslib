@@ -56,7 +56,7 @@ namespace BMW.Rheingold.Module.ISTA
             registry = new Dictionary<string, ServiceDialogConfiguration>();
             controlId2Name = new Dictionary<decimal, string>();
             Register(51946891m, "AdapterServiceDlg", typeof(AdapterServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
-            //[-] Register(53531955979m, "Dialog_1Balkenhorizontal", typeof(Dialog_1Balkenhorizontal), typeof(BalkenHorizontalDlgUi), null);
+            Register(53531955979m, "Dialog_1Balkenhorizontal", typeof(Dialog_1Balkenhorizontal), typeof(BalkenHorizontalDlgUi), null);
             //[-] Register(53536324363m, "Dialog_2Balkenhorizontal", typeof(Dialog_2Balkenhorizontal), typeof(BalkenHorizontalDlgUi), null);
             //[-] Register(53600486795m, "Dialog_3Balkenhorizontal", typeof(Dialog_3Balkenhorizontal), typeof(BalkenHorizontalDlgUi), null);
             //[-] Register(53600523019m, "Dialog_4Balkenhorizontal", typeof(Dialog_4Balkenhorizontal), typeof(BalkenHorizontalDlgUi), null);
