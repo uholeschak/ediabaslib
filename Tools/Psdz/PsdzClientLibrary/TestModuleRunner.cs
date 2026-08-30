@@ -1,5 +1,6 @@
 ﻿using BMW.ISPI.IstaOperation.Impl;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.RheingoldSessionController;
 using EdiabasLib;
 using log4net;
@@ -18,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using BMW.Rheingold.Module.ISTA;
 
 namespace PsdzClientLibrary;
 
@@ -55,6 +57,7 @@ public class TestModuleRunner
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly ILogic _logic;
     private readonly ServiceProgramController _serviceProgramController;
+    private readonly IModuleExecutionParent _moduleExecutionParent;
     private readonly string _moduleName;
     private readonly string _moduleTypeName;
     private readonly ModuleParameter _moduleParameters;
@@ -85,6 +88,7 @@ public class TestModuleRunner
 
         _logic = new Logic(clientContext, programmingJobs);
         _serviceProgramController = new ServiceProgramController();
+        //_moduleExecutionParent = new ModuleExecutionParent(runParameter: (!(parametersDict?.GetValueOrDefault(ModuleParameter.ParameterName.XepInfoObjectStarted) is XepInfoObject xepInfoObject)) ? runParameter : xepInfoObject.Identifikator, module: module, parameters: parametersDict);
         _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
 
@@ -708,8 +712,7 @@ public class TestModuleRunner
         }
 
         parameterContainer.setParameter("__RheinGoldCoreModuleParameters__", _moduleParameters.Clone());
-
-        //parameterContainer.setParameter("__RheinGoldTabModuleISTA__", parent);
+        parameterContainer.setParameter("__RheinGoldTabModuleISTA__", _moduleExecutionParent);
         //parameterContainer.setParameter("FASTA", fasta2);
         //parameterContainer.setParameter("MeasurementLauncher", measurementService);
         parameterContainer.setParameter("ISTAModule.Me", _swiInfoObj);
