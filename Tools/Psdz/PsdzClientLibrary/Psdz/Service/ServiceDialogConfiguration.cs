@@ -61,7 +61,7 @@ namespace BMW.Rheingold.Module.ISTA
             Register(53600486795m, "Dialog_3Balkenhorizontal", typeof(Dialog_3Balkenhorizontal), typeof(BalkenHorizontalDlgUi), null);
             Register(53600523019m, "Dialog_4Balkenhorizontal", typeof(Dialog_4Balkenhorizontal), typeof(BalkenHorizontalDlgUi), null);
             Register(61002193291m, null, typeof(Dialog_Zuendungstatus), typeof(DialogZuendungstatusCmd), hasGui: true);
-            //[-] Register(52655243m, "DTC_ANZEIGE_DYN", typeof(DtcAnzeigeDynImpl), typeof(DtcAnzeigeDynUi), null);
+            Register(52655243m, "DTC_ANZEIGE_DYN", typeof(DtcAnzeigeDynImpl), typeof(DtcAnzeigeDynUi), null);
             //[-] Register(51939083m, "ECUKOMServiceDlg", typeof(EcuKomServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(51888523m, "EnterServiceDlg", typeof(EnterServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(43608062091m, null, typeof(Fahrzeugauftrag_ausISTA_UX), typeof(FahrzeugauftragAusIstaUxCmd), hasGui: false);
