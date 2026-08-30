@@ -7,17 +7,15 @@ namespace BMW.Rheingold.Module.ISTA
     public class CurveDataViewModel : INotifyPropertyChanged
     {
         private CurveData data;
-
         private PointCollection curvesToView;
-
         private string toolTipContent;
-
         public CurveData Data
         {
             get
             {
                 return data;
             }
+
             set
             {
                 data = value;
@@ -31,6 +29,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return curvesToView;
             }
+
             set
             {
                 curvesToView = value;
@@ -39,7 +38,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public int StrokeThickness { get; set; }
-
         public bool CurveInPoints { get; set; }
 
         public string ToolTipContent
@@ -48,6 +46,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return toolTipContent;
             }
+
             set
             {
                 toolTipContent = value;
@@ -56,7 +55,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public CurveDataViewModel(CurveData data, PointCollection curveToView, bool curveInPoints, string toolTipContent)
         {
             Data = data;
@@ -68,7 +66,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

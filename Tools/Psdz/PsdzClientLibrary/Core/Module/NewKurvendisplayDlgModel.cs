@@ -13,112 +13,75 @@ namespace BMW.Rheingold.Module.ISTA
     {
         [DataMember]
         private readonly ObservableCollection<KurvenDisplayActionButton> actionButtons;
-
         [DataMember]
         private readonly ObservableCollection<NewCurveData> curves;
-
         [DataMember]
         private readonly ObservableCollection<double> lowerLimitY;
-
         [DataMember]
         private readonly ObservableCollection<double> minYValue;
-
         [DataMember]
         private readonly ObservableCollection<double> upperLimitY;
-
         [DataMember]
         private readonly ObservableCollection<double> xPoints;
-
         [DataMember]
         private readonly ObservableCollection<double> yAxisDivision;
-
         [DataMember]
         private readonly ObservableCollection<string> yAxisLegendName;
-
         [DataMember]
         private readonly ObservableCollection<string> yAxisText;
-
         [DataMember]
         private ObservableCollection<string> backgroundColor;
-
         [DataMember]
         private string conclusionText;
-
         [DataMember]
         private string headerText;
-
         [DataMember]
         private bool horizontalOverflowScrollingEnabled;
-
         [DataMember]
         private double horizontalZoom;
-
         [DataMember]
         private string introductionText;
-
         [DataMember]
         private ReferenceAxis referenceVerticalZoomAxis;
-
         [DataMember]
         private bool isStatic;
-
         [DataMember]
         private bool linearInterpolationEnabled;
-
         [DataMember]
         private double maxXValue;
-
         [DataMember]
         private ObservableCollection<double> maxYValue;
-
         [DataMember]
         private double minXValue;
-
         [DataMember]
         private double originalMaxXValue;
-
         [DataMember]
         private double[] originalMaxYValue;
-
         private bool originalValuesInitialized;
-
         [DataMember]
         private SampledPointsIndexContainer sampledPointsContainer;
-
         [DataMember]
         private bool showCurveNumbers;
-
         [DataMember]
         private double verticalScrollBarMaxYReference;
-
         [DataMember]
         private double verticalScrollBarMinYReference;
-
         [DataMember]
         private int verticalValuesReferenceCurveIndex;
-
         [DataMember]
         private ObservableCollection<double> verticalZoom;
-
         [DataMember]
         private double xAxisDivision;
-
         [DataMember]
         private string xAxisText;
-
         [DataMember]
         private ObservableCollection<int> selectedVerticalAxis;
-
         [DataMember]
         private bool gridEnabled;
-
         [DataMember]
         private string toggleGridBtnBackground;
-
         private List<double> ticksX;
-
         private List<double> ticksY;
-
         public ObservableCollection<KurvenDisplayActionButton> ActionButtons => actionButtons;
 
         public string ConclusionText
@@ -127,6 +90,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return conclusionText;
             }
+
             set
             {
                 if (conclusionText != value)
@@ -143,6 +107,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return backgroundColor;
             }
+
             set
             {
                 if (backgroundColor != value)
@@ -161,6 +126,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return headerText;
             }
+
             set
             {
                 if (headerText != value)
@@ -177,6 +143,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return horizontalOverflowScrollingEnabled;
             }
+
             set
             {
                 if (horizontalOverflowScrollingEnabled != value)
@@ -194,6 +161,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return horizontalZoom;
             }
+
             set
             {
                 if (horizontalZoom != value)
@@ -210,6 +178,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return introductionText;
             }
+
             set
             {
                 if (introductionText != value)
@@ -228,6 +197,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return HorizontalOverflowScrollingEnabled;
                 }
+
                 return true;
             }
         }
@@ -238,6 +208,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isStatic;
             }
+
             set
             {
                 if (isStatic != value)
@@ -257,6 +228,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return linearInterpolationEnabled;
             }
+
             set
             {
                 if (linearInterpolationEnabled != value)
@@ -275,6 +247,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return maxXValue;
             }
+
             set
             {
                 if (maxXValue != value)
@@ -293,6 +266,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return minXValue;
             }
+
             set
             {
                 if (minXValue != value)
@@ -311,6 +285,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return sampledPointsContainer;
             }
+
             set
             {
                 if (sampledPointsContainer != value)
@@ -328,6 +303,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return showCurveNumbers;
             }
+
             set
             {
                 if (showCurveNumbers != value)
@@ -346,6 +322,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return verticalScrollBarMaxYReference;
             }
+
             set
             {
                 if (verticalScrollBarMaxYReference != value)
@@ -362,6 +339,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return verticalScrollBarMinYReference;
             }
+
             set
             {
                 if (verticalScrollBarMinYReference != value)
@@ -378,6 +356,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return verticalValuesReferenceCurveIndex;
             }
+
             set
             {
                 if (verticalValuesReferenceCurveIndex != value)
@@ -394,6 +373,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return referenceVerticalZoomAxis;
             }
+
             set
             {
                 if (referenceVerticalZoomAxis != value)
@@ -410,6 +390,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return verticalZoom;
             }
+
             set
             {
                 if (verticalZoom != value)
@@ -426,6 +407,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return xAxisDivision;
             }
+
             set
             {
                 if (xAxisDivision != value)
@@ -442,6 +424,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return xAxisText;
             }
+
             set
             {
                 if (xAxisText != value)
@@ -453,11 +436,8 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public ObservableCollection<double> XPoints => xPoints;
-
         public ObservableCollection<double> YAxisDivision => yAxisDivision;
-
         public ObservableCollection<string> YAxisLegendName => yAxisLegendName;
-
         public ObservableCollection<string> YAxisText => yAxisText;
 
         public ObservableCollection<int> SelectedVerticalAxis
@@ -466,6 +446,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return selectedVerticalAxis;
             }
+
             private set
             {
                 if (selectedVerticalAxis != value)
@@ -482,6 +463,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return gridEnabled;
             }
+
             private set
             {
                 if (gridEnabled != value)
@@ -498,6 +480,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return toggleGridBtnBackground;
             }
+
             private set
             {
                 if (toggleGridBtnBackground != value)
@@ -514,6 +497,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return ticksX;
             }
+
             set
             {
                 if (ticksX != value)
@@ -530,6 +514,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return ticksY;
             }
+
             set
             {
                 if (ticksY != value)
@@ -568,10 +553,10 @@ namespace BMW.Rheingold.Module.ISTA
             switch (param)
             {
                 case ZoomParam.IncreaseHorizontal:
-                    HorizontalZoom += 1.0;
+                    HorizontalZoom++;
                     break;
                 case ZoomParam.DecreaseHorizontal:
-                    HorizontalZoom -= 1.0;
+                    HorizontalZoom--;
                     break;
                 case ZoomParam.IncreaseVertical:
                     AddVerticalZoom(1);
@@ -609,6 +594,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 SelectedVerticalAxis.Add((int)referenceAxis);
             }
+
             UpdateReferenceVerticalAxis();
         }
 
@@ -636,6 +622,7 @@ namespace BMW.Rheingold.Module.ISTA
                     result = CanDecreaseVerticalZooml();
                     break;
             }
+
             return result;
         }
 
@@ -650,6 +637,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     originalMaxYValue[i] = MaxYValue[i];
                 }
+
                 originalValuesInitialized = true;
             }
         }
@@ -661,6 +649,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return;
             }
+
             double item = MaxYValue.Max();
             int index = MaxYValue.IndexOf(item);
             double num = double.MinValue;
@@ -671,9 +660,10 @@ namespace BMW.Rheingold.Module.ISTA
             IEnumerable<NewCurveData> enumerable;
             if (maxZoom > 1.0)
             {
-                IEnumerable<int> maxZoomedAxis = from x in Enumerable.Range(0, 4)
-                                                 where VerticalZoom[x] == maxZoom
-                                                 select x;
+                IEnumerable<int> maxZoomedAxis =
+                    from x in Enumerable.Range(0, 4)
+                    where VerticalZoom[x] == maxZoom
+                    select x;
                 enumerable = curves.Where((NewCurveData x) => maxZoomedAxis.Contains(x.YAxis - 1));
             }
             else
@@ -688,8 +678,10 @@ namespace BMW.Rheingold.Module.ISTA
                     IEnumerable<NewCurveData> enumerable3 = Curves;
                     enumerable2 = enumerable3;
                 }
+
                 enumerable = enumerable2;
             }
+
             ReferenceAxis referenceAxis = ReferenceAxis.Y1;
             foreach (NewCurveData item2 in enumerable)
             {
@@ -706,6 +698,7 @@ namespace BMW.Rheingold.Module.ISTA
                     referenceAxis = (ReferenceAxis)item2.YAxis;
                 }
             }
+
             VerticalScrollBarMaxYReference = num3;
             VerticalScrollBarMinYReference = num2;
             VerticalValuesReferenceCurveIndex = num4;
@@ -720,8 +713,10 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     VerticalZoom[i] += zoomValueToBeAdded;
                 }
+
                 return;
             }
+
             foreach (int item in SelectedVerticalAxis)
             {
                 VerticalZoom[item - 1] += zoomValueToBeAdded;
@@ -755,6 +750,7 @@ namespace BMW.Rheingold.Module.ISTA
                     flag |= compareFunc(VerticalZoom[item - 1], zoomLevel);
                 }
             }
+
             return flag;
         }
     }

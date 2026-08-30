@@ -9,10 +9,8 @@ namespace BMW.Rheingold.Module.ISTA
     {
         [DataMember]
         private string content;
-
         [DataMember]
         private bool executeAction;
-
         [DataMember]
         public int ButtonNumber { get; set; }
 
@@ -22,6 +20,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return content;
             }
+
             set
             {
                 if (content != value)
@@ -38,6 +37,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return executeAction;
             }
+
             set
             {
                 if (executeAction != value)
@@ -49,7 +49,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public void ToogleExecuteState()
         {
             ExecuteAction = !ExecuteAction;
@@ -57,7 +56,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

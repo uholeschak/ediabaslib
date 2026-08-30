@@ -10,15 +10,10 @@ namespace BMW.Rheingold.Module.ISTA
     public class FaultModelDtcDyn : INotifyPropertyChanged
     {
         private bool marked;
-
         private bool selected;
-
         private int index;
-
         private string btnNo;
-
         private string faultLabel;
-
         public DtcAnzeigeButtonModel ButtonModel => new DtcAnzeigeButtonModel(IsMarked, IsSelected, DTC?.FortAsHexString, FaultLabel, btnNo, index);
 
         [PreserveSource(Hint = "Fault?.DTC", Placeholder = true)]
@@ -36,6 +31,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return faultLabel;
             }
+
             set
             {
                 faultLabel = value;
@@ -49,6 +45,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return marked;
             }
+
             set
             {
                 marked = value;
@@ -62,6 +59,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return selected;
             }
+
             set
             {
                 if (selected != value)
@@ -78,6 +76,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return index;
             }
+
             set
             {
                 index = value;
@@ -91,6 +90,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return btnNo;
             }
+
             set
             {
                 btnNo = value;
@@ -99,7 +99,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         [PreserveSource(Hint = "Fault", SignatureModified = true)]
         public FaultModelDtcDyn(PlaceholderType fault, PsdzDatabase database, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
@@ -143,7 +142,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

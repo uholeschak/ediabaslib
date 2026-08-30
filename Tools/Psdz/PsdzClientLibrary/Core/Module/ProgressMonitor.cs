@@ -7,35 +7,24 @@ namespace BMW.Rheingold.CoreFramework
     public class ProgressMonitor : INotifyPropertyChanged, IProgressMonitor
     {
         private long endTime;
-
         private double processProgress;
-
         private FormatedData processDescription;
-
         private FormatedData taskDescription;
-
         private ProgressCancelBehavior cancelBehavior;
-
         private double progressMultiplier = 1.0;
-
         private double progressOffset;
-
         private double progressMultiplierCmdList = 1.0;
-
         private bool isAborted;
-
         private bool minimizeable;
-
         private bool isRunningInBackground;
-
         protected Dispatcher dispatcher;
-
         public bool IsRunningInBackground
         {
             get
             {
                 return isRunningInBackground;
             }
+
             set
             {
                 isRunningInBackground = value;
@@ -49,6 +38,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return minimizeable;
             }
+
             set
             {
                 if (minimizeable != value)
@@ -67,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return isAborted;
             }
+
             set
             {
                 if (isAborted != value)
@@ -83,12 +74,14 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return cancelBehavior;
             }
+
             set
             {
                 if (cancelBehavior == value)
                 {
                     return;
                 }
+
                 if (dispatcher != null)
                 {
                     dispatcher.InvokeIfNoAccess(delegate
@@ -111,6 +104,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return endTime;
             }
+
             set
             {
                 if (endTime != value)
@@ -127,12 +121,14 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return processProgress;
             }
+
             set
             {
                 if (processProgress == value)
                 {
                     return;
                 }
+
                 if (dispatcher != null)
                 {
                     dispatcher.InvokeIfNoAccess(delegate
@@ -155,6 +151,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return progressMultiplierCmdList;
             }
+
             set
             {
                 progressOffset = processProgress;
@@ -169,12 +166,14 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return taskDescription;
             }
+
             set
             {
                 if (value == null || taskDescription == value)
                 {
                     return;
                 }
+
                 if (dispatcher != null)
                 {
                     dispatcher.InvokeIfNoAccess(delegate
@@ -197,12 +196,14 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return processDescription;
             }
+
             set
             {
                 if (value == null || processDescription == value)
                 {
                     return;
                 }
+
                 if (dispatcher != null)
                 {
                     dispatcher.InvokeIfNoAccess(delegate
@@ -220,7 +221,6 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public ProgressMonitor()
         {
             IsRunningInBackground = false;
@@ -230,9 +230,9 @@ namespace BMW.Rheingold.CoreFramework
 
         public void NotifyPropertyChanged(string propertyName)
         {
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 

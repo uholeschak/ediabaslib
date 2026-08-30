@@ -11,42 +11,32 @@ namespace BMW.Rheingold.Module.ISTA
     {
         [DataMember]
         private readonly string plainText;
-
         [DataMember]
         private readonly int result;
-
         [DataMember]
         private readonly string buttonText;
-
         private readonly ISelectableEntry fastaEntry;
-
         [DataMember]
         private string selectedbrand;
-
         [DataMember]
         private bool useMultiSelect;
-
         [DataMember]
         private bool isChecked;
-
         [DataMember]
         private bool isEnabled;
-
         [DataMember]
         private bool isMarked;
-
         [DataMember]
         private string label;
-
         [DataMember]
         private bool isVisible;
-
         public string SelectedBrand
         {
             get
             {
                 return selectedbrand;
             }
+
             set
             {
                 if (selectedbrand != value)
@@ -63,6 +53,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return useMultiSelect;
             }
+
             set
             {
                 if (useMultiSelect != value)
@@ -81,6 +72,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return 0;
                 }
+
                 if (IsMultiSelect)
                 {
                     if (isEnabled)
@@ -89,26 +81,33 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             return 1;
                         }
+
                         return 2;
                     }
+
                     if (!isChecked)
                     {
                         return -1;
                     }
+
                     return -2;
                 }
+
                 if (isEnabled)
                 {
                     if (!isChecked)
                     {
                         return -1;
                     }
+
                     return 1;
                 }
+
                 if (!isChecked)
                 {
                     return -2;
                 }
+
                 return 2;
             }
         }
@@ -119,6 +118,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isEnabled;
             }
+
             set
             {
                 if (isEnabled != value)
@@ -135,6 +135,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isChecked;
             }
+
             set
             {
                 if (isChecked != value)
@@ -151,6 +152,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return label;
             }
+
             private set
             {
                 label = value;
@@ -164,6 +166,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isMarked;
             }
+
             set
             {
                 if (isMarked != value)
@@ -180,6 +183,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isVisible;
             }
+
             set
             {
                 if (isVisible != value)
@@ -191,15 +195,11 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public int Result => result;
-
         public string PlainText => plainText;
-
         public ISelectableEntry FastaEntry => fastaEntry;
-
         public string ButtonText => buttonText;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public QuestionSelectButtonModel(bool isMarked, int selectionState, string buttonText, string plainText, string label, int result, ISelectableEntry fastaEntry, bool useMultiSelect = false, string selectedBrand = "BMWPKW")
         {
             this.isMarked = isMarked;
@@ -279,7 +279,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

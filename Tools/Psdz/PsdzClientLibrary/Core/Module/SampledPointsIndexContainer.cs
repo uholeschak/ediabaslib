@@ -12,15 +12,11 @@ namespace BMW.Rheingold.Module.ISTA
     {
         [DataMember]
         private readonly ObservableCollection<int> sampledIndexes;
-
         private readonly double sampleDistance;
-
         private double lastSampledValue;
-
         public ObservableCollection<int> SampledIndexes => sampledIndexes;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public SampledPointsIndexContainer(double minVal, double maxVal, int curveCount, int targetSamplePointsOnXAxis, int maxSamplePointsOnXAxis)
         {
             sampledIndexes = new ObservableCollection<int>();
@@ -36,12 +32,13 @@ namespace BMW.Rheingold.Module.ISTA
                 lastSampledValue = value;
                 return true;
             }
+
             return false;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private double GetSampleDistance(double minVal, double maxVal, int samplePointsPerAxis)
@@ -58,8 +55,10 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return maxSamplePointsOnXAxis;
                 }
+
                 return num;
             }
+
             return targetSamplePointsOnXAxis;
         }
     }

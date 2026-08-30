@@ -10,34 +10,27 @@ namespace BMW.Rheingold.Module.ISTA
     {
         [DataMember]
         private int color;
-
         [DataMember]
         private int index;
-
         [DataMember]
         private string legendText;
-
         [DataMember]
         private int style;
-
         [DataMember]
         private int thickness;
-
         [DataMember]
         private int yAxis;
-
         [DataMember]
         private readonly ObservableCollection<double> yPoints;
-
         [DataMember]
         private int toggleState;
-
         public int Color
         {
             get
             {
                 return color;
             }
+
             set
             {
                 if (color != value)
@@ -54,6 +47,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return index;
             }
+
             set
             {
                 if (index != value)
@@ -70,6 +64,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return legendText;
             }
+
             set
             {
                 if (legendText != value)
@@ -86,6 +81,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return style;
             }
+
             set
             {
                 if (style != value)
@@ -105,12 +101,15 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return 0;
                 }
+
                 if (toggleState == 1)
                 {
                     return thickness + 2;
                 }
+
                 return thickness;
             }
+
             set
             {
                 if (thickness != value)
@@ -127,6 +126,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return yAxis;
             }
+
             set
             {
                 if (yAxis != value)
@@ -138,11 +138,9 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public ObservableCollection<double> YPoints => yPoints;
-
         public int ToggleState => toggleState;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public NewCurveData()
         {
             color = 1;
@@ -162,7 +160,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override bool Equals(object obj)
@@ -171,6 +169,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return newCurveData.Index == Index;
             }
+
             return false;
         }
 

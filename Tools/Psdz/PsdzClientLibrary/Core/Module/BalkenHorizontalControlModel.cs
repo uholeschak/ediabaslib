@@ -13,42 +13,32 @@ namespace BMW.Rheingold.Module.ISTA
     public class BalkenHorizontalControlModel : INotifyPropertyChanged
     {
         private const int colorRed = 11;
-
         private Regex formatRegex = new Regex("(?<=FORMAT=\")[^\"]+");
-
         [DataMember]
         private string txtOverBalkenTextbox;
-
         [DataMember]
         private string txtBalkenTextbox;
-
         [DataMember]
         private double barValue;
-
         [DataMember]
         private string barValueFormat;
-
         [DataMember]
         private double barMin;
-
         [DataMember]
         private double barMax;
-
         [DataMember]
         private int barColor;
-
         [DataMember]
         private double barUpperLimit;
-
         [DataMember]
         private double barLowerLimit;
-
         public string TxtOverBalkenTextbox
         {
             get
             {
                 return txtOverBalkenTextbox;
             }
+
             set
             {
                 if (txtOverBalkenTextbox != value)
@@ -65,6 +55,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return txtBalkenTextbox;
             }
+
             set
             {
                 if (txtBalkenTextbox != value)
@@ -81,6 +72,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return barValue;
             }
+
             set
             {
                 if (barValue != value)
@@ -97,6 +89,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return barValueFormat;
             }
+
             set
             {
                 if (barValueFormat != value)
@@ -113,6 +106,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return barMin;
             }
+
             set
             {
                 if (barMin != value)
@@ -129,6 +123,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return barMax;
             }
+
             set
             {
                 if (barMax != value)
@@ -145,6 +140,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return barColor;
             }
+
             set
             {
                 if (barColor != value)
@@ -161,6 +157,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return barUpperLimit;
             }
+
             set
             {
                 if (barUpperLimit != value)
@@ -177,6 +174,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return barLowerLimit;
             }
+
             set
             {
                 if (barLowerLimit != value)
@@ -188,7 +186,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public BalkenHorizontalControlModel()
         {
             BarValue = 0.0;
@@ -217,6 +214,7 @@ namespace BMW.Rheingold.Module.ISTA
                     textLocator = inParam.getParameter($"i_OverBalken{identifier}Text", null) as ITextLocator;
                     value = Convert.ToDouble(inParam.getParameter($"i_Balken{identifier}farbgrenze", 0));
                 }
+
                 ITextContent textContent = inParam.getParameter($"i_Balken{identifier}Textbox", null) as ITextContent;
                 TxtOverBalkenTextbox = textLocator?.TextContent.GetTextForUI(lang)[0].TextItem;
                 TxtBalkenTextbox = textContent?.GetTextForUI(lang)[0].TextItem;
@@ -229,6 +227,7 @@ namespace BMW.Rheingold.Module.ISTA
                     Match match = formatRegex.Match(textLocator.Text);
                     BarValueFormat = (match.Success ? match.Value : string.Empty);
                 }
+
                 UpperLimit(value);
             }
             catch (Exception exception)
@@ -277,7 +276,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

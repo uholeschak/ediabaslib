@@ -9,31 +9,25 @@ namespace BMW.Rheingold.Module.ISTA
     {
         [DataMember]
         private bool isMarked;
-
         [DataMember]
         private bool isSelected;
-
         [DataMember]
         private string fortAsHexString;
-
         [DataMember]
         private string faultLabel;
-
         [DataMember]
         private string buttonNo;
-
         [DataMember]
         private int index;
-
         [DataMember]
         private bool isEnabled;
-
         public bool IsMarked
         {
             get
             {
                 return isMarked;
             }
+
             set
             {
                 isMarked = value;
@@ -47,6 +41,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isSelected;
             }
+
             set
             {
                 if (isSelected != value)
@@ -63,6 +58,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return fortAsHexString;
             }
+
             set
             {
                 fortAsHexString = value;
@@ -76,6 +72,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return faultLabel;
             }
+
             set
             {
                 faultLabel = value;
@@ -89,6 +86,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return index;
             }
+
             set
             {
                 index = value;
@@ -102,6 +100,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return buttonNo;
             }
+
             set
             {
                 buttonNo = value;
@@ -115,6 +114,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isEnabled;
             }
+
             set
             {
                 isEnabled = value;
@@ -123,7 +123,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public DtcAnzeigeButtonModel()
         {
         }
@@ -141,7 +140,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

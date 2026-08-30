@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 
+#pragma warning disable SYSLIB0006
 namespace BMW.Rheingold.Module.ISTA
 {
     internal class NewKurvendisplayDlgImpl : ServiceDlgImplBase<NewKurvendisplayDlgModel>

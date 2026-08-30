@@ -13,34 +13,27 @@ namespace BMW.Rheingold.Module.ISTA
     {
         [DataMember]
         private ObservableCollection<Tuple<double, double>> curve = new ObservableCollection<Tuple<double, double>>();
-
         [DataMember]
         private bool isVisible;
-
         [DataMember]
         private bool isY2;
-
         [DataMember]
         private string name;
-
         [DataMember]
         private int strokeColor;
-
         [DataMember]
         private string text;
-
         [DataMember]
         private double x;
-
         [DataMember]
         private double y;
-
         public string Name
         {
             get
             {
                 return name;
             }
+
             set
             {
                 name = value;
@@ -54,6 +47,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isY2;
             }
+
             set
             {
                 isY2 = value;
@@ -67,6 +61,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isVisible;
             }
+
             set
             {
                 if (isVisible != value)
@@ -83,6 +78,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return text;
             }
+
             set
             {
                 if (text != value)
@@ -99,6 +95,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return strokeColor;
             }
+
             set
             {
                 if (strokeColor != value)
@@ -118,6 +115,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return x;
             }
+
             set
             {
                 if (x != value)
@@ -134,6 +132,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return y;
             }
+
             set
             {
                 if (y != value)
@@ -147,7 +146,6 @@ namespace BMW.Rheingold.Module.ISTA
         public IEnumerable<Tuple<double, double>> Curve => curve;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public CurveData()
         {
             Points = new Collection<Tuple<double, double>>();
@@ -171,10 +169,12 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     curve.Clear();
                 }
+
                 if (!curve.Any() || x != 0.0 || y != 0.0)
                 {
                     curve.Add(new Tuple<double, double>(x, y));
                 }
+
                 X = x;
                 Y = y;
             }
@@ -182,7 +182,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void CutCurve(CurveNewDataCotainer curveNewContainer)
         {
-            double[,] curveNew = curveNewContainer.CurveNew;
+            double[, ] curveNew = curveNewContainer.CurveNew;
             curve.Clear();
             if (curveNew != null && curveNew.GetLength(0) > 0)
             {
@@ -196,7 +196,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

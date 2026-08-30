@@ -14,104 +14,68 @@ namespace BMW.Rheingold.Module.ISTA
     public class CurveDisplayData : INotifyPropertyChanged
     {
         public const double VerticalStepLength = 35.0;
-
         public const double HorizontalStepLength = 30.0;
-
         [DataMember]
         private double border1;
-
         [DataMember]
         private double border2;
-
         [DataMember]
         private bool curveInPoints;
-
         [DataMember]
         private int curveThickness;
-
         [DataMember]
         private double initialMinValue;
-
         [DataMember]
         private double maxXValue;
-
         [DataMember]
         private double maxY2Value;
-
         [DataMember]
         private double maxYValue;
-
         [DataMember]
         private double minXValue;
-
         [DataMember]
         private double minY2Value;
-
         [DataMember]
         private double minYValue;
-
         [DataMember]
         private string unitX;
-
         [DataMember]
         private string unitY;
-
         [DataMember]
         private string unitY2;
-
         [DataMember]
         private double xTeiler = 1.0;
-
         [DataMember]
         private int y2AxisColor;
-
         [DataMember]
         private double y2Teiler = 1.0;
-
         [DataMember]
         private int yAxisColor;
-
         [DataMember]
         private double yTeiler = 1.0;
-
         private Tuple<bool, double>[] borderLinesYValues;
-
         private double xAxisLength;
-
         private double yAxisLength;
-
         private int maxYSteps;
-
         private int maxY2Steps;
-
         private int maxXSteps;
-
         private double yAxisMargin;
-
         private double[] horizontalChartLineYValues;
-
         private LineDescriptionData[] horizontalChartLineY2Values;
-
         private IEnumerable<LineDescriptionData> yLineDescription;
-
         private IEnumerable<LineDescriptionData> y2LineDescription;
-
         private IEnumerable<LineDescriptionData> xLineDescription;
-
         private double[] verticalChartLineXValues;
-
         private double yPositionOfXAxisDescription;
-
         private bool isY2Visible;
-
         private ObservableCollectionEx<CurveDataViewModel> curvesToView = new ObservableCollectionEx<CurveDataViewModel>();
-
         public double XTeiler
         {
             get
             {
                 return xTeiler;
             }
+
             set
             {
                 if (xTeiler != value)
@@ -125,6 +89,7 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Warning("CurveDisplayData.XTeiler", "Value of property 'XTeiler' is lower 0. This is not allowed. The value is instead set to 1.");
                         xTeiler = 1.0;
                     }
+
                     OnPropertyChanged("XTeiler");
                 }
             }
@@ -136,6 +101,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return yTeiler;
             }
+
             set
             {
                 if (yTeiler != value)
@@ -149,6 +115,7 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Warning("CurveDisplayData.YTeiler", "Value of property 'YTeiler' is lower 0. This is not allowed. The value is instead set to 1.");
                         yTeiler = 1.0;
                     }
+
                     OnPropertyChanged("YTeiler");
                 }
             }
@@ -160,6 +127,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return y2Teiler;
             }
+
             set
             {
                 if (y2Teiler != value)
@@ -173,6 +141,7 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Warning("CurveDisplayData.Y2Teiler", "Value of property 'Y2Teiler' is lower 0. This is not allowed. The value is instead set to 1.");
                         y2Teiler = 1.0;
                     }
+
                     OnPropertyChanged("Y2Teiler");
                 }
             }
@@ -184,6 +153,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return maxXValue;
             }
+
             set
             {
                 if (maxXValue != value)
@@ -200,6 +170,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return maxYValue;
             }
+
             set
             {
                 if (maxYValue != value)
@@ -216,6 +187,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return maxY2Value;
             }
+
             set
             {
                 if (maxY2Value != value)
@@ -232,6 +204,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return minXValue;
             }
+
             set
             {
                 if (minXValue != value)
@@ -248,6 +221,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return minYValue;
             }
+
             set
             {
                 if (minYValue != value)
@@ -264,6 +238,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return minY2Value;
             }
+
             set
             {
                 if (minY2Value != value)
@@ -280,6 +255,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return border1;
             }
+
             set
             {
                 if (border1 != value)
@@ -296,6 +272,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return border2;
             }
+
             set
             {
                 if (border2 != value)
@@ -312,6 +289,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return unitX;
             }
+
             set
             {
                 if (unitX != value)
@@ -328,6 +306,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return unitY;
             }
+
             set
             {
                 if (unitY != value)
@@ -344,6 +323,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return unitY2;
             }
+
             set
             {
                 if (unitY2 != value)
@@ -360,6 +340,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return yAxisColor;
             }
+
             set
             {
                 if (yAxisColor != value)
@@ -376,6 +357,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return y2AxisColor;
             }
+
             set
             {
                 if (y2AxisColor != value)
@@ -392,6 +374,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return curveThickness;
             }
+
             set
             {
                 if (curveThickness != value)
@@ -408,6 +391,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return curveInPoints;
             }
+
             set
             {
                 if (curveInPoints != value)
@@ -424,6 +408,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return initialMinValue;
             }
+
             set
             {
                 if (initialMinValue != value)
@@ -440,6 +425,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return xAxisLength;
             }
+
             set
             {
                 xAxisLength = value;
@@ -453,6 +439,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return yAxisLength;
             }
+
             set
             {
                 yAxisLength = value;
@@ -466,6 +453,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return maxYSteps;
             }
+
             set
             {
                 maxYSteps = value;
@@ -479,6 +467,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return maxY2Steps;
             }
+
             set
             {
                 maxY2Steps = value;
@@ -492,6 +481,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return maxXSteps;
             }
+
             set
             {
                 maxXSteps = value;
@@ -505,6 +495,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return yAxisMargin;
             }
+
             set
             {
                 yAxisMargin = value;
@@ -518,6 +509,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return horizontalChartLineYValues;
             }
+
             set
             {
                 horizontalChartLineYValues = value;
@@ -531,6 +523,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return horizontalChartLineY2Values;
             }
+
             set
             {
                 horizontalChartLineY2Values = value;
@@ -544,6 +537,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return verticalChartLineXValues;
             }
+
             set
             {
                 verticalChartLineXValues = value;
@@ -557,6 +551,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return borderLinesYValues;
             }
+
             set
             {
                 borderLinesYValues = value;
@@ -570,6 +565,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return yLineDescription;
             }
+
             set
             {
                 yLineDescription = value;
@@ -583,6 +579,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return y2LineDescription;
             }
+
             set
             {
                 y2LineDescription = value;
@@ -596,6 +593,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return xLineDescription;
             }
+
             set
             {
                 xLineDescription = value;
@@ -609,6 +607,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return yPositionOfXAxisDescription;
             }
+
             set
             {
                 yPositionOfXAxisDescription = value;
@@ -622,6 +621,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return curvesToView;
             }
+
             set
             {
                 curvesToView = value;
@@ -635,6 +635,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return isY2Visible;
             }
+
             set
             {
                 isY2Visible = value;
@@ -643,10 +644,9 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if ("Border1".Equals(propertyName) || "Border2".Equals(propertyName) || "MinYValue".Equals(propertyName) || "YTeiler".Equals(propertyName))
             {
                 UpdateBorderLinesYValues();
@@ -670,6 +670,7 @@ namespace BMW.Rheingold.Module.ISTA
                     UpdateHorizontalChartLineY2Values();
                     return;
                 }
+
                 y2LineDescription = new List<LineDescriptionData>();
                 HorizontalChartLineY2Values = new LineDescriptionData[0];
             }
@@ -688,6 +689,7 @@ namespace BMW.Rheingold.Module.ISTA
                     UpdateHorizontalChartLineY2Values();
                     return;
                 }
+
                 y2LineDescription = new List<LineDescriptionData>();
                 HorizontalChartLineY2Values = new LineDescriptionData[0];
             }
@@ -707,7 +709,11 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void UpdateBorderLinesYValues()
         {
-            double[] array = new double[2] { Border1, Border2 };
+            double[] array = new double[2]
+            {
+                Border1,
+                Border2
+            };
             Tuple<bool, double>[] array2 = new Tuple<bool, double>[2];
             for (int i = 0; i < array.Length; i++)
             {
@@ -724,6 +730,7 @@ namespace BMW.Rheingold.Module.ISTA
                     array2[i] = new Tuple<bool, double>(item1: false, -1.0);
                 }
             }
+
             BorderLinesYValues = array2;
         }
 
@@ -745,6 +752,7 @@ namespace BMW.Rheingold.Module.ISTA
                     num2 = num3;
                 }
             }
+
             YAxisLength = ((num2 <= 0.0) ? 0.0 : (num2 + 17.5));
         }
 
@@ -777,18 +785,11 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 array[num2 - 1] = (double)(MaxYSteps - num2) * 35.0 + YAxisMargin;
                 double content = (double)num2 * YTeiler + MinYValue;
-                list.Add(new LineDescriptionData
-                {
-                    Content = content,
-                    TextPosition = new Point(10.0, array[num2 - 1] - 8.0)
-                });
+                list.Add(new LineDescriptionData { Content = content, TextPosition = new Point(10.0, array[num2 - 1] - 8.0) });
             }
+
             array[num] = YAxisLength;
-            list.Add(new LineDescriptionData
-            {
-                Content = MinYValue,
-                TextPosition = new Point(10.0, array[num] - 8.0)
-            });
+            list.Add(new LineDescriptionData { Content = MinYValue, TextPosition = new Point(10.0, array[num] - 8.0) });
             YLineDescription = list;
             HorizontalChartLineYValues = array;
         }
@@ -801,32 +802,20 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 num2 = MaxYSteps - num;
             }
+
             List<LineDescriptionData> list = new List<LineDescriptionData>();
             double[] array = new double[num + 1];
             for (int num3 = num; num3 > 0; num3--)
             {
                 array[num3 - 1] = (double)(MaxY2Steps - num3) * 35.0 + YAxisMargin + (double)num2 * 35.0;
                 double content = (double)num3 * Y2Teiler + MinY2Value;
-                list.Add(new LineDescriptionData
-                {
-                    Content = content,
-                    TextPosition = new Point(XAxisLength + 10.0, array[num3 - 1] - 8.0),
-                    DividerEndPoint = XAxisLength + 6.0
-                });
+                list.Add(new LineDescriptionData { Content = content, TextPosition = new Point(XAxisLength + 10.0, array[num3 - 1] - 8.0), DividerEndPoint = XAxisLength + 6.0 });
             }
+
             array[num] = YAxisLength;
-            list.Add(new LineDescriptionData
-            {
-                Content = MinY2Value,
-                TextPosition = new Point(XAxisLength + 10.0, array[num] - 8.0),
-                DividerEndPoint = XAxisLength + 6.0
-            });
+            list.Add(new LineDescriptionData { Content = MinY2Value, TextPosition = new Point(XAxisLength + 10.0, array[num] - 8.0), DividerEndPoint = XAxisLength + 6.0 });
             Y2LineDescription = list;
-            HorizontalChartLineY2Values = array.Select((double y) => new LineDescriptionData
-            {
-                DividerEndPoint = XAxisLength + 6.0,
-                TextPosition = new Point(10.0, y)
-            }).ToArray();
+            HorizontalChartLineY2Values = array.Select((double y) => new LineDescriptionData { DividerEndPoint = XAxisLength + 6.0, TextPosition = new Point(10.0, y) }).ToArray();
         }
 
         private void UpdateVerticalChartLineXValues()
@@ -835,22 +824,13 @@ namespace BMW.Rheingold.Module.ISTA
             double[] array = new double[num + 1];
             List<LineDescriptionData> list = new List<LineDescriptionData>();
             array[num] = 0.0;
-            list.Add(new LineDescriptionData
-            {
-                Content = MinXValue,
-                TextPosition = new Point(array[num], 0.0),
-                DividerEndPoint = YAxisLength + 6.0
-            });
+            list.Add(new LineDescriptionData { Content = MinXValue, TextPosition = new Point(array[num], 0.0), DividerEndPoint = YAxisLength + 6.0 });
             for (int num2 = num; num2 > 0; num2--)
             {
                 array[num2 - 1] = (double)(MaxXSteps - num2 + 1) * 30.0;
-                list.Add(new LineDescriptionData
-                {
-                    Content = (double)(MaxXSteps - num2 + 1) * XTeiler + MinXValue,
-                    TextPosition = new Point(array[num2 - 1], 0.0),
-                    DividerEndPoint = YAxisLength + 6.0
-                });
+                list.Add(new LineDescriptionData { Content = (double)(MaxXSteps - num2 + 1) * XTeiler + MinXValue, TextPosition = new Point(array[num2 - 1], 0.0), DividerEndPoint = YAxisLength + 6.0 });
             }
+
             XLineDescription = list;
             VerticalChartLineXValues = array;
         }
@@ -865,6 +845,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 CurvesToView.Clear();
             }
+
             foreach (CurveData curf in curves)
             {
                 if (curf.Curve != null)
@@ -902,6 +883,7 @@ namespace BMW.Rheingold.Module.ISTA
                 num3 = MaxYValue;
                 text = UnitY;
             }
+
             Matrix matrix = new Matrix(30.0 / XTeiler, 0.0, 0.0, -35.0 / num, 0.0, 0.0);
             Point point = new Point(0.0, YAxisLength);
             Point point2 = new Point(MinXValue, num2);
@@ -914,6 +896,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     continue;
                 }
+
                 if (item2 >= num2 && item2 <= num3)
                 {
                     Point value = point + matrix.Transform(point3 - point2);
@@ -945,6 +928,7 @@ namespace BMW.Rheingold.Module.ISTA
                     AddPointsToView(pointCollection, curveData);
                 }
             }
+
             if (!CurveInPoints)
             {
                 AddPointsToView(pointCollection, curveData);
