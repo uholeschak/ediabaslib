@@ -113,7 +113,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(20000169514081m, null, typeof(AirServiceHistory), null, hasGui: false);
             //[-] Register(20000361414781m, "Rdc Trigger Tool", typeof(RdcTriggerToolDialog), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(-2m, "QuickCommandMeasuringServiceDlg", typeof(QuickCommandMeasuringServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
-            //[-] Register(20000364853784m, "NewDialogKurvenDisplay", typeof(NewKurvendisplayDlgImpl), typeof(IstaOperationServiceDialogUi), null);
+            Register(20000364853784m, "NewDialogKurvenDisplay", typeof(NewKurvendisplayDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(20000548205711m, "Balkendisplay", typeof(HealthIndicatorDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(20000590095471m, "MultiselectServiceDlg", typeof(MultiselectServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(20001106707371m, "EFuseDlg", typeof(EFuseDlgImpl), typeof(IstaOperationServiceDialogUi), null);
