@@ -14,40 +14,31 @@ namespace BMW.Rheingold.CoreFramework
     {
         [DataMember]
         private ModuleExecutionOrigin executedFrom;
-
         [DataMember]
         private InfoObject infoObj;
-
         [DataMember]
         private string infoType;
-
         [DataMember]
         private bool isActive;
-
         [DataMember]
         private bool isMinimizable;
-
         [DataMember]
         private ModuleExecutionStateType moduleState;
-
         [DataMember]
         private string name;
-
         [DataMember]
         private typeDiagObjectState stateField;
-
         [DataMember]
         private string title;
-
         [DataMember]
         private string visibleName;
-
         public bool IsActive
         {
             get
             {
                 return isActive;
             }
+
             set
             {
                 if (!object.Equals(isActive, value))
@@ -66,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return ModuleState == ModuleExecutionStateType.aborted;
                 }
+
                 return true;
             }
         }
@@ -76,6 +68,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return moduleState;
             }
+
             set
             {
                 if (!object.Equals(moduleState, value))
@@ -92,6 +85,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return title;
             }
+
             set
             {
                 if (!object.Equals(title, value))
@@ -108,6 +102,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return infoObj;
             }
+
             private set
             {
                 if (!object.Equals(infoObj, value))
@@ -124,6 +119,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return executedFrom;
             }
+
             set
             {
                 if (!object.Equals(executedFrom, value))
@@ -140,10 +136,11 @@ namespace BMW.Rheingold.CoreFramework
             {
                 if (InfoObj != null)
                 {
-                    //[-] decimal? nodeclass = InfoObj.XepInfoObject.Nodeclass;
-                    //[-] decimal num = 41153666;
-                    //[-] return (nodeclass.GetValueOrDefault() == num) & nodeclass.HasValue;
+                //[-] decimal? nodeclass = InfoObj.XepInfoObject.Nodeclass;
+                //[-] decimal num = 41153666;
+                //[-] return (nodeclass.GetValueOrDefault() == num) & nodeclass.HasValue;
                 }
+
                 return false;
             }
         }
@@ -156,6 +153,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return ModuleState == ModuleExecutionStateType.running;
                 }
+
                 return true;
             }
         }
@@ -166,6 +164,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return visibleName;
             }
+
             set
             {
                 if (!object.Equals(visibleName, value))
@@ -182,6 +181,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return stateField;
             }
+
             set
             {
                 if (!stateField.Equals(value))
@@ -192,6 +192,7 @@ namespace BMW.Rheingold.CoreFramework
                     {
                         infoObject.State = value;
                     }
+
                     OnPropertyChanged("Status");
                 }
             }
@@ -203,6 +204,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return name;
             }
+
             private set
             {
                 if (!object.Equals(name, value))
@@ -219,6 +221,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return isMinimizable;
             }
+
             set
             {
                 if (!object.Equals(isMinimizable, value))
@@ -238,6 +241,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return infoObject.State == typeDiagObjectState.Minimized;
                 }
+
                 return false;
             }
         }
@@ -248,6 +252,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return infoType;
             }
+
             set
             {
                 if (!object.Equals(infoType, value))
@@ -259,7 +264,6 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         [PreserveSource(Cleaned = true)]
         public static InfoObject CreateHelperInfoObject(string moduleName)
         {
@@ -272,8 +276,7 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [PreserveSource(Cleaned = true)]
-        public ModuleData(IXepInfoObject xepInfoObject)
-            : this(new InfoObject())
+        public ModuleData(IXepInfoObject xepInfoObject) : this(new InfoObject())
         {
         }
 
@@ -283,6 +286,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 throw new ArgumentException("infoObject");
             }
+
             //[-] if (infoObject.XepInfoObject == null)
             //[-] {
             //[-] throw new ArgumentException("XepInfoObject");
@@ -301,7 +305,7 @@ namespace BMW.Rheingold.CoreFramework
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

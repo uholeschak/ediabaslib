@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BMW.Rheingold.RheingoldSessionController.Module;
+using PsdzClient;
 
 namespace BMW.Rheingold.Module.ISTA
 {
@@ -103,11 +104,13 @@ namespace BMW.Rheingold.Module.ISTA
             return 0u;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public void Close()
         {
             Close(abort: true);
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public void Close(bool abort)
         {
             if (logic.VecInfo.DiagCodes == null || !logic.VecInfo.DiagCodes.Any())
