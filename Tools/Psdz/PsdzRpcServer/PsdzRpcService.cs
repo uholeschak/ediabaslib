@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 
 namespace PsdzRpcServer
 {
@@ -423,14 +424,14 @@ namespace PsdzRpcServer
 
         public Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzRpcSwiRegisterEnum? swiRegisterEnum)
         {
-            PsdzDatabase.SwiRegisterEnum? swiRegisterEnumValue = swiRegisterEnum.HasValue ? MapSwiRegisterEnum(swiRegisterEnum.Value) : null;
+            SwiRegister? swiRegisterEnumValue = swiRegisterEnum.HasValue ? MapSwiRegisterEnum(swiRegisterEnum.Value) : null;
             List<PsdzRpcOptionItem> options = GetSelectedOptionsInternal(swiRegisterEnumValue);
             return Task.FromResult(options);
         }
 
         public Task<PsdzSwiRegisterGroupEnum> GetSwiRegisterGroup(PsdzRpcSwiRegisterEnum swiRegisterEnum)
         {
-            PsdzDatabase.SwiRegisterEnum swiRegisterEnumValue = MapSwiRegisterEnum(swiRegisterEnum);
+            SwiRegister swiRegisterEnumValue = MapSwiRegisterEnum(swiRegisterEnum);
             PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumValue);
             PsdzSwiRegisterGroupEnum rpcSwiRegisterGroup = MapSwiRegisterGroupEnum(swiRegisterGroup);
             return Task.FromResult(rpcSwiRegisterGroup);
@@ -588,7 +589,7 @@ namespace PsdzRpcServer
             return isConnected;
         }
 
-        private List<PsdzRpcOptionItem> GetSelectedOptionsInternal(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private List<PsdzRpcOptionItem> GetSelectedOptionsInternal(SwiRegister? swiRegisterEnum)
         {
             try
             {
@@ -612,7 +613,7 @@ namespace PsdzRpcServer
 
                 List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
                 List<PsdzDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(_programmingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+                Dictionary<SwiRegister, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
                 if (optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {
                     if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
@@ -714,11 +715,11 @@ namespace PsdzRpcServer
                     return true;
                 }
 
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
-                PsdzDatabase.SwiRegisterEnum swiRegisterEnum = MapSwiRegisterEnum(optionItem.SwiRegisterEnum);
+                Dictionary<SwiRegister, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+                SwiRegister swiRegisterEnum = MapSwiRegisterEnum(optionItem.SwiRegisterEnum);
                 if (_programmingJobs.SelectedOptions.Count > 0)
                 {
-                    PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
+                    SwiRegister swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
                     if (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
                     {
                         _programmingJobs.SelectedOptions.Clear();
@@ -877,7 +878,7 @@ namespace PsdzRpcServer
             _callback.OnUpdateOptions();
         }
 
-        private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void UpdateOptionSelections(SwiRegister? swiRegisterEnum)
         {
             PsdzRpcSwiRegisterEnum? swiRegisterEnumValue = swiRegisterEnum.HasValue ? MapSwiRegisterEnum(swiRegisterEnum.Value) : null;
             _callback.OnUpdateOptionSelections(swiRegisterEnumValue);
@@ -975,7 +976,7 @@ namespace PsdzRpcServer
             throw new ArgumentOutOfRangeException(nameof(operationType), operationType, "Unknown OperationType");
         }
 
-        private static PsdzRpcSwiRegisterEnum MapSwiRegisterEnum(PsdzDatabase.SwiRegisterEnum swiRegisterEnum)
+        private static PsdzRpcSwiRegisterEnum MapSwiRegisterEnum(SwiRegister swiRegisterEnum)
         {
             if (Enum.TryParse(swiRegisterEnum.ToString(), out PsdzRpcSwiRegisterEnum result))
             {
@@ -984,9 +985,9 @@ namespace PsdzRpcServer
             throw new ArgumentOutOfRangeException(nameof(swiRegisterEnum), swiRegisterEnum, "Unknown SwiRegisterEnum");
         }
 
-        private static PsdzDatabase.SwiRegisterEnum MapSwiRegisterEnum(PsdzRpcSwiRegisterEnum swiRegisterEnum)
+        private static SwiRegister MapSwiRegisterEnum(PsdzRpcSwiRegisterEnum swiRegisterEnum)
         {
-            if (Enum.TryParse(swiRegisterEnum.ToString(), out PsdzDatabase.SwiRegisterEnum result))
+            if (Enum.TryParse(swiRegisterEnum.ToString(), out SwiRegister result))
             {
                 return result;
             }

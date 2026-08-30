@@ -38,6 +38,7 @@ using System.Threading;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 
 namespace PsdzClient.Programming
 {
@@ -94,7 +95,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         public class OptionsItem
         {
-            public OptionsItem(PsdzDatabase.SwiRegisterEnum swiRegisterEnum,PsdzDatabase.SwiAction swiAction, ClientContext clientContext)
+            public OptionsItem(SwiRegister swiRegisterEnum, PsdzDatabase.SwiAction swiAction, ClientContext clientContext)
             {
                 Init();
                 SwiRegisterEnum = swiRegisterEnum;
@@ -102,7 +103,7 @@ namespace PsdzClient.Programming
                 ClientContext = clientContext;
             }
 
-            public OptionsItem(PsdzDatabase.SwiRegisterEnum swiRegisterEnum, PsdzDatabase.EcuInfo ecuInfo, IEcuLogisticsEntry ecuLogisticsEntry, ClientContext clientContext)
+            public OptionsItem(SwiRegister swiRegisterEnum, PsdzDatabase.EcuInfo ecuInfo, IEcuLogisticsEntry ecuLogisticsEntry, ClientContext clientContext)
             {
                 Init();
                 SwiRegisterEnum = swiRegisterEnum;
@@ -117,7 +118,7 @@ namespace PsdzClient.Programming
                 Invalid = false;
             }
 
-            public PsdzDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
+            public SwiRegister SwiRegisterEnum { get; private set; }
 
             public PsdzDatabase.SwiAction SwiAction { get; private set; }
 
@@ -167,7 +168,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         public class OptionType
         {
-            public OptionType(string name, PsdzDatabase.SwiRegisterEnum swiRegisterEnum)
+            public OptionType(string name, SwiRegister swiRegisterEnum)
             {
                 Name = name;
                 SwiRegisterEnum = swiRegisterEnum;
@@ -176,7 +177,7 @@ namespace PsdzClient.Programming
 
             public string Name { get; private set; }
 
-            public PsdzDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
+            public SwiRegister SwiRegisterEnum { get; private set; }
 
             public PsdzDatabase.SwiRegister SwiRegister { get; set; }
 
@@ -201,14 +202,14 @@ namespace PsdzClient.Programming
             {
             }
 
-            public SelectedOptionData(string swiId, PsdzDatabase.SwiRegisterEnum swiRegister)
+            public SelectedOptionData(string swiId, SwiRegister swiRegister)
             {
                 SwiId = swiId;
                 SwiRegister = swiRegister;
             }
 
             [XmlElement("SwiId")] public string SwiId { get; set; }
-            [XmlElement("SwiRegister")] public PsdzDatabase.SwiRegisterEnum SwiRegister { get; set; }
+            [XmlElement("SwiRegister")] public SwiRegister SwiRegister { get; set; }
         }
 
 
@@ -289,7 +290,7 @@ namespace PsdzClient.Programming
         public delegate void UpdateOptionsDelegate();
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
-        public delegate void UpdateOptionSelectionsDelegate(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum);
+        public delegate void UpdateOptionSelectionsDelegate(SwiRegister? swiRegisterEnum);
         public event UpdateOptionSelectionsDelegate UpdateOptionSelectionsEvent;
 
         public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool okBtn, bool wait);
@@ -307,13 +308,13 @@ namespace PsdzClient.Programming
 
         private OptionType[] _optionTypes =
         {
-            new OptionType("Coding", PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion),
-            new OptionType("Coding back", PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion),
-            new OptionType("Modification", PsdzDatabase.SwiRegisterEnum.VehicleModificationConversion),
-            new OptionType("Modification back", PsdzDatabase.SwiRegisterEnum.VehicleModificationBackConversion),
-            new OptionType("Retrofit", PsdzDatabase.SwiRegisterEnum.VehicleModificationRetrofitting),
-            new OptionType("Before replacement", PsdzDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement),
-            new OptionType("After replacement", PsdzDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement),
+            new OptionType("Coding", SwiRegister.VehicleModificationCodingConversion),
+            new OptionType("Coding back", SwiRegister.VehicleModificationCodingBackConversion),
+            new OptionType("Modification", SwiRegister.VehicleModificationConversion),
+            new OptionType("Modification back", SwiRegister.VehicleModificationBackConversion),
+            new OptionType("Retrofit", SwiRegister.VehicleModificationRetrofitting),
+            new OptionType("Before replacement", SwiRegister.EcuReplacementBeforeReplacement),
+            new OptionType("After replacement", SwiRegister.EcuReplacementAfterReplacement),
         };
         public OptionType[] OptionTypes => _optionTypes;
 
@@ -378,8 +379,8 @@ namespace PsdzClient.Programming
             }
         }
 
-        private Dictionary<PsdzDatabase.SwiRegisterEnum, List<OptionsItem>> _optionsDict;
-        public Dictionary<PsdzDatabase.SwiRegisterEnum, List<OptionsItem>> OptionsDict
+        private Dictionary<SwiRegister, List<OptionsItem>> _optionsDict;
+        public Dictionary<SwiRegister, List<OptionsItem>> OptionsDict
         {
             get
             {
@@ -2952,19 +2953,19 @@ namespace PsdzClient.Programming
                             log.Info(Environment.NewLine + "Swi tree:" + Environment.NewLine + treeText);
                         }
 
-                        Dictionary<PsdzDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict = new Dictionary<PsdzDatabase.SwiRegisterEnum, List<OptionsItem>>();
+                        Dictionary<SwiRegister, List<OptionsItem>> optionsDict = new Dictionary<SwiRegister, List<OptionsItem>>();
                         foreach (OptionType optionType in _optionTypes)
                         {
-                            PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionType.SwiRegisterEnum;
+                            SwiRegister swiRegisterEnum = optionType.SwiRegisterEnum;
                             optionType.ClientContext = clientContext;
                             optionType.SwiRegister = ProgrammingService.PsdzDatabase.FindNodeForRegister(swiRegisterEnum, PsdzContext.VecInfo);
 
                             switch (swiRegisterEnum)
                             {
-                                case PsdzDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement:
-                                case PsdzDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement:
+                                case SwiRegister.EcuReplacementBeforeReplacement:
+                                case SwiRegister.EcuReplacementAfterReplacement:
                                 {
-                                    bool individualOnly = swiRegisterEnum == PsdzDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement;
+                                    bool individualOnly = swiRegisterEnum == SwiRegister.EcuReplacementBeforeReplacement;
                                     List<PsdzDatabase.EcuInfo> ecuList = PsdzContext.GetEcuList(individualOnly);
                                     if (ecuList != null)
                                     {
@@ -3997,7 +3998,7 @@ namespace PsdzClient.Programming
                 return true;
             }
 
-            if (optionsItem.SwiRegisterEnum == PsdzDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement)
+            if (optionsItem.SwiRegisterEnum == SwiRegister.EcuReplacementAfterReplacement)
             {
                 if (optionsItem.EcuInfo == null)
                 {
@@ -4317,7 +4318,7 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null;
+            SwiRegister? swiRegisterEnum = null;
             SelectedOptions?.Clear();
             if (OptionsDict != null && OperationState.SelectedOptionList != null)
             {
@@ -4378,15 +4379,15 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null;
+            SwiRegister? swiRegisterEnum = null;
             switch (OperationState.Operation)
             {
                 case OperationStateData.OperationEnum.HwInstall:
-                    swiRegisterEnum = PsdzDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement;
+                    swiRegisterEnum = SwiRegister.EcuReplacementAfterReplacement;
                     break;
 
                 case OperationStateData.OperationEnum.HwDeinstall:
-                    swiRegisterEnum = PsdzDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement;
+                    swiRegisterEnum = SwiRegister.EcuReplacementBeforeReplacement;
                     break;
             }
 
@@ -4482,13 +4483,13 @@ namespace PsdzClient.Programming
             UpdateStatusEvent?.Invoke(message);
         }
 
-        private void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
+        private void UpdateOptions(Dictionary<SwiRegister, List<OptionsItem>> optionsDict)
         {
             OptionsDict = optionsDict;
             UpdateOptionsEvent?.Invoke();
         }
 
-        private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
+        private void UpdateOptionSelections(SwiRegister? swiRegisterEnum = null)
         {
             if (swiRegisterEnum != null)
             {

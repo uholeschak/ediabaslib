@@ -260,11 +260,11 @@ namespace WebPsdzClient
                 }
             }
 #else
-            PsdzClient.PsdzDatabase.SwiRegisterEnum? selectedSwiRegister = null;
+            BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister? selectedSwiRegister = null;
             ListItem listItemSelect = DropDownListOptionType.SelectedItem;
             if (listItemSelect != null)
             {
-                if (Enum.TryParse(listItemSelect.Value, true, out PsdzClient.PsdzDatabase.SwiRegisterEnum swiRegister))
+                if (Enum.TryParse(listItemSelect.Value, true, out BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister swiRegister))
                 {
                     selectedSwiRegister = swiRegister;
                 }
@@ -552,7 +552,7 @@ namespace WebPsdzClient
 #if USE_RPC_CLIENT
         private void SelectOptions(PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
 #else
-        private void SelectOptions(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void SelectOptions(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister? swiRegisterEnum)
 #endif
         {
             try

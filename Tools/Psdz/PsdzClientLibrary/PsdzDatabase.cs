@@ -46,23 +46,6 @@ namespace PsdzClient
         public const string DiagObjectItems =
             "ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, GROBZEICHEN, HG_NUMMER, HGUG_NUMMER, CONTROLID, SORT_ORDER";
 
-        public enum SwiRegisterEnum
-        {
-            SoftwareUpdateExtended,
-            SoftwareUpdateAdditionalSoftware,
-            SoftwareUpdateComfort,
-            EcuReplacementBeforeReplacement,
-            EcuReplacementAfterReplacement,
-            VehicleModification,
-            VehicleModificationRetrofitting,
-            VehicleModificationConversion,
-            VehicleModificationCodingConversion,
-            VehicleModificationBackConversion,
-            VehicleModificationCodingBackConversion,
-            Common,
-            Immediatactions
-        }
-
         public enum SwiRegisterGroup
         {
             None,
@@ -1647,48 +1630,48 @@ namespace PsdzClient
 
         // ToDo: Check on update
         // SwiRegister -> SwiRegisterEnum, vehicle added
-        private string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister, Vehicle vehicle)
+        private string SwiRegisterEnumerationNameConverter(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister swiRegister, Vehicle vehicle)
         {
             string arg;
             switch (swiRegister)
             {
-                case SwiRegisterEnum.SoftwareUpdateExtended:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.SoftwareUpdateExtended:
                     arg = "ERWEITERT";
                     break;
-                case SwiRegisterEnum.SoftwareUpdateAdditionalSoftware:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.SoftwareUpdateAdditionalSoftware:
                     arg = "ZUSATZSOFTWARE";
                     break;
-                case SwiRegisterEnum.SoftwareUpdateComfort:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.SoftwareUpdateComfort:
                     arg = "KOMFORT";
                     break;
-                case SwiRegisterEnum.EcuReplacementBeforeReplacement:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.EcuReplacementBeforeReplacement:
                     arg = "VOR_DEM_TAUSCH";
                     break;
-                case SwiRegisterEnum.EcuReplacementAfterReplacement:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.EcuReplacementAfterReplacement:
                     arg = "NACH_DEM_TAUSCH";
                     break;
-                case SwiRegisterEnum.VehicleModification:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModification:
                     arg = "FAHRZEUG-MODIFIKATION";
                     break;
-                case SwiRegisterEnum.VehicleModificationRetrofitting:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationRetrofitting:
                     arg = "NACHRUESTUNGEN";
                     break;
-                case SwiRegisterEnum.VehicleModificationConversion:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationConversion:
                     arg = "UMRUESTUNGEN";
                     break;
-                case SwiRegisterEnum.VehicleModificationCodingConversion:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationCodingConversion:
                     arg = "CODIERUMRUESTUNGEN";
                     break;
-                case SwiRegisterEnum.VehicleModificationBackConversion:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationBackConversion:
                     arg = "RUECKRUESTUNGEN";
                     break;
-                case SwiRegisterEnum.VehicleModificationCodingBackConversion:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationCodingBackConversion:
                     arg = "CODIERRUECKRUESTUNGEN";
                     break;
-                case SwiRegisterEnum.Common:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.Common:
                     arg = "ALLGEMEIN";
                     break;
-                case SwiRegisterEnum.Immediatactions:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.Immediatactions:
                     arg = GetImmediatactionsIdentifier(vehicle);
                     break;
                 default:
@@ -1708,31 +1691,31 @@ namespace PsdzClient
         }
 
 
-        public static SwiRegisterGroup GetSwiRegisterGroup(SwiRegisterEnum swiRegisterEnum)
+        public static SwiRegisterGroup GetSwiRegisterGroup(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister swiRegisterEnum)
         {
             switch (swiRegisterEnum)
             {
-                case SwiRegisterEnum.SoftwareUpdateExtended:
-                case SwiRegisterEnum.SoftwareUpdateAdditionalSoftware:
-                case SwiRegisterEnum.SoftwareUpdateComfort:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.SoftwareUpdateExtended:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.SoftwareUpdateAdditionalSoftware:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.SoftwareUpdateComfort:
                     return SwiRegisterGroup.Software;
 
-                case SwiRegisterEnum.EcuReplacementBeforeReplacement:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.EcuReplacementBeforeReplacement:
                     return SwiRegisterGroup.HwDeinstall;
 
-                case SwiRegisterEnum.EcuReplacementAfterReplacement:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.EcuReplacementAfterReplacement:
                     return SwiRegisterGroup.HwInstall;
 
-                case SwiRegisterEnum.VehicleModification:
-                case SwiRegisterEnum.VehicleModificationRetrofitting:
-                case SwiRegisterEnum.VehicleModificationConversion:
-                case SwiRegisterEnum.VehicleModificationCodingConversion:
-                case SwiRegisterEnum.VehicleModificationBackConversion:
-                case SwiRegisterEnum.VehicleModificationCodingBackConversion:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModification:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationRetrofitting:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationConversion:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationCodingConversion:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationBackConversion:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationCodingBackConversion:
                     return SwiRegisterGroup.Modification;
 
-                case SwiRegisterEnum.Common:
-                case SwiRegisterEnum.Immediatactions:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.Common:
+                case BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.Immediatactions:
                     return SwiRegisterGroup.Other;
             }
 
@@ -2248,7 +2231,7 @@ namespace PsdzClient
             return true;
         }
 
-        public List<SwiAction> GetSwiActionsForRegister(SwiRegisterEnum swiRegisterEnum, bool getChildren, Vehicle vehicle)
+        public List<SwiAction> GetSwiActionsForRegister(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister swiRegisterEnum, bool getChildren, Vehicle vehicle)
         {
             SwiRegister swiRegister = FindNodeForRegister(swiRegisterEnum, vehicle);
             if (swiRegister == null)
@@ -2287,7 +2270,7 @@ namespace PsdzClient
             return swiActions;
         }
 
-        public SwiRegister FindNodeForRegister(SwiRegisterEnum swiRegisterEnum, Vehicle vehicle)
+        public SwiRegister FindNodeForRegister(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister swiRegisterEnum, Vehicle vehicle)
         {
             try
             {

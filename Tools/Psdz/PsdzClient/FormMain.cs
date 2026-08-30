@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 
 namespace PsdzClient
 {
@@ -129,7 +130,7 @@ namespace PsdzClient
                 talPresent = _programmingJobs.PsdzContext?.Tal != null;
             }
 
-            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+            Dictionary<SwiRegister, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
             bool ipEnabled = !active && !vehicleConnected;
             bool modifyTal = !active && hostRunning && vehicleConnected && optionsDict != null;
 
@@ -308,7 +309,7 @@ namespace PsdzClient
             PsdzServiceStarter.ClearIstaPIDsFile();
         }
 
-        private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
+        private void UpdateCurrentOptions(SwiRegister? swiRegisterEnum = null)
         {
             if (InvokeRequired)
             {
@@ -322,7 +323,7 @@ namespace PsdzClient
             try
             {
                 _ignoreChange = true;
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+                Dictionary<SwiRegister, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
                 int selectedIndex = comboBoxOptionType.SelectedIndex;
                 comboBoxOptionType.BeginUpdate();
                 comboBoxOptionType.Items.Clear();
@@ -390,7 +391,7 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void UpdateOptionSelections(SwiRegister? swiRegisterEnum)
         {
             if (InvokeRequired)
             {
@@ -439,7 +440,7 @@ namespace PsdzClient
             return -1;
         }
 
-        private void SelectOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void SelectOptions(SwiRegister? swiRegisterEnum)
         {
             if (InvokeRequired)
             {
@@ -480,7 +481,7 @@ namespace PsdzClient
                 }
 
                 _ignoreCheck = true;
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+                Dictionary<SwiRegister, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
                 checkedListBoxOptions.BeginUpdate();
                 checkedListBoxOptions.Items.Clear();
                 if (optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
@@ -1267,16 +1268,16 @@ namespace PsdzClient
                 return;
             }
 
-            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+            Dictionary<SwiRegister, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
             bool modified = false;
             if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
             {
                 if (checkedListBoxOptions.Items[e.Index] is ProgrammingJobs.OptionsItem optionsItem)
                 {
-                    PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionsItem.SwiRegisterEnum;
+                    SwiRegister swiRegisterEnum = optionsItem.SwiRegisterEnum;
                     if (_programmingJobs.SelectedOptions.Count > 0)
                     {
-                        PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
+                        SwiRegister swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
                         if (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
                         {
                             _programmingJobs.SelectedOptions.Clear();

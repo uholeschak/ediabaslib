@@ -3,6 +3,7 @@ using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Runtime.CompilerServices;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 
 namespace PsdzRpcServer
 {
@@ -13,7 +14,7 @@ namespace PsdzRpcServer
         {
             AssertEnumCount<ProgrammingJobs.CacheType, PsdzRpcCacheType>();
             AssertEnumCount<ProgrammingJobs.OperationType, PsdzOperationType>();
-            AssertEnumCount<PsdzDatabase.SwiRegisterEnum, PsdzRpcSwiRegisterEnum>();
+            AssertEnumCount<SwiRegister, PsdzRpcSwiRegisterEnum>();
             AssertEnumCount<PsdzDatabase.SwiRegisterGroup, PsdzSwiRegisterGroupEnum>();
         }
 

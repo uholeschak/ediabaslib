@@ -213,8 +213,8 @@ namespace WebPsdzClient.App_Data
         private PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         public PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? SelectedSwiRegister
 #else
-        private PsdzClient.PsdzDatabase.SwiRegisterEnum? _selectedSwiRegister;
-        public PsdzClient.PsdzDatabase.SwiRegisterEnum? SelectedSwiRegister
+        private BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister? _selectedSwiRegister;
+        public BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister? SelectedSwiRegister
 #endif
         {
             get
@@ -2747,7 +2747,7 @@ namespace WebPsdzClient.App_Data
 #else
         public void SetDefaultSelectedSwiRegister()
         {
-            SelectedSwiRegister = PsdzClient.PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion;
+            SelectedSwiRegister = BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister.VehicleModificationCodingConversion;
         }
 
         public bool IsPsdzInitialized()
@@ -2934,7 +2934,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public List<ListItem> GetSelectedOptions(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        public List<ListItem> GetSelectedOptions(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister? swiRegisterEnum)
         {
             try
             {
@@ -2956,7 +2956,7 @@ namespace WebPsdzClient.App_Data
                     }
                 }
 
-                Dictionary<PsdzClient.PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+                Dictionary<BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
                 List<PsdzClient.PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(ProgrammingJobs);
                 List<PsdzClient.PsdzDatabase.SwiAction> linkedSwiActions = ProgrammingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(ProgrammingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
 
@@ -3051,7 +3051,7 @@ namespace WebPsdzClient.App_Data
             }
 
             bool modified = false;
-            Dictionary<PsdzClient.PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+            Dictionary<BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
             if (optionsDict != null && SelectedSwiRegister.HasValue)
             {
                 if (optionsDict.TryGetValue(SelectedSwiRegister.Value, out List<PsdzClient.Programming.ProgrammingJobs.OptionsItem> optionsItems))
@@ -3090,11 +3090,11 @@ namespace WebPsdzClient.App_Data
                 return true;
             }
 
-            Dictionary<PsdzClient.PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
-            PsdzClient.PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionItem.SwiRegisterEnum;
+            Dictionary<BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+            BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister swiRegisterEnum = optionItem.SwiRegisterEnum;
             if (ProgrammingJobs.SelectedOptions.Count > 0)
             {
-                PsdzClient.PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = ProgrammingJobs.SelectedOptions[0].SwiRegisterEnum;
+                BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister swiRegisterEnumCurrent = ProgrammingJobs.SelectedOptions[0].SwiRegisterEnum;
                 if (PsdzClient.PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzClient.PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
                 {
                     ProgrammingJobs.SelectedOptions.Clear();
@@ -3194,7 +3194,7 @@ namespace WebPsdzClient.App_Data
             UpdateCurrentOptions();
         }
 
-        public void UpdateOptionSelections(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        public void UpdateOptionSelections(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister? swiRegisterEnum)
         {
             UpdateCurrentOptions(swiRegisterEnum);
         }
@@ -3602,7 +3602,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 #else
-        private void UpdateCurrentOptions(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
+        private void UpdateCurrentOptions(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister? swiRegisterEnum = null)
         {
             try
             {
