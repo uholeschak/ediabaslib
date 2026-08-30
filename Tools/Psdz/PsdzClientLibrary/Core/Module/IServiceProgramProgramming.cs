@@ -12,7 +12,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         string Identifier { get; }
 
-        PsdzDatabase.SwiActionLinkType LinkType { get; }
+        SwiActionLinkType LinkType { get; }
 
         decimal? Priority { get; }
 

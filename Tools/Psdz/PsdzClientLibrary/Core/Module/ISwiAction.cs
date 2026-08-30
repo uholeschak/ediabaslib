@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
 #pragma warning disable CS8632
@@ -29,6 +30,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
         ISwiAction Data { get; }
 
         [PreserveSource(Placeholder = true)]
-        void ExecuteServiceProgramms(PsdzDatabase.SwiActionLinkType type, IProgrammingSessionExt session);
+        void ExecuteServiceProgramms(SwiActionLinkType type, IProgrammingSessionExt session);
     }
 }

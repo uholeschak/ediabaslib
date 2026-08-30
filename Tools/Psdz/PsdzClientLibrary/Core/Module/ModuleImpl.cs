@@ -238,11 +238,11 @@ namespace BMW.Rheingold.RheingoldSessionController.Module
             }
             switch (infoObjPrg.LinkType)
             {
-                case PsdzDatabase.SwiActionLinkType.MPB:
-                case PsdzDatabase.SwiActionLinkType.SMP:
+                case SwiActionLinkType.MPB:
+                case SwiActionLinkType.SMP:
                     return LayoutGroup.PBV.ToString();
-                case PsdzDatabase.SwiActionLinkType.AUS:
-                case PsdzDatabase.SwiActionLinkType.HDD:
+                case SwiActionLinkType.AUS:
+                case SwiActionLinkType.HDD:
                     {
                         ILogic logic3 = Parameters.getParameter(ModuleParameter.ParameterName.Logic) as ILogic;
                         if (infoObjPrg.SwiActionReport.Any((ISwiActionReport x) => x.Name?.StartsWith("FZA_AL_EXECUTION_ORDER", StringComparison.Ordinal) ?? false))
@@ -256,25 +256,25 @@ namespace BMW.Rheingold.RheingoldSessionController.Module
                         //[-] }
                         return LayoutGroup.PBV.ToString();
                     }
-                case PsdzDatabase.SwiActionLinkType.PRF:
+                case SwiActionLinkType.PRF:
                     return LayoutGroup.PAP.ToString();
-                case PsdzDatabase.SwiActionLinkType.MHV:
-                case PsdzDatabase.SwiActionLinkType.MVF:
-                case PsdzDatabase.SwiActionLinkType.MVS:
+                case SwiActionLinkType.MHV:
+                case SwiActionLinkType.MVF:
+                case SwiActionLinkType.MVS:
                     return LayoutGroup.PAV.ToString();
-                case PsdzDatabase.SwiActionLinkType.ESK_VA:
-                case PsdzDatabase.SwiActionLinkType.ESK_VF:
-                case PsdzDatabase.SwiActionLinkType.ESK_VS:
-                case PsdzDatabase.SwiActionLinkType.ESK_MPB:
-                case PsdzDatabase.SwiActionLinkType.ESK_PRF:
+                case SwiActionLinkType.ESK_VA:
+                case SwiActionLinkType.ESK_VF:
+                case SwiActionLinkType.ESK_VS:
+                case SwiActionLinkType.ESK_MPB:
+                case SwiActionLinkType.ESK_PRF:
                     {
                         int num = ((!(Parameters.getParameter(ModuleParameter.ParameterName.Logic) is ILogic logic2)) ? ((int?)null) : logic2.ProgrammingSession?.TherapyPlanApi?.EscalationStep) ?? 1;
                         return string.Format(CultureInfo.InvariantCulture, "{0}-{1}", LayoutGroup.PAE.ToString(), num);
                     }
-                case PsdzDatabase.SwiActionLinkType.MNS:
-                case PsdzDatabase.SwiActionLinkType.MNF:
-                case PsdzDatabase.SwiActionLinkType.MHN:
-                case PsdzDatabase.SwiActionLinkType.TN:
+                case SwiActionLinkType.MNS:
+                case SwiActionLinkType.MNF:
+                case SwiActionLinkType.MHN:
+                case SwiActionLinkType.TN:
                     return LayoutGroup.PAN.ToString();
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Link type \"{0}\" is not supported.", infoObjPrg.LinkType));

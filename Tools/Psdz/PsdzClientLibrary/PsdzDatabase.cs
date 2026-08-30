@@ -81,28 +81,6 @@ namespace PsdzClient
             SwiRegister,
         }
 
-        public enum SwiActionLinkType
-        {
-            SwiActionDiagnosticLink,
-            PRF,
-            MPB,
-            MHV,
-            MVF,
-            MVS,
-            MNS,
-            MNF,
-            MHN,
-            AUS,
-            TN,
-            ESK_VA,
-            ESK_VF,
-            ESK_VS,
-            ESK_MPB,
-            ESK_PRF,
-            SMP,
-            HDD
-        }
-
         public class EcuTranslation
         {
             public EcuTranslation()

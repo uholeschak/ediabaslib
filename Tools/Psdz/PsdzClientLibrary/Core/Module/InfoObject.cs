@@ -148,7 +148,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         [XmlIgnore]
-        public PsdzDatabase.SwiActionLinkType LinkType => PsdzDatabase.SwiActionLinkType.SwiActionDiagnosticLink;
+        public SwiActionLinkType LinkType => SwiActionLinkType.SwiActionDiagnosticLink;
 
         [XmlIgnore]
         public decimal? Priority { get; set; }
