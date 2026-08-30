@@ -62,6 +62,7 @@ namespace SourceCodeSync
             {"public_LicenseStatusChecker", null},
             {"public_LicenseWizardHelper", null },
             {"internal_CharacteristicsGenerator", null },
+            {"BMW.Rheingold.PresentationFramework.CurveDisplay", null },
             {"BMW.Rheingold.Programming.Common.SecureCodingService", null },
             {"BMW.Rheingold.Programming.ProgrammingService", "ProgrammingService2"},
             {"BMW.iLean.CommonServices.Logging.Extensions", null},
