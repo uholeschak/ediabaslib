@@ -106,7 +106,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(20000104538851m, null, typeof(IMIB_ZAEHLER), null, hasGui: true);
             //[-] Register(20000104329474m, null, typeof(xS_LESEN_DETAIL), null, hasGui: false);
             //[-] Register(20000098022441m, "Fahrzeuginterface", typeof(string), typeof(FahrzeuginterfaceCmd), hasGui: false);
-            //[-] Register(20000093559516m, "DialogKurvenDisplay", typeof(KurvendisplayDlgImpl), typeof(IstaOperationServiceDialogUi), null);
+            Register(20000093559516m, "DialogKurvenDisplay", typeof(KurvendisplayDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             Register(20000138655401m, "MehrfachAuswahlDlg", typeof(MehrfachAuswahlDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(20000100664261m, null, typeof(Vorgangshistorie), null, hasGui: false);
             //[-] Register(20000161161141m, null, typeof(PDIServiceHistory), null, hasGui: false);
