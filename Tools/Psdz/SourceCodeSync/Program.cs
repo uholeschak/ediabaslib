@@ -105,6 +105,7 @@ namespace SourceCodeSync
             "RheingoldInfoProvider",
             "RheingoldISPINext",
             "RheingoldISTACoreFramework",
+            "RheingoldPresentationFramework",
             "RheingoldProgramming",
             "RheingoldPsdzWebApi.Adapter",
             "RheingoldPsdzWebApi.Adapter.Contracts",
