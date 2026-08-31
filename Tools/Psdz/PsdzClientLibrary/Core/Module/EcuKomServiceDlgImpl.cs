@@ -21,55 +21,30 @@ namespace BMW.Rheingold.Module.ISTA
     internal class EcuKomServiceDlgImpl : ServiceDlgImplBase<EcuKomServiceDlgModel>
     {
         private bool p_WeiterButtonEnabledStack;
-
         private IProtocolBasic fasta;
-
         private ParameterContainer inParameters;
-
         private bool display = true;
-
         private bool p_Fehlermeldung;
-
         private ITextLocator m_IOFrageText;
-
         private ITextLocator concatTxt;
-
         private bool m_IOFrage;
-
         private ConfigurationContainer configContainer;
-
         private IAction<IUiDialog> fastaDlg;
-
         private ParameterContainer fastaParameter = new ParameterContainer();
-
         private ParameterContainer outParameter = new ParameterContainer();
-
         private IDiagnosticDeviceResult dscJob = new EDIABASAdapterDeviceResult(new ECUJob());
-
         private bool m_bStartPressed;
-
         private bool p_DSCError;
-
         private Timer executionTimer;
-
         private bool showErrorPopupForNotOkay;
-
         private bool executionInProgress;
-
         private ITextLocator wertFeld;
-
         private ITextLocator wertFeld1;
-
         private ISTAModule callingModule;
-
         private static DateTime lastErrorMessage = DateTime.MinValue;
-
         private int selectionIndex;
-
         private Thread parentThread;
-
-        public EcuKomServiceDlgImpl(ParameterContainer inParam)
-            : base(inParam)
+        public EcuKomServiceDlgImpl(ParameterContainer inParam) : base(inParam)
         {
             fasta = RetrieveFasta(inParam);
             callingModule = inParam.getParameter("__CallingModule__") as ISTAModule;
@@ -86,12 +61,14 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("EcuKomServiceDlgImpl.Invoke()", "FASTA protocoling not possible.");
             }
+
             bool flag = (bool)__RheinGoldCoreModuleParameters__.getParameter(ModuleParameter.ParameterName.ForegroundThread, false);
             p_WeiterButtonEnabledStack = IsNextButtonEnabled();
             if (!"InitializeDialog".Equals(method))
             {
                 return;
             }
+
             InitializeInParameters(inParam);
             if ((logic as Logic).IsModuleExecutionMinimized() && !flag)
             {
@@ -100,32 +77,35 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     Thread.Sleep(500);
                 }
+
                 Log.Info("EcuKomServiceDlgImpl.Invoke()", "found shortly maximmized testmodule! Execution will be resumed");
             }
+
             if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Module.ISTA.ECUKOMServiceDlg.ShowVMDialog", defaultValue: true))
             {
-                //[-] if (!flag)
-                //[-] {
-                //[-] if (logic.VecInfo.VCI == null || logic.VecInfo.VCI.VCIType == VCIDeviceType.INFOSESSION || logic.EcuKom == null)
-                //[-] {
-                //[-] Log.Warning("EcuKomServiceDlgImpl.Invoke()", "InitializeDialog: no ecuKom available due to infosession. Show up connection manager");
-                //[-] InteractionConnectionManagerResponse interactionConnectionManagerResponse = ConnectionManagerHandler.ShowConnectionManager(null, logic, logic.Services.InteractionService, logic.VecInfo?.VCI, null, ConnectionTargetTypes.VCI);
-                //[-] ConnectionManagerResponseAction? connectionManagerResponseAction = interactionConnectionManagerResponse?.Action;
-                //[-] if (connectionManagerResponseAction.HasValue && connectionManagerResponseAction.GetValueOrDefault() == ConnectionManagerResponseAction.Connect)
-                //[-] {
-                //[-] logic.CheckVinAndConnectOverConnectionManager(new ProgressMonitor(), interactionConnectionManagerResponse.VciDevice);
-                //[-] }
-                //[-] else
-                //[-] {
-                //[-] Log.Warning("EcuKomServiceDlgImpl.Invoke()", "Response action '{0}' is not allowed.", interactionConnectionManagerResponse?.Action);
-                //[-] }
-                //[-] }
-                //[-] }
-                //[-] else
-                //[-] {
-                //[-] Log.Info("EcuKomServiceDlgImpl.Invoke()", "no ecukom handle available; no connection manager popup due to FFM resolving");
-                //[-] }
+            //[-] if (!flag)
+            //[-] {
+            //[-] if (logic.VecInfo.VCI == null || logic.VecInfo.VCI.VCIType == VCIDeviceType.INFOSESSION || logic.EcuKom == null)
+            //[-] {
+            //[-] Log.Warning("EcuKomServiceDlgImpl.Invoke()", "InitializeDialog: no ecuKom available due to infosession. Show up connection manager");
+            //[-] InteractionConnectionManagerResponse interactionConnectionManagerResponse = ConnectionManagerHandler.ShowConnectionManager(null, logic, logic.Services.InteractionService, logic.VecInfo?.VCI, null, ConnectionTargetTypes.VCI);
+            //[-] ConnectionManagerResponseAction? connectionManagerResponseAction = interactionConnectionManagerResponse?.Action;
+            //[-] if (connectionManagerResponseAction.HasValue && connectionManagerResponseAction.GetValueOrDefault() == ConnectionManagerResponseAction.Connect)
+            //[-] {
+            //[-] logic.CheckVinAndConnectOverConnectionManager(new ProgressMonitor(), interactionConnectionManagerResponse.VciDevice);
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] Log.Warning("EcuKomServiceDlgImpl.Invoke()", "Response action '{0}' is not allowed.", interactionConnectionManagerResponse?.Action);
+            //[-] }
+            //[-] }
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] Log.Info("EcuKomServiceDlgImpl.Invoke()", "no ecukom handle available; no connection manager popup due to FFM resolving");
+            //[-] }
             }
+
             if (display)
             {
                 base.SPEUserInterface.DisplayWaitCursor(bWaitCursor: false);
@@ -137,6 +117,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     dscJob = DscSynchron(standardErrorHandling: true, configContainer);
                 }
+
                 if (m_IOFrage)
                 {
                     base.Model.IOFrageTextFlow = ((TextContent)m_IOFrageText.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
@@ -166,17 +147,20 @@ namespace BMW.Rheingold.Module.ISTA
                     base.Model.IsCustomButton0Enabled = false;
                     base.Model.IsCustomButton0Visible = false;
                 }
+
                 if (executionTimer != null)
                 {
                     Log.Info("EcuKomServiceDlgImpl.Invoke()", "stop execution timer");
                     executionTimer.Change(-1, -1);
                 }
+
                 ProtocolFasta();
             }
             else
             {
                 dscJob = DscSynchron(p_Fehlermeldung, configContainer);
             }
+
             if (dscJob != null && dscJob.ECUJob != null)
             {
                 List<IEcuJob> list = new List<IEcuJob>();
@@ -189,13 +173,14 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     ecu = logic.VecInfo.getECUbyECU_SGBD(dscJob.ECUJob.EcuName);
                 }
+
                 if (fasta != null)
                 {
                     if (ecu != null)
                     {
-                        //[-] IAction<IEcuCommunication> action = fasta.CreateEcuCommunication(ecu, new List<IEcuJob> { dscJob.ECUJob }, doFastaRelevantFiltering: true, LayoutGroup.X);
-                        //[-] action.StartTime = now;
-                        //[-] fasta.AddIfIsNotInLoopOrDoLoopHandling(action, callingModule._VerboseLoopLogs, callingModule._DoLoopHandling);
+                    //[-] IAction<IEcuCommunication> action = fasta.CreateEcuCommunication(ecu, new List<IEcuJob> { dscJob.ECUJob }, doFastaRelevantFiltering: true, LayoutGroup.X);
+                    //[-] action.StartTime = now;
+                    //[-] fasta.AddIfIsNotInLoopOrDoLoopHandling(action, callingModule._VerboseLoopLogs, callingModule._DoLoopHandling);
                     }
                     else if (!string.IsNullOrWhiteSpace(dscJob.ECUJob.JobErrorText))
                     {
@@ -210,16 +195,18 @@ namespace BMW.Rheingold.Module.ISTA
                             localizedText.TextItem = localizedText.TextItem + " (ECUName = \"" + text + "\", JobName = \"" + text2 + "\")";
                             list2.Add(item);
                         }
+
                         action2.SpecialAction.CreateAndAddMessageText(list2);
                     }
                     else if (!string.IsNullOrEmpty(dscJob.ECUJob.EcuName))
                     {
-                        //[-] IAction<IEcuCommunication> action3 = fasta.CreateEcuCommunication(dscJob.ECUJob.EcuName, new List<IEcuJob> { dscJob.ECUJob }, doFastaRelevantFiltering: true, LayoutGroup.X);
-                        //[-] action3.StartTime = now;
-                        //[-] fasta.AddIfIsNotInLoopOrDoLoopHandling(action3, callingModule._VerboseLoopLogs, callingModule._DoLoopHandling);
+                    //[-] IAction<IEcuCommunication> action3 = fasta.CreateEcuCommunication(dscJob.ECUJob.EcuName, new List<IEcuJob> { dscJob.ECUJob }, doFastaRelevantFiltering: true, LayoutGroup.X);
+                    //[-] action3.StartTime = now;
+                    //[-] fasta.AddIfIsNotInLoopOrDoLoopHandling(action3, callingModule._VerboseLoopLogs, callingModule._DoLoopHandling);
                     }
                 }
             }
+
             outParam.setParameter("_FASTA", fastaParameter);
         }
 
@@ -239,6 +226,7 @@ namespace BMW.Rheingold.Module.ISTA
                 fastaDlg = fasta.CreateAndAddUiDialogFromServiceProgram("EcuKomServiceDlg", methodName);
                 fastaDlg.SpecialAction.Display = display;
             }
+
             outParameter.setParameter("_FASTA", fastaParameter);
         }
 
@@ -249,6 +237,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.Info("EcuKomServiceDlgImpl.ExecuteAdapter()", "Parent thread is not alive => Timer disabled.");
                 executionTimer.Change(-1, -1);
             }
+
             if (!executionInProgress)
             {
                 executionInProgress = true;
@@ -264,6 +253,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     Log.WarningException("EcuKomServiceDlgImpl.ExecuteAdapter()", exception);
                 }
+
                 executionInProgress = false;
             }
         }
@@ -283,11 +273,13 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         _ = (bool)parameter;
                     }
+
                     parameter = inParameters.getParameter("/WurzelIn/StateLists/Result[1]/ReplaceResultWithState", false);
                     if (parameter is bool)
                     {
                         _ = (bool)parameter;
                     }
+
                     if (!string.IsNullOrEmpty(text))
                     {
                         object iSTAResultAsType = dscJob.getISTAResultAsType(text, typeof(object));
@@ -303,18 +295,20 @@ namespace BMW.Rheingold.Module.ISTA
                                     {
                                         continue;
                                     }
+
                                     string text5 = null;
                                     text5 = ((!(iSTAResultAsType is int num)) ? iSTAResultAsType.ToString() : num.ToString(CultureInfo.InvariantCulture));
                                     if (string.Compare(text5, item.Value.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         string name = match.Value.Replace("/Value", "/Text");
-                                        if (inParameters.getParameter(name) is ITextLocator textLocator)
+                                        if (inParameters.getParameter(name)is ITextLocator textLocator)
                                         {
                                             wertFeld = textLocator;
                                             flag = true;
                                         }
                                     }
                                 }
+
                                 if (!flag)
                                 {
                                     foreach (KeyValuePair<string, object> item2 in inParameters.Parameter)
@@ -334,6 +328,7 @@ namespace BMW.Rheingold.Module.ISTA
                             }
                         }
                     }
+
                     if (!string.IsNullOrEmpty(text2))
                     {
                         object iSTAResultAsType2 = dscJob.getISTAResultAsType(text2, typeof(object));
@@ -351,7 +346,7 @@ namespace BMW.Rheingold.Module.ISTA
                                         if (string.Compare(text7, item3.Value.ToString(), ignoreCase: true) == 0)
                                         {
                                             string name2 = match2.Value.Replace("/Value", "/Text");
-                                            if (inParameters.getParameter(name2) is ITextLocator textLocator2)
+                                            if (inParameters.getParameter(name2)is ITextLocator textLocator2)
                                             {
                                                 wertFeld1 = textLocator2;
                                             }
@@ -374,6 +369,7 @@ namespace BMW.Rheingold.Module.ISTA
                                 Log.WarningException("EcuKomServiceDlgImpl.SetupGUI()", exception2);
                             }
                         }
+
                         base.Model.WertFeldFlow1 = ((TextContent)wertFeld1.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
                     }
                 }
@@ -385,17 +381,14 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                     else
                     {
-                        wertFeld = __Text("51946123", new __TextParameter[2]
-                        {
-                        new __TextParameter("p1", dscJob.ECUJob.JobErrorText),
-                        new __TextParameter("p2", " ")
-                        });
+                        wertFeld = __Text("51946123", new __TextParameter[2] { new __TextParameter("p1", dscJob.ECUJob.JobErrorText), new __TextParameter("p2", " ") });
                     }
                 }
                 else
                 {
                     wertFeld = null;
                 }
+
                 if (wertFeld != null)
                 {
                     base.Model.WertFeldFlow = ((TextContent)wertFeld.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
@@ -404,6 +397,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     wertFeld = new TextLocator("null");
                 }
+
                 IList<LocalizedText> list = new List<LocalizedText>();
                 if (!string.IsNullOrEmpty(concatTxt.TextContent.PlainText))
                 {
@@ -439,17 +433,14 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     flag = diagnosticDeviceResult.ECUJob.IsOkay((ushort)diagnosticDeviceResult.ECUJob.JobResultSets);
                 }
+
                 if (standardErrorHandling)
                 {
                     if (diagnosticDeviceResult.Error != null && diagnosticDeviceResult.ECUJob != null && diagnosticDeviceResult.ECUJob.JobErrorCode != 0)
                     {
                         string text = FindEcuName(diagnosticDeviceResult.ECUJob.EcuName);
                         string text2 = FormatedData.Localize(diagnosticDeviceResult.ECUJob.JobErrorText, "EDIABAS", false, text);
-                        ITextLocator textLocator = __Text("51946123", new __TextParameter[2]
-                        {
-                        new __TextParameter("p1", text2),
-                        new __TextParameter("p2", " ")
-                        });
+                        ITextLocator textLocator = __Text("51946123", new __TextParameter[2] { new __TextParameter("p1", text2), new __TextParameter("p2", " ") });
                         if (text2.Equals("NET-0014: CONNECTION ABORTED") || text2.Equals("NET-0009: TIMEOUT"))
                         {
                             Log.Info("EcuKomServiceDlgImpl.DscSynchron()", text2);
@@ -487,14 +478,15 @@ namespace BMW.Rheingold.Module.ISTA
                                 sessionLogic.StartWatchDogTimer();
                             }
                         }
-                        if (textLocator != null && (!callingModule._DoLoopHandling || lastErrorMessage == DateTime.MinValue || lastErrorMessage.AddSeconds(10.0) < DateTime.Now) && flag2)
+
+                        if ((textLocator != null && (!callingModule._DoLoopHandling || lastErrorMessage == DateTime.MinValue || lastErrorMessage.AddSeconds(10.0) < DateTime.Now)) & flag2)
                         {
                             LocalizedText localizedText = new LocalizedText(textLocator.TextContent.PlainText, "en-GB");
                             logic.Services.InteractionService.RegisterMessage(new FormatedData("#Error").Localize(logic.Lang), new LocalizedText[1] { localizedText }.ToList());
                             lastErrorMessage = DateTime.Now;
                         }
                     }
-                    else if (!flag && diagnosticDeviceResult.ECUJob != null && showErrorPopupForNotOkay && flag2)
+                    else if ((!flag && diagnosticDeviceResult.ECUJob != null && showErrorPopupForNotOkay) & flag2)
                     {
                         string stringResult = diagnosticDeviceResult.ECUJob.getStringResult((ushort)diagnosticDeviceResult.ECUJob.JobResultSets, "JOB_STATUS");
                         if (!callingModule._DoLoopHandling || lastErrorMessage == DateTime.MinValue || lastErrorMessage.AddSeconds(10.0) < DateTime.Now)
@@ -517,8 +509,10 @@ namespace BMW.Rheingold.Module.ISTA
                         }
                     }
                 }
+
                 return diagnosticDeviceResult;
             }
+
             return new EDIABASAdapterDeviceResult();
         }
 
@@ -532,12 +526,14 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         return item.TITLE_ECUTREE;
                     }
+
                     if (jobEcuName.Equals(item.ECU_SGBD))
                     {
                         return item.TITLE_ECUTREE;
                     }
                 }
             }
+
             Log.Error("EcuKomServiceDlgImpl.FindEcuName()", "Did not find ECU name for jobEcuName \"{0}\". Returning \"{1}\".", jobEcuName, "unknown");
             return "unknown";
         }
@@ -575,6 +571,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     SetNextButtonEnabled(value: true);
                 }
+
                 if (p_Fehlermeldung)
                 {
                     executionTimer.Change(0, 500);
@@ -583,8 +580,10 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     executionTimer.Change(0, 500);
                 }
+
                 base.Model.CustomButton0Content = __Text("51942795").TextContent.PlainText;
             }
+
             Log.Info("EcuKomServiceDlgImpl.DoStartStopAsynch()", "_ExitIndex is: {0}", EventKind.T, 0);
         }
 
@@ -602,6 +601,7 @@ namespace BMW.Rheingold.Module.ISTA
                         selectionIndex = 1;
                         break;
                 }
+
                 SetNextButtonEnabled(value: true);
             }
             catch (Exception exception)
@@ -623,6 +623,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return;
             }
+
             List<LocalizedText> list = new List<LocalizedText>();
             if (concatTxt == null && wertFeld == null)
             {
@@ -630,15 +631,18 @@ namespace BMW.Rheingold.Module.ISTA
                 fastaDlg.SpecialAction.CreateAndAddMessageText(list);
                 return;
             }
+
             _ = string.Empty;
             if (concatTxt != null && concatTxt.TextContent.PlainText != null)
             {
                 list.AddRangeIfNotContains(concatTxt.TextContent.GetTextForUI(logic.Lang));
             }
+
             if (wertFeld != null && wertFeld.TextContent.PlainText != null)
             {
                 list.AddRangeIfNotContains(wertFeld.TextContent.GetTextForUI(logic.Lang));
             }
+
             fastaDlg.SpecialAction.CreateAndAddMessageText(list);
         }
 
@@ -655,12 +659,14 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         break;
                     }
+
                     if (serviceProgramAction is ServiceProgramButtonSelectionAction serviceProgramButtonSelectionAction)
                     {
                         Log.Info("EcuKomServiceDlgImpl.WaitOnUserInteraction()", "Selected button index: {0}", serviceProgramButtonSelectionAction.SelectedIndex);
                         ButtonSelection(serviceProgramButtonSelectionAction.SelectedIndex);
                     }
                 }
+
                 Log.Info("EcuKomServiceDlgImpl.WaitOnUserInteraction()", "Navigation action: {0}", serviceProgramNavigationAction.NavigationAction);
             }
             catch (Exception exception)
