@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClientLibrary;
 
@@ -55,7 +56,7 @@ public class TestModuleRunner
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
-    private readonly ILogic _logic;
+    private readonly Logic _logic;
     private readonly ServiceProgramController _serviceProgramController;
     private readonly string _moduleName;
     private readonly string _moduleTypeName;
@@ -86,7 +87,9 @@ public class TestModuleRunner
             throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
         }
 
+        Vehicle vehicle = programmingJobs?.PsdzContext?.VecInfo;
         _logic = new Logic(clientContext, programmingJobs);
+        _logic.VecInfo = vehicle;
         _serviceProgramController = new ServiceProgramController();
         _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
@@ -94,7 +97,7 @@ public class TestModuleRunner
         Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();
         _moduleParameters = new ModuleParameter(useParametersDict);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Logic, _logic);
-        _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, programmingJobs.PsdzContext.VecInfo);
+        _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, vehicle);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.ServiceProgramController, _serviceProgramController);
 
         List<string> lang = new List<string> { ConfigSettings.CurrentUICulture };
