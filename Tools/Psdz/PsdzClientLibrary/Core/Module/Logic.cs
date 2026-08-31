@@ -178,7 +178,7 @@ namespace BMW.Rheingold.RheingoldSessionController
 
         public string SerializedProgrammingSessionData { get; private set; }
 
-        //public ISessionLogic SessionLogic { get; protected set; }
+        public ISessionLogic SessionLogic { get; protected set; }
 
         //public PukVehicleCaseData VehicleCase { get; set; }
 
@@ -508,7 +508,7 @@ namespace BMW.Rheingold.RheingoldSessionController
             //VersionInfo = new VersionInformation(logicAssemblyVersionInfo.GetInfo(), ConfigSettings.GetIstaConfigString("ProductVersion", null), ConfigSettings.GetIstaConfigString("DataVersion", null), ConfigSettings.GetIstaConfigString("MainProductVersion", null), ConfigSettings.GetIstaConfigString("SWIData", null), this.database, ConfigSettings.GetIstaConfigString("SWIVersionQueue", null));
             SetLauncherLangVersion(ConfigSettings.CurrentUICulture);
             LogVersionInfo();
-            //SessionLogic = null;
+            SessionLogic = null;
             //Factory = InfoObjectFactory.Instance;
             //Fasta2Service = fasta2;
             if (Fasta2Service == null)
