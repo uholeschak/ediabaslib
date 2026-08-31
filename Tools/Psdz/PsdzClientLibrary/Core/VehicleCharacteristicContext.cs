@@ -16,7 +16,7 @@ namespace BMW.Rheingold.CoreFramework
         private ICharacteristicsLocator characteristicsLocator;
 
         [PreserveSource(Hint = "XEP_CHARACTERISTICROOTS", Placeholder = true)]
-        private PsdzDatabase.Characteristics characteristicRoot;
+        private PsdzDatabase.CharacteristicRoots characteristicRoot;
 
         [PreserveSource(Hint = "XEP_CHARACTERISTICROOTS", SignatureModified = true)]
         public bool IsSetVehicleCharacteristic(string vehicleCode, Vehicle vehicle, ICharacteristicsLocator characteristicsLocator, PsdzDatabase.CharacteristicRoots characteristic)
@@ -426,8 +426,8 @@ namespace BMW.Rheingold.CoreFramework
             vehicle = (Vehicle)parameters[0];
             characteristicsLocator = (ICharacteristicsLocator)parameters[1];
             //[-] characteristicRoot = (XEP_CHARACTERISTICROOTS)parameters[2];
-            //[+] characteristicRoot = (PsdzDatabase.Characteristics)parameters[2];
-            characteristicRoot = (PsdzDatabase.Characteristics)parameters[2];
+            //[+] characteristicRoot = ((PsdzDatabase.CharacteristicRoots)parameters[2];
+            characteristicRoot = (PsdzDatabase.CharacteristicRoots)parameters[2];
         }
 
         private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, string value, List<HeatMotor> heatMotors)
