@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 using PsdzClient;
 
 #pragma warning disable CS8632
@@ -20,8 +21,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         bool IsHidden { get; }
 
-        [PreserveSource(Placeholder = true)]
-        PsdzDatabase.SwiRegister? Register { get; }
+        SwiRegister? Register { get; }
 
         string EcuId { get; }
 
@@ -29,7 +29,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         ISwiAction Data { get; }
 
-        [PreserveSource(Placeholder = true)]
         void ExecuteServiceProgramms(SwiActionLinkType type, IProgrammingSessionExt session);
     }
 }
