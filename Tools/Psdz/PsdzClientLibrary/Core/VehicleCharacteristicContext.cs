@@ -426,7 +426,7 @@ namespace BMW.Rheingold.CoreFramework
             vehicle = (Vehicle)parameters[0];
             characteristicsLocator = (ICharacteristicsLocator)parameters[1];
             //[-] characteristicRoot = (XEP_CHARACTERISTICROOTS)parameters[2];
-            //[+] characteristicRoot = ((PsdzDatabase.CharacteristicRoots)parameters[2];
+            //[+] characteristicRoot = (PsdzDatabase.CharacteristicRoots)parameters[2];
             characteristicRoot = (PsdzDatabase.CharacteristicRoots)parameters[2];
         }
 
