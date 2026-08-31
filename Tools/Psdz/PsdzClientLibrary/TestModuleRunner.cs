@@ -97,7 +97,7 @@ public class TestModuleRunner
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, programmingJobs.PsdzContext.VecInfo);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.ServiceProgramController, _serviceProgramController);
 
-        List<string> lang = new List<string> { "de-DE" };
+        List<string> lang = new List<string> { ConfigSettings.CurrentUICulture };
         ModuleImpl module = new ModuleImpl(lang, _moduleName);
         _moduleExecutionParent = new ModuleExecutionParent(module, _swiInfoObj.Identificator, _moduleParameters);
     }
