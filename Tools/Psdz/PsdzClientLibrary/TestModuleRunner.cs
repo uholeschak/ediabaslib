@@ -1,7 +1,8 @@
 ﻿using BMW.ISPI.IstaOperation.Impl;
 using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.RheingoldSessionController;
+using BMW.Rheingold.RheingoldSessionController.Module;
 using EdiabasLib;
 using log4net;
 using Microsoft.CodeAnalysis;
@@ -19,7 +20,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using BMW.Rheingold.Module.ISTA;
 
 namespace PsdzClientLibrary;
 
@@ -57,10 +57,10 @@ public class TestModuleRunner
     private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
     private readonly ILogic _logic;
     private readonly ServiceProgramController _serviceProgramController;
-    private readonly IModuleExecutionParent _moduleExecutionParent;
     private readonly string _moduleName;
     private readonly string _moduleTypeName;
     private readonly ModuleParameter _moduleParameters;
+    private readonly IModuleExecutionParent _moduleExecutionParent;
 
     public ModuleParameter ModuleParameters => _moduleParameters;
 
@@ -88,7 +88,6 @@ public class TestModuleRunner
 
         _logic = new Logic(clientContext, programmingJobs);
         _serviceProgramController = new ServiceProgramController();
-        //_moduleExecutionParent = new ModuleExecutionParent(runParameter: (!(parametersDict?.GetValueOrDefault(ModuleParameter.ParameterName.XepInfoObjectStarted) is XepInfoObject xepInfoObject)) ? runParameter : xepInfoObject.Identifikator, module: module, parameters: parametersDict);
         _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
 
@@ -97,6 +96,10 @@ public class TestModuleRunner
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Logic, _logic);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, programmingJobs.PsdzContext.VecInfo);
         _moduleParameters.setParameter(ModuleParameter.ParameterName.ServiceProgramController, _serviceProgramController);
+
+        List<string> lang = new List<string> { "de-DE" };
+        ModuleImpl module = new ModuleImpl(lang, _moduleName);
+        _moduleExecutionParent = new ModuleExecutionParent(module, _swiInfoObj.Identificator, _moduleParameters);
     }
 
     public bool CheckModuleAssemblyVersion(Assembly assembly)
