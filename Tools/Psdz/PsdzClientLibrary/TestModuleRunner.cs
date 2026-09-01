@@ -87,12 +87,13 @@ public class TestModuleRunner
             throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
         }
 
+        _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
+        _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
+
         Vehicle vehicle = programmingJobs?.PsdzContext?.VecInfo;
         _logic = new Logic(clientContext, programmingJobs);
         _logic.VecInfo = vehicle;
-        _serviceProgramController = new ServiceProgramController();
-        _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
-        _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
+        _serviceProgramController = new ServiceProgramController(ModuleData.CreateModuleDataFromModuleName(_moduleName));
 
         Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();
         _moduleParameters = new ModuleParameter(useParametersDict);

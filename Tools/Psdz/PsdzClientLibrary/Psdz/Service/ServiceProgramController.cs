@@ -48,12 +48,13 @@ namespace BMW.ISPI.IstaOperation.Impl
 
         public ScreenMode ScreenMode { get; set; }
 
-        public ServiceProgramController()
+        public ServiceProgramController(ModuleData moduleData)
         {
             //this.logic = logic;
             //this.faultManager = faultManager;
             //this.documentLoader = documentLoader;
             //moduleLauncher = new ModuleLauncher(logic);
+            currentModule = moduleData;
         }
 
         public bool NavigateToDialog(IServiceDialogModel model)
