@@ -211,9 +211,9 @@ namespace BMW.Rheingold.CoreFramework.Interaction
         {
             try
             {
-                model.IsTriggeredSynchronously = true;
-                RegisterInteractionModel(model);
-                (model as IInteractionRequestModel<InteractionResponse>)?.WaitOnResponse();
+                //[-] model.IsTriggeredSynchronously = true;
+                //[-] RegisterInteractionModel(model);
+                //[-] (model as IInteractionRequestModel<InteractionResponse>)?.WaitOnResponse();
             }
             catch (Exception exception)
             {
@@ -225,8 +225,10 @@ namespace BMW.Rheingold.CoreFramework.Interaction
         {
             try
             {
-                RegisterInteractionModel(model);
-                return Task.Run(() => model.WaitOnResponse());
+                //[-] RegisterInteractionModel(model);
+                //[-] return Task.Run(() => model.WaitOnResponse());
+                //[+] return Task.FromResult<TResponse>(null);
+                return Task.FromResult<TResponse>(null);
             }
             catch (Exception exception)
             {
@@ -239,9 +241,11 @@ namespace BMW.Rheingold.CoreFramework.Interaction
         {
             try
             {
-                model.IsTriggeredSynchronously = true;
-                RegisterInteractionModel(model);
-                return model.WaitOnResponse();
+                //[-] model.IsTriggeredSynchronously = true;
+                //[-] RegisterInteractionModel(model);
+                //[-] return model.WaitOnResponse();
+                //[+] return null;
+                return null;
             }
             catch (Exception exception)
             {
