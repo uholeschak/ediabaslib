@@ -92,7 +92,7 @@ public class TestModuleRunner
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
 
         Vehicle vehicle = programmingJobs?.PsdzContext?.VecInfo;
-        ECUKom ecuKom = new ECUKom("TestModuleRunner", new List<string>());
+        ECUKom ecuKom = programmingJobs?.PsdzContext?.DetectVehicle?.CreateEcuKom("TestModuleRunner");
 
         _logic = new Logic(clientContext, programmingJobs);
         _logic.VecInfo = vehicle;
