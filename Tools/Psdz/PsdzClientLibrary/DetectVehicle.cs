@@ -989,7 +989,7 @@ namespace PsdzClient
                 if (IsConnected())
                 {
                     IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
-                    ECUKom ecuKom = new ECUKom("UpdateVehicle", new List<string>(), _ediabas);
+                    ECUKom ecuKom = CreateEcuKom("UpdateVehicle");
                     service.SetVehicleLifeStartDate(vehicle, ecuKom);
                     LifeStartDate = vehicle.VehicleLifeStartDate;
                     return true;
@@ -1002,7 +1002,8 @@ namespace PsdzClient
 
         public ECUKom CreateEcuKom(string app)
         {
-            return new ECUKom(app, new List<string>(), _ediabas);
+            List<string> lang = new List<string> { ConfigSettings.CurrentUICulture };
+            return new ECUKom(app, lang, _ediabas);
         }
 
         public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml, Dictionary<string,string> runOverrideDict = null)
@@ -1033,7 +1034,7 @@ namespace PsdzClient
                     }
                 }
 
-                ECUKom ecuKom = new ECUKom("DetectVehicle", new List<string>(), _ediabas);
+                ECUKom ecuKom = CreateEcuKom("DetectVehicle");
                 if (_clientContext.IsProblemHandlingTraceRunning)
                 {
                     ecuKom.SetTraceLevelToMax(string.Empty);
