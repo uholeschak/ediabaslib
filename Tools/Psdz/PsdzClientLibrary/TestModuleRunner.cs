@@ -93,14 +93,7 @@ public class TestModuleRunner
 
         Vehicle vehicle = programmingJobs?.PsdzContext?.VecInfo;
         DetectVehicle detectVehicle = programmingJobs?.PsdzContext?.DetectVehicle;
-        ECUKom ecuKom = null;
-        if (detectVehicle != null)
-        {
-            if (detectVehicle.Connect())
-            {
-                ecuKom = detectVehicle.CreateEcuKom("TestModuleRunner");
-            }
-        }
+        ECUKom ecuKom = detectVehicle?.CreateEcuKom("TestModuleRunner");
 
         _logic = new Logic(clientContext, programmingJobs);
         _logic.VecInfo = vehicle;

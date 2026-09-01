@@ -1,4 +1,7 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
@@ -18,7 +21,6 @@ using BmwFileReader;
 using EdiabasLib;
 using log4net;
 using log4net.Config;
-using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Psdz;
 using PsdzClientLibrary;
@@ -36,9 +38,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 
 namespace PsdzClient.Programming
 {
@@ -1618,6 +1617,7 @@ namespace PsdzClient.Programming
 
         public bool RunTestModule(CancellationTokenSource cts, string titleFilter, Dictionary<string, object> parametersDict = null)
         {
+            StringBuilder sbResult = new StringBuilder();
             SetThreadContextId();
             try
             {
@@ -1667,11 +1667,36 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, controlId, parametersDict);
-                if (!testModuleRunner.Run())
+                bool psdzConnected = PsdzContext.Connection != null;
+                try
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed for controlId: {0}", controlId);
-                    return false;
+                    if (psdzConnected)
+                    {
+                        ClosePsdzConnection(true);
+                    }
+
+                    if (!PsdzContext.DetectVehicle.Connect())
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed: Could not connect to vehicle");
+                        return false;
+                    }
+
+                    TestModuleRunner testModuleRunner = new TestModuleRunner(ClientContext, this, controlId, parametersDict);
+                    if (!testModuleRunner.Run())
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed for controlId: {0}", controlId);
+                        return false;
+                    }
+                }
+                finally
+                {
+                    if (psdzConnected)
+                    {
+                        if (!OpenPsdzConnection(sbResult))
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule Reopen Psdz connection failed");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
