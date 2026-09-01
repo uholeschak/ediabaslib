@@ -97,7 +97,6 @@ public class TestModuleRunner
         _logic = new Logic(clientContext, programmingJobs);
         _logic.VecInfo = vehicle;
         _logic.EcuKom = ecuKom;
-        //_logic.Services = new OperationServices(null, null);
         _serviceProgramController = new ServiceProgramController(ModuleData.CreateModuleDataFromModuleName(_moduleName));
 
         Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();

@@ -1,12 +1,14 @@
-﻿using BMW.Rheingold.CoreFramework;
+﻿using BMW.ISPI.IstaOperation.Impl;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using BMW.Rheingold.CoreFramework.Feedback;
+using BMW.Rheingold.FASTA;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
-using Microsoft.Win32;
 using PsdzClient;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
@@ -22,8 +24,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using BMW.Rheingold.FASTA;
+using BMW.Rheingold.CoreFramework.Interaction;
 
 #pragma warning disable CS0649, CS0618, CS0169
 namespace BMW.Rheingold.RheingoldSessionController
@@ -503,7 +504,7 @@ namespace BMW.Rheingold.RheingoldSessionController
             this.database = clientContext.Database;
             FaultPatternImportedFromPuk = new HashSet<decimal>();
             PukCaseInfoGuid = new List<string>();
-            Services = null;
+            Services = new OperationServices(new WcfNavigationService(), new InteractionController());
             //LogicAssemblyVersionInfo logicAssemblyVersionInfo = new LogicAssemblyVersionInfo();
             //VersionInfo = new VersionInformation(logicAssemblyVersionInfo.GetInfo(), ConfigSettings.GetIstaConfigString("ProductVersion", null), ConfigSettings.GetIstaConfigString("DataVersion", null), ConfigSettings.GetIstaConfigString("MainProductVersion", null), ConfigSettings.GetIstaConfigString("SWIData", null), this.database, ConfigSettings.GetIstaConfigString("SWIVersionQueue", null));
             SetLauncherLangVersion(ConfigSettings.CurrentUICulture);
