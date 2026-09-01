@@ -1000,6 +1000,11 @@ namespace PsdzClient
             return false;
         }
 
+        public ECUKom CreateEcuKom(string app)
+        {
+            return new ECUKom(app, new List<string>(), _ediabas);
+        }
+
         public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml, Dictionary<string,string> runOverrideDict = null)
         {
             string result = string.Empty;
