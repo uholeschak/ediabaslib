@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using PsdzClient;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.Module.ISTA
 {
     internal class EnterServiceDlgImpl : ServiceDlgImplBase<EnterServiceDlgModel>
