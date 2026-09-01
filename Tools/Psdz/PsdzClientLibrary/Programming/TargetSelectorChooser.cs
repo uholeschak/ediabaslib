@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using PsdzClient;

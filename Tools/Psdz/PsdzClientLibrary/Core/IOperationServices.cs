@@ -1,4 +1,7 @@
-﻿namespace PsdzClient.Core
+﻿using BMW.Rheingold.CoreFramework.Contracts;
+using PsdzClient.Core;
+
+namespace BMW.Rheingold.CoreFramework
 {
     public interface IOperationServices
     {

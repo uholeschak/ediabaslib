@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 
 namespace BMW.Rheingold.Psdz

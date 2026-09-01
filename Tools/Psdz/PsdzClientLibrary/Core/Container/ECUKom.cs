@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;

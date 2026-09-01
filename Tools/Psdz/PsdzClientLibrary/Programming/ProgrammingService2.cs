@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 using System;
 using System.IO;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.Programming;
 
 #pragma warning disable CS0169
