@@ -3,7 +3,7 @@ using PsdzClient.Core;
 
 namespace BMW.ISPI.IstaOperation.Impl
 {
-    [PreserveSource(Hint = "Simplified")]
+    [PreserveSource(Hint = "Simplified", SuppressWarning = true)]
     public class WcfNavigationService : INavigationService
     {
         public TabName CurrentTab
