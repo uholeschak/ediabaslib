@@ -15,19 +15,17 @@ namespace BMW.Rheingold.CoreFramework.Interaction
     {
         [DataMember]
         private readonly List<IInteractionProgressModel> backgroundInteractionCollection;
-
         [DataMember]
         private readonly ObservableCollection<IInteractionModel> modelCollection;
-
         [DataMember]
         private IInteractionProgressModel backgroundInteractionModel;
-
         public IInteractionProgressModel BackgroundInteractionModel
         {
             get
             {
                 return backgroundInteractionModel;
             }
+
             private set
             {
                 backgroundInteractionModel = value;
@@ -38,7 +36,6 @@ namespace BMW.Rheingold.CoreFramework.Interaction
         public ObservableCollection<IInteractionModel> ModelCollection => modelCollection;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public InteractionDataContext()
         {
             modelCollection = new ObservableCollection<IInteractionModel>();
@@ -58,9 +55,11 @@ namespace BMW.Rheingold.CoreFramework.Interaction
                     backgroundInteractionCollection.Remove(model);
                     backgroundInteractionCollection.Add(model);
                 }
+
                 BackgroundInteractionModel = backgroundInteractionCollection.LastOrDefault();
                 return;
             }
+
             throw new ArgumentNullException("model cannot be null.");
         }
 
@@ -70,6 +69,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             {
                 return false;
             }
+
             return backgroundInteractionCollection.Contains(model);
         }
 
@@ -85,14 +85,16 @@ namespace BMW.Rheingold.CoreFramework.Interaction
                 {
                     Log.Info(Log.CurrentMethod(), "The given model is not an active background interaction model. Nothing will be removed.");
                 }
+
                 return;
             }
+
             throw new ArgumentNullException("model cannot be null");
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
