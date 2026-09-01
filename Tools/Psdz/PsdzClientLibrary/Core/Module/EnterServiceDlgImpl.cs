@@ -27,39 +27,22 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         private readonly ParameterContainer fastaParameter = new ParameterContainer();
-
         private readonly ParameterContainer outParameter;
-
         private DataType dataType = DataType.AlphaNumerical;
-
         private ITextLocator txtParam;
-
         private int maxTextLength = 1024;
-
         private IProtocolBasic fasta;
-
         private string rdcTriggerToolReport;
-
         private IAction<IUiDialog> fastaDialog;
-
         private string callingMethod;
-
         private ISTAModule callingModule;
-
         private DateTime startTime;
-
         private bool rdcResponseReceived;
-
         private readonly decimal hintIDNumeric = 2000050451914m;
-
         private readonly decimal hintIDAlphaNumeric = 2000050451915m;
-
         private readonly decimal hintIDDecimal = 2000050451916m;
-
         private readonly decimal hintIDHex = 2000050451917m;
-
-        public EnterServiceDlgImpl(ParameterContainer inParam)
-            : base(inParam)
+        public EnterServiceDlgImpl(ParameterContainer inParam) : base(inParam)
         {
             Log.Info("EnterServiceDlg.EnterServiceDlgImpl()", "called");
             _globalModuleInParameter = inParam;
@@ -74,7 +57,7 @@ namespace BMW.Rheingold.Module.ISTA
             SetUpInParameters(method, inParam);
             if ("ServiceCodeProtokoll".Equals(method))
             {
-                string name = ((inParam.getParameter("ServiceCodeName", null) is ITextLocator textLocator) ? textLocator.TextContent.PlainText : "n/a");
+                string name = ((inParam.getParameter("ServiceCodeName", null)is ITextLocator textLocator) ? textLocator.TextContent.PlainText : "n/a");
                 string value = inParam.getParameter("ServiceCodeWert", "n/a") as string;
                 ParameterContainer parameter = new ParameterContainer();
                 outParam.setParameter("_FASTA", parameter);
@@ -116,6 +99,7 @@ namespace BMW.Rheingold.Module.ISTA
                     list = new List<LocalizedText>();
                     list.AddRange(txtParam.TextContent.GetTextForUI(logic.Lang));
                 }
+
                 fastaDialog.SpecialAction.CreateAndAddMessageText(list);
                 string answerText = ((string.IsNullOrEmpty(base.Model.TextInput) || string.IsNullOrEmpty(base.Model.TextInput.Trim())) ? "(empty)" : base.Model.TextInput);
                 List<LocalizedText> list2 = new List<LocalizedText>();
@@ -126,6 +110,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("EnterServiceDlg.FinishDialog()", "FASTA 2 protocoling not possible.");
             }
+
             return outParameter;
         }
 
@@ -140,6 +125,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.Warning("EnterServiceDlg.InitializeGUI()", "InParameters was null");
                 return;
             }
+
             bool num = (bool)inParameters.getParameter("MaxTextLengthUsed", false);
             txtParam = inParameters.getParameter("txtParam", TextLocator.Empty) as ITextLocator;
             base.Model.TxtParamFlow = GetContent(txtParam.TextContent);
@@ -156,12 +142,14 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 base.Model.TextInputMaxLength = 0;
             }
+
             dataType = (DataType)inParameters.getParameter("Datentyp", 1);
             SetInputTypeHint(dataType);
             if (dataType == DataType.RDCTriggerTool)
             {
                 SetUpRDCTriggertool();
             }
+
             SetKeyboardEnabled(enable: true);
         }
 
@@ -185,6 +173,7 @@ namespace BMW.Rheingold.Module.ISTA
                         flag = true;
                         TextChangedCommand();
                     }
+
                     ServiceProgramAction serviceProgramAction = base.ServiceProgramController.AwaitUserAction(1000);
                     if (serviceProgramAction is ServiceProgramTextChangedAction serviceProgramTextChangedAction)
                     {
@@ -192,6 +181,7 @@ namespace BMW.Rheingold.Module.ISTA
                         base.Model.TextInput = serviceProgramTextChangedAction.NewText;
                         TextChangedCommand();
                     }
+
                     serviceProgramNavigationAction = serviceProgramAction as ServiceProgramNavigationAction;
                 }
                 while (serviceProgramNavigationAction == null);
@@ -216,12 +206,13 @@ namespace BMW.Rheingold.Module.ISTA
                     inParam.setParameter("MaxTextLengthUsed", true);
                     break;
                 case "ServiceCodeEingabe_und_Protokoll":
-                    {
-                        ITextLocator parameter = (ITextLocator)inParam.getParameter("AnzeigeText", TextLocator.Empty);
-                        inParam.setParameter("AnzeigeText", parameter);
-                        inParam.setParameter("MaxTextLengthUsed", true);
-                        break;
-                    }
+                {
+                    ITextLocator parameter = (ITextLocator)inParam.getParameter("AnzeigeText", TextLocator.Empty);
+                    inParam.setParameter("AnzeigeText", parameter);
+                    inParam.setParameter("MaxTextLengthUsed", true);
+                    break;
+                }
+
                 case "ServiceCodeProtokoll":
                     Log.Info("EnterServiceDlgImpl.SetUpInParameters()", "nothing to do here");
                     break;
@@ -259,6 +250,7 @@ namespace BMW.Rheingold.Module.ISTA
                     SetNextButtonEnabled(value: false);
                     return;
                 }
+
                 long result;
                 switch (dataType)
                 {
@@ -269,10 +261,11 @@ namespace BMW.Rheingold.Module.ISTA
                         SetNextButtonEnabled(value: true);
                         break;
                     case DataType.Decimal:
-                        {
-                            SetNextButtonEnabled(decimal.TryParse(textInput.Trim(), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, new CultureInfo(ConfigSettings.CurrentUICulture, useUserOverride: false), out var _));
-                            break;
-                        }
+                    {
+                        SetNextButtonEnabled(decimal.TryParse(textInput.Trim(), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, new CultureInfo(ConfigSettings.CurrentUICulture, useUserOverride: false), out var _));
+                        break;
+                    }
+
                     case DataType.Hex:
                         SetNextButtonEnabled(long.TryParse(textInput.Trim(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out result));
                         break;
@@ -312,6 +305,7 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Error("EnterServiceDlgImpl.SetInputTypeHint()", "DataType not recognized. Setting InputHintType to AlphaNumeric by default.", dataType);
                         break;
                 }
+
                 base.Model.InputTypeHint = __Text(num.ToString()).TextContent.PlainText;
             }
             catch (Exception ex)
@@ -320,5 +314,4 @@ namespace BMW.Rheingold.Module.ISTA
             }
         }
     }
-
 }
