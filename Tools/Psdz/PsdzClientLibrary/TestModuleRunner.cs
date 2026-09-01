@@ -1,8 +1,10 @@
 ﻿using BMW.ISPI.IstaOperation.Impl;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.RheingoldSessionController;
 using BMW.Rheingold.RheingoldSessionController.Module;
+using BMW.Rheingold.VehicleCommunication;
 using EdiabasLib;
 using log4net;
 using Microsoft.CodeAnalysis;
@@ -20,7 +22,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClientLibrary;
 
@@ -91,8 +92,11 @@ public class TestModuleRunner
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
 
         Vehicle vehicle = programmingJobs?.PsdzContext?.VecInfo;
+        ECUKom ecuKom = new ECUKom("TestModuleRunner", new List<string>());
+
         _logic = new Logic(clientContext, programmingJobs);
         _logic.VecInfo = vehicle;
+        _logic.EcuKom = ecuKom;
         _serviceProgramController = new ServiceProgramController(ModuleData.CreateModuleDataFromModuleName(_moduleName));
 
         Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();
