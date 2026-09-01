@@ -17,6 +17,7 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class EnterServiceDlgImpl : ServiceDlgImplBase<EnterServiceDlgModel>
     {
+        [PreserveSource(SuppressWarning = true)]
         private enum DataType
         {
             Numerical,

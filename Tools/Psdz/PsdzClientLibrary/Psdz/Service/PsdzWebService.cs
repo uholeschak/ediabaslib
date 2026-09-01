@@ -16,6 +16,7 @@ namespace BMW.Rheingold.Psdz
 {
     public class PsdzWebService : IPsdzWebService
     {
+        [PreserveSource(SuppressWarning = true)]
         private enum DataType
         {
             Output,

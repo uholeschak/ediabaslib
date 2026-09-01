@@ -80,6 +80,7 @@ namespace SourceCodeSync
             {"BMW.iLean.CommonServices.Logging.EventKind", null},
             {"BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", null},
             {"BMW.Rheingold.CoreFramework.Contracts.Programming.TherapyPlan.SwiActionCategory", null},
+            {"RheingoldPsdzWebApi.Adapter.DataType", null},
             {"BMW.Rheingold.Module.ISTA.DataType", null},
         };
 
