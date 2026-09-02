@@ -5,6 +5,7 @@
     <TargetFrameworks>net10.0-windows10.0.26100.0;net481</TargetFrameworks>
     <DefaultTargetFramework>net481</DefaultTargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>PsdzClient</AssemblyTitle>
     <Product>PsdzClient</Product>

@@ -20,6 +20,9 @@ namespace PsdzClient
         {
 #if NET
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            // Muss vor dem Erzeugen des ersten Fensters erfolgen, damit die WPF Initialisierung
+            // beim Laden der Testmodule die DPI Awareness nicht mehr veraendern kann.
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
 #endif
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (sender, exArgs) =>
