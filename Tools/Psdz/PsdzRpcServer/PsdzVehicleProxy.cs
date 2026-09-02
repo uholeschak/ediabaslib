@@ -176,7 +176,11 @@ public class PsdzVehicleProxy : IDisposable
     {
         try
         {
-            StopTcpListener();
+            if (!StopTcpListener())
+            {
+                log.ErrorFormat("StartTcpListener Stopping previous listener failed");
+                return false;
+            }
 
             if (_enetTcpMutex != null && !_enetTcpMutex.WaitOne(EnetTcpMutexTimeout))
             {
@@ -274,6 +278,8 @@ public class PsdzVehicleProxy : IDisposable
 
             try
             {
+                bool threadsStopped = true;
+
                 if (_tcpThread != null)
                 {
                     _stopThread = true;
@@ -281,9 +287,12 @@ public class PsdzVehicleProxy : IDisposable
                     if (!_tcpThread.Join(ThreadFinishTimeout))
                     {
                         log.ErrorFormat("StopTcpListener Stopping thread failed");
+                        threadsStopped = false;
                     }
-
-                    _tcpThread = null;
+                    else
+                    {
+                        _tcpThread = null;
+                    }
                 }
 
                 if (_vehicleThread != null)
@@ -293,9 +302,19 @@ public class PsdzVehicleProxy : IDisposable
                     if (!_vehicleThread.Join(ThreadFinishTimeout))
                     {
                         log.ErrorFormat("StopTcpListener Stopping vehicle thread failed");
+                        threadsStopped = false;
                     }
+                    else
+                    {
+                        _vehicleThread = null;
+                    }
+                }
 
-                    _vehicleThread = null;
+                if (!threadsStopped)
+                {
+                    // don't release the channels while a thread is still using them
+                    log.ErrorFormat("StopTcpListener Threads still running, skipping cleanup");
+                    return false;
                 }
 
                 StopTcpServers();
@@ -1519,6 +1538,12 @@ public class PsdzVehicleProxy : IDisposable
                                 {
                                     for (int retry = 0; retry < 3; retry++)
                                     {
+                                        if (_stopThread)
+                                        {
+                                            log.InfoFormat("VehicleThread Stop requested, aborting retries");
+                                            break;
+                                        }
+
                                         if (!VehicleSendEvent.Invoke(GetNextPacketId(), bmwFastTel))
                                         {
                                             log.ErrorFormat("VehicleThread Vehicle send failed");
