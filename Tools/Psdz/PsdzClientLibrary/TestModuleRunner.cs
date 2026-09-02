@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Versioning;
 
 namespace PsdzClientLibrary;
 
@@ -35,11 +36,15 @@ public class TestModuleRunner
     public static string TestModuleDir = "Testmodule";
 #if DEBUG
     public static OptimizationLevel OptimizationLevel = OptimizationLevel.Debug;
-    public static string OutputSubDir = "Debug";
+    public static string ConfigSubDir = "Debug";
 #else
-    public static string OutputSubDir = "Release";
+    public static string ConfigSubDir = "Release";
     public static OptimizationLevel OptimizationLevel = OptimizationLevel.Release;
 #endif
+    // Die kompilierten Module sind an die laufende Runtime gebunden,
+    // daher wird pro Zielframework ein eigenes Ausgabeverzeichnis verwendet.
+    public static string FrameworkSubDir = GetFrameworkSubDir();
+    public static string OutputSubDir = Path.Combine(ConfigSubDir, FrameworkSubDir);
     public static readonly string[] AdditionalAssemblies =
     {
         "mscorlib.dll",
@@ -706,6 +711,39 @@ public class TestModuleRunner
         }
 
         return true;
+    }
+
+    private static string GetFrameworkSubDir()
+    {
+        try
+        {
+            TargetFrameworkAttribute attribute = typeof(TestModuleRunner).Assembly
+                .GetCustomAttribute<TargetFrameworkAttribute>();
+            FrameworkName frameworkName = attribute != null && !string.IsNullOrEmpty(attribute.FrameworkName)
+                ? new FrameworkName(attribute.FrameworkName)
+                : null;
+
+            if (frameworkName != null)
+            {
+                string version = frameworkName.Version.ToString().Replace(".", string.Empty);
+                switch (frameworkName.Identifier)
+                {
+                    case ".NETFramework":
+                        return "net" + version;
+
+                    case ".NETCoreApp":
+                        return "net" + frameworkName.Version.Major + "." + frameworkName.Version.Minor;
+                }
+
+                return frameworkName.Identifier.Replace(".", string.Empty) + version;
+            }
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("GetFrameworkSubDir: Exception: {0}", ex);
+        }
+
+        return "unknown";
     }
 
     private static void AddReference(ref List<MetadataReference> references, ref HashSet<string> addedPaths, string path)
