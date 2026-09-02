@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 
 #pragma warning disable SYSLIB0006, CS0168, CS4014
