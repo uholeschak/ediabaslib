@@ -52,6 +52,8 @@ public class TestModuleRunner
     };
     private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
         new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, MetadataReference> metadataReferenceCache =
+        new ConcurrentDictionary<string, MetadataReference>(StringComparer.OrdinalIgnoreCase);
     private static Version dbVersionCache;
 
     private readonly ClientContext _clientContext;
@@ -708,9 +710,30 @@ public class TestModuleRunner
 
     private static void AddReference(ref List<MetadataReference> references, ref HashSet<string> addedPaths, string path)
     {
-        if (!string.IsNullOrEmpty(path) && File.Exists(path) && addedPaths.Add(path))
+        if (!string.IsNullOrEmpty(path) && addedPaths.Add(path))
         {
-            references.Add(MetadataReference.CreateFromFile(path));
+            MetadataReference reference = metadataReferenceCache.GetOrAdd(path, filePath =>
+            {
+                try
+                {
+                    if (!File.Exists(filePath))
+                    {
+                        return null;
+                    }
+
+                    return MetadataReference.CreateFromFile(filePath);
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("AddReference: CreateFromFile Exception for {0}: {1}", filePath, ex);
+                    return null;
+                }
+            });
+
+            if (reference != null)
+            {
+                references.Add(reference);
+            }
         }
     }
 
