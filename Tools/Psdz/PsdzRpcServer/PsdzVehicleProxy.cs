@@ -164,6 +164,14 @@ public class PsdzVehicleProxy : IDisposable
         }
     }
 
+    private EnetTcpChannel[] GetTcpChannels()
+    {
+        lock (_enetTcpChannels)
+        {
+            return _enetTcpChannels.ToArray();
+        }
+    }
+
     private bool StartTcpListener()
     {
         try
@@ -178,13 +186,16 @@ public class PsdzVehicleProxy : IDisposable
 
             try
             {
-                if (_enetTcpChannels.Count == 0)
+                lock (_enetTcpChannels)
                 {
-                    _enetTcpChannels.Add(new EnetTcpChannel(false));
-                    _enetTcpChannels.Add(new EnetTcpChannel(true));
+                    if (_enetTcpChannels.Count == 0)
+                    {
+                        _enetTcpChannels.Add(new EnetTcpChannel(false));
+                        _enetTcpChannels.Add(new EnetTcpChannel(true));
+                    }
                 }
 
-                foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+                foreach (EnetTcpChannel enetTcpChannel in GetTcpChannels())
                 {
                     if (enetTcpChannel.TcpServer == null)
                     {
@@ -306,12 +317,13 @@ public class PsdzVehicleProxy : IDisposable
 
     private void StopTcpServers()
     {
-        if (_enetTcpChannels.Count == 0)
+        EnetTcpChannel[] enetTcpChannels = GetTcpChannels();
+        if (enetTcpChannels.Length == 0)
         {
             return;
         }
 
-        foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+        foreach (EnetTcpChannel enetTcpChannel in enetTcpChannels)
         {
             TcpClientsDisconnect(enetTcpChannel);
 
@@ -331,7 +343,10 @@ public class PsdzVehicleProxy : IDisposable
             }
         }
 
-        _enetTcpChannels.Clear();
+        lock (_enetTcpChannels)
+        {
+            _enetTcpChannels.Clear();
+        }
     }
 
     private void TcpClientsDisconnect(EnetTcpChannel enetTcpChannel)
@@ -925,11 +940,12 @@ public class PsdzVehicleProxy : IDisposable
 
         for (; ; )
         {
-            WaitHandle[] waitHandles = new WaitHandle[1 + _enetTcpChannels.Count * 2];
+            EnetTcpChannel[] enetTcpChannels = GetTcpChannels();
+            WaitHandle[] waitHandles = new WaitHandle[1 + enetTcpChannels.Length * 2];
             int index = 0;
 
             waitHandles[index++] = _tcpThreadWakeEvent;
-            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            foreach (EnetTcpChannel enetTcpChannel in enetTcpChannels)
             {
                 waitHandles[index++] = enetTcpChannel.RecEvent;
                 waitHandles[index++] = enetTcpChannel.SendEvent;
@@ -942,7 +958,7 @@ public class PsdzVehicleProxy : IDisposable
                 break;
             }
 
-            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            foreach (EnetTcpChannel enetTcpChannel in enetTcpChannels)
             {
                 foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
                 {
@@ -1456,7 +1472,7 @@ public class PsdzVehicleProxy : IDisposable
                 break;
             }
 
-            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            foreach (EnetTcpChannel enetTcpChannel in GetTcpChannels())
             {
                 if (enetTcpChannel.Control)
                 {
@@ -1626,7 +1642,7 @@ public class PsdzVehicleProxy : IDisposable
 
             int diagPort = 0;
             int controlPort = 0;
-            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            foreach (EnetTcpChannel enetTcpChannel in GetTcpChannels())
             {
                 if (enetTcpChannel.Control)
                 {
@@ -1686,15 +1702,16 @@ public class PsdzVehicleProxy : IDisposable
 
     public int GetTelSendQueueSize()
     {
-        if (_enetTcpChannels.Count == 0)
-        {
-            return -1;
-        }
-
-        int queueSize = 0;
         try
         {
-            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            EnetTcpChannel[] enetTcpChannels = GetTcpChannels();
+            if (enetTcpChannels.Length == 0)
+            {
+                return -1;
+            }
+
+            int queueSize = 0;
+            foreach (EnetTcpChannel enetTcpChannel in enetTcpChannels)
             {
                 if (enetTcpChannel.Control)
                 {
@@ -1714,14 +1731,14 @@ public class PsdzVehicleProxy : IDisposable
                     }
                 }
             }
+
+            return queueSize;
         }
         catch (Exception ex)
         {
             log.ErrorFormat("TelSendQueueSizeEvent Exception: {0}", ex.Message);
             return -1;
         }
-
-        return queueSize;
     }
 
     public bool StopThread()
