@@ -1453,176 +1453,183 @@ public class PsdzVehicleProxy : IDisposable
 
     private void VehicleThread()
     {
-        log.InfoFormat("VehicleThread started");
-
-        VehicleResponseDictClear();
-        VehicleResponseClear();
-        ResetPacketId();
-
-        if (!VehicleConnect())
+        try
         {
-            log.ErrorFormat("VehicleThread Vehicle connect failed");
-        }
+            log.InfoFormat("VehicleThread started");
 
-        for (; ; )
-        {
-            _vehicleThreadWakeEvent.WaitOne(100, false);
-            if (_stopThread)
+            VehicleResponseDictClear();
+            VehicleResponseClear();
+            ResetPacketId();
+
+            if (!VehicleConnect())
             {
-                break;
+                log.ErrorFormat("VehicleThread Vehicle connect failed");
             }
 
-            foreach (EnetTcpChannel enetTcpChannel in GetTcpChannels())
+            for (; ; )
             {
-                if (enetTcpChannel.Control)
+                _vehicleThreadWakeEvent.WaitOne(100, false);
+                if (_stopThread)
                 {
-                    continue;
+                    break;
                 }
 
-                foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
+                foreach (EnetTcpChannel enetTcpChannel in GetTcpChannels())
                 {
-                    try
+                    if (enetTcpChannel.Control)
                     {
-                        if (enetTcpClientData.TcpClientStream == null)
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        byte[] bmwFastTel = null;
-                        lock (enetTcpClientData.RecPacketQueue)
+                    foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
+                    {
+                        try
                         {
-                            if (enetTcpClientData.RecPacketQueue.Count > 0)
+                            if (enetTcpClientData.TcpClientStream == null)
                             {
-                                // keep the packet until processed
-                                bmwFastTel = enetTcpClientData.RecPacketQueue.Peek();
-                            }
-                        }
-
-                        if (bmwFastTel != null)
-                        {
-                            byte[] sendData = bmwFastTel;
-                            bool funcAddress = IsFunctionalAddress(bmwFastTel);
-
-                            string sendString = ArrayToString(sendData);
-                            log.InfoFormat("VehicleThread Transmit Data={0}", sendString);
-
-                            if (_programmingJobs.CacheClearRequired)
-                            {
-                                log.InfoFormat("VehicleThread Clearing response cache");
-                                VehicleResponseDictClear();
-                                _programmingJobs.CacheClearRequired = false;
+                                continue;
                             }
 
-                            if (VehicleSendEvent != null)
-                            {
-                                for (int retry = 0; retry < 3; retry++)
-                                {
-                                    if (!VehicleSendEvent.Invoke(GetNextPacketId(), bmwFastTel))
-                                    {
-                                        log.ErrorFormat("VehicleThread Vehicle send failed");
-                                    }
-
-                                    PsdzVehicleResponse vehicleResponse = WaitForVehicleResponse(() =>
-                                    {
-                                        if (_stopThread)
-                                        {
-                                            return true;
-                                        }
-
-                                        return false;
-                                    });
-
-                                    byte sourceAddr = bmwFastTel[1];
-                                    bool nr78Removed;
-                                    lock (enetTcpClientData.Nr78Dict)
-                                    {
-                                        nr78Removed = enetTcpClientData.Nr78Dict.Remove(sourceAddr);
-                                    }
-
-                                    if (nr78Removed)
-                                    {
-                                        log.InfoFormat("VehicleThread NR78 removed: Addr={0:X02}", sourceAddr);
-                                    }
-
-                                    if (vehicleResponse == null || !vehicleResponse.Valid)
-                                    {
-                                        log.ErrorFormat("VehicleThread Vehicle transmit failed");
-                                    }
-                                    else
-                                    {
-                                        if (!vehicleResponse.Connected)
-                                        {
-                                            log.ErrorFormat("VehicleThread Vehicle disconnected, reconnecting");
-                                            if (!VehicleConnect())
-                                            {
-                                                log.ErrorFormat("VehicleThread Vehicle reconnect failed");
-                                            }
-                                            else
-                                            {
-                                                log.ErrorFormat("VehicleThread Vehicle reconnected, retrying: {0}", retry);
-                                                continue;
-                                            }
-                                        }
-                                        else if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
-                                        {
-                                            string sendDataString = ArrayToString(bmwFastTel);
-                                            log.ErrorFormat("VehicleThread Vehicle transmit no response for Request={0}", sendDataString);
-
-                                            if (funcAddress)
-                                            {
-                                                log.InfoFormat("VehicleThread Cache disable Request={0}", sendDataString);
-                                                lock (_lockObject)
-                                                {
-                                                    _vehicleResponseDict[sendDataString] = new List<byte[]>();
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            LogVehicleResponse(vehicleResponse);
-                                            PatchVehicleResponse(vehicleResponse);
-
-                                            if (funcAddress)
-                                            {
-                                                string sendDataString = ArrayToString(bmwFastTel);
-                                                log.InfoFormat("VehicleThread Caching Request={0}", sendDataString);
-                                                lock (_lockObject)
-                                                {
-                                                    _vehicleResponseDict[sendDataString] = vehicleResponse.ResponseList;
-                                                }
-                                            }
-
-                                            SendEnetResponses(enetTcpClientData, vehicleResponse.ResponseList);
-                                        }
-                                    }
-
-                                    break;
-                                }
-                            }
+                            byte[] bmwFastTel = null;
                             lock (enetTcpClientData.RecPacketQueue)
                             {
                                 if (enetTcpClientData.RecPacketQueue.Count > 0)
                                 {
-                                    enetTcpClientData.RecPacketQueue.Dequeue();
+                                    // keep the packet until processed
+                                    bmwFastTel = enetTcpClientData.RecPacketQueue.Peek();
+                                }
+                            }
+
+                            if (bmwFastTel != null)
+                            {
+                                byte[] sendData = bmwFastTel;
+                                bool funcAddress = IsFunctionalAddress(bmwFastTel);
+
+                                string sendString = ArrayToString(sendData);
+                                log.InfoFormat("VehicleThread Transmit Data={0}", sendString);
+
+                                if (_programmingJobs.CacheClearRequired)
+                                {
+                                    log.InfoFormat("VehicleThread Clearing response cache");
+                                    VehicleResponseDictClear();
+                                    _programmingJobs.CacheClearRequired = false;
+                                }
+
+                                if (VehicleSendEvent != null)
+                                {
+                                    for (int retry = 0; retry < 3; retry++)
+                                    {
+                                        if (!VehicleSendEvent.Invoke(GetNextPacketId(), bmwFastTel))
+                                        {
+                                            log.ErrorFormat("VehicleThread Vehicle send failed");
+                                        }
+
+                                        PsdzVehicleResponse vehicleResponse = WaitForVehicleResponse(() =>
+                                        {
+                                            if (_stopThread)
+                                            {
+                                                return true;
+                                            }
+
+                                            return false;
+                                        });
+
+                                        byte sourceAddr = bmwFastTel[1];
+                                        bool nr78Removed;
+                                        lock (enetTcpClientData.Nr78Dict)
+                                        {
+                                            nr78Removed = enetTcpClientData.Nr78Dict.Remove(sourceAddr);
+                                        }
+
+                                        if (nr78Removed)
+                                        {
+                                            log.InfoFormat("VehicleThread NR78 removed: Addr={0:X02}", sourceAddr);
+                                        }
+
+                                        if (vehicleResponse == null || !vehicleResponse.Valid)
+                                        {
+                                            log.ErrorFormat("VehicleThread Vehicle transmit failed");
+                                        }
+                                        else
+                                        {
+                                            if (!vehicleResponse.Connected)
+                                            {
+                                                log.ErrorFormat("VehicleThread Vehicle disconnected, reconnecting");
+                                                if (!VehicleConnect())
+                                                {
+                                                    log.ErrorFormat("VehicleThread Vehicle reconnect failed");
+                                                }
+                                                else
+                                                {
+                                                    log.ErrorFormat("VehicleThread Vehicle reconnected, retrying: {0}", retry);
+                                                    continue;
+                                                }
+                                            }
+                                            else if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+                                            {
+                                                string sendDataString = ArrayToString(bmwFastTel);
+                                                log.ErrorFormat("VehicleThread Vehicle transmit no response for Request={0}", sendDataString);
+
+                                                if (funcAddress)
+                                                {
+                                                    log.InfoFormat("VehicleThread Cache disable Request={0}", sendDataString);
+                                                    lock (_lockObject)
+                                                    {
+                                                        _vehicleResponseDict[sendDataString] = new List<byte[]>();
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                LogVehicleResponse(vehicleResponse);
+                                                PatchVehicleResponse(vehicleResponse);
+
+                                                if (funcAddress)
+                                                {
+                                                    string sendDataString = ArrayToString(bmwFastTel);
+                                                    log.InfoFormat("VehicleThread Caching Request={0}", sendDataString);
+                                                    lock (_lockObject)
+                                                    {
+                                                        _vehicleResponseDict[sendDataString] = vehicleResponse.ResponseList;
+                                                    }
+                                                }
+
+                                                SendEnetResponses(enetTcpClientData, vehicleResponse.ResponseList);
+                                            }
+                                        }
+
+                                        break;
+                                    }
+                                }
+                                lock (enetTcpClientData.RecPacketQueue)
+                                {
+                                    if (enetTcpClientData.RecPacketQueue.Count > 0)
+                                    {
+                                        enetTcpClientData.RecPacketQueue.Dequeue();
+                                    }
                                 }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        log.ErrorFormat("VehicleThread Exception: {0}", ex.Message);
+                        catch (Exception ex)
+                        {
+                            log.ErrorFormat("VehicleThread Inner Exception: {0}", ex.Message);
+                        }
                     }
                 }
             }
-        }
 
-        if (!VehicleDisconnect())
+            if (!VehicleDisconnect())
+            {
+                log.ErrorFormat("VehicleThread Vehicle disconnect failed");
+            }
+
+            VehicleResponseDictClear();
+            CloseVehicleLog();
+        }
+        catch (Exception ex)    
         {
-            log.ErrorFormat("VehicleThread Vehicle disconnect failed");
+            log.ErrorFormat("VehicleThread Outer Exception: {0}", ex.Message);
         }
-
-        VehicleResponseDictClear();
-        CloseVehicleLog();
         log.InfoFormat("VehicleThread stopped");
     }
 
