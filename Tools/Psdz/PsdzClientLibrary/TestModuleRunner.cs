@@ -55,7 +55,8 @@ public class TestModuleRunner
         "System.Core.dll",
         "System.Runtime.dll",
         "System.Collections.dll",
-        "System.Xml.dll"
+        "System.Xml.dll",
+        "System.Console.dll"    // Unter .NET Framework ist Console in mscorlib enthalten, ab .NET Core in einer eigenen Assembly.
     };
     private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
         new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
