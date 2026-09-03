@@ -36,6 +36,7 @@ public class TestModuleRunner
     private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
     public static string IgnoreAssembliesFile = "IgnoreAssemblies.txt";
     public static string TestModuleDir = "Testmodule";
+    public static int ProgressUpdatePeriod = 200;
 #if DEBUG
     public static OptimizationLevel OptimizationLevel = OptimizationLevel.Debug;
     public static string ConfigSubDir = "Debug";
@@ -393,60 +394,68 @@ public class TestModuleRunner
 
             HashSet<string> ignoreAssemblySet = new HashSet<string>(ignoreAssemblies, StringComparer.OrdinalIgnoreCase);
             ConcurrentBag<string> failedAssemblies = new ConcurrentBag<string>();
-            object progressLock = new object();
             int errorCount = 0;
-            int lastProgress = -1;
-            bool cancelled = false;
+            int cancelRequested = 0;
 
             ParallelOptions parallelOptions = new ParallelOptions
             {
                 MaxDegreeOfParallelism = Environment.ProcessorCount
             };
 
-            Parallel.ForEach(sourceFiles, parallelOptions, (sourceFile, loopState) =>
+            // Die Kompilierung laeuft komplett im Hintergrund, der Fortschritt wird
+            // ausschliesslich vom aufrufenden Thread gemeldet. Dadurch blockiert kein
+            // Worker Thread durch den nicht threadsicheren Fortschritts Delegate.
+            Task compileTask = Task.Run(() =>
             {
-                if (loopState.ShouldExitCurrentIteration)
+                Parallel.ForEach(sourceFiles, parallelOptions, (sourceFile, loopState) =>
                 {
-                    return;
-                }
-
-                if (progressDelegate != null)
-                {
-                    int progress = (int)(Interlocked.Increment(ref index) * 100.0 / sourceFilesCount);
-                    // Der Fortschritts Delegate ist nicht threadsicher und kann blockieren.
-                    // Daher meldet immer nur ein Thread, die uebrigen arbeiten weiter.
-                    if (progress != Volatile.Read(ref lastProgress) && Monitor.TryEnter(progressLock))
+                    if (loopState.ShouldExitCurrentIteration || Volatile.Read(ref cancelRequested) != 0)
                     {
-                        try
+                        loopState.Stop();
+                        return;
+                    }
+
+                    string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
+                    string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
+                    string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
+                    if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
+                    {
+                        failedAssemblies.Add(assemblyName);
+                        if (!ignoreAssemblySet.Contains(assemblyName))
                         {
-                            Volatile.Write(ref lastProgress, progress);
-                            if (progressDelegate(false, progress, Volatile.Read(ref errorCount)))
-                            {
-                                log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
-                                cancelled = true;
-                                loopState.Stop();
-                                return;
-                            }
-                        }
-                        finally
-                        {
-                            Monitor.Exit(progressLock);
+                            Interlocked.Increment(ref errorCount);
                         }
                     }
-                }
 
-                string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
-                string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
-                string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
-                if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
-                {
-                    failedAssemblies.Add(assemblyName);
-                    if (!ignoreAssemblySet.Contains(assemblyName))
-                    {
-                        Interlocked.Increment(ref errorCount);
-                    }
-                }
+                    Interlocked.Increment(ref index);
+                });
             });
+
+            bool cancelled = false;
+            int lastProgress = -1;
+            while (!compileTask.Wait(ProgressUpdatePeriod))
+            {
+                if (progressDelegate == null)
+                {
+                    continue;
+                }
+
+                int progress = (int)(Volatile.Read(ref index) * 100.0 / sourceFilesCount);
+                if (progress == lastProgress)
+                {
+                    continue;
+                }
+
+                lastProgress = progress;
+                if (progressDelegate(false, progress, Volatile.Read(ref errorCount)))
+                {
+                    log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
+                    Volatile.Write(ref cancelRequested, 1);
+                    cancelled = true;
+                    compileTask.Wait();
+                    break;
+                }
+            }
 
             if (cancelled)
             {
