@@ -402,9 +402,6 @@ public class TestModuleRunner
                 MaxDegreeOfParallelism = Environment.ProcessorCount * 2
             };
 
-            // Die Kompilierung laeuft komplett im Hintergrund, der Fortschritt wird
-            // ausschliesslich vom aufrufenden Thread gemeldet. Dadurch blockiert kein
-            // Worker Thread durch den nicht threadsicheren Fortschritts Delegate.
             Task compileTask = Task.Run(() =>
             {
                 Parallel.ForEach(sourceFiles, parallelOptions, (sourceFile, loopState) =>
@@ -431,7 +428,6 @@ public class TestModuleRunner
                 });
             });
 
-            bool cancelled = false;
             int lastProgress = -1;
             while (!compileTask.Wait(ProgressUpdatePeriod))
             {
@@ -447,18 +443,19 @@ public class TestModuleRunner
                 }
 
                 lastProgress = progress;
-                if (progressDelegate(false, progress, Volatile.Read(ref errorCount)))
+                int failures = Volatile.Read(ref errorCount);
+                if (progressDelegate(false, progress, failures))
                 {
                     log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
                     Volatile.Write(ref cancelRequested, 1);
-                    cancelled = true;
                     compileTask.Wait();
                     break;
                 }
             }
 
-            if (cancelled)
+            if (Volatile.Read(ref cancelRequested) != 0)
             {
+                log.InfoFormat("CompileAllModules: Compilation cancelled");
                 return false;
             }
 
