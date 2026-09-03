@@ -23,6 +23,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PsdzClientLibrary;
 
@@ -383,17 +385,52 @@ public class TestModuleRunner
                 }
             }
 
-            int errorCount = 0;
-            List<string> failedAssemblies = new List<string>();
-            foreach (string sourceFile in sourceFiles)
+            if (!Directory.Exists(outputDir))
             {
+                Directory.CreateDirectory(outputDir);
+            }
+
+            HashSet<string> ignoreAssemblySet = new HashSet<string>(ignoreAssemblies, StringComparer.OrdinalIgnoreCase);
+            ConcurrentBag<string> failedAssemblies = new ConcurrentBag<string>();
+            object progressLock = new object();
+            int errorCount = 0;
+            int lastProgress = -1;
+            bool cancelled = false;
+
+            ParallelOptions parallelOptions = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            };
+
+            Parallel.ForEach(sourceFiles, parallelOptions, (sourceFile, loopState) =>
+            {
+                if (loopState.ShouldExitCurrentIteration)
+                {
+                    return;
+                }
+
                 if (progressDelegate != null)
                 {
-                    int progress = (int)((index + 1) * 100.0 / sourceFilesCount);
-                    if (progressDelegate(false, progress, errorCount))
+                    int progress = (int)(Interlocked.Increment(ref index) * 100.0 / sourceFilesCount);
+                    // Der Fortschritts Delegate ist nicht threadsicher und kann blockieren.
+                    // Daher meldet immer nur ein Thread, die uebrigen arbeiten weiter.
+                    if (progress != Volatile.Read(ref lastProgress) && Monitor.TryEnter(progressLock))
                     {
-                        log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
-                        return false;
+                        try
+                        {
+                            Volatile.Write(ref lastProgress, progress);
+                            if (progressDelegate(false, progress, Volatile.Read(ref errorCount)))
+                            {
+                                log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
+                                cancelled = true;
+                                loopState.Stop();
+                                return;
+                            }
+                        }
+                        finally
+                        {
+                            Monitor.Exit(progressLock);
+                        }
                     }
                 }
 
@@ -403,19 +440,24 @@ public class TestModuleRunner
                 if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
                 {
                     failedAssemblies.Add(assemblyName);
-                    if (!ignoreAssemblies.Contains(assemblyName))
+                    if (!ignoreAssemblySet.Contains(assemblyName))
                     {
-                        errorCount++;
+                        Interlocked.Increment(ref errorCount);
                     }
                 }
+            });
 
-                index++;
+            if (cancelled)
+            {
+                return false;
             }
 
             try
             {
+                List<string> failedAssemblyList = failedAssemblies.ToList();
+                failedAssemblyList.Sort(StringComparer.OrdinalIgnoreCase);
                 File.WriteAllText(Path.Combine(outputDir, IgnoreAssembliesFile),
-                    string.Join(Environment.NewLine, failedAssemblies));
+                    string.Join(Environment.NewLine, failedAssemblyList));
             }
             catch (Exception e)
             {
