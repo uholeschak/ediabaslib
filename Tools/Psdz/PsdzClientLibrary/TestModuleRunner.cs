@@ -399,7 +399,7 @@ public class TestModuleRunner
 
             ParallelOptions parallelOptions = new ParallelOptions
             {
-                MaxDegreeOfParallelism = Environment.ProcessorCount
+                MaxDegreeOfParallelism = Environment.ProcessorCount * 2
             };
 
             // Die Kompilierung laeuft komplett im Hintergrund, der Fortschritt wird
