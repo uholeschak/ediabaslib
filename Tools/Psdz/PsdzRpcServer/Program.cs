@@ -109,7 +109,14 @@ namespace PsdzRpcServer
                             Directory.CreateDirectory(logFileDir);
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to create log file directory '{logFile}': {ex.Message}");
+                }
 
+                try
+                {
                     StreamWriter fileWriter = new StreamWriter(logFile, append: true, encoding: System.Text.Encoding.UTF8)
                     {
                         AutoFlush = true
