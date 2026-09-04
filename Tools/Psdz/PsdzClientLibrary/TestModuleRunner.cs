@@ -397,6 +397,13 @@ public class TestModuleRunner
             int errorCount = 0;
             int cancelRequested = 0;
 
+            List<MetadataReference> sharedReferences = BuildReferenceSet();
+            if (sharedReferences == null)
+            {
+                log.ErrorFormat("CompileAllModules: BuildReferenceSet failed");
+                return false;
+            }
+
             ParallelOptions parallelOptions = new ParallelOptions
             {
                 MaxDegreeOfParallelism = Environment.ProcessorCount * 2
@@ -415,7 +422,7 @@ public class TestModuleRunner
                     string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
                     string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
                     string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
-                    if (!CompileModuleAssembly(sourcePath, assemblyPath, true))
+                    if (!CompileModuleAssembly(sourcePath, assemblyPath, true, sharedReferences))
                     {
                         failedAssemblies.Add(assemblyName);
                         if (!ignoreAssemblySet.Contains(assemblyName))
@@ -582,7 +589,8 @@ public class TestModuleRunner
         }
     }
 
-    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false)
+    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false,
+        IReadOnlyList<MetadataReference> sharedReferences = null)
     {
         try
         {
@@ -659,34 +667,10 @@ public class TestModuleRunner
                                    """;
             SyntaxTree assemblyInfoTree = CSharpSyntaxTree.ParseText(assemblyInfo);
 
-            List<MetadataReference> references = new List<MetadataReference>();
-            HashSet<string> addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            string runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
-            if (string.IsNullOrEmpty(runtimeDir))
+            IReadOnlyList<MetadataReference> references = sharedReferences ?? BuildReferenceSet();
+            if (references == null)
             {
-                log.ErrorFormat("CompileModuleAssembly: Runtime directory is null or empty");
                 return false;
-            }
-
-            foreach (string assembly in AdditionalAssemblies)
-            {
-                AddReference(ref references, ref addedPaths, Path.Combine(runtimeDir, assembly));
-            }
-
-            foreach (Assembly loaded in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                try
-                {
-                    if (!loaded.IsDynamic)
-                    {
-                        AddReference(ref references, ref addedPaths, loaded.Location);
-                    }
-                }
-                catch (Exception)
-                {
-                    // Assemblies ohne Location überspringen
-                }
             }
 
             CSharpCompilation compilation = CSharpCompilation.Create(
@@ -795,7 +779,45 @@ public class TestModuleRunner
         return "unknown";
     }
 
-    private static void AddReference(ref List<MetadataReference> references, ref HashSet<string> addedPaths, string path)
+    // Der Referenzsatz ist fuer alle Module identisch und wird daher einmal pro Lauf
+    // aufgebaut. MetadataReference Objekte sind unveraenderlich und koennen von
+    // mehreren Compilations parallel genutzt werden.
+    private static List<MetadataReference> BuildReferenceSet()
+    {
+        List<MetadataReference> references = new List<MetadataReference>();
+        HashSet<string> addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        string runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
+        if (string.IsNullOrEmpty(runtimeDir))
+        {
+            log.ErrorFormat("BuildReferenceSet: Runtime directory is null or empty");
+            return null;
+        }
+
+        foreach (string assembly in AdditionalAssemblies)
+        {
+            AddReference(references, addedPaths, Path.Combine(runtimeDir, assembly));
+        }
+
+        foreach (Assembly loaded in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            try
+            {
+                if (!loaded.IsDynamic)
+                {
+                    AddReference(references, addedPaths, loaded.Location);
+                }
+            }
+            catch (Exception)
+            {
+                // Assemblies ohne Location überspringen
+            }
+        }
+
+        return references;
+    }
+
+    private static void AddReference(List<MetadataReference> references, HashSet<string> addedPaths, string path)
     {
         if (!string.IsNullOrEmpty(path) && addedPaths.Add(path))
         {
