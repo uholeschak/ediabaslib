@@ -101,6 +101,15 @@ namespace PsdzRpcServer
             {
                 try
                 {
+                    string logFileDir = Path.GetDirectoryName(logFile);
+                    if (!string.IsNullOrEmpty(logFileDir))
+                    {
+                        if (!Directory.Exists(logFileDir))
+                        {
+                            Directory.CreateDirectory(logFileDir);
+                        }
+                    }
+
                     StreamWriter fileWriter = new StreamWriter(logFile, append: true, encoding: System.Text.Encoding.UTF8)
                     {
                         AutoFlush = true
