@@ -404,6 +404,8 @@ public class TestModuleRunner
                 return false;
             }
 
+            string buildTimestamp = CreateBuildTimestamp();
+
             ParallelOptions parallelOptions = new ParallelOptions
             {
                 MaxDegreeOfParallelism = Environment.ProcessorCount * 2
@@ -422,7 +424,7 @@ public class TestModuleRunner
                     string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
                     string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
                     string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
-                    if (!CompileModuleAssembly(sourcePath, assemblyPath, true, sharedReferences))
+                    if (!CompileModuleAssembly(sourcePath, assemblyPath, true, sharedReferences, buildTimestamp))
                     {
                         failedAssemblies.Add(assemblyName);
                         if (!ignoreAssemblySet.Contains(assemblyName))
@@ -590,7 +592,7 @@ public class TestModuleRunner
     }
 
     public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false,
-        IReadOnlyList<MetadataReference> sharedReferences = null)
+        IReadOnlyList<MetadataReference> sharedReferences = null, string buildTimestamp = null)
     {
         try
         {
@@ -655,6 +657,7 @@ public class TestModuleRunner
                 }
             }
 
+            string timestamp = buildTimestamp ?? CreateBuildTimestamp();
             string assemblyInfo = $"""
                                    using System.Reflection;
                                    [assembly: AssemblyTitle("{assemblyName}")]
@@ -663,7 +666,7 @@ public class TestModuleRunner
                                    [assembly: AssemblyCompany("EdiabasLib")]
                                    [assembly: AssemblyVersion("1.0.0.0")]
                                    [assembly: AssemblyFileVersion("1.0.0.0")]
-                                   [assembly: AssemblyInformationalVersion("Compiled {DateTime.Now:yyyy-MM-dd HH:mm:ss}")]
+                                   [assembly: AssemblyInformationalVersion("Compiled {timestamp}")]
                                    """;
             SyntaxTree assemblyInfoTree = CSharpSyntaxTree.ParseText(assemblyInfo);
 
@@ -777,6 +780,13 @@ public class TestModuleRunner
         }
 
         return "unknown";
+    }
+
+    // Alle Module eines Laufs erhalten denselben Zeitstempel, damit die erzeugten
+    // Assemblies untereinander konsistent sind.
+    private static string CreateBuildTimestamp()
+    {
+        return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
     }
 
     // Der Referenzsatz ist fuer alle Module identisch und wird daher einmal pro Lauf
