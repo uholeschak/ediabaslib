@@ -77,7 +77,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(69973561867m, null, typeof(ISTA_Kontext_Ausstattung_Daten), typeof(IstaKontextAusstattungDatenCmd), hasGui: false);
             //[-] Register(68072409611m, null, typeof(ISTA_Kontext_DTC_Auswertung), typeof(IstaKontextDtcAuswertungCmd), hasGui: false);
             //[-] Register(67207569803m, null, typeof(ISTA_Kontext_DTC_Daten), typeof(IstaKontextDtcDatenCmd), hasGui: false);
-            //[-] Register(69913852939m, null, typeof(ISTA_Kontext_FZG_Daten), typeof(ISTA_Kontext_FZG_DatenCmd), hasGui: false);
+            Register(69913852939m, null, typeof(ISTA_Kontext_FZG_Daten), typeof(ISTA_Kontext_FZG_DatenCmd), hasGui: false);
             Register(70704210955m, null, typeof(ISTA_Zeit), typeof(IstaZeitCmd), hasGui: false);
             //[-] Register(51892235m, "MeasuringServiceDlg", typeof(MeasuringServiceDlgImpl), typeof(IstaOperationServiceDialogUi), typeof(MeasuringServiceDlgCmd));
             Register(68904586891m, "Meldung_Neu", typeof(MeldungNeuImpl), typeof(IstaOperationServiceDialogUi), null);
