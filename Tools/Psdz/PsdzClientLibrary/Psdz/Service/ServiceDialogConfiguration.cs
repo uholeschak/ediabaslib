@@ -99,7 +99,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(54870936203m, "DatumeingabeDlg", typeof(DatumeingabeDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             Register(51911691m, "QuestionSelectServiceDlg", typeof(QuestionSelectServiceDlgDefaultImpl), typeof(IstaOperationServiceDialogUi), null);
             Register(13628358027m, "QuestionSelectServiceDlg_20", typeof(QuestionSelectServiceDlgDefaultImpl), typeof(IstaOperationServiceDialogUi), null);
-            //[-] Register(51878795m, "QuestionServiceDlg", typeof(QuestionServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
+            Register(51878795m, "QuestionServiceDlg", typeof(QuestionServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(20000104329472m, null, typeof(IMIB_BT), null, hasGui: true);
             //[-] Register(20000139577811m, "IMIB_PLUGIN", typeof(ImibGenericServiceDlgImpl), typeof(ImibGenericServiceDlgUi), typeof(ImibGenericServiceCmd));
             //[-] Register(20000104329471m, null, typeof(IMIB_USB), null, hasGui: true);
