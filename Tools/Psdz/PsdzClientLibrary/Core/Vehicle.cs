@@ -3910,7 +3910,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         [PreserveSource(Cleaned = true)]
-        public void AddDiagCode(string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList, bool teileClearingFlag)
+        public void AddDiagCode(string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList)
         {
         }
 

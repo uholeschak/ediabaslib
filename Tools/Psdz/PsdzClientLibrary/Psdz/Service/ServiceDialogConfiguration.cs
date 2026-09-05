@@ -80,7 +80,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(69913852939m, null, typeof(ISTA_Kontext_FZG_Daten), typeof(ISTA_Kontext_FZG_DatenCmd), hasGui: false);
             //[-] Register(70704210955m, null, typeof(ISTA_Zeit), typeof(IstaZeitCmd), hasGui: false);
             //[-] Register(51892235m, "MeasuringServiceDlg", typeof(MeasuringServiceDlgImpl), typeof(IstaOperationServiceDialogUi), typeof(MeasuringServiceDlgCmd));
-            //[-] Register(68904586891m, "Meldung_Neu", typeof(MeldungNeuImpl), typeof(IstaOperationServiceDialogUi), null);
+            Register(68904586891m, "Meldung_Neu", typeof(MeldungNeuImpl), typeof(IstaOperationServiceDialogUi), null);
             Register(51915403m, "MessageServiceDlg", typeof(MessageServiceDlgImpl), typeof(IstaOperationServiceDialogUi), typeof(MessageServiceDlgCmd));
             //[-] Register(57410849547m, "Dialog_Messwertanzeige_H", typeof(MesswertanzeigeHorizontalImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(55479872651m, "Dialog_Messwertanzeige_V", typeof(MesswertanzeigeVerticalImpl), typeof(IstaOperationServiceDialogUi), null);
