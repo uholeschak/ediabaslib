@@ -1,10 +1,13 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.Common;
+using PsdzClient;
 using PsdzClient.Contracts;
+using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,8 +18,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
-using PsdzClient;
-using PsdzClient.Core;
 
 #pragma warning disable CS0169, CS0649, CS0618, CS0612
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
@@ -44,8 +45,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private PlaceholderType checkControlMessages;
         private string salesDesignationBadgeUIText;
         private string eBezeichnungUIText;
-        [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
-        private PlaceholderType virtualFaultInfoList;
+        private BlockingCollection<VirtualFaultInfo> virtualFaultInfoList;
         private string hmiVersion;
         private string kraftstoffartEinbaulage;
         private string baustand;
@@ -2483,9 +2483,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
         [XmlIgnore]
         public PlaceholderType FaultList;
-        [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
         [XmlIgnore]
-        public PlaceholderType VirtualFaultInfoList;
+        public BlockingCollection<VirtualFaultInfo> VirtualFaultInfoList;
         [XmlIgnore]
         public List<IEcu> SvtECU { get; set; } = new List<IEcu>();
 
@@ -2835,7 +2834,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             //[-] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
             //[-]  pKodeList = new ObservableCollectionEx<Fault>();
             //[-] FaultList = new List<Fault>();
-            //[-] VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
+            VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
             sessionDataStore = new ParameterContainer();
             //[-] Testplan = new TestPlanType(this);
             diagCodesProgramming = new ObservableCollection<string>();
