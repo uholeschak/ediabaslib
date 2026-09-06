@@ -14,6 +14,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>12.0</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net481'">
+    <!-- Unter .NET Framework kann die DPI-Awareness nur ueber das Manifest gesetzt werden. -->
+    <ApplicationManifest>app.netframework.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Properties\Resources.resx" />
   </ItemGroup>
