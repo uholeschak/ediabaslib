@@ -450,17 +450,17 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 try
                 {
-                    //[-] Fault fault = Vehicle.FaultList.FirstOrDefault(delegate (Fault x)
-                    //[-] {
-                    //[-] DTC dTC = x.DTC;
-                    //[-] return dTC != null && dTC.Id.HasValue && x.DTC.Id.ToString() == id;
-                    //[-] });
-                    //[-] if (fault != null)
-                    //[-] {
-                    //[-] string faultLabel = ((!string.IsNullOrEmpty(fault.XepFaultLabel?.Title)) ? fault.XepFaultLabel.Title : FaultCodeConverters.LocalizedFaultLabel(fault.ECU, fault.DTC, Vehicle, FFMResolver));
-                    //[-] FaultModelDtcDyn fault2 = new FaultModelDtcDyn(fault, faultLabel);
-                    //[-] MarkAndAddToFaultCodeList(list, fault2, MarkedFaultCodes.Contains(fault.DTC.Id ?? ((decimal)fault.DTC.F_ORT.Value)));
-                    //[-] }
+                    Fault fault = Vehicle.FaultList.FirstOrDefault(delegate (Fault x)
+                    {
+                        DTC dTC = x.DTC;
+                        return dTC != null && dTC.Id.HasValue && x.DTC.Id.ToString() == id;
+                    });
+                    if (fault != null)
+                    {
+                        string faultLabel = ((!string.IsNullOrEmpty(fault.XepFaultLabel?.Title)) ? fault.XepFaultLabel.Title : FaultCodeConverters.LocalizedFaultLabel(fault.ECU, fault.DTC, Vehicle, FFMResolver));
+                        FaultModelDtcDyn fault2 = new FaultModelDtcDyn(fault, faultLabel);
+                        MarkAndAddToFaultCodeList(list, fault2, MarkedFaultCodes.Contains(fault.DTC.Id ?? ((decimal)fault.DTC.F_ORT.Value)));
+                    }
                 }
                 catch (Exception exception)
                 {

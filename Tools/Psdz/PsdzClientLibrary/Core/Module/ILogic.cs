@@ -214,7 +214,7 @@ namespace BMW.Rheingold.CoreFramework
 
         IBoolResultObject CheckVinOverConnectionLossPopup(IProgressMonitor monitor, VCIDevice device);
 
-        //IEnumerable<IXepInfoObject> FilterToyotaObfcmIdentificator(IEnumerable<IXepInfoObject> xepInfoObjects);
+        IEnumerable<IXepInfoObject> FilterToyotaObfcmIdentificator(IEnumerable<IXepInfoObject> xepInfoObjects);
 
         IBoolResultObject ReleaseReservedIcom(VCIDevice selectedDevice);
 

@@ -15,7 +15,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     {
         private InfoObjectContentTransformed content;
 
-        //private IXepInfoObject xepInfoObject;
+        private IXepInfoObject xepInfoObject;
 
         private bool isMarkedForExport;
 
@@ -60,7 +60,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 return content;
             }
         }
-#if false
+
+        [Obsolete("Temporary workaround.")]
+        [XmlIgnore]
+        public XepInfoObject XepInfoObjectCasted => XepInfoObject as XepInfoObject;
+
         [XmlIgnore]
         public IXepInfoObject XepInfoObject
         {
@@ -81,7 +85,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
             }
         }
-#endif
+
         public bool IsESLError
         {
             get

@@ -229,8 +229,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         [XmlIgnore]
-        [PreserveSource(Hint = "FaultCodeConverters.FormatFort(this)", Placeholder = true)]
-        public string FortAsHexString => string.Empty;
+        public string FortAsHexString => FaultCodeConverters.FormatFort(this);
 
         [XmlIgnore]
         IEnumerable<IFArtExt> IDtc.F_ART_EXT => F_ART_EXT;
@@ -1282,22 +1281,21 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return MemberwiseClone();
         }
 
-        [PreserveSource(Hint = "XEP_VIRTUALFAULTCODES", SignatureModified = true)]
-        public static DTC GetDTCByFaultCode(PlaceholderType vFaultCode)
+        public static DTC GetDTCByFaultCode(XEP_VIRTUALFAULTCODES vFaultCode)
         {
-            //[-] if (vFaultCode == null)
-            //[-] {
-            //[-] Log.Warning("DTC.GetDTCByFaultCode(XEP_VIRTUALFAULTCODES)", "vFaultCode was null");
-            //[-] return null;
-            //[-] }
+            if (vFaultCode == null)
+            {
+                Log.Warning("DTC.GetDTCByFaultCode(XEP_VIRTUALFAULTCODES)", "vFaultCode was null");
+                return null;
+            }
             DTC dTC = new DTC();
             dTC.IsVirtual = true;
-            //[-] dTC.Id = vFaultCode.ID;
-            //[-] dTC.SetVirtualDtcFaultClassAndGroup(vFaultCode.ECUNOANSWER);
+            dTC.Id = vFaultCode.ID;
+            dTC.SetVirtualDtcFaultClassAndGroup(vFaultCode.ECUNOANSWER);
             try
             {
-            //[-] string value = vFaultCode.CODE.TrimStart('S', ' ');
-            //[-] dTC.F_ORT = Convert.ToInt64(value, 16);
+                string value = vFaultCode.CODE.TrimStart('S', ' ');
+                dTC.F_ORT = Convert.ToInt64(value, 16);
             }
             catch (Exception exception)
             {

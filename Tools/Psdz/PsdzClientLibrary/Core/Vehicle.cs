@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
 using BMW.Rheingold.Programming.Common;
 using PsdzClient;
 using PsdzClient.Contracts;
@@ -16,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -351,8 +353,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Placeholder = true)]
-        public PlaceholderType ZFS;
+        public ObservableCollection<ZFSResult> ZFS;
         public List<CEMResult> CEM
         {
             get
@@ -2480,9 +2481,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
         public PlaceholderType CheckControlMessages;
-        [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
         [XmlIgnore]
-        public PlaceholderType FaultList;
+        public IList<Fault> FaultList;
         [XmlIgnore]
         public BlockingCollection<VirtualFaultInfo> VirtualFaultInfoList;
         [XmlIgnore]
@@ -2603,9 +2603,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         [XmlIgnore]
         IVciDevice IVehicle.VCI => VCI;
 
-        [PreserveSource(Hint = "IEnumerable<IZfsResult>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.ZFS => ZFS;
+        IEnumerable<IZfsResult> IVehicle.ZFS => ZFS;
 
         [XmlIgnore]
         IEnumerable<ICemResult> IVehicle.CEM => CEM;
@@ -2833,7 +2832,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             dealerSessionProperties = new List<DealerSessionProperty>();
             //[-] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
             //[-]  pKodeList = new ObservableCollectionEx<Fault>();
-            //[-] FaultList = new List<Fault>();
+            FaultList = new List<Fault>();
             VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
             sessionDataStore = new ParameterContainer();
             //[-] Testplan = new TestPlanType(this);
@@ -2871,35 +2870,136 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        [PreserveSource(Cleaned = true)]
         public List<string> PermanentSAEFehlercodesInFaultList()
         {
             List<string> list = new List<string>();
+            if (FaultList == null || FaultList.Count == 0)
+            {
+                return new List<string>();
+            }
+            foreach (Fault fault in FaultList)
+            {
+                if (fault.DTC.FortAsHexString == "S 0751")
+                {
+                    list.Add("S 0751");
+                }
+                if (fault.DTC.FortAsHexString == "S 0756")
+                {
+                    list.Add("S 0756");
+                }
+            }
             return list;
         }
 
-        [PreserveSource(Cleaned = true)]
-        public PlaceholderType GetEnrichedFaultList(IFFMDynamicResolver ffmDynamicResolver)
+        public IEnumerable<Fault> GetEnrichedFaultList(IFFMDynamicResolver ffmDynamicResolver)
         {
-            return PlaceholderType.Value;
+            if (!FaultList.Any())
+            {
+                return Enumerable.Empty<Fault>();
+            }
+            ComputeResolveLabelsForAllFaultAsync(this, ffmDynamicResolver).ConfigureAwait(continueOnCapturedContext: false).GetAwaiter().GetResult();
+            List<Fault> list = new List<Fault>();
+            foreach (Fault fault in FaultList)
+            {
+                list.Add(fault);
+            }
+            return list;
         }
 
-        [PreserveSource(Cleaned = true)]
-        public PlaceholderType ComputeResolveLabelsForAllFaultAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        public async Task ComputeResolveLabelsForAllFaultAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, string language = null)
         {
-            return PlaceholderType.Value;
+            if (!string.IsNullOrEmpty(language))
+            {
+                ConfigSettings.CurrentUICulture = language;
+            }
+            //[-] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = DatabaseProviderFactory.Instance.GetRefFaultLabelsLabelIdByFaultList(FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
+            //[-] Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel));
+            //[-] Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> xepFaultLabelsTask = Task.Run(() => GetXepFaultLabelsByDtcFOrtEcuVariantAsync(vehicle, ffmDynamicResolver, refFaultLabel));
+            //[-] await Task.WhenAll(xepFaultModelLabelsTask, xepFaultLabelsTask).ConfigureAwait(continueOnCapturedContext: false);
+            //[-] foreach (Fault fault in FaultList)
+            //[-] {
+            //[-] fault.ResolveLabels(vehicle, ffmDynamicResolver, xepFaultModelLabelsTask.Result, xepFaultLabelsTask.Result, language);
+            //[-] }
         }
 
-        [PreserveSource(Cleaned = true)]
-        private PlaceholderType GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync()
+        private async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel)
         {
-            return PlaceholderType.Value;
+            Collection<decimal> reffaultLabelsLabelIds = new Collection<decimal>();
+            refFaultLabel.ForEach(delegate (KeyValuePair<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> x)
+            {
+                reffaultLabelsLabelIds.AddRange(x.Value);
+            });
+            IEnumerable<decimal> enumerable = reffaultLabelsLabelIds.Distinct();
+            IDictionary<decimal, XEP_FAULTMODELABELS> dictionary2;
+            if (!enumerable.Any())
+            {
+                IDictionary<decimal, XEP_FAULTMODELABELS> dictionary = new Dictionary<decimal, XEP_FAULTMODELABELS>();
+                dictionary2 = dictionary;
+            }
+            else
+            {
+                //[-] dictionary2 = DatabaseProviderFactory.Instance.GetFaultModelLabelsByIds(enumerable);
+                //[+] dictionary2 = new Dictionary<decimal, XEP_FAULTMODELABELS>();
+                dictionary2 = new Dictionary<decimal, XEP_FAULTMODELABELS>();
+            }
+            IDictionary<decimal, XEP_FAULTMODELABELS> modelFaultLabelAll = dictionary2;
+            Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>> faultListFault = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>(refFaultLabel.Count);
+            DtcFOrtEcuVariantKey key;
+            foreach (FaultCodeIdDtcFOrtEcuVariantKey key2 in refFaultLabel.Keys)
+            {
+                key = key2.GetDtcFOrtEcuVariantKey();
+                if (!faultListFault.ContainsKey(key))
+                {
+                    faultListFault.Add(key, new Collection<XEP_FAULTMODELABELS>());
+                }
+                refFaultLabel[key2].ForEach(delegate (decimal x)
+                {
+                    if (modelFaultLabelAll.ContainsKey(x) && !faultListFault[key].Contains(modelFaultLabelAll[x]))
+                    {
+                        faultListFault[key].Add(modelFaultLabelAll[x]);
+                    }
+                });
+            }
+            return await Task.FromResult(faultListFault);
         }
 
-        [PreserveSource(Cleaned = true)]
-        private PlaceholderType GetXepFaultLabelsByDtcFOrtEcuVariantAsync()
+        private async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> GetXepFaultLabelsByDtcFOrtEcuVariantAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel)
         {
-            return PlaceholderType.Value;
+            Collection<FaultCodeIdDtcFOrtEcuVariantKey> collection = new Collection<FaultCodeIdDtcFOrtEcuVariantKey>();
+            Collection<decimal> collection2 = new Collection<decimal>();
+            foreach (FaultCodeIdDtcFOrtEcuVariantKey key2 in refFaultLabel.Keys)
+            {
+                //[-] if (DatabaseProviderFactory.Instance.EvaluateXepRulesById(key2.FaultId, vehicle, ffmDynamicResolver))
+                {
+                    collection.Add(key2);
+                    collection2.AddRange(refFaultLabel[key2]);
+                }
+            }
+            Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>> xepFaultLabelsList = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>(collection.Count);
+            if (!collection.Any() || !collection2.Any())
+            {
+                return await Task.FromResult(xepFaultLabelsList);
+            }
+            //[-] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = DatabaseProviderFactory.Instance.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
+            //[+] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = new Dictionary<decimal, XEP_FAULTLABELS>();
+            IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = new Dictionary<decimal, XEP_FAULTLABELS>();
+            DtcFOrtEcuVariantKey key;
+            foreach (FaultCodeIdDtcFOrtEcuVariantKey item in collection)
+            {
+                key = item.GetDtcFOrtEcuVariantKey();
+                if (!xepFaultLabelsList.ContainsKey(key))
+                {
+                    xepFaultLabelsList.Add(key, new Collection<XEP_FAULTLABELS>());
+                }
+                refFaultLabel[item].ForEach(delegate (decimal x)
+                {
+                    if (xepFaultLabels.ContainsKey(x) && !xepFaultLabelsList[key].Contains(xepFaultLabels[x]))
+                    {
+                        xepFaultLabelsList[key].Add(xepFaultLabels[x]);
+                    }
+                });
+            }
+            return await Task.FromResult(xepFaultLabelsList);
         }
 
         public static Vehicle Deserialize(string filename)
@@ -3102,21 +3202,86 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return true;
         }
 
-        [PreserveSource(Cleaned = true)]
         public ECU GetECUbyDTC(decimal id)
         {
+            if (ECU != null)
+            {
+                foreach (ECU item in ECU)
+                {
+                    if (item.FEHLER != null)
+                    {
+                        foreach (DTC item2 in item.FEHLER)
+                        {
+                            if (id.Equals(item2.Id))
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                    if (item.INFO == null)
+                    {
+                        continue;
+                    }
+                    foreach (DTC item3 in item.INFO)
+                    {
+                        if (id.Equals(item3.Id))
+                        {
+                            return item;
+                        }
+                    }
+                }
+            }
             return null;
         }
 
-        [PreserveSource(Cleaned = true)]
-        public PlaceholderType GetDTC(decimal id)
+        public DTC GetDTC(decimal id)
         {
-            return PlaceholderType.Value;
+            if (ECU != null)
+            {
+                foreach (ECU item in ECU)
+                {
+                    if (item.FEHLER != null)
+                    {
+                        foreach (DTC item2 in item.FEHLER)
+                        {
+                            if (id.Equals(item2.Id))
+                            {
+                                return item2;
+                            }
+                        }
+                    }
+                    if (item.INFO == null)
+                    {
+                        continue;
+                    }
+                    foreach (DTC item3 in item.INFO)
+                    {
+                        if (id.Equals(item3.Id))
+                        {
+                            return item3;
+                        }
+                    }
+                }
+            }
+            if (CombinedFaults != null)
+            {
+                return CombinedFaults.FirstOrDefault(delegate (DTC item)
+                {
+                    decimal? id2 = item.Id;
+                    decimal num = id;
+                    return (id2.GetValueOrDefault() == num) & id2.HasValue;
+                });
+            }
+            return null;
         }
 
-        [PreserveSource(Cleaned = true)]
         public void CalculateFaultProperties(IFFMDynamicResolver ffmResolver = null)
         {
+            ObservableCollection<Fault> observableCollection = CalculateFaultList(this, ECU, CombinedFaults, ZFS, ffmResolver);
+            //[-] SessionInfoAccessor.SessionInfo.FaultCodeSum = CalculateFaultCodeSum(ECU, observableCollection, onlyNonSignalFaultDtcs: false);
+            //[-] SessionInfoAccessor.SessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(ECU, observableCollection, onlyNonSignalFaultDtcs: true);
+            //[-] Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", FaultList?.Count, SessionInfoAccessor.SessionInfo.FaultCodeSum);
+            FaultList = new List<Fault>(observableCollection);
         }
 
         public typeECU_Transaction getECUTransaction(ECU transECU, string transId)
@@ -3908,9 +4073,32 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return default(T);
         }
 
-        [PreserveSource(Cleaned = true)]
         public void AddDiagCode(string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList)
         {
+            if (!string.IsNullOrEmpty(diagCodeString))
+            {
+                if (DiagCodes == null)
+                {
+                    DiagCodes = new ObservableCollection<typeDiagCode>();
+                }
+                typeDiagCode typeDiagCode2 = new typeDiagCode();
+                typeDiagCode2.DiagnoseCode = diagCodeString;
+                typeDiagCode2.DiagnoseCodeSuffix = diagCodeSuffixString;
+                typeDiagCode2.Origin = ((originatingAblauf == null) ? string.Empty : originatingAblauf);
+                if (reparaturPaketList != null)
+                {
+                    typeDiagCode2.ReparaturPaket = new ObservableCollection<string>(reparaturPaketList);
+                }
+                else
+                {
+                    typeDiagCode2.ReparaturPaket = new ObservableCollection<string>();
+                }
+                DiagCodes.Add(typeDiagCode2);
+                if (!string.IsNullOrEmpty(diagCodeString) && !diagCodesProgramming.Contains(diagCodeString))
+                {
+                    diagCodesProgramming.Add(diagCodeString);
+                }
+            }
         }
 
         IEcu IVehicle.getECU(long? sgAdr)
@@ -4000,21 +4188,90 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return null;
         }
 
-        [PreserveSource(Cleaned = true)]
-        private static PlaceholderType CalculateFaultList()
+        private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
         {
-            return PlaceholderType.Value;
+            bool flag = true;
+            bool flag2 = true;
+            if (ConfigSettings.OperationalMode != OperationalMode.ISTA && ConfigSettings.OperationalMode != OperationalMode.OPAPI)
+            {
+                flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", defaultValue: true);
+                flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", defaultValue: false);
+            }
+            ObservableCollection<Fault> observableCollection = new ObservableCollection<Fault>();
+            try
+            {
+                if (ecus != null)
+                {
+                    foreach (ECU item in ecus.Where((ECU item) => item.FEHLER != null))
+                    {
+                        foreach (DTC item2 in item.FEHLER)
+                        {
+                            Fault fault = new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive);
+                            if (item2.Relevance == true)
+                            {
+                                if (ffmFesolver != null && ConfigSettings.getConfigStringAsBoolean("EnableRelevanceFaultCode", defaultValue: true))
+                                {
+                                    fault.ResolveRelevanceFaultCode(vehicle, ffmFesolver);
+                                    if (fault.DTC.Relevance == true)
+                                    {
+                                        observableCollection.AddIfNotContains(fault);
+                                    }
+                                }
+                                else
+                                {
+                                    observableCollection.AddIfNotContains(fault);
+                                }
+                            }
+                            else if (item2.Relevance == false && !flag)
+                            {
+                                observableCollection.AddIfNotContains(new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive));
+                            }
+                            else if (!item2.Relevance.HasValue && !flag2)
+                            {
+                                observableCollection.AddIfNotContains(new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive));
+                            }
+                        }
+                    }
+                }
+                if (combinedFaults == null)
+                {
+                    return observableCollection;
+                }
+                foreach (DTC combinedFault in combinedFaults)
+                {
+                    Fault fault2 = new Fault(null, combinedFault, null, vehicle.Classification.IsNewFaultMemoryActive);
+                    fault2.ResolveLabels(vehicle, null);
+                    observableCollection.AddIfNotContains(fault2);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("Vehicle.CalculateFaultList()", exception);
+            }
+            return observableCollection;
         }
 
-        [PreserveSource(Cleaned = true)]
-        private static int? CalculateFaultCodeSum()
+        public static int? CalculateFaultCodeSum(IEnumerable<IEcu> ecus, IEnumerable<Fault> faults, bool onlyNonSignalFaultDtcs)
         {
-            return null;
+            int num = 0;
+            num = (onlyNonSignalFaultDtcs ? faults.Count((Fault f) => f.FaultGroupNumber != 6) : faults.Count());
+            if (num == 0 && (ecus == null || !ecus.Any() || ecus.Any((IEcu item) => !item.FS_SUCCESSFULLY && !item.BUS.ToString().Contains("VIRTUAL"))))
+            {
+                return null;
+            }
+            return num;
         }
 
-        [PreserveSource(Cleaned = true)]
-        public void AddCombinedDTC()
+        public void AddCombinedDTC(DTC dtc)
         {
+            if (dtc == null)
+            {
+                Log.Warning("Vehicle.AddCombinedDTC()", "dtc was null");
+            }
+            else if (dtc.IsVirtual && dtc.IsCombined && CombinedFaults != null)
+            {
+                CombinedFaults.AddIfNotContains(dtc);
+            }
         }
 
         public bool GetProgrammingEnabledForBn(string bn)
@@ -4102,10 +4359,46 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return num;
         }
 
-        [PreserveSource(Cleaned = true)]
-        public int GetFaultListHashCode()
+        public int GetFaultListHashCode(FaultFilter filter, List<Fault> selectedFaults = null)
         {
-            return 0;
+            int num = 37;
+            int num2 = 327;
+            IList<int> faultGroupNumbers = filter.FaultGroupNumbers;
+            IEnumerable<(string, string)> enumerable = null;
+            IEnumerable<string> enumerable2 = null;
+            if (selectedFaults != null)
+            {
+                enumerable = from f in selectedFaults
+                    where !f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))
+                    orderby f.ECU.VARIANTE, f.DTC.FortAsHexString
+                    select (VARIANTE: f.ECU.VARIANTE, FortAsHexString: f.DTC.FortAsHexString);
+                enumerable2 = from f in selectedFaults
+                    where f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))
+                    orderby f.DTC.FortAsHexString
+                    select f.DTC.FortAsHexString;
+            }
+            else
+            {
+                enumerable = ECU.OrderBy((ECU e) => e.VARIANTE).SelectMany((ECU ecu) => from dtc in ecu.FEHLER
+                    where dtc.Relevance == true && (dtc.FaultGroup == 0 || faultGroupNumbers.Contains(dtc.FaultGroup))
+                    orderby dtc.FortAsHexString
+                    select (VARIANTE: ecu.VARIANTE, FortAsHexString: dtc.FortAsHexString));
+                enumerable2 = from f in CombinedFaults
+                    where f.Relevance == true && (f.FaultGroup == 0 || faultGroupNumbers.Contains(f.FaultGroup))
+                    orderby f.FortAsHexString
+                    select f.FortAsHexString;
+            }
+            foreach (var item in enumerable)
+            {
+                num += item.Item1?.GetHashCode() ?? 0;
+                num += item.Item2.GetHashCode();
+            }
+            num *= num2;
+            foreach (string item2 in enumerable2)
+            {
+                num += item2.GetHashCode();
+            }
+            return num * num2;
         }
 
         public IReactorFa GetFaInstance()

@@ -28,11 +28,11 @@ public class DocumentLocator : IDocumentLocator, ISPELocator
     {
         get
         {
-            //[-] if (infoObject.XepInfoObject == null)
+            if (infoObject.XepInfoObject == null)
             {
                 return -1m;
             }
-            //[-] return infoObject.XepInfoObject.Id;
+            return infoObject.XepInfoObject.Id;
         }
     }
 

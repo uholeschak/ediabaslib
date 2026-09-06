@@ -1,11 +1,12 @@
 ﻿using BMW.Authoring.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge;
+using PsdzClient;
 using PsdzClient.Core;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using PsdzClient;
 
 namespace BMW.Rheingold.Module.ISTA
 {
@@ -24,8 +25,7 @@ namespace BMW.Rheingold.Module.ISTA
         [DataMember]
         private int selectedIndex;
 
-        [PreserveSource(Hint = "Fault", Placeholder = true)]
-        public PlaceholderType Fault { get; private set; }
+        public Fault Fault { get; private set; }
 
         public string PriorText
         {
@@ -89,8 +89,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
         }
 
-        [PreserveSource(Hint = "Fault", Placeholder = true)]
-        public event EventHandler<PlaceholderType> FaultChanged;
+        public event EventHandler<Fault> FaultChanged;
 
         public DtcAnzeigeDynModel()
         {
@@ -111,8 +110,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
         }
 
-        [PreserveSource(Hint = "Fault", Placeholder = true)]
-        internal void SelectedFault(PlaceholderType fault)
+        internal void SelectedFault(Fault fault)
         {
             Fault = fault;
             this.FaultChanged?.Invoke(this, Fault);

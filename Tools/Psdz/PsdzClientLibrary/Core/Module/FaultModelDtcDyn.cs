@@ -16,14 +16,11 @@ namespace BMW.Rheingold.Module.ISTA
         private string faultLabel;
         public DtcAnzeigeButtonModel ButtonModel => new DtcAnzeigeButtonModel(IsMarked, IsSelected, DTC?.FortAsHexString, FaultLabel, btnNo, index);
 
-        [PreserveSource(Hint = "Fault?.DTC", Placeholder = true)]
-        public DTC DTC => null;
+        public DTC DTC => Fault?.DTC;
 
-        [PreserveSource(Hint = "Fault?.ECU", Placeholder = true)]
-        public ECU ECU => null;
+        public ECU ECU => Fault?.ECU;
 
-        [PreserveSource(Hint = "Fault", Placeholder = true)]
-        public PlaceholderType Fault { get; set; }
+        public Fault Fault { get; set; }
 
         public string FaultLabel
         {
@@ -99,23 +96,20 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        [PreserveSource(Hint = "Fault", SignatureModified = true)]
-        public FaultModelDtcDyn(PlaceholderType fault, PsdzDatabase database, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        public FaultModelDtcDyn(Fault fault, PsdzDatabase database, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             Fault = fault;
-            //[-] faultLabel = Fault.FaultLabel;
+            faultLabel = Fault.FaultLabel;
             Initialize(fault, database, vehicle, ffmResolver);
         }
 
-        [PreserveSource(Hint = "Fault", SignatureModified = true)]
-        public FaultModelDtcDyn(PlaceholderType fault, string faultLabel)
+        public FaultModelDtcDyn(Fault fault, string faultLabel)
         {
             Fault = fault;
             FaultLabel = faultLabel;
         }
 
-        [PreserveSource(Hint = "Fault", SignatureModified = true)]
-        private void Initialize(PlaceholderType fault, PsdzDatabase database, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        private void Initialize(Fault fault, PsdzDatabase database, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             //[-] XEP_FAULTLABELS ecuFaultLabelByFaultCodeAndEcuVariant = database.GetEcuFaultLabelByFaultCodeAndEcuVariant(fault.DTC.F_ORT.ToString(), fault.ECU.VARIANTE, vehicle, ffmResolver);
             //[-] string value = ((ecuFaultLabelByFaultCodeAndEcuVariant != null) ? ecuFaultLabelByFaultCodeAndEcuVariant.Title : string.Empty);
