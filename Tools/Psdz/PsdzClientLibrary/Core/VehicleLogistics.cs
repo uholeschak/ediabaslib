@@ -777,17 +777,6 @@ namespace PsdzClient.Core
             return null;
         }
 
-        public static ObservableCollectionEx<XEP_SALAPAS> GetAvailableSALAPAs(Vehicle vecInfo)
-        {
-            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
-            if (characteristics != null)
-            {
-                return characteristics.GetAvailableSALAPAs(vecInfo);
-            }
-
-            return new ObservableCollectionEx<XEP_SALAPAS>();
-        }
-
         [PreserveSource(Hint = "vehicle added", SignatureModified = true)]
         public static void DecodeVCMBackupFA(byte[] faAsByteArray, Vehicle vehicle)
         {

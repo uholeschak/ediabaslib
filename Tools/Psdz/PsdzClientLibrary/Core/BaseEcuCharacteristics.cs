@@ -774,59 +774,6 @@ namespace PsdzClient.Core
             }
         }
 
-        public virtual ObservableCollectionEx<XEP_SALAPAS> GetAvailableSALAPAs(Vehicle vecInfo)
-        {
-            ObservableCollectionEx<XEP_SALAPAS> observableCollectionEx = new ObservableCollectionEx<XEP_SALAPAS>();
-            if (vecInfo != null && !string.IsNullOrEmpty(compatibilityInfo))
-            {
-                try
-                {
-                    string[] array = compatibilityInfo.Split('\n');
-                    foreach (string text in array)
-                    {
-                        try
-                        {
-                            if (string.IsNullOrEmpty(text) || text.Length < 10)
-                            {
-                                continue;
-                            }
-
-                            string[] array2 = text.Split(';');
-                            if (!array2[2].Contains(vecInfo.Typ))
-                            {
-                                continue;
-                            }
-
-                            string[] array3 = array2[3].Split('&');
-                            foreach (string text2 in array3)
-                            {
-                                if (!string.IsNullOrEmpty(text2))
-                                {
-                                    //[-] XEP_SALAPAS saLaPaByProductTypeAndSalesKey = DatabaseProviderFactory.Instance.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
-                                    //[+] XEP_SALAPAS saLaPaByProductTypeAndSalesKey = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty)));
-                                    XEP_SALAPAS saLaPaByProductTypeAndSalesKey = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty)));
-                                    if (saLaPaByProductTypeAndSalesKey != null)
-                                    {
-                                        observableCollectionEx.AddIfNotContains(saLaPaByProductTypeAndSalesKey);
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception exception)
-                        {
-                            Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception);
-                        }
-                    }
-                }
-                catch (Exception exception2)
-                {
-                    Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception2);
-                }
-            }
-
-            return observableCollectionEx;
-        }
-
         [PreserveSource(Hint = "database replaced", SignatureModified = true)]
         protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
