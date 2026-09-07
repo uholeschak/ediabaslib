@@ -388,6 +388,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return null;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static FaultCode GetFaultCode(string refCode, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             try
@@ -483,6 +484,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return null;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static FaultCode GetFaultCode(ECU ecu, long f_Ort, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             if (ecu == null)
