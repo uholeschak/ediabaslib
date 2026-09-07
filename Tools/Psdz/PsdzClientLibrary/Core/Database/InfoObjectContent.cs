@@ -9,8 +9,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     {
         public string Doc { get; set; }
 
-        [PreserveSource(Hint = "ICollection<XEP_QUERYOBJECTSEX>", Placeholder = true)]
-        public ICollection<PlaceholderType> ListSvgLinks { get; set; }
+        public ICollection<XEP_QUERYOBJECTSEX> ListSvgLinks { get; set; }
 
         public ICollection<LinkType> ListLinks { get; set; }
 
@@ -23,7 +22,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public InfoObjectContent()
         {
             ListLinks = new Collection<LinkType>();
-            //[-] ListSvgLinks = new Collection<XEP_QUERYOBJECTSEX>();
+            ListSvgLinks = new Collection<XEP_QUERYOBJECTSEX>();
             ListGraphics = new Collection<GraphicsType>();
             ListIncludes = new Collection<string>();
         }

@@ -10,8 +10,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         byte[] BinaryDocument { get; }
 
-        [PreserveSource(Hint = "ICollection<XEP_QUERYOBJECTSEX>", Placeholder = true)]
-        ICollection<PlaceholderType> ListSvgLinks { get; }
+        ICollection<XEP_QUERYOBJECTSEX> ListSvgLinks { get; }
 
         ICollection<LinkType> ListLinks { get; }
 
