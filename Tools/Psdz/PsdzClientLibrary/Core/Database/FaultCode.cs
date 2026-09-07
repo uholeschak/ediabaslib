@@ -336,6 +336,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static FaultCode GetCombinedFaultCode(DTC dtc, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             if (dtc == null || vehicle == null || !dtc.Id.HasValue)
@@ -345,6 +346,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return GetCombinedFaultCode(dtc.Id.Value, vehicle, ffmResolver);
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static FaultCode GetCombinedFaultCode(decimal id, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             try
