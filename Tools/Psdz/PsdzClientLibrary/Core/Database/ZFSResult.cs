@@ -7,79 +7,51 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class ZFSResult : INotifyPropertyChanged, IZfsResult
     {
         private ushort indexField;
-
         private long? sTAT_DM_ADRESSE_SGField;
-
         private string sTAT_ZFS_KOMPLEXField;
-
         private long? sTAT_DM_MELDUNG_NRField;
-
         private long? sTAT_DM_SGBD_INDEXField;
-
         private short? sTAT_DM_MELDUNG_TYPField;
-
         private ulong? sTAT_DM_ZEITSTEMPELField;
-
         private ulong? sTAT_DM_ZEITSTEMPEL_MSField;
-
         private string sTAT_DM_MELDUNG_TEXTField;
-
         private ulong? sTAT_SYSKONTEXT_ZEIT_WECKEN_WERTField;
-
         private ulong? sTAT_SYSKONTEXT_ZEITSTEMPEL_WERTField;
-
         private double? sTAT_SYSKONTEXT_SPANNUNG_MAX_WERTField;
-
         private double? sTAT_SYSKONTEXT_SPANNUNG_MIN_WERTField;
-
         private DateTime? sTAT_SYSKONTEXT_KUNDENZEITField;
-
         private double? sTAT_SYSKONTEXT_TEMPERATUR_AUSSEN_WERTField;
-
         private short? sTAT_SYSKONTEXT_KLEMMEN_BEI_FEHLER_WERTField;
-
         private short? sTAT_SYSKONTEXT_KLEMMEN_VOR_FEHLER_WERTField;
-
         private double? sTAT_SYSKONTEXT_GESCHWINDIGKEIT_MAX_WERTField;
-
         private double? sTAT_SYSKONTEXT_GESCHWINDIGKEIT_MIN_WERTField;
-
         private short? sTAT_SYSKONTEXT_OPSTATUS_BEI_FEHLER_WERTField;
-
         private short? sTAT_SYSKONTEXT_OPSTATUS_VOR_FEHLER_WERTField;
-
         private ulong? sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_R_EIN_WERTField;
-
         private ulong? sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_15_EIN_WERTField;
-
         private ulong? sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_50_EIN_WERTField;
-
         private ulong? sTAT_SYSKONTEXT_ZEIT_KLEMMENWECHSEL_WERTField;
-
         private int? sTAT_SYSKONTEXT_WEGSTRECKE_METER_WERTField;
-
         private int? sTAT_SYSKONTEXT_WEGSTRECKE_KILOMETER_WERTField;
-
         private ulong? sTAT_SYSKONTEXT_ZEIT_OPSTATUSWECHSEL_WERTField;
-
         private double? sTAT_SYSKONTEXT_DREHZAHL_KURBELWELLE_MAX_WERTField;
-
         private double? sTAT_SYSKONTEXT_DREHZAHL_KURBELWELLE_MIN_WERTField;
-
         private double? sTAT_SYSKONTEXT_TEMPERATUR_MOTOR_ANTRIEB_WERTField;
-
         private short? sTAT_SYSKONTEXT_FEHLERSPEICHERSPERRE_AKTIV_WERTField;
-
         private short? sTAT_DM_MESSAGE_TYPEField;
-
-        private int[] checkControlMessageTypes = new int[3] { 2, 3, 255 };
-
+        private int[] checkControlMessageTypes = new int[3]
+        {
+            2,
+            3,
+            255
+        };
         public ushort Index
         {
             get
             {
                 return indexField;
             }
+
             set
             {
                 _ = indexField;
@@ -97,6 +69,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_DM_ADRESSE_SGField;
             }
+
             set
             {
                 if (sTAT_DM_ADRESSE_SGField.HasValue)
@@ -121,6 +94,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_ZFS_KOMPLEXField;
             }
+
             set
             {
                 if (sTAT_ZFS_KOMPLEXField != null)
@@ -145,6 +119,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_DM_MELDUNG_NRField;
             }
+
             set
             {
                 if (sTAT_DM_MELDUNG_NRField.HasValue)
@@ -169,6 +144,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_DM_SGBD_INDEXField;
             }
+
             set
             {
                 if (sTAT_DM_SGBD_INDEXField.HasValue)
@@ -193,6 +169,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_DM_MELDUNG_TYPField;
             }
+
             set
             {
                 if (sTAT_DM_MELDUNG_TYPField.HasValue)
@@ -217,6 +194,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_DM_ZEITSTEMPELField;
             }
+
             set
             {
                 if (sTAT_DM_ZEITSTEMPELField.HasValue)
@@ -241,6 +219,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_DM_ZEITSTEMPEL_MSField;
             }
+
             set
             {
                 if (sTAT_DM_ZEITSTEMPEL_MSField != value)
@@ -257,6 +236,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_DM_MELDUNG_TEXTField;
             }
+
             set
             {
                 if (sTAT_DM_MELDUNG_TEXTField != null)
@@ -281,6 +261,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_ZEIT_WECKEN_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_ZEIT_WECKEN_WERTField.HasValue)
@@ -305,6 +286,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_ZEITSTEMPEL_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_ZEITSTEMPEL_WERTField.HasValue)
@@ -329,6 +311,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_SPANNUNG_MAX_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_SPANNUNG_MAX_WERTField.HasValue)
@@ -353,6 +336,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_SPANNUNG_MIN_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_SPANNUNG_MIN_WERTField.HasValue)
@@ -377,6 +361,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_KUNDENZEITField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_KUNDENZEITField.HasValue)
@@ -401,6 +386,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_TEMPERATUR_AUSSEN_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_TEMPERATUR_AUSSEN_WERTField.HasValue)
@@ -425,6 +411,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_KLEMMEN_BEI_FEHLER_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_KLEMMEN_BEI_FEHLER_WERTField.HasValue)
@@ -449,6 +436,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_KLEMMEN_VOR_FEHLER_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_KLEMMEN_VOR_FEHLER_WERTField.HasValue)
@@ -473,6 +461,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_GESCHWINDIGKEIT_MAX_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_GESCHWINDIGKEIT_MAX_WERTField.HasValue)
@@ -497,6 +486,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_GESCHWINDIGKEIT_MIN_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_GESCHWINDIGKEIT_MIN_WERTField.HasValue)
@@ -521,6 +511,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_OPSTATUS_BEI_FEHLER_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_OPSTATUS_BEI_FEHLER_WERTField.HasValue)
@@ -545,6 +536,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_OPSTATUS_VOR_FEHLER_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_OPSTATUS_VOR_FEHLER_WERTField.HasValue)
@@ -569,6 +561,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_R_EIN_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_R_EIN_WERTField.HasValue)
@@ -593,6 +586,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_15_EIN_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_15_EIN_WERTField.HasValue)
@@ -617,6 +611,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_50_EIN_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_ZEIT_ERSTE_KL_50_EIN_WERTField.HasValue)
@@ -641,6 +636,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_ZEIT_KLEMMENWECHSEL_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_ZEIT_KLEMMENWECHSEL_WERTField.HasValue)
@@ -665,6 +661,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_WEGSTRECKE_KILOMETER_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_WEGSTRECKE_KILOMETER_WERTField.HasValue)
@@ -689,6 +686,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_WEGSTRECKE_METER_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_WEGSTRECKE_METER_WERTField != value)
@@ -705,6 +703,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_ZEIT_OPSTATUSWECHSEL_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_ZEIT_OPSTATUSWECHSEL_WERTField.HasValue)
@@ -729,6 +728,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_DREHZAHL_KURBELWELLE_MAX_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_DREHZAHL_KURBELWELLE_MAX_WERTField.HasValue)
@@ -753,6 +753,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_DREHZAHL_KURBELWELLE_MIN_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_DREHZAHL_KURBELWELLE_MIN_WERTField.HasValue)
@@ -777,6 +778,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_TEMPERATUR_MOTOR_ANTRIEB_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_TEMPERATUR_MOTOR_ANTRIEB_WERTField.HasValue)
@@ -801,6 +803,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_SYSKONTEXT_FEHLERSPEICHERSPERRE_AKTIV_WERTField;
             }
+
             set
             {
                 if (sTAT_SYSKONTEXT_FEHLERSPEICHERSPERRE_AKTIV_WERTField.HasValue)
@@ -825,6 +828,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTAT_DM_MESSAGE_TYPEField;
             }
+
             set
             {
                 if (sTAT_DM_MESSAGE_TYPEField != value)
@@ -838,58 +842,34 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public bool IsCheckControlMessage { get; set; }
-
         public string JOB_STATUS { get; set; }
-
         public byte STAT_DM_ACTIVE_STATE { get; set; }
-
         public byte STAT_DM_MAPPING_ID { get; set; }
-
         public string STAT_DM_MESSAGE_TYPE_TEXT { get; set; }
-
         public string STAT_DM_TS_1AS { get; set; }
-
         public string STAT_DM_TS_1AS_MS { get; set; }
-
         public byte STAT_SYSKONTEXT_BASIS_TN_WERT { get; set; }
-
         public ulong STAT_SYSKONTEXT_FUNKT_TN_WERT { get; set; }
-
         public int STAT_SYSKONTEXT_KUNDENZEIT_JAHR_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_KUNDENZEIT_MONAT_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_KUNDENZEIT_TAG_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_KUNDENZEIT_STUNDE_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_KUNDENZEIT_MINUTE_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_KUNDENZEIT_SEKUNDE_WERT { get; set; }
-
         public double STAT_SYSKONTEXT_LAENGSBESCHLEUNIGUNG_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_PWF_BEI_FEHLER_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_PWF_VOR_PWF_BEI_FEHLER_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_SCHLSLPRFL_AKT_WERT { get; set; }
-
         public double STAT_SYSKONTEXT_SPANNUNG2_MAX_WERT { get; set; }
-
         public double STAT_SYSKONTEXT_SPANNUNG2_MIN_WERT { get; set; }
-
         public double STAT_SYSKONTEXT_SPANNUNG_HV_SYSTEM_WERT { get; set; }
-
         public byte STAT_SYSKONTEXT_WEGSTRECKE_INSYNC_WERT { get; set; }
-
         public long STAT_SYSKONTEXT_ZEIT_LETZTER_PWF_WECHSEL_WERT { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void MarkCheckControlMessage()

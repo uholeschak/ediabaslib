@@ -15,16 +15,12 @@ namespace BMW.Rheingold.Module.ISTA
     {
         [DataMember]
         private string priorText;
-
         [DataMember]
         private string pastText;
-
         [DataMember]
         private ObservableCollection<DtcAnzeigeButtonModel> buttons;
-
         [DataMember]
         private int selectedIndex;
-
         public Fault Fault { get; private set; }
 
         public string PriorText
@@ -33,6 +29,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return priorText;
             }
+
             set
             {
                 if (!object.Equals(priorText, value))
@@ -49,6 +46,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return pastText;
             }
+
             set
             {
                 if (!object.Equals(pastText, value))
@@ -65,6 +63,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return selectedIndex;
             }
+
             set
             {
                 if (!object.Equals(selectedIndex, value))
@@ -81,6 +80,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return buttons;
             }
+
             set
             {
                 buttons.Clear();
@@ -90,7 +90,6 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event EventHandler<Fault> FaultChanged;
-
         public DtcAnzeigeDynModel()
         {
             buttons = new ObservableCollection<DtcAnzeigeButtonModel>();
@@ -113,8 +112,7 @@ namespace BMW.Rheingold.Module.ISTA
         internal void SelectedFault(Fault fault)
         {
             Fault = fault;
-            this.FaultChanged?.Invoke(this, Fault);
+            FaultChanged?.Invoke(this, Fault);
         }
     }
 }
-

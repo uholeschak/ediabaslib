@@ -6,33 +6,23 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_COMBINEDFAULTS : INotifyPropertyChanged
     {
         private decimal idField;
-
         private string cODEField;
-
         private string fAULTCODETYPEField;
-
         private decimal? kMBEREICHField;
-
         private decimal? zEITBEREICHField;
-
         private string rULEField;
-
         private string zEITBEREICHEINHEITField;
-
         private decimal? wEIGHTINGField;
-
         private decimal? sICHERHEITSRELEVANTField;
-
         private DateTime? vALIDTOField;
-
         private DateTime? vALIDFROMField;
-
         public decimal ID
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -50,6 +40,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return cODEField;
             }
+
             set
             {
                 if (cODEField != null)
@@ -74,6 +65,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return fAULTCODETYPEField;
             }
+
             set
             {
                 if (fAULTCODETYPEField != null)
@@ -98,6 +90,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return kMBEREICHField;
             }
+
             set
             {
                 if (kMBEREICHField.HasValue)
@@ -122,6 +115,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return zEITBEREICHField;
             }
+
             set
             {
                 if (zEITBEREICHField.HasValue)
@@ -146,6 +140,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return rULEField;
             }
+
             set
             {
                 if (rULEField != null)
@@ -170,6 +165,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return zEITBEREICHEINHEITField;
             }
+
             set
             {
                 if (zEITBEREICHEINHEITField != null)
@@ -194,6 +190,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return wEIGHTINGField;
             }
+
             set
             {
                 if (wEIGHTINGField.HasValue)
@@ -218,6 +215,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sICHERHEITSRELEVANTField;
             }
+
             set
             {
                 if (sICHERHEITSRELEVANTField.HasValue)
@@ -242,6 +240,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return vALIDTOField;
             }
+
             set
             {
                 if (vALIDTOField.HasValue)
@@ -266,6 +265,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return vALIDFROMField;
             }
+
             set
             {
                 if (vALIDFROMField.HasValue)
@@ -285,10 +285,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override bool Equals(object obj)
@@ -297,54 +296,67 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_COMBINEDFAULTS xEP_COMBINEDFAULTS))
             {
                 return false;
             }
+
             if (ID != xEP_COMBINEDFAULTS.ID)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(CODE, xEP_COMBINEDFAULTS.CODE) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(FAULTCODETYPE, xEP_COMBINEDFAULTS.FAULTCODETYPE) != 0)
             {
                 return false;
             }
+
             if (!(KMBEREICH == xEP_COMBINEDFAULTS.KMBEREICH))
             {
                 return false;
             }
+
             if (!(ZEITBEREICH == xEP_COMBINEDFAULTS.ZEITBEREICH))
             {
                 return false;
             }
+
             if (string.CompareOrdinal(RULE, xEP_COMBINEDFAULTS.RULE) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(ZEITBEREICHEINHEIT, xEP_COMBINEDFAULTS.ZEITBEREICHEINHEIT) != 0)
             {
                 return false;
             }
+
             if (!(WEIGHTING == xEP_COMBINEDFAULTS.WEIGHTING))
             {
                 return false;
             }
+
             if (!(SICHERHEITSRELEVANT == xEP_COMBINEDFAULTS.SICHERHEITSRELEVANT))
             {
                 return false;
             }
+
             if (VALIDFROM != xEP_COMBINEDFAULTS.VALIDFROM)
             {
                 return false;
             }
+
             if (VALIDTO != xEP_COMBINEDFAULTS.VALIDTO)
             {
                 return false;
             }
+
             return true;
         }
 

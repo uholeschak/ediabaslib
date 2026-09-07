@@ -8,27 +8,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_ECUJOBSEX : INotifyPropertyChanged
     {
         private IList<XEP_ECUPARAMETERSEX> parameters = new List<XEP_ECUPARAMETERSEX>();
-
         private ObservableCollection<XEP_ECURESULTSEX> results = new ObservableCollection<XEP_ECURESULTSEX>();
-
         private decimal idField;
-
         private string functionNameJobField;
-
         private string adapterConfigurationField;
-
         private string nameField;
-
         private string phaseField;
-
         private decimal? rankField;
-
         public IList<XEP_ECUPARAMETERSEX> Parameters
         {
             get
             {
                 return parameters;
             }
+
             set
             {
                 parameters = value;
@@ -43,6 +36,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -60,6 +54,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return functionNameJobField;
             }
+
             set
             {
                 if (functionNameJobField != null)
@@ -84,6 +79,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return adapterConfigurationField;
             }
+
             set
             {
                 if (adapterConfigurationField != null)
@@ -108,6 +104,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -132,6 +129,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return phaseField;
             }
+
             set
             {
                 if (phaseField != null)
@@ -156,6 +154,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return rankField;
             }
+
             set
             {
                 if (rankField.HasValue)
@@ -175,7 +174,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public string GetParameterString()
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -188,6 +186,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     stringBuilder.Append(item.ParamValue + ";");
                 }
             }
+
             return stringBuilder.ToString().TrimEnd(';');
         }
 
@@ -197,26 +196,32 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_ECUJOBSEX xEP_ECUJOBSEX))
             {
                 return false;
             }
+
             if (Id != xEP_ECUJOBSEX.Id)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(FunctionNameJob, xEP_ECUJOBSEX.FunctionNameJob) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(AdapterConfiguration, xEP_ECUJOBSEX.AdapterConfiguration) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Name, xEP_ECUJOBSEX.Name) != 0)
             {
                 return false;
             }
+
             return true;
         }
 
@@ -227,7 +232,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

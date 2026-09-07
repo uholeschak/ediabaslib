@@ -6,27 +6,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_VIRTUALFAULTCODES : INotifyPropertyChanged
     {
         private decimal idField;
-
         private string cODEField;
-
         private decimal? eCUNOANSWERField;
-
         private DateTime? vALIDFROMField;
-
         private DateTime? vALIDTOField;
-
         private decimal? sICHERHEITSRELEVANTField;
-
         private decimal? wEIGHTINGField;
-
         private decimal? pARENTIDField;
-
         public decimal ID
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -44,6 +37,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return cODEField;
             }
+
             set
             {
                 if (cODEField != null)
@@ -68,6 +62,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return eCUNOANSWERField;
             }
+
             set
             {
                 if (eCUNOANSWERField.HasValue)
@@ -92,6 +87,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return vALIDFROMField;
             }
+
             set
             {
                 if (vALIDFROMField.HasValue)
@@ -116,6 +112,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return vALIDTOField;
             }
+
             set
             {
                 if (vALIDTOField.HasValue)
@@ -140,6 +137,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sICHERHEITSRELEVANTField;
             }
+
             set
             {
                 if (sICHERHEITSRELEVANTField.HasValue)
@@ -164,6 +162,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return wEIGHTINGField;
             }
+
             set
             {
                 if (wEIGHTINGField.HasValue)
@@ -188,6 +187,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return pARENTIDField;
             }
+
             set
             {
                 if (pARENTIDField.HasValue)
@@ -207,10 +207,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override bool Equals(object obj)
@@ -219,42 +218,52 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_VIRTUALFAULTCODES xEP_VIRTUALFAULTCODES))
             {
                 return false;
             }
+
             if (ID != xEP_VIRTUALFAULTCODES.ID)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(CODE, xEP_VIRTUALFAULTCODES.CODE) != 0)
             {
                 return false;
             }
+
             if (!(ECUNOANSWER == xEP_VIRTUALFAULTCODES.ECUNOANSWER))
             {
                 return false;
             }
+
             if (VALIDFROM != xEP_VIRTUALFAULTCODES.VALIDFROM)
             {
                 return false;
             }
+
             if (VALIDTO != xEP_VIRTUALFAULTCODES.VALIDTO)
             {
                 return false;
             }
+
             if (!(SICHERHEITSRELEVANT == xEP_VIRTUALFAULTCODES.SICHERHEITSRELEVANT))
             {
                 return false;
             }
+
             if (!(WEIGHTING == xEP_VIRTUALFAULTCODES.WEIGHTING))
             {
                 return false;
             }
+
             if (!(PARENTID == xEP_VIRTUALFAULTCODES.PARENTID))
             {
                 return false;
             }
+
             return true;
         }
 

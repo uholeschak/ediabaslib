@@ -9,71 +9,42 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_ECUVARIANTS : INotifyPropertyChanged, IXepEcuVariants, IMultilanguageTitle
     {
         private decimal idField;
-
         private decimal? faultMemoryDeleteWaitingTimeField;
-
         private string nameField;
-
         private decimal? titleIdField;
-
         private string title_dedeField;
-
         private string title_engbField;
-
         private string title_enusField;
-
         private string title_frField;
-
         private string title_thField;
-
         private string title_svField;
-
         private string title_itField;
-
         private string title_esField;
-
         private string title_idField;
-
         private string title_koField;
-
         private string title_elField;
-
         private string title_trField;
-
         private string title_zhcnField;
-
         private string title_ruField;
-
         private string title_nlField;
-
         private string title_ptField;
-
         private string title_zhtwField;
-
         private string title_jaField;
-
         private string title_csczField;
-
         private string title_plplField;
-
         private DateTime? validFromField;
-
         private DateTime? validToField;
-
         private decimal? sicherheitsrelevantField;
-
         private decimal? ecuGroupIdField;
-
         private decimal? sortField;
-
         private string logisticsType_Field;
-
         public decimal Id
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -91,6 +62,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return faultMemoryDeleteWaitingTimeField;
             }
+
             set
             {
                 if (faultMemoryDeleteWaitingTimeField.HasValue)
@@ -115,6 +87,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -139,6 +112,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return titleIdField;
             }
+
             set
             {
                 if (titleIdField.HasValue)
@@ -163,6 +137,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_dedeField;
             }
+
             set
             {
                 if (title_dedeField != null)
@@ -187,6 +162,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_engbField;
             }
+
             set
             {
                 if (title_engbField != null)
@@ -211,6 +187,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_enusField;
             }
+
             set
             {
                 if (title_enusField != null)
@@ -235,6 +212,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_frField;
             }
+
             set
             {
                 if (title_frField != null)
@@ -259,6 +237,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_thField;
             }
+
             set
             {
                 if (title_thField != null)
@@ -283,6 +262,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_svField;
             }
+
             set
             {
                 if (title_svField != null)
@@ -307,6 +287,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_itField;
             }
+
             set
             {
                 if (title_itField != null)
@@ -331,6 +312,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_esField;
             }
+
             set
             {
                 if (title_esField != null)
@@ -355,6 +337,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_idField;
             }
+
             set
             {
                 if (title_idField != null)
@@ -379,6 +362,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_koField;
             }
+
             set
             {
                 if (title_koField != null)
@@ -403,6 +387,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_elField;
             }
+
             set
             {
                 if (title_elField != null)
@@ -427,6 +412,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_trField;
             }
+
             set
             {
                 if (title_trField != null)
@@ -451,6 +437,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_zhcnField;
             }
+
             set
             {
                 if (title_zhcnField != null)
@@ -475,6 +462,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_ruField;
             }
+
             set
             {
                 if (title_ruField != null)
@@ -499,6 +487,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_nlField;
             }
+
             set
             {
                 if (title_nlField != null)
@@ -523,6 +512,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_ptField;
             }
+
             set
             {
                 if (title_ptField != null)
@@ -547,6 +537,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_zhtwField;
             }
+
             set
             {
                 if (title_zhtwField != null)
@@ -571,6 +562,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_jaField;
             }
+
             set
             {
                 if (title_jaField != null)
@@ -595,6 +587,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_csczField;
             }
+
             set
             {
                 if (title_csczField != null)
@@ -619,6 +612,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_plplField;
             }
+
             set
             {
                 if (title_plplField != null)
@@ -643,6 +637,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return validFromField;
             }
+
             set
             {
                 if (validFromField.HasValue)
@@ -667,6 +662,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return validToField;
             }
+
             set
             {
                 if (validToField.HasValue)
@@ -691,6 +687,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sicherheitsrelevantField;
             }
+
             set
             {
                 if (sicherheitsrelevantField.HasValue)
@@ -715,6 +712,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ecuGroupIdField;
             }
+
             set
             {
                 if (ecuGroupIdField.HasValue)
@@ -739,6 +737,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sortField;
             }
+
             set
             {
                 if (sortField.HasValue)
@@ -763,6 +762,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return logisticsType_Field;
             }
+
             set
             {
                 if (logisticsType_Field != null)
@@ -791,6 +791,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return ExplicitTitle;
                 }
+
                 string text;
                 switch (ConfigSettings.CurrentUICulture)
                 {
@@ -856,19 +857,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         text = Title_engb;
                         break;
                 }
+
                 if (string.IsNullOrEmpty(text))
                 {
                     text = Title_engb;
                 }
+
                 return text;
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual XEP_ECUVARIANTS Clone()
@@ -907,130 +909,162 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_ECUVARIANTS xEP_ECUVARIANTS))
             {
                 return false;
             }
+
             if (Id != xEP_ECUVARIANTS.Id)
             {
                 return false;
             }
+
             if (!(FaultMemoryDeleteWaitingTime == xEP_ECUVARIANTS.FaultMemoryDeleteWaitingTime))
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Name, xEP_ECUVARIANTS.Name) != 0)
             {
                 return false;
             }
+
             if (!(TitleId == xEP_ECUVARIANTS.TitleId))
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_dede, xEP_ECUVARIANTS.Title_dede) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_engb, xEP_ECUVARIANTS.Title_engb) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_enus, xEP_ECUVARIANTS.Title_enus) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_fr, xEP_ECUVARIANTS.Title_fr) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_th, xEP_ECUVARIANTS.Title_th) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_sv, xEP_ECUVARIANTS.Title_sv) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_it, xEP_ECUVARIANTS.Title_it) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_es, xEP_ECUVARIANTS.Title_es) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_id, xEP_ECUVARIANTS.Title_id) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_ko, xEP_ECUVARIANTS.Title_ko) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_el, xEP_ECUVARIANTS.Title_el) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_tr, xEP_ECUVARIANTS.Title_tr) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_zhcn, xEP_ECUVARIANTS.Title_zhcn) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_ru, xEP_ECUVARIANTS.Title_ru) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_nl, xEP_ECUVARIANTS.Title_nl) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_pt, xEP_ECUVARIANTS.Title_pt) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_zhtw, xEP_ECUVARIANTS.Title_zhtw) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_ja, xEP_ECUVARIANTS.Title_ja) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_cscz, xEP_ECUVARIANTS.Title_cscz) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_plpl, xEP_ECUVARIANTS.Title_plpl) != 0)
             {
                 return false;
             }
+
             if (ValidTo != xEP_ECUVARIANTS.ValidTo)
             {
                 return false;
             }
+
             if (ValidFrom != xEP_ECUVARIANTS.ValidFrom)
             {
                 return false;
             }
+
             if (!(Sicherheitsrelevant == xEP_ECUVARIANTS.Sicherheitsrelevant))
             {
                 return false;
             }
+
             if (!(EcuGroupId == xEP_ECUVARIANTS.EcuGroupId))
             {
                 return false;
             }
+
             if (!(Sort == xEP_ECUVARIANTS.Sort))
             {
                 return false;
             }
+
             if (string.CompareOrdinal(LogisticsType, xEP_ECUVARIANTS.LogisticsType) != 0)
             {
                 return false;
             }
+
             return true;
         }
 

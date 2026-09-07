@@ -6,31 +6,22 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_ECUGROUPS : INotifyPropertyChanged, IXepEcuGroups
     {
         private decimal idField;
-
         private decimal obdIdentificationField;
-
         private decimal faultMemoryDeleteIdentificatioField;
-
         private decimal faultMemoryDeleteWaitingTimeField;
-
         private string nameField;
-
         private decimal virtuellField;
-
         private decimal sicherheitsrelevantField;
-
         private DateTime validToField;
-
         private DateTime validFromField;
-
         private decimal diagnosticAddressField;
-
         public decimal Id
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 if (!idField.Equals(value))
@@ -47,6 +38,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return obdIdentificationField;
             }
+
             set
             {
                 if (!obdIdentificationField.Equals(value))
@@ -63,6 +55,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return faultMemoryDeleteIdentificatioField;
             }
+
             set
             {
                 if (!faultMemoryDeleteIdentificatioField.Equals(value))
@@ -79,6 +72,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return faultMemoryDeleteWaitingTimeField;
             }
+
             set
             {
                 if (!faultMemoryDeleteWaitingTimeField.Equals(value))
@@ -95,6 +89,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField == null || !nameField.Equals(value))
@@ -111,6 +106,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return virtuellField;
             }
+
             set
             {
                 if (!virtuellField.Equals(value))
@@ -127,6 +123,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sicherheitsrelevantField;
             }
+
             set
             {
                 if (!sicherheitsrelevantField.Equals(value))
@@ -143,6 +140,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return validToField;
             }
+
             set
             {
                 if (!validToField.Equals(value))
@@ -159,6 +157,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return validFromField;
             }
+
             set
             {
                 if (!validFromField.Equals(value))
@@ -175,6 +174,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return diagnosticAddressField;
             }
+
             set
             {
                 if (!diagnosticAddressField.Equals(value))
@@ -186,10 +186,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual XEP_ECUGROUPS Clone()
@@ -203,46 +202,57 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_ECUGROUPS xEP_ECUGROUPS))
             {
                 return false;
             }
+
             if (Id != xEP_ECUGROUPS.Id)
             {
                 return false;
             }
+
             if (ObdIdentification != xEP_ECUGROUPS.ObdIdentification)
             {
                 return false;
             }
+
             if (FaultMemoryDeleteIdentificatio != xEP_ECUGROUPS.FaultMemoryDeleteIdentificatio)
             {
                 return false;
             }
+
             if (FaultMemoryDeleteWaitingTime != xEP_ECUGROUPS.FaultMemoryDeleteWaitingTime)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Name, xEP_ECUGROUPS.Name) != 0)
             {
                 return false;
             }
+
             if (Virtuell != xEP_ECUGROUPS.Virtuell)
             {
                 return false;
             }
+
             if (ValidTo != xEP_ECUGROUPS.ValidTo)
             {
                 return false;
             }
+
             if (ValidFrom != xEP_ECUGROUPS.ValidFrom)
             {
                 return false;
             }
+
             if (DiagnosticAddress != xEP_ECUGROUPS.DiagnosticAddress)
             {
                 return false;
             }
+
             return true;
         }
 

@@ -7,35 +7,24 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_FAULTCODE : INotifyPropertyChanged, IXepFaultCode
     {
         private decimal idField;
-
         private string cODEField;
-
         private string dATATYPEField;
-
         private decimal? wEIGHTINGField;
-
         private string sCHEINFEHLERField;
-
         private string aUSBLENDINDEXField;
-
         private decimal? rELEVANCEField;
-
         private decimal? sICHERHEITSRELEVANTField;
-
         private DateTime? vALIDTOField;
-
         private DateTime? vALIDFROMField;
-
         private string dIAGNOSEINDEXField;
-
         private decimal? eCUVARIANTIDField;
-
         public decimal ID
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -53,6 +42,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return cODEField;
             }
+
             set
             {
                 if (cODEField != null)
@@ -77,6 +67,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return dATATYPEField;
             }
+
             set
             {
                 if (dATATYPEField != null)
@@ -101,6 +92,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return wEIGHTINGField;
             }
+
             set
             {
                 if (wEIGHTINGField.HasValue)
@@ -125,6 +117,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sCHEINFEHLERField;
             }
+
             set
             {
                 if (sCHEINFEHLERField != null)
@@ -149,6 +142,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return aUSBLENDINDEXField;
             }
+
             set
             {
                 if (aUSBLENDINDEXField != null)
@@ -173,6 +167,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return rELEVANCEField;
             }
+
             set
             {
                 if (rELEVANCEField.HasValue)
@@ -197,6 +192,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sICHERHEITSRELEVANTField;
             }
+
             set
             {
                 if (sICHERHEITSRELEVANTField.HasValue)
@@ -221,6 +217,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return vALIDTOField;
             }
+
             set
             {
                 if (vALIDTOField.HasValue)
@@ -245,6 +242,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return vALIDFROMField;
             }
+
             set
             {
                 if (vALIDFROMField.HasValue)
@@ -269,6 +267,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return dIAGNOSEINDEXField;
             }
+
             set
             {
                 if (dIAGNOSEINDEXField != null)
@@ -293,6 +292,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return eCUVARIANTIDField;
             }
+
             set
             {
                 if (eCUVARIANTIDField.HasValue)
@@ -312,10 +312,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override bool Equals(object obj)
@@ -324,58 +323,72 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_FAULTCODE xEP_FAULTCODE))
             {
                 return false;
             }
+
             if (ID != xEP_FAULTCODE.ID)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(CODE, xEP_FAULTCODE.CODE) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(DATATYPE, xEP_FAULTCODE.DATATYPE) != 0)
             {
                 return false;
             }
+
             if (!(WEIGHTING == xEP_FAULTCODE.WEIGHTING))
             {
                 return false;
             }
+
             if (string.CompareOrdinal(SCHEINFEHLER, xEP_FAULTCODE.SCHEINFEHLER) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(AUSBLENDINDEX, xEP_FAULTCODE.AUSBLENDINDEX) != 0)
             {
                 return false;
             }
+
             if (!(RELEVANCE == xEP_FAULTCODE.RELEVANCE))
             {
                 return false;
             }
+
             if (!(SICHERHEITSRELEVANT == xEP_FAULTCODE.SICHERHEITSRELEVANT))
             {
                 return false;
             }
+
             if (VALIDTO != xEP_FAULTCODE.VALIDTO)
             {
                 return false;
             }
+
             if (VALIDFROM != xEP_FAULTCODE.VALIDFROM)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(DIAGNOSEINDEX, xEP_FAULTCODE.DIAGNOSEINDEX) != 0)
             {
                 return false;
             }
+
             if (!(ECUVARIANTID == xEP_FAULTCODE.ECUVARIANTID))
             {
                 return false;
             }
+
             return true;
         }
 
