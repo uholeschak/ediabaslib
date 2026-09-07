@@ -53,10 +53,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public string Second_F_UW_EINH => second_F_UW_EINH;
 
-        [PreserveSource(Hint = "f_UW_TEXT_EnvCondLabels.Uwident", Placeholder = true)]
-        public string F_UW_IDENT => string.Empty;
+        public string F_UW_IDENT => f_UW_TEXT_EnvCondLabels.Uwident;
 
-        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public F_UW_Display()
         {
         }
@@ -85,11 +83,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             second_F_UW_EINH = F_UW_EINH;
         }
 
-        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public F_UW_Display(string F_UW_TEXT_vec, object current_F_UW_WERT, string current_F_UW_EINH, object first_F_UW_WERT, string first_F_UW_EINH, object second_F_UW_WERT, string second_F_UW_EINH)
         {
             this.F_UW_TEXT_vec = F_UW_TEXT_vec;
-            //[-] f_UW_TEXT_EnvCondLabels = null;
+            f_UW_TEXT_EnvCondLabels = null;
             this.current_F_UW_WERT = current_F_UW_WERT;
             this.current_F_UW_EINH = current_F_UW_EINH;
             this.first_F_UW_WERT = first_F_UW_WERT;
