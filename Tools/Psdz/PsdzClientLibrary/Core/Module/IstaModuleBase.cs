@@ -1452,6 +1452,7 @@ namespace BMW.Rheingold.CoreFramework
         public IEcuGroupLocator __EcuGroup(decimal ecuGroupId)
         {
             //[-] XEP_ECUGROUPS ecuGroupById = DBProvider.GetEcuGroupById(ecuGroupId);
+            //[+] XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(DBProvider.GetEcuGroupById(ecuGroupId.ToString(CultureInfo.InvariantCulture)));
             XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(DBProvider.GetEcuGroupById(ecuGroupId.ToString(CultureInfo.InvariantCulture)));
             if (ecuGroupById != null)
             {
