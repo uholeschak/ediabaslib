@@ -230,6 +230,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
                 List<ISPELocator> list = new List<ISPELocator>();
                 //[-] XEP_ECUVARIANTS xEP_ECUVARIANTS = null;
+                //[+] PsdzDatabase.EcuVar xEP_ECUVARIANTS = null;
                 PsdzDatabase.EcuVar xEP_ECUVARIANTS = null;
                 if (ECU != null && !string.IsNullOrEmpty(ECU.VARIANTE))
                 {
