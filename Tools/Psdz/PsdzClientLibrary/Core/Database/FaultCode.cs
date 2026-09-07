@@ -14,27 +14,16 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class FaultCode : XEP_FAULTCODE
     {
         private InfoObject document;
-
         private DTC dtc;
-
         private ECU ecu;
-
         private decimal? ecuNoAnswer;
-
         private bool isVirtualDTC;
-
         private IList<XEP_ENVCONDSLABELS> listEnvConds;
-
         private decimal? parentId;
-
         private Vehicle vehicleContext;
-
         private IFFMDynamicResolver ffmResolver;
-
         private ISPELocator[] parents;
-
         private IDocumentLocator documentLocator;
-
         public ISPELocator[] Children
         {
             get
@@ -49,6 +38,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return dtc;
             }
+
             set
             {
                 if (dtc != value)
@@ -60,11 +50,21 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public string DataClassName => "FaultCode";
-
         public string[] DataValueNames => new string[13]
         {
-        "ID", "CODE", "DATATYPE", "WEIGHTING", "SCHEINFEHLER", "AUSBLENDINDEX", "RELEVANCE", "SICHERHEITSRELEVANT", "VALIDTO", "VALIDTO",
-        "VALIDFROM", "DIAGNOSEINDEX", "ECUVARIANTID"
+            "ID",
+            "CODE",
+            "DATATYPE",
+            "WEIGHTING",
+            "SCHEINFEHLER",
+            "AUSBLENDINDEX",
+            "RELEVANCE",
+            "SICHERHEITSRELEVANT",
+            "VALIDTO",
+            "VALIDTO",
+            "VALIDFROM",
+            "DIAGNOSEINDEX",
+            "ECUVARIANTID"
         };
 
         public InfoObject Doc
@@ -73,10 +73,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 if (document == null)
                 {
-                    //[-] document = InfoObjectFactory.Instance.GetFaultCodeDocument(base.ID, FortAsHexString, vehicleContext);
+                //[-] document = InfoObjectFactory.Instance.GetFaultCodeDocument(base.ID, FortAsHexString, vehicleContext);
                 }
+
                 return document;
             }
+
             set
             {
                 document = value;
@@ -91,6 +93,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ecu;
             }
+
             set
             {
                 if (ecu != value)
@@ -107,6 +110,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ecuNoAnswer;
             }
+
             set
             {
                 if (!(value == ecuNoAnswer))
@@ -133,6 +137,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return DTC.FortAsHexString;
                 }
+
                 return $"{F_ORT:X}";
             }
         }
@@ -147,6 +152,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return DTC.F_ORT;
                     }
+
                     if (!string.IsNullOrEmpty(base.CODE))
                     {
                         return Convert.ToInt64(base.CODE);
@@ -156,6 +162,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     Log.WarningException("FaultCode.get_F_ORT", exception);
                 }
+
                 return null;
             }
         }
@@ -184,6 +191,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return isVirtualDTC;
             }
+
             set
             {
                 if (value != isVirtualDTC)
@@ -210,6 +218,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return parentId;
             }
+
             set
             {
                 if (!(value == parentId))
@@ -228,6 +237,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return parents;
                 }
+
                 List<ISPELocator> list = new List<ISPELocator>();
                 //[-] XEP_ECUVARIANTS xEP_ECUVARIANTS = null;
                 //[+] PsdzDatabase.EcuVar xEP_ECUVARIANTS = null;
@@ -238,17 +248,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     //[+] xEP_ECUVARIANTS = ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(ECU.VARIANTE);
                     xEP_ECUVARIANTS = ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(ECU.VARIANTE);
                 }
+
                 if (xEP_ECUVARIANTS == null && base.ECUVARIANTID.HasValue)
                 {
                     //[-] xEP_ECUVARIANTS = DatabaseProviderFactory.Instance.GetEcuVariantById(base.ECUVARIANTID.Value);
                     //[+] xEP_ECUVARIANTS = ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(base.ECUVARIANTID.Value.ToString(CultureInfo.InvariantCulture));
                     xEP_ECUVARIANTS = ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(base.ECUVARIANTID.Value.ToString(CultureInfo.InvariantCulture));
                 }
+
                 if (xEP_ECUVARIANTS != null)
                 {
                     IEcuVariantLocator item = new EcuVariantLocator(xEP_ECUVARIANTS, vehicleContext, ffmResolver);
                     list.Add(item);
                 }
+
                 parents = list.ToArray();
                 return parents;
             }
@@ -270,6 +283,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         return new TextContent(xepFaultLabelByFaultCodeId.Title);
                     }
                 }
+
                 if (IsVirtualDTC)
                 {
                     //[-] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = DatabaseProviderFactory.Instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(base.ID);
@@ -279,6 +293,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return new TextContent(xepVirtualFaultLabelsByVirtualFaultCodeId.Title);
                     }
+
                     //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelById = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelById(base.ID);
                     //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelById = null;
                     XEP_COMBIFAULTLABELS xepCombiFaultLabelById = null;
@@ -287,6 +302,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         return new TextContent(xepCombiFaultLabelById.Title);
                     }
                 }
+
                 return new TextContent("na");
             }
         }
@@ -297,6 +313,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return vehicleContext;
             }
+
             set
             {
                 if (vehicleContext != value)
@@ -313,6 +330,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ffmResolver;
             }
+
             set
             {
                 if (ffmResolver != value)
@@ -328,10 +346,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             get
             {
                 decimal? rELEVANCE = base.RELEVANCE;
-                if ((rELEVANCE.GetValueOrDefault() == default(decimal)) & rELEVANCE.HasValue)
+                if ((rELEVANCE.GetValueOrDefault() == 0m) & rELEVANCE.HasValue)
                 {
                     return false;
                 }
+
                 return true;
             }
         }
@@ -343,6 +362,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return null;
             }
+
             return GetCombinedFaultCode(dtc.Id.Value, vehicle, ffmResolver);
         }
 
@@ -377,6 +397,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             WEIGHTING = xepCombinedFaultById.WEIGHTING
                         };
                     }
+
                     Log.Warning("FaultCode.getCombinedFaultCode()", "no combined fault with fault id:{0} found", id);
                 }
                 else
@@ -388,6 +409,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("FaultCode.getCombinedFaultCode()", exception);
             }
+
             return null;
         }
 
@@ -412,6 +434,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         faultCodeById.VehicleContext = vehicle;
                         return faultCodeById;
                     }
+
                     Log.Warning("FaultCode.GetFaultCode()", "No valid faultcode found in database for ref: {0}", refCode);
                 }
                 else
@@ -423,6 +446,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("FaultCode.GetFaultCode()", exception);
             }
+
             return null;
         }
 
@@ -440,11 +464,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 Log.Warning("FaultCode.GetFaultCode(ECU ecu, DTC dtc, Vehicle vec)", "ecu was null");
                 return null;
             }
+
             if (dtc == null || !dtc.F_ORT.HasValue)
             {
                 Log.Warning("FaultCode.GetFaultCode(ECU ecu, DTC dtc, Vehicle vec)", "dtc or dtc.F_ORT was null");
                 return null;
             }
+
             try
             {
                 if (string.IsNullOrEmpty(ecu.VARIANTE))
@@ -452,6 +478,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     Log.Warning("FaultCode.GetFaultCode(ECU ecu, DTC dtc, Vehicle vec)", "ecu.VARIANTE was null");
                     return null;
                 }
+
                 //[-] if (db != null && db.DatabaseAccessType != DatabaseType.None)
                 //[+] if (db != null)
                 if (db != null)
@@ -466,13 +493,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         //[+] faultCode = resolvedFaultCodes.FirstOrDefault((FaultCode fc) => fc.CODE == f_ort.ToString() && fc.ECU.VARIANTE.Equals(variant, StringComparison.InvariantCultureIgnoreCase) && fc.DATATYPE.Equals(ecuDTCType, StringComparison.InvariantCultureIgnoreCase) && db.EvaluateXepRulesById(fc.ID.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver));
                         faultCode = resolvedFaultCodes.FirstOrDefault((FaultCode fc) => fc.CODE == f_ort.ToString() && fc.ECU.VARIANTE.Equals(variant, StringComparison.InvariantCultureIgnoreCase) && fc.DATATYPE.Equals(ecuDTCType, StringComparison.InvariantCultureIgnoreCase) && db.EvaluateXepRulesById(fc.ID.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver));
                     }
+
                     //[-] faultCode = faultCode ?? db.GetFaultCodeByCodeAndVariantName(f_ort, variant, ecuDTCType, vehicle, ffmResolver);
                     if (faultCode != null)
                     {
                         if (resolveEnvCondLabels && faultCode.ECUVARIANTID.HasValue)
                         {
-                            //[-] faultCode.listEnvConds = db.GetEnvCondLabels(f_ort.ToString(CultureInfo.InvariantCulture), faultCode.ECUVARIANTID.Value).ToList();
+                        //[-] faultCode.listEnvConds = db.GetEnvCondLabels(f_ort.ToString(CultureInfo.InvariantCulture), faultCode.ECUVARIANTID.Value).ToList();
                         }
+
                         faultCode.DTC = dtc;
                         faultCode.ECU = ecu;
                         faultCode.VehicleContext = vehicle;
@@ -484,6 +513,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("FaultCode.getFaultCode(ECU ecu, DTC dtc, Vehicle vec)", exception);
             }
+
             return null;
         }
 
@@ -495,6 +525,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 Log.Warning("FaultCode.getFaultCode(ECU ecu, long f_Ort)", "ecu was null");
                 return null;
             }
+
             try
             {
                 //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
@@ -505,6 +536,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     Log.Warning("FaultCode.getFaultCode(ECU ecu, long f_Ort)", "ecu.VARIANTE was null");
                     return null;
                 }
+
                 //[-] if (instance != null && instance.DatabaseAccessType != DatabaseType.None)
                 //[+] if (instance != null)
                 if (instance != null)
@@ -516,8 +548,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         if (faultCodeByCodeAndVariantName.ECUVARIANTID.HasValue)
                         {
-                            //[-] faultCodeByCodeAndVariantName.listEnvConds = DatabaseProviderFactory.Instance.GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
+                        //[-] faultCodeByCodeAndVariantName.listEnvConds = DatabaseProviderFactory.Instance.GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
                         }
+
                         faultCodeByCodeAndVariantName.ECU = ecu;
                         faultCodeByCodeAndVariantName.VehicleContext = vehicle;
                         return faultCodeByCodeAndVariantName;
@@ -528,6 +561,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("FaultCode.getFaultCode(ECU ecu, long f_Ort)", exception);
             }
+
             return null;
         }
 
@@ -574,6 +608,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("FaultCode.getVirtualFaultCode()", exception);
             }
+
             return null;
         }
 
@@ -586,10 +621,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return null;
                 }
+
                 if (string.IsNullOrEmpty(ecu.ECU_GRUPPE))
                 {
                     return null;
                 }
+
                 //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
                 //[-] if (instance != null && instance.DatabaseAccessType != DatabaseType.None)
                 //[+] PsdzDatabase instance = ClientContext.GetDatabase(vehicle);
@@ -600,17 +637,19 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     XEP_VIRTUALFAULTCODES xEP_VIRTUALFAULTCODES = null;
                     if (dtc.Id.HasValue)
                     {
-                        //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeById(dtc.Id.Value, vehicle, ffmResolver);
+                    //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeById(dtc.Id.Value, vehicle, ffmResolver);
                     }
+
                     if (xEP_VIRTUALFAULTCODES == null && !string.IsNullOrEmpty(ecu.ECU_GRUPPE))
                     {
                         string code = $"S {dtc.F_ORT:X4}";
                         string[] array = ecu.ECU_GRUPPE.Split('|');
                         foreach (string ecuGroup in array)
                         {
-                            //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
+                        //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
                         }
                     }
+
                     if (xEP_VIRTUALFAULTCODES != null)
                     {
                         return new FaultCode
@@ -638,6 +677,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("FaultCode.getVirtualFaultCode()", exception);
             }
+
             return null;
         }
 
@@ -648,10 +688,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return GetFaultCode(fault.ECU, fault.DTC, vehicle, ffmResolver, db);
             }
+
             if (fault.DTC.IsCombined)
             {
                 return GetCombinedFaultCode(fault.DTC, vehicle, ffmResolver);
             }
+
             return GetVirtualFaultCode(fault.ECU, fault.DTC, vehicle, ffmResolver);
         }
 
@@ -666,6 +708,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return base.CODE;
                     }
+
                     return string.Empty;
                 case "F_SELEKT_CODE":
                     if (base.CODE != null && dtc != null && dtc.F_ORT.HasValue)
@@ -674,8 +717,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         {
                             return base.CODE;
                         }
+
                         return $"{dtc.F_ORT:X}";
                     }
+
                     return string.Empty;
                 case "DATATYPE":
                     return base.DATATYPE;
@@ -744,6 +789,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     obj = base.ECUVARIANTID;
                     break;
             }
+
             Type typeFromHandle = typeof(T);
             try
             {
@@ -753,6 +799,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return (T)Convert.ChangeType(obj, typeFromHandle);
                     }
+
                     return (T)obj;
                 }
             }
@@ -760,6 +807,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("FaultCode.GetDataValue<T>()", exception);
             }
+
             return default(T);
         }
 
@@ -776,8 +824,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     documentLocator = new DocumentLocator(Doc);
                 }
+
                 return documentLocator;
             }
+
             return null;
         }
 
@@ -787,10 +837,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return;
             }
+
             if (cleanDtcUwDisplayData)
             {
                 DTC.F_UW_Display.Clear();
             }
+
             if (ListEnvConds != null)
             {
                 List<F_UW_Display> list = new List<F_UW_Display>();
@@ -835,20 +887,24 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         }
                     }
                 }
+
                 list.Sort(delegate (F_UW_Display x, F_UW_Display y)
                 {
                     if (x.F_UW_TEXT == null && y.F_UW_TEXT == null)
                     {
                         return 0;
                     }
+
                     if (x.F_UW_TEXT == null)
                     {
                         return -1;
                     }
+
                     return (y.F_UW_TEXT == null) ? 1 : string.Compare(x.F_UW_TEXT, y.F_UW_TEXT, StringComparison.Ordinal);
                 });
                 DTC.F_UW_Display.AddRange(list);
             }
+
             fault.UpdateUwDisplay(this);
         }
 
@@ -858,6 +914,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return null;
             }
+
             foreach (XEP_ENVCONDSLABELS listEnvCond in listEnvConds)
             {
                 if (string.CompareOrdinal(listEnvCond.Uwident, F_UW_NR.Value.ToString(CultureInfo.InvariantCulture)) == 0)
@@ -865,6 +922,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return listEnvCond;
                 }
             }
+
             return null;
         }
 
@@ -874,6 +932,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return null;
             }
+
             foreach (XEP_ENVCONDSLABELS listEnvCond in listEnvConds)
             {
                 if (string.CompareOrdinal(listEnvCond.Uwident, F_UW_NR.Value.ToString(CultureInfo.InvariantCulture)) == 0 && (string.IsNullOrEmpty(listEnvCond.Name) || string.IsNullOrEmpty(F_UW_NAME) || string.Equals(listEnvCond.Name, F_UW_NAME, StringComparison.OrdinalIgnoreCase)))
@@ -881,6 +940,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return listEnvCond;
                 }
             }
+
             return null;
         }
 
@@ -953,22 +1013,25 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             }
                         }
                     }
+
                     if (ECU == null && parentId.HasValue)
                     {
                         //[-] XEP_ECUVARIANTS ecuVariantById = DatabaseProviderFactory.Instance.GetEcuVariantById(parentId.Value);
                         //[+] XEP_ECUVARIANTS ecuVariantById = null;
                         XEP_ECUVARIANTS ecuVariantById = null;
-                        if (ecuVariantById != null && vehicleContext.getECUbyECU_SGBD(ecuVariantById.Name) is ECU eCU)
+                        if (ecuVariantById != null && vehicleContext.getECUbyECU_SGBD(ecuVariantById.Name)is ECU eCU)
                         {
                             ECU = eCU;
                         }
                     }
+
                     if (ECU == null)
                     {
                         Log.Warning("FaultCode.Set()", "ecu was null; dtc cannot be assigned");
                         return false;
                     }
                 }
+
                 Log.Info("FaultCode.Set()", "FaultCode to set {0} for ecu: {1}", dtc.F_ORT, ecu.ID_SG_ADR);
                 if (vehicleContext != null && vehicleContext.ECU != null && ecu != null)
                 {
@@ -983,10 +1046,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 return false;
                             }
                         }
+
                         if (DTC.DTCContext == null)
                         {
                             DTC.DTCContext = new ObservableCollection<typeDTCContext>();
                         }
+
                         typeDTCContext typeDTCContext2 = new typeDTCContext();
                         typeDTCContext2.F_UW = new ObservableCollection<F_UW>();
                         typeDTCContext2.F_UW_ANZ = 0;
@@ -997,6 +1062,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         vehicleContext.CalculateFaultProperties(FFMResolver);
                         return true;
                     }
+
                     Log.Warning("FaultCode.Set()", "related ecu not found in VehicleContext");
                 }
                 else
@@ -1008,6 +1074,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("FaultCode.Set()", exception);
             }
+
             return false;
         }
 
@@ -1024,10 +1091,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 text = ((!isBN2000Vehicle) ? dTC.F_SAE_CODE_STRING : dTC.F_PCODE_STRING);
             }
+
             if (string.IsNullOrEmpty(text))
             {
                 text = "--";
             }
+
             return new F_UW_Display(label, text, label.Unit);
         }
 
@@ -1049,6 +1118,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     current_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(fault.DTC.F_UW_ZEIT).ToString("G");
                 }
+
                 if (fault.DTC.First != null)
                 {
                     if (fault.DTC.First.F_UW_ZEIT_SUPREME > 0.0)
@@ -1060,6 +1130,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         first_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(fault.DTC.First.F_UW_ZEIT.Value).ToString("G");
                     }
                 }
+
                 if (fault.DTC.Second != null)
                 {
                     if (fault.DTC.Second.F_UW_ZEIT_SUPREME > 0.0)
@@ -1085,6 +1156,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     current_F_UW_WERT = fault.DTC.F_UW_ZEIT.ToString();
                     current_F_UW_EINH = text;
                 }
+
                 if (fault.DTC.First != null)
                 {
                     if (fault.DTC.First.F_UW_ZEIT_SUPREME > 0.0)
@@ -1098,6 +1170,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         first_F_UW_EINH = text;
                     }
                 }
+
                 if (fault.DTC.Second != null)
                 {
                     if (fault.DTC.Second.F_UW_ZEIT_SUPREME > 0.0)
@@ -1112,6 +1185,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 }
             }
+
             return new F_UW_Display(label, current_F_UW_WERT, current_F_UW_EINH, first_F_UW_WERT, first_F_UW_EINH, second_F_UW_WERT, second_F_UW_EINH);
         }
 
@@ -1129,6 +1203,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 text4 = fault.DTC.F_UW_KM.Value.ToString();
             }
+
             string current_F_UW_EINH = ((text4 != text2) ? text : null);
             string text5 = text2;
             if (fault.DTC.First != null)
@@ -1142,6 +1217,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     text5 = fault.DTC.First.F_UW_KM.Value.ToString();
                 }
             }
+
             string first_F_UW_EINH = ((text5 != text2) ? text : null);
             string text6 = text2;
             if (fault.DTC.Second != null)
@@ -1155,6 +1231,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     text6 = fault.DTC.Second.F_UW_KM.Value.ToString();
                 }
             }
+
             string second_F_UW_EINH = ((text6 != text2) ? text : null);
             return new F_UW_Display(label, text4, current_F_UW_EINH, text5, first_F_UW_EINH, text6, second_F_UW_EINH);
         }
