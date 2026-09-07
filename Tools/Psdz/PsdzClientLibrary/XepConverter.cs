@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
+﻿using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BmwFileReader;
 using PsdzClient;
 
@@ -39,5 +40,20 @@ public static class XepConverter
         xepSaLaPa.Title_cscz = saLaPa.EcuTranslation.TextCs;
         xepSaLaPa.Title_plpl = saLaPa.EcuTranslation.TextPl;
         return xepSaLaPa;
+    }
+
+    public static List<XEP_SALAPAS> Convert(List<PsdzDatabase.SaLaPa> saLaPaList)
+    {
+        if (saLaPaList == null)
+        {
+            return null;
+        }
+
+        List<XEP_SALAPAS> xepSaLaPaList = new List<XEP_SALAPAS>();
+        foreach (PsdzDatabase.SaLaPa saLaPa in saLaPaList)
+        {
+            xepSaLaPaList.Add(Convert(saLaPa));
+        }
+        return xepSaLaPaList;
     }
 }
