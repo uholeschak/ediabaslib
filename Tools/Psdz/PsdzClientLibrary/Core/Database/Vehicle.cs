@@ -67,8 +67,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private string serialEngineField;
         private BrandName? brandNameField;
         private ObservableCollection<ECU> eCUField;
-        [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Placeholder = true)]
-        private PlaceholderType zFSField;
+        private ObservableCollection<ZFSResult> zFSField;
         private List<CEMResult> cemField;
         private ECU selectedECUField;
         [PreserveSource(Hint = "ObservableCollection<typeCBSInfo>", Placeholder = true)]
@@ -352,7 +351,31 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        public ObservableCollection<ZFSResult> ZFS;
+        public ObservableCollection<ZFSResult> ZFS
+        {
+            get
+            {
+                return zFSField;
+            }
+
+            set
+            {
+                if (zFSField != null)
+                {
+                    if (!zFSField.Equals(value))
+                    {
+                        zFSField = value;
+                        OnPropertyChanged("ZFS");
+                    }
+                }
+                else
+                {
+                    zFSField = value;
+                    OnPropertyChanged("ZFS");
+                }
+            }
+        }
+
         public List<CEMResult> CEM
         {
             get
@@ -2481,9 +2504,37 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
         public PlaceholderType CheckControlMessages;
         [XmlIgnore]
-        public IList<Fault> FaultList;
+        public IList<Fault> FaultList
+        {
+            get
+            {
+                return faultList;
+            }
+
+            set
+            {
+                if (value != null)
+                {
+                    faultList = value;
+                    OnPropertyChanged("FaultList");
+                }
+            }
+        }
+
         [XmlIgnore]
-        public BlockingCollection<VirtualFaultInfo> VirtualFaultInfoList;
+        public BlockingCollection<VirtualFaultInfo> VirtualFaultInfoList
+        {
+            get
+            {
+                return virtualFaultInfoList;
+            }
+
+            set
+            {
+                virtualFaultInfoList = value;
+            }
+        }
+
         [XmlIgnore]
         public List<IEcu> SvtECU { get; set; } = new List<IEcu>();
 
@@ -2876,17 +2927,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return new List<string>();
             }
+
             foreach (Fault fault in FaultList)
             {
                 if (fault.DTC.FortAsHexString == "S 0751")
                 {
                     list.Add("S 0751");
                 }
+
                 if (fault.DTC.FortAsHexString == "S 0756")
                 {
                     list.Add("S 0756");
                 }
             }
+
             return list;
         }
 
@@ -2896,12 +2950,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return Enumerable.Empty<Fault>();
             }
+
             ComputeResolveLabelsForAllFaultAsync(this, ffmDynamicResolver).ConfigureAwait(continueOnCapturedContext: false).GetAwaiter().GetResult();
             List<Fault> list = new List<Fault>();
             foreach (Fault fault in FaultList)
             {
                 list.Add(fault);
             }
+
             return list;
         }
 
@@ -2911,14 +2967,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 ConfigSettings.CurrentUICulture = language;
             }
-            //[-] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = DatabaseProviderFactory.Instance.GetRefFaultLabelsLabelIdByFaultList(FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
-            //[-] Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel));
-            //[-] Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> xepFaultLabelsTask = Task.Run(() => GetXepFaultLabelsByDtcFOrtEcuVariantAsync(vehicle, ffmDynamicResolver, refFaultLabel));
-            //[-] await Task.WhenAll(xepFaultModelLabelsTask, xepFaultLabelsTask).ConfigureAwait(continueOnCapturedContext: false);
-            //[-] foreach (Fault fault in FaultList)
-            //[-] {
-            //[-] fault.ResolveLabels(vehicle, ffmDynamicResolver, xepFaultModelLabelsTask.Result, xepFaultLabelsTask.Result, language);
-            //[-] }
+        //[-] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = DatabaseProviderFactory.Instance.GetRefFaultLabelsLabelIdByFaultList(FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
+        //[-] Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel));
+        //[-] Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> xepFaultLabelsTask = Task.Run(() => GetXepFaultLabelsByDtcFOrtEcuVariantAsync(vehicle, ffmDynamicResolver, refFaultLabel));
+        //[-] await Task.WhenAll(xepFaultModelLabelsTask, xepFaultLabelsTask).ConfigureAwait(continueOnCapturedContext: false);
+        //[-] foreach (Fault fault in FaultList)
+        //[-] {
+        //[-] fault.ResolveLabels(vehicle, ffmDynamicResolver, xepFaultModelLabelsTask.Result, xepFaultLabelsTask.Result, language);
+        //[-] }
         }
 
         private async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel)
@@ -2941,6 +2997,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[+] dictionary2 = new Dictionary<decimal, XEP_FAULTMODELABELS>();
                 dictionary2 = new Dictionary<decimal, XEP_FAULTMODELABELS>();
             }
+
             IDictionary<decimal, XEP_FAULTMODELABELS> modelFaultLabelAll = dictionary2;
             Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>> faultListFault = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>(refFaultLabel.Count);
             DtcFOrtEcuVariantKey key;
@@ -2951,6 +3008,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     faultListFault.Add(key, new Collection<XEP_FAULTMODELABELS>());
                 }
+
                 refFaultLabel[key2].ForEach(delegate (decimal x)
                 {
                     if (modelFaultLabelAll.ContainsKey(x) && !faultListFault[key].Contains(modelFaultLabelAll[x]))
@@ -2959,6 +3017,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 });
             }
+
             return await Task.FromResult(faultListFault);
         }
 
@@ -2974,11 +3033,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     collection2.AddRange(refFaultLabel[key2]);
                 }
             }
+
             Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>> xepFaultLabelsList = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>(collection.Count);
             if (!collection.Any() || !collection2.Any())
             {
                 return await Task.FromResult(xepFaultLabelsList);
             }
+
             //[-] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = DatabaseProviderFactory.Instance.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
             //[+] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = new Dictionary<decimal, XEP_FAULTLABELS>();
             IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = new Dictionary<decimal, XEP_FAULTLABELS>();
@@ -2990,6 +3051,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     xepFaultLabelsList.Add(key, new Collection<XEP_FAULTLABELS>());
                 }
+
                 refFaultLabel[item].ForEach(delegate (decimal x)
                 {
                     if (xepFaultLabels.ContainsKey(x) && !xepFaultLabelsList[key].Contains(xepFaultLabels[x]))
@@ -2998,6 +3060,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 });
             }
+
             return await Task.FromResult(xepFaultLabelsList);
         }
 
@@ -3217,10 +3280,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             }
                         }
                     }
+
                     if (item.INFO == null)
                     {
                         continue;
                     }
+
                     foreach (DTC item3 in item.INFO)
                     {
                         if (id.Equals(item3.Id))
@@ -3230,6 +3295,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 }
             }
+
             return null;
         }
 
@@ -3249,10 +3315,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             }
                         }
                     }
+
                     if (item.INFO == null)
                     {
                         continue;
                     }
+
                     foreach (DTC item3 in item.INFO)
                     {
                         if (id.Equals(item3.Id))
@@ -3262,6 +3330,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 }
             }
+
             if (CombinedFaults != null)
             {
                 return CombinedFaults.FirstOrDefault(delegate (DTC item)
@@ -3271,6 +3340,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return (id2.GetValueOrDefault() == num) & id2.HasValue;
                 });
             }
+
             return null;
         }
 
@@ -4080,6 +4150,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     DiagCodes = new ObservableCollection<typeDiagCode>();
                 }
+
                 typeDiagCode typeDiagCode2 = new typeDiagCode();
                 typeDiagCode2.DiagnoseCode = diagCodeString;
                 typeDiagCode2.DiagnoseCodeSuffix = diagCodeSuffixString;
@@ -4092,6 +4163,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     typeDiagCode2.ReparaturPaket = new ObservableCollection<string>();
                 }
+
                 DiagCodes.Add(typeDiagCode2);
                 if (!string.IsNullOrEmpty(diagCodeString) && !diagCodesProgramming.Contains(diagCodeString))
                 {
@@ -4196,6 +4268,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", defaultValue: true);
                 flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", defaultValue: false);
             }
+
             ObservableCollection<Fault> observableCollection = new ObservableCollection<Fault>();
             try
             {
@@ -4232,10 +4305,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         }
                     }
                 }
+
                 if (combinedFaults == null)
                 {
                     return observableCollection;
                 }
+
                 foreach (DTC combinedFault in combinedFaults)
                 {
                     Fault fault2 = new Fault(null, combinedFault, null, vehicle.Classification.IsNewFaultMemoryActive);
@@ -4247,6 +4322,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.ErrorException("Vehicle.CalculateFaultList()", exception);
             }
+
             return observableCollection;
         }
 
@@ -4258,6 +4334,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return null;
             }
+
             return num;
         }
 
@@ -4367,36 +4444,39 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             IEnumerable<string> enumerable2 = null;
             if (selectedFaults != null)
             {
-                enumerable = from f in selectedFaults
-                    where !f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))
-                    orderby f.ECU.VARIANTE, f.DTC.FortAsHexString
+                enumerable =
+                    from f in selectedFaults
+                    where !f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))orderby f.ECU.VARIANTE, f.DTC.FortAsHexString
                     select (VARIANTE: f.ECU.VARIANTE, FortAsHexString: f.DTC.FortAsHexString);
-                enumerable2 = from f in selectedFaults
-                    where f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))
-                    orderby f.DTC.FortAsHexString
+                enumerable2 =
+                    from f in selectedFaults
+                    where f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))orderby f.DTC.FortAsHexString
                     select f.DTC.FortAsHexString;
             }
             else
             {
-                enumerable = ECU.OrderBy((ECU e) => e.VARIANTE).SelectMany((ECU ecu) => from dtc in ecu.FEHLER
-                    where dtc.Relevance == true && (dtc.FaultGroup == 0 || faultGroupNumbers.Contains(dtc.FaultGroup))
-                    orderby dtc.FortAsHexString
+                enumerable = ECU.OrderBy((ECU e) => e.VARIANTE).SelectMany((ECU ecu) =>
+                    from dtc in ecu.FEHLER
+                    where dtc.Relevance == true && (dtc.FaultGroup == 0 || faultGroupNumbers.Contains(dtc.FaultGroup))orderby dtc.FortAsHexString
                     select (VARIANTE: ecu.VARIANTE, FortAsHexString: dtc.FortAsHexString));
-                enumerable2 = from f in CombinedFaults
-                    where f.Relevance == true && (f.FaultGroup == 0 || faultGroupNumbers.Contains(f.FaultGroup))
-                    orderby f.FortAsHexString
+                enumerable2 =
+                    from f in CombinedFaults
+                    where f.Relevance == true && (f.FaultGroup == 0 || faultGroupNumbers.Contains(f.FaultGroup))orderby f.FortAsHexString
                     select f.FortAsHexString;
             }
+
             foreach (var item in enumerable)
             {
                 num += item.Item1?.GetHashCode() ?? 0;
                 num += item.Item2.GetHashCode();
             }
+
             num *= num2;
             foreach (string item2 in enumerable2)
             {
                 num += item2.GetHashCode();
             }
+
             return num * num2;
         }
 
