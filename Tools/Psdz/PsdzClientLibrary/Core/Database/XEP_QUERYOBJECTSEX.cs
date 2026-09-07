@@ -5,23 +5,18 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_QUERYOBJECTSEX : INotifyPropertyChanged
     {
         private decimal idField;
-
         private string titleField;
-
         private string attributNameField;
-
         private string attributWertField;
-
         private string zielKlasseField;
-
         private string linkIdField;
-
         public decimal Id
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -39,6 +34,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return titleField;
             }
+
             set
             {
                 if (titleField != null)
@@ -63,6 +59,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return attributNameField;
             }
+
             set
             {
                 if (attributNameField != null)
@@ -87,6 +84,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return attributWertField;
             }
+
             set
             {
                 if (attributWertField != null)
@@ -111,6 +109,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return zielKlasseField;
             }
+
             set
             {
                 if (zielKlasseField != null)
@@ -135,6 +134,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return linkIdField;
             }
+
             set
             {
                 if (linkIdField != null)
@@ -154,10 +154,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

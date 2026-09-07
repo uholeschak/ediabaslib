@@ -196,7 +196,22 @@ namespace PsdzClient.Core
         IEnumerable<IEcuTransaction> IEcu.TAL => TAL;
 
         [XmlIgnore]
-        public XEP_ECUCLIQUES XepEcuClique { get; set; }
+        public XEP_ECUCLIQUES XepEcuClique
+        {
+            get
+            {
+                return xepEcuClique;
+            }
+
+            set
+            {
+                if (xepEcuClique != value)
+                {
+                    xepEcuClique = value;
+                    OnPropertyChanged("XepEcuClique");
+                }
+            }
+        }
 
         public string ECUTitle
         {
@@ -1930,6 +1945,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("ECU.getDTCbyF_ORT()", exception);
             }
+
             return null;
         }
 
@@ -1950,6 +1966,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             if (INFO != null)
             {
                 foreach (DTC item2 in INFO)
@@ -1960,6 +1977,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return null;
         }
 
