@@ -20,6 +20,7 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 
 #pragma warning disable CS0169, CS0649, CS0618, CS0612
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
@@ -3779,13 +3780,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return false;
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public void AddEcu(ECU ecu)
         {
             ECU.Add(ecu);
         }
 
-        [PreserveSource(Hint = "XEP_ECUCLIQUES removed", SignatureModified = true)]
         public void AddEcu(IIdentEcu ecu)
         {
             ECU eCU = new ECU
@@ -3801,33 +3800,33 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 ECUTreeColor = ecu.ECUTreeColor,
                 ECUTitle = ecu.ECUTitle
             };
-            //[-] IXepEcuCliques xepEcuClique = ecu.XepEcuClique;
-            //[-] if (xepEcuClique != null && xepEcuClique.IsValid)
-            //[-] {
-            //[-] if (ecu.XepEcuClique is XEP_ECUCLIQUES xepEcuClique2)
-            //[-] {
-            //[-] eCU.XepEcuClique = xepEcuClique2;
-            //[-] }
-            //[-] else
-            //[-] {
-            //[-] eCU.XepEcuClique = new XEP_ECUCLIQUES(ecu.XepEcuClique);
-            //[-] }
-            //[-] }
-            //[-] else
-            //[-] {
-            //[-] eCU.XepEcuClique = new InvalidEcuClique();
-            //[-] }
-            //[-] if (ecu.XepEcuVariant != null)
-            //[-] {
-            //[-] if (ecu.XepEcuVariant is XEP_ECUVARIANTS xepEcuVariant)
-            //[-] {
-            //[-] eCU.XepEcuVariant = xepEcuVariant;
-            //[-] }
-            //[-] else
-            //[-] {
-            //[-] eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
-            //[-] }
-            //[-] }
+            IXepEcuCliques xepEcuClique = ecu.XepEcuClique;
+            if (xepEcuClique != null && xepEcuClique.IsValid)
+            {
+                if (ecu.XepEcuClique is XEP_ECUCLIQUES xepEcuClique2)
+                {
+                    eCU.XepEcuClique = xepEcuClique2;
+                }
+                else
+                {
+                    eCU.XepEcuClique = new XEP_ECUCLIQUES(ecu.XepEcuClique);
+                }
+            }
+            else
+            {
+                eCU.XepEcuClique = new InvalidEcuClique();
+            }
+            if (ecu.XepEcuVariant != null)
+            {
+                if (ecu.XepEcuVariant is XEP_ECUVARIANTS xepEcuVariant)
+                {
+                    eCU.XepEcuVariant = xepEcuVariant;
+                }
+                else
+                {
+                 eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
+                }
+            }
             ECU.AddIfNotContains(eCU);
         }
 
