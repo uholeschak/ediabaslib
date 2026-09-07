@@ -1,7 +1,9 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
-using PsdzClient.Programming;
 using PsdzClient;
+using PsdzClient.Programming;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +16,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Core
@@ -23,8 +24,7 @@ namespace PsdzClient.Core
     {
         private string bntn;
         private int stillProgrammable;
-        [PreserveSource(Hint = "private XEP_ECUCLIQUES", Placeholder = true)]
-        private PlaceholderType xepEcuClique;
+        private XEP_ECUCLIQUES xepEcuClique;
         private string eCUTitle;
         private string vARIANTEField;
         [PreserveSource(Hint = "private ObservableCollection<JOB>", Placeholder = true)]
@@ -95,9 +95,8 @@ namespace PsdzClient.Core
         private IEcuStatusInfo statusInfo;
         public GenerationType Generation { get; set; }
 
-        [PreserveSource(Hint = "IXepEcuVariants", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IIdentEcu.XepEcuVariant
+        IXepEcuVariants IIdentEcu.XepEcuVariant
         {
             get
             {
@@ -109,9 +108,8 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "IXepEcuCliques", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IIdentEcu.XepEcuClique
+        IXepEcuCliques IIdentEcu.XepEcuClique
         {
             get
             {
@@ -197,9 +195,8 @@ namespace PsdzClient.Core
         [XmlIgnore]
         IEnumerable<IEcuTransaction> IEcu.TAL => TAL;
 
-        [PreserveSource(Hint = "XEP_ECUCLIQUES", Placeholder = true)]
         [XmlIgnore]
-        public PlaceholderType XepEcuClique { get; set; }
+        public XEP_ECUCLIQUES XepEcuClique { get; set; }
 
         public string ECUTitle
         {
@@ -218,9 +215,8 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "XEP_ECUVARIANTS", Placeholder = true)]
         [XmlIgnore]
-        public PlaceholderType XepEcuVariant { get; set; }
+        public XEP_ECUVARIANTS XepEcuVariant { get; set; }
 
         [XmlIgnore]
         public ILcSwitchList LCSwitchList { get; set; } = new LcSwitchList();

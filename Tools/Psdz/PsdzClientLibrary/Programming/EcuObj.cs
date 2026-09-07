@@ -1,20 +1,19 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
+using PsdzClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
-using PsdzClient;
 
 namespace PsdzClient.Programming
 {
     internal class EcuObj : IEcuObj
     {
-        [PreserveSource(Hint = "public XEP_ECUCLIQUES", Placeholder = true)]
-        public PlaceholderType XepEcuClique { get; internal set; }
+        public XEP_ECUCLIQUES XepEcuClique { get; internal set; }
 
-        [PreserveSource(Hint = "public XEP_ECUVARIANTS", Placeholder = true)]
-        public PlaceholderType XepEcuVariant { get; internal set; }
+        public XEP_ECUVARIANTS XepEcuVariant { get; internal set; }
         public string EcuGroup { get; internal set; }
         public string EcuRep { get; internal set; }
         public string BaseVariant { get; internal set; }

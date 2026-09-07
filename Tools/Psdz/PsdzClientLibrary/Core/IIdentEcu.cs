@@ -1,4 +1,6 @@
-﻿using PsdzClient;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient;
 using System.Collections.Generic;
 
 namespace PsdzClient.Core
@@ -25,11 +27,9 @@ namespace PsdzClient.Core
 
         string ECUTitle { get; set; }
 
-        [PreserveSource(Hint = "IXepEcuVariants", Placeholder = true)]
-        PlaceholderType XepEcuVariant { get; set; }
+        IXepEcuVariants XepEcuVariant { get; set; }
 
-        [PreserveSource(Hint = "IXepEcuCliques", Placeholder = true)]
-        PlaceholderType XepEcuClique { get; set; }
+        IXepEcuCliques XepEcuClique { get; set; }
 
         void FillEcuTitleTree(ISet<string> ecuShortName);
     }
