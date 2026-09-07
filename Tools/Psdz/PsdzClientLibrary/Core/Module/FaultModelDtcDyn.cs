@@ -96,6 +96,7 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        [PreserveSource(Hint = "database modified", SignatureModified = true)]
         public FaultModelDtcDyn(Fault fault, PsdzDatabase database, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             Fault = fault;
@@ -103,12 +104,14 @@ namespace BMW.Rheingold.Module.ISTA
             Initialize(fault, database, vehicle, ffmResolver);
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public FaultModelDtcDyn(Fault fault, string faultLabel)
         {
             Fault = fault;
             FaultLabel = faultLabel;
         }
 
+        [PreserveSource(Hint = "database modified", SignatureModified = true)]
         private void Initialize(Fault fault, PsdzDatabase database, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             //[-] XEP_FAULTLABELS ecuFaultLabelByFaultCodeAndEcuVariant = database.GetEcuFaultLabelByFaultCodeAndEcuVariant(fault.DTC.F_ORT.ToString(), fault.ECU.VARIANTE, vehicle, ffmResolver);
