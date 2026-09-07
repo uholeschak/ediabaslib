@@ -777,8 +777,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "XEP_SALAPAS replaced", SignatureModified = true)]
-        public static ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
+        public static ObservableCollectionEx<XEP_SALAPAS> GetAvailableSALAPAs(Vehicle vecInfo)
         {
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
@@ -786,9 +785,7 @@ namespace PsdzClient.Core
                 return characteristics.GetAvailableSALAPAs(vecInfo);
             }
 
-            //[-] return new ObservableCollectionEx<XEP_SALAPAS>();
-            //[+] return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
-            return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
+            return new ObservableCollectionEx<XEP_SALAPAS>();
         }
 
         [PreserveSource(Hint = "vehicle added", SignatureModified = true)]

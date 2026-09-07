@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Schema;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient.Utility;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -773,12 +774,9 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "XEP_SALAPAS replaced", SignatureModified = true)]
-        public virtual ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
+        public virtual ObservableCollectionEx<XEP_SALAPAS> GetAvailableSALAPAs(Vehicle vecInfo)
         {
-            //[-] ObservableCollectionEx<XEP_SALAPAS> observableCollectionEx = new ObservableCollectionEx<XEP_SALAPAS>();
-            //[+] ObservableCollectionEx<PsdzDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
-            ObservableCollectionEx<PsdzDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
+            ObservableCollectionEx<XEP_SALAPAS> observableCollectionEx = new ObservableCollectionEx<XEP_SALAPAS>();
             if (vecInfo != null && !string.IsNullOrEmpty(compatibilityInfo))
             {
                 try
@@ -805,8 +803,8 @@ namespace PsdzClient.Core
                                 if (!string.IsNullOrEmpty(text2))
                                 {
                                     //[-] XEP_SALAPAS saLaPaByProductTypeAndSalesKey = DatabaseProviderFactory.Instance.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
-                                    //[+] PsdzDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
-                                    PsdzDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
+                                    //[+] XEP_SALAPAS saLaPaByProductTypeAndSalesKey = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty)));
+                                    XEP_SALAPAS saLaPaByProductTypeAndSalesKey = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty)));
                                     if (saLaPaByProductTypeAndSalesKey != null)
                                     {
                                         observableCollectionEx.AddIfNotContains(saLaPaByProductTypeAndSalesKey);
