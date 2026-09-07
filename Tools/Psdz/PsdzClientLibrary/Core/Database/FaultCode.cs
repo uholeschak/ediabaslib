@@ -531,6 +531,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return null;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static FaultCode GetVirtualFaultCode(string refCode, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             try
@@ -576,6 +577,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return null;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static FaultCode GetVirtualFaultCode(ECU ecu, DTC dtc, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             try
