@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BmwFileReader;
 using PsdzClient;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace PsdzClientLibrary;
 
@@ -55,5 +57,53 @@ public static class XepConverter
             xepSaLaPaList.Add(Convert(saLaPa));
         }
         return xepSaLaPaList;
+    }
+
+    public static XEP_ECUGROUPS Convert(PsdzDatabase.EcuGroup ecuGroup)
+    {
+        if (ecuGroup == null)
+        {
+            return null;
+        }
+
+        XEP_ECUGROUPS xepEcuGroup = new XEP_ECUGROUPS();
+        xepEcuGroup.Id = ecuGroup.Id.ConvertToInt();
+        xepEcuGroup.ObdIdentification = ecuGroup.ObdIdent.ConvertToInt();
+        xepEcuGroup.FaultMemoryDeleteIdentificatio = ecuGroup.FaultMemDelIdent.ConvertToInt();
+        xepEcuGroup.FaultMemoryDeleteWaitingTime = ecuGroup.FaultMemDelWaitTime.ConvertToInt();
+        xepEcuGroup.Name = ecuGroup.Name;
+        xepEcuGroup.Virtuell = ecuGroup.Virt.ConvertToInt();
+        xepEcuGroup.Sicherheitsrelevant = ecuGroup.SafetyRelevant.ConvertToInt();
+        xepEcuGroup.ValidFrom = ConvertToDateTime(ecuGroup.ValidFrom);
+        xepEcuGroup.ValidTo = ConvertToDateTime(ecuGroup.ValidTo);
+        xepEcuGroup.DiagnosticAddress = ecuGroup.DiagAddr.ConvertToInt();
+
+        return xepEcuGroup;
+    }
+
+    public static List<XEP_ECUGROUPS> Convert(List<PsdzDatabase.EcuGroup> ecuGroupList)
+    {
+        if (ecuGroupList == null)
+        {
+            return null;
+        }
+
+        List<XEP_ECUGROUPS> xepEcuGroupList = new List<XEP_ECUGROUPS>();
+        foreach (PsdzDatabase.EcuGroup ecuGroup in ecuGroupList)
+        {
+            xepEcuGroupList.Add(Convert(ecuGroup));
+        }
+        return xepEcuGroupList;
+    }
+
+    private static DateTime ConvertToDateTime(string text, DateTime? defaultValue = null)
+    {
+        if (!string.IsNullOrWhiteSpace(text) &&
+            DateTime.TryParse(text.Trim(), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
+        {
+            return result;
+        }
+
+        return defaultValue ?? DateTime.MinValue;
     }
 }
