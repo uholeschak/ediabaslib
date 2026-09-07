@@ -9,6 +9,7 @@ using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
+using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1437,8 +1438,8 @@ namespace BMW.Rheingold.CoreFramework
         public IEcuGroupLocator __EcuGroup(string groupName)
         {
             //[-] XEP_ECUGROUPS ecuGroupByName = DBProvider.GetEcuGroupByName(groupName);
-            //[+] PsdzDatabase.EcuGroup ecuGroupByName = DBProvider.GetEcuGroupByName(groupName);
-            PsdzDatabase.EcuGroup ecuGroupByName = DBProvider.GetEcuGroupByName(groupName);
+            //[+] XEP_ECUGROUPS ecuGroupByName = XepConverter.Convert(DBProvider.GetEcuGroupByName(groupName));
+            XEP_ECUGROUPS ecuGroupByName = XepConverter.Convert(DBProvider.GetEcuGroupByName(groupName));
             if (ecuGroupByName != null)
             {
                 return new EcuGroupLocator(ecuGroupByName, Vehicle, FFMResolver);
@@ -1451,10 +1452,11 @@ namespace BMW.Rheingold.CoreFramework
         public IEcuGroupLocator __EcuGroup(decimal ecuGroupId)
         {
             //[-] XEP_ECUGROUPS ecuGroupById = DBProvider.GetEcuGroupById(ecuGroupId);
-            //[-] if (ecuGroupById != null)
-            //[-] {
-            //[-] return new EcuGroupLocator(ecuGroupById, Vehicle, FFMResolver);
-            //[-] }
+            XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(DBProvider.GetEcuGroupById(ecuGroupId.ToString(CultureInfo.InvariantCulture)));
+            if (ecuGroupById != null)
+            {
+                return new EcuGroupLocator(ecuGroupById, Vehicle, FFMResolver);
+            }
             return null;
         }
 

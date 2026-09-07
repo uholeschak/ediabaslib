@@ -8,6 +8,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -44,8 +45,8 @@ namespace PsdzClient.Core
                 if (string.IsNullOrEmpty(ecuVariant.EcuGroupId))
                 {
                     //[-] XEP_ECUGROUPS ecuGroupById = DatabaseProviderFactory.Instance.GetEcuGroupById(ecuVariant.EcuGroupId.Value);
-                    //[+] PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId);
-                    PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId);
+                    //[+] XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId));
+                    XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId));
                     if (ecuGroupById != null)
                     {
                         list.Add(new EcuGroupLocator(ecuGroupById, vecInfo, ffmResolver));

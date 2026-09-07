@@ -3,14 +3,14 @@ using PsdzClient;
 using System;
 using System.Globalization;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 #pragma warning disable CS0649
 namespace PsdzClient.Core
 {
     public class EcuGroupLocator : IEcuGroupLocator, ISPELocator
     {
-        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
-        private readonly PsdzDatabase.EcuGroup ecuGroup;
+        private readonly XEP_ECUGROUPS ecuGroup;
         private readonly Vehicle vecInfo;
         private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;
         private readonly ISPELocator[] parents;
@@ -65,17 +65,15 @@ namespace PsdzClient.Core
                     return -1m;
                 }
 
-                //[-] return ecuGroup.Id;
-                //[+] return ecuGroup.Id.ConvertToInt();
-                return ecuGroup.Id.ConvertToInt();
+                return ecuGroup.Id;
             }
         }
 
         public Exception Exception => null;
         public bool HasException => false;
 
-        [PreserveSource(Hint = "ecuGroup modified", SignatureModified = true)]
-        public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup)
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
+        public EcuGroupLocator(XEP_ECUGROUPS ecuGroup)
         {
             this.ecuGroup = ecuGroup;
             children = new ISPELocator[0];
@@ -85,15 +83,15 @@ namespace PsdzClient.Core
         public EcuGroupLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             //[-] ecuGroup = DatabaseProviderFactory.Instance.GetEcuGroupById(id);
-            //[+] ecuGroup = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
-            ecuGroup = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
+            //[+] ecuGroup = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture)));
+            ecuGroup = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture)));
             children = new ISPELocator[0];
             this.vecInfo = vecInfo;
             this.ffmResolver = ffmResolver;
         }
 
-        [PreserveSource(Hint = "ecuGroup modified", SignatureModified = true)]
-        public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup, Vehicle vecInfo, IFFMDynamicResolverRuleEvaluation ffmResolver)
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
+        public EcuGroupLocator(XEP_ECUGROUPS ecuGroup, Vehicle vecInfo, IFFMDynamicResolverRuleEvaluation ffmResolver)
         {
             this.ecuGroup = ecuGroup;
             children = new ISPELocator[0];
@@ -115,35 +113,21 @@ namespace PsdzClient.Core
                 case "NODECLASS":
                     return "5717890";
                 case "OBDIDENTIFICATION":
-                    //[-] return ecuGroup.ObdIdentification.ToString(CultureInfo.InvariantCulture);
-                    //[+] return ecuGroup.ObdIdent;
-                    return ecuGroup.ObdIdent;
+                    return ecuGroup.ObdIdentification.ToString(CultureInfo.InvariantCulture);
                 case "FAULTMEMORYDELETEIDENTIFICATIO":
-                    //[-] return ecuGroup.FaultMemoryDeleteIdentificatio.ToString(CultureInfo.InvariantCulture);
-                    //[+] return ecuGroup.FaultMemDelIdent;
-                    return ecuGroup.FaultMemDelIdent;
+                    return ecuGroup.FaultMemoryDeleteIdentificatio.ToString(CultureInfo.InvariantCulture);
                 case "FAULTMEMORYDELETEWAITINGTIME":
-                    //[-] return ecuGroup.FaultMemoryDeleteWaitingTime.ToString(CultureInfo.InvariantCulture);
-                    //[+] return ecuGroup.FaultMemDelWaitTime;
-                    return ecuGroup.FaultMemDelWaitTime;
+                    return ecuGroup.FaultMemoryDeleteWaitingTime.ToString(CultureInfo.InvariantCulture);
                 case "NAME":
                     return ecuGroup.Name;
                 case "VIRTUELL":
-                    //[-] return ecuGroup.Virtuell.ToString(CultureInfo.InvariantCulture);
-                    //[+] return ecuGroup.Virt;
-                    return ecuGroup.Virt;
+                    return ecuGroup.Virtuell.ToString(CultureInfo.InvariantCulture);
                 case "VALIDFROM":
-                    //[-] return ecuGroup.ValidFrom.ToString();
-                    //[+] return ecuGroup.ValidFrom;
-                    return ecuGroup.ValidFrom;
+                    return ecuGroup.ValidFrom.ToString();
                 case "VALIDTO":
-                    //[-] return ecuGroup.ValidTo.ToString();
-                    //[+] return ecuGroup.ValidTo;
-                    return ecuGroup.ValidTo;
+                    return ecuGroup.ValidTo.ToString();
                 case "SICHERHEITSRELEVANT":
-                    //[-] return ecuGroup.Sicherheitsrelevant.ToString(CultureInfo.InvariantCulture);
-                    //[+] return ecuGroup.SafetyRelevant;
-                    return ecuGroup.SafetyRelevant;
+                    return ecuGroup.Sicherheitsrelevant.ToString(CultureInfo.InvariantCulture);
                 default:
                     return string.Empty;
             }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using PsdzClientLibrary;
 
 #pragma warning disable CS0618, CS0649
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
@@ -1002,8 +1003,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     if (ECU == null && parentId.HasValue)
                     {
                         //[-] XEP_ECUGROUPS ecuGroupById = DatabaseProviderFactory.Instance.GetEcuGroupById(parentId.Value);
-                        //[+] XEP_ECUGROUPS ecuGroupById = null;
-                        XEP_ECUGROUPS ecuGroupById = null;
+                        //[+] XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuGroupById(parentId.Value.ToString(CultureInfo.InvariantCulture)));
+                        XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuGroupById(parentId.Value.ToString(CultureInfo.InvariantCulture)));
                         if (ecuGroupById != null)
                         {
                             ECU eCUbyECU_GRUPPE = vehicleContext.getECUbyECU_GRUPPE(ecuGroupById.Name);
