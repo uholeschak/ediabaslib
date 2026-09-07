@@ -41,8 +41,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private string verkaufsBezeichnungField;
         private string targetILevel;
         private readonly ObservableCollection<string> diagCodesProgramming;
-        [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
-        private PlaceholderType faultList;
+        private IList<Fault> faultList;
         [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
         private PlaceholderType checkControlMessages;
         private string salesDesignationBadgeUIText;
