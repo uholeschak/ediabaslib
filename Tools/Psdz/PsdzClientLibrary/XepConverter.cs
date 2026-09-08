@@ -235,6 +235,42 @@ public static class XepConverter
         return xepEcuCliqueList;
     }
 
+    public static XEP_SWIREGISTER Convert(PsdzDatabase.SwiRegister swiRegister)
+    {
+        if (swiRegister == null)
+        {
+            return null;
+        }
+
+        XEP_SWIREGISTER xepSwiRegister = new XEP_SWIREGISTER();
+        xepSwiRegister.Id = swiRegister.Id.ConvertToInt();
+        xepSwiRegister.Nodeclass = swiRegister.NodeClass.ConvertToInt();
+        xepSwiRegister.Name = swiRegister.Name;
+        xepSwiRegister.ParentId = swiRegister.ParentId.ConvertToInt();
+        xepSwiRegister.Remark = swiRegister.Remark;
+        xepSwiRegister.Sort = swiRegister.Sort.ConvertToInt();
+        xepSwiRegister.VersionNumber = swiRegister.VersionNum.ConvertToInt();
+        xepSwiRegister.Identifier = swiRegister.Identifier;
+        CopyEcuTranslation(swiRegister.EcuTranslation, xepSwiRegister);
+
+        return xepSwiRegister;
+    }
+
+    public static List<XEP_SWIREGISTER> Convert(List<PsdzDatabase.SwiRegister> swiRegisterList)
+    {
+        if (swiRegisterList == null)
+        {
+            return null;
+        }
+
+        List<XEP_SWIREGISTER> xepSwiRegisterList = new List<XEP_SWIREGISTER>();
+        foreach (PsdzDatabase.SwiRegister swiRegister in swiRegisterList)
+        {
+            xepSwiRegisterList.Add(Convert(swiRegister));
+        }
+        return xepSwiRegisterList;
+    }
+
     // Property names are taken via nameof from a reference type declaring all of them,
     // so typos and renames are detected by the compiler.
     private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =
