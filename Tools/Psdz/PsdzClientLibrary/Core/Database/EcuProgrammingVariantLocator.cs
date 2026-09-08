@@ -93,6 +93,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             children = new ISPELocator[0];
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static IEcuProgrammingVariantLocator CreateEcuProgrammingVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             IEcuProgrammingVariantLocator result = null;
@@ -110,6 +111,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return result;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public EcuProgrammingVariantLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             //[-] ecuVariant = DatabaseProviderFactory.Instance.GetEcuProgrammingVariantById(id, vecInfo, ffmResolver);
@@ -119,6 +121,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             this.ffmResolver = ffmResolver;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public EcuProgrammingVariantLocator(XEP_ECUPROGRAMMINGVARIANT ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             this.ecuVariant = ecuVariant;
