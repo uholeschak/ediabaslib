@@ -6,19 +6,16 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_ECUPROGRAMMINGVARIANT : INotifyPropertyChanged, IXepEcuProgrammingVariant
     {
         private decimal idField;
-
         private string nameField;
-
         private decimal? flashLimitField;
-
         private decimal ecuVariantIdField;
-
         public decimal Id
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 if (!idField.Equals(value))
@@ -35,6 +32,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField == null || !nameField.Equals(value))
@@ -51,6 +49,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return flashLimitField;
             }
+
             set
             {
                 if (!flashLimitField.HasValue || !flashLimitField.Equals(value))
@@ -67,6 +66,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ecuVariantIdField;
             }
+
             set
             {
                 if (!ecuVariantIdField.Equals(value))
@@ -78,10 +78,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual XEP_ECUPROGRAMMINGVARIANT Clone()
@@ -95,22 +94,27 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_ECUPROGRAMMINGVARIANT xEP_ECUPROGRAMMINGVARIANT))
             {
                 return false;
             }
+
             if (Id != xEP_ECUPROGRAMMINGVARIANT.Id)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Name, xEP_ECUPROGRAMMINGVARIANT.Name) != 0)
             {
                 return false;
             }
+
             if (!(FlashLimit == xEP_ECUPROGRAMMINGVARIANT.FlashLimit))
             {
                 return false;
             }
+
             return true;
         }
 
