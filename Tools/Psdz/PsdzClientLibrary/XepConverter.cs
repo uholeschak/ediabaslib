@@ -80,6 +80,34 @@ public static class XepConverter
         return xepEcuGroupList;
     }
 
+    public static XEP_ECUREPS Convert(PsdzDatabase.EcuReps ecuReps)
+    {
+        if (ecuReps == null)
+        {
+            return null;
+        }
+
+        XEP_ECUREPS xepEcuReps = new XEP_ECUREPS();
+        xepEcuReps.Id = ecuReps.Id.ConvertToInt();
+        xepEcuReps.SteuergeraeteKuerzel = ecuReps.EcuShortcut;
+
+        return xepEcuReps;
+    }
+
+    public static List<XEP_ECUREPS> Convert(List<PsdzDatabase.EcuReps> ecuRepsList)
+    {
+        if (ecuRepsList == null)
+        {
+            return null;
+        }
+        List<XEP_ECUREPS> xepEcuRepsList = new List<XEP_ECUREPS>();
+        foreach (PsdzDatabase.EcuReps ecuReps in ecuRepsList)
+        {
+            xepEcuRepsList.Add(Convert(ecuReps));
+        }
+        return xepEcuRepsList;
+    }
+
     public static XEP_EQUIPMENT Convert(PsdzDatabase.Equipment equipment)
     {
         if (equipment == null)

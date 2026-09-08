@@ -1,4 +1,6 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using PsdzClient.Utility;
 using System;
@@ -8,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -34,8 +36,8 @@ namespace PsdzClient.Core
             }
 
             //[-] IXepEcuReps ecuRepsById = dataProvider.GetEcuRepsById(value);
-            //[+] PsdzDatabase.EcuReps ecuRepsById = ClientContext.GetDatabase(vec)?.GetEcuRepsById(value.ToString(CultureInfo.InvariantCulture));
-            PsdzDatabase.EcuReps ecuRepsById = ClientContext.GetDatabase(vec)?.GetEcuRepsById(value.ToString(CultureInfo.InvariantCulture));
+            //[+] IXepEcuReps ecuRepsById = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetEcuRepsById(value.ToString(CultureInfo.InvariantCulture)));
+            IXepEcuReps ecuRepsById = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetEcuRepsById(value.ToString(CultureInfo.InvariantCulture)));
             if (ecuRepsById == null)
             {
                 logger.Warning("EcuRepresentativeExpression.Evaluate()", "no ecu representative evaluation for {0} because it was unknown", value);
@@ -43,24 +45,16 @@ namespace PsdzClient.Core
             }
             if (vec.VCI != null && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
             {
-                //[-](0) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
-                //[+](0) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.EcuShortcut, vec.VehicleIdentLevel);
-                logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.EcuShortcut, vec.VehicleIdentLevel);
+                logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
                 return true;
             }
             if (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && vec.ECU != null && !vec.ECU.Any())
             {
-                //[-](1) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
-                //[+](1) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.EcuShortcut, vec.VehicleIdentLevel);
-                logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.EcuShortcut, vec.VehicleIdentLevel);
+                logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
                 return true;
             }
-            //[-] bool flag = VehicleHelper.GetECUbyTITLE_ECUTREE(vec, ecuRepsById.SteuergeraeteKuerzel) != null;
-            //[-] logger.Debug("EcuRepresentativeExpression.Evaluate()", "Ecu Representative: {0} result: {1} [original rule: {2}]", ecuRepsById.SteuergeraeteKuerzel, flag, value);
-            //[+] bool flag = VehicleHelper.GetECUbyTITLE_ECUTREE(vec, ecuRepsById.EcuShortcut) != null;
-            bool flag = VehicleHelper.GetECUbyTITLE_ECUTREE(vec, ecuRepsById.EcuShortcut) != null;
-            //[+] logger.Debug("EcuRepresentativeExpression.Evaluate()", "Ecu Representative: {0} result: {1} [original rule: {2}]", ecuRepsById.EcuShortcut, flag, value);
-            logger.Debug("EcuRepresentativeExpression.Evaluate()", "Ecu Representative: {0} result: {1} [original rule: {2}]", ecuRepsById.EcuShortcut, flag, value);
+            bool flag = VehicleHelper.GetECUbyTITLE_ECUTREE(vec, ecuRepsById.SteuergeraeteKuerzel) != null;
+            logger.Debug("EcuRepresentativeExpression.Evaluate()", "Ecu Representative: {0} result: {1} [original rule: {2}]", ecuRepsById.SteuergeraeteKuerzel, flag, value);
             return flag;
         }
 
