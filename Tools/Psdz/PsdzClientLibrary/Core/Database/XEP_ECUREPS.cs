@@ -6,15 +6,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_ECUREPS : INotifyPropertyChanged, IXepEcuReps
     {
         private decimal idField;
-
         private string steuergeraeteKuerzelField;
-
         public decimal Id
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -32,6 +31,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return steuergeraeteKuerzelField;
             }
+
             set
             {
                 if (steuergeraeteKuerzelField != null)
@@ -51,10 +51,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual XEP_ECUREPS Clone()
@@ -68,14 +67,17 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_ECUREPS xEP_ECUREPS))
             {
                 return false;
             }
+
             if (Id != xEP_ECUREPS.Id)
             {
                 return false;
             }
+
             return true;
         }
 
