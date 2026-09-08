@@ -117,28 +117,30 @@ public static class XepConverter
         return xepEcuVariantList;
     }
 
+    // Property names are taken via nameof from a reference type declaring all of them,
+    // so typos and renames are detected by the compiler.
     private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =
     {
-        ("Title_dede", nameof(PsdzDatabase.EcuTranslation.TextDe)),
-        ("Title_engb", nameof(PsdzDatabase.EcuTranslation.TextEn)),
-        ("Title_enus", nameof(PsdzDatabase.EcuTranslation.TextUs)),
-        ("Title_fr", nameof(PsdzDatabase.EcuTranslation.TextFr)),
-        ("Title_th", nameof(PsdzDatabase.EcuTranslation.TextTh)),
-        ("Title_sv", nameof(PsdzDatabase.EcuTranslation.TextSv)),
-        ("Title_it", nameof(PsdzDatabase.EcuTranslation.TextIt)),
-        ("Title_es", nameof(PsdzDatabase.EcuTranslation.TextEs)),
-        ("Title_id", nameof(PsdzDatabase.EcuTranslation.TextId)),
-        ("Title_ko", nameof(PsdzDatabase.EcuTranslation.TextKo)),
-        ("Title_el", nameof(PsdzDatabase.EcuTranslation.TextEl)),
-        ("Title_tr", nameof(PsdzDatabase.EcuTranslation.TextTr)),
-        ("Title_zhcn", nameof(PsdzDatabase.EcuTranslation.TextZh)),
-        ("Title_zhtw", nameof(PsdzDatabase.EcuTranslation.TextZh)),
-        ("Title_ru", nameof(PsdzDatabase.EcuTranslation.TextRu)),
-        ("Title_nl", nameof(PsdzDatabase.EcuTranslation.TextNl)),
-        ("Title_pt", nameof(PsdzDatabase.EcuTranslation.TextPt)),
-        ("Title_ja", nameof(PsdzDatabase.EcuTranslation.TextJa)),
-        ("Title_cscz", nameof(PsdzDatabase.EcuTranslation.TextCs)),
-        ("Title_plpl", nameof(PsdzDatabase.EcuTranslation.TextPl)),
+        (nameof(XEP_ECUVARIANTS.Title_dede), nameof(PsdzDatabase.EcuTranslation.TextDe)),
+        (nameof(XEP_ECUVARIANTS.Title_engb), nameof(PsdzDatabase.EcuTranslation.TextEn)),
+        (nameof(XEP_ECUVARIANTS.Title_enus), nameof(PsdzDatabase.EcuTranslation.TextUs)),
+        (nameof(XEP_ECUVARIANTS.Title_fr), nameof(PsdzDatabase.EcuTranslation.TextFr)),
+        (nameof(XEP_ECUVARIANTS.Title_th), nameof(PsdzDatabase.EcuTranslation.TextTh)),
+        (nameof(XEP_ECUVARIANTS.Title_sv), nameof(PsdzDatabase.EcuTranslation.TextSv)),
+        (nameof(XEP_ECUVARIANTS.Title_it), nameof(PsdzDatabase.EcuTranslation.TextIt)),
+        (nameof(XEP_ECUVARIANTS.Title_es), nameof(PsdzDatabase.EcuTranslation.TextEs)),
+        (nameof(XEP_ECUVARIANTS.Title_id), nameof(PsdzDatabase.EcuTranslation.TextId)),
+        (nameof(XEP_ECUVARIANTS.Title_ko), nameof(PsdzDatabase.EcuTranslation.TextKo)),
+        (nameof(XEP_ECUVARIANTS.Title_el), nameof(PsdzDatabase.EcuTranslation.TextEl)),
+        (nameof(XEP_ECUVARIANTS.Title_tr), nameof(PsdzDatabase.EcuTranslation.TextTr)),
+        (nameof(XEP_ECUVARIANTS.Title_zhcn), nameof(PsdzDatabase.EcuTranslation.TextZh)),
+        (nameof(XEP_ECUVARIANTS.Title_zhtw), nameof(PsdzDatabase.EcuTranslation.TextZh)),
+        (nameof(XEP_ECUVARIANTS.Title_ru), nameof(PsdzDatabase.EcuTranslation.TextRu)),
+        (nameof(XEP_ECUVARIANTS.Title_nl), nameof(PsdzDatabase.EcuTranslation.TextNl)),
+        (nameof(XEP_ECUVARIANTS.Title_pt), nameof(PsdzDatabase.EcuTranslation.TextPt)),
+        (nameof(XEP_ECUVARIANTS.Title_ja), nameof(PsdzDatabase.EcuTranslation.TextJa)),
+        (nameof(XEP_ECUVARIANTS.Title_cscz), nameof(PsdzDatabase.EcuTranslation.TextCs)),
+        (nameof(XEP_ECUVARIANTS.Title_plpl), nameof(PsdzDatabase.EcuTranslation.TextPl)),
     };
 
     private static class TitleCopier<T> where T : class
