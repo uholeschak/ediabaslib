@@ -271,6 +271,58 @@ public static class XepConverter
         return xepSwiRegisterList;
     }
 
+    public static IXepInfoObject Convert(PsdzDatabase.SwiInfoObj swiInfoObj)
+    {
+        if (swiInfoObj == null)
+        {
+            return null;
+        }
+
+        XepInfoObject xepInfoObject = new XepInfoObject();
+        xepInfoObject.Id = swiInfoObj.Id.ConvertToInt();
+        xepInfoObject.Nodeclass = swiInfoObj.NodeClass.ConvertToInt();
+        xepInfoObject.Assembly = swiInfoObj.Assembly.ConvertToInt();
+        xepInfoObject.VersionNumber = swiInfoObj.VersionNum.ConvertToInt();
+        xepInfoObject.ProgramType = swiInfoObj.ProgramType;
+        xepInfoObject.SicherheitsRelevant = swiInfoObj.SafetyRelevant.ConvertToInt();
+        xepInfoObject.TitleId = swiInfoObj.TitleId.ConvertToInt();
+        xepInfoObject.Generell = swiInfoObj.General.ConvertToInt();
+        xepInfoObject.TeleserviceKennung = swiInfoObj.TelSrvId.ConvertToInt();
+        xepInfoObject.FahrzeugKommunikation = swiInfoObj.VehicleComm.ConvertToInt();
+        xepInfoObject.Messtechnik = swiInfoObj.Measurement.ConvertToInt();
+        xepInfoObject.Versteckt = swiInfoObj.Hidden.ConvertToInt();
+        xepInfoObject.Name = swiInfoObj.Name;
+        xepInfoObject.InformationsTyp = swiInfoObj.InformationType;
+        xepInfoObject.Identifikator = swiInfoObj.Identificator;
+        xepInfoObject.Informationsformat = swiInfoObj.InformationFormat;
+        xepInfoObject.SiNummer = swiInfoObj.SiNumber;
+        xepInfoObject.ZielIStufe = swiInfoObj.TargetILevel;
+        xepInfoObject.ControlId = swiInfoObj.ControlId.ConvertToInt();
+        xepInfoObject.InfoType = swiInfoObj.InfoType;
+        xepInfoObject.InfoFormat = swiInfoObj.InfoFormat;
+        xepInfoObject.DocNumber = swiInfoObj.DocNum;
+        xepInfoObject.Priority = swiInfoObj.Priority.ConvertToInt();
+        xepInfoObject.Identifier = swiInfoObj.Identifier;
+
+        CopyEcuTranslation(swiInfoObj.EcuTranslation, xepInfoObject);
+
+        return xepInfoObject;
+    }
+
+    public static List<IXepInfoObject> Convert(List<PsdzDatabase.SwiInfoObj> swiInfoObjList)
+    {
+        if (swiInfoObjList == null)
+        {
+            return null;
+        }
+        List<IXepInfoObject> xepInfoObjectList = new List<IXepInfoObject>();
+        foreach (PsdzDatabase.SwiInfoObj swiInfoObj in swiInfoObjList)
+        {
+            xepInfoObjectList.Add(Convert(swiInfoObj));
+        }
+        return xepInfoObjectList;
+    }
+
     // Property names are taken via nameof from a reference type declaring all of them,
     // so typos and renames are detected by the compiler.
     private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =

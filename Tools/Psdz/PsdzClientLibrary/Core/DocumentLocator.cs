@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System;
 using System.Globalization;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core;
 
@@ -40,10 +41,10 @@ public class DocumentLocator : IDocumentLocator, ISPELocator
     {
         get
         {
-            //[-] if (infoObject.XepInfoObject.Nodeclass.HasValue)
-            //[-] {
-            //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(infoObject.XepInfoObject.Nodeclass.Value);
-            //[-] }
+            if (infoObject.XepInfoObject.Nodeclass.HasValue)
+            {
+                //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(infoObject.XepInfoObject.Nodeclass.Value);
+            }
             return string.Empty;
         }
     }
