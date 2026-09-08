@@ -87,13 +87,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public string Name => ecuVariant.Name;
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public EcuProgrammingVariantLocator(XEP_ECUPROGRAMMINGVARIANT ecuVariant)
         {
             this.ecuVariant = ecuVariant;
             children = new ISPELocator[0];
         }
 
-        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static IEcuProgrammingVariantLocator CreateEcuProgrammingVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             IEcuProgrammingVariantLocator result = null;
