@@ -240,21 +240,19 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
 
                 List<ISPELocator> list = new List<ISPELocator>();
-                //[-] XEP_ECUVARIANTS xEP_ECUVARIANTS = null;
-                //[+] PsdzDatabase.EcuVar xEP_ECUVARIANTS = null;
-                PsdzDatabase.EcuVar xEP_ECUVARIANTS = null;
+                XEP_ECUVARIANTS xEP_ECUVARIANTS = null;
                 if (ECU != null && !string.IsNullOrEmpty(ECU.VARIANTE))
                 {
                     //[-] xEP_ECUVARIANTS = DatabaseProviderFactory.Instance.GetEcuVariantByName(ECU.VARIANTE);
-                    //[+] xEP_ECUVARIANTS = ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(ECU.VARIANTE);
-                    xEP_ECUVARIANTS = ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(ECU.VARIANTE);
+                    //[+] xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(ECU.VARIANTE));
+                    xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(ECU.VARIANTE));
                 }
 
                 if (xEP_ECUVARIANTS == null && base.ECUVARIANTID.HasValue)
                 {
                     //[-] xEP_ECUVARIANTS = DatabaseProviderFactory.Instance.GetEcuVariantById(base.ECUVARIANTID.Value);
-                    //[+] xEP_ECUVARIANTS = ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(base.ECUVARIANTID.Value.ToString(CultureInfo.InvariantCulture));
-                    xEP_ECUVARIANTS = ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(base.ECUVARIANTID.Value.ToString(CultureInfo.InvariantCulture));
+                    //[+] xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(base.ECUVARIANTID.Value.ToString(CultureInfo.InvariantCulture)));
+                    xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(base.ECUVARIANTID.Value.ToString(CultureInfo.InvariantCulture)));
                 }
 
                 if (xEP_ECUVARIANTS != null)
@@ -1018,8 +1016,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     if (ECU == null && parentId.HasValue)
                     {
                         //[-] XEP_ECUVARIANTS ecuVariantById = DatabaseProviderFactory.Instance.GetEcuVariantById(parentId.Value);
-                        //[+] XEP_ECUVARIANTS ecuVariantById = null;
-                        XEP_ECUVARIANTS ecuVariantById = null;
+                        //[+] XEP_ECUVARIANTS ecuVariantById = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(parentId.Value.ToString(CultureInfo.InvariantCulture)));
+                        XEP_ECUVARIANTS ecuVariantById = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(parentId.Value.ToString(CultureInfo.InvariantCulture)));
                         if (ecuVariantById != null && vehicleContext.getECUbyECU_SGBD(ecuVariantById.Name)is ECU eCU)
                         {
                             ECU = eCU;

@@ -14,8 +14,7 @@ namespace PsdzClient.Core
 {
     public class EcuVariantLocator : IEcuVariantLocator, ISPELocator
     {
-        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
-        private readonly PsdzDatabase.EcuVar ecuVariant;
+        private readonly XEP_ECUVARIANTS ecuVariant;
         private readonly ISPELocator[] children;
         private ISPELocator[] parents;
         private readonly Vehicle vecInfo;
@@ -40,13 +39,11 @@ namespace PsdzClient.Core
                     return parents;
                 }
                 List<ISPELocator> list = new List<ISPELocator>();
-                //[-] if (ecuVariant.EcuGroupId.HasValue)
-                //[+] if (string.IsNullOrEmpty(ecuVariant.EcuGroupId))
-                if (string.IsNullOrEmpty(ecuVariant.EcuGroupId))
+                if (ecuVariant.EcuGroupId.HasValue)
                 {
                     //[-] XEP_ECUGROUPS ecuGroupById = DatabaseProviderFactory.Instance.GetEcuGroupById(ecuVariant.EcuGroupId.Value);
-                    //[+] XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId));
-                    XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId));
+                    //[+] XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId.Value.ToString(CultureInfo.InvariantCulture)));
+                    XEP_ECUGROUPS ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId.Value.ToString(CultureInfo.InvariantCulture)));
                     if (ecuGroupById != null)
                     {
                         list.Add(new EcuGroupLocator(ecuGroupById, vecInfo, ffmResolver));
@@ -103,17 +100,15 @@ namespace PsdzClient.Core
                     return -1m;
                 }
 
-                //[-] return ecuVariant.Id;
-                //[+] return ecuVariant.Id.ConvertToInt();
-                return ecuVariant.Id.ConvertToInt();
+                return ecuVariant.Id;
             }
         }
 
         public Exception Exception => null;
         public bool HasException => false;
 
-        [PreserveSource(Hint = "ecuVariant modified", SignatureModified = true)]
-        public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant)
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
+        public EcuVariantLocator(XEP_ECUVARIANTS ecuVariant)
         {
             this.ecuVariant = ecuVariant;
             children = new ISPELocator[0];
@@ -122,8 +117,8 @@ namespace PsdzClient.Core
         public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             //[-] XEP_ECUVARIANTS ecuVariantByName = DatabaseProviderFactory.Instance.GetEcuVariantByName(ecuVariant);
-            //[+] PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
-            PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
+            //[+] XEP_ECUVARIANTS ecuVariantByName = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant));
+            XEP_ECUVARIANTS ecuVariantByName = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant));
             if (ecuVariantByName != null)
             {
                 return new EcuVariantLocator(ecuVariantByName, vecInfo, ffmResolver);
@@ -135,14 +130,14 @@ namespace PsdzClient.Core
         public EcuVariantLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             //[-] ecuVariant = DatabaseProviderFactory.Instance.GetEcuVariantById(id);
-            //[+] ecuVariant = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
-            ecuVariant = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
+            //[+] ecuVariant = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture)));
+            ecuVariant = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture)));
             this.vecInfo = vecInfo;
             this.ffmResolver = ffmResolver;
         }
 
-        [PreserveSource(Hint = "ecuVariant modified", SignatureModified = true)]
-        public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant, Vehicle vecInfo, IFFMDynamicResolverRuleEvaluation ffmResolver)
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
+        public EcuVariantLocator(XEP_ECUVARIANTS ecuVariant, Vehicle vecInfo, IFFMDynamicResolverRuleEvaluation ffmResolver)
         {
             this.ecuVariant = ecuVariant;
             children = new ISPELocator[0];
@@ -163,157 +158,91 @@ namespace PsdzClient.Core
                 case "NODECLASS":
                     return "5719042";
                 case "TITLE_DEDE":
-                    //[-] return ecuVariant.Title_dede;
-                    //[+] return ecuVariant.EcuTranslation.TextDe;
-                    return ecuVariant.EcuTranslation.TextDe;
+                    return ecuVariant.Title_dede;
                 case "TITLE_ENGB":
-                    //[-] return ecuVariant.Title_engb;
-                    //[+] return ecuVariant.EcuTranslation.TextEn;
-                    return ecuVariant.EcuTranslation.TextEn;
+                    return ecuVariant.Title_engb;
                 case "TITLE_ENUS":
-                    //[-] return ecuVariant.Title_enus;
-                    //[+] return ecuVariant.EcuTranslation.TextEn;
-                    return ecuVariant.EcuTranslation.TextEn;
+                    return ecuVariant.Title_enus;
                 case "TITLE_FR":
-                    //[-] return ecuVariant.Title_fr;
-                    //[+] return ecuVariant.EcuTranslation.TextFr;
-                    return ecuVariant.EcuTranslation.TextFr;
+                    return ecuVariant.Title_fr;
                 case "TITLE_TH":
-                    //[-] return ecuVariant.Title_th;
-                    //[+] return ecuVariant.EcuTranslation.TextTh;
-                    return ecuVariant.EcuTranslation.TextTh;
+                    return ecuVariant.Title_th;
                 case "TITLE_SV":
-                    //[-] return ecuVariant.Title_sv;
-                    //[+] return ecuVariant.EcuTranslation.TextSv;
-                    return ecuVariant.EcuTranslation.TextSv;
+                    return ecuVariant.Title_sv;
                 case "TITLE_IT":
-                    //[-] return ecuVariant.Title_it;
-                    //[+] return ecuVariant.EcuTranslation.TextIt;
-                    return ecuVariant.EcuTranslation.TextIt;
+                    return ecuVariant.Title_it;
                 case "TITLE_ES":
-                    //[-] return ecuVariant.Title_es;
-                    //[+] return ecuVariant.EcuTranslation.TextEs;
-                    return ecuVariant.EcuTranslation.TextEs;
+                    return ecuVariant.Title_es;
                 case "TITLE_ID":
-                    //[-] return ecuVariant.Title_id;
-                    //[+] return ecuVariant.EcuTranslation.TextId;
-                    return ecuVariant.EcuTranslation.TextId;
+                    return ecuVariant.Title_id;
                 case "TITLE_KO":
-                    //[-] return ecuVariant.Title_ko;
-                    //[+] return ecuVariant.EcuTranslation.TextKo;
-                    return ecuVariant.EcuTranslation.TextKo;
+                    return ecuVariant.Title_ko;
                 case "TITLE_EL":
-                    //[-] return ecuVariant.Title_el;
-                    //[+] return ecuVariant.EcuTranslation.TextEl;
-                    return ecuVariant.EcuTranslation.TextEl;
+                    return ecuVariant.Title_el;
                 case "TITLE_TR":
-                    //[-] return ecuVariant.Title_tr;
-                    //[+] return ecuVariant.EcuTranslation.TextTr;
-                    return ecuVariant.EcuTranslation.TextTr;
+                    return ecuVariant.Title_tr;
                 case "TITLE_ZHCN":
-                    //[-] return ecuVariant.Title_zhcn;
-                    //[+] return ecuVariant.EcuTranslation.TextZh;
-                    return ecuVariant.EcuTranslation.TextZh;
+                    return ecuVariant.Title_zhcn;
                 case "TITLE_RU":
-                    //[-] return ecuVariant.Title_ru;
-                    //[+] return ecuVariant.EcuTranslation.TextRu;
-                    return ecuVariant.EcuTranslation.TextRu;
+                    return ecuVariant.Title_ru;
                 case "TITLE_NL":
-                    //[-] return ecuVariant.Title_nl;
-                    //[+] return ecuVariant.EcuTranslation.TextNl;
-                    return ecuVariant.EcuTranslation.TextNl;
+                    return ecuVariant.Title_nl;
                 case "TITLE_PT":
-                    //[-] return ecuVariant.Title_pt;
-                    //[+] return ecuVariant.EcuTranslation.TextPt;
-                    return ecuVariant.EcuTranslation.TextPt;
+                    return ecuVariant.Title_pt;
                 case "TITLE_ZHTW":
-                    //[-] return ecuVariant.Title_zhtw;
-                    //[+] return ecuVariant.EcuTranslation.TextZh;
-                    return ecuVariant.EcuTranslation.TextZh;
+                    return ecuVariant.Title_zhtw;
                 case "TITLE_JA":
-                    //[-] return ecuVariant.Title_ja;
-                    //[+] return ecuVariant.EcuTranslation.TextJa;
-                    return ecuVariant.EcuTranslation.TextJa;
+                    return ecuVariant.Title_ja;
                 case "TITLE_CSCZ":
-                    //[-] return ecuVariant.Title_cscz;
-                    //[+] return ecuVariant.EcuTranslation.TextCs;
-                    return ecuVariant.EcuTranslation.TextCs;
+                    return ecuVariant.Title_cscz;
                 case "TITLE_PLPL":
-                    //[-] return ecuVariant.Title_plpl;
-                    //[+] return ecuVariant.EcuTranslation.TextPl;
-                    return ecuVariant.EcuTranslation.TextPl;
+                    return ecuVariant.Title_plpl;
                 case "FAULTMEMORYDELETEWAITINGTIME":
-                    //[-] if (!ecuVariant.FaultMemoryDeleteWaitingTime.HasValue)
-                    //[+] if (string.IsNullOrEmpty(ecuVariant.FaultMemDelWaitTime))
-                    if (string.IsNullOrEmpty(ecuVariant.FaultMemDelWaitTime))
+                    if (!ecuVariant.FaultMemoryDeleteWaitingTime.HasValue)
                     {
                         return string.Empty;
                     }
 
-                    //[-] return ecuVariant.FaultMemoryDeleteWaitingTime.ToString();
-                    //[+] return ecuVariant.FaultMemDelWaitTime;
-                    return ecuVariant.FaultMemDelWaitTime;
+                    return ecuVariant.FaultMemoryDeleteWaitingTime.ToString();
                 case "NAME":
                     return ecuVariant.Name;
                 case "ECUGROUPID":
-                    //[-] if (!ecuVariant.EcuGroupId.HasValue)
-                    //[+] if (string.IsNullOrEmpty(ecuVariant.EcuGroupId))
-                    if (string.IsNullOrEmpty(ecuVariant.EcuGroupId))
+                    if (!ecuVariant.EcuGroupId.HasValue)
                     {
                         return "0";
                     }
 
-                    //[-] return ecuVariant.EcuGroupId.ToString();
-                    //[+] return ecuVariant.EcuGroupId;
-                    return ecuVariant.EcuGroupId;
+                    return ecuVariant.EcuGroupId.ToString();
                 case "SORT":
-                    //[-] if (!ecuVariant.Sort.HasValue)
-                    //[+] if (string.IsNullOrEmpty(ecuVariant.Sort))
-                    if (string.IsNullOrEmpty(ecuVariant.Sort))
+                    if (!ecuVariant.Sort.HasValue)
                     {
                         return "0";
                     }
 
-                    //[-] return ecuVariant.Sort.ToString();
-                    //[+] return ecuVariant.Sort;
-                    return ecuVariant.Sort;
+                    return ecuVariant.Sort.ToString();
                 case "VALIDFROM":
-                    //[-] if (!ecuVariant.ValidFrom.HasValue)
-                    //[+] if (string.IsNullOrEmpty(ecuVariant.ValidFrom))
-                    if (string.IsNullOrEmpty(ecuVariant.ValidFrom))
+                    if (!ecuVariant.ValidFrom.HasValue)
                     {
                         return string.Empty;
                     }
 
-                    //[-] return ecuVariant.ValidFrom.ToString();
-                    //[+] return ecuVariant.ValidFrom;
-                    return ecuVariant.ValidFrom;
+                    return ecuVariant.ValidFrom.ToString();
                 case "VALIDTO":
-                    //[-] if (!ecuVariant.ValidTo.HasValue)
-                    //[+] if (string.IsNullOrEmpty(ecuVariant.ValidTo))
-                    if (string.IsNullOrEmpty(ecuVariant.ValidTo))
+                    if (!ecuVariant.ValidTo.HasValue)
                     {
                         return string.Empty;
                     }
 
-                    //[-] return ecuVariant.ValidTo.ToString();
-                    //[+] return ecuVariant.ValidTo;
-                    return ecuVariant.ValidTo;
+                    return ecuVariant.ValidTo.ToString();
                 case "SICHERHEITSRELEVANT":
-                    //[-] if (!ecuVariant.Sicherheitsrelevant.HasValue)
-                    //[+] if (string.IsNullOrEmpty(ecuVariant.SafetyRelevant))
-                    if (string.IsNullOrEmpty(ecuVariant.SafetyRelevant))
+                    if (!ecuVariant.Sicherheitsrelevant.HasValue)
                     {
                         return "0";
                     }
 
-                    //[-] return ecuVariant.Sicherheitsrelevant.ToString();
-                    //[+] return ecuVariant.SafetyRelevant;
-                    return ecuVariant.SafetyRelevant;
+                    return ecuVariant.Sicherheitsrelevant.ToString();
                 case "TITLE":
-                    //[-] return ecuVariant.Title;
-                    //[+] return ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
-                    return ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
+                    return ecuVariant.Title;
                 default:
                     return string.Empty;
             }
@@ -355,109 +284,67 @@ namespace PsdzClient.Core
                             obj = "5719042";
                             break;
                         case "TITLE_DEDE":
-                            //[-] obj = ecuVariant.Title_dede;
-                            //[+] obj = ecuVariant.EcuTranslation.TextDe;
-                            obj = ecuVariant.EcuTranslation.TextDe;
+                            obj = ecuVariant.Title_dede;
                             break;
                         case "TITLE_ENGB":
-                            //[-] obj = ecuVariant.Title_engb;
-                            //[+] obj = ecuVariant.EcuTranslation.TextEn;
-                            obj = ecuVariant.EcuTranslation.TextEn;
+                            obj = ecuVariant.Title_engb;
                             break;
                         case "TITLE_ENUS":
-                            //[-] obj = ecuVariant.Title_enus;
-                            //[+] obj = ecuVariant.EcuTranslation.TextEn;
-                            obj = ecuVariant.EcuTranslation.TextEn;
+                            obj = ecuVariant.Title_enus;
                             break;
                         case "TITLE_FR":
-                            //[-] obj = ecuVariant.Title_fr;
-                            //[+] obj = ecuVariant.EcuTranslation.TextFr;
-                            obj = ecuVariant.EcuTranslation.TextFr;
+                            obj = ecuVariant.Title_fr;
                             break;
                         case "TITLE_TH":
-                            //[-] obj = ecuVariant.Title_th;
-                            //[+] obj = ecuVariant.EcuTranslation.TextTh;
-                            obj = ecuVariant.EcuTranslation.TextTh;
+                            obj = ecuVariant.Title_th;
                             break;
                         case "TITLE_SV":
-                            //[-] obj = ecuVariant.Title_sv;
-                            //[+] obj = ecuVariant.EcuTranslation.TextSv;
-                            obj = ecuVariant.EcuTranslation.TextSv;
+                            obj = ecuVariant.Title_sv;
                             break;
                         case "TITLE_IT":
-                            //[-] obj = ecuVariant.Title_it;
-                            //[+] obj = ecuVariant.EcuTranslation.TextIt;
-                            obj = ecuVariant.EcuTranslation.TextIt;
+                            obj = ecuVariant.Title_it;
                             break;
                         case "TITLE_ES":
-                            //[-] obj = ecuVariant.Title_es;
-                            //[+] obj = ecuVariant.EcuTranslation.TextEs;
-                            obj = ecuVariant.EcuTranslation.TextEs;
+                            obj = ecuVariant.Title_es;
                             break;
                         case "TITLE_ID":
-                            //[-] obj = ecuVariant.Title_id;
-                            //[+] obj = ecuVariant.EcuTranslation.TextId;
-                            obj = ecuVariant.EcuTranslation.TextId;
+                            obj = ecuVariant.Title_id;
                             break;
                         case "TITLE_KO":
-                            //[-] obj = ecuVariant.Title_ko;
-                            //[+] obj = ecuVariant.EcuTranslation.TextKo;
-                            obj = ecuVariant.EcuTranslation.TextKo;
+                            obj = ecuVariant.Title_ko;
                             break;
                         case "TITLE_EL":
-                            //[-] obj = ecuVariant.Title_el;
-                            //[+] obj = ecuVariant.EcuTranslation.TextEl;
-                            obj = ecuVariant.EcuTranslation.TextEl;
+                            obj = ecuVariant.Title_el;
                             break;
                         case "TITLE_TR":
-                            //[-] obj = ecuVariant.Title_tr;
-                            //[+] obj = ecuVariant.EcuTranslation.TextTr;
-                            obj = ecuVariant.EcuTranslation.TextTr;
+                            obj = ecuVariant.Title_tr;
                             break;
                         case "TITLE_ZHCN":
-                            //[-] obj = ecuVariant.Title_zhcn;
-                            //[+] obj = ecuVariant.EcuTranslation.TextZh;
-                            obj = ecuVariant.EcuTranslation.TextZh;
+                            obj = ecuVariant.Title_zhcn;
                             break;
                         case "TITLE_RU":
-                            //[-] obj = ecuVariant.Title_ru;
-                            //[+] obj = ecuVariant.EcuTranslation.TextRu;
-                            obj = ecuVariant.EcuTranslation.TextRu;
+                            obj = ecuVariant.Title_ru;
                             break;
                         case "TITLE_NL":
-                            //[-] obj = ecuVariant.Title_nl;
-                            //[+] obj = ecuVariant.EcuTranslation.TextNl;
-                            obj = ecuVariant.EcuTranslation.TextNl;
+                            obj = ecuVariant.Title_nl;
                             break;
                         case "TITLE_PT":
-                            //[-] obj = ecuVariant.Title_pt;
-                            //[+] obj = ecuVariant.EcuTranslation.TextPt;
-                            obj = ecuVariant.EcuTranslation.TextPt;
+                            obj = ecuVariant.Title_pt;
                             break;
                         case "TITLE_ZHTW":
-                            //[-] obj = ecuVariant.Title_zhtw;
-                            //[+] obj = ecuVariant.EcuTranslation.TextZh;
-                            obj = ecuVariant.EcuTranslation.TextZh;
+                            obj = ecuVariant.Title_zhtw;
                             break;
                         case "TITLE_JA":
-                            //[-] obj = ecuVariant.Title_ja;
-                            //[+] obj = ecuVariant.EcuTranslation.TextJa;
-                            obj = ecuVariant.EcuTranslation.TextJa;
+                            obj = ecuVariant.Title_ja;
                             break;
                         case "TITLE_CSCZ":
-                            //[-] obj = ecuVariant.Title_cscz;
-                            //[+] obj = ecuVariant.EcuTranslation.TextCs;
-                            obj = ecuVariant.EcuTranslation.TextCs;
+                            obj = ecuVariant.Title_cscz;
                             break;
                         case "TITLE_PLPL":
-                            //[-] obj = ecuVariant.Title_plpl;
-                            //[+] obj = ecuVariant.EcuTranslation.TextPl;
-                            obj = ecuVariant.EcuTranslation.TextPl;
+                            obj = ecuVariant.Title_plpl;
                             break;
                         case "FAULTMEMORYDELETEWAITINGTIME":
-                            //[-] obj = ecuVariant.FaultMemoryDeleteWaitingTime;
-                            //[+] obj = ecuVariant.FaultMemDelWaitTime;
-                            obj = ecuVariant.FaultMemDelWaitTime;
+                            obj = ecuVariant.FaultMemoryDeleteWaitingTime;
                             break;
                         case "NAME":
                             obj = ecuVariant.Name;
@@ -469,24 +356,16 @@ namespace PsdzClient.Core
                             obj = ecuVariant.Sort;
                             break;
                         case "VALIDFROM":
-                            //[-] obj = ecuVariant.ValidFrom.HasValue;
-                            //[+] obj = !string.IsNullOrEmpty(ecuVariant.ValidFrom);
-                            obj = !string.IsNullOrEmpty(ecuVariant.ValidFrom);
+                            obj = ecuVariant.ValidFrom.HasValue;
                             break;
                         case "VALIDTO":
-                            //[-] obj = ecuVariant.ValidTo.HasValue;
-                            //[+] obj = !string.IsNullOrEmpty(ecuVariant.ValidTo);
-                            obj = !string.IsNullOrEmpty(ecuVariant.ValidTo);
+                            obj = ecuVariant.ValidTo.HasValue;
                             break;
                         case "SICHERHEITSRELEVANT":
-                            //[-] obj = ecuVariant.Sicherheitsrelevant;
-                            //[+] obj = ecuVariant.SafetyRelevant;
-                            obj = ecuVariant.SafetyRelevant;
+                            obj = ecuVariant.Sicherheitsrelevant;
                             break;
                         case "TITLE":
-                            //[-] obj = ecuVariant.Title;
-                            //[+] obj = ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
-                            obj = ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
+                            obj = ecuVariant.Title;
                             break;
                     }
                     if (obj != null)
