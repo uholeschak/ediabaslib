@@ -14,7 +14,7 @@ namespace PsdzClient.Core
 {
     public class EcuVariantLocator : IEcuVariantLocator, ISPELocator
     {
-        private readonly XEP_ECUVARIANTS ecuVariant;
+        private readonly IXepEcuVariants ecuVariant;
         private readonly ISPELocator[] children;
         private ISPELocator[] parents;
         private readonly Vehicle vecInfo;
@@ -38,6 +38,7 @@ namespace PsdzClient.Core
                 {
                     return parents;
                 }
+
                 List<ISPELocator> list = new List<ISPELocator>();
                 if (ecuVariant.EcuGroupId.HasValue)
                 {
@@ -123,6 +124,7 @@ namespace PsdzClient.Core
             {
                 return new EcuVariantLocator(ecuVariantByName, vecInfo, ffmResolver);
             }
+
             return null;
         }
 
@@ -151,6 +153,7 @@ namespace PsdzClient.Core
             {
                 return null;
             }
+
             switch (name.ToUpperInvariant())
             {
                 case "ID":
@@ -368,6 +371,7 @@ namespace PsdzClient.Core
                             obj = ecuVariant.Title;
                             break;
                     }
+
                     if (obj != null)
                     {
                         return (T)Convert.ChangeType(obj, typeof(T));
@@ -378,6 +382,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("EcuVariantLocator.GetDataValue<T>()", exception);
             }
+
             return default(T);
         }
     }
