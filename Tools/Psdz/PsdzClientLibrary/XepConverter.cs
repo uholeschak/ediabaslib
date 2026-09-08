@@ -177,6 +177,36 @@ public static class XepConverter
         return xepEcuProgrammingVariantList;
     }
 
+    public static XEP_ECUCLIQUES Convert(PsdzDatabase.EcuClique ecuClique)
+    {
+        if (ecuClique == null)
+        {
+            return null;
+        }
+
+        XEP_ECUCLIQUES xepEcuClique = new XEP_ECUCLIQUES();
+        xepEcuClique.ID = ecuClique.Id.ConvertToInt();
+        xepEcuClique.CLIQUENKURZBEZEICHNUNG = ecuClique.CliqueName;
+        xepEcuClique.ECUREPID = ecuClique.EcuRepId.ConvertToInt();
+        CopyEcuTranslation(ecuClique.EcuTranslation, xepEcuClique);
+        return xepEcuClique;
+    }
+
+    public static List<XEP_ECUCLIQUES> Convert(List<PsdzDatabase.EcuClique> ecuCliqueList)
+    {
+        if (ecuCliqueList == null)
+        {
+            return null;
+        }
+
+        List<XEP_ECUCLIQUES> xepEcuCliqueList = new List<XEP_ECUCLIQUES>();
+        foreach (PsdzDatabase.EcuClique ecuClique in ecuCliqueList)
+        {
+            xepEcuCliqueList.Add(Convert(ecuClique));
+        }
+        return xepEcuCliqueList;
+    }
+
     // Property names are taken via nameof from a reference type declaring all of them,
     // so typos and renames are detected by the compiler.
     private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =
