@@ -21,6 +21,7 @@ public static class XepConverter
         xepSaLaPa.Id = saLaPa.Id.ConvertToInt();
         xepSaLaPa.Name = saLaPa.Name;
         xepSaLaPa.ProductType = saLaPa.ProductType;
+
         xepSaLaPa.Title_dede = saLaPa.EcuTranslation.TextDe;
         xepSaLaPa.Title_engb = saLaPa.EcuTranslation.TextEn;
         xepSaLaPa.Title_enus = saLaPa.EcuTranslation.TextUs;
@@ -94,6 +95,62 @@ public static class XepConverter
             xepEcuGroupList.Add(Convert(ecuGroup));
         }
         return xepEcuGroupList;
+    }
+
+    public static XEP_ECUVARIANTS Convert(PsdzDatabase.EcuVar ecuVar)
+    {
+        if (ecuVar == null)
+        {
+            return null;
+        }
+
+        XEP_ECUVARIANTS xepEcuVariant = new XEP_ECUVARIANTS();
+        xepEcuVariant.Id = ecuVar.Id.ConvertToInt();
+        xepEcuVariant.FaultMemoryDeleteWaitingTime = ecuVar.FaultMemDelWaitTime.ConvertToInt();
+        xepEcuVariant.Name = ecuVar.Name;
+        xepEcuVariant.EcuGroupId = ecuVar.EcuGroupId.ConvertToInt();
+        xepEcuVariant.ValidFrom = ConvertToDateTime(ecuVar.ValidFrom);
+        xepEcuVariant.ValidTo = ConvertToDateTime(ecuVar.ValidTo);
+        xepEcuVariant.Sicherheitsrelevant = ecuVar.SafetyRelevant.ConvertToInt();
+        xepEcuVariant.EcuGroupId = ecuVar.EcuGroupId.ConvertToInt();
+        xepEcuVariant.Sort = ecuVar.Sort.ConvertToInt();
+
+        xepEcuVariant.Title_dede = ecuVar.EcuTranslation.TextDe;
+        xepEcuVariant.Title_engb = ecuVar.EcuTranslation.TextEn;
+        xepEcuVariant.Title_enus = ecuVar.EcuTranslation.TextUs;
+        xepEcuVariant.Title_fr = ecuVar.EcuTranslation.TextFr;
+        xepEcuVariant.Title_th = ecuVar.EcuTranslation.TextTh;
+        xepEcuVariant.Title_sv = ecuVar.EcuTranslation.TextSv;
+        xepEcuVariant.Title_it = ecuVar.EcuTranslation.TextIt;
+        xepEcuVariant.Title_es = ecuVar.EcuTranslation.TextEs;
+        xepEcuVariant.Title_id = ecuVar.EcuTranslation.TextId;
+        xepEcuVariant.Title_ko = ecuVar.EcuTranslation.TextKo;
+        xepEcuVariant.Title_el = ecuVar.EcuTranslation.TextEl;
+        xepEcuVariant.Title_tr = ecuVar.EcuTranslation.TextTr;
+        xepEcuVariant.Title_zhcn = ecuVar.EcuTranslation.TextZh;
+        xepEcuVariant.Title_zhtw = ecuVar.EcuTranslation.TextZh;
+        xepEcuVariant.Title_ru = ecuVar.EcuTranslation.TextRu;
+        xepEcuVariant.Title_nl = ecuVar.EcuTranslation.TextNl;
+        xepEcuVariant.Title_pt = ecuVar.EcuTranslation.TextPt;
+        xepEcuVariant.Title_ja = ecuVar.EcuTranslation.TextJa;
+        xepEcuVariant.Title_cscz = ecuVar.EcuTranslation.TextCs;
+        xepEcuVariant.Title_plpl = ecuVar.EcuTranslation.TextPl;
+        return xepEcuVariant;
+    }
+
+    public static List<XEP_ECUVARIANTS> Convert(List<PsdzDatabase.EcuVar> ecuVarList)
+    {
+        if (ecuVarList == null)
+        {
+            return null;
+        }
+
+        List<XEP_ECUVARIANTS> xepEcuVariantList = new List<XEP_ECUVARIANTS>();
+        foreach (PsdzDatabase.EcuVar ecuVar in ecuVarList)
+        {
+            xepEcuVariantList.Add(Convert(ecuVar));
+        }
+        return xepEcuVariantList;
     }
 
     private static DateTime ConvertToDateTime(string text, DateTime? defaultValue = null)
