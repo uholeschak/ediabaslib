@@ -2734,7 +2734,7 @@ namespace PsdzClient
                 return null;
             }
 
-            Equipment equipement = null;
+            Equipment equipment = null;
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + " FROM XEP_EQUIPMENT WHERE (ID = {0})", equipmentId);
@@ -2745,7 +2745,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            equipement = ReadXepEquipment(reader);
+                            equipment = ReadXepEquipment(reader);
                         }
                     }
                 }
@@ -2756,7 +2756,39 @@ namespace PsdzClient
                 return null;
             }
 
-            return equipement;
+            return equipment;
+        }
+
+        public Equipment GetEquipmentByName(string refText)
+        {
+            if (string.IsNullOrEmpty(refText))
+            {
+                return null;
+            }
+
+            Equipment equipment = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + " FROM XEP_EQUIPMENT WHERE (NAME = '{0}')", refText);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            equipment = ReadXepEquipment(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEquipmentByName Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return equipment;
         }
 
         public EcuClique GetEcuClique(string ecuCliqueId)

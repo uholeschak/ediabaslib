@@ -1288,10 +1288,12 @@ namespace BMW.Rheingold.CoreFramework
         public IEquipmentLocator __Equipment(string refText)
         {
             //[-] XEP_EQUIPMENT equipmentByName = DBProvider.GetEquipmentByName(refText);
-            //[-] if (equipmentByName != null)
-            //[-] {
-            //[-] return new EquipmentLocator(equipmentByName);
-            //[-] }
+            //[+] XEP_EQUIPMENT equipmentByName = XepConverter.Convert(DBProvider.GetEquipmentByName(refText));
+            XEP_EQUIPMENT equipmentByName = XepConverter.Convert(DBProvider.GetEquipmentByName(refText));
+            if (equipmentByName != null)
+            {
+                return new EquipmentLocator(equipmentByName);
+            }
             return null;
         }
 
