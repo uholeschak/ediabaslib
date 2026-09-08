@@ -4,6 +4,8 @@ using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace PsdzClientLibrary;
 
@@ -22,26 +24,7 @@ public static class XepConverter
         xepSaLaPa.Name = saLaPa.Name;
         xepSaLaPa.ProductType = saLaPa.ProductType;
 
-        xepSaLaPa.Title_dede = saLaPa.EcuTranslation.TextDe;
-        xepSaLaPa.Title_engb = saLaPa.EcuTranslation.TextEn;
-        xepSaLaPa.Title_enus = saLaPa.EcuTranslation.TextUs;
-        xepSaLaPa.Title_fr = saLaPa.EcuTranslation.TextFr;
-        xepSaLaPa.Title_th = saLaPa.EcuTranslation.TextTh;
-        xepSaLaPa.Title_sv = saLaPa.EcuTranslation.TextSv;
-        xepSaLaPa.Title_it = saLaPa.EcuTranslation.TextIt;
-        xepSaLaPa.Title_es = saLaPa.EcuTranslation.TextEs;
-        xepSaLaPa.Title_id = saLaPa.EcuTranslation.TextId;
-        xepSaLaPa.Title_ko = saLaPa.EcuTranslation.TextKo;
-        xepSaLaPa.Title_el = saLaPa.EcuTranslation.TextEl;
-        xepSaLaPa.Title_tr = saLaPa.EcuTranslation.TextTr;
-        xepSaLaPa.Title_zhcn = saLaPa.EcuTranslation.TextZh;
-        xepSaLaPa.Title_zhtw = saLaPa.EcuTranslation.TextZh;
-        xepSaLaPa.Title_ru = saLaPa.EcuTranslation.TextRu;
-        xepSaLaPa.Title_nl = saLaPa.EcuTranslation.TextNl;
-        xepSaLaPa.Title_pt = saLaPa.EcuTranslation.TextPt;
-        xepSaLaPa.Title_ja = saLaPa.EcuTranslation.TextJa;
-        xepSaLaPa.Title_cscz = saLaPa.EcuTranslation.TextCs;
-        xepSaLaPa.Title_plpl = saLaPa.EcuTranslation.TextPl;
+        CopyEcuTranslation(saLaPa.EcuTranslation, xepSaLaPa);
         return xepSaLaPa;
     }
 
@@ -115,26 +98,7 @@ public static class XepConverter
         xepEcuVariant.EcuGroupId = ecuVar.EcuGroupId.ConvertToInt();
         xepEcuVariant.Sort = ecuVar.Sort.ConvertToInt();
 
-        xepEcuVariant.Title_dede = ecuVar.EcuTranslation.TextDe;
-        xepEcuVariant.Title_engb = ecuVar.EcuTranslation.TextEn;
-        xepEcuVariant.Title_enus = ecuVar.EcuTranslation.TextUs;
-        xepEcuVariant.Title_fr = ecuVar.EcuTranslation.TextFr;
-        xepEcuVariant.Title_th = ecuVar.EcuTranslation.TextTh;
-        xepEcuVariant.Title_sv = ecuVar.EcuTranslation.TextSv;
-        xepEcuVariant.Title_it = ecuVar.EcuTranslation.TextIt;
-        xepEcuVariant.Title_es = ecuVar.EcuTranslation.TextEs;
-        xepEcuVariant.Title_id = ecuVar.EcuTranslation.TextId;
-        xepEcuVariant.Title_ko = ecuVar.EcuTranslation.TextKo;
-        xepEcuVariant.Title_el = ecuVar.EcuTranslation.TextEl;
-        xepEcuVariant.Title_tr = ecuVar.EcuTranslation.TextTr;
-        xepEcuVariant.Title_zhcn = ecuVar.EcuTranslation.TextZh;
-        xepEcuVariant.Title_zhtw = ecuVar.EcuTranslation.TextZh;
-        xepEcuVariant.Title_ru = ecuVar.EcuTranslation.TextRu;
-        xepEcuVariant.Title_nl = ecuVar.EcuTranslation.TextNl;
-        xepEcuVariant.Title_pt = ecuVar.EcuTranslation.TextPt;
-        xepEcuVariant.Title_ja = ecuVar.EcuTranslation.TextJa;
-        xepEcuVariant.Title_cscz = ecuVar.EcuTranslation.TextCs;
-        xepEcuVariant.Title_plpl = ecuVar.EcuTranslation.TextPl;
+        CopyEcuTranslation(ecuVar.EcuTranslation, xepEcuVariant);
         return xepEcuVariant;
     }
 
@@ -151,6 +115,81 @@ public static class XepConverter
             xepEcuVariantList.Add(Convert(ecuVar));
         }
         return xepEcuVariantList;
+    }
+
+    private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =
+    {
+        ("Title_dede", nameof(PsdzDatabase.EcuTranslation.TextDe)),
+        ("Title_engb", nameof(PsdzDatabase.EcuTranslation.TextEn)),
+        ("Title_enus", nameof(PsdzDatabase.EcuTranslation.TextUs)),
+        ("Title_fr", nameof(PsdzDatabase.EcuTranslation.TextFr)),
+        ("Title_th", nameof(PsdzDatabase.EcuTranslation.TextTh)),
+        ("Title_sv", nameof(PsdzDatabase.EcuTranslation.TextSv)),
+        ("Title_it", nameof(PsdzDatabase.EcuTranslation.TextIt)),
+        ("Title_es", nameof(PsdzDatabase.EcuTranslation.TextEs)),
+        ("Title_id", nameof(PsdzDatabase.EcuTranslation.TextId)),
+        ("Title_ko", nameof(PsdzDatabase.EcuTranslation.TextKo)),
+        ("Title_el", nameof(PsdzDatabase.EcuTranslation.TextEl)),
+        ("Title_tr", nameof(PsdzDatabase.EcuTranslation.TextTr)),
+        ("Title_zhcn", nameof(PsdzDatabase.EcuTranslation.TextZh)),
+        ("Title_zhtw", nameof(PsdzDatabase.EcuTranslation.TextZh)),
+        ("Title_ru", nameof(PsdzDatabase.EcuTranslation.TextRu)),
+        ("Title_nl", nameof(PsdzDatabase.EcuTranslation.TextNl)),
+        ("Title_pt", nameof(PsdzDatabase.EcuTranslation.TextPt)),
+        ("Title_ja", nameof(PsdzDatabase.EcuTranslation.TextJa)),
+        ("Title_cscz", nameof(PsdzDatabase.EcuTranslation.TextCs)),
+        ("Title_plpl", nameof(PsdzDatabase.EcuTranslation.TextPl)),
+    };
+
+    private static class TitleCopier<T> where T : class
+    {
+        // Built once per XEP type, then reused. Reflection is only used during construction.
+        internal static readonly Action<PsdzDatabase.EcuTranslation, T> Copy = BuildCopyAction();
+
+        private static Action<PsdzDatabase.EcuTranslation, T> BuildCopyAction()
+        {
+            Type translationType = typeof(PsdzDatabase.EcuTranslation);
+            ParameterExpression translationParam = Expression.Parameter(translationType, "ecuTranslation");
+            ParameterExpression targetParam = Expression.Parameter(typeof(T), "xepObject");
+            List<Expression> assignments = new List<Expression>();
+
+            foreach ((string titleName, string textName) in TitleMapping)
+            {
+                PropertyInfo titleProperty = typeof(T).GetProperty(titleName, BindingFlags.Public | BindingFlags.Instance);
+                if (titleProperty == null || !titleProperty.CanWrite || titleProperty.PropertyType != typeof(string))
+                {
+                    continue;
+                }
+
+                PropertyInfo textProperty = translationType.GetProperty(textName, BindingFlags.Public | BindingFlags.Instance);
+                if (textProperty == null || textProperty.PropertyType != typeof(string))
+                {
+                    continue;
+                }
+
+                assignments.Add(Expression.Assign(
+                    Expression.Property(targetParam, titleProperty),
+                    Expression.Property(translationParam, textProperty)));
+            }
+
+            if (assignments.Count == 0)
+            {
+                return (ecuTranslation, xepObject) => { };
+            }
+
+            return Expression.Lambda<Action<PsdzDatabase.EcuTranslation, T>>(
+                Expression.Block(assignments), translationParam, targetParam).Compile();
+        }
+    }
+
+    private static void CopyEcuTranslation<T>(PsdzDatabase.EcuTranslation ecuTranslation, T xepObject) where T : class
+    {
+        if (ecuTranslation == null || xepObject == null)
+        {
+            return;
+        }
+
+        TitleCopier<T>.Copy(ecuTranslation, xepObject);
     }
 
     private static DateTime ConvertToDateTime(string text, DateTime? defaultValue = null)
