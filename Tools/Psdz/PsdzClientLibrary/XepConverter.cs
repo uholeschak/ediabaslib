@@ -80,6 +80,35 @@ public static class XepConverter
         return xepEcuGroupList;
     }
 
+    public static XEP_EQUIPMENT Convert(PsdzDatabase.Equipment equipment)
+    {
+        if (equipment == null)
+        {
+            return null;
+        }
+
+        XEP_EQUIPMENT xepEquipment = new XEP_EQUIPMENT();
+        xepEquipment.ID = equipment.Id.ConvertToInt();
+        xepEquipment.NAME = equipment.Name;
+
+        CopyEcuTranslation(equipment.EcuTranslation, xepEquipment);
+        return xepEquipment;
+    }
+
+    public static List<XEP_EQUIPMENT> Convert(List<PsdzDatabase.Equipment> equipmentList)
+    {
+        if (equipmentList == null)
+        {
+            return null;
+        }
+        List<XEP_EQUIPMENT> xepEquipmentList = new List<XEP_EQUIPMENT>();
+        foreach (PsdzDatabase.Equipment equipment in equipmentList)
+        {
+            xepEquipmentList.Add(Convert(equipment));
+        }
+        return xepEquipmentList;
+    }
+
     public static XEP_ECUVARIANTS Convert(PsdzDatabase.EcuVar ecuVar)
     {
         if (ecuVar == null)
