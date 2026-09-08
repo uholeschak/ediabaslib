@@ -1501,10 +1501,12 @@ namespace BMW.Rheingold.CoreFramework
         public IEcuProgrammingVariantLocator __EcuProgrammingVariant(decimal ecuProgrammingVariantId)
         {
             //[-] XEP_ECUPROGRAMMINGVARIANT ecuProgrammingVariantById = DBProvider.GetEcuProgrammingVariantById(ecuProgrammingVariantId, Vehicle, FFMResolver);
-            //[-] if (ecuProgrammingVariantById != null)
-            //[-] {
-            //[-] return new EcuProgrammingVariantLocator(ecuProgrammingVariantById, Vehicle, FFMResolver);
-            //[-] }
+            //[+] XEP_ECUPROGRAMMINGVARIANT ecuProgrammingVariantById = XepConverter.Convert(DBProvider.GetEcuProgrammingVariantById(ecuProgrammingVariantId.ToString(CultureInfo.InvariantCulture), Vehicle, FFMResolver));
+            XEP_ECUPROGRAMMINGVARIANT ecuProgrammingVariantById = XepConverter.Convert(DBProvider.GetEcuProgrammingVariantById(ecuProgrammingVariantId.ToString(CultureInfo.InvariantCulture), Vehicle, FFMResolver));
+            if (ecuProgrammingVariantById != null)
+            {
+                //[-] return new EcuProgrammingVariantLocator(ecuProgrammingVariantById, Vehicle, FFMResolver);
+            }
             return null;
         }
 

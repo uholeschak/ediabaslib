@@ -117,6 +117,37 @@ public static class XepConverter
         return xepEcuVariantList;
     }
 
+    public static XEP_ECUPROGRAMMINGVARIANT Convert(PsdzDatabase.EcuPrgVar ecuPrgVar)
+    {
+        if (ecuPrgVar == null)
+        {
+            return null;
+        }
+
+        XEP_ECUPROGRAMMINGVARIANT xepEcuProgrammingVariant = new XEP_ECUPROGRAMMINGVARIANT();
+        xepEcuProgrammingVariant.Id = ecuPrgVar.Id.ConvertToInt();
+        xepEcuProgrammingVariant.Name = ecuPrgVar.Name;
+        xepEcuProgrammingVariant.FlashLimit = ecuPrgVar.FlashLimit.ConvertToInt();
+        xepEcuProgrammingVariant.EcuVariantId = ecuPrgVar.EcuVarId.ConvertToInt();
+
+        return xepEcuProgrammingVariant;
+    }
+
+    public static List<XEP_ECUPROGRAMMINGVARIANT> Convert(List<PsdzDatabase.EcuPrgVar> ecuPrgVarList)
+    {
+        if (ecuPrgVarList == null)
+        {
+            return null;
+        }
+
+        List<XEP_ECUPROGRAMMINGVARIANT> xepEcuProgrammingVariantList = new List<XEP_ECUPROGRAMMINGVARIANT>();
+        foreach (PsdzDatabase.EcuPrgVar ecuPrgVar in ecuPrgVarList)
+        {
+            xepEcuProgrammingVariantList.Add(Convert(ecuPrgVar));
+        }
+        return xepEcuProgrammingVariantList;
+    }
+
     // Property names are taken via nameof from a reference type declaring all of them,
     // so typos and renames are detected by the compiler.
     private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =
