@@ -25,8 +25,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (!string.IsNullOrEmpty(characteristicsContainer.NodeClass))
                 {
                     //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(characteristicsContainer.Nodeclass.Value);
-                    //[+] return clientContext?.Database?.GetNodeClassNameById(characteristicsContainer.NodeClass);
-                    return clientContext?.Database?.GetNodeClassNameById(characteristicsContainer.NodeClass);
+                    //[+] return clientContext?.Database?.GetXepNodeClassNameById(characteristicsContainer.NodeClass);
+                    return clientContext?.Database?.GetXepNodeClassNameById(characteristicsContainer.NodeClass);
                 }
 
                 return string.Empty;

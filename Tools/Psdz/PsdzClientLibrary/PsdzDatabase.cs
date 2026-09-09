@@ -1766,9 +1766,9 @@ namespace PsdzClient
             return true;
         }
 
-        public string GetNodeClassNameById(string nodeClassId)
+        public string GetXepNodeClassNameById(string nodeClassId)
         {
-            return DatabaseFunctions.GetNodeClassNameById(_mDbConnection, nodeClassId);
+            return DatabaseFunctions.GetXepNodeClassNameById(_mDbConnection, nodeClassId);
         }
 
         public List<LocalizedText> GetTextCollectionById(string id, IList<string> lang = null)
