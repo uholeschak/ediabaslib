@@ -60,8 +60,8 @@ namespace PsdzClient.Core
                 //[-] bool flag2 = new RuleEvaluationUtill(ruleEvaluationServices, dataProvider, dealer).EvaluateSingleRuleExpression(vec, value, ffmResolver);
                 //[+] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
                 RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
-                //[+] bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value.ToString(CultureInfo.InvariantCulture), ffmResolver);
-                bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value.ToString(CultureInfo.InvariantCulture), ffmResolver);
+                //[+] bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value, ffmResolver);
+                bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value, ffmResolver);
                 logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.NAME, value, flag2);
                 if ((ffmResolver != null) & flag2)
                 {

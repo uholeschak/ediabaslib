@@ -220,14 +220,6 @@ namespace PsdzClient.Core
             stopRuleMetrics?.Invoke();
         }
 
-        [PreserveSource(Hint = "ruleId as string", Added = true)]
-        internal bool EvaluateSingleRuleExpression(Vehicle vehicle, string ruleId, IFFMDynamicResolver ffmResolver)
-        {
-            //[-] return !RetrieveNotValidRulesIds(new Dictionary<decimal, decimal?> { { ruleId, null } }, vehicle, ffmResolver).Any();
-            //[+] return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
-            return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
-        }
-
         [PreserveSource(Added = true)]
         private readonly PsdzDatabase database;
     }
