@@ -159,14 +159,14 @@ public static class XepConverter
         return xepEcuVariant;
     }
 
-    public static List<XEP_ECUVARIANTS> Convert(List<PsdzDatabase.EcuVar> ecuVarList)
+    public static List<IXepEcuVariants> Convert(List<PsdzDatabase.EcuVar> ecuVarList)
     {
         if (ecuVarList == null)
         {
             return null;
         }
 
-        List<XEP_ECUVARIANTS> xepEcuVariantList = new List<XEP_ECUVARIANTS>();
+        List<IXepEcuVariants> xepEcuVariantList = new List<IXepEcuVariants>();
         foreach (PsdzDatabase.EcuVar ecuVar in ecuVarList)
         {
             xepEcuVariantList.Add(Convert(ecuVar));
