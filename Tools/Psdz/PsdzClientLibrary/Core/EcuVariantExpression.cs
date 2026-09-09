@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -45,8 +46,8 @@ namespace PsdzClient.Core
             //[+] }
             }
             //[-] IXepEcuVariants ecuVariantById = dataProvider.GetEcuVariantById(value);
-            //[+] PsdzDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(value.ToString(CultureInfo.InvariantCulture));
-            PsdzDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(value.ToString(CultureInfo.InvariantCulture));
+            //[+] IXepEcuVariants ecuVariantById = XepConverter.Convert(database.GetEcuVariantById(value.ToString(CultureInfo.InvariantCulture)));
+            IXepEcuVariants ecuVariantById = XepConverter.Convert(database.GetEcuVariantById(value.ToString(CultureInfo.InvariantCulture)));
             if (ecuVariantById == null)
             {
                 ruleEvaluationServices.Logger.Warning("EcuVariantExpression.Evaluate()", "no valid variant information found for id: {0}", value);
@@ -61,8 +62,8 @@ namespace PsdzClient.Core
                 if (ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVariantById.Id, ffmResolver))
                 {
                     //[-] IXepEcuGroups ecuGroupById = dataProvider.GetEcuGroupById(ecuVariantById.EcuGroupId.Value);
-                    //[+] PsdzDatabase.EcuGroup ecuGroupById = database.GetEcuGroupById(ecuVariantById.EcuGroupId);
-                    PsdzDatabase.EcuGroup ecuGroupById = database.GetEcuGroupById(ecuVariantById.EcuGroupId);
+                    //[+] IXepEcuGroups ecuGroupById = XepConverter.Convert(database.GetEcuGroupById(ecuVariantById.EcuGroupId?.ToString(CultureInfo.InvariantCulture)));
+                    IXepEcuGroups ecuGroupById = XepConverter.Convert(database.GetEcuGroupById(ecuVariantById.EcuGroupId?.ToString(CultureInfo.InvariantCulture)));
                     if (ecuGroupById != null)
                     {
                         if (ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuGroupById.Id, ffmResolver))
