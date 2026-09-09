@@ -390,7 +390,7 @@ public static class XepConverter
 
             foreach ((string titleName, string textName) in TitleMapping)
             {
-                PropertyInfo titleProperty = typeof(T).GetProperty(titleName, BindingFlags.Public | BindingFlags.Instance);
+                PropertyInfo titleProperty = FindTitleProperty(titleName);
                 if (titleProperty == null || !titleProperty.CanWrite || titleProperty.PropertyType != typeof(string))
                 {
                     continue;
@@ -414,6 +414,26 @@ public static class XepConverter
 
             return Expression.Lambda<Action<PsdzDatabase.EcuTranslation, T>>(
                 Expression.Block(assignments), translationParam, targetParam).Compile();
+        }
+
+        // Some XEP classes declare the title properties in upper case (e.g. TITLE_DEDE instead of Title_dede).
+        private static PropertyInfo FindTitleProperty(string titleName)
+        {
+            PropertyInfo titleProperty = typeof(T).GetProperty(titleName, BindingFlags.Public | BindingFlags.Instance);
+            if (titleProperty != null)
+            {
+                return titleProperty;
+            }
+
+            foreach (PropertyInfo property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (string.Equals(property.Name, titleName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return property;
+                }
+            }
+
+            return null;
         }
     }
 
