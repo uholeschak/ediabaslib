@@ -235,6 +235,33 @@ public static class XepConverter
         return xepEcuCliqueList;
     }
 
+    public static XEP_REFECUCLIQUES Convert(PsdzDatabase.EcuRefClique refEcuCliques)
+    {
+        if (refEcuCliques == null)
+        {
+            return null;
+        }
+
+        XEP_REFECUCLIQUES xepRefEcuCliques = new XEP_REFECUCLIQUES();
+        xepRefEcuCliques.ID = refEcuCliques.Id.ConvertToInt();
+        xepRefEcuCliques.ECUCLIQUEID = refEcuCliques.EcuCliqueId.ConvertToInt();
+        return xepRefEcuCliques;
+    }
+
+    public static List<XEP_REFECUCLIQUES> Convert(List<PsdzDatabase.EcuRefClique> refEcuCliquesList)
+    {
+        if (refEcuCliquesList == null)
+        {
+            return null;
+        }
+        List<XEP_REFECUCLIQUES> xepRefEcuCliquesList = new List<XEP_REFECUCLIQUES>();
+        foreach (PsdzDatabase.EcuRefClique refEcuCliques in refEcuCliquesList)
+        {
+            xepRefEcuCliquesList.Add(Convert(refEcuCliques));
+        }
+        return xepRefEcuCliquesList;
+    }
+
     public static XEP_SWIREGISTER Convert(PsdzDatabase.SwiRegister swiRegister)
     {
         if (swiRegister == null)
