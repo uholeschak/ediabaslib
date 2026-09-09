@@ -79,14 +79,6 @@ namespace PsdzClient.Core
             return database.EvaluateXepRulesById(ruleId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, null);
         }
 
-        [PreserveSource(Hint = "ruleId as string", Added = true)]
-        internal bool EvaluateSingleRuleExpression(Vehicle vehicle, string ruleId, IFFMDynamicResolver ffmResolver)
-        {
-            //[-] return !RetrieveNotValidRulesIds(new Dictionary<decimal, decimal?> { { ruleId, null } }, vehicle, ffmResolver).Any();
-            //[+] return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
-            return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
-        }
-
         private void UpdateRuleSetsFromCachedRuleExpressions(IDictionary<decimal, decimal?> rules)
         {
             if (!rulesToEvaluate.Any())
@@ -226,6 +218,14 @@ namespace PsdzClient.Core
             }
 
             stopRuleMetrics?.Invoke();
+        }
+
+        [PreserveSource(Hint = "ruleId as string", Added = true)]
+        internal bool EvaluateSingleRuleExpression(Vehicle vehicle, string ruleId, IFFMDynamicResolver ffmResolver)
+        {
+            //[-] return !RetrieveNotValidRulesIds(new Dictionary<decimal, decimal?> { { ruleId, null } }, vehicle, ffmResolver).Any();
+            //[+] return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
+            return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
         }
 
         [PreserveSource(Added = true)]
