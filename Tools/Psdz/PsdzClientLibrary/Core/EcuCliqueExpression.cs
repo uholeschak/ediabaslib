@@ -1,7 +1,11 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using PsdzClient;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;
+using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,7 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Globalization;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClient.Core
 {
@@ -41,8 +44,8 @@ namespace PsdzClient.Core
             //[+] }
             }
 
-            //[+] PsdzDatabase.EcuClique ecuClique = database.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));
-            PsdzDatabase.EcuClique ecuClique = database.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));
+            //[+] IXepEcuCliques ecuClique = XepConverter.Convert(database.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture)));
+            IXepEcuCliques ecuClique = XepConverter.Convert(database.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture)));
             if (vec == null)
             {
                 return false;
@@ -54,53 +57,37 @@ namespace PsdzClient.Core
             }
 
             //[-] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, dataProvider, dealer);
-            //[-] if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuClique.ID, ffmResolver))
             //[+] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
             RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
-            //[+] if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuClique.Id, ffmResolver))
-            if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuClique.Id, ffmResolver))
+            if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuClique.ID, ffmResolver))
             {
                 return false;
             }
 
             //[-] ICollection<IXepEcuVariants> ecuVariantsByEcuCliquesId = dataProvider.GetEcuVariantsByEcuCliquesId(ecuClique.ID);
-            //[+] List<PsdzDatabase.EcuVar> ecuVariantsByEcuCliquesId = database.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
-            List<PsdzDatabase.EcuVar> ecuVariantsByEcuCliquesId = database.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
+            //[+] ICollection<IXepEcuVariants> ecuVariantsByEcuCliquesId = XepConverter.Convert(database.GetEcuVariantsByEcuCliquesId(ecuClique.ID.ToString(CultureInfo.InvariantCulture)));
+            ICollection<IXepEcuVariants> ecuVariantsByEcuCliquesId = XepConverter.Convert(database.GetEcuVariantsByEcuCliquesId(ecuClique.ID.ToString(CultureInfo.InvariantCulture)));
             if (ecuVariantsByEcuCliquesId == null || ecuVariantsByEcuCliquesId.Count == 0)
             {
-                //[-] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Unable to find ECU variants for ECU clique id: {0}", ecuClique.ID);
-                //[+] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Unable to find ECU variants for ECU clique id: {0}", ecuClique.Id);
-                ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Unable to find ECU variants for ECU clique id: {0}", ecuClique.Id);
+                ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Unable to find ECU variants for ECU clique id: {0}", ecuClique.ID);
                 return false;
             }
 
             if (vec.VCI != null && vec.VCI.VCIType == VCIDeviceType.INFOSESSION && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && (vec.ECU == null || (vec.ECU != null && !vec.ECU.Any()))) || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
             {
-                //[-] foreach (IXepEcuVariants item in ecuVariantsByEcuCliquesId)
-                //[+] foreach (PsdzDatabase.EcuVar item in ecuVariantsByEcuCliquesId)
-                foreach (PsdzDatabase.EcuVar item in ecuVariantsByEcuCliquesId)
+                foreach (IXepEcuVariants item in ecuVariantsByEcuCliquesId)
                 {
                     flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.Id, ffmResolver);
-                    //[-] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CLIQUENKURZBEZEICHNUNG, vec.VehicleIdentLevel, flag);
-                    //[-] if (!flag || !item.EcuGroupId.HasValue)
-                    //[+] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CliqueName, vec.VehicleIdentLevel, flag);
-                    ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CliqueName, vec.VehicleIdentLevel, flag);
-                    //[+] if (!flag)
-                    if (!flag)
+                    ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CLIQUENKURZBEZEICHNUNG, vec.VehicleIdentLevel, flag);
+                    if (!flag || !item.EcuGroupId.HasValue)
                     {
                         continue;
                     }
 
-                    //[-] decimal? ecuGroupId = item.EcuGroupId;
-                    //[-] if ((ecuGroupId.GetValueOrDefault() > 0m) & ecuGroupId.HasValue)
-                    //[+] if (!string.IsNullOrEmpty(item.EcuGroupId))
-                    if (!string.IsNullOrEmpty(item.EcuGroupId))
+                    decimal? ecuGroupId = item.EcuGroupId;
+                    if ((ecuGroupId.GetValueOrDefault() > 0m) & ecuGroupId.HasValue)
                     {
-                            //[-] flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId.Value, ffmResolver);
-                            //[-] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", item.Name, item.EcuGroupId, flag);
-                            //[+] flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId, ffmResolver);
-                            flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId, ffmResolver);
-                        //[+] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", item.Name, item.EcuGroupId, flag);
+                        flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId.Value, ffmResolver);
                         ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", item.Name, item.EcuGroupId, flag);
                         if (flag)
                         {
@@ -109,15 +96,11 @@ namespace PsdzClient.Core
                     }
                 }
 
-                //[-](0) ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CLIQUENKURZBEZEICHNUNG, flag, value);
-                //[+](0) ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
-                ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
+                ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CLIQUENKURZBEZEICHNUNG, flag, value);
                 return flag;
             }
 
-            //[-] foreach (IXepEcuVariants item2 in ecuVariantsByEcuCliquesId)
-            //[+] foreach (PsdzDatabase.EcuVar item2 in ecuVariantsByEcuCliquesId)
-            foreach (PsdzDatabase.EcuVar item2 in ecuVariantsByEcuCliquesId)
+            foreach (IXepEcuVariants item2 in ecuVariantsByEcuCliquesId)
             {
                 flag = VehicleHelper.GetECUbyECU_SGBD(vec, item2.Name) != null;
                 if (flag)
@@ -126,9 +109,7 @@ namespace PsdzClient.Core
                 }
             }
 
-            //[-](1) ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CLIQUENKURZBEZEICHNUNG, flag, value);
-            //[+](1) ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
-            ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
+            ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CLIQUENKURZBEZEICHNUNG, flag, value);
             return flag;
         }
 

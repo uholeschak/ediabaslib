@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Globalization;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
@@ -70,7 +71,15 @@ namespace PsdzClient.Core
             return notValidRulesIds;
         }
 
-        [PreserveSource(Hint = "ruleId as string", SignatureModified = true)]
+        [PreserveSource(Hint = "Vehicle type changed", SignatureModified = true)]
+        internal bool EvaluateSingleRuleExpression(Vehicle vehicle, decimal ruleId, IFFMDynamicResolver ffmResolver)
+        {
+            //[-] return !RetrieveNotValidRulesIds(new Dictionary<decimal, decimal?> { { ruleId, null } }, vehicle, ffmResolver).Any();
+            //[+] return database.EvaluateXepRulesById(ruleId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, null);
+            return database.EvaluateXepRulesById(ruleId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, null);
+        }
+
+        [PreserveSource(Hint = "ruleId as string", Added = true)]
         internal bool EvaluateSingleRuleExpression(Vehicle vehicle, string ruleId, IFFMDynamicResolver ffmResolver)
         {
             //[-] return !RetrieveNotValidRulesIds(new Dictionary<decimal, decimal?> { { ruleId, null } }, vehicle, ffmResolver).Any();
