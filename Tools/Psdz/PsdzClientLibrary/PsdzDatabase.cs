@@ -512,9 +512,9 @@ namespace PsdzClient
             }
         }
 
-        public class EcuRefClique
+        public class RefEcuClique
         {
-            public EcuRefClique(string id, string ecuCliqueId)
+            public RefEcuClique(string id, string ecuCliqueId)
             {
                 Id = id;
                 EcuCliqueId = ecuCliqueId;
@@ -529,7 +529,7 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, CliqueId={1}", Id, EcuCliqueId));
+                    "RefEcuClique: Id={0}, CliqueId={1}", Id, EcuCliqueId));
                 return sb.ToString();
             }
         }
@@ -2823,14 +2823,14 @@ namespace PsdzClient
             return ecuClique;
         }
 
-        public EcuRefClique GetRefEcuCliqueById(string ecuRefId)
+        public RefEcuClique GetRefEcuCliqueById(string ecuRefId)
         {
             if (string.IsNullOrEmpty(ecuRefId))
             {
                 return null;
             }
 
-            EcuRefClique ecuRefClique = null;
+            RefEcuClique ecuRefClique = null;
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ECUCLIQUEID FROM XEP_REFECUCLIQUES WHERE (ID = {0})", ecuRefId);
@@ -2841,7 +2841,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            ecuRefClique = ReadXepEcuRefClique(reader);
+                            ecuRefClique = ReadXepRefEcuClique(reader);
                         }
                     }
                 }
@@ -2862,7 +2862,7 @@ namespace PsdzClient
                 return null;
             }
 
-            EcuRefClique ecuRefClique = GetRefEcuCliqueById(ecuVar.Id);
+            RefEcuClique ecuRefClique = GetRefEcuCliqueById(ecuVar.Id);
             if (ecuRefClique == null)
             {
                 return null;
@@ -5681,11 +5681,11 @@ namespace PsdzClient
             return new EcuClique(id, cliqueName, ecuRepId, GetTranslation(reader));
         }
 
-        private static EcuRefClique ReadXepEcuRefClique(SqliteDataReader reader)
+        private static RefEcuClique ReadXepRefEcuClique(SqliteDataReader reader)
         {
             string id = reader["ID"].ToString()?.Trim();
             string ecuCliqueId = reader["ECUCLIQUEID"].ToString()?.Trim();
-            return new EcuRefClique(id, ecuCliqueId);
+            return new RefEcuClique(id, ecuCliqueId);
         }
 
         private static CharacteristicRoots ReadXepCharacteristicRoots(SqliteDataReader reader)

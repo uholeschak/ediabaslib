@@ -235,7 +235,7 @@ public static class XepConverter
         return xepEcuCliqueList;
     }
 
-    public static XEP_REFECUCLIQUES Convert(PsdzDatabase.EcuRefClique refEcuCliques)
+    public static XEP_REFECUCLIQUES Convert(PsdzDatabase.RefEcuClique refEcuCliques)
     {
         if (refEcuCliques == null)
         {
@@ -248,14 +248,14 @@ public static class XepConverter
         return xepRefEcuCliques;
     }
 
-    public static List<XEP_REFECUCLIQUES> Convert(List<PsdzDatabase.EcuRefClique> refEcuCliquesList)
+    public static List<XEP_REFECUCLIQUES> Convert(List<PsdzDatabase.RefEcuClique> refEcuCliquesList)
     {
         if (refEcuCliquesList == null)
         {
             return null;
         }
         List<XEP_REFECUCLIQUES> xepRefEcuCliquesList = new List<XEP_REFECUCLIQUES>();
-        foreach (PsdzDatabase.EcuRefClique refEcuCliques in refEcuCliquesList)
+        foreach (PsdzDatabase.RefEcuClique refEcuCliques in refEcuCliquesList)
         {
             xepRefEcuCliquesList.Add(Convert(refEcuCliques));
         }
