@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using PsdzClientLibrary;
 
 namespace BMW.Rheingold.CoreFramework
 {
@@ -355,8 +356,8 @@ namespace BMW.Rheingold.CoreFramework
                 if (ffmResolver != null)
                 {
                     //[-] ICollection<IXepInfoObject> infoObjectsByDiagObjectControlId = DatabaseProviderFactory.Instance.GetInfoObjectsByDiagObjectControlId(equipment.SignedId, vehicle, ffmResolver, getHidden: true);
-                    //[+] List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = ClientContext.GetClientContext(vehicle)?.Database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true);
-                    List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = ClientContext.GetClientContext(vehicle)?.Database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true);
+                    //[+] ICollection<IXepInfoObject> infoObjectsByDiagObjectControlId = XepConverter.Convert(ClientContext.GetClientContext(vehicle)?.Database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true));
+                    ICollection<IXepInfoObject> infoObjectsByDiagObjectControlId = XepConverter.Convert(ClientContext.GetClientContext(vehicle)?.Database?.GetInfoObjectsByDiagObjectControlId(equipment.SignedId.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver, getHidden: true));
                     if (infoObjectsByDiagObjectControlId != null && infoObjectsByDiagObjectControlId.Count > 0)
                     {
                         flag = ffmResolver.Resolve(equipment.SignedId, infoObjectsByDiagObjectControlId.First());
