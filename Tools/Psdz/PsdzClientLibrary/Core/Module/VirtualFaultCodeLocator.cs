@@ -3,9 +3,8 @@ using PsdzClient.Core;
 using System;
 using System.Globalization;
 using System.Linq;
-using PsdzClient;
-using PsdzClientLibrary;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.CoreFramework
 {
     public class VirtualFaultCodeLocator : IVirtualFaultCodeLocator, IFaultCodeLocator, ISPELocator
