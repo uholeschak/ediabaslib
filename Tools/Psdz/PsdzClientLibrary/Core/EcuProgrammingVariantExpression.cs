@@ -1,20 +1,22 @@
-﻿using PsdzClient;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
     public class EcuProgrammingVariantExpression : SingleAssignmentExpression
     {
-        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
-        private PsdzDatabase.EcuPrgVar programmingVariant;
-        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
-        private PsdzDatabase.EcuVar ecuVariant;
+        private IXepEcuProgrammingVariant programmingVariant;
+
+        private IXepEcuVariants ecuVariant;
+
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
@@ -28,8 +30,8 @@ namespace PsdzClient.Core
                 }
 
                 //[-] programmingVariant = dataProvider.GetEcuProgrammingVariantById(value, vec, ffmResolver);
-                //[+] programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
-                programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
+                //[+] programmingVariant = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver));
+                programmingVariant = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver));
                 if (programmingVariant == null)
                 {
                     logger.Warning(logger.CurrentMethod(), "no valid programming variant information found for id: {0}", value);
@@ -37,8 +39,8 @@ namespace PsdzClient.Core
                 }
 
                 //[-] ecuVariant = dataProvider.GetEcuVariantById(programmingVariant.EcuVariantId);
-                //[+] ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(programmingVariant.EcuVarId);
-                ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(programmingVariant.EcuVarId);
+                //[+] ecuVariant = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetEcuVariantById(programmingVariant.EcuVariantId.ToString(CultureInfo.InvariantCulture)));
+                ecuVariant = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetEcuVariantById(programmingVariant.EcuVariantId.ToString(CultureInfo.InvariantCulture)));
                 if (ecuVariant == null)
                 {
                     logger.Warning(logger.CurrentMethod(), "no valid EcuVariant information found for id: {0}", value);
