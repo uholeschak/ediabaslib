@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -30,8 +31,8 @@ namespace PsdzClient.Core
             }
 
             //[-] IXepEcuGroups ecuGroupById = dataProvider.GetEcuGroupById(value);
-            //[+] PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(vec)?.GetEcuGroupById(value.ToString(CultureInfo.InvariantCulture));
-            PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(vec)?.GetEcuGroupById(value.ToString(CultureInfo.InvariantCulture));
+            //[+] IXepEcuGroups ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetEcuGroupById(value.ToString(CultureInfo.InvariantCulture)));
+            IXepEcuGroups ecuGroupById = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetEcuGroupById(value.ToString(CultureInfo.InvariantCulture)));
             if (ecuGroupById == null || string.IsNullOrEmpty(ecuGroupById.Name))
             {
                 ruleEvaluationServices.Logger.Warning("EcuGroupExpression.Evaluate()", "no valid group information found for id: {0}", value);
