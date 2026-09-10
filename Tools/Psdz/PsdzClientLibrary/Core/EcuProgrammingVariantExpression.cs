@@ -80,11 +80,11 @@ namespace PsdzClient.Core
         {
             StringBuilder stringBuilder = new StringBuilder();
             PsdzDatabase database = ClientContext.GetDatabase(this.vecInfo);
-            PsdzDatabase.EcuPrgVar ecuPrgVar = database.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), null, null);
+            PsdzDatabase.EcuPrgVar ecuPrgVar = database?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), null, null);
             PsdzDatabase.EcuVar ecuVar = null;
             if (ecuPrgVar != null)
             {
-                ecuVar = database?.GetEcuVariantById(ecuPrgVar.EcuVarId);
+                ecuVar = database.GetEcuVariantById(ecuPrgVar.EcuVarId);
             }
 
             if (ecuPrgVar != null && ecuVar != null)
