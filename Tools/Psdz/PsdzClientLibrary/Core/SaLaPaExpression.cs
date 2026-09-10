@@ -1,10 +1,12 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient.Utility;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -49,8 +51,8 @@ namespace PsdzClient.Core
             }
 
             //[-] IXepSaLaPasRuleEvaluation saLaPaById = dataProvider.GetSaLaPaById(value);
-            //[+] PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
-            PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
+            //[+] IXepSaLaPasRuleEvaluation saLaPaById = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture)));
+            IXepSaLaPasRuleEvaluation saLaPaById = XepConverter.Convert(ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture)));
             if (saLaPaById == null)
             {
                 return false;
