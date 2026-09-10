@@ -67,7 +67,7 @@ public class TestModuleRunner
 
     private readonly ClientContext _clientContext;
     private readonly ProgrammingJobs _programmingJobs;
-    private readonly PsdzDatabase.SwiInfoObj _swiInfoObj;
+    private readonly IXepInfoObject _swiInfoObj;
     private readonly Logic _logic;
     private readonly ServiceProgramController _serviceProgramController;
     private readonly string _moduleName;
@@ -92,14 +92,14 @@ public class TestModuleRunner
             throw new ArgumentException("Database version is null");
         }
 
-        _swiInfoObj = _clientContext?.Database?.GetInfoObjectByControlId(controlId);
+        _swiInfoObj = XepConverter.Convert(_clientContext?.Database?.GetInfoObjectByControlId(controlId));
         if (_swiInfoObj == null)
         {
             log.ErrorFormat("TestModuleRunner: No SwiInfoObj found for controlId: {0}", controlId);
             throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
         }
 
-        _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identificator);
+        _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identifikator);
         _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
 
         Vehicle vehicle = programmingJobs?.PsdzContext?.VecInfo;
@@ -119,7 +119,7 @@ public class TestModuleRunner
 
         List<string> lang = new List<string> { ConfigSettings.CurrentUICulture };
         ModuleImpl module = new ModuleImpl(lang, _moduleName);
-        _moduleExecutionParent = new ModuleExecutionParent(module, _swiInfoObj.Identificator, _moduleParameters);
+        _moduleExecutionParent = new ModuleExecutionParent(module, _swiInfoObj.Identifikator, _moduleParameters);
     }
 
     public bool CheckModuleAssemblyVersion(Assembly assembly)

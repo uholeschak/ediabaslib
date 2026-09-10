@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Globalization;
 using PsdzClient;
+using PsdzClientLibrary;
 
 namespace BMW.Rheingold.Module.ISTA
 {
@@ -24,8 +25,8 @@ namespace BMW.Rheingold.Module.ISTA
                     //[-] IXepInfoObject infoObjectByControlId = instance.GetInfoObjectByControlId(serviceDialogConfiguration.ControlId);
                     //[+] PsdzDatabase instance = callingModule.DBProvider;
                     PsdzDatabase instance = callingModule.DBProvider;
-                    //[+] PsdzDatabase.SwiInfoObj infoObjectByControlId = instance.GetInfoObjectByControlId(serviceDialogConfiguration.ControlId.ToString());
-                    PsdzDatabase.SwiInfoObj infoObjectByControlId = instance.GetInfoObjectByControlId(serviceDialogConfiguration.ControlId.ToString());
+                    //[+] IXepInfoObject infoObjectByControlId = XepConverter.Convert(instance.GetInfoObjectByControlId(serviceDialogConfiguration.ControlId.ToString(CultureInfo.InvariantCulture)));
+                    IXepInfoObject infoObjectByControlId = XepConverter.Convert(instance.GetInfoObjectByControlId(serviceDialogConfiguration.ControlId.ToString(CultureInfo.InvariantCulture)));
                     serviceDialogConfiguration.TextCollection = TextContentManager.Create(instance, callingModule.logic.Lang, infoObjectByControlId, serviceDialogConfiguration.Name);
                 }
             }

@@ -1162,9 +1162,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (_globalModuleInParameter != null)
                 {
-                    //[-] base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as IXepInfoObject;
-                    //[+] base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as PsdzDatabase.SwiInfoObj;
-                    base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as PsdzDatabase.SwiInfoObj;
+                    base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as IXepInfoObject;
                     ModuleParameter moduleParameter = (ModuleParameter)_globalModuleInParameter.getParameter("__RheinGoldCoreModuleParameters__");
                     if (moduleParameter != null)
                     {
@@ -1494,8 +1492,7 @@ namespace BMW.Rheingold.Module.ISTA
             return Path.GetFullPath(Path.Combine(ConfigSettings.AppBaseDirectory, ConfigSettings.getPathString("BMW.Rheingold.Diagnostics.Module.ISTA.ISTATabModuleCore.SubModulePath", "..\\..\\..\\Testmodule")));
         }
 
-        [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
-        public override PsdzDatabase.SwiInfoObj GetRootModule()
+        public override IXepInfoObject GetRootModule()
         {
             return base.Me;
         }

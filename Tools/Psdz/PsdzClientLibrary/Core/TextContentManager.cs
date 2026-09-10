@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BmwFileReader;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -7,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using BmwFileReader;
 
 namespace PsdzClient.Core
 {
@@ -21,13 +22,12 @@ namespace PsdzClient.Core
         private XmlNamespaceManager namespaceManager;
         private readonly ITextLocator serviceProgramCollection;
         private IList<XElement> serviceProgramCollectionRoot;
-        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
-        private readonly PsdzDatabase.SwiInfoObj xepInfoObj;
+        private readonly IXepInfoObject xepInfoObj;
         private const string DefaultParameterValue = "";
         private ITextLocator ServiceProgramCollection => serviceProgramCollection ?? throw new ArgumentException("No text collection available.");
 
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
-        public static ITextContentManager Create(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
+        public static ITextContentManager Create(PsdzDatabase databaseProvider, IList<string> lang, IXepInfoObject xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
             {
@@ -39,13 +39,9 @@ namespace PsdzClient.Core
                 throw new ArgumentNullException("lang");
             }
 
-            //[-] if (xepInfoObj == null || xepInfoObj.Id == -1m)
-            //[+] if (xepInfoObj == null || xepInfoObj.Id.ConvertToInt(-1) == -1)
-            if (xepInfoObj == null || xepInfoObj.Id.ConvertToInt(-1) == -1)
+            if (xepInfoObj == null || xepInfoObj.Id == -1m)
             {
-                //[-] Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identifikator + "(" + xepInfoObj.ControlId + ")"));
-                //[+] Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identificator + "(" + xepInfoObj.ControlId + ")"));
-                Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identificator + "(" + xepInfoObj.ControlId + ")"));
+                Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identifikator + "(" + xepInfoObj.ControlId + ")"));
                 return new TextContentManagerDummy();
             }
 
@@ -53,7 +49,7 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
-        private TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
+        private TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, IXepInfoObject xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
             {
@@ -65,12 +61,8 @@ namespace PsdzClient.Core
                 throw new ArgumentNullException("lang");
             }
 
-            //[-] decimal num = xepInfoObj.Id;
-            //[-] if (num == 0m)
-            //[+] string num = xepInfoObj.Id;
-            string num = xepInfoObj.Id;
-            //[+] if (num.ConvertToInt(-1) == 0m)
-            if (num.ConvertToInt(-1) == 0m)
+            decimal num = xepInfoObj.Id;
+            if (num == 0m)
             {
                 string text = xepInfoObj.Identifier;
                 if (text.StartsWith("ABL_"))
@@ -78,7 +70,7 @@ namespace PsdzClient.Core
                     text = new Regex(Regex.Escape("_")).Replace(text, "-", 2);
                 }
 
-                num = databaseProvider.GetInfoObjectIdByIdentifier(text);
+                num = databaseProvider.GetInfoObjectIdByIdentifier(text).ConvertToInt();
             }
 
             db = databaseProvider;
@@ -87,9 +79,7 @@ namespace PsdzClient.Core
             this.xepInfoObj = xepInfoObj;
             if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.ConWoy.UseServiceProgramsOverConWoy", defaultValue: false))
             {
-                //[-] serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId.Value);
-                //[+] serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId);
-                serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId);
+                serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId.Value);
             }
             else
             {
@@ -97,9 +87,7 @@ namespace PsdzClient.Core
             }
 
             serviceProgramCollectionRoot = null;
-            //[-] Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identifikator, xepInfoObj.ControlId);
-            //[+] Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identificator, xepInfoObj.ControlId);
-            Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identificator, xepInfoObj.ControlId);
+            Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identifikator, xepInfoObj.ControlId);
         }
 
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
@@ -216,9 +204,7 @@ namespace PsdzClient.Core
                 LocalizedText item;
                 if (num == 0)
                 {
-                    //[-] Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identifikator : "null");
-                    //[+] Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identificator : "null");
-                    Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identificator : "null");
+                    Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identifikator : "null");
                     item = new LocalizedText("<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>### " + textItemId + " ###</spe:PARAGRAPH></spe:TEXTITEM>", lang[j]);
                 }
                 else
@@ -275,10 +261,9 @@ namespace PsdzClient.Core
             return xElement;
         }
 
-        [PreserveSource(Hint = "idInfoObject as string", SignatureModified = true)]
-        private ITextLocator ReadTextCollection(string idInfoObject)
+        private ITextLocator ReadTextCollection(decimal idInfoObject)
         {
-            IList<LocalizedText> textCollectionById = db.GetTextCollectionById(idInfoObject, lang);
+            IList<LocalizedText> textCollectionById = db.GetTextCollectionById(idInfoObject.ToString(CultureInfo.InvariantCulture), lang);
             if (textCollectionById == null)
             {
                 return null;

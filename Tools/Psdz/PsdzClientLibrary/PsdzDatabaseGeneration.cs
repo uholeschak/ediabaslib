@@ -21,6 +21,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient
 {
@@ -3226,7 +3227,7 @@ namespace PsdzClient
 
                 log.InfoFormat("ReadServiceModule Using module type: {0}", moduleType.FullName);
 
-                TextContentManager textContentManager = TextContentManager.Create(this, EcuTranslation.GetLanguages(), swiInfoObj) as TextContentManager;
+                TextContentManager textContentManager = TextContentManager.Create(this, EcuTranslation.GetLanguages(), XepConverter.Convert(swiInfoObj)) as TextContentManager;
                 if (textContentManager == null)
                 {
                     log.ErrorFormat("ReadServiceModule No TextContentManager");
@@ -3442,7 +3443,7 @@ namespace PsdzClient
 
                     if (!string.IsNullOrEmpty(dataItem.ControlId))
                     {
-                        SwiInfoObj infoObject = GetInfoObjectByControlId(dataItem.ControlId);
+                        IXepInfoObject infoObject = XepConverter.Convert(GetInfoObjectByControlId(dataItem.ControlId));
                         if (infoObject != null)
                         {
                             log.InfoFormat("ReadServiceModule InfoObject Id: {0}, Identifer: {1}", infoObject.Id, infoObject.Identifier);

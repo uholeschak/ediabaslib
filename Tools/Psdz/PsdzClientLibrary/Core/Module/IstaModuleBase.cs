@@ -56,8 +56,7 @@ namespace BMW.Rheingold.CoreFramework
         public virtual PsdzDatabase DBProvider { get; set; }
         protected ITextContentManager textContentManager { get; set; }
 
-        [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
-        protected PsdzDatabase.SwiInfoObj Me { get; set; }
+        protected IXepInfoObject Me { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [AuthorAPIHidden]
@@ -1003,8 +1002,7 @@ namespace BMW.Rheingold.CoreFramework
         //[-] return new VirtualFaultCodeLocator(virtualFaultCode, Vehicle, GetRootModule());
         }
 
-        [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
-        public abstract PsdzDatabase.SwiInfoObj GetRootModule();
+        public abstract IXepInfoObject GetRootModule();
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public IVehiclePartLocator __Part(string refText)
         {

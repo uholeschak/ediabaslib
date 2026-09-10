@@ -7,10 +7,12 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge;
 using PsdzClient;
+using PsdzClientLibrary;
 
 namespace BMW.Rheingold.Module.ISTA
 {
@@ -71,8 +73,8 @@ namespace BMW.Rheingold.Module.ISTA
         {
             inParam.setParameter("FASTA", fasta);
             //[-] IXepInfoObject infoObjectByControlId = DatabaseProviderFactory.Instance.GetInfoObjectByControlId(ServiceDialogConfig.ControlId);
-            //[+]PsdzDatabase.SwiInfoObj infoObjectByControlId = CallingModule.DBProvider.GetInfoObjectByControlId(ServiceDialogConfig.ControlId.ToString());
-            PsdzDatabase.SwiInfoObj infoObjectByControlId = CallingModule.DBProvider.GetInfoObjectByControlId(ServiceDialogConfig.ControlId.ToString());
+            //[+]IXepInfoObject infoObjectByControlId = XepConverter.Convert(CallingModule.DBProvider.GetInfoObjectByControlId(ServiceDialogConfig.ControlId.ToString()));
+            IXepInfoObject infoObjectByControlId = XepConverter.Convert(CallingModule.DBProvider.GetInfoObjectByControlId(ServiceDialogConfig.ControlId.ToString()));
             inParam.Parameter.Add("ISTAModule.Me", infoObjectByControlId);
             inParam.Parameter.Add("ISTAModule.TextCollection", ServiceDialogConfig.TextCollection);
             inParam.setParameter("__RheinGoldTabModuleISTA__", globalTabModuleISTA);
@@ -210,8 +212,8 @@ namespace BMW.Rheingold.Module.ISTA
                         //[-] inParam.Parameter.Add("ISTAModule.Me", instance.GetInfoObjectByControlId(ServiceDialogConfig.ControlId));
                         //[+]PsdzDatabase instance = CallingModule.DBProvider;
                         PsdzDatabase instance = CallingModule.DBProvider;
-                        //[+] inParam.Parameter.Add("ISTAModule.Me", instance.GetInfoObjectByControlId(ServiceDialogConfig.ControlId.ToString()));
-                        inParam.Parameter.Add("ISTAModule.Me", instance.GetInfoObjectByControlId(ServiceDialogConfig.ControlId.ToString()));
+                        //[+] inParam.Parameter.Add("ISTAModule.Me", XepConverter.Convert(instance.GetInfoObjectByControlId(ServiceDialogConfig.ControlId.ToString(CultureInfo.InvariantCulture))));
+                        inParam.Parameter.Add("ISTAModule.Me", XepConverter.Convert(instance.GetInfoObjectByControlId(ServiceDialogConfig.ControlId.ToString(CultureInfo.InvariantCulture))));
                     }
                     obj = inParam.getParameter("FASTA");
                 }
