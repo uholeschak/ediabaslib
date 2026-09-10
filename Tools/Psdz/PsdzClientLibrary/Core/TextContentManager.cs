@@ -70,6 +70,8 @@ namespace PsdzClient.Core
                     text = new Regex(Regex.Escape("_")).Replace(text, "-", 2);
                 }
 
+                //[-] num = databaseProvider.GetInfoObjectIdByIdentifier(text);
+                //[+] num = databaseProvider.GetInfoObjectIdByIdentifier(text).ConvertToInt();
                 num = databaseProvider.GetInfoObjectIdByIdentifier(text).ConvertToInt();
             }
 
@@ -263,6 +265,8 @@ namespace PsdzClient.Core
 
         private ITextLocator ReadTextCollection(decimal idInfoObject)
         {
+            //[-] IList<LocalizedText> textCollectionById = db.GetTextCollectionById(idInfoObject, lang);
+            //[+] IList<LocalizedText> textCollectionById = db.GetTextCollectionById(idInfoObject.ToString(CultureInfo.InvariantCulture), lang);
             IList<LocalizedText> textCollectionById = db.GetTextCollectionById(idInfoObject.ToString(CultureInfo.InvariantCulture), lang);
             if (textCollectionById == null)
             {
