@@ -1177,6 +1177,7 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             ffmResolver = logic.FFMResolver;
                         }
+
                         vehicleContext = new VehicleContext(vehicle, ffmResolver);
                         MeasurementLauncher = moduleParameter.getParameter(ModuleParameter.ParameterName.MeasurementLauncher) as IStartMeasurementServiceServer;
                     }
@@ -1494,7 +1495,22 @@ namespace BMW.Rheingold.Module.ISTA
 
         public override IXepInfoObject GetRootModule()
         {
-            return base.Me;
+            IXepInfoObject xepInfoObject = __RheinGoldCoreModuleParameters__?.getParameter(ModuleParameter.ParameterName.XepInfoObjectStarted) as XepInfoObject;
+            if (xepInfoObject == null)
+            {
+                if (__RheinGoldCoreModuleParameters__?.getParameter(ModuleParameter.ParameterName.InfoObjStarted)is InfoObject infoObject)
+                {
+                    xepInfoObject = infoObject.XepInfoObject;
+                }
+
+                if (xepInfoObject == null)
+                {
+                    Log.Warning("ISTAModule.GetRootModule", "Cannot retrieve root module, using current: " + base.Me.Title);
+                    xepInfoObject = base.Me;
+                }
+            }
+
+            return xepInfoObject;
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]

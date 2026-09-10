@@ -5,15 +5,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class XEP_REFECUCLIQUES : INotifyPropertyChanged
     {
         private decimal idField;
-
         private decimal eCUCLIQUEIDField;
-
         public decimal ID
         {
             get
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -31,6 +30,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return eCUCLIQUEIDField;
             }
+
             set
             {
                 _ = eCUCLIQUEIDField;
@@ -43,10 +43,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override bool Equals(object obj)
@@ -55,18 +54,22 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is XEP_REFECUCLIQUES xEP_REFECUCLIQUES))
             {
                 return false;
             }
+
             if (ID != xEP_REFECUCLIQUES.ID)
             {
                 return false;
             }
+
             if (ECUCLIQUEID != xEP_REFECUCLIQUES.ECUCLIQUEID)
             {
                 return false;
             }
+
             return true;
         }
 
