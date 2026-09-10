@@ -980,26 +980,24 @@ namespace BMW.Rheingold.CoreFramework
 
         public IFaultCodeLocator GetFaultCode(string refCode)
         {
-            //[-] FaultCode faultCode = FaultCode.GetFaultCode(refCode, Vehicle, FFMResolver);
-            //[-] if (faultCode == null)
-            //[-] {
-            //[-] Log.Warning("ISTAModule.__FaultCode()", "no fault code found for reference: {0}", refCode);
-            //[-] return null;
-            //[-] }
-            //[-] return new FaultCodeLocator(faultCode, Vehicle, FFMResolver);
-            //[+] return null;
-            return null;
+            FaultCode faultCode = FaultCode.GetFaultCode(refCode, Vehicle, FFMResolver);
+            if (faultCode == null)
+            {
+                Log.Warning("ISTAModule.__FaultCode()", "no fault code found for reference: {0}", refCode);
+                return null;
+            }
+            return new FaultCodeLocator(faultCode, Vehicle, FFMResolver);
         }
 
         public IVirtualFaultCodeLocator GetVirtualFaultCode(string refCode)
         {
-            //[-] FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(refCode, Vehicle, FFMResolver);
-            //[-] if (virtualFaultCode == null)
-            //[-] {
-            Log.Warning("ISTAModule.__VirtualFaultCode()", "no virtual fault code found for reference: {0}", refCode);
-            return null;
-        //[-] }
-        //[-] return new VirtualFaultCodeLocator(virtualFaultCode, Vehicle, GetRootModule());
+            FaultCode virtualFaultCode = FaultCode.GetVirtualFaultCode(refCode, Vehicle, FFMResolver);
+            if (virtualFaultCode == null)
+            {
+                Log.Warning("ISTAModule.__VirtualFaultCode()", "no virtual fault code found for reference: {0}", refCode);
+                return null;
+            }
+            return new VirtualFaultCodeLocator(virtualFaultCode, Vehicle, GetRootModule());
         }
 
         public abstract IXepInfoObject GetRootModule();
