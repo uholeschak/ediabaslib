@@ -5223,6 +5223,41 @@ namespace PsdzClient
             return null;
         }
 
+        public XEP_FAULTLABELS GetXepFaultLabelByFaultCodeId(string faultCodeId)
+        {
+            log.InfoFormat("GetXepFaultLabelByFaultCodeId FaultCodeId: {0}", faultCodeId);
+            if (string.IsNullOrEmpty(faultCodeId))
+            {
+                return null;
+            }
+
+            XEP_FAULTLABELS faultLabels = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, SAECODE, TITLEID, " + SqlTitleItemsC + @", RELEVANCE, DATATYPE FROM XEP_FAULTLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS WHERE ID = {0})", faultCodeId);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            faultLabels = ReadXepFaultLabels(reader);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetXepFaultLabelByFaultCodeId Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetXepFaultLabelByFaultCodeId FaultLabels: {0}", faultLabels != null);
+            return faultLabels;
+        }
+
         public Dictionary<string, XepRule> LoadXepRules()
         {
             log.InfoFormat("LoadXepRules");

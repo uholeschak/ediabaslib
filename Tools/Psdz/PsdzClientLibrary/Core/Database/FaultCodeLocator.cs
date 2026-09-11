@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using PsdzClient;
 using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
@@ -48,8 +50,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (faultCode != null && !faultCode.IsVirtualDTC)
                 {
                     //[-] XEP_FAULTLABELS xepFaultLabelByFaultCodeId = DatabaseProviderFactory.Instance.GetXepFaultLabelByFaultCodeId(faultCode.ID);
-                    //[+] XEP_FAULTLABELS xepFaultLabelByFaultCodeId = null;
-                    XEP_FAULTLABELS xepFaultLabelByFaultCodeId = null;
+                    //[+] XEP_FAULTLABELS xepFaultLabelByFaultCodeId = ClientContext.GetDatabase(vecInfo)?.GetXepFaultLabelByFaultCodeId(faultCode.ID.ToString(CultureInfo.InvariantCulture));
+                    XEP_FAULTLABELS xepFaultLabelByFaultCodeId = ClientContext.GetDatabase(vecInfo)?.GetXepFaultLabelByFaultCodeId(faultCode.ID.ToString(CultureInfo.InvariantCulture));
                     if (xepFaultLabelByFaultCodeId != null)
                     {
                         return new TextContent(xepFaultLabelByFaultCodeId.Title);
