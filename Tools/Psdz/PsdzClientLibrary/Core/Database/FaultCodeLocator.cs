@@ -48,7 +48,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (faultCode != null && !faultCode.IsVirtualDTC)
                 {
                     //[-] XEP_FAULTLABELS xepFaultLabelByFaultCodeId = DatabaseProviderFactory.Instance.GetXepFaultLabelByFaultCodeId(faultCode.ID);
-                    //[+]XEP_FAULTLABELS xepFaultLabelByFaultCodeId = null;
+                    //[+] XEP_FAULTLABELS xepFaultLabelByFaultCodeId = null;
                     XEP_FAULTLABELS xepFaultLabelByFaultCodeId = null;
                     if (xepFaultLabelByFaultCodeId != null)
                     {

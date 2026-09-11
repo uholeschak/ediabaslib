@@ -5868,6 +5868,16 @@ namespace PsdzClient
             return virtualFaultCode;
         }
 
+        private static XEP_FAULTLABELS ReadXepFaultLabels(SqliteDataReader reader)
+        {
+            XEP_FAULTLABELS faultLabel = new XEP_FAULTLABELS();
+            faultLabel.Id = GetReaderDecimal(reader, "ID") ?? 0;
+            faultLabel.Code = reader["CODE"].ToString()?.Trim();
+            faultLabel.SaeCode = reader["SAECODE"].ToString()?.Trim();
+            faultLabel.TitleId = GetReaderDecimal(reader, "TITLEID");
+            return faultLabel;
+        }
+
         private static decimal? GetReaderDecimal(SqliteDataReader reader, string name)
         {
             object value = reader[name];
