@@ -5232,6 +5232,7 @@ namespace PsdzClient
             }
 
             XEP_FAULTLABELS faultLabels = null;
+            int num = 0;
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, SAECODE, TITLEID, " + SqlTitleItemsC + @", RELEVANCE, DATATYPE FROM XEP_FAULTLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS WHERE ID = {0})", faultCodeId);
@@ -5243,7 +5244,7 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             faultLabels = ReadXepFaultLabels(reader);
-                            break;
+                            num++;
                         }
                     }
                 }
@@ -5254,7 +5255,11 @@ namespace PsdzClient
                 return null;
             }
 
-            log.InfoFormat("GetXepFaultLabelByFaultCodeId FaultLabels: {0}", faultLabels != null);
+            log.InfoFormat("GetXepFaultLabelByFaultCodeId Count: {0}", num);
+            if (num > 1)
+            {
+                log.ErrorFormat("GetXepFaultLabelByFaultCodeId() {0} hits where there should be only one", num);
+            }
             return faultLabels;
         }
 
