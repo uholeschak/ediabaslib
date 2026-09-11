@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient
 {
@@ -5875,6 +5876,11 @@ namespace PsdzClient
             faultLabel.Code = reader["CODE"].ToString()?.Trim();
             faultLabel.SaeCode = reader["SAECODE"].ToString()?.Trim();
             faultLabel.TitleId = GetReaderDecimal(reader, "TITLEID");
+            faultLabel.Relevance = GetReaderDecimal(reader, "RELEVANCE");
+            faultLabel.DataType = reader["DATATYPE"].ToString()?.Trim();
+
+            EcuTranslation translation = GetTranslation(reader);
+            XepConverter.CopyEcuTranslation(translation, faultLabel);
             return faultLabel;
         }
 

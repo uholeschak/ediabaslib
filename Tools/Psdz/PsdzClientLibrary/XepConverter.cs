@@ -437,7 +437,7 @@ public static class XepConverter
         }
     }
 
-    private static void CopyEcuTranslation<T>(PsdzDatabase.EcuTranslation ecuTranslation, T xepObject) where T : class
+    public static void CopyEcuTranslation<T>(PsdzDatabase.EcuTranslation ecuTranslation, T xepObject) where T : class
     {
         if (ecuTranslation == null || xepObject == null)
         {
@@ -447,7 +447,7 @@ public static class XepConverter
         TitleCopier<T>.Copy(ecuTranslation, xepObject);
     }
 
-    private static DateTime ConvertToDateTime(string text, DateTime? defaultValue = null)
+    public static DateTime ConvertToDateTime(string text, DateTime? defaultValue = null)
     {
         if (!string.IsNullOrWhiteSpace(text) &&
             DateTime.TryParse(text.Trim(), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
