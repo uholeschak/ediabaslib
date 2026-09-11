@@ -523,8 +523,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 if (xEP_VIRTUALFAULTCODES == null)
                                 {
                                     //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
-                                    //[+] xEP_VIRTUALFAULTCODES = null;
-                                    xEP_VIRTUALFAULTCODES = null;
+                                    //[+] xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
+                                    xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
                                     if (xEP_VIRTUALFAULTCODES != null)
                                     {
                                         break;

@@ -5170,9 +5170,59 @@ namespace PsdzClient
                 return null;
             }
 
-            log.InfoFormat("GetVirtualFaultCodeById VirtualFaultCode: {0}", virtualFaultCode);
+            log.InfoFormat("GetVirtualFaultCodeById VirtualFaultCode: {0}", virtualFaultCode != null);
             return virtualFaultCode;
         }
+
+        public XEP_VIRTUALFAULTCODES GetVirtualFaultCodeByCodeAndEcuGroup(string code, string ecuGroup, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            log.InfoFormat("GetVirtualFaultCodeByCodeAndEcuGroup Code: {0}, EcuGroup: {1}", code, ecuGroup);
+            if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(ecuGroup))
+            {
+                return null;
+            }
+
+            List<XEP_VIRTUALFAULTCODES> list = new List<XEP_VIRTUALFAULTCODES>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, ECUNOANSWER, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, WEIGHTING, PARENTID FROM XEP_VIRTUALFAULTCODES WHERE (CODE = '{0}') AND PARENTID IN (SELECT ID FROM XEP_ECUGROUPS WHERE (NAME = '{1}'))", code, ecuGroup);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_VIRTUALFAULTCODES virtualFaultCode = ReadXepVirtualFaultCodes(reader);
+                            if (vehicle == null || EvaluateXepRulesById(virtualFaultCode.ID.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver))
+                            {
+                                list.Add(virtualFaultCode);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetVirtualFaultCodeByCodeAndEcuGroup Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetVirtualFaultCodeByCodeAndEcuGroup VirtualFaultCode: {0}", list.Count);
+            if (list.Count == 1)
+            {
+                return list.First();
+            }
+
+            if (list.Count > 1)
+            {
+                log.WarnFormat("{0} hits where there should be only one. Returning only the first Virtual fault code!", list.Count);
+                return list.First();
+            }
+
+            return null;
+        }
+
         public Dictionary<string, XepRule> LoadXepRules()
         {
             log.InfoFormat("LoadXepRules");

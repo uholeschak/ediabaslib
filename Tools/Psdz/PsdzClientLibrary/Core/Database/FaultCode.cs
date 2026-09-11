@@ -647,7 +647,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         string[] array = ecu.ECU_GRUPPE.Split('|');
                         foreach (string ecuGroup in array)
                         {
-                        //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
+                            //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
+                            //[+] xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
+                            xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
                         }
                     }
 
