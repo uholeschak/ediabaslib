@@ -5134,6 +5134,45 @@ namespace PsdzClient
             return diagnosisCode;
         }
 
+        public XEP_VIRTUALFAULTCODES GetVirtualFaultCodeById(string id, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            log.InfoFormat("GetVirtualFaultCodeById Id: {0}", id);
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            XEP_VIRTUALFAULTCODES virtualFaultCode = null;
+            try
+            {
+                if (vehicle != null && !EvaluateXepRulesById(id, vehicle, ffmDynamicResolver))
+                {
+                    return null;
+                }
+
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, ECUNOANSWER, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, WEIGHTING, PARENTID FROM XEP_VIRTUALFAULTCODES WHERE (ID = {0})", id);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            virtualFaultCode = ReadXepVirtualFaultCodes(reader);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetVirtualFaultCodeById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetVirtualFaultCodeById VirtualFaultCode: {0}", virtualFaultCode);
+            return virtualFaultCode;
+        }
         public Dictionary<string, XepRule> LoadXepRules()
         {
             log.InfoFormat("LoadXepRules");
@@ -5858,14 +5897,14 @@ namespace PsdzClient
         private static XEP_VIRTUALFAULTCODES ReadXepVirtualFaultCodes(SqliteDataReader reader)
         {
             XEP_VIRTUALFAULTCODES virtualFaultCode = new XEP_VIRTUALFAULTCODES();
-            virtualFaultCode.ID = GetReaderDecimal(reader, "ID") ?? 0;
             virtualFaultCode.CODE = reader["CODE"].ToString()?.Trim();
             virtualFaultCode.ECUNOANSWER = GetReaderDecimal(reader, "ECUNOANSWER");
+            virtualFaultCode.ID = GetReaderDecimal(reader, "ID") ?? 0;
+            virtualFaultCode.PARENTID = GetReaderDecimal(reader, "PARENTID");
+            virtualFaultCode.SICHERHEITSRELEVANT = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
             virtualFaultCode.VALIDFROM = GetReaderDateTime(reader, "VALIDFROM");
             virtualFaultCode.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
-            virtualFaultCode.SICHERHEITSRELEVANT = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
             virtualFaultCode.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
-            virtualFaultCode.PARENTID = GetReaderDecimal(reader, "PARENTID");
             return virtualFaultCode;
         }
 
