@@ -5854,6 +5854,74 @@ namespace PsdzClient
             return new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, validFrom, validTo, safetyRelevant, grobzeichen, hgNummer, hgugNummer, controlId, sortOrder, GetTranslation(reader));
         }
 
+        private static XEP_VIRTUALFAULTCODES ReadXepVirtualFaultCodes(SqliteDataReader reader)
+        {
+            XEP_VIRTUALFAULTCODES virtualFaultCode = new XEP_VIRTUALFAULTCODES();
+            virtualFaultCode.ID = GetReaderDecimal(reader, "ID") ?? 0;
+            virtualFaultCode.CODE = reader["CODE"].ToString()?.Trim();
+            virtualFaultCode.ECUNOANSWER = GetReaderDecimal(reader, "ECUNOANSWER");
+            virtualFaultCode.VALIDFROM = GetReaderDateTime(reader, "VALIDFROM");
+            virtualFaultCode.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
+            virtualFaultCode.SICHERHEITSRELEVANT = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
+            virtualFaultCode.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
+            virtualFaultCode.PARENTID = GetReaderDecimal(reader, "PARENTID");
+            return virtualFaultCode;
+        }
+
+        private static decimal? GetReaderDecimal(SqliteDataReader reader, string name)
+        {
+            object value = reader[name];
+            if (value == null || value is DBNull)
+            {
+                return null;
+            }
+
+            if (value is decimal || value is long || value is int || value is double || value is float)
+            {
+                return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
+            }
+
+            string text = value.ToString()?.Trim();
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
+        private static DateTime? GetReaderDateTime(SqliteDataReader reader, string name)
+        {
+            object value = reader[name];
+            if (value == null || value is DBNull)
+            {
+                return null;
+            }
+
+            if (value is DateTime dateTimeValue)
+            {
+                return dateTimeValue;
+            }
+
+            string text = value.ToString()?.Trim();
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            if (DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
         private static EcuTranslation GetTranslation(SqliteDataReader reader, string prefix = "TITLE", string language = null)
         {
             return new EcuTranslation(
