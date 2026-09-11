@@ -15,10 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Apis.AndroidPublisher.v3">
-      <Version>1.75.0.4246</Version>
+      <Version>1.76.0.4261</Version>
     </PackageReference>
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Management" Version="10.0.11" />
+    <PackageReference Include="System.Management" Version="10.0.12" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
