@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -9,15 +10,15 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Utility;
+using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClientLibrary;
 
 namespace PsdzClient
 {
@@ -5261,6 +5262,67 @@ namespace PsdzClient
                 log.ErrorFormat("GetXepFaultLabelByFaultCodeId() {0} hits where there should be only one", num);
             }
             return faultLabels;
+        }
+
+        public IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> GetRefFaultLabelsLabelIdByFaultList(IEnumerable<Fault> faultList)
+        {
+            try
+            {
+                Dictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> dictionary = new Dictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>>();
+                if (!faultList.Any())
+                {
+                    return dictionary;
+                }
+                IEnumerable<string> values = faultList.Select((Fault x) => x.ECU.VARIANTE).Distinct();
+                IEnumerable<string> values2 = faultList.Select((Fault x) => x.DTC.F_ORT.ToString()).Distinct();
+                StringBuilder stringBuilder = new StringBuilder("SELECT XEP_REFFAULTLABELS.LABELID, XEP_FAULTCODES.ID, XEP_FAULTCODES.CODE, XEP_ECUVARIANTS.NAME ");
+                stringBuilder.Append(" FROM XEP_FAULTCODES, XEP_ECUVARIANTS, XEP_REFFAULTLABELS ");
+                stringBuilder.Append(" WHERE XEP_FAULTCODES.ECUVARIANTID = XEP_ECUVARIANTS.ID ");
+                stringBuilder.Append(" AND XEP_FAULTCODES.ID = XEP_REFFAULTLABELS.ID ");
+                stringBuilder.Append(" AND XEP_ECUVARIANTS.NAME COLLATE IN (" + CreateInClause(values) + ") ");
+                stringBuilder.Append(" AND XEP_FAULTCODES.CODE COLLATE IN (" + CreateInClause(values2) + ") ");
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = stringBuilder.ToString();
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            decimal faultId = reader.GetDecimal(reader.GetOrdinal("ID"));
+                            string dtcFOrt = reader.GetString(reader.GetOrdinal("CODE"));
+                            string ecuVariant = reader.GetString(reader.GetOrdinal("NAME")).ToLowerInvariant();
+                            FaultCodeIdDtcFOrtEcuVariantKey key = new FaultCodeIdDtcFOrtEcuVariantKey(faultId, dtcFOrt, ecuVariant);
+                            if (!dictionary.ContainsKey(key))
+                            {
+                                dictionary.Add(key, new Collection<decimal>());
+                            }
+                            decimal item = reader.GetDecimal(reader.GetOrdinal("LABELID"));
+                            dictionary[key].Add(item);
+                        }
+                    }
+                }
+
+                return dictionary;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetXepFaultLabelByFaultCodeId Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
+        public static string CreateInClause(IEnumerable<string> values)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (string value in values)
+            {
+                if (!string.IsNullOrEmpty(stringBuilder.ToString()))
+                {
+                    stringBuilder.Append(",");
+                }
+                stringBuilder.Append("'").Append(value.Trim()).Append("'");
+            }
+            return stringBuilder.ToString();
         }
 
         public Dictionary<string, XepRule> LoadXepRules()
