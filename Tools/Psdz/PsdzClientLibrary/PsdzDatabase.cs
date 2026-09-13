@@ -5305,6 +5305,39 @@ namespace PsdzClient
             }
         }
 
+        public XEP_VIRTUALFAULTLABELS GetXepVirtualFaultLabelsByVirtualFaultCodeId(decimal id)
+        {
+            try
+            {
+                XEP_VIRTUALFAULTLABELS xEP_VIRTUALFAULTLABELS = null;
+                int num = 0;
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLEID, " + SqlTitleItemsC + @", CODE FROM XEP_VIRTUALFAULTLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS WHERE ID = {0})", id);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xEP_VIRTUALFAULTLABELS = new XEP_VIRTUALFAULTLABELS();
+                            xEP_VIRTUALFAULTLABELS.CODE = reader.GetString(reader.GetOrdinal("CODE"));
+                            xEP_VIRTUALFAULTLABELS.ID = reader.GetDecimal(reader.GetOrdinal("ID"));
+                            xEP_VIRTUALFAULTLABELS.TITLEID = reader.GetDecimal(reader.GetOrdinal("TITLEID"));
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_VIRTUALFAULTLABELS);
+                            num++;
+                        }
+                    }
+                }
+                return xEP_VIRTUALFAULTLABELS;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetXepVirtualFaultLabelsByVirtualFaultCodeId Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
         public IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> GetRefFaultLabelsLabelIdByFaultList(IEnumerable<Fault> faultList)
         {
             try

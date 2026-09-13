@@ -376,7 +376,7 @@ public static class DatabaseUtil
         //[-] }
     }
 
-        public static Stream Compress(Stream dataStream)
+    public static Stream Compress(Stream dataStream)
     {
         MemoryStream memoryStream = new MemoryStream();
         try

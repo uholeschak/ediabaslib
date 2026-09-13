@@ -541,8 +541,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         if (xEP_VIRTUALFAULTCODES != null)
                         {
                             //[-] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = DatabaseProviderFactory.Instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
-                            //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = null;
-                            XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = null;
+                            //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = ClientContext.GetDatabase(vehicle).GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
+                            XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = ClientContext.GetDatabase(vehicle).GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
                             if (xepVirtualFaultLabelsByVirtualFaultCodeId != null)
                             {
                                 XepFaultLabel = xepVirtualFaultLabelsByVirtualFaultCodeId;
