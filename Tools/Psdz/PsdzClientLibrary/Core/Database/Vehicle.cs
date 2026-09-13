@@ -3001,8 +3001,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             else
             {
                 //[-] dictionary2 = DatabaseProviderFactory.Instance.GetFaultModelLabelsByIds(enumerable);
-                //[+] dictionary2 = new Dictionary<decimal, XEP_FAULTMODELABELS>();
-                dictionary2 = new Dictionary<decimal, XEP_FAULTMODELABELS>();
+                //[+] dictionary2 = ClientContext.GetDatabase(this).GetFaultModelLabelsByIds(enumerable);
+                dictionary2 = ClientContext.GetDatabase(this).GetFaultModelLabelsByIds(enumerable);
             }
 
             IDictionary<decimal, XEP_FAULTMODELABELS> modelFaultLabelAll = dictionary2;

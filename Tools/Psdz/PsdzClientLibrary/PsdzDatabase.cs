@@ -5264,6 +5264,47 @@ namespace PsdzClient
             return faultLabels;
         }
 
+        public IDictionary<decimal, XEP_FAULTMODELABELS> GetFaultModelLabelsByIds(IEnumerable<decimal> labelsId)
+        {
+            try
+            {
+                Dictionary<decimal, XEP_FAULTMODELABELS> dictionary = new Dictionary<decimal, XEP_FAULTMODELABELS>();
+                if (!labelsId.Any())
+                {
+                    return dictionary;
+                }
+                StringBuilder stringBuilder = new StringBuilder("SELECT f.ID, f.CODE, f.TITLEID, f.TITLE_DEDE, f.TITLE_ENGB, f.TITLE_ENUS, f.TITLE_FR, f.TITLE_TH, f.TITLE_SV, f.TITLE_IT, f.TITLE_ES, ");
+                stringBuilder.Append(" f.TITLE_ID, f.TITLE_KO, f.TITLE_EL, f.TITLE_TR, f.TITLE_ZHCN, f.TITLE_RU, f.TITLE_NL, f.TITLE_PT, f.TITLE_ZHTW, f.TITLE_JA, f.TITLE_CSCZ, f.TITLE_PLPL, f.RELEVANCE, f.ERWEITERT ");
+                stringBuilder.Append("FROM XEP_FAULTMODELABELS as f ");
+                stringBuilder.Append(" where ID IN (" + DatabaseUtil.CreateInClause(labelsId) + ") ");
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = stringBuilder.ToString();
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_FAULTMODELABELS xEP_FAULTMODELABELS = new XEP_FAULTMODELABELS();
+                            xEP_FAULTMODELABELS.ID = reader.GetDecimal(reader.GetOrdinal("ID"));
+                            xEP_FAULTMODELABELS.Code = reader.GetString(reader.GetOrdinal("CODE"));
+                            xEP_FAULTMODELABELS.Erweitert = reader.GetDecimal(reader.GetOrdinal("ERWEITERT"));
+                            xEP_FAULTMODELABELS.Relevance = reader.GetDecimal(reader.GetOrdinal("RELEVANCE"));
+                            xEP_FAULTMODELABELS.Titleid = reader.GetDecimal(reader.GetOrdinal("TITLEID"));
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_FAULTMODELABELS);
+                        }
+                    }
+                }
+
+                return dictionary;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetFaultModelLabelsByIds Exception: '{0}'", e.Message);
+                return new Dictionary<decimal, XEP_FAULTMODELABELS>();
+            }
+        }
+
         public IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> GetRefFaultLabelsLabelIdByFaultList(IEnumerable<Fault> faultList)
         {
             try
@@ -5279,8 +5320,8 @@ namespace PsdzClient
                 stringBuilder.Append(" FROM XEP_FAULTCODES, XEP_ECUVARIANTS, XEP_REFFAULTLABELS ");
                 stringBuilder.Append(" WHERE XEP_FAULTCODES.ECUVARIANTID = XEP_ECUVARIANTS.ID ");
                 stringBuilder.Append(" AND XEP_FAULTCODES.ID = XEP_REFFAULTLABELS.ID ");
-                stringBuilder.Append(" AND XEP_ECUVARIANTS.NAME COLLATE IN (" + CreateInClause(values) + ") ");
-                stringBuilder.Append(" AND XEP_FAULTCODES.CODE COLLATE IN (" + CreateInClause(values2) + ") ");
+                stringBuilder.Append(" AND XEP_ECUVARIANTS.NAME COLLATE IN (" + DatabaseUtil.CreateInClause(values) + ") ");
+                stringBuilder.Append(" AND XEP_FAULTCODES.CODE COLLATE IN (" + DatabaseUtil.CreateInClause(values2) + ") ");
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = stringBuilder.ToString();
@@ -5307,22 +5348,8 @@ namespace PsdzClient
             catch (Exception e)
             {
                 log.ErrorFormat("GetXepFaultLabelByFaultCodeId Exception: '{0}'", e.Message);
-                return null;
+                return new Dictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>>();
             }
-        }
-
-        public static string CreateInClause(IEnumerable<string> values)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (string value in values)
-            {
-                if (!string.IsNullOrEmpty(stringBuilder.ToString()))
-                {
-                    stringBuilder.Append(",");
-                }
-                stringBuilder.Append("'").Append(value.Trim()).Append("'");
-            }
-            return stringBuilder.ToString();
         }
 
         public Dictionary<string, XepRule> LoadXepRules()
