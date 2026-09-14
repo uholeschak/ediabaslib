@@ -498,7 +498,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         if (resolveEnvCondLabels && faultCode.ECUVARIANTID.HasValue)
                         {
-                        //[-] faultCode.listEnvConds = db.GetEnvCondLabels(f_ort.ToString(CultureInfo.InvariantCulture), faultCode.ECUVARIANTID.Value).ToList();
+                            faultCode.listEnvConds = db.GetEnvCondLabels(f_ort.ToString(CultureInfo.InvariantCulture), faultCode.ECUVARIANTID.Value).ToList();
                         }
 
                         faultCode.DTC = dtc;
@@ -547,7 +547,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         if (faultCodeByCodeAndVariantName.ECUVARIANTID.HasValue)
                         {
-                        //[-] faultCodeByCodeAndVariantName.listEnvConds = DatabaseProviderFactory.Instance.GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
+                            //[-] faultCodeByCodeAndVariantName.listEnvConds = DatabaseProviderFactory.Instance.GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
+                            //[+] faultCodeByCodeAndVariantName.listEnvConds = ClientContext.GetDatabase(vehicle).GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
+                            faultCodeByCodeAndVariantName.listEnvConds = ClientContext.GetDatabase(vehicle).GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
                         }
 
                         faultCodeByCodeAndVariantName.ECU = ecu;

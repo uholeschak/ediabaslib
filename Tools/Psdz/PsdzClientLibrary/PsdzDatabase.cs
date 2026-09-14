@@ -5356,6 +5356,7 @@ namespace PsdzClient
 
         public IDictionary<decimal, XEP_FAULTMODELABELS> GetFaultModelLabelsByIds(IEnumerable<decimal> labelsId)
         {
+            log.InfoFormat("GetFaultModelLabelsByIds called with labelsId: '{0}'", string.Join(",", labelsId));
             try
             {
                 Dictionary<decimal, XEP_FAULTMODELABELS> dictionary = new Dictionary<decimal, XEP_FAULTMODELABELS>();
@@ -5397,6 +5398,7 @@ namespace PsdzClient
 
         public XEP_VIRTUALFAULTLABELS GetXepVirtualFaultLabelsByVirtualFaultCodeId(decimal id)
         {
+            log.InfoFormat("GetXepVirtualFaultLabelsByVirtualFaultCodeId called with id: '{0}'", id);
             try
             {
                 XEP_VIRTUALFAULTLABELS xEP_VIRTUALFAULTLABELS = null;
@@ -5434,6 +5436,7 @@ namespace PsdzClient
 
         public XEP_COMBINEDFAULTS GetXepCombinedFaultById(decimal combinedFaultId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
+            log.InfoFormat("GetXepCombinedFaultById called with combinedFaultId: '{0}'", combinedFaultId);
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, CODE, FAULTCODETYPE, KMBEREICH, ZEITBEREICH, RULE, ZEITBEREICHEINHEIT, WEIGHTING, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM FROM XEP_COMBINEDFAULTS WHERE ID = {0}", combinedFaultId);
@@ -5480,6 +5483,7 @@ namespace PsdzClient
 
         public XEP_COMBIFAULTLABELS GetXepCombiFaultLabelById(decimal combinedFaultLabelId)
         {
+            log.InfoFormat("GetXepCombiFaultLabelById called with combinedFaultLabelId: '{0}'", combinedFaultLabelId);
             try
             {
                 XEP_COMBIFAULTLABELS xEP_COMBIFAULTLABELS = null;
@@ -5510,8 +5514,51 @@ namespace PsdzClient
             }
         }
 
+        public ICollection<XEP_ENVCONDSLABELS> GetEnvCondLabels(string faultCode, decimal ecuVariantId)
+        {
+            log.InfoFormat("GetEnvCondLabels called with faultCode: '{0}', ecuVariantId: '{1}'", faultCode, ecuVariantId);
+
+            try
+            {
+                ICollection<XEP_ENVCONDSLABELS> collection = new HashSet<XEP_ENVCONDSLABELS>();
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, NODECLASS, TITLEID, " + SqlTitleItemsC + ", NAME, TYPE, RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT, PARENTID\r\n                  FROM XEP_ENVCONDSLABELS\r\n                  WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS, XEP_FAULTCODES WHERE CODE = {0} AND ECUVARIANTID = {1} AND XEP_REFFAULTLABELS.ID = XEP_FAULTCODES.ID)", faultCode, ecuVariantId);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_ENVCONDSLABELS xEP_ENVCONDSLABELS = new XEP_ENVCONDSLABELS();
+                            xEP_ENVCONDSLABELS.BlockAnzahl = GetReaderDecimal(reader, "BLOCKANZAHL");
+                            xEP_ENVCONDSLABELS.Id = GetReaderDecimal(reader, "ID") ?? 0;
+                            xEP_ENVCONDSLABELS.Name = reader["NAME"].ToString()?.Trim();
+                            xEP_ENVCONDSLABELS.NodeClass = GetReaderDecimal(reader, "NODECLASS");
+                            xEP_ENVCONDSLABELS.ParentId = GetReaderDecimal(reader, "PARENTID");
+                            xEP_ENVCONDSLABELS.Relevance = GetReaderDecimal(reader, "RELEVANCE");
+                            xEP_ENVCONDSLABELS.TitleId = GetReaderDecimal(reader, "TITLEID") ?? 0;
+                            xEP_ENVCONDSLABELS.Type = reader["TYPE"].ToString()?.Trim();
+                            xEP_ENVCONDSLABELS.Unit = reader["UNIT"].ToString()?.Trim();
+                            xEP_ENVCONDSLABELS.Uwident = reader["UWIDENT"].ToString()?.Trim();
+                            xEP_ENVCONDSLABELS.UwidentTyp = reader["UWIDENTTYP"].ToString()?.Trim();
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_ENVCONDSLABELS);
+                            collection.Add(xEP_ENVCONDSLABELS);
+                        }
+                    }
+                }
+                return collection;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEnvCondLabels Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
         public IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> GetRefFaultLabelsLabelIdByFaultList(IEnumerable<Fault> faultList)
         {
+            log.InfoFormat("GetRefFaultLabelsLabelIdByFaultList called with faultList: '{0}'", string.Join(",", faultList.Select(f => f.ToString())));
             try
             {
                 Dictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> dictionary = new Dictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>>();
