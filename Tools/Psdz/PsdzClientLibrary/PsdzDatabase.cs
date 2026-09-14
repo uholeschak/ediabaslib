@@ -5140,6 +5140,59 @@ namespace PsdzClient
             return diagnosisCode;
         }
 
+        public FaultCode GetFaultCodeById(decimal id, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            log.InfoFormat("GetFaultCodeById: Id: {0}", id);
+
+            FaultCode faultCode = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM, DIAGNOSEINDEX, ECUVARIANTID FROM XEP_FAULTCODES WHERE (ID = {0})", id);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            faultCode = new FaultCode();
+                            faultCode.AUSBLENDINDEX = reader["AUSBLENDINDEX"].ToString()?.Trim();
+                            faultCode.CODE = reader["CODE"].ToString()?.Trim();
+                            faultCode.DATATYPE = reader["DATATYPE"].ToString()?.Trim();
+                            faultCode.DIAGNOSEINDEX = reader["DIAGNOSEINDEX"].ToString()?.Trim();
+                            faultCode.ECUVARIANTID = GetReaderDecimal(reader, "ECUVARIANTID");
+                            faultCode.ID = GetReaderDecimal(reader, "ID") ?? 0;
+                            faultCode.RELEVANCE = GetReaderDecimal(reader, "RELEVANCE") ?? 0;
+                            faultCode.SCHEINFEHLER = reader["SCHEINFEHLER"].ToString()?.Trim();
+                            faultCode.SICHERHEITSRELEVANT = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
+                            faultCode.VALIDFROM = GetReaderDateTime(reader, "VALIDFROM");
+                            faultCode.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
+                            faultCode.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
+                            faultCode.VehicleContext = vehicle;
+                            faultCode.FFMResolver = ffmDynamicResolver;
+                            if (vehicle != null)
+                            {
+                                faultCode.ECU = vehicle.GetECUbyDTC(faultCode.ID);
+                                if (faultCode.ECU != null)
+                                {
+                                    faultCode.DTC = faultCode.ECU.GetDTCById(faultCode.ID);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetFaultCodeById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetFaultCodeById FaultCode: {0}", faultCode != null);
+            return faultCode;
+        }
+
         public XEP_VIRTUALFAULTCODES GetVirtualFaultCodeById(string id, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             log.InfoFormat("GetVirtualFaultCodeById Id: {0}", id);
@@ -5291,7 +5344,7 @@ namespace PsdzClient
                         {
                             XEP_FAULTMODELABELS xEP_FAULTMODELABELS = new XEP_FAULTMODELABELS();
                             xEP_FAULTMODELABELS.ID = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_FAULTMODELABELS.Code = reader.GetString(reader.GetOrdinal("CODE"));
+                            xEP_FAULTMODELABELS.Code = reader["CODE"].ToString()?.Trim();
                             xEP_FAULTMODELABELS.Erweitert = GetReaderDecimal(reader, "ERWEITERT") ?? 0;
                             xEP_FAULTMODELABELS.Relevance = GetReaderDecimal(reader, "RELEVANCE") ?? 0;
                             xEP_FAULTMODELABELS.Titleid = GetReaderDecimal(reader, "TITLEID") ?? 0;
@@ -5325,7 +5378,7 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             xEP_VIRTUALFAULTLABELS = new XEP_VIRTUALFAULTLABELS();
-                            xEP_VIRTUALFAULTLABELS.CODE = reader.GetString(reader.GetOrdinal("CODE"));
+                            xEP_VIRTUALFAULTLABELS.CODE = reader["CODE"].ToString()?.Trim();
                             xEP_VIRTUALFAULTLABELS.ID = GetReaderDecimal(reader, "ID") ?? 0;
                             xEP_VIRTUALFAULTLABELS.TITLEID = GetReaderDecimal(reader, "TITLEID") ?? 0;
                             EcuTranslation translation = GetTranslation(reader);
@@ -5361,12 +5414,12 @@ namespace PsdzClient
                         {
                             XEP_COMBINEDFAULTS xEP_COMBINEDFAULTS = new XEP_COMBINEDFAULTS();
                             xEP_COMBINEDFAULTS.ID = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_COMBINEDFAULTS.CODE = reader.GetString(reader.GetOrdinal("CODE"));
-                            xEP_COMBINEDFAULTS.FAULTCODETYPE = reader.GetString(reader.GetOrdinal("FAULTCODETYPE"));
+                            xEP_COMBINEDFAULTS.CODE = reader["CODE"].ToString()?.Trim();
+                            xEP_COMBINEDFAULTS.FAULTCODETYPE = reader["FAULTCODETYPE"].ToString()?.Trim();
                             xEP_COMBINEDFAULTS.KMBEREICH = GetReaderDecimal(reader, "KMBEREICH");
                             xEP_COMBINEDFAULTS.ZEITBEREICH = GetReaderDecimal(reader, "ZEITBEREICH");
-                            xEP_COMBINEDFAULTS.RULE = reader.GetString(reader.GetOrdinal("RULE"));
-                            xEP_COMBINEDFAULTS.ZEITBEREICHEINHEIT = reader.GetString(reader.GetOrdinal("ZEITBEREICHEINHEIT"));
+                            xEP_COMBINEDFAULTS.RULE = reader["RULE"].ToString()?.Trim();
+                            xEP_COMBINEDFAULTS.ZEITBEREICHEINHEIT = reader["ZEITBEREICHEINHEIT"].ToString()?.Trim();
                             xEP_COMBINEDFAULTS.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
                             xEP_COMBINEDFAULTS.SICHERHEITSRELEVANT = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
                             xEP_COMBINEDFAULTS.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
@@ -5409,7 +5462,7 @@ namespace PsdzClient
                             xEP_COMBIFAULTLABELS = new XEP_COMBIFAULTLABELS();
                             xEP_COMBIFAULTLABELS.Id = GetReaderDecimal(reader, "ID") ?? 0;
                             xEP_COMBIFAULTLABELS.TitleId = GetReaderDecimal(reader, "TITLEID") ?? 0;
-                            xEP_COMBIFAULTLABELS.Code = reader.GetString(reader.GetOrdinal("CODE"));
+                            xEP_COMBIFAULTLABELS.Code = reader["CODE"].ToString()?.Trim();
                             EcuTranslation translation = GetTranslation(reader);
                             XepConverter.CopyEcuTranslation(translation, xEP_COMBIFAULTLABELS);
                             break;
@@ -5450,8 +5503,8 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             decimal faultId = GetReaderDecimal(reader, "ID") ?? 0;
-                            string dtcFOrt = reader.GetString(reader.GetOrdinal("CODE"));
-                            string ecuVariant = reader.GetString(reader.GetOrdinal("NAME")).ToLowerInvariant();
+                            string dtcFOrt = reader["CODE"].ToString()?.Trim();
+                            string ecuVariant = reader["NAME"].ToString()?.Trim().ToLowerInvariant();
                             FaultCodeIdDtcFOrtEcuVariantKey key = new FaultCodeIdDtcFOrtEcuVariantKey(faultId, dtcFOrt, ecuVariant);
                             if (!dictionary.ContainsKey(key))
                             {

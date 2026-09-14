@@ -426,8 +426,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     decimal id = Convert.ToDecimal(refCode);
                     //[-] FaultCode faultCodeById = instance.GetFaultCodeById(id, vehicle, ffmDynamicResolver);
-                    //[+] FaultCode faultCodeById = null;
-                    FaultCode faultCodeById = null;
+                    //[+] FaultCode faultCodeById = ClientContext.GetDatabase(vehicle)?.GetFaultCodeById(id, vehicle, ffmDynamicResolver);
+                    FaultCode faultCodeById = ClientContext.GetDatabase(vehicle)?.GetFaultCodeById(id, vehicle, ffmDynamicResolver);
                     if (faultCodeById != null)
                     {
                         faultCodeById.VehicleContext = vehicle;
