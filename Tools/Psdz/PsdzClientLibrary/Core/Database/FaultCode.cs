@@ -294,8 +294,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
 
                     //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelById = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelById(base.ID);
-                    //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelById = null;
-                    XEP_COMBIFAULTLABELS xepCombiFaultLabelById = null;
+                    //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelById = ClientContext.GetDatabase(vehicleContext)?.GetXepCombiFaultLabelById(base.ID);
+                    XEP_COMBIFAULTLABELS xepCombiFaultLabelById = ClientContext.GetDatabase(vehicleContext)?.GetXepCombiFaultLabelById(base.ID);
                     if (xepCombiFaultLabelById != null)
                     {
                         return new TextContent(xepCombiFaultLabelById.Title);

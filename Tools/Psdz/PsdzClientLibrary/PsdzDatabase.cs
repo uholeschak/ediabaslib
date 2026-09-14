@@ -5329,6 +5329,10 @@ namespace PsdzClient
                         }
                     }
                 }
+                if (num > 1)
+                {
+                    log.ErrorFormat("GetXepVirtualFaultLabelsByVirtualFaultCodeId - {0} hits where there should be only one", num);
+                }
                 return xEP_VIRTUALFAULTLABELS;
             }
             catch (Exception e)
@@ -5336,6 +5340,40 @@ namespace PsdzClient
                 log.ErrorFormat("GetXepVirtualFaultLabelsByVirtualFaultCodeId Exception: '{0}'", e.Message);
                 return null;
             }
+        }
+
+        public XEP_COMBIFAULTLABELS GetXepCombiFaultLabelById(decimal combinedFaultLabelId)
+        {
+            try
+            {
+                XEP_COMBIFAULTLABELS xEP_COMBIFAULTLABELS = null;
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + SqlTitleItemsC + ", CODE FROM XEP_COMBIFAULTLABELS WHERE ID = {0}", combinedFaultLabelId); 
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xEP_COMBIFAULTLABELS = new XEP_COMBIFAULTLABELS();
+                            xEP_COMBIFAULTLABELS.Id = reader.GetDecimal(reader.GetOrdinal("ID"));
+                            xEP_COMBIFAULTLABELS.TitleId = reader.GetDecimal(reader.GetOrdinal("TITLEID"));
+                            xEP_COMBIFAULTLABELS.Code = reader.GetString(reader.GetOrdinal("CODE"));
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_COMBIFAULTLABELS);
+                            break;
+                        }
+                    }
+                }
+                return xEP_COMBIFAULTLABELS;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetXepCombiFaultLabelById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return null;
         }
 
         public IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> GetRefFaultLabelsLabelIdByFaultList(IEnumerable<Fault> faultList)
