@@ -1600,6 +1600,11 @@ namespace PsdzClient
             _mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString);
             _mDbConnection.Open();
 
+            // UTF8CI ist keine eingebaute SQLite Kollation und muss pro Verbindung
+            // registriert werden. Sie wird in mehreren Abfragen verwendet.
+            _mDbConnection.CreateCollation("UTF8CI",
+                (x, y) => string.Compare(x, y, StringComparison.OrdinalIgnoreCase));
+
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
             _xepRuleDict = null;
@@ -5435,8 +5440,8 @@ namespace PsdzClient
                 stringBuilder.Append(" FROM XEP_FAULTCODES, XEP_ECUVARIANTS, XEP_REFFAULTLABELS ");
                 stringBuilder.Append(" WHERE XEP_FAULTCODES.ECUVARIANTID = XEP_ECUVARIANTS.ID ");
                 stringBuilder.Append(" AND XEP_FAULTCODES.ID = XEP_REFFAULTLABELS.ID ");
-                stringBuilder.Append(" AND XEP_ECUVARIANTS.NAME COLLATE IN (" + DatabaseUtil.CreateInClause(values) + ") ");
-                stringBuilder.Append(" AND XEP_FAULTCODES.CODE COLLATE IN (" + DatabaseUtil.CreateInClause(values2) + ") ");
+                stringBuilder.Append(" AND XEP_ECUVARIANTS.NAME COLLATE UTF8CI IN (" + DatabaseUtil.CreateInClause(values) + ") ");
+                stringBuilder.Append(" AND XEP_FAULTCODES.CODE COLLATE UTF8CI IN (" + DatabaseUtil.CreateInClause(values2) + ") ");
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = stringBuilder.ToString();
