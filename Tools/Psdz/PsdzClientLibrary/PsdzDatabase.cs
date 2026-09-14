@@ -4625,7 +4625,7 @@ namespace PsdzClient
 
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT " + DiagObjectItems +
-                    @" FROM XEP_DIAGNOSISOBJECTS WHERE (NAME = {0}{1})",
+                    @" FROM XEP_DIAGNOSISOBJECTS WHERE (NAME = {0}{1} COLLATE UTF8CI)",
                     name, hiddenRule);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
@@ -5244,7 +5244,7 @@ namespace PsdzClient
             List<XEP_VIRTUALFAULTCODES> list = new List<XEP_VIRTUALFAULTCODES>();
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, ECUNOANSWER, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, WEIGHTING, PARENTID FROM XEP_VIRTUALFAULTCODES WHERE (CODE = '{0}') AND PARENTID IN (SELECT ID FROM XEP_ECUGROUPS WHERE (NAME = '{1}'))", code, ecuGroup);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, ECUNOANSWER, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, WEIGHTING, PARENTID FROM XEP_VIRTUALFAULTCODES WHERE (CODE = '{0}') AND PARENTID IN (SELECT ID FROM XEP_ECUGROUPS WHERE (NAME = '{1}' COLLATE UTF8CI))", code, ecuGroup);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
