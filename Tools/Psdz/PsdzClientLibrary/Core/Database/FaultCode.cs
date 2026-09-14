@@ -374,12 +374,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[-] if (instance != null && instance.DatabaseAccessType != DatabaseType.None)
                 //[+] PsdzDatabase instance = ClientContext.GetDatabase(vehicle);
                 PsdzDatabase instance = ClientContext.GetDatabase(vehicle);
-                //[+] if (instance == null)
-                if (instance == null)
+                //[+] if (instance != null)
+                if (instance != null)
                 {
                     //[-] XEP_COMBINEDFAULTS xepCombinedFaultById = DatabaseProviderFactory.Instance.GetXepCombinedFaultById(id, vehicle, ffmResolver);
-                    //[+] XEP_COMBINEDFAULTS xepCombinedFaultById = null;
-                    XEP_COMBINEDFAULTS xepCombinedFaultById = null;
+                    //[+] XEP_COMBINEDFAULTS xepCombinedFaultById = instance.GetXepCombinedFaultById(id, vehicle, ffmResolver);
+                    XEP_COMBINEDFAULTS xepCombinedFaultById = instance.GetXepCombinedFaultById(id, vehicle, ffmResolver);
                     if (xepCombinedFaultById != null)
                     {
                         return new FaultCode

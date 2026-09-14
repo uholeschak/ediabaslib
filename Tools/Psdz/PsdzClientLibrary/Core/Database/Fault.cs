@@ -562,8 +562,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
                     Log.Info("Fault.ResolveLabels()", "found combined fault: {0} Code: {1}", DTC.Id, DTC.FortAsHexString);
                     //[-] XEP_COMBINEDFAULTS xepCombinedFaultById = DatabaseProviderFactory.Instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
-                    //[+] XEP_COMBINEDFAULTS xepCombinedFaultById = null;
-                    XEP_COMBINEDFAULTS xepCombinedFaultById = null;
+                    //[+] XEP_COMBINEDFAULTS xepCombinedFaultById = ClientContext.GetDatabase(vehicle)?.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
+                    XEP_COMBINEDFAULTS xepCombinedFaultById = ClientContext.GetDatabase(vehicle)?.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
                     if (xepCombinedFaultById != null)
                     {
                         //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
