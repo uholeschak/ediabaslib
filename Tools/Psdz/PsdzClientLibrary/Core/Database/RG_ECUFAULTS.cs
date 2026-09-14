@@ -6,105 +6,59 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class RG_ECUFAULTS : INotifyPropertyChanged
     {
         private decimal ecuFault_idField;
-
         private string faultCodeField;
-
         private string ecuVariant_nameField;
-
         private string dataTypeField;
-
         private string ausblendIndexField;
-
         private string diagnoseIndexField;
-
         private string title_dedeField;
-
         private string title_engbField;
-
         private string title_enusField;
-
         private string title_frField;
-
         private string title_thField;
-
         private string title_svField;
-
         private string title_itField;
-
         private string title_esField;
-
         private string title_idField;
-
         private string title_koField;
-
         private string title_elField;
-
         private string title_trField;
-
         private string title_zhcnField;
-
         private string title_ruField;
-
         private string title_nlField;
-
         private string title_ptField;
-
         private string title_zhtwField;
-
         private string title_jaField;
-
         private string title_csczField;
-
         private string title_plplField;
-
         private string label_dedeField;
-
         private string label_engbField;
-
         private string label_enusField;
-
         private string label_frField;
-
         private string label_thField;
-
         private string label_svField;
-
         private string label_itField;
-
         private string label_esField;
-
         private string label_idField;
-
         private string label_koField;
-
         private string label_elField;
-
         private string label_trField;
-
         private string label_zhcnField;
-
         private string label_ruField;
-
         private string label_nlField;
-
         private string label_ptField;
-
         private string label_zhtwField;
-
         private string label_jaField;
-
         private string label_csczField;
-
         private string label_plplField;
-
         private decimal ecuGroupIDField;
-
         public decimal EcuFault_id
         {
             get
             {
                 return ecuFault_idField;
             }
+
             set
             {
                 _ = ecuFault_idField;
@@ -122,6 +76,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return faultCodeField;
             }
+
             set
             {
                 if (faultCodeField != null)
@@ -146,6 +101,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ecuVariant_nameField;
             }
+
             set
             {
                 if (ecuVariant_nameField != null)
@@ -170,6 +126,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return dataTypeField;
             }
+
             set
             {
                 if (dataTypeField != null)
@@ -194,6 +151,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ausblendIndexField;
             }
+
             set
             {
                 if (ausblendIndexField != null)
@@ -218,6 +176,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return diagnoseIndexField;
             }
+
             set
             {
                 if (diagnoseIndexField != null)
@@ -242,6 +201,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_dedeField;
             }
+
             set
             {
                 if (title_dedeField != null)
@@ -266,6 +226,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_engbField;
             }
+
             set
             {
                 if (title_engbField != null)
@@ -290,6 +251,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_enusField;
             }
+
             set
             {
                 if (title_enusField != null)
@@ -314,6 +276,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_frField;
             }
+
             set
             {
                 if (title_frField != null)
@@ -338,6 +301,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_thField;
             }
+
             set
             {
                 if (title_thField != null)
@@ -362,6 +326,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_svField;
             }
+
             set
             {
                 if (title_svField != null)
@@ -386,6 +351,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_itField;
             }
+
             set
             {
                 if (title_itField != null)
@@ -410,6 +376,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_esField;
             }
+
             set
             {
                 if (title_esField != null)
@@ -434,6 +401,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_idField;
             }
+
             set
             {
                 if (title_idField != null)
@@ -458,6 +426,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_koField;
             }
+
             set
             {
                 if (title_koField != null)
@@ -482,6 +451,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_elField;
             }
+
             set
             {
                 if (title_elField != null)
@@ -506,6 +476,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_trField;
             }
+
             set
             {
                 if (title_trField != null)
@@ -530,6 +501,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_zhcnField;
             }
+
             set
             {
                 if (title_zhcnField != null)
@@ -554,6 +526,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_ruField;
             }
+
             set
             {
                 if (title_ruField != null)
@@ -578,6 +551,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_nlField;
             }
+
             set
             {
                 if (title_nlField != null)
@@ -602,6 +576,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_ptField;
             }
+
             set
             {
                 if (title_ptField != null)
@@ -626,6 +601,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_zhtwField;
             }
+
             set
             {
                 if (title_zhtwField != null)
@@ -650,6 +626,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_jaField;
             }
+
             set
             {
                 if (title_jaField != null)
@@ -674,6 +651,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_csczField;
             }
+
             set
             {
                 if (title_csczField != null)
@@ -698,6 +676,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return title_plplField;
             }
+
             set
             {
                 if (title_plplField != null)
@@ -722,6 +701,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_dedeField;
             }
+
             set
             {
                 if (label_dedeField != null)
@@ -746,6 +726,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_engbField;
             }
+
             set
             {
                 if (label_engbField != null)
@@ -770,6 +751,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_enusField;
             }
+
             set
             {
                 if (label_enusField != null)
@@ -794,6 +776,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_frField;
             }
+
             set
             {
                 if (label_frField != null)
@@ -818,6 +801,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_thField;
             }
+
             set
             {
                 if (label_thField != null)
@@ -842,6 +826,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_svField;
             }
+
             set
             {
                 if (label_svField != null)
@@ -866,6 +851,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_itField;
             }
+
             set
             {
                 if (label_itField != null)
@@ -890,6 +876,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_esField;
             }
+
             set
             {
                 if (label_esField != null)
@@ -914,6 +901,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_idField;
             }
+
             set
             {
                 if (label_idField != null)
@@ -938,6 +926,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_koField;
             }
+
             set
             {
                 if (label_koField != null)
@@ -962,6 +951,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_elField;
             }
+
             set
             {
                 if (label_elField != null)
@@ -986,6 +976,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_trField;
             }
+
             set
             {
                 if (label_trField != null)
@@ -1010,6 +1001,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_zhcnField;
             }
+
             set
             {
                 if (label_zhcnField != null)
@@ -1034,6 +1026,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_ruField;
             }
+
             set
             {
                 if (label_ruField != null)
@@ -1058,6 +1051,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_nlField;
             }
+
             set
             {
                 if (label_nlField != null)
@@ -1082,6 +1076,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_ptField;
             }
+
             set
             {
                 if (label_ptField != null)
@@ -1106,6 +1101,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_zhtwField;
             }
+
             set
             {
                 if (label_zhtwField != null)
@@ -1130,6 +1126,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_jaField;
             }
+
             set
             {
                 if (label_jaField != null)
@@ -1154,6 +1151,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_csczField;
             }
+
             set
             {
                 if (label_csczField != null)
@@ -1178,6 +1176,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return label_plplField;
             }
+
             set
             {
                 if (label_plplField != null)
@@ -1202,6 +1201,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ecuGroupIDField;
             }
+
             set
             {
                 _ = ecuGroupIDField;
@@ -1265,10 +1265,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override bool Equals(object obj)
@@ -1277,198 +1276,247 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return false;
             }
+
             if (!(obj is RG_ECUFAULTS rG_ECUFAULTS))
             {
                 return false;
             }
+
             if (EcuFault_id != rG_ECUFAULTS.EcuFault_id)
             {
                 return false;
             }
+
             if (ecuGroupID != rG_ECUFAULTS.ecuGroupID)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(FaultCode, rG_ECUFAULTS.FaultCode) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(EcuVariant_name, rG_ECUFAULTS.EcuVariant_name) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(DataType, rG_ECUFAULTS.DataType) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(AusblendIndex, rG_ECUFAULTS.AusblendIndex) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(DiagnoseIndex, rG_ECUFAULTS.DiagnoseIndex) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_dede, rG_ECUFAULTS.Title_dede) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_engb, rG_ECUFAULTS.Title_engb) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_enus, rG_ECUFAULTS.Title_enus) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_fr, rG_ECUFAULTS.Title_fr) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_th, rG_ECUFAULTS.Title_th) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_sv, rG_ECUFAULTS.Title_sv) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_it, rG_ECUFAULTS.Title_it) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_es, rG_ECUFAULTS.Title_es) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_id, rG_ECUFAULTS.Title_id) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_ko, rG_ECUFAULTS.Title_ko) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_el, rG_ECUFAULTS.Title_el) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_tr, rG_ECUFAULTS.Title_tr) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_zhcn, rG_ECUFAULTS.Title_zhcn) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_ru, rG_ECUFAULTS.Title_ru) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_nl, rG_ECUFAULTS.Title_nl) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_pt, rG_ECUFAULTS.Title_pt) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_zhtw, rG_ECUFAULTS.Title_zhtw) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_ja, rG_ECUFAULTS.Title_ja) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_cscz, rG_ECUFAULTS.Title_cscz) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Title_plpl, rG_ECUFAULTS.Title_plpl) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_dede, rG_ECUFAULTS.Label_dede) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_engb, rG_ECUFAULTS.Label_engb) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_enus, rG_ECUFAULTS.Label_enus) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_fr, rG_ECUFAULTS.Label_fr) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_th, rG_ECUFAULTS.Label_th) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_sv, rG_ECUFAULTS.Label_sv) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_it, rG_ECUFAULTS.Label_it) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_es, rG_ECUFAULTS.Label_es) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_id, rG_ECUFAULTS.Label_id) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_ko, rG_ECUFAULTS.Label_ko) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_el, rG_ECUFAULTS.Label_el) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_tr, rG_ECUFAULTS.Label_tr) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_zhcn, rG_ECUFAULTS.Label_zhcn) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_ru, rG_ECUFAULTS.Label_ru) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_nl, rG_ECUFAULTS.Label_nl) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_pt, rG_ECUFAULTS.Label_pt) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_zhtw, rG_ECUFAULTS.Label_zhtw) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_ja, rG_ECUFAULTS.Label_ja) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_cscz, rG_ECUFAULTS.Label_cscz) != 0)
             {
                 return false;
             }
+
             if (string.CompareOrdinal(Label_plpl, rG_ECUFAULTS.Label_plpl) != 0)
             {
                 return false;
             }
+
             return true;
         }
 
