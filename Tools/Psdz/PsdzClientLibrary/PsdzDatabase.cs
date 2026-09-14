@@ -5155,21 +5155,10 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            faultCode = new FaultCode();
-                            faultCode.AUSBLENDINDEX = reader["AUSBLENDINDEX"].ToString()?.Trim();
-                            faultCode.CODE = reader["CODE"].ToString()?.Trim();
-                            faultCode.DATATYPE = reader["DATATYPE"].ToString()?.Trim();
-                            faultCode.DIAGNOSEINDEX = reader["DIAGNOSEINDEX"].ToString()?.Trim();
-                            faultCode.ECUVARIANTID = GetReaderDecimal(reader, "ECUVARIANTID");
-                            faultCode.ID = GetReaderDecimal(reader, "ID") ?? 0;
-                            faultCode.RELEVANCE = GetReaderDecimal(reader, "RELEVANCE") ?? 0;
-                            faultCode.SCHEINFEHLER = reader["SCHEINFEHLER"].ToString()?.Trim();
-                            faultCode.SICHERHEITSRELEVANT = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
-                            faultCode.VALIDFROM = GetReaderDateTime(reader, "VALIDFROM");
-                            faultCode.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
-                            faultCode.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
+                            faultCode = ReadXepFaultCode(reader);
                             faultCode.VehicleContext = vehicle;
                             faultCode.FFMResolver = ffmDynamicResolver;
+
                             if (vehicle != null)
                             {
                                 faultCode.ECU = vehicle.GetECUbyDTC(faultCode.ID);
@@ -5191,6 +5180,49 @@ namespace PsdzClient
 
             log.InfoFormat("GetFaultCodeById FaultCode: {0}", faultCode != null);
             return faultCode;
+        }
+
+        public FaultCode GetFaultCodeByCodeAndVariantName(decimal code, string variantName, string dataType, Vehicle vec, IFFMDynamicResolver ffmResolver)
+        {
+            log.InfoFormat("GetFaultCodeByCodeAndVariantName: Code: {0}, VariantName: {1}, DataType: {2}", code, variantName, dataType);
+
+            List<FaultCode> list = new List<FaultCode>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{{0}}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{{1}}' COLLATE UTF8CI)))"" : ""SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{0}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{1}' COLLATE UTF8CI))) and (datatype = '{2}')", code, variantName, dataType);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            FaultCode faultCode = ReadXepFaultCode(reader);
+                            if (vec == null || EvaluateXepRulesById(faultCode.ID.ToString(CultureInfo.InvariantCulture), vec, ffmResolver))
+                            {
+                                list.Add(faultCode);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetFaultCodeByCodeAndVariantName Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetFaultCodeByCodeAndVariantName Count: {0}", list.Count);
+            if (list.Count == 1)
+            {
+                return list.First();
+            }
+            if (list.Count > 1)
+            {
+                log.ErrorFormat("GetFaultCodeByCodeAndVariantName(): {0} FaultCodes for Variant Name {1} and Code {2} found. Only the first hit will be returned!", list.Count, variantName, code);
+                return list.First();
+            }
+            return null;
         }
 
         public XEP_VIRTUALFAULTCODES GetVirtualFaultCodeById(string id, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
@@ -6244,6 +6276,24 @@ namespace PsdzClient
             string controlId = reader["CONTROLID"].ToString()?.Trim();
             string sortOrder = reader["SORT_ORDER"].ToString()?.Trim();
             return new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, validFrom, validTo, safetyRelevant, grobzeichen, hgNummer, hgugNummer, controlId, sortOrder, GetTranslation(reader));
+        }
+
+        private static FaultCode ReadXepFaultCode(SqliteDataReader reader)
+        {
+            FaultCode faultCode = new FaultCode();
+            faultCode.AUSBLENDINDEX = reader["AUSBLENDINDEX"].ToString()?.Trim();
+            faultCode.CODE = reader["CODE"].ToString()?.Trim();
+            faultCode.DATATYPE = reader["DATATYPE"].ToString()?.Trim();
+            faultCode.DIAGNOSEINDEX = reader["DIAGNOSEINDEX"].ToString()?.Trim();
+            faultCode.ECUVARIANTID = GetReaderDecimal(reader, "ECUVARIANTID");
+            faultCode.ID = GetReaderDecimal(reader, "ID") ?? 0;
+            faultCode.RELEVANCE = GetReaderDecimal(reader, "RELEVANCE") ?? 0;
+            faultCode.SCHEINFEHLER = reader["SCHEINFEHLER"].ToString()?.Trim();
+            faultCode.SICHERHEITSRELEVANT = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
+            faultCode.VALIDFROM = GetReaderDateTime(reader, "VALIDFROM");
+            faultCode.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
+            faultCode.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
+            return faultCode;
         }
 
         private static XEP_VIRTUALFAULTCODES ReadXepVirtualFaultCodes(SqliteDataReader reader)

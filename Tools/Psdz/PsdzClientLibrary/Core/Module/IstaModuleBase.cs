@@ -1344,12 +1344,12 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-            //[-] decimal code = Convert.ToDecimal(fCode, CultureInfo.InvariantCulture);
-            //[-] FaultCode faultCodeByCodeAndVariantName = DBProvider.GetFaultCodeByCodeAndVariantName(code, variante, null, Vehicle, FFMResolver);
-            //[-] if (faultCodeByCodeAndVariantName != null)
-            //[-] {
-            //[-] faultCodeByCodeAndVariantName.VehicleContext = Vehicle;
-            //[-] }
+                decimal code = Convert.ToDecimal(fCode, CultureInfo.InvariantCulture);
+                FaultCode faultCodeByCodeAndVariantName = DBProvider.GetFaultCodeByCodeAndVariantName(code, variante, null, Vehicle, FFMResolver);
+                if (faultCodeByCodeAndVariantName != null)
+                {
+                    faultCodeByCodeAndVariantName.VehicleContext = Vehicle;
+                }
             }
             catch (Exception exception)
             {

@@ -493,7 +493,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         faultCode = resolvedFaultCodes.FirstOrDefault((FaultCode fc) => fc.CODE == f_ort.ToString() && fc.ECU.VARIANTE.Equals(variant, StringComparison.InvariantCultureIgnoreCase) && fc.DATATYPE.Equals(ecuDTCType, StringComparison.InvariantCultureIgnoreCase) && db.EvaluateXepRulesById(fc.ID.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver));
                     }
 
-                    //[-] faultCode = faultCode ?? db.GetFaultCodeByCodeAndVariantName(f_ort, variant, ecuDTCType, vehicle, ffmResolver);
+                    faultCode = faultCode ?? db.GetFaultCodeByCodeAndVariantName(f_ort, variant, ecuDTCType, vehicle, ffmResolver);
                     if (faultCode != null)
                     {
                         if (resolveEnvCondLabels && faultCode.ECUVARIANTID.HasValue)
@@ -541,8 +541,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (instance != null)
                 {
                     //[-] FaultCode faultCodeByCodeAndVariantName = DatabaseProviderFactory.Instance.GetFaultCodeByCodeAndVariantName(f_Ort, ecu.VARIANTE, "F", vehicle, ffmDynamicResolver);
-                    //[+] FaultCode faultCodeByCodeAndVariantName = null;
-                    FaultCode faultCodeByCodeAndVariantName = null;
+                    //[+] FaultCode faultCodeByCodeAndVariantName = ClientContext.GetDatabase(vehicle).GetFaultCodeByCodeAndVariantName(f_Ort, ecu.VARIANTE, "F", vehicle, ffmDynamicResolver);
+                    FaultCode faultCodeByCodeAndVariantName = ClientContext.GetDatabase(vehicle).GetFaultCodeByCodeAndVariantName(f_Ort, ecu.VARIANTE, "F", vehicle, ffmDynamicResolver);
                     if (faultCodeByCodeAndVariantName != null)
                     {
                         if (faultCodeByCodeAndVariantName.ECUVARIANTID.HasValue)
