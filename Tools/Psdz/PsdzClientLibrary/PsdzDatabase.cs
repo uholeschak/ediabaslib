@@ -5372,8 +5372,6 @@ namespace PsdzClient
                 log.ErrorFormat("GetXepCombiFaultLabelById Exception: '{0}'", e.Message);
                 return null;
             }
-
-            return null;
         }
 
         public IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> GetRefFaultLabelsLabelIdByFaultList(IEnumerable<Fault> faultList)
