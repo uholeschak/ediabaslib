@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Model;
@@ -1614,6 +1615,7 @@ namespace PsdzClient
             _diagObjRootNodeIdSet = null;
             SwiRegisterTree = null;
             UseIsAtLeastOnePathToRootValid = true;
+            FaultCodeConverters.SetFaultClasses(this);  // register fault code converters for this database
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
@@ -5170,11 +5172,11 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("GetFaultCodeById Exception: '{0}'", e.Message);
+                log.ErrorFormat("GetFaultClasses Exception: '{0}'", e.Message);
                 return null;
             }
 
-            log.InfoFormat("GetFaultCodeById Count: {0}", list.Count);
+            log.InfoFormat("GetFaultClasses Count: {0}", list.Count);
             return list;
         }
 

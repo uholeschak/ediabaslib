@@ -2899,8 +2899,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             Classification = new VehicleClassification(this);
             //[+] Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
             Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
-            //[+] FaultCodeConverters.SetFaultClasses(_clientContext.Database);
-            FaultCodeConverters.SetFaultClasses(_clientContext.Database);
             SessionInfoForSerializationOnly = new SessionInfo();
         }
 
