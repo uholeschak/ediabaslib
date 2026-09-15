@@ -5140,6 +5140,44 @@ namespace PsdzClient
             return diagnosisCode;
         }
 
+        public ICollection<XEP_FAULTCLASSES> GetFaultClasses()
+        {
+            log.InfoFormat("GetFaultClasses");
+
+            List<XEP_FAULTCLASSES> list = new List<XEP_FAULTCLASSES>();
+            try
+            {
+                string sql = @"SELECT ID, TITLEID, " + SqlTitleItemsC + ", REGEL, PRIORITY, PARENTID FROM XEP_FAULTCLASSES";
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_FAULTCLASSES xEP_FAULTCLASSES = new XEP_FAULTCLASSES();
+                            xEP_FAULTCLASSES.Id = GetReaderDecimal(reader, "ID") ?? 0;
+                            xEP_FAULTCLASSES.ParentId = GetReaderDecimal(reader, "PARENTID");
+                            xEP_FAULTCLASSES.Priority = GetReaderDecimal(reader, "PRIORITY");
+                            xEP_FAULTCLASSES.Regel = reader["REGEL"].ToString()?.Trim();
+                            xEP_FAULTCLASSES.TitleId = GetReaderDecimal(reader, "TITLEID");
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_FAULTCLASSES);
+                            list.Add(xEP_FAULTCLASSES);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetFaultCodeById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetFaultCodeById Count: {0}", list.Count);
+            return list;
+        }
+
         public FaultCode GetFaultCodeById(decimal id, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             log.InfoFormat("GetFaultCodeById: Id: {0}", id);

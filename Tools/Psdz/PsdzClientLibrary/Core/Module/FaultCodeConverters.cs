@@ -96,7 +96,7 @@ namespace BMW.Rheingold.CoreFramework
         [PreserveSource(Hint = "IDatabaseProvider", SignatureModified = true)]
         public static void SetFaultClasses(PsdzDatabase db)
         {
-            //[-] faultClasses = db.GetFaultClasses();
+            faultClasses = db.GetFaultClasses();
         }
 
         private static XEP_FAULTCLASSES GetFaultClassById(decimal id)
