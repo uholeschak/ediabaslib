@@ -5535,12 +5535,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            xEP_COMBIFAULTLABELS = new XEP_COMBIFAULTLABELS();
-                            xEP_COMBIFAULTLABELS.Id = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_COMBIFAULTLABELS.TitleId = GetReaderDecimal(reader, "TITLEID") ?? 0;
-                            xEP_COMBIFAULTLABELS.Code = GetReaderString(reader, "CODE");
-                            EcuTranslation translation = GetTranslation(reader);
-                            XepConverter.CopyEcuTranslation(translation, xEP_COMBIFAULTLABELS);
+                            xEP_COMBIFAULTLABELS = ReadXepCombinedFaultLabels(reader);
                             break;
                         }
                     }
@@ -6381,6 +6376,17 @@ namespace PsdzClient
             faultCode.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
             faultCode.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
             return faultCode;
+        }
+
+        private static XEP_COMBIFAULTLABELS ReadXepCombinedFaultLabels(SqliteDataReader reader)
+        {
+            XEP_COMBIFAULTLABELS xEP_COMBIFAULTLABELS = new XEP_COMBIFAULTLABELS();
+            xEP_COMBIFAULTLABELS.Id = GetReaderDecimal(reader, "ID") ?? 0;
+            xEP_COMBIFAULTLABELS.TitleId = GetReaderDecimal(reader, "TITLEID") ?? 0;
+            xEP_COMBIFAULTLABELS.Code = GetReaderString(reader, "CODE");
+            EcuTranslation translation = GetTranslation(reader);
+            XepConverter.CopyEcuTranslation(translation, xEP_COMBIFAULTLABELS);
+            return xEP_COMBIFAULTLABELS;
         }
 
         private static XEP_VIRTUALFAULTCODES ReadXepVirtualFaultCodes(SqliteDataReader reader)
