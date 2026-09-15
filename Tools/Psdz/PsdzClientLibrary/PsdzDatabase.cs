@@ -5377,7 +5377,7 @@ namespace PsdzClient
                         {
                             XEP_FAULTMODELABELS xEP_FAULTMODELABELS = new XEP_FAULTMODELABELS();
                             xEP_FAULTMODELABELS.ID = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_FAULTMODELABELS.Code = reader["CODE"].ToString()?.Trim();
+                            xEP_FAULTMODELABELS.Code = GetReaderString(reader, "CODE");
                             xEP_FAULTMODELABELS.Erweitert = GetReaderDecimal(reader, "ERWEITERT") ?? 0;
                             xEP_FAULTMODELABELS.Relevance = GetReaderDecimal(reader, "RELEVANCE") ?? 0;
                             xEP_FAULTMODELABELS.Titleid = GetReaderDecimal(reader, "TITLEID") ?? 0;
@@ -5412,7 +5412,7 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             xEP_VIRTUALFAULTLABELS = new XEP_VIRTUALFAULTLABELS();
-                            xEP_VIRTUALFAULTLABELS.CODE = reader["CODE"].ToString()?.Trim();
+                            xEP_VIRTUALFAULTLABELS.CODE = GetReaderString(reader, "CODE");
                             xEP_VIRTUALFAULTLABELS.ID = GetReaderDecimal(reader, "ID") ?? 0;
                             xEP_VIRTUALFAULTLABELS.TITLEID = GetReaderDecimal(reader, "TITLEID") ?? 0;
                             EcuTranslation translation = GetTranslation(reader);
@@ -5449,12 +5449,12 @@ namespace PsdzClient
                         {
                             XEP_COMBINEDFAULTS xEP_COMBINEDFAULTS = new XEP_COMBINEDFAULTS();
                             xEP_COMBINEDFAULTS.ID = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_COMBINEDFAULTS.CODE = reader["CODE"].ToString()?.Trim();
-                            xEP_COMBINEDFAULTS.FAULTCODETYPE = reader["FAULTCODETYPE"].ToString()?.Trim();
+                            xEP_COMBINEDFAULTS.CODE = GetReaderString(reader, "CODE");
+                            xEP_COMBINEDFAULTS.FAULTCODETYPE = GetReaderString(reader, "FAULTCODETYPE");
                             xEP_COMBINEDFAULTS.KMBEREICH = GetReaderDecimal(reader, "KMBEREICH");
                             xEP_COMBINEDFAULTS.ZEITBEREICH = GetReaderDecimal(reader, "ZEITBEREICH");
-                            xEP_COMBINEDFAULTS.RULE = reader["RULE"].ToString()?.Trim();
-                            xEP_COMBINEDFAULTS.ZEITBEREICHEINHEIT = reader["ZEITBEREICHEINHEIT"].ToString()?.Trim();
+                            xEP_COMBINEDFAULTS.RULE = GetReaderString(reader, "RULE");
+                            xEP_COMBINEDFAULTS.ZEITBEREICHEINHEIT = GetReaderString(reader, "ZEITBEREICHEINHEIT");
                             xEP_COMBINEDFAULTS.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
                             xEP_COMBINEDFAULTS.SICHERHEITSRELEVANT = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
                             xEP_COMBINEDFAULTS.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
@@ -5498,7 +5498,7 @@ namespace PsdzClient
                             xEP_COMBIFAULTLABELS = new XEP_COMBIFAULTLABELS();
                             xEP_COMBIFAULTLABELS.Id = GetReaderDecimal(reader, "ID") ?? 0;
                             xEP_COMBIFAULTLABELS.TitleId = GetReaderDecimal(reader, "TITLEID") ?? 0;
-                            xEP_COMBIFAULTLABELS.Code = reader["CODE"].ToString()?.Trim();
+                            xEP_COMBIFAULTLABELS.Code = GetReaderString(reader, "CODE");
                             EcuTranslation translation = GetTranslation(reader);
                             XepConverter.CopyEcuTranslation(translation, xEP_COMBIFAULTLABELS);
                             break;
@@ -5532,15 +5532,15 @@ namespace PsdzClient
                             XEP_ENVCONDSLABELS xEP_ENVCONDSLABELS = new XEP_ENVCONDSLABELS();
                             xEP_ENVCONDSLABELS.BlockAnzahl = GetReaderDecimal(reader, "BLOCKANZAHL");
                             xEP_ENVCONDSLABELS.Id = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_ENVCONDSLABELS.Name = reader["NAME"].ToString()?.Trim();
+                            xEP_ENVCONDSLABELS.Name = GetReaderString(reader, "NAME");
                             xEP_ENVCONDSLABELS.NodeClass = GetReaderDecimal(reader, "NODECLASS");
                             xEP_ENVCONDSLABELS.ParentId = GetReaderDecimal(reader, "PARENTID");
                             xEP_ENVCONDSLABELS.Relevance = GetReaderDecimal(reader, "RELEVANCE");
                             xEP_ENVCONDSLABELS.TitleId = GetReaderDecimal(reader, "TITLEID") ?? 0;
-                            xEP_ENVCONDSLABELS.Type = reader["TYPE"].ToString()?.Trim();
-                            xEP_ENVCONDSLABELS.Unit = reader["UNIT"].ToString()?.Trim();
-                            xEP_ENVCONDSLABELS.Uwident = reader["UWIDENT"].ToString()?.Trim();
-                            xEP_ENVCONDSLABELS.UwidentTyp = reader["UWIDENTTYP"].ToString()?.Trim();
+                            xEP_ENVCONDSLABELS.Type = GetReaderString(reader, "TYPE");
+                            xEP_ENVCONDSLABELS.Unit = GetReaderString(reader, "UNIT");
+                            xEP_ENVCONDSLABELS.Uwident = GetReaderString(reader, "UWIDENT");
+                            xEP_ENVCONDSLABELS.UwidentTyp = GetReaderString(reader, "UWIDENTTYP");
                             EcuTranslation translation = GetTranslation(reader);
                             XepConverter.CopyEcuTranslation(translation, xEP_ENVCONDSLABELS);
                             collection.Add(xEP_ENVCONDSLABELS);
@@ -5582,8 +5582,8 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             decimal faultId = GetReaderDecimal(reader, "ID") ?? 0;
-                            string dtcFOrt = reader["CODE"].ToString()?.Trim();
-                            string ecuVariant = reader["NAME"].ToString()?.Trim().ToLowerInvariant();
+                            string dtcFOrt = GetReaderString(reader, "CODE");
+                            string ecuVariant = GetReaderString(reader, "NAME")?.ToLowerInvariant();
                             FaultCodeIdDtcFOrtEcuVariantKey key = new FaultCodeIdDtcFOrtEcuVariantKey(faultId, dtcFOrt, ecuVariant);
                             if (!dictionary.ContainsKey(key))
                             {
@@ -6424,6 +6424,22 @@ namespace PsdzClient
             }
 
             return null;
+        }
+
+        private static string GetReaderString(SqliteDataReader reader, string name, string defaultValue = null)
+        {
+            object value = reader[name];
+            if (value == null || value is DBNull)
+            {
+                return defaultValue;
+            }
+
+            if (value is string text)
+            {
+                return text.Trim();
+            }
+
+            return Convert.ToString(value, CultureInfo.InvariantCulture)?.Trim();
         }
 
         private static EcuTranslation GetTranslation(SqliteDataReader reader, string prefix = "TITLE", string language = null)
