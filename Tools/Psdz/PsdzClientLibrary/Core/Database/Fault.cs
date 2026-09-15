@@ -567,8 +567,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     if (xepCombinedFaultById != null)
                     {
                         //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
-                        //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = null;
-                        XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = null;
+                        //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = ClientContext.GetDatabase(vehicle)?.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
+                        XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = ClientContext.GetDatabase(vehicle)?.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
                         if (xepCombiFaultLabelByCode == null)
                         {
                             FaultLabel = xepCombinedFaultById.CODE;

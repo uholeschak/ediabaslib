@@ -5527,7 +5527,35 @@ namespace PsdzClient
             try
             {
                 XEP_COMBIFAULTLABELS xEP_COMBIFAULTLABELS = null;
-                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + SqlTitleItemsC + ", CODE FROM XEP_COMBIFAULTLABELS WHERE ID = {0}", combinedFaultLabelId); 
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + SqlTitleItemsC + ", CODE FROM XEP_COMBIFAULTLABELS WHERE ID = {0}", combinedFaultLabelId);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xEP_COMBIFAULTLABELS = ReadXepCombinedFaultLabels(reader);
+                            break;
+                        }
+                    }
+                }
+                return xEP_COMBIFAULTLABELS;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetXepCombiFaultLabelByCode Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
+        public XEP_COMBIFAULTLABELS GetXepCombiFaultLabelByCode(string combinedFaultCode, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            log.InfoFormat("GetXepCombiFaultLabelByCode called with combinedFaultCode: '{0}'", combinedFaultCode);
+            try
+            {
+                XEP_COMBIFAULTLABELS xEP_COMBIFAULTLABELS = null;
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + SqlTitleItemsC + ", CODE FROM XEP_COMBIFAULTLABELS WHERE ID = {0}", combinedFaultLabelId);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
