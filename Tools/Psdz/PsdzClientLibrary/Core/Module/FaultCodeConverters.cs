@@ -53,16 +53,16 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     if (zfs.FirstOrDefault((ZFSResult item) => item.STAT_DM_MELDUNG_NR == dtc.F_ORT && item.STAT_DM_ZEITSTEMPEL == (ulong?)dtc.Current.F_UW_ZEIT.Value && item.STAT_SYSKONTEXT_SPANNUNG_MIN_WERT < 9.0 && item.STAT_SYSKONTEXT_SPANNUNG_MIN_WERT >= 0.0) != null)
                     {
-                        //[-] return GetFaultClassById(37750384011m).Title;
+                        return GetFaultClassById(37750384011m).Title;
                     }
                     if (zfs.FirstOrDefault((ZFSResult item) => item.STAT_DM_MELDUNG_NR == dtc.F_ORT && item.STAT_DM_ZEITSTEMPEL == (ulong?)dtc.Current.F_UW_ZEIT.Value && item.STAT_SYSKONTEXT_SPANNUNG_MIN_WERT > 16.0) != null)
                     {
-                        //[-] return GetFaultClassById(37750520971m).Title;
+                        return GetFaultClassById(37750520971m).Title;
                     }
                 }
                 if (dtc != null && dtc.F_EREIGNIS_DTC == 1)
                 {
-                    //[-] return GetFaultClassById(37750559371m).Title;
+                    return GetFaultClassById(37750559371m).Title;
                 }
             }
             catch (Exception exception)
