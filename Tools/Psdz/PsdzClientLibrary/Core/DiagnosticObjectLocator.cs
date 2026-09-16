@@ -118,6 +118,7 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
         diagnosticObjectContainer = diagObj;
     }
 
+    [PreserveSource(Hint = "ClientContext added", SignatureModified = true)]
     public DiagnosticObjectLocator(DiagnosticObject diagObj, ICollection<XEP_DIAGNOSISOBJECTSEX> diagChildren, ClientContext clientContext)
     {
         diagnosticObjectContainer = diagObj;
