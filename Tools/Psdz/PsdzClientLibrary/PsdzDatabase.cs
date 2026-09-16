@@ -4039,6 +4039,44 @@ namespace PsdzClient
             return swiInfoObjs;
         }
 
+        public IXepInfoObject LoadXepInfoObjForFaultCodeId(decimal faultCodeId)
+        {
+            log.InfoFormat("LoadXepInfoObjForFaultCodeId called with faultCodeId: '{0}'", faultCodeId);
+
+            XepInfoObject xepInfoObject = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT infoObj.ID, NODECLASS, ASSEMBLY, DEBUGINFO, USEDDEVICEADAPTERS, VERSIONNUMBER, PROGRAMTYPE, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, TITLEID, " + SqlTitleItemsC + @", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, HINWEISID, " +
+                    @"HINWEIS_DEDE, HINWEIS_ENGB, HINWEIS_ENUS, HINWEIS_FR, HINWEIS_TH, HINWEIS_SV, HINWEIS_IT, HINWEIS_ES, HINWEIS_ID, HINWEIS_KO, HINWEIS_EL, HINWEIS_TR, HINWEIS_ZHCN, HINWEIS_RU, HINWEIS_NL, HINWEIS_PT, HINWEIS_ZHTW, HINWEIS_JA, " +
+                    @"NAME, INFORMATIONSTYP, IDENTIFIKATOR, CREATEDATE, EXPIRYDATE, CHANGEDATE, LAUNCHDATE, ABGASRELEVANT, DRINGLICHKEIT, INFORMATIONSFORMAT, GROBZEICHEN, AWNUMMER, " +
+                    @"SWZNUMMER, SINUMMER, ZIELISTUFE, infoObj.CONTROLID, MODIFICATIONTIME, INFOTYPE, INFOFORMAT, DOCNUMBER, infoObj.PRIORITY, IDENTIFIER " +
+                    @"FROM XEP_INFOOBJECTS infoObj, XEP_REFINFOOBJECTS WHERE infoObj.ID = XEP_REFINFOOBJECTS.INFOOBJECTID AND (XEP_REFINFOOBJECTS.ID = {0}) AND (infoObj.generell = 0)", faultCodeId);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xepInfoObject = new XepInfoObject();
+                            xepInfoObject.DocNumber = reader.GetString(reader.GetOrdinal("DOCNUMBER"));
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xepInfoObject);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("LoadXepInfoObjForFaultCodeId Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("LoadXepInfoObjForFaultCodeId has xepInfoObject: '{0}'", xepInfoObject != null);
+            return xepInfoObject;
+        }
+
         public ICollection<IXepInfoObject> GetInfoObjectsForDiagObject(XEP_DIAGNOSISOBJECTSEX diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
             if (diagObject.ControlId.HasValue)
@@ -4050,6 +4088,7 @@ namespace PsdzClient
 
         public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string diagnosisObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden, List<string> typeFilter = null)
         {
+            log.InfoFormat("GetInfoObjectsByDiagObjectControlId called with diagnosisObjectControlId: '{0}'", diagnosisObjectControlId);
             if (string.IsNullOrEmpty(diagnosisObjectControlId))
             {
                 return null;

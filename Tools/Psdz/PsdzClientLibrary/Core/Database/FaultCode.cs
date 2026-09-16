@@ -974,8 +974,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public void LoadInfoObj()
         {
             //[-] IXepInfoObject xepInfoObject = DatabaseProviderFactory.Instance.LoadXepInfoObjForFaultCodeId(base.ID);
-            //[+] IXepInfoObject xepInfoObject = new XepInfoObject();
-            IXepInfoObject xepInfoObject = new XepInfoObject();
+            //[+] IXepInfoObject xepInfoObject = ClientContext.GetDatabase(vehicleContext)?.LoadXepInfoObjForFaultCodeId(base.ID);
+            IXepInfoObject xepInfoObject = ClientContext.GetDatabase(vehicleContext)?.LoadXepInfoObjForFaultCodeId(base.ID);
+            //[+] if (xepInfoObject == null) return;
+            if (xepInfoObject == null) return;
             XepInfoObject xepInfoObjectCasted = Document.XepInfoObjectCasted;
             xepInfoObjectCasted.Title_dede = xepInfoObject.Title_dede;
             xepInfoObjectCasted.Title_el = xepInfoObject.Title_el;
