@@ -910,7 +910,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 DTC.F_UW_Display.AddRange(list);
             }
 
-            fault.UpdateUwDisplay(this);
+            //[-] fault.UpdateUwDisplay(this);
+            //[+] fault.UpdateUwDisplay(this, vehicle);
+            fault.UpdateUwDisplay(this, vehicle);
         }
 
         public XEP_ENVCONDSLABELS GetEnvCondsByUwNr(long? F_UW_NR)

@@ -899,7 +899,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return text;
         }
 
-        public void UpdateUwDisplay(FaultCode faultCode)
+        [PreserveSource(Hint = "vehicle added", SignatureModified = true)]
+        public void UpdateUwDisplay(FaultCode faultCode, Vehicle vehicle)
         {
             if (DTC.Current == null || faultCode == null)
             {
@@ -943,8 +944,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if ((nodeClass.GetValueOrDefault() == num) & nodeClass.HasValue)
                 {
                     //[-] IList<XEP_STATEVALUES> ecuResultStateValues = DatabaseProviderFactory.Instance.GetEcuResultStateValues(envCondsByUwNrName.Id);
-                    //[+] IList<XEP_STATEVALUES> ecuResultStateValues = null;
-                    IList<XEP_STATEVALUES> ecuResultStateValues = null;
+                    //[+] IList<XEP_STATEVALUES> ecuResultStateValues = ClientContext.GetDatabase(vehicle).GetEcuResultStateValues(envCondsByUwNrName.Id);
+                    IList<XEP_STATEVALUES> ecuResultStateValues = ClientContext.GetDatabase(vehicle).GetEcuResultStateValues(envCondsByUwNrName.Id);
                     if (ecuResultStateValues != null && ecuResultStateValues.Any())
                     {
                         flag = true;
