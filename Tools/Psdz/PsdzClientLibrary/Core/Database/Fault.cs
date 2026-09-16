@@ -590,8 +590,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 DtcFOrtEcuVariantKey key = new DtcFOrtEcuVariantKey(DTC.F_ORT.ToString(), ECU.VARIANTE.ToLowerInvariant());
                 XEP_FAULTLABELS xEP_FAULTLABELS = null;
                 //[-] xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : DatabaseProviderFactory.Instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
-                //[+] xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : null);
-                xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : null);
+                //[+] xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : ClientContext.GetDatabase(vehicle)?.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
+                xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : ClientContext.GetDatabase(vehicle)?.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
                 string value;
                 if (xEP_FAULTLABELS == null)
                 {
