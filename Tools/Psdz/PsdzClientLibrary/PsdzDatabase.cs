@@ -4530,15 +4530,15 @@ namespace PsdzClient
             return swiDiagObjs;
         }
 
-        public List<SwiDiagObj> GetChildDiagObjects(SwiDiagObj diagnosisObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        public List<SwiDiagObj> GetChildDiagObjects(XEP_DIAGNOSISOBJECTSEX diagnosisObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
-            if (diagnosisObject == null)
+            if (diagnosisObject == null || !diagnosisObject.ControlId.HasValue)
             {
                 return null;
             }
 
             log.InfoFormat("GetChildDiagObjects ControlId: {0}", diagnosisObject.ControlId);
-            string controlId = diagnosisObject.ControlId;
+            string controlId = diagnosisObject.ControlId.Value.ToString(CultureInfo.InvariantCulture);
             List<SwiDiagObj> swiDiagObjs = new List<SwiDiagObj>();
             try
             {
@@ -4585,6 +4585,11 @@ namespace PsdzClient
             }
 
             return swiDiagObjs;
+        }
+
+        public List<SwiDiagObj> GetChildDiagObjects(SwiDiagObj diagnosisObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        {
+            return GetChildDiagObjects(XepConverter.Convert(diagnosisObject), vehicle, ffmDynamicResolver, getHidden);
         }
 
         public SwiDiagObj GetDiagObjectById(string diagObjectId)

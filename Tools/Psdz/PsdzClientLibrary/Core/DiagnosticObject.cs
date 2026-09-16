@@ -1,6 +1,7 @@
 ﻿using BmwFileReader;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core;
 
@@ -10,11 +11,9 @@ public class DiagnosticObject
 
     private readonly Vehicle vehicle;
 
-    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
-    private readonly PsdzDatabase.SwiDiagObj diagnosisObject;
+    private readonly XEP_DIAGNOSISOBJECTSEX diagnosisObject;
 
-    [PreserveSource(Hint = "IXepInfoObject", Placeholder = true)]
-    private ICollection<PsdzDatabase.SwiInfoObj> infoObjects;
+    private ICollection<IXepInfoObject> infoObjects;
 
     public IFFMDynamicResolver FFMResolver => ffmResolver;
 
@@ -26,112 +25,70 @@ public class DiagnosticObject
             switch (ConfigSettings.CurrentUICulture)
             {
                 case "de-DE":
-                    //[-] text = diagnosisObject.Title_dede;
-                    //[+] text = diagnosisObject.EcuTranslation.TextDe;
-                    text = diagnosisObject.EcuTranslation.TextDe;
+                    text = diagnosisObject.Title_dede;
                     break;
                 case "en-GB":
-                    //[-] text = diagnosisObject.Title_engb;
-                    //[+](0) text = diagnosisObject.EcuTranslation.TextEn;
-                    text = diagnosisObject.EcuTranslation.TextEn;
+                    text = diagnosisObject.Title_engb;
                     break;
                 case "en-US":
-                    //[-] text = diagnosisObject.Title_enus;
-                    //[+] text = diagnosisObject.EcuTranslation.TextUs;
-                    text = diagnosisObject.EcuTranslation.TextUs;
+                    text = diagnosisObject.Title_enus;
                     break;
                 case "fr-FR":
-                    //[-] text = diagnosisObject.Title_fr;
-                    //[+] text = diagnosisObject.EcuTranslation.TextFr;
-                    text = diagnosisObject.EcuTranslation.TextFr;
+                    text = diagnosisObject.Title_fr;
                     break;
                 case "es-ES":
-                    //[-] text = diagnosisObject.Title_es;
-                    //[+] text = diagnosisObject.EcuTranslation.TextEs;
-                    text = diagnosisObject.EcuTranslation.TextEs;
+                    text = diagnosisObject.Title_es;
                     break;
                 case "th-TH":
-                    //[-] text = diagnosisObject.Title_th;
-                    //[+] text = diagnosisObject.EcuTranslation.TextTh;
-                    text = diagnosisObject.EcuTranslation.TextTh;
+                    text = diagnosisObject.Title_th;
                     break;
                 case "tr-TR":
-                    //[-] text = diagnosisObject.Title_tr;
-                    //[+] text = diagnosisObject.EcuTranslation.TextTr;
-                    text = diagnosisObject.EcuTranslation.TextTr;
+                    text = diagnosisObject.Title_tr;
                     break;
                 case "el-GR":
-                    //[-] text = diagnosisObject.Title_el;
-                    //[+] text = diagnosisObject.EcuTranslation.TextEl;
-                    text = diagnosisObject.EcuTranslation.TextEl;
+                    text = diagnosisObject.Title_el;
                     break;
                 case "ja-JP":
-                    //[-] text = diagnosisObject.Title_ja;
-                    //[+] text = diagnosisObject.EcuTranslation.TextJa;
-                    text = diagnosisObject.EcuTranslation.TextJa;
+                    text = diagnosisObject.Title_ja;
                     break;
                 case "ru-RU":
-                    //[-] text = diagnosisObject.Title_ru;
-                    //[+] text = diagnosisObject.EcuTranslation.TextRu;
-                    text = diagnosisObject.EcuTranslation.TextRu;
+                    text = diagnosisObject.Title_ru;
                     break;
                 case "it-IT":
-                    //[-] text = diagnosisObject.Title_it;
-                    //[+] text = diagnosisObject.EcuTranslation.TextIt;
-                    text = diagnosisObject.EcuTranslation.TextIt;
+                    text = diagnosisObject.Title_it;
                     break;
                 case "nl-NL":
-                    //[-] text = diagnosisObject.Title_nl;
-                    //[+] text = diagnosisObject.EcuTranslation.TextNl;
-                    text = diagnosisObject.EcuTranslation.TextNl;
+                    text = diagnosisObject.Title_nl;
                     break;
                 case "pl-PL":
-                    //[-] text = diagnosisObject.Title_plpl;
-                    //[+] text = diagnosisObject.EcuTranslation.TextPl;
-                    text = diagnosisObject.EcuTranslation.TextPl;
+                    text = diagnosisObject.Title_plpl;
                     break;
                 case "cs-CZ":
-                    //[-] text = diagnosisObject.Title_cscz;
-                    //[+] text = diagnosisObject.EcuTranslation.TextCs;
-                    text = diagnosisObject.EcuTranslation.TextCs;
+                    text = diagnosisObject.Title_cscz;
                     break;
                 case "pt-PT":
-                    //[-] text = diagnosisObject.Title_pt;
-                    //[+] text = diagnosisObject.EcuTranslation.TextPt;
-                    text = diagnosisObject.EcuTranslation.TextPt;
+                    text = diagnosisObject.Title_pt;
                     break;
                 case "sv-SE":
-                    //[-] text = diagnosisObject.Title_sv;
-                    //[+] text = diagnosisObject.EcuTranslation.TextSv;
-                    text = diagnosisObject.EcuTranslation.TextSv;
+                    text = diagnosisObject.Title_sv;
                     break;
                 case "zh-CN":
-                    //[-] text = diagnosisObject.Title_zhcn;
-                    //[+] text = diagnosisObject.EcuTranslation.TextZh;
-                    text = diagnosisObject.EcuTranslation.TextZh;
+                    text = diagnosisObject.Title_zhcn;
                     break;
                 case "zh-TW":
-                    //[-] text = diagnosisObject.Title_zhtw;
-                    //[+] text = diagnosisObject.EcuTranslation.TextZh;
-                    text = diagnosisObject.EcuTranslation.TextZh;
+                    text = diagnosisObject.Title_zhtw;
                     break;
                 case "ko-KR":
-                    //[-] text = diagnosisObject.Title_ko;
-                    //[+] text = diagnosisObject.EcuTranslation.TextKo;
-                    text = diagnosisObject.EcuTranslation.TextKo;
+                    text = diagnosisObject.Title_ko;
                     break;
                 default:
                     Log.Warning("DiagnosticObject.get_Title", "CurrentUICulture {0} not available - language set to enGB", ConfigSettings.CurrentUICulture);
-                    //[-] text = diagnosisObject.Title_engb;
-                    //[+](1) text = diagnosisObject.EcuTranslation.TextEn;
-                    text = diagnosisObject.EcuTranslation.TextEn;
+                    text = diagnosisObject.Title_engb;
                     break;
             }
             if (string.IsNullOrEmpty(text))
             {
-                //[-] return diagnosisObject.Title_engb;
-                //[+](2) return diagnosisObject.EcuTranslation.TextEn;
-                return diagnosisObject.EcuTranslation.TextEn;
+                return diagnosisObject.Title_engb;
             }
             return text;
         }
@@ -139,29 +96,22 @@ public class DiagnosticObject
 
     public Vehicle Vehicle => vehicle;
 
-    [PreserveSource(Hint = "ConvertToInt", Placeholder = true)]
-    public decimal Id => diagnosisObject.Id.ConvertToInt();
+    public decimal Id => diagnosisObject.Id;
 
-    [PreserveSource(Hint = "ConvertToInt", Placeholder = true)]
-    public decimal? ControlId => diagnosisObject.ControlId.ConvertToInt();
+    public decimal? ControlId => diagnosisObject.ControlId;
 
-    [PreserveSource(Hint = "No Change", SignatureModified = true)]
     public DiagnosticObject()
     {
     }
 
-    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", SignatureModified = true)]
-    public DiagnosticObject(PsdzDatabase.SwiDiagObj diagnosticObjectContainer, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+    public DiagnosticObject(XEP_DIAGNOSISOBJECTSEX diagnosticObjectContainer, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
     {
         this.vehicle = vehicle;
         ffmResolver = ffmDynamicResolver;
-        //[-] diagnosisObject = new XEP_DIAGNOSISOBJECTSEX(diagnosticObjectContainer);
-        //[+] diagnosisObject = new PsdzDatabase.SwiDiagObj(diagnosticObjectContainer);
-        diagnosisObject = new PsdzDatabase.SwiDiagObj(diagnosticObjectContainer);
+        diagnosisObject = new XEP_DIAGNOSISOBJECTSEX(diagnosticObjectContainer);
     }
 
-    [PreserveSource(Hint = "IXepInfoObject", SignatureModified = true)]
-    public ICollection<PsdzDatabase.SwiInfoObj> GetAttachedInfoObjects()
+    public ICollection<IXepInfoObject> GetAttachedInfoObjects()
     {
         if (infoObjects != null)
         {
@@ -173,11 +123,8 @@ public class DiagnosticObject
         return infoObjects;
     }
 
-    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", SignatureModified = true)]
-    public PsdzDatabase.SwiDiagObj GetXepDiagnosisObject()
+    public XEP_DIAGNOSISOBJECTSEX GetXepDiagnosisObject()
     {
-        //[-] return new XEP_DIAGNOSISOBJECTSEX(diagnosisObject);
-        //[+] return new PsdzDatabase.SwiDiagObj(diagnosisObject);
-        return new PsdzDatabase.SwiDiagObj(diagnosisObject);
+        return new XEP_DIAGNOSISOBJECTSEX(diagnosisObject);
     }
 }

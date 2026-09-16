@@ -28,7 +28,7 @@ public static class XepConverter
         return xepSaLaPa;
     }
 
-    public static List<XEP_SALAPAS> Convert(List<PsdzDatabase.SaLaPa> saLaPaList)
+    public static ICollection<XEP_SALAPAS> Convert(ICollection<PsdzDatabase.SaLaPa> saLaPaList)
     {
         if (saLaPaList == null)
         {
@@ -65,7 +65,7 @@ public static class XepConverter
         return xepEcuGroup;
     }
 
-    public static List<XEP_ECUGROUPS> Convert(List<PsdzDatabase.EcuGroup> ecuGroupList)
+    public static ICollection<XEP_ECUGROUPS> Convert(ICollection<PsdzDatabase.EcuGroup> ecuGroupList)
     {
         if (ecuGroupList == null)
         {
@@ -94,7 +94,7 @@ public static class XepConverter
         return xepEcuReps;
     }
 
-    public static List<XEP_ECUREPS> Convert(List<PsdzDatabase.EcuReps> ecuRepsList)
+    public static ICollection<XEP_ECUREPS> Convert(ICollection<PsdzDatabase.EcuReps> ecuRepsList)
     {
         if (ecuRepsList == null)
         {
@@ -123,7 +123,7 @@ public static class XepConverter
         return xepEquipment;
     }
 
-    public static List<XEP_EQUIPMENT> Convert(List<PsdzDatabase.Equipment> equipmentList)
+    public static ICollection<XEP_EQUIPMENT> Convert(ICollection<PsdzDatabase.Equipment> equipmentList)
     {
         if (equipmentList == null)
         {
@@ -159,7 +159,7 @@ public static class XepConverter
         return xepEcuVariant;
     }
 
-    public static List<IXepEcuVariants> Convert(List<PsdzDatabase.EcuVar> ecuVarList)
+    public static ICollection<IXepEcuVariants> Convert(ICollection<PsdzDatabase.EcuVar> ecuVarList)
     {
         if (ecuVarList == null)
         {
@@ -190,7 +190,7 @@ public static class XepConverter
         return xepEcuProgrammingVariant;
     }
 
-    public static List<XEP_ECUPROGRAMMINGVARIANT> Convert(List<PsdzDatabase.EcuPrgVar> ecuPrgVarList)
+    public static ICollection<XEP_ECUPROGRAMMINGVARIANT> Convert(ICollection<PsdzDatabase.EcuPrgVar> ecuPrgVarList)
     {
         if (ecuPrgVarList == null)
         {
@@ -220,7 +220,7 @@ public static class XepConverter
         return xepEcuClique;
     }
 
-    public static List<XEP_ECUCLIQUES> Convert(List<PsdzDatabase.EcuClique> ecuCliqueList)
+    public static ICollection<XEP_ECUCLIQUES> Convert(ICollection<PsdzDatabase.EcuClique> ecuCliqueList)
     {
         if (ecuCliqueList == null)
         {
@@ -248,7 +248,7 @@ public static class XepConverter
         return xepRefEcuCliques;
     }
 
-    public static List<XEP_REFECUCLIQUES> Convert(List<PsdzDatabase.RefEcuClique> refEcuCliquesList)
+    public static ICollection<XEP_REFECUCLIQUES> Convert(ICollection<PsdzDatabase.RefEcuClique> refEcuCliquesList)
     {
         if (refEcuCliquesList == null)
         {
@@ -283,7 +283,7 @@ public static class XepConverter
         return xepSwiRegister;
     }
 
-    public static List<XEP_SWIREGISTER> Convert(List<PsdzDatabase.SwiRegister> swiRegisterList)
+    public static ICollection<XEP_SWIREGISTER> Convert(ICollection<PsdzDatabase.SwiRegister> swiRegisterList)
     {
         if (swiRegisterList == null)
         {
@@ -336,7 +336,7 @@ public static class XepConverter
         return xepInfoObject;
     }
 
-    public static List<IXepInfoObject> Convert(List<PsdzDatabase.SwiInfoObj> swiInfoObjList)
+    public static ICollection<IXepInfoObject> Convert(ICollection<PsdzDatabase.SwiInfoObj> swiInfoObjList)
     {
         if (swiInfoObjList == null)
         {
@@ -379,7 +379,7 @@ public static class XepConverter
         return xepDiagObject;
     }
 
-    public static List<XEP_DIAGNOSISOBJECTSEX> Convert(ICollection<PsdzDatabase.SwiDiagObj> swiDiagObjList)
+    public static ICollection<XEP_DIAGNOSISOBJECTSEX> Convert(ICollection<PsdzDatabase.SwiDiagObj> swiDiagObjList)
     {
         if (swiDiagObjList == null)
         {
