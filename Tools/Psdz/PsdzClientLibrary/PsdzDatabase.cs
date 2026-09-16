@@ -5354,6 +5354,89 @@ namespace PsdzClient
             return null;
         }
 
+        public XEP_FAULTLABELS GetEcuFaultLabelByFaultCodeAndEcuVariant(string faultCode, string ecuVariant, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            ICollection<decimal> ecuFaultIdsForFaultCodeAndEuVariant = GetEcuFaultIdsForFaultCodeAndEuVariant(faultCode, ecuVariant, vehicle, ffmDynamicResolver);
+            return GetFaultLabelXepFaultLabel(faultCode, ecuFaultIdsForFaultCodeAndEuVariant);
+        }
+
+        private ICollection<decimal> GetEcuFaultIdsForFaultCodeAndEuVariant(string faultCode, string ecuVariant, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            log.InfoFormat("GetEcuFaultIdsForFaultCodeAndEuVariant FaultCode: {0}, EcuVariant: {1}", faultCode, ecuVariant);
+
+            ICollection<decimal> collection = new HashSet<decimal>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ECUFAULT_ID FROM " +
+                    @"(SELECT faults.id ECUFAULT_ID, faults.code FAULTCODE, NAME ECUVARIANT_NAME FROM XEP_ECUVARIANTS ecus, xep_faultcodes faults WHERE " +
+                    @"(ecus.id = faults.ecuvariantid)) WHERE (UPPER(FAULTCODE) = UPPER({0})) AND (ECUVARIANT_NAME = {1} COLLATE UTF8CI)", faultCode, ecuVariant);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            decimal num = GetReaderDecimal(reader, "ecufault_id") ?? 0;
+                            if (vehicle != null)
+                            {
+                                if (EvaluateXepRulesById(num.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver))
+                                {
+                                    collection.Add(num);
+                                }
+                            }
+                            else
+                            {
+                                collection.Add(num);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetVirtualFaultCodeById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetVirtualFaultCodeById Result Count: {0}", collection.Count);
+            return collection;
+        }
+
+        private XEP_FAULTLABELS GetFaultLabelXepFaultLabel(string faultCode, IEnumerable<decimal> hashSetFaultCodeIds)
+        {
+            log.InfoFormat("GetFaultLabelXepFaultLabel FaultCode: {0}, HashSetFaultCodeIds: {1}", faultCode, string.Join(",", hashSetFaultCodeIds));
+
+            XEP_FAULTLABELS result = null;
+            try
+            {
+                foreach (decimal hashSetFaultCodeId in hashSetFaultCodeIds)
+                {
+                    string sql = string.Format(CultureInfo.InvariantCulture,
+                        @"SELECT ID, CODE, SAECODE, TITLEID, " + SqlTitleItemsC +
+                        @", RELEVANCE, DATATYPE FROM XEP_FAULTLABELS where (code = {0}) and (id in (SELECT LABELID FROM XEP_REFFAULTLABELS where (id = {1})))", faultCode, hashSetFaultCodeId);
+                    using (SqliteCommand command = _mDbConnection.CreateCommand())
+                    {
+                        command.CommandText = sql;
+                        using (SqliteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                result = ReadXepFaultLabels(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetFaultLabelXepFaultLabel Exception: '{0}'", e.Message);
+                return null;
+            }
+            return result;
+        }
+
         public XEP_FAULTLABELS GetXepFaultLabelByFaultCodeId(string faultCodeId)
         {
             log.InfoFormat("GetXepFaultLabelByFaultCodeId FaultCodeId: {0}", faultCodeId);

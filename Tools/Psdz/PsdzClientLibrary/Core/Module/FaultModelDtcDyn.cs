@@ -114,16 +114,16 @@ namespace BMW.Rheingold.Module.ISTA
         [PreserveSource(Hint = "database modified", SignatureModified = true)]
         private void Initialize(Fault fault, PsdzDatabase database, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
-            //[-] XEP_FAULTLABELS ecuFaultLabelByFaultCodeAndEcuVariant = database.GetEcuFaultLabelByFaultCodeAndEcuVariant(fault.DTC.F_ORT.ToString(), fault.ECU.VARIANTE, vehicle, ffmResolver);
-            //[-] string value = ((ecuFaultLabelByFaultCodeAndEcuVariant != null) ? ecuFaultLabelByFaultCodeAndEcuVariant.Title : string.Empty);
-            //[-] if (!string.IsNullOrEmpty(value))
-            //[-] {
-            //[-] FaultLabel = value;
-            //[-] }
-            //[-] else
-            //[-] {
-            //[-] FaultLabel = fault.DTC.F_ORT_TEXT;
-            //[-] }
+            XEP_FAULTLABELS ecuFaultLabelByFaultCodeAndEcuVariant = database.GetEcuFaultLabelByFaultCodeAndEcuVariant(fault.DTC.F_ORT.ToString(), fault.ECU.VARIANTE, vehicle, ffmResolver);
+            string value = ((ecuFaultLabelByFaultCodeAndEcuVariant != null) ? ecuFaultLabelByFaultCodeAndEcuVariant.Title : string.Empty);
+            if (!string.IsNullOrEmpty(value))
+            {
+                FaultLabel = value;
+            }
+            else
+            {
+                FaultLabel = fault.DTC.F_ORT_TEXT;
+            }
             if (!string.IsNullOrEmpty(FaultLabel))
             {
                 FaultLabel = FaultLabel.Trim();
