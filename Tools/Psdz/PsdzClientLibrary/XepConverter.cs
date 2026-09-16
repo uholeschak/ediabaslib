@@ -350,6 +350,49 @@ public static class XepConverter
         return xepInfoObjectList;
     }
 
+    public static XEP_DIAGNOSISOBJECTSEX Convert(PsdzDatabase.SwiDiagObj swiDiagObj)
+    {
+        if (swiDiagObj == null)
+        {
+            return null;
+        }
+
+        XEP_DIAGNOSISOBJECTSEX xepDiagObject = new XEP_DIAGNOSISOBJECTSEX();
+        xepDiagObject.Id = swiDiagObj.Id.ConvertToInt();
+        xepDiagObject.Nodeclass = swiDiagObj.NodeClass.ConvertToInt();
+        xepDiagObject.TitleId = swiDiagObj.TitleId.ConvertToInt();
+        xepDiagObject.VersionNumber = swiDiagObj.VersionNum.ConvertToInt();
+        xepDiagObject.Name = swiDiagObj.Name;
+        xepDiagObject.FailureWeight = swiDiagObj.FailWeight.ConvertToInt();
+        xepDiagObject.Versteckt = swiDiagObj.Hidden.ConvertToInt();
+        xepDiagObject.ValidFrom = ConvertToDateTime(swiDiagObj.ValidFrom);
+        xepDiagObject.ValidTo = ConvertToDateTime(swiDiagObj.ValidTo);
+        xepDiagObject.SicherheitsRelevant = swiDiagObj.SafetyRelevant.ConvertToInt();
+        xepDiagObject.Grobzeichen = swiDiagObj.Grobzeichen;
+        xepDiagObject.Hg_Nummer = swiDiagObj.Hg_Nummer;
+        xepDiagObject.Hgug_Nummer = swiDiagObj.Hgug_Nummer;
+        xepDiagObject.ControlId = swiDiagObj.ControlId.ConvertToInt();
+        xepDiagObject.SortOrder = swiDiagObj.SortOrder.ConvertToInt();
+
+        CopyEcuTranslation(swiDiagObj.EcuTranslation, xepDiagObject);
+
+        return xepDiagObject;
+    }
+
+    public static List<XEP_DIAGNOSISOBJECTSEX> Convert(ICollection<PsdzDatabase.SwiDiagObj> swiDiagObjList)
+    {
+        if (swiDiagObjList == null)
+        {
+            return null;
+        }
+        List<XEP_DIAGNOSISOBJECTSEX> xepDiagObjectList = new List<XEP_DIAGNOSISOBJECTSEX>();
+        foreach (PsdzDatabase.SwiDiagObj swiDiagObj in swiDiagObjList)
+        {
+            xepDiagObjectList.Add(Convert(swiDiagObj));
+        }
+        return xepDiagObjectList;
+    }
+
     // Property names are taken via nameof from a reference type declaring all of them,
     // so typos and renames are detected by the compiler.
     private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =

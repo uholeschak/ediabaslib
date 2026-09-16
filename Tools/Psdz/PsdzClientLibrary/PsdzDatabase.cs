@@ -1081,8 +1081,7 @@ namespace PsdzClient
                 SafetyRelevant = swiDiagObj.SafetyRelevant;
                 Grobzeichen = swiDiagObj.Grobzeichen;
                 Hg_Nummer = swiDiagObj.Hg_Nummer;
-                Hgug_Nummer = swiDiagObj.Hgug_Nummer;   
-                Identifier = swiDiagObj.Identifier;
+                Hgug_Nummer = swiDiagObj.Hgug_Nummer;
                 ControlId = swiDiagObj.ControlId;
                 SortOrder = swiDiagObj.SortOrder;
                 EcuTranslation = swiDiagObj.EcuTranslation != null ? new EcuTranslation(swiDiagObj.EcuTranslation) : null;
@@ -1138,8 +1137,6 @@ namespace PsdzClient
             public string Hg_Nummer { get; set; }
 
             public string Hgug_Nummer { get; set; }
-
-            public string Identifier { get; set; }
 
             public string ControlId { get; set; }
 
@@ -1213,8 +1210,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiDiagObj: Id={0}, Class={1}, TitleId={2}, Name={3}, Identification={4}, ControlId={5}, Title='{6}'",
-                    Id, NodeClass, TitleId, Name, Identifier, ControlId, EcuTranslation.GetTitle(language)));
+                    "SwiDiagObj: Id={0}, Class={1}, TitleId={2}, Name={3}, ControlId={4}, Title='{5}'",
+                    Id, NodeClass, TitleId, Name, ControlId, EcuTranslation.GetTitle(language)));
 
                 string prefixChild = prefix + " ";
                 if (InfoObjects != null)
@@ -4042,6 +4039,15 @@ namespace PsdzClient
             return swiInfoObjs;
         }
 
+        public ICollection<IXepInfoObject> GetInfoObjectsForDiagObject(XEP_DIAGNOSISOBJECTSEX diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        {
+            if (diagObject.ControlId.HasValue)
+            {
+                return XepConverter.Convert(GetInfoObjectsByDiagObjectControlId(diagObject.ControlId.Value.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver, getHidden: true));
+            }
+            return new Collection<IXepInfoObject>();
+        }
+
         public List<SwiInfoObj> GetInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
             if (!string.IsNullOrEmpty(diagObject.ControlId))
@@ -4295,6 +4301,16 @@ namespace PsdzClient
             }
 
             return diagObjectsList;
+        }
+
+        public ICollection<SwiDiagObj> GetParentDiagObjects(XEP_DIAGNOSISOBJECTSEX diagnosisObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        {
+            HashSet<SwiDiagObj> hashSet = new HashSet<SwiDiagObj>();
+            if (diagnosisObject.ControlId.HasValue)
+            {
+                GetParentDiagObjectsByChildControlId(diagnosisObject.ControlId.Value.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver, getHidden, hashSet);
+            }
+            return hashSet;
         }
 
         public ICollection<SwiDiagObj> GetParentDiagObjects(SwiDiagObj diagnosisObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
