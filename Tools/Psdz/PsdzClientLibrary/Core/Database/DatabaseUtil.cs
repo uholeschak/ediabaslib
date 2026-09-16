@@ -407,6 +407,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             bool flag = ClientContext.GetDatabase(vehicle)?.IsDiagObjectValid(diagObject.Id.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver) ?? false;
             Log.Info("IsDiagObjectValid()", "Checking LEVEL {4}: DiagObject: Name: {0} ID: {1} ControlID: {2} Result: {3}", diagObject.Name, diagObject.Id, diagObject.ControlId, flag, level);
             //[-] ICollection<XEP_DIAGNOSISOBJECTSEX> parentDiagObjects = DatabaseProviderFactory.Instance.GetParentDiagObjects(diagObject, vehicle, ffmDynamicResolver, getHidden: true);
+            //[+] ICollection<XEP_DIAGNOSISOBJECTSEX> parentDiagObjects = XepConverter.Convert(ClientContext.GetDatabase(vehicle)?.GetParentDiagObjects(diagObject, vehicle, ffmDynamicResolver, getHidden: true));
             ICollection<XEP_DIAGNOSISOBJECTSEX> parentDiagObjects = XepConverter.Convert(ClientContext.GetDatabase(vehicle)?.GetParentDiagObjects(diagObject, vehicle, ffmDynamicResolver, getHidden: true));
             level++;
             foreach (XEP_DIAGNOSISOBJECTSEX item in parentDiagObjects)
