@@ -5286,6 +5286,46 @@ namespace PsdzClient
             return null;
         }
 
+        public IList<XEP_STATEVALUES> GetEcuResultStateValues(decimal ecuResultId)
+        {
+            log.InfoFormat("GetEcuResultStateValues Id: {0}", ecuResultId);
+
+            List<XEP_STATEVALUES> list = new List<XEP_STATEVALUES>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLEID, " + SqlTitleItemsC + @", STATEVALUE, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, PARENTID FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", ecuResultId);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_STATEVALUES xEP_STATEVALUES = new XEP_STATEVALUES();
+                            xEP_STATEVALUES.Id = GetReaderDecimal(reader, "ID") ?? 0;
+                            xEP_STATEVALUES.TitleId = GetReaderDecimal(reader, "TITLEID");
+                            xEP_STATEVALUES.Statevalue = GetReaderString(reader, "STATEVALUE");
+                            xEP_STATEVALUES.ValidFrom = GetReaderDateTime(reader, "VALIDFROM");
+                            xEP_STATEVALUES.ValidTo = GetReaderDateTime(reader, "VALIDTO");
+                            xEP_STATEVALUES.Sicherheitsrelevant = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
+                            xEP_STATEVALUES.ParentId = GetReaderDecimal(reader, "PARENTID");
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_STATEVALUES);
+                            list.Add(xEP_STATEVALUES);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEcuResultStateValues Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetEcuResultStateValues StateValues: {0}", list.Count);
+            return list;
+        }
+
         public XEP_VIRTUALFAULTCODES GetVirtualFaultCodeById(string id, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             log.InfoFormat("GetVirtualFaultCodeById Id: {0}", id);
