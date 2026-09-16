@@ -24,10 +24,10 @@
     <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-      <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" GeneratePathProperty="true">
+      <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.45" GeneratePathProperty="true">
           <ExcludeAssets>all</ExcludeAssets>
       </PackageReference>
-      <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.4" GeneratePathProperty="true">
+      <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.5" GeneratePathProperty="true">
           <ExcludeAssets>all</ExcludeAssets>
       </PackageReference>
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
