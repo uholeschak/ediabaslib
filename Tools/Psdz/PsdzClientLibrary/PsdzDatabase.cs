@@ -4048,15 +4048,6 @@ namespace PsdzClient
             return new Collection<IXepInfoObject>();
         }
 
-        public List<SwiInfoObj> GetInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
-        {
-            if (!string.IsNullOrEmpty(diagObject.ControlId))
-            {
-                return GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, vehicle, ffmDynamicResolver, getHidden: true);
-            }
-            return new List<SwiInfoObj>();
-        }
-
         public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string diagnosisObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden, List<string> typeFilter = null)
         {
             if (string.IsNullOrEmpty(diagnosisObjectControlId))
