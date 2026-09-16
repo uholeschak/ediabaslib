@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using PsdzClient.Programming;
 
 #pragma warning disable CS0169, CS0649, CS0162
 namespace BMW.Rheingold.CoreFramework
@@ -160,7 +161,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 if (_doLoopHandling && !value)
                 {
-                //[-] FastaProtocoler?.WriteLoopEntriesToLog(_VerboseLoopLogs);
+                    FastaProtocoler?.WriteLoopEntriesToLog(_VerboseLoopLogs);
                 }
 
                 _doLoopHandling = value;
@@ -798,9 +799,7 @@ namespace BMW.Rheingold.CoreFramework
             string text = refText;
             if (string.IsNullOrEmpty(text))
             {
-                //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
-                //[+] PsdzDatabase.SwiDiagObj xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
-                PsdzDatabase.SwiDiagObj xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
+                XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX = SelectDiagParent("__DiagnosticObject(string)");
                 if (xEP_DIAGNOSISOBJECTSEX != null)
                 {
                     text = xEP_DIAGNOSISOBJECTSEX.Name;
@@ -867,56 +866,39 @@ namespace BMW.Rheingold.CoreFramework
             return null;
         }
 
-        [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
-        public PsdzDatabase.SwiDiagObj SelectDiagParent(string callingMethod)
+        public XEP_DIAGNOSISOBJECTSEX SelectDiagParent(string callingMethod)
         {
             InfoObject infoObjStarted = GetInfoObjStarted();
             if (infoObjStarted == null)
             {
                 return null;
             }
-            //[-] IList<XEP_DIAGNOSISOBJECTSEX> list = FindDiagParents(infoObjStarted);
-            //[+] IList<PsdzDatabase.SwiDiagObj> list = FindDiagParents(infoObjStarted);
-            IList<PsdzDatabase.SwiDiagObj> list = FindDiagParents(infoObjStarted);
+            IList<XEP_DIAGNOSISOBJECTSEX> list = FindDiagParents(infoObjStarted);
             if (list.Count == 0)
             {
-                //[-] Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object [{0}/{1}]. Returning null.", infoObjStarted.XepInfoObject.Identifikator, infoObjStarted.XepInfoObject.Id);
-                //[+] Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object. Returning null.");
-                Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object. Returning null.");
+                Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object [{0}/{1}]. Returning null.", infoObjStarted.XepInfoObject.Identifikator, infoObjStarted.XepInfoObject.Id);
                 return null;
             }
-            //[-] XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX;
-            //[+] PsdzDatabase.SwiDiagObj xEP_DIAGNOSISOBJECTSEX;
-            PsdzDatabase.SwiDiagObj xEP_DIAGNOSISOBJECTSEX;
+            XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX;
             if (list.Count == 1)
             {
                 xEP_DIAGNOSISOBJECTSEX = list[0];
             }
             else
             {
-                //[-] IEnumerable<XEP_DIAGNOSISOBJECTSEX> enumerable = (infoObjStarted.ParentDiagnosisObject as ManualDiagObj)?.SearchTreeNode;
-                //[+] IEnumerable<PsdzDatabase.SwiDiagObj> enumerable = (infoObjStarted.ParentDiagnosisObject as ManualDiagObj)?.SearchTreeNode;
-                IEnumerable<PsdzDatabase.SwiDiagObj> enumerable = (infoObjStarted.ParentDiagnosisObject as ManualDiagObj)?.SearchTreeNode;
-                //[-] IList<XEP_DIAGNOSISOBJECTSEX> list2 = new List<XEP_DIAGNOSISOBJECTSEX>();
-                //[+] IList<PsdzDatabase.SwiDiagObj> list2 = new List<PsdzDatabase.SwiDiagObj>();
-                IList<PsdzDatabase.SwiDiagObj> list2 = new List<PsdzDatabase.SwiDiagObj>();
+                IEnumerable<XEP_DIAGNOSISOBJECTSEX> enumerable = (infoObjStarted.ParentDiagnosisObject as ManualDiagObj)?.SearchTreeNode;
+                IList<XEP_DIAGNOSISOBJECTSEX> list2 = new List<XEP_DIAGNOSISOBJECTSEX>();
                 if (enumerable != null && enumerable.Any())
                 {
-                    //[-] List<decimal> list3 = new List<decimal>();
-                    //[+] List<string> list3 = new List<string>();
-                    List<string> list3 = new List<string>();
-                    //[-] foreach (XEP_DIAGNOSISOBJECTSEX item in enumerable)
-                    //[+] foreach (PsdzDatabase.SwiDiagObj item in enumerable)
-                    foreach (PsdzDatabase.SwiDiagObj item in enumerable)
+                    List<decimal> list3 = new List<decimal>();
+                    foreach (XEP_DIAGNOSISOBJECTSEX item in enumerable)
                     {
                         if (item != null)
                         {
                             list3.Add(item.Id);
                         }
                     }
-                    //[-] foreach (XEP_DIAGNOSISOBJECTSEX item2 in list)
-                    //[+] foreach (PsdzDatabase.SwiDiagObj item2 in list)
-                    foreach (PsdzDatabase.SwiDiagObj item2 in list)
+                    foreach (XEP_DIAGNOSISOBJECTSEX item2 in list)
                     {
                         if (item2 != null && list3.Contains(item2.Id))
                         {
@@ -926,9 +908,7 @@ namespace BMW.Rheingold.CoreFramework
                 }
                 if (!list2.Any())
                 {
-                    //[-] foreach (XEP_DIAGNOSISOBJECTSEX item3 in list)
-                    //[+] foreach (PsdzDatabase.SwiDiagObj item3 in list)
-                    foreach (PsdzDatabase.SwiDiagObj item3 in list)
+                    foreach (XEP_DIAGNOSISOBJECTSEX item3 in list)
                     {
                         list2.Add(item3);
                     }
@@ -940,10 +920,9 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         public abstract InfoObject GetInfoObjStarted();
-        [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
-        public abstract PsdzDatabase.SwiDiagObj SelectDiagParentByAskingUser(IList<PsdzDatabase.SwiDiagObj> diag, string callingMethod);
-        [PreserveSource(Hint = "IList<XEP_DIAGNOSISOBJECTSEX>", Placeholder = true)]
-        private IList<PsdzDatabase.SwiDiagObj> FindDiagParents(InfoObject infoObj)
+        public abstract XEP_DIAGNOSISOBJECTSEX SelectDiagParentByAskingUser(IList<XEP_DIAGNOSISOBJECTSEX> diag, string callingMethod);
+        [PreserveSource(Cleaned = true)]
+        private IList<XEP_DIAGNOSISOBJECTSEX> FindDiagParents(InfoObject infoObj)
         {
             throw new NotImplementedException();
         }
@@ -1161,28 +1140,28 @@ namespace BMW.Rheingold.CoreFramework
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
             }
 
-            //[-] else
-            //[-] {
-            //[-] foreach (InfoObject infoObject in infoObjects)
-            //[-] {
-            //[-] if (string.Compare(infoObject.XepInfoObject.DocumentType, "NONE", StringComparison.OrdinalIgnoreCase) == 0)
-            //[-] {
-            //[-] Log.Warning(Log.CurrentMethod(), "Unable to find document for document identifier: {0}", infoObject.Identifier ?? "");
-            //[-] infoObject.State = typeDiagObjectState.Canceled;
-            //[-] list.Add(infoObject.Identifier);
-            //[-] }
-            //[-] else if (!infoObject.IsExternalDocument && (string.IsNullOrEmpty(infoObject.Content.TransformedDocument) || (string.IsNullOrEmpty(infoObject.Content.Doc) && infoObject.Content.BinaryDocument == null)))
-            //[-] {
-            //[-] Log.Warning(Log.CurrentMethod(), "Selected document has no content for document identifier: {0} UI-culture: {1}", infoObject.Identifier ?? "", ConfigSettings.CurrentUICulture);
-            //[-] infoObject.State = typeDiagObjectState.Canceled;
-            //[-] list2.Add(infoObject.Identifier);
-            //[-] }
-            //[-] else
-            //[-] {
-            //[-] list3.Add(infoObject);
-            //[-] }
-            //[-] }
-            //[-] }
+            else
+            {
+                foreach (InfoObject infoObject in infoObjects)
+                {
+                    if (string.Compare(infoObject.XepInfoObject.DocumentType, "NONE", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        Log.Warning(Log.CurrentMethod(), "Unable to find document for document identifier: {0}", infoObject.Identifier ?? "");
+                        infoObject.State = typeDiagObjectState.Canceled;
+                        list.Add(infoObject.Identifier);
+                    }
+                    else if (!infoObject.IsExternalDocument && (string.IsNullOrEmpty(infoObject.Content.TransformedDocument) || (string.IsNullOrEmpty(infoObject.Content.Doc) && infoObject.Content.BinaryDocument == null)))
+                    {
+                        Log.Warning(Log.CurrentMethod(), "Selected document has no content for document identifier: {0} UI-culture: {1}", infoObject.Identifier ?? "", ConfigSettings.CurrentUICulture);
+                        infoObject.State = typeDiagObjectState.Canceled;
+                        list2.Add(infoObject.Identifier);
+                    }
+                    else
+                    {
+                        list3.Add(infoObject);
+                    }
+                }
+            }
             if (list.Any())
             {
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));

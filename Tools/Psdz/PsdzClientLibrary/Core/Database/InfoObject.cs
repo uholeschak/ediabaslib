@@ -108,7 +108,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         [XmlIgnore]
-        public PsdzDatabase.SwiDiagObj ParentDiagnosisObject { get; set; }
+        public XEP_DIAGNOSISOBJECTSEX ParentDiagnosisObject { get; set; }
 
         [XmlIgnore]
         public int Index { get; set; }

@@ -276,7 +276,7 @@ namespace BMW.Rheingold.Module.ISTA
                     return vehicleAdapters;
                 }
 
-                //[-] vehicleAdapters = new VehicleAdapters(Vehicle);
+                vehicleAdapters = new VehicleAdapters(Vehicle);
                 return vehicleAdapters;
             }
         }
@@ -1131,8 +1131,8 @@ namespace BMW.Rheingold.Module.ISTA
             return result;
         }
 
-        [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", Placeholder = true)]
-        public override PsdzDatabase.SwiDiagObj SelectDiagParentByAskingUser(IList<PsdzDatabase.SwiDiagObj> diag, string callingMethod)
+        [PreserveSource(Cleaned = true)]
+        public override XEP_DIAGNOSISOBJECTSEX SelectDiagParentByAskingUser(IList<XEP_DIAGNOSISOBJECTSEX> diag, string callingMethod)
         {
             throw new NotImplementedException();
         }
