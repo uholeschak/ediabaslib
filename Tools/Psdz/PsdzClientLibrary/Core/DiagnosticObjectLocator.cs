@@ -112,7 +112,7 @@ public class DiagnosticObjectLocator : IDiagnosticObjectLocator, ISPELocator
 
     public bool HasException => false;
 
-    [PreserveSource(Hint = "XEP_DIAGNOSISOBJECTSEX", SignatureModified = true)]
+    [PreserveSource(Hint = "No change", SignatureModified = true)]
     public DiagnosticObjectLocator(DiagnosticObject diagObj)
     {
         diagnosticObjectContainer = diagObj;
