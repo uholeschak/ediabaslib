@@ -5356,6 +5356,53 @@ namespace PsdzClient
             return list;
         }
 
+        public ICollection<XEP_ECUFIXEDFUNCTIONS> GetEcuFixedFunctionsForEcuVariant(string ecuVariantName, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            ICollection<XEP_ECUFIXEDFUNCTIONS> result = new Collection<XEP_ECUFIXEDFUNCTIONS>();
+            try
+            {
+                XEP_ECUVARIANTS ecuVariant = XepConverter.Convert(GetEcuVariantByName(ecuVariantName));
+                if (ecuVariant == null)
+                {
+                    log.ErrorFormat("GetEcuFixedFunctionsForEcuVariant ecuVariant was null for: {0}", ecuVariantName);
+                    return result;
+                }
+
+                ICollection<XEP_REFECUVARIANTS> collection = new Collection<XEP_REFECUVARIANTS>();
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ECUVARIANTID FROM XEP_REFECUVARIANTS WHERE ECUVARIANTID = {0}", ecuVariant.Id);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_REFECUVARIANTS xEP_REFECUVARIANTS = new XEP_REFECUVARIANTS();
+                            xEP_REFECUVARIANTS.Id = GetReaderDecimal(reader, "ID") ?? 0;
+                            xEP_REFECUVARIANTS.EcuVariantId = GetReaderDecimal(reader, "ECUVARIANTID") ?? 0;
+                            collection.Add(xEP_REFECUVARIANTS);
+                        }
+                    }
+                }
+
+                foreach (XEP_REFECUVARIANTS item in collection)
+                {
+                    if (item.EcuVariantId == ecuVariant.Id)
+                    {
+                        //result = GetEcuFixedFunctionsByParentId(item.Id, vehicle, ffmDynamicResolver);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetVirtualFaultCodeById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetEcuFixedFunctionsForEcuVariant Result Count: {0}", result.Count);
+            return result;
+        }
+
         public XEP_VIRTUALFAULTCODES GetVirtualFaultCodeById(string id, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             log.InfoFormat("GetVirtualFaultCodeById Id: {0}", id);

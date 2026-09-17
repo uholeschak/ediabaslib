@@ -3,6 +3,7 @@ using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
@@ -899,8 +900,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public ICollection<XEP_ECUFIXEDFUNCTIONS> GetFixedFunctions(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             //[-] return DatabaseProviderFactory.Instance.GetEcuFixedFunctionsForEcuVariant(Name, vehicle, ffmDynamicResolver);
-            //[+] return new List<XEP_ECUFIXEDFUNCTIONS>();
-            return new List<XEP_ECUFIXEDFUNCTIONS>();
+            //[+] return ClientContext.GetDatabase(vehicle)?.GetEcuFixedFunctionsForEcuVariant(Name, vehicle, ffmDynamicResolver);
+            return ClientContext.GetDatabase(vehicle)?.GetEcuFixedFunctionsForEcuVariant(Name, vehicle, ffmDynamicResolver);
         }
 
         public override bool Equals(object obj)
