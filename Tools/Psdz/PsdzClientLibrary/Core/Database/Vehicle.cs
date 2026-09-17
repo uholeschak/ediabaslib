@@ -3050,8 +3050,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
 
             //[-] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = DatabaseProviderFactory.Instance.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
-            //[+] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = new Dictionary<decimal, XEP_FAULTLABELS>();
-            IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = new Dictionary<decimal, XEP_FAULTLABELS>();
+            //[+] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = _clientContext.Database.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
+            IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = _clientContext.Database.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
             DtcFOrtEcuVariantKey key;
             foreach (FaultCodeIdDtcFOrtEcuVariantKey item in collection)
             {

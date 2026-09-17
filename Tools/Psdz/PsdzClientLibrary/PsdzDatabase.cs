@@ -5749,6 +5749,46 @@ namespace PsdzClient
             return faultLabels;
         }
 
+        public IDictionary<decimal, XEP_FAULTLABELS> GetFaultLabelXepFaultLabelByCodesAndIds(IEnumerable<string> codesId, IEnumerable<decimal> labelsId)
+        {
+            Dictionary<decimal, XEP_FAULTLABELS> dictionary = new Dictionary<decimal, XEP_FAULTLABELS>();
+            if (!codesId.Any() || !labelsId.Any())
+            {
+                return dictionary;
+            }
+
+            log.InfoFormat("GetFaultLabelXepFaultLabelByCodesAndIds CodesId: {0}, LabelsId: {1}", string.Join(",", codesId), string.Join(",", labelsId));
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder("SELECT ID, CODE, SAECODE, TITLEID, TITLE_DEDE, TITLE_ENGB, TITLE_ENUS, TITLE_FR, TITLE_TH, TITLE_SV, TITLE_IT, ");
+                stringBuilder.Append(" TITLE_ES, TITLE_ID, TITLE_KO, TITLE_EL, TITLE_TR, TITLE_ZHCN, TITLE_RU, TITLE_NL, TITLE_PT, TITLE_ZHTW, ");
+                stringBuilder.Append(" TITLE_JA, TITLE_CSCZ, TITLE_PLPL, RELEVANCE, DATATYPE ");
+                stringBuilder.Append(" FROM XEP_FAULTLABELS ");
+                stringBuilder.Append(" where code IN (" + DatabaseUtil.CreateInClause(codesId) + ") ");
+                stringBuilder.Append(" and id IN (" + DatabaseUtil.CreateInClause(labelsId) + ") ");
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = stringBuilder.ToString();
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_FAULTLABELS xEP_FAULTLABELS = ReadXepFaultLabels(reader);
+                            dictionary.Add(xEP_FAULTLABELS.Id, xEP_FAULTLABELS);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetFaultLabelXepFaultLabelByCodesAndIds Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetFaultLabelXepFaultLabelByCodesAndIds Count: {0}", dictionary.Count);
+            return dictionary;
+        }
+
         public ICollection<XEP_FAULTMODELABELS> GetEcuFaultAdditionalLabel(string faultCode, string ecuVariant)
         {
             log.InfoFormat("GetEcuFaultAdditionalLabel FaultCode: {0}, EcuVariant: {1}", faultCode, ecuVariant);
