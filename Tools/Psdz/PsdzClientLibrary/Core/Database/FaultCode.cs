@@ -244,8 +244,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (ECU != null && !string.IsNullOrEmpty(ECU.VARIANTE))
                 {
                     //[-] xEP_ECUVARIANTS = DatabaseProviderFactory.Instance.GetEcuVariantByName(ECU.VARIANTE);
-                    //[+] xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(ECU.VARIANTE));
-                    xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(ECU.VARIANTE));
+                    //[+] xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantByName(ECU.VARIANTE));
+                    xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantByName(ECU.VARIANTE));
                 }
 
                 if (xEP_ECUVARIANTS == null && base.ECUVARIANTID.HasValue)

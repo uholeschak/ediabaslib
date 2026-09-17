@@ -2815,13 +2815,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
             //[-]if (instance != null && instance.DatabaseAccessType != DatabaseType.None && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(SessionInfoAccessor.SessionInfo.VinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             //[+] PsdzDatabase database = ClientContext.GetDatabase(this);
-            PsdzDatabase database = ClientContext.GetDatabase(this);
-            //[+] if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(_clientContext.SessionInfo.VinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
-            if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(_clientContext.SessionInfo.VinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            PsdzDatabase instance = ClientContext.GetDatabase(this);
+            //[+] if (instance != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(_clientContext.SessionInfo.VinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            if (instance != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(_clientContext.SessionInfo.VinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             {
                 //[-] IVinRanges vinRangesByVin = instance.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
-                //[+] PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
-                PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
+                //[+] PsdzDatabase.VinRanges vinRangesByVin = instance.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
+                PsdzDatabase.VinRanges vinRangesByVin = instance.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
                 if (vinRangesByVin != null)
                 {
                     //[-] SessionInfoAccessor.SessionInfo.VinRangeTypeLastResolvedType = VIN7;
