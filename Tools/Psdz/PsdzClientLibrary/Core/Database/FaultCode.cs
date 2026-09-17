@@ -541,15 +541,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (instance != null)
                 {
                     //[-] FaultCode faultCodeByCodeAndVariantName = DatabaseProviderFactory.Instance.GetFaultCodeByCodeAndVariantName(f_Ort, ecu.VARIANTE, "F", vehicle, ffmDynamicResolver);
-                    //[+] FaultCode faultCodeByCodeAndVariantName = ClientContext.GetDatabase(vehicle).GetFaultCodeByCodeAndVariantName(f_Ort, ecu.VARIANTE, "F", vehicle, ffmDynamicResolver);
-                    FaultCode faultCodeByCodeAndVariantName = ClientContext.GetDatabase(vehicle).GetFaultCodeByCodeAndVariantName(f_Ort, ecu.VARIANTE, "F", vehicle, ffmDynamicResolver);
+                    //[+] FaultCode faultCodeByCodeAndVariantName = instance.GetFaultCodeByCodeAndVariantName(f_Ort, ecu.VARIANTE, "F", vehicle, ffmDynamicResolver);
+                    FaultCode faultCodeByCodeAndVariantName = instance.GetFaultCodeByCodeAndVariantName(f_Ort, ecu.VARIANTE, "F", vehicle, ffmDynamicResolver);
                     if (faultCodeByCodeAndVariantName != null)
                     {
                         if (faultCodeByCodeAndVariantName.ECUVARIANTID.HasValue)
                         {
                             //[-] faultCodeByCodeAndVariantName.listEnvConds = DatabaseProviderFactory.Instance.GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
-                            //[+] faultCodeByCodeAndVariantName.listEnvConds = ClientContext.GetDatabase(vehicle).GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
-                            faultCodeByCodeAndVariantName.listEnvConds = ClientContext.GetDatabase(vehicle).GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
+                            //[+] faultCodeByCodeAndVariantName.listEnvConds = instance.GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
+                            faultCodeByCodeAndVariantName.listEnvConds = instance.GetEnvCondLabels(f_Ort.ToString(CultureInfo.InvariantCulture), faultCodeByCodeAndVariantName.ECUVARIANTID.Value).ToList();
                         }
 
                         faultCodeByCodeAndVariantName.ECU = ecu;
@@ -579,8 +579,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (instance != null)
                 {
                     //[-] XEP_VIRTUALFAULTCODES virtualFaultCodeById = instance.GetVirtualFaultCodeById(Convert.ToInt64(refCode), vehicle, ffmResolver);
-                    //[+] XEP_VIRTUALFAULTCODES virtualFaultCodeById = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeById(refCode, vehicle, ffmResolver);
-                    XEP_VIRTUALFAULTCODES virtualFaultCodeById = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeById(refCode, vehicle, ffmResolver);
+                    //[+] XEP_VIRTUALFAULTCODES virtualFaultCodeById = instance.GetVirtualFaultCodeById(refCode, vehicle, ffmResolver);
+                    XEP_VIRTUALFAULTCODES virtualFaultCodeById = instance.GetVirtualFaultCodeById(refCode, vehicle, ffmResolver);
                     if (virtualFaultCodeById != null)
                     {
                         return new FaultCode
@@ -639,8 +639,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     if (dtc.Id.HasValue)
                     {
                         //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeById(dtc.Id.Value, vehicle, ffmResolver);
-                        //[+] xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeById(dtc.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver);
-                        xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeById(dtc.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver);
+                        //[+] xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeById(dtc.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver);
+                        xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeById(dtc.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, ffmResolver);
                     }
 
                     if (xEP_VIRTUALFAULTCODES == null && !string.IsNullOrEmpty(ecu.ECU_GRUPPE))
@@ -650,8 +650,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         foreach (string ecuGroup in array)
                         {
                             //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
-                            //[+] xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
-                            xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
+                            //[+] xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
+                            xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeByCodeAndEcuGroup(code, ecuGroup, vehicle, ffmResolver);
                         }
                     }
 
