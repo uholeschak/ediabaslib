@@ -509,8 +509,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         if (DTC.Id.HasValue)
                         {
                             //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeById(DTC.Id.Value, vehicle, resolver);
-                            //[+] xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeById(DTC.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, resolver);
-                            xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeById(DTC.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, resolver);
+                            //[+] xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeById(DTC.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, resolver);
+                            xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeById(DTC.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, resolver);
                         }
 
                         if (xEP_VIRTUALFAULTCODES == null && !string.IsNullOrEmpty(ECU.ECU_GRUPPE))
@@ -523,8 +523,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 if (xEP_VIRTUALFAULTCODES == null)
                                 {
                                     //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
-                                    //[+] xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
-                                    xEP_VIRTUALFAULTCODES = ClientContext.GetDatabase(vehicle).GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
+                                    //[+] xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
+                                    xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
                                     if (xEP_VIRTUALFAULTCODES != null)
                                     {
                                         break;
@@ -541,8 +541,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         if (xEP_VIRTUALFAULTCODES != null)
                         {
                             //[-] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = DatabaseProviderFactory.Instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
-                            //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = ClientContext.GetDatabase(vehicle).GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
-                            XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = ClientContext.GetDatabase(vehicle).GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
+                            //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
+                            XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
                             if (xepVirtualFaultLabelsByVirtualFaultCodeId != null)
                             {
                                 XepFaultLabel = xepVirtualFaultLabelsByVirtualFaultCodeId;
@@ -562,13 +562,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
                     Log.Info("Fault.ResolveLabels()", "found combined fault: {0} Code: {1}", DTC.Id, DTC.FortAsHexString);
                     //[-] XEP_COMBINEDFAULTS xepCombinedFaultById = DatabaseProviderFactory.Instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
-                    //[+] XEP_COMBINEDFAULTS xepCombinedFaultById = ClientContext.GetDatabase(vehicle)?.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
-                    XEP_COMBINEDFAULTS xepCombinedFaultById = ClientContext.GetDatabase(vehicle)?.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
+                    //[+] XEP_COMBINEDFAULTS xepCombinedFaultById = instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
+                    XEP_COMBINEDFAULTS xepCombinedFaultById = instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
                     if (xepCombinedFaultById != null)
                     {
                         //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
-                        //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = ClientContext.GetDatabase(vehicle)?.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
-                        XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = ClientContext.GetDatabase(vehicle)?.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
+                        //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
+                        XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
                         if (xepCombiFaultLabelByCode == null)
                         {
                             FaultLabel = xepCombinedFaultById.CODE;
@@ -590,8 +590,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 DtcFOrtEcuVariantKey key = new DtcFOrtEcuVariantKey(DTC.F_ORT.ToString(), ECU.VARIANTE.ToLowerInvariant());
                 XEP_FAULTLABELS xEP_FAULTLABELS = null;
                 //[-] xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : DatabaseProviderFactory.Instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
-                //[+] xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : ClientContext.GetDatabase(vehicle)?.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
-                xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : ClientContext.GetDatabase(vehicle)?.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
+                //[+] xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
+                xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
                 string value;
                 if (xEP_FAULTLABELS == null)
                 {
@@ -608,8 +608,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (xepFaultModelLabelsCollection == null)
                 {
                     //[-] enumerable = DatabaseProviderFactory.Instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
-                    //[+] enumerable = ClientContext.GetDatabase(vehicle)?.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
-                    enumerable = ClientContext.GetDatabase(vehicle)?.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
+                    //[+] enumerable = instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
+                    enumerable = instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
                 }
                 else
                 {
@@ -646,8 +646,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 foreach (XEP_FAULTMODELABELS item in enumerable)
                 {
                     //[-] if (!DatabaseProviderFactory.Instance.EvaluateXepRulesById(item.ID, vehicle, resolver) || string.IsNullOrEmpty(item.Code))
-                    //[+] if (ClientContext.GetDatabase(vehicle)?.EvaluateXepRulesById(item.ID.ToString(CultureInfo.InvariantCulture), vehicle, resolver) != true || string.IsNullOrEmpty(item.Code))
-                    if (ClientContext.GetDatabase(vehicle)?.EvaluateXepRulesById(item.ID.ToString(CultureInfo.InvariantCulture), vehicle, resolver) != true || string.IsNullOrEmpty(item.Code))
+                    //[+] if (instance.EvaluateXepRulesById(item.ID.ToString(CultureInfo.InvariantCulture), vehicle, resolver) != true || string.IsNullOrEmpty(item.Code))
+                    if (instance.EvaluateXepRulesById(item.ID.ToString(CultureInfo.InvariantCulture), vehicle, resolver) != true || string.IsNullOrEmpty(item.Code))
                     {
                         continue;
                     }
