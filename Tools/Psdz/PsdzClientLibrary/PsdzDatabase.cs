@@ -5389,7 +5389,7 @@ namespace PsdzClient
                 {
                     if (item.EcuVariantId == ecuVariant.Id)
                     {
-                        //result = GetEcuFixedFunctionsByParentId(item.Id, vehicle, ffmDynamicResolver);
+                        result = GetEcuFixedFunctionsByParentId(item.Id, vehicle, ffmDynamicResolver);
                     }
                 }
             }
@@ -5401,6 +5401,140 @@ namespace PsdzClient
 
             log.InfoFormat("GetEcuFixedFunctionsForEcuVariant Result Count: {0}", result.Count);
             return result;
+        }
+
+        private List<XEP_ECUFIXEDFUNCTIONS> GetEcuFixedFunctionsByParentId(decimal parentId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            List<XEP_ECUFIXEDFUNCTIONS> list = new List<XEP_ECUFIXEDFUNCTIONS>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, NODECLASS, TITLEID, " + SqlTitleItemsC +
+                    @", TELESERVICERELEVANT,SICHERHEITSRELEVANT, VALIDTO, VALIDFROM, FASTARELEVANT, STEUERGERAETEFUNKTIONENRELEVAN, FAHRZEUGTESTRELEVANT, FASTADATATYPE, FDMRELEVANT, PREPARINGOPERATORTEXTID," +
+                    @"PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_ENGB, PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_FR, PREPARINGOPERATORTEXT_TH, " +
+                    @"PREPARINGOPERATORTEXT_SV, PREPARINGOPERATORTEXT_IT, PREPARINGOPERATORTEXT_ES, PREPARINGOPERATORTEXT_ID, PREPARINGOPERATORTEXT_KO, " +
+                    @"PREPARINGOPERATORTEXT_EL, PREPARINGOPERATORTEXT_TR, PREPARINGOPERATORTEXT_ZHCN, PREPARINGOPERATORTEXT_RU, PREPARINGOPERATORTEXT_NL, " +
+                    @"PREPARINGOPERATORTEXT_PT, PREPARINGOPERATORTEXT_ZHTW, PREPARINGOPERATORTEXT_JA, PREPARINGOPERATORTEXT_CSCZ, PREPARINGOPERATORTEXT_PLPL, " +
+                    @"PROCESSINGOPERATORTEXTID, PROCESSINGOPERATORTEXT_DEDE, PROCESSINGOPERATORTEXT_ENGB, PROCESSINGOPERATORTEXT_ENUS, PROCESSINGOPERATORTEXT_FR, " +
+                    @"PROCESSINGOPERATORTEXT_TH, PROCESSINGOPERATORTEXT_SV, PROCESSINGOPERATORTEXT_IT, PROCESSINGOPERATORTEXT_ES, PROCESSINGOPERATORTEXT_ID, " +
+                    @"PROCESSINGOPERATORTEXT_KO, PROCESSINGOPERATORTEXT_EL, PROCESSINGOPERATORTEXT_TR, PROCESSINGOPERATORTEXT_ZHCN, PROCESSINGOPERATORTEXT_RU, " +
+                    @"PROCESSINGOPERATORTEXT_NL, PROCESSINGOPERATORTEXT_PT, PROCESSINGOPERATORTEXT_ZHTW, PROCESSINGOPERATORTEXT_JA, PROCESSINGOPERATORTEXT_CSCZ, " +
+                    @"PROCESSINGOPERATORTEXT_PLPL, POSTOPERATORTEXTID, POSTOPERATORTEXT_DEDE, POSTOPERATORTEXT_ENGB, POSTOPERATORTEXT_ENUS, " +
+                    @"POSTOPERATORTEXT_FR, POSTOPERATORTEXT_TH, POSTOPERATORTEXT_SV, POSTOPERATORTEXT_IT, POSTOPERATORTEXT_ES, POSTOPERATORTEXT_ID, POSTOPERATORTEXT_KO, " +
+                    @"POSTOPERATORTEXT_EL, POSTOPERATORTEXT_TR, POSTOPERATORTEXT_ZHCN, POSTOPERATORTEXT_RU, POSTOPERATORTEXT_NL, POSTOPERATORTEXT_PT, " +
+                    @"POSTOPERATORTEXT_ZHTW, POSTOPERATORTEXT_JA, POSTOPERATORTEXT_CSCZ, POSTOPERATORTEXT_PLPL, " +
+                    @"PARENTID, SORT_ORDER, ACTIVATION, ACTIVATION_DURATION_MS FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", parentId);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_ECUFIXEDFUNCTIONS xEP_ECUFIXEDFUNCTIONS = new XEP_ECUFIXEDFUNCTIONS();
+                            xEP_ECUFIXEDFUNCTIONS.Id = GetReaderDecimal(reader, "ID") ?? 0;
+                            xEP_ECUFIXEDFUNCTIONS.Nodeclass = GetReaderDecimal(reader, "NODECLASS") ?? 0;
+                            xEP_ECUFIXEDFUNCTIONS.FahrzeugTestRelevant = GetReaderDecimal(reader, "FAHRZEUGTESTRELEVANT");
+                            xEP_ECUFIXEDFUNCTIONS.FastaDataType = GetReaderString(reader, "FASTADATATYPE");
+                            xEP_ECUFIXEDFUNCTIONS.FastaRelevant = GetReaderDecimal(reader, "FASTARELEVANT");
+                            xEP_ECUFIXEDFUNCTIONS.FdmRelevant = GetReaderDecimal(reader, "FDMRELEVANT");
+                            xEP_ECUFIXEDFUNCTIONS.ParentId = GetReaderDecimal(reader, "PARENTID");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_dede = GetReaderString(reader, "POSTOPERATORTEXT_DEDE");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_el = GetReaderString(reader, "POSTOPERATORTEXT_EL");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_engb = GetReaderString(reader, "POSTOPERATORTEXT_ENGB");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_enus = GetReaderString(reader, "POSTOPERATORTEXT_ENUS");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_es = GetReaderString(reader, "POSTOPERATORTEXT_ES");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_fr = GetReaderString(reader, "POSTOPERATORTEXT_FR");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_id = GetReaderString(reader, "POSTOPERATORTEXT_ID");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_it = GetReaderString(reader, "POSTOPERATORTEXT_IT");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_ja = GetReaderString(reader, "POSTOPERATORTEXT_JA");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_ko = GetReaderString(reader, "POSTOPERATORTEXT_KO");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_nl = GetReaderString(reader, "POSTOPERATORTEXT_NL");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_pt = GetReaderString(reader, "POSTOPERATORTEXT_PT");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_ru = GetReaderString(reader, "POSTOPERATORTEXT_RU");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_sv = GetReaderString(reader, "POSTOPERATORTEXT_SV");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_th = GetReaderString(reader, "POSTOPERATORTEXT_TH");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_tr = GetReaderString(reader, "POSTOPERATORTEXT_TR");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_zhcn = GetReaderString(reader, "POSTOPERATORTEXT_ZHCN");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_zhtw = GetReaderString(reader, "POSTOPERATORTEXT_ZHTW");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_cscz = GetReaderString(reader, "POSTOPERATORTEXT_CSCZ");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorText_plpl = GetReaderString(reader, "POSTOPERATORTEXT_PLPL");
+                            xEP_ECUFIXEDFUNCTIONS.PostOperatorTextId = GetReaderDecimal(reader, "POSTOPERATORTEXTID");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_dede = GetReaderString(reader, "PREPARINGOPERATORTEXT_DEDE");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_el = GetReaderString(reader, "PREPARINGOPERATORTEXT_EL");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_engb = GetReaderString(reader, "PREPARINGOPERATORTEXT_ENGB");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_enus = GetReaderString(reader, "PREPARINGOPERATORTEXT_ENUS");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_es = GetReaderString(reader, "PREPARINGOPERATORTEXT_ES");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_fr = GetReaderString(reader, "PREPARINGOPERATORTEXT_FR");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_id = GetReaderString(reader, "PREPARINGOPERATORTEXT_ID");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_it = GetReaderString(reader, "PREPARINGOPERATORTEXT_IT");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_ja = GetReaderString(reader, "PREPARINGOPERATORTEXT_JA");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_ko = GetReaderString(reader, "PREPARINGOPERATORTEXT_KO");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_nl = GetReaderString(reader, "PREPARINGOPERATORTEXT_NL");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_pt = GetReaderString(reader, "PREPARINGOPERATORTEXT_PT");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_ru = GetReaderString(reader, "PREPARINGOPERATORTEXT_RU");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_sv = GetReaderString(reader, "PREPARINGOPERATORTEXT_SV");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_th = GetReaderString(reader, "PREPARINGOPERATORTEXT_TH");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_tr = GetReaderString(reader, "PREPARINGOPERATORTEXT_TR");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_zhcn = GetReaderString(reader, "PREPARINGOPERATORTEXT_ZHCN");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_zhtw = GetReaderString(reader, "PREPARINGOPERATORTEXT_ZHTW");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_cscz = GetReaderString(reader, "PREPARINGOPERATORTEXT_CSCZ");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorText_plpl = GetReaderString(reader, "PREPARINGOPERATORTEXT_PLPL");
+                            xEP_ECUFIXEDFUNCTIONS.PreparingOperatorTextId = GetReaderDecimal(reader, "PREPARINGOPERATORTEXTID");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_dede = GetReaderString(reader, "PROCESSINGOPERATORTEXT_DEDE");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_el = GetReaderString(reader, "PROCESSINGOPERATORTEXT_EL");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_engb = GetReaderString(reader, "PROCESSINGOPERATORTEXT_ENGB");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_enus = GetReaderString(reader, "PROCESSINGOPERATORTEXT_ENUS");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_es = GetReaderString(reader, "PROCESSINGOPERATORTEXT_ES");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_fr = GetReaderString(reader, "PROCESSINGOPERATORTEXT_FR");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_id = GetReaderString(reader, "PROCESSINGOPERATORTEXT_ID");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_it = GetReaderString(reader, "PROCESSINGOPERATORTEXT_IT");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_ja = GetReaderString(reader, "PROCESSINGOPERATORTEXT_JA");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_ko = GetReaderString(reader, "PROCESSINGOPERATORTEXT_KO");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_nl = GetReaderString(reader, "PROCESSINGOPERATORTEXT_NL");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_pt = GetReaderString(reader, "PROCESSINGOPERATORTEXT_PT");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_ru = GetReaderString(reader, "PROCESSINGOPERATORTEXT_RU");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_sv = GetReaderString(reader, "PROCESSINGOPERATORTEXT_SV");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_th = GetReaderString(reader, "PROCESSINGOPERATORTEXT_TH");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_tr = GetReaderString(reader, "PROCESSINGOPERATORTEXT_TR");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_zhcn = GetReaderString(reader, "PROCESSINGOPERATORTEXT_ZHCN");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_zhtw = GetReaderString(reader, "PROCESSINGOPERATORTEXT_ZHTW");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_cscz = GetReaderString(reader, "PROCESSINGOPERATORTEXT_CSCZ");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorText_plpl = GetReaderString(reader, "PROCESSINGOPERATORTEXT_PLPL");
+                            xEP_ECUFIXEDFUNCTIONS.ProcessingOperatorTextId = GetReaderDecimal(reader, "PROCESSINGOPERATORTEXTID");
+                            xEP_ECUFIXEDFUNCTIONS.SicherheitsRelevant = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
+                            xEP_ECUFIXEDFUNCTIONS.SteuergeraeteFunktionenRelevan = GetReaderDecimal(reader, "STEUERGERAETEFUNKTIONENRELEVAN");
+                            xEP_ECUFIXEDFUNCTIONS.TeleserviceRelevant = GetReaderDecimal(reader, "TELESERVICERELEVANT");
+                            xEP_ECUFIXEDFUNCTIONS.ValidFrom = GetReaderDateTime(reader, "VALIDFROM");
+                            xEP_ECUFIXEDFUNCTIONS.ValidTo = GetReaderDateTime(reader, "VALIDTO");
+                            xEP_ECUFIXEDFUNCTIONS.SortOrder = GetReaderDecimal(reader, "SORT_ORDER");
+                            xEP_ECUFIXEDFUNCTIONS.Activation = GetReaderDecimal(reader, "ACTIVATION") ?? 0;
+                            xEP_ECUFIXEDFUNCTIONS.ActivationDurationMs = GetReaderDecimal(reader, "ACTIVATION_DURATION_MS") ?? 0;
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_ECUFIXEDFUNCTIONS);
+                            if (vehicle != null)
+                            {
+                                if (EvaluateXepRulesById(xEP_ECUFIXEDFUNCTIONS.Id.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver))
+                                {
+                                    list.Add(xEP_ECUFIXEDFUNCTIONS);
+                                }
+                            }
+                            else
+                            {
+                                list.Add(xEP_ECUFIXEDFUNCTIONS);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetVirtualFaultCodeById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetEcuFixedFunctionsByParentId Count: {0}", list.Count);
+            return list;
         }
 
         public XEP_VIRTUALFAULTCODES GetVirtualFaultCodeById(string id, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
