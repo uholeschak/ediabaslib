@@ -1,5 +1,6 @@
 ﻿using BMW.Authoring.Vehicle;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using PsdzClient.Core;
 using System.Collections.Generic;
@@ -15,14 +16,12 @@ namespace BMW.Rheingold.FASTA.Model
             Log.Debug("TestPlanNodeNop.AddInfoObject()", "Not operation executed.");
         }
 
-        [PreserveSource(Hint = "Fault", Placeholder = true)]
-        public void AddSymptom(PlaceholderType fault)
+        public void AddSymptom(Fault fault)
         {
             Log.Debug("TestPlanNodeNop.AddSymptom()", "Not operation executed.");
         }
 
-        [PreserveSource(Hint = "XEP_PERCEIVEDSYMPTOMSEX", Placeholder = true)]
-        public void AddFaultPattern(PlaceholderType symptom)
+        public void AddFaultPattern(XEP_PERCEIVEDSYMPTOMSEX symptom)
         {
             Log.Debug("TestPlanNodeNop.AddFaultPattern()", "Not operation executed.");
         }

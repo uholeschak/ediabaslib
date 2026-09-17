@@ -8,8 +8,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface ISwiAction : INotifyPropertyChanged
     {
-        [PreserveSource(Hint = "XEP_SWIACTION", Placeholder = true)]
-        PlaceholderType XepSwiAction { get; }
+        XEP_SWIACTION XepSwiAction { get; }
 
         decimal Id { get; }
 
