@@ -1612,7 +1612,31 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        public ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> PerceivedSymptoms => perceivedSymptomsField;
+        public ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> PerceivedSymptoms
+        {
+            get
+            {
+                return perceivedSymptomsField;
+            }
+
+            set
+            {
+                if (perceivedSymptomsField != null)
+                {
+                    if (!perceivedSymptomsField.Equals(value))
+                    {
+                        perceivedSymptomsField = value;
+                        OnPropertyChanged("PerceivedSymptoms");
+                    }
+                }
+                else
+                {
+                    perceivedSymptomsField = value;
+                    OnPropertyChanged("PerceivedSymptoms");
+                }
+            }
+        }
+
         public string ProgmanVersion
         {
             get
@@ -2963,6 +2987,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 ConfigSettings.CurrentUICulture = language;
             }
+
             //[+] PsdzDatabase database = ClientContext.GetDatabase(this);
             PsdzDatabase database = ClientContext.GetDatabase(this);
             //[+] if (database == null) return;
@@ -3819,6 +3844,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 eCU.XepEcuClique = new InvalidEcuClique();
             }
+
             if (ecu.XepEcuVariant != null)
             {
                 if (ecu.XepEcuVariant is XEP_ECUVARIANTS xepEcuVariant)
@@ -3827,9 +3853,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
                 else
                 {
-                 eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
+                    eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
                 }
             }
+
             ECU.AddIfNotContains(eCU);
         }
 
