@@ -1,7 +1,5 @@
-﻿using BMW.Authoring.Vehicle;
-using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+﻿using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient;
 using PsdzClient.Core;
 using System.Collections.Generic;
 
