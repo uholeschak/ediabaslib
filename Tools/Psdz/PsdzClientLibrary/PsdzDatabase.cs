@@ -5585,14 +5585,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            XEP_FAULTMODELABELS xEP_FAULTMODELABELS = new XEP_FAULTMODELABELS();
-                            xEP_FAULTMODELABELS.Code = GetReaderString(reader, "CODE");
-                            xEP_FAULTMODELABELS.Erweitert = GetReaderDecimal(reader, "ERWEITERT");
-                            xEP_FAULTMODELABELS.ID = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_FAULTMODELABELS.Relevance = GetReaderDecimal(reader, "RELEVANCE");
-                            xEP_FAULTMODELABELS.Titleid = GetReaderDecimal(reader, "TITLEID");
-                            EcuTranslation translation = GetTranslation(reader);
-                            XepConverter.CopyEcuTranslation(translation, xEP_FAULTMODELABELS);
+                            XEP_FAULTMODELABELS xEP_FAULTMODELABELS = ReadXepFaultModelLabel(reader);
                             collection.Add(xEP_FAULTMODELABELS);
                         }
                     }
@@ -5629,14 +5622,8 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            XEP_FAULTMODELABELS xEP_FAULTMODELABELS = new XEP_FAULTMODELABELS();
-                            xEP_FAULTMODELABELS.ID = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_FAULTMODELABELS.Code = GetReaderString(reader, "CODE");
-                            xEP_FAULTMODELABELS.Erweitert = GetReaderDecimal(reader, "ERWEITERT") ?? 0;
-                            xEP_FAULTMODELABELS.Relevance = GetReaderDecimal(reader, "RELEVANCE") ?? 0;
-                            xEP_FAULTMODELABELS.Titleid = GetReaderDecimal(reader, "TITLEID") ?? 0;
-                            EcuTranslation translation = GetTranslation(reader);
-                            XepConverter.CopyEcuTranslation(translation, xEP_FAULTMODELABELS);
+                            XEP_FAULTMODELABELS xEP_FAULTMODELABELS = ReadXepFaultModelLabel(reader);
+                            dictionary.Add(xEP_FAULTMODELABELS.ID, xEP_FAULTMODELABELS);
                         }
                     }
                 }
@@ -6618,6 +6605,19 @@ namespace PsdzClient
             faultCode.VALIDTO = GetReaderDateTime(reader, "VALIDTO");
             faultCode.WEIGHTING = GetReaderDecimal(reader, "WEIGHTING");
             return faultCode;
+        }
+
+        private static XEP_FAULTMODELABELS ReadXepFaultModelLabel(SqliteDataReader reader)
+        {
+            XEP_FAULTMODELABELS xEP_FAULTMODELABELS = new XEP_FAULTMODELABELS();
+            xEP_FAULTMODELABELS.Code = GetReaderString(reader, "CODE");
+            xEP_FAULTMODELABELS.Erweitert = GetReaderDecimal(reader, "ERWEITERT");
+            xEP_FAULTMODELABELS.ID = GetReaderDecimal(reader, "ID") ?? 0;
+            xEP_FAULTMODELABELS.Relevance = GetReaderDecimal(reader, "RELEVANCE");
+            xEP_FAULTMODELABELS.Titleid = GetReaderDecimal(reader, "TITLEID");
+            EcuTranslation translation = GetTranslation(reader);
+            XepConverter.CopyEcuTranslation(translation, xEP_FAULTMODELABELS);
+            return xEP_FAULTMODELABELS;
         }
 
         private static XEP_COMBIFAULTLABELS ReadXepCombinedFaultLabels(SqliteDataReader reader)

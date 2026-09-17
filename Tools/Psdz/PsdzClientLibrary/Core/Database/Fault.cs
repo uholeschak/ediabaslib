@@ -608,8 +608,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 if (xepFaultModelLabelsCollection == null)
                 {
                     //[-] enumerable = DatabaseProviderFactory.Instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
-                    //[+] enumerable = new List<XEP_FAULTMODELABELS>();
-                    enumerable = new List<XEP_FAULTMODELABELS>();
+                    //[+] enumerable = ClientContext.GetDatabase(vehicle)?.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
+                    enumerable = ClientContext.GetDatabase(vehicle)?.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
                 }
                 else
                 {
