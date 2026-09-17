@@ -28,8 +28,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class Vehicle : IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle, IEcuTreeVehicle
     {
         public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
-        [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
-        private readonly PlaceholderType pKodeList;
+        private readonly ObservableCollectionEx<Fault> pKodeList;
         private readonly ParameterContainer sessionDataStore;
         private string vinRangeType;
         private FA targetFA;
@@ -2565,8 +2564,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
-        public PlaceholderType PKodeList => pKodeList;
+        public ObservableCollectionEx<Fault> PKodeList => pKodeList;
 
         [XmlIgnore]
         [Obsolete("Use SessionInfoAccessor.SessionInfo.IsVehicleBreakdownAlreadyShown")]
@@ -2882,7 +2880,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             gWSZReadoutSuccessField = false;
             dealerSessionProperties = new List<DealerSessionProperty>();
             //[-] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
-            //[-]  pKodeList = new ObservableCollectionEx<Fault>();
+            pKodeList = new ObservableCollectionEx<Fault>();
             FaultList = new List<Fault>();
             VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
             sessionDataStore = new ParameterContainer();
