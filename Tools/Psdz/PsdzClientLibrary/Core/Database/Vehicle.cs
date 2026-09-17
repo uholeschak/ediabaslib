@@ -3035,6 +3035,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             foreach (FaultCodeIdDtcFOrtEcuVariantKey key2 in refFaultLabel.Keys)
             {
                 //[-] if (DatabaseProviderFactory.Instance.EvaluateXepRulesById(key2.FaultId, vehicle, ffmDynamicResolver))
+                //[+] if (_clientContext.Database.EvaluateXepRulesById(key2.FaultId.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver))
+                if (_clientContext.Database.EvaluateXepRulesById(key2.FaultId.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver))
                 {
                     collection.Add(key2);
                     collection2.AddRange(refFaultLabel[key2]);
