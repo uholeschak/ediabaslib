@@ -5568,6 +5568,46 @@ namespace PsdzClient
             return faultLabels;
         }
 
+        public ICollection<XEP_FAULTMODELABELS> GetEcuFaultAdditionalLabel(string faultCode, string ecuVariant)
+        {
+            log.InfoFormat("GetEcuFaultAdditionalLabel FaultCode: {0}, EcuVariant: {1}", faultCode, ecuVariant);
+            ICollection<XEP_FAULTMODELABELS> collection = new HashSet<XEP_FAULTMODELABELS>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, CODE, TITLEID, " + SqlTitleItemsC + @", RELEVANCE, ERWEITERT " +
+                    @"FROM XEP_FAULTMODELABELS WHERE ID IN (SELECT XEP_REFFAULTLABELS.LABELID FROM XEP_FAULTCODES, XEP_ECUVARIANTS, XEP_REFFAULTLABELS " +
+                    @"WHERE (XEP_FAULTCODES.ECUVARIANTID = XEP_ECUVARIANTS.ID) AND (XEP_ECUVARIANTS.NAME = {0} COLLATE UTF8CI) AND (XEP_FAULTCODES.CODE = {1} COLLATE UTF8CI) AND (XEP_FAULTCODES.ID = XEP_REFFAULTLABELS.ID))", ecuVariant, faultCode);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_FAULTMODELABELS xEP_FAULTMODELABELS = new XEP_FAULTMODELABELS();
+                            xEP_FAULTMODELABELS.Code = GetReaderString(reader, "CODE");
+                            xEP_FAULTMODELABELS.Erweitert = GetReaderDecimal(reader, "ERWEITERT");
+                            xEP_FAULTMODELABELS.ID = GetReaderDecimal(reader, "ID") ?? 0;
+                            xEP_FAULTMODELABELS.Relevance = GetReaderDecimal(reader, "RELEVANCE");
+                            xEP_FAULTMODELABELS.Titleid = GetReaderDecimal(reader, "TITLEID");
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_FAULTMODELABELS);
+                            collection.Add(xEP_FAULTMODELABELS);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEcuFaultAdditionalLabel Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetEcuFaultAdditionalLabel Count: {0}", collection.Count);
+            return collection;
+        }
+
         public IDictionary<decimal, XEP_FAULTMODELABELS> GetFaultModelLabelsByIds(IEnumerable<decimal> labelsId)
         {
             log.InfoFormat("GetFaultModelLabelsByIds called with labelsId: '{0}'", string.Join(",", labelsId));
