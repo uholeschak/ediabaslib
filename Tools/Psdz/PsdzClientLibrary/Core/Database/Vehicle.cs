@@ -36,7 +36,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private string doorNumber;
         private string securityRelevant;
         private DateTime? cDatetimeByModelYearMonth;
-        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         private BatteryEnum batteryType;
         private string verkaufsBezeichnungField;
         private string targetILevel;
@@ -139,8 +138,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private string aEKurzbezeichnungField;
         private string aELeistungsklasseField;
         private string aEUeberarbeitungField;
-        [PreserveSource(Hint = "ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
-        private PlaceholderType perceivedSymptomsField;
+        private ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> perceivedSymptomsField;
         private string progmanVersionField;
         private StateType status_FunctionStateField;
         private string kl15VoltageField;
@@ -1614,8 +1612,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        [PreserveSource(Hint = "ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
-        public PlaceholderType PerceivedSymptoms;
+        public ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> PerceivedSymptoms => perceivedSymptomsField;
         public string ProgmanVersion
         {
             get
@@ -2839,7 +2836,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             //[+] _clientContext = clientContext;
             _clientContext = clientContext;
-            //[-] perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
+            perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
             //[-] installedAdaptersField = new ObservableCollection<decimal>();
             combinedFaultsField = new ObservableCollection<DTC>();
             //[-] diagCodesField = new ObservableCollection<typeDiagCode>();

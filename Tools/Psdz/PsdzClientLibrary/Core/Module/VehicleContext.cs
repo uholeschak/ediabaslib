@@ -201,16 +201,16 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return false;
             }
-            //[-] if (vehicle.PerceivedSymptoms != null)
-            //[-] {
-            //[-] foreach (XEP_PERCEIVEDSYMPTOMSEX perceivedSymptom2 in vehicle.PerceivedSymptoms)
-            //[-] {
-            //[-] if (perceivedSymptom2.Id == perceivedSymptom.SignedId)
-            //[-] {
-            //[-] return true;
-            //[-] }
-            //[-] }
-            //[-] }
+            if (vehicle.PerceivedSymptoms != null)
+            {
+                foreach (XEP_PERCEIVEDSYMPTOMSEX perceivedSymptom2 in vehicle.PerceivedSymptoms)
+                {
+                    if (perceivedSymptom2.Id == perceivedSymptom.SignedId)
+                    {
+                        return true;
+                    }
+                }
+            }
             return false;
         }
 
