@@ -1,6 +1,7 @@
 ﻿using BMW.Authoring;
 using PsdzClient.Core;
 using System.ComponentModel;
+using BMW.Authoring.Programming.API.Interface;
 using BMW.Authoring.Vehicle.Interface;
 
 namespace BMW.Authoring.Vehicle
@@ -24,5 +25,7 @@ namespace BMW.Authoring.Vehicle
         IVerbraucherList VerbraucherList { get; }
 
         ICentralErrorMemory CentralErrorMemory { get; }
+
+        ICombinedEcuHousing CombinedEcuHousing { get; }
     }
 }
