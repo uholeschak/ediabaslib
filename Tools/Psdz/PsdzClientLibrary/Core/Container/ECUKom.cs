@@ -1196,13 +1196,13 @@ namespace BMW.Rheingold.VehicleCommunication
             throw new InvalidOperationException("IDataContext service not found.");
         }
 
-        [PreserveSource(Cleaned = true, OriginalHash = "518B3C96000D5560047F58E2CC00BF49")]
+        [PreserveSource(Cleaned = true, OriginalHash = "B3EEAC2FA4ED21AC86BA5B83BF7A4291")]
         private WebCallResponse<bool> RequestCertReqProfil(ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
             throw new InvalidOperationException("IDataContext service not found.");
         }
 
-        [PreserveSource(Cleaned = true, OriginalHash = "518B3C96000D5560047F58E2CC00BF49")]
+        [PreserveSource(Cleaned = true, OriginalHash = "D10036BB70628031DAA7CC534D2A487B")]
         private WebCallResponse<Sec4DiagResponseData> RequestCertificate(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
             throw new InvalidOperationException("IDataContext service not found.");
