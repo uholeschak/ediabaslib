@@ -28,6 +28,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return;
             }
+
             IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
             if (service != null)
             {
@@ -47,17 +48,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return new List<string>();
             }
+
             foreach (Fault fault in vehicle.FaultList)
             {
                 if (fault.DTC.FortAsHexString == "S 0751")
                 {
                     list.Add("S 0751");
                 }
+
                 if (fault.DTC.FortAsHexString == "S 0756")
                 {
                     list.Add("S 0756");
                 }
             }
+
             return list;
         }
 
@@ -67,12 +71,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return Enumerable.Empty<Fault>();
             }
+
             ComputeResolveLabelsForAllFaultAsync(vehicle, ffmDynamicResolver).ConfigureAwait(continueOnCapturedContext: false).GetAwaiter().GetResult();
             List<Fault> list = new List<Fault>();
             foreach (Fault fault in vehicle.FaultList)
             {
                 list.Add(fault);
             }
+
             return list;
         }
 
@@ -82,6 +88,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 ConfigSettings.CurrentUICulture = language;
             }
+
             //[-] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = DatabaseProviderFactory.Instance.GetRefFaultLabelsLabelIdByFaultList(vehicle.FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
             //[+] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = ClientContext.GetDatabase(vehicle)?.GetRefFaultLabelsLabelIdByFaultList(vehicle.FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
             IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = ClientContext.GetDatabase(vehicle)?.GetRefFaultLabelsLabelIdByFaultList(vehicle.FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
@@ -117,6 +124,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[+] dictionary2 = ClientContext.GetDatabase(vehicle)?.GetFaultModelLabelsByIds(enumerable);
                 dictionary2 = ClientContext.GetDatabase(vehicle)?.GetFaultModelLabelsByIds(enumerable);
             }
+
             IDictionary<decimal, XEP_FAULTMODELABELS> modelFaultLabelAll = dictionary2;
             Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>> faultListFault = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>(refFaultLabel.Count);
             DtcFOrtEcuVariantKey key;
@@ -127,6 +135,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     faultListFault.Add(key, new Collection<XEP_FAULTMODELABELS>());
                 }
+
                 refFaultLabel[key2].ForEach(delegate (decimal x)
                 {
                     if (modelFaultLabelAll.ContainsKey(x) && !faultListFault[key].Contains(modelFaultLabelAll[x]))
@@ -135,6 +144,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 });
             }
+
             return await Task.FromResult(faultListFault);
         }
 
@@ -148,15 +158,17 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[+] if (ClientContext.GetDatabase(vehicle)?.EvaluateXepRulesById(key2.FaultId.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver) == true)
                 if (ClientContext.GetDatabase(vehicle)?.EvaluateXepRulesById(key2.FaultId.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver) == true)
                 {
-                        collection.Add(key2);
+                    collection.Add(key2);
                     collection2.AddRange(refFaultLabel[key2]);
                 }
             }
+
             Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>> xepFaultLabelsList = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>(collection.Count);
             if (!collection.Any() || !collection2.Any())
             {
                 return await Task.FromResult(xepFaultLabelsList);
             }
+
             //[-] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = DatabaseProviderFactory.Instance.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
             //[+] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = ClientContext.GetDatabase(vehicle)?.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
             IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = ClientContext.GetDatabase(vehicle)?.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
@@ -168,6 +180,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     xepFaultLabelsList.Add(key, new Collection<XEP_FAULTLABELS>());
                 }
+
                 refFaultLabel[item].ForEach(delegate (decimal x)
                 {
                     if (xepFaultLabels.ContainsKey(x) && !xepFaultLabelsList[key].Contains(xepFaultLabels[x]))
@@ -176,6 +189,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 });
             }
+
             return await Task.FromResult(xepFaultLabelsList);
         }
 
@@ -188,6 +202,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     Log.Warning(Log.CurrentMethod() + "()", "file doesn't exist: {0}", filename);
                     return null;
                 }
+
                 using (FileStream input = File.OpenRead(filename))
                 {
                     using (XmlTextReader xmlReader = new XmlTextReader(input))
@@ -202,6 +217,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException(Log.CurrentMethod() + "()", exception);
             }
+
             return null;
         }
 
@@ -269,8 +285,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                         goto IL_01b5;
                                 }
                             }
+
                             goto IL_01b3;
                         }
+
                         if (c != 'E')
                         {
                             if (c != 'R')
@@ -310,47 +328,54 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         default:
                             goto IL_01b5;
                     }
+
                     if (ereihe == "K41" || ereihe == "R21")
                     {
                         goto IL_01b3;
                     }
                 }
             }
+
             goto IL_01b5;
             IL_00fd:
-            if (ereihe == "247")
-            {
-                goto IL_01b3;
-            }
+                if (ereihe == "247")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
             IL_0127:
-            if (ereihe == "K30")
-            {
-                goto IL_01b3;
-            }
+                if (ereihe == "K30")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
             IL_0112:
-            if (ereihe == "259")
-            {
-                goto IL_01b3;
-            }
+                if (ereihe == "259")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
             IL_01b3:
-            return true;
+                return true;
             IL_00c3:
-            if (ereihe == "R22")
-            {
-                goto IL_01b3;
-            }
+                if (ereihe == "R22")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
             IL_00d8:
-            if (ereihe == "R28" || ereihe == "248")
-            {
-                goto IL_01b3;
-            }
+                if (ereihe == "R28" || ereihe == "248")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
             IL_01b5:
-            return false;
+                return false;
         }
 
         public static ECU GetECUbyDTC(this Vehicle vehicle, decimal id)
@@ -369,10 +394,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             }
                         }
                     }
+
                     if (item.INFO == null)
                     {
                         continue;
                     }
+
                     foreach (DTC item3 in item.INFO)
                     {
                         if (id.Equals(item3.Id))
@@ -382,6 +409,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 }
             }
+
             return null;
         }
 
@@ -401,10 +429,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             }
                         }
                     }
+
                     if (item.INFO == null)
                     {
                         continue;
                     }
+
                     foreach (DTC item3 in item.INFO)
                     {
                         if (id.Equals(item3.Id))
@@ -414,6 +444,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 }
             }
+
             if (vehicle.CombinedFaults != null)
             {
                 return vehicle.CombinedFaults.FirstOrDefault(delegate (DTC item)
@@ -423,6 +454,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return (id2.GetValueOrDefault() == num) & id2.HasValue;
                 });
             }
+
             return null;
         }
 
@@ -439,6 +471,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             sessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
             //[+] sessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
             sessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
+            //[-] Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", vehicle.FaultList?.Count, SessionInfoAccessor.SessionInfo.FaultCodeSum);
+            //[+] Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", vehicle.FaultList?.Count, sessionInfo.FaultCodeSum);
             Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", vehicle.FaultList?.Count, sessionInfo.FaultCodeSum);
             vehicle.FaultList = new List<Fault>(observableCollection);
         }
@@ -451,6 +485,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return null;
             }
+
             return num;
         }
 
@@ -463,6 +498,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", defaultValue: true);
                 flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", defaultValue: false);
             }
+
             ObservableCollection<Fault> observableCollection = new ObservableCollection<Fault>();
             try
             {
@@ -499,10 +535,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         }
                     }
                 }
+
                 if (combinedFaults == null)
                 {
                     return observableCollection;
                 }
+
                 foreach (DTC combinedFault in combinedFaults)
                 {
                     Fault fault2 = new Fault(null, combinedFault, null, vehicle.Classification.IsNewFaultMemoryActive);
@@ -514,6 +552,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.ErrorException("Vehicle.CalculateFaultList()", exception);
             }
+
             return observableCollection;
         }
 
@@ -523,14 +562,17 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
             }
+
             if (transECU == null)
             {
                 return null;
             }
+
             if (string.IsNullOrEmpty(transId))
             {
                 return null;
             }
+
             try
             {
                 if (transECU.TAL != null)
@@ -548,6 +590,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehicle.getECUTransaction()", exception);
             }
+
             return null;
         }
 
@@ -563,8 +606,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         flag = (byte)((flag ? 1u : 0u) | 1u) != 0;
                     }
                 }
+
                 return flag;
             }
+
             return true;
         }
 
@@ -574,6 +619,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
             }
+
             try
             {
                 foreach (ECU item in vehicle.ECU)
@@ -582,6 +628,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return item;
                     }
+
                     if (!string.IsNullOrEmpty(item.ECU_ADR))
                     {
                         string text = string.Empty;
@@ -589,10 +636,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         {
                             text = item.ECU_ADR.ToUpper().Substring(2);
                         }
+
                         if (item.ECU_ADR.Length == 2)
                         {
                             text = item.ECU_ADR.ToUpper();
                         }
+
                         if (text == string.Format(CultureInfo.InvariantCulture, "{0:X2}", sgAdr))
                         {
                             return item;
@@ -604,6 +653,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehicle.getECU()", exception);
             }
+
             return null;
         }
 
@@ -613,6 +663,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
             }
+
             try
             {
                 foreach (ECU item in vehicle.ECU)
@@ -627,6 +678,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehcile.getECU()", exception);
             }
+
             return null;
         }
 
@@ -636,16 +688,19 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
             }
+
             if (string.IsNullOrEmpty(ECU_GRUPPE))
             {
                 Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "parameter was null or empty");
                 return null;
             }
+
             if (vehicle.ECU == null)
             {
                 Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "ECU was null");
                 return null;
             }
+
             try
             {
                 foreach (ECU item in vehicle.ECU)
@@ -654,6 +709,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         continue;
                     }
+
                     string[] array = ECU_GRUPPE.Split('|');
                     string[] array2 = item.ECU_GRUPPE.Split('|');
                     foreach (string a in array2)
@@ -673,6 +729,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehicle.getECUbyECU_GRUPPE()", exception);
             }
+
             return null;
         }
 
@@ -682,6 +739,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
             }
+
             uint num = 0u;
             try
             {
@@ -697,6 +755,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehcile.getECU()", exception);
             }
+
             return num;
         }
 
@@ -708,6 +767,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return null;
                 }
+
                 foreach (typeCBSInfo cB in vehicle.CBS)
                 {
                     if (cB.Type == mType)
@@ -715,12 +775,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         return cB;
                     }
                 }
+
                 return null;
             }
             catch (Exception exception)
             {
                 Log.WarningException("Vehicle.getCBSMeasurementValue()", exception);
             }
+
             return null;
         }
 
@@ -732,10 +794,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return false;
                 }
+
                 if (vehicle.CBS == null)
                 {
                     vehicle.CBS = new ObservableCollection<typeCBSInfo>();
                 }
+
                 foreach (typeCBSInfo cB in vehicle.CBS)
                 {
                     if (cB.Type == cbsNew.Type)
@@ -745,6 +809,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         return true;
                     }
                 }
+
                 vehicle.CBS.Add(cbsNew);
                 return true;
             }
@@ -752,6 +817,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehicle.addOrUpdateCBSMeasurementValue()", exception);
             }
+
             return false;
         }
 
@@ -763,10 +829,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return false;
                 }
+
                 if (vehicle.CBS == null)
                 {
                     vehicle.CBS = new ObservableCollection<typeCBSInfo>();
                 }
+
                 foreach (typeCBSInfo cbsNew in cbsNewList)
                 {
                     bool flag = false;
@@ -779,20 +847,24 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             {
                                 vehicle.CBS[num] = cbsNew;
                             }
+
                             flag = true;
                         }
                     }
+
                     if (!flag)
                     {
                         vehicle.CBS.Add(cbsNew);
                     }
                 }
+
                 return true;
             }
             catch (Exception exception)
             {
                 Log.WarningException("Vehicle.addOrUpdateCBSMeasurementValue()", exception);
             }
+
             return false;
         }
 
@@ -810,10 +882,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     Log.Warning("Vehicle.AddOrUpdateECU()", "ecu was null");
                     return false;
                 }
+
                 if (vehicle.ECU == null)
                 {
                     vehicle.ECU = new ObservableCollection<ECU>();
                 }
+
                 foreach (ECU item in vehicle.ECU)
                 {
                     if (item.ID_SG_ADR == nECU.ID_SG_ADR)
@@ -827,6 +901,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         }
                     }
                 }
+
                 vehicle.ECU.Add(nECU);
                 Log.Info("Vehicle.AddOrUpdateECU()", "adding ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
                 return true;
@@ -835,6 +910,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehicle.AddOrUpdateECU()", exception);
             }
+
             return false;
         }
 
@@ -852,6 +928,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[+] return new VehicleCharacteristicVehicleHelper(vehicle).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, vehicle, datavalueId, internalResult);
                 return new VehicleCharacteristicVehicleHelper(vehicle).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, vehicle, datavalueId, internalResult);
             }
+
             Log.Warning("Vehicle.getISTACharactersitics()", "No entry found in CharacteristicRoots for id: {0}!", id);
             value = "???";
             return false;
@@ -864,7 +941,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 //[+] if (sessionInfo == null) return;
-                if (sessionInfo == null) return;
+                if (sessionInfo == null)
+                    return;
                 //[-] string status_FunctionName = SessionInfoAccessor.SessionInfo.Status_FunctionName;
                 //[+] string status_FunctionName = sessionInfo.Status_FunctionName;
                 string status_FunctionName = sessionInfo.Status_FunctionName;
@@ -880,6 +958,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     //[+] sessionInfo.Status_FunctionProgress = progress.Value;
                     sessionInfo.Status_FunctionProgress = progress.Value;
                 }
+
                 //[-] SessionInfoAccessor.SessionInfo.IsNoVehicleCommunicationRunning = vehicle.Status_FunctionState != StateType.running;
                 //[+] sessionInfo.IsNoVehicleCommunicationRunning = vehicle.Status_FunctionState != StateType.running;
                 sessionInfo.IsNoVehicleCommunicationRunning = vehicle.Status_FunctionState != StateType.running;
@@ -900,30 +979,42 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return true;
                 }
+
                 if (string.IsNullOrEmpty(vehicle.ILevel))
                 {
                     Log.Info("Vehicle.evaILevelExpression()", "ILevel unknown; result will be true; expression was: {0}", iLevelExpressions);
                     return true;
                 }
+
                 if (iLevelExpressions.Contains("&"))
                 {
                     flag2 = false;
                     flag = true;
                 }
+
                 if (CoreFramework.DebugLevel > 0)
                 {
                     Log.Info("Vehicle.evalILevelExpression()", "expression:{0} vehicle iLEVEL:{1}", iLevelExpressions, vehicle.ILevel);
                 }
-                string[] separator = new string[2] { "&", "|" };
+
+                string[] separator = new string[2]
+                {
+                    "&",
+                    "|"
+                };
                 string[] array = iLevelExpressions.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string text in array)
                 {
-                    string[] separator2 = new string[1] { "," };
+                    string[] separator2 = new string[1]
+                    {
+                        ","
+                    };
                     string[] array2 = text.Split(separator2, StringSplitOptions.RemoveEmptyEntries);
                     if (array2.Length != 2)
                     {
                         continue;
                     }
+
                     Log.Info("Vehicle.evalILevelExpression()", "expression {0} {1}", vehicle.ILevel, text);
                     if (string.Compare(vehicle.ILevel, 0, array2[1], 0, 4, StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -934,6 +1025,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "> was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "<":
@@ -941,6 +1033,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "< was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "=":
@@ -948,6 +1041,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "= was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case ">=":
@@ -955,6 +1049,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", ">= was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "<=":
@@ -962,6 +1057,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "<= was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "!=":
@@ -970,6 +1066,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "!= was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(vehicle.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                         }
@@ -979,6 +1076,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         Log.Warning("Vehicle.evalILevelExpression()", "iLevel main type does not match");
                     }
                 }
+
                 return flag;
             }
             catch (Exception exception)
@@ -998,6 +1096,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return true;
                     }
+
                     if (!string.IsNullOrEmpty(item.ECU_ADR) && !string.IsNullOrEmpty(checkSG.ECU_ADR) && string.Compare(item.ECU_ADR, checkSG.ECU_ADR, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
@@ -1008,6 +1107,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehicle.isECUAlreadyScanned()", exception);
             }
+
             return false;
         }
 
@@ -1032,49 +1132,57 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             break;
                         case "/Result/DList":
                         case "/Result/GruppenListe":
+                        {
+                            string text4 = string.Empty;
+                            foreach (ECU item in vehicle.ECU)
                             {
-                                string text4 = string.Empty;
-                                foreach (ECU item in vehicle.ECU)
-                                {
-                                    text4 = text4 + item.ECU_GRUPPE + ",";
-                                }
-                                text4 = text4.TrimEnd(',');
-                                obj = text4;
-                                break;
+                                text4 = text4 + item.ECU_GRUPPE + ",";
                             }
+
+                            text4 = text4.TrimEnd(',');
+                            obj = text4;
+                            break;
+                        }
+
                         case "/Result/SonderAusstattungsListe":
+                        {
+                            string text3 = string.Empty;
+                            foreach (string item2 in vehicle.FA.SA)
                             {
-                                string text3 = string.Empty;
-                                foreach (string item2 in vehicle.FA.SA)
-                                {
-                                    text3 = text3 + item2 + ",";
-                                }
-                                text3 = text3.TrimEnd(',');
-                                obj = text3;
-                                break;
+                                text3 = text3 + item2 + ",";
                             }
+
+                            text3 = text3.TrimEnd(',');
+                            obj = text3;
+                            break;
+                        }
+
                         case "/Result/EWortListe":
+                        {
+                            string text2 = string.Empty;
+                            foreach (string item3 in vehicle.FA.E_WORT)
                             {
-                                string text2 = string.Empty;
-                                foreach (string item3 in vehicle.FA.E_WORT)
-                                {
-                                    text2 = text2 + item3 + ",";
-                                }
-                                text2 = text2.TrimEnd(',');
-                                obj = text2;
-                                break;
+                                text2 = text2 + item3 + ",";
                             }
+
+                            text2 = text2.TrimEnd(',');
+                            obj = text2;
+                            break;
+                        }
+
                         case "/Result/HOWortListe":
+                        {
+                            string text = string.Empty;
+                            foreach (string item4 in vehicle.FA.HO_WORT)
                             {
-                                string text = string.Empty;
-                                foreach (string item4 in vehicle.FA.HO_WORT)
-                                {
-                                    text = text + item4 + ",";
-                                }
-                                text = text.TrimEnd(',');
-                                obj = text;
-                                break;
+                                text = text + item4 + ",";
                             }
+
+                            text = text.TrimEnd(',');
+                            obj = text;
+                            break;
+                        }
+
                         case "/Result/Baustand":
                             obj = vehicle.FA.C_DATE;
                             break;
@@ -1082,12 +1190,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
                             break;
                     }
+
                     if (obj != null)
                     {
                         if (obj.GetType() != typeFromHandle)
                         {
                             return (T)Convert.ChangeType(obj, typeFromHandle);
                         }
+
                         return (T)obj;
                     }
                 }
@@ -1096,6 +1206,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Vehicle.getISTAResultAs(string resultName)", exception);
             }
+
             return default(T);
         }
 
@@ -1107,6 +1218,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     vehicle.DiagCodes = new ObservableCollection<typeDiagCode>();
                 }
+
                 typeDiagCode typeDiagCode2 = new typeDiagCode();
                 typeDiagCode2.DiagnoseCode = diagCodeString;
                 typeDiagCode2.DiagnoseCodeSuffix = diagCodeSuffixString;
@@ -1119,6 +1231,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     typeDiagCode2.ReparaturPaket = new ObservableCollection<string>();
                 }
+
                 vehicle.DiagCodes.Add(typeDiagCode2);
                 if (!string.IsNullOrEmpty(diagCodeString) && !vehicle.DiagCodesProgramming.Contains(diagCodeString))
                 {
@@ -1133,8 +1246,22 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 string[] array = new string[16]
                 {
-                "ASCMK20", "absmk4", "absmk4g", "abs5", "abs_uc", "asc4gus", "asc5", "asc57", "asc57r75", "asc5d",
-                "ascmk20", "ascmk4.prg", "ascmk4g", "ascmk4g1", "asc_l22", "asc_t"
+                    "ASCMK20",
+                    "absmk4",
+                    "absmk4g",
+                    "abs5",
+                    "abs_uc",
+                    "asc4gus",
+                    "asc5",
+                    "asc57",
+                    "asc57r75",
+                    "asc5d",
+                    "ascmk20",
+                    "ascmk4.prg",
+                    "ascmk4g",
+                    "ascmk4g1",
+                    "asc_l22",
+                    "asc_t"
                 };
                 ECU eCU = vehicle.getECU(86L, null);
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
@@ -1147,8 +1274,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             return true;
                         }
                     }
+
                     return false;
                 }
+
                 eCU = vehicle.getECU(41L, null);
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
                 {
@@ -1160,8 +1289,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             return true;
                         }
                     }
+
                     return false;
                 }
+
                 eCU = vehicle.getECU(54L, null);
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
                 {
@@ -1173,9 +1304,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             return true;
                         }
                     }
+
                     return false;
                 }
             }
+
             return null;
         }
 
@@ -1203,6 +1336,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return set;
             }
+
             string[] array = bnTypes.Split(',');
             foreach (string text in array)
             {
@@ -1211,8 +1345,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     set.Add(result);
                     continue;
                 }
+
                 Log.Error("Vehicle.GetBnTypes()", "Ignore BN \"{0}\", because of missconfiguration.", text);
             }
+
             return set;
         }
 
@@ -1225,31 +1361,33 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             IEnumerable<string> enumerable2 = null;
             if (selectedFaults != null)
             {
-                enumerable = from f in selectedFaults
-                             where !f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))
-                             orderby f.ECU.VARIANTE, f.DTC.FortAsHexString
-                             select (VARIANTE: f.ECU.VARIANTE, FortAsHexString: f.DTC.FortAsHexString);
-                enumerable2 = from f in selectedFaults
-                              where f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))
-                              orderby f.DTC.FortAsHexString
-                              select f.DTC.FortAsHexString;
+                enumerable =
+                    from f in selectedFaults
+                    where !f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))orderby f.ECU.VARIANTE, f.DTC.FortAsHexString
+                    select (VARIANTE: f.ECU.VARIANTE, FortAsHexString: f.DTC.FortAsHexString);
+                enumerable2 =
+                    from f in selectedFaults
+                    where f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))orderby f.DTC.FortAsHexString
+                    select f.DTC.FortAsHexString;
             }
             else
             {
-                enumerable = vehicle.ECU.OrderBy((ECU e) => e.VARIANTE).SelectMany((ECU ecu) => from dtc in ecu.FEHLER
-                                                                                                where dtc.Relevance == true && (dtc.FaultGroup == 0 || faultGroupNumbers.Contains(dtc.FaultGroup))
-                                                                                                orderby dtc.FortAsHexString
-                                                                                                select (VARIANTE: ecu.VARIANTE, FortAsHexString: dtc.FortAsHexString));
-                enumerable2 = from f in vehicle.CombinedFaults
-                              where f.Relevance == true && (f.FaultGroup == 0 || faultGroupNumbers.Contains(f.FaultGroup))
-                              orderby f.FortAsHexString
-                              select f.FortAsHexString;
+                enumerable = vehicle.ECU.OrderBy((ECU e) => e.VARIANTE).SelectMany((ECU ecu) =>
+                    from dtc in ecu.FEHLER
+                    where dtc.Relevance == true && (dtc.FaultGroup == 0 || faultGroupNumbers.Contains(dtc.FaultGroup))orderby dtc.FortAsHexString
+                    select (VARIANTE: ecu.VARIANTE, FortAsHexString: dtc.FortAsHexString));
+                enumerable2 =
+                    from f in vehicle.CombinedFaults
+                    where f.Relevance == true && (f.FaultGroup == 0 || faultGroupNumbers.Contains(f.FaultGroup))orderby f.FortAsHexString
+                    select f.FortAsHexString;
             }
+
             foreach (var item in enumerable)
             {
                 num += item.Item1?.GetHashCode() ?? 0;
                 num += item.Item2.GetHashCode();
             }
+
             num *= num2;
             if (perceivedSymptoms != null)
             {
@@ -1257,12 +1395,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     num += item2.Id.GetHashCode();
                 }
+
                 num *= num2;
             }
+
             foreach (string item3 in enumerable2)
             {
                 num += item3.GetHashCode();
             }
+
             return num * num2;
         }
     }
