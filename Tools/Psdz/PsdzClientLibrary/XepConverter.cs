@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BmwFileReader;
 using PsdzClient;
 using System;
@@ -12,6 +13,38 @@ namespace PsdzClientLibrary;
 [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
 public static class XepConverter
 {
+    public static XEP_CHARACTERISTICROOTS Convert(PsdzDatabase.CharacteristicRoots characteristicRoot)
+    {
+        if (characteristicRoot == null)
+        {
+            return null;
+        }
+
+        XEP_CHARACTERISTICROOTS xepCharacteristicRoot = new XEP_CHARACTERISTICROOTS();
+        xepCharacteristicRoot.Id = characteristicRoot.Id.ConvertToInt();
+        xepCharacteristicRoot.Nodeclass = characteristicRoot.NodeClass.ConvertToInt();
+        xepCharacteristicRoot.MotorCycleSequence = characteristicRoot.MotorCycSeq.ConvertToInt();
+        xepCharacteristicRoot.VehicleSequence = characteristicRoot.VehicleSeq.ConvertToInt();
+
+        CopyEcuTranslation(characteristicRoot.EcuTranslation, xepCharacteristicRoot);
+        return xepCharacteristicRoot;
+    }
+
+    public static ICollection<XEP_CHARACTERISTICROOTS> Convert(ICollection<PsdzDatabase.CharacteristicRoots> characteristicRootList)
+    {
+        if (characteristicRootList == null)
+        {
+            return null;
+        }
+
+        List<XEP_CHARACTERISTICROOTS> xepCharacteristicRootList = new List<XEP_CHARACTERISTICROOTS>();
+        foreach (PsdzDatabase.CharacteristicRoots characteristicRoot in characteristicRootList)
+        {
+            xepCharacteristicRootList.Add(Convert(characteristicRoot));
+        }
+        return xepCharacteristicRootList;
+    }
+
     public static XEP_SALAPAS Convert(PsdzDatabase.SaLaPa saLaPa)
     {
         if (saLaPa == null)
