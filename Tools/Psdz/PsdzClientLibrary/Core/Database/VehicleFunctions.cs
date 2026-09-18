@@ -941,8 +941,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 //[+] if (sessionInfo == null) return;
-                if (sessionInfo == null)
-                    return;
+                if (sessionInfo == null) return;
                 //[-] string status_FunctionName = SessionInfoAccessor.SessionInfo.Status_FunctionName;
                 //[+] string status_FunctionName = sessionInfo.Status_FunctionName;
                 string status_FunctionName = sessionInfo.Status_FunctionName;
