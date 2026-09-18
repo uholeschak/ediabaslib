@@ -1,11 +1,13 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClientLibrary;
 
 #pragma warning disable CA2022
 namespace PsdzClient.Core
@@ -169,21 +171,12 @@ namespace PsdzClient.Core
         {
             string result = string.Empty;
             //[-] IXepCharacteristicRoots characteristicRootsById = dataProvider.GetCharacteristicRootsById(dataclassId);
-            //[-] if (characteristicRootsById != null && characteristicRootsById.Title_dede != null)
-            //[-] {
-            //[-] result = characteristicRootsById.Title_dede;
-            //[-] }
-            //[+] PsdzDatabase.CharacteristicRoots characteristicRootsById = database?.GetCharacteristicRootsById(dataclassId.ToString(CultureInfo.InvariantCulture));
-            PsdzDatabase.CharacteristicRoots characteristicRootsById = database?.GetCharacteristicRootsById(dataclassId.ToString(CultureInfo.InvariantCulture));
-            //[+] if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
-            if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
-                //[+] {
+            //[+] IXepCharacteristicRoots characteristicRootsById = XepConverter.Convert(database?.GetCharacteristicRootsById(dataclassId.ToString(CultureInfo.InvariantCulture)));
+            IXepCharacteristicRoots characteristicRootsById = XepConverter.Convert(database?.GetCharacteristicRootsById(dataclassId.ToString(CultureInfo.InvariantCulture)));
+            if (characteristicRootsById != null && characteristicRootsById.Title_dede != null)
             {
-                //[+] result = characteristicRootsById.EcuTranslation.TextDe;
-                result = characteristicRootsById.EcuTranslation.TextDe;
-                //[+] }
+                result = characteristicRootsById.Title_dede;
             }
-
             return result;
         }
 

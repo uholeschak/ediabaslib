@@ -1,13 +1,14 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using PsdzClient.Core;
+using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using PsdzClientLibrary;
 
 namespace BMW.Rheingold.CoreFramework
 {
@@ -153,14 +154,12 @@ namespace BMW.Rheingold.CoreFramework
                 if (characteristicsLocator != null)
                 {
                     //[-] IXepCharacteristicRoots characteristicRootsById = DatabaseProviderFactory.Instance.GetCharacteristicRootsById(characteristicsLocator.ParentId);
-                    //[+] PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture));
-                    PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture));
+                    //[+] IXepCharacteristicRoots characteristicRootsById = XepConverter.Convert(ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture)));
+                    IXepCharacteristicRoots characteristicRootsById = XepConverter.Convert(ClientContext.GetClientContext(vehicle)?.Database?.GetCharacteristicRootsById(characteristicsLocator.ParentId.ToString(CultureInfo.InvariantCulture)));
                     VehicleCharacteristicContext vehicleCharacteristicContext = new VehicleCharacteristicContext();
                     if (characteristicRootsById != null)
                     {
-                        //[-] flag = vehicleCharacteristicContext.IsSetVehicleCharacteristic(characteristicRootsById.Nodeclass.ToString(), vehicle, characteristicsLocator, characteristicRootsById);
-                        //[+] flag = vehicleCharacteristicContext.IsSetVehicleCharacteristic(characteristicRootsById.NodeClass, vehicle, characteristicsLocator, characteristicRootsById);
-                        flag = vehicleCharacteristicContext.IsSetVehicleCharacteristic(characteristicRootsById.NodeClass, vehicle, characteristicsLocator, characteristicRootsById);
+                        flag = vehicleCharacteristicContext.IsSetVehicleCharacteristic(characteristicRootsById.Nodeclass.ToString(), vehicle, characteristicsLocator, characteristicRootsById);
                         Log.Info("VehicleContext.IsSet()", "characterValueSet with Key:{0} Value:{1} Result:{2}", characteristicsLocator.DataClassName, characteristicsLocator.Name, flag);
                         return flag;
                     }

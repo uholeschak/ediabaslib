@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using PsdzClient.Core;
@@ -15,11 +16,9 @@ namespace BMW.Rheingold.CoreFramework
 
         private ICharacteristicsLocator characteristicsLocator;
 
-        [PreserveSource(Hint = "XEP_CHARACTERISTICROOTS", Placeholder = true)]
-        private PsdzDatabase.CharacteristicRoots characteristicRoot;
+        private XEP_CHARACTERISTICROOTS characteristicRoot;
 
-        [PreserveSource(Hint = "XEP_CHARACTERISTICROOTS", SignatureModified = true)]
-        public bool IsSetVehicleCharacteristic(string vehicleCode, Vehicle vehicle, ICharacteristicsLocator characteristicsLocator, PsdzDatabase.CharacteristicRoots characteristic)
+        public bool IsSetVehicleCharacteristic(string vehicleCode, Vehicle vehicle, ICharacteristicsLocator characteristicsLocator, IXepCharacteristicRoots characteristic)
         {
             return ComputeCharacteristic(vehicleCode, vehicle, characteristicsLocator, characteristic);
         }
@@ -129,9 +128,7 @@ namespace BMW.Rheingold.CoreFramework
                     if (parameters.Length > 2)
                     {
                         GetContextParameters(parameters);
-                        //[-] Log.Warning("VehicleIdent.IsSet()", "Found unknown key:{0} value: {1}. WARNING!!! Unknown characteristic '{2} Nodeclass ID: {3}' have been used!!!", characteristicsLocator.DataClassName, characteristicsLocator.Name, characteristicRoot.Title_dede, characteristicRoot.Nodeclass);
-                        //[+] Log.Warning("VehicleIdent.IsSet()", "Found unknown key:{0} value: {1}. WARNING!!! Unknown characteristic '{2} Nodeclass ID: {3}' have been used!!!", characteristicsLocator.DataClassName, characteristicsLocator.Name, characteristicRoot.EcuTranslation.TextDe, characteristicRoot.NodeClass);
-                        Log.Warning("VehicleIdent.IsSet()", "Found unknown key:{0} value: {1}. WARNING!!! Unknown characteristic '{2} Nodeclass ID: {3}' have been used!!!", characteristicsLocator.DataClassName, characteristicsLocator.Name, characteristicRoot.EcuTranslation.TextDe, characteristicRoot.NodeClass);
+                        Log.Warning("VehicleIdent.IsSet()", "Found unknown key:{0} value: {1}. WARNING!!! Unknown characteristic '{2} Nodeclass ID: {3}' have been used!!!", characteristicsLocator.DataClassName, characteristicsLocator.Name, characteristicRoot.Title_dede, characteristicRoot.Nodeclass);
                     }
                     else
                     {
@@ -410,9 +407,7 @@ namespace BMW.Rheingold.CoreFramework
             GetContextParameters(parameters);
             if (parameters.Length > 2)
             {
-                //[-] Log.Warning("VehicleIdent.IsSet()", "Found unknown key:{0} value: {1}. WARNING!!! Unknown characteristic '{2} Nodeclass ID: {3}' have been used!!!", characteristicsLocator.DataClassName, characteristicsLocator.Name, characteristicRoot.Title_dede, characteristicRoot.Nodeclass);
-                //[+] Log.Warning("VehicleIdent.IsSet()", "Found unknown key:{0} value: {1}. WARNING!!! Unknown characteristic '{2} Nodeclass ID: {3}' have been used!!!", characteristicsLocator.DataClassName, characteristicsLocator.Name, characteristicRoot.EcuTranslation.TextDe, characteristicRoot.NodeClass);
-                Log.Warning("VehicleIdent.IsSet()", "Found unknown key:{0} value: {1}. WARNING!!! Unknown characteristic '{2} Nodeclass ID: {3}' have been used!!!", characteristicsLocator.DataClassName, characteristicsLocator.Name, characteristicRoot.EcuTranslation.TextDe, characteristicRoot.NodeClass);
+                Log.Warning("VehicleIdent.IsSet()", "Found unknown key:{0} value: {1}. WARNING!!! Unknown characteristic '{2} Nodeclass ID: {3}' have been used!!!", characteristicsLocator.DataClassName, characteristicsLocator.Name, characteristicRoot.Title_dede, characteristicRoot.Nodeclass);
             }
             else
             {
@@ -425,9 +420,7 @@ namespace BMW.Rheingold.CoreFramework
         {
             vehicle = (Vehicle)parameters[0];
             characteristicsLocator = (ICharacteristicsLocator)parameters[1];
-            //[-] characteristicRoot = (XEP_CHARACTERISTICROOTS)parameters[2];
-            //[+] characteristicRoot = (PsdzDatabase.CharacteristicRoots)parameters[2];
-            characteristicRoot = (PsdzDatabase.CharacteristicRoots)parameters[2];
+            characteristicRoot = (XEP_CHARACTERISTICROOTS)parameters[2];
         }
 
         private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, string value, List<HeatMotor> heatMotors)

@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using PsdzClientLibrary;
 
 #pragma warning disable CS0169, CS0649, CS0618, CS0612
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
