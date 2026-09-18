@@ -1,13 +1,15 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Programming;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
@@ -97,8 +99,8 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        [PreserveSource(Hint = "IEnumerable<IProgrammingTask>", Placeholder = true)]
-        public PlaceholderType RetrieveAvailableProgrammingTasks(IVehicle vehicle)
+        [PreserveSource(Cleaned = true)]
+        public IEnumerable<IProgrammingTask> RetrieveAvailableProgrammingTasks(IVehicle vehicle)
         {
             throw new NotImplementedException();
         }
@@ -117,14 +119,14 @@ namespace PsdzClient.Programming
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
         }
 
-        [PreserveSource(Hint = "IProgrammingSessionExt", Placeholder = true)]
-        public PlaceholderType Start(PlaceholderType programmingParam)
+        [PreserveSource(Hint = "ProgrammingParam", Placeholder = true)]
+        public IProgrammingSessionExt Start(PlaceholderType programmingParam)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "IProgrammingSessionExt", Placeholder = true)]
-        public PlaceholderType Start(PlaceholderType programmingParam, bool avoidTlsConnection)
+        [PreserveSource(Hint = "ProgrammingParam", Placeholder = true)]
+        public IProgrammingSessionExt Start(PlaceholderType programmingParam, bool avoidTlsConnection)
         {
             throw new NotImplementedException();
         }

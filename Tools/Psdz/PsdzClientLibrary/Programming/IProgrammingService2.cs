@@ -1,6 +1,8 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
+using System.Collections.Generic;
 
 namespace PsdzClient.Programming
 {
@@ -9,12 +11,11 @@ namespace PsdzClient.Programming
     {
         IPsdz Psdz { get; }
 
-        [PreserveSource(Hint = "IEnumerable<IProgrammingTask>", Placeholder = true)]
-        PlaceholderType RetrieveAvailableProgrammingTasks(IVehicle vehicle);
-        [PreserveSource(Hint = "IProgrammingSessionExt", Placeholder = true)]
-        PlaceholderType Start(PlaceholderType programmingParam);
-        [PreserveSource(Hint = "IProgrammingSessionExt", Placeholder = true)]
-        PlaceholderType Start(PlaceholderType programmingParam, bool avoidTlsConnection);
+        IEnumerable<IProgrammingTask> RetrieveAvailableProgrammingTasks(IVehicle vehicle);
+        [PreserveSource(Hint = "ProgrammingParam", Placeholder = true)]
+        IProgrammingSessionExt Start(PlaceholderType programmingParam);
+        [PreserveSource(Hint = "ProgrammingParam", Placeholder = true)]
+        IProgrammingSessionExt Start(PlaceholderType programmingParam, bool avoidTlsConnection);
         void SetLogLevelToMax();
         void SetLogLevelToNormal();
         bool CollectPsdzLog(string targetLogFilePath);
