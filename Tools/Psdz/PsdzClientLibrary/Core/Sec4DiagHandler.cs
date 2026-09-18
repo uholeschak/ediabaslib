@@ -49,33 +49,17 @@ namespace PsdzClient.Core
         {
             //[+] if (!string.IsNullOrEmpty(istaFolder))
             if (!string.IsNullOrEmpty(istaFolder))
-            //[+] {
+                //[+] {
             {
                 //[+] ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
                 ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
                 //[+] istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
                 istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
-            //[+] }
+                //[+] }
             }
-
             IstaKeyPair = LoadKeyPairFromFile(istaKeyPairPath, "G#8x!9sD2@qZ6&lF1");
             Service29KeyPair = GenerateKeyPair();
-            bool flag = false;
-            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
-            {
-                if (istaIcsServiceClient.IsAvailable())
-                {
-                    flag = istaIcsServiceClient.GetFeatureEnabledStatus("EdiabasVersionForNcar").IsActive;
-                }
-            }
-        //[-]if (flag)
-        //[-]{
-        //[-]ediabaasS29Path = Path.Combine("C:\\", "EC-Apps-ISTA", "EDIABAS", "Security", "S29", "Certificates");
-        //[-]}
-        //[-]else
-        //[-]{
-        //[-]ediabaasS29Path = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
-        //[-]}
+            //[-] ediabaasS29Path = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
         }
 
         public AsymmetricCipherKeyPair LoadKeyPairFromFile(string filePath, string password)
