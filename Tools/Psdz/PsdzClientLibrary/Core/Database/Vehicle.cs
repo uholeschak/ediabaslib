@@ -425,7 +425,31 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        public ObservableCollection<typeCBSInfo> CBS;
+        public ObservableCollection<typeCBSInfo> CBS
+        {
+            get
+            {
+                return cBSField;
+            }
+
+            set
+            {
+                if (cBSField != null)
+                {
+                    if (!cBSField.Equals(value))
+                    {
+                        cBSField = value;
+                        OnPropertyChanged("CBS");
+                    }
+                }
+                else
+                {
+                    cBSField = value;
+                    OnPropertyChanged("CBS");
+                }
+            }
+        }
+
         public string Typ
         {
             get

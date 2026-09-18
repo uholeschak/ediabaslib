@@ -7,53 +7,33 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class typeCBSInfo : INotifyPropertyChanged, ICbsInfo
     {
         private typeCBSVersion versionField;
-
         private typeCBSMeaurementType typeField;
-
         private bool? mMIAnnouncementField;
-
         private short? mANIP_CBSField;
-
         private short? aVAI_CBS_WERTField;
-
         private string aVAI_CBS_EINHField;
-
         private short? rMMI_CBS_WERTField;
-
         private string rMMI_CBS_EINHField;
-
         private short? fRC_INTM_WAY_CBS_MESSField;
-
         private string fRC_INTM_WAY_CBS_EINHField;
-
         private short? fRC_INTM_T_CBS_MESSField;
-
         private DateTime? zIELField;
-
         private short? iD_FN_CBS_MESS_WERTField;
-
         private string iD_FN_CBS_MESS_TEXTField;
-
         private string sT_UN_CBS_HEXField;
-
         private string sT_UN_CBS_TEXTField;
-
         private short? sT_UN_CBS_WERTField;
-
         private string sTATUS_MESSUNG_TEXTField;
-
         private short? sTATUS_MESSUNGField;
-
         private string cOU_RSTG_CBS_MESS_EINHField;
-
         private short? cOU_RSTG_CBS_MESS_WERTField;
-
         public typeCBSVersion Version
         {
             get
             {
                 return versionField;
             }
+
             set
             {
                 if (!versionField.Equals(value))
@@ -70,6 +50,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return typeField;
             }
+
             set
             {
                 if (!typeField.Equals(value))
@@ -86,6 +67,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return mMIAnnouncementField;
             }
+
             set
             {
                 if (mMIAnnouncementField.HasValue)
@@ -110,6 +92,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return mANIP_CBSField;
             }
+
             set
             {
                 if (mANIP_CBSField.HasValue)
@@ -134,6 +117,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return aVAI_CBS_WERTField;
             }
+
             set
             {
                 if (aVAI_CBS_WERTField.HasValue)
@@ -158,6 +142,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return aVAI_CBS_EINHField;
             }
+
             set
             {
                 if (aVAI_CBS_EINHField != null)
@@ -182,6 +167,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return rMMI_CBS_WERTField;
             }
+
             set
             {
                 if (rMMI_CBS_WERTField.HasValue)
@@ -206,6 +192,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return rMMI_CBS_EINHField;
             }
+
             set
             {
                 if (rMMI_CBS_EINHField != null)
@@ -230,6 +217,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return fRC_INTM_WAY_CBS_MESSField;
             }
+
             set
             {
                 if (fRC_INTM_WAY_CBS_MESSField.HasValue)
@@ -254,6 +242,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return fRC_INTM_WAY_CBS_EINHField;
             }
+
             set
             {
                 if (fRC_INTM_WAY_CBS_EINHField != null)
@@ -278,6 +267,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return fRC_INTM_T_CBS_MESSField;
             }
+
             set
             {
                 if (fRC_INTM_T_CBS_MESSField.HasValue)
@@ -302,6 +292,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return zIELField;
             }
+
             set
             {
                 if (zIELField.HasValue)
@@ -326,6 +317,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return iD_FN_CBS_MESS_WERTField;
             }
+
             set
             {
                 if (iD_FN_CBS_MESS_WERTField.HasValue)
@@ -350,6 +342,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return iD_FN_CBS_MESS_TEXTField;
             }
+
             set
             {
                 if (iD_FN_CBS_MESS_TEXTField != null)
@@ -374,6 +367,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sT_UN_CBS_HEXField;
             }
+
             set
             {
                 if (sT_UN_CBS_HEXField != null)
@@ -398,6 +392,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sT_UN_CBS_TEXTField;
             }
+
             set
             {
                 if (sT_UN_CBS_TEXTField != null)
@@ -422,6 +417,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sT_UN_CBS_WERTField;
             }
+
             set
             {
                 if (sT_UN_CBS_WERTField.HasValue)
@@ -446,6 +442,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTATUS_MESSUNG_TEXTField;
             }
+
             set
             {
                 if (sTATUS_MESSUNG_TEXTField != null)
@@ -470,6 +467,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sTATUS_MESSUNGField;
             }
+
             set
             {
                 if (sTATUS_MESSUNGField.HasValue)
@@ -494,6 +492,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return cOU_RSTG_CBS_MESS_EINHField;
             }
+
             set
             {
                 if (cOU_RSTG_CBS_MESS_EINHField != null)
@@ -518,6 +517,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return cOU_RSTG_CBS_MESS_WERTField;
             }
+
             set
             {
                 if (cOU_RSTG_CBS_MESS_WERTField.HasValue)
@@ -537,7 +537,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public typeCBSInfo()
         {
             versionField = typeCBSVersion.UNKNOWN;
@@ -546,7 +545,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
