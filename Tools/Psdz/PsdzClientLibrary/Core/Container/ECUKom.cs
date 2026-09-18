@@ -1190,19 +1190,19 @@ namespace BMW.Rheingold.VehicleCommunication
             return dateTime - now;
         }
 
-        [PreserveSource(Cleaned = true, OriginalHash = "A54CCEFE36F21D280EC1F996CDF6E24E")]
+        [PreserveSource(Cleaned = true, OriginalHash = "518B3C96000D5560047F58E2CC00BF49")]
         private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog, bool testRun)
         {
             throw new InvalidOperationException("IDataContext service not found.");
         }
 
-        [PreserveSource(Cleaned = true, OriginalHash = "4D1D0C7E4C6AD0B5B12DE7429ABD37CE")]
+        [PreserveSource(Cleaned = true, OriginalHash = "518B3C96000D5560047F58E2CC00BF49")]
         private WebCallResponse<bool> RequestCertReqProfil(ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
             throw new InvalidOperationException("IDataContext service not found.");
         }
 
-        [PreserveSource(Cleaned = true, OriginalHash = "F7D287B4437241744997FAB84CF754A0")]
+        [PreserveSource(Cleaned = true, OriginalHash = "518B3C96000D5560047F58E2CC00BF49")]
         private WebCallResponse<Sec4DiagResponseData> RequestCertificate(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
             throw new InvalidOperationException("IDataContext service not found.");
