@@ -56,6 +56,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool IsApipa { get; }
 
+        short LanDiscoverMode { get; set; }
+
         bool IsLocalMachine { get; }
 
         string ImageVersionApplication { get; set; }

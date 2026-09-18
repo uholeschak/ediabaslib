@@ -130,8 +130,13 @@ namespace BMW.Rheingold.Psdz
             if (lifeCycleController != null)
             {
                 lifeCycleController.RequestShutdown();
-                Log.Info(Log.CurrentMethod(), "Shutdown has been requested. Waiting for the shutdown.");
-                _terminationSignal.WaitOne();
+                int num = 60000;
+                Log.Info(Log.CurrentMethod(), $"Shutdown has been requested. Waiting up to {num} ms for shutdown.");
+                if (!_terminationSignal.WaitOne(num))
+                {
+                    Log.Warning(Log.CurrentMethod(), $"Shutdown timeout reached after {num} ms. Forcing process termination.");
+                }
+
                 PsdzWebserviceHelper.TryKillTree(psdzWebserviceProcess);
                 Log.Info(Log.CurrentMethod(), "Shutdown is complete.");
             }

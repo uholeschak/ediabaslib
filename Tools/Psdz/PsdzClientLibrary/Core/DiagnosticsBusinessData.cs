@@ -552,7 +552,7 @@ namespace PsdzClient.Core
             "MGU_02_L",
             "MGU_02_A"
         };
-        private readonly string[] newFaultMemoryEnabledESeriesLifeCycles = new string[8]
+        private readonly string[] newFaultMemoryEnabledESeriesLifeCycles = new string[10]
         {
             "F95-1",
             "F96-1",
@@ -561,6 +561,8 @@ namespace PsdzClient.Core
             "G07-1",
             "G09-0",
             "G18-1",
+            "G61-1",
+            "G70-1",
             "RR25-0"
         };
         private readonly List<string> ereiheWithoutFA = new List<string>
@@ -685,12 +687,7 @@ namespace PsdzClient.Core
                 return vecInfo.Classification.IsSp2021;
             }
 
-            if (!vecInfo.Classification.IsSp2021 && !vecInfo.Classification.IsSp2025)
-            {
-                return newFaultMemoryEnabledESeriesLifeCycles.Any((string eslc) => eslc.Equals(vecInfo.ESeriesLifeCycle, StringComparison.InvariantCultureIgnoreCase));
-            }
-
-            return true;
+            return IsVehicleInNewGeneration(vecInfo);
         }
 
         public List<int> GetGatewayEcuAdresses(IVehicle vecInfo)
@@ -930,7 +927,7 @@ namespace PsdzClient.Core
 
         public bool IsVehicleInNewGeneration(IVehicle vecInfo)
         {
-            if (!vecInfo.Classification.IsSp2021 && !vecInfo.Classification.IsSp2025)
+            if (!vecInfo.Classification.IsSp2021 && !vecInfo.Classification.IsNCar)
             {
                 return newFaultMemoryEnabledESeriesLifeCycles.Any((string eslc) => eslc.Equals(vecInfo.ESeriesLifeCycle, StringComparison.InvariantCultureIgnoreCase));
             }

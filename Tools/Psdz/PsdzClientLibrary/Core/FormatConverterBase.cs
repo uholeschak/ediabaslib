@@ -11,10 +11,11 @@ namespace PsdzClient.Core
             {
                 if (!string.IsNullOrEmpty(constructionDate))
                 {
-                    if (DateTime.TryParseExact(constructionDate, "MMyy", null, DateTimeStyles.None, out var result))
+                    if (DateTime.TryParseExact(constructionDate, "MMyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
                     {
                         return result;
                     }
+
                     logger.Warning(logger.CurrentMethod(), "failed when TryParseExact() with the string {0}.", constructionDate);
                     if (!string.IsNullOrEmpty(month) && !string.IsNullOrEmpty(year))
                     {
@@ -26,6 +27,7 @@ namespace PsdzClient.Core
             {
                 logger.Warning(logger.CurrentMethod(), "failed with exception: {0}", ex.ToString());
             }
+
             return DateTime.Now;
         }
 
@@ -37,17 +39,20 @@ namespace PsdzClient.Core
                 {
                     return text;
                 }
+
                 if (!string.IsNullOrEmpty(text))
                 {
                     if (text.Length == targetLength)
                     {
                         return text;
                     }
+
                     if (text.Length < targetLength)
                     {
                         int num = targetLength - text.Length;
                         return string.Format(CultureInfo.InvariantCulture, "{0:d" + num + "}{1}", 0, text);
                     }
+
                     if (text.Length > targetLength)
                     {
                         logger.Warning("FormatConverter.FillWithZeros()", "text was longer than target length; will be cut");
@@ -59,6 +64,7 @@ namespace PsdzClient.Core
             {
                 logger.Warning("FormatConverter.FillWithZeros()", "failed with exception: {0}", ex.ToString());
             }
+
             return string.Format("{0:d" + targetLength + "}", 0);
         }
 
@@ -68,6 +74,7 @@ namespace PsdzClient.Core
             {
                 return "null";
             }
+
             return ((int)sgAdr.Value).ToString("X2");
         }
     }

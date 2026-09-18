@@ -20,19 +20,24 @@ namespace PsdzClient.Core
             public const string FillFuncJobInFstdat = "FillFuncJobInFstdat";
             public const string FscOverTricCloud = "FscOverTricCloud";
             public const string FsLesenExpertOldCode = "FsLesenExpertOldCode";
+            public const string ForceEnetUsage = "ForceEnetUsage";
             public const string GetEFuseTitlesNewWay = "GetEFuseTitlesNewWay";
             public const string GetEslDocFromAirViaTrz = "GetEslDocFromAirViaTrz";
             public const string IcomNextPCapReadout = "IcomNextPCapReadout";
             public const string IpmOverTricCloud = "IpmOverTricCloud";
+            public const string IsCompassHelpEnabled = "IsCompassHelpEnabled";
             public const string JumpAirInAwp = "JumpAirInAwp";
             public const string KaiServiceHistory = "KaiServiceHistory";
             public const string Login = "Login";
             public const string LogTracingMaximum = "LogTracingMaximum";
             public const string MidaOverTricCloud = "MidaOverTricCloud";
+            public const string MultipleIcomUpdate = "MultipleIcomUpdate";
             public const string NewDocTransformation = "NewDocTransformation";
+            public const string NewService29Url = "NewService29Url";
             public const string NopOverTricCloud = "NopOverTricCloud";
             public const string PkiOverTricCloud = "PkiOverTricCloud";
             public const string RenewConAfterEcuReset = "RenewConAfterEcuReset";
+            public const string RestServiceHistory = "RestServiceHistory";
             public const string SALocalizedOverConwoy = "SALocalizedOverConwoy";
             public const string SCBOverTricCloud = "SCBOverTricCloud";
             public const string SccOverTricCloud = "SccOverTricCloud";
@@ -52,6 +57,7 @@ namespace PsdzClient.Core
             public const string SyncLoginDatabasesJob = "SyncLoginDatabasesJob";
             public const string TCMOverTricCloud = "TCMOverTricCloud";
             public const string UseAlphaRealm = "UseAlphaRealm";
+            public const string UseFastaJson = "UseFastaJson";
             public const string UseNewIcomFwUpdate = "UseNewIcomFwUpdate";
             public const string UsePsdzSeriesFormatter = "UsePsdzSeriesFormatter";
             public const string UseQaBackendForSfaAndFsc = "UseQaBackendForSfaAndFsc";
@@ -161,6 +167,7 @@ namespace PsdzClient.Core
 
         public static class SwitchTypes
         {
+            public const string RegistryKeyOld = "REGISTRY KEY (old)";
             public const string RegistryKey = "REGISTRY KEY";
             public const string EnabledByDeviceLBP = "ENABLED BY DEVICE LBP";
             public const string DeactivatedByOutletLBP = "DEACTIVATED BY OUTLET LBP";
@@ -187,6 +194,11 @@ namespace PsdzClient.Core
         public static string FeatureRegistryKey(string feature)
         {
             return "BMW.Rheingold." + feature + "_Activate";
+        }
+
+        public static string LbpFeatureRegistryKey(string feature)
+        {
+            return "LBP_" + feature;
         }
 
         public static string FeatureCheckLBPsSinceIstaVersion(string feature)

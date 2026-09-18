@@ -6,6 +6,7 @@
         public static string ANA11_FdlGateEcuStateAorO_nu_LF = "ANA11_FdlGateEcuStateAorO_nu_LF";
         public static string ANA12_CorruptedMetadata_nu_LF = "ANA12_CorruptedMetadata_nu_LF";
         public static string ANA13_ErrorInterpretationFsLesenDetail_nu_LF = "ANA13_ErrorInterpretationFsLesenDetail_nu_LF ";
+        public static string ANA14_TestmodulLoadingIsBlocked_nu_LF = "ANA14_TestmodulLoadingIsBlocked_nu_LF";
         public static readonly string ESL01_FaultPatternDetectedId_nu_ST = "ESL01_FaultPatternDetectedId_nu_ST";
         public static readonly string ESL02_FaultPatternDisplayedId_nu_ST = "ESL02_FaultPatternDisplayedId_nu_ST";
         public const string SUC01_NoInternetConnection_nu_LF = "SUC01_NoInternetConnection_nu_LF";
@@ -21,7 +22,7 @@
         public const string LOG06_WEN_Session_Error_nu_LF = "LOG06_WEN_Session_Error_nu_LF";
         public const string LOG07_PIN_creation_change_nu_LF = "LOG07_PIN_creation_change_nu_LF";
         public const string LOG08_NetworkDiscrepancyDetected_nu_LF = "LOG08_NetworkDiscrepancyDetected_nu_LF";
-        public const string LOG09_AuthenticationSharedDatabaseStatus_nu_LF = "LOG09_AuthenticationSharedDatabaseStatus_nu_LF";
+        public const string LOG09_AccessTokenNotFound_nu_LF = "LOG09_AccessTokenNotFound_nu_LF ";
         public const string SDP10_BLPDownloadSuccess_nu_LF = "SDP10_BLPDownloadSuccess_nu_LF";
         public const string SDP11_BLPDownloadFailed_nu_LF = "SDP11_BLPDownloadFailed_nu_LF";
         public const string SDP12_SWEDownloadSuccess_nu_LF = "SDP12_SWEDownloadSuccess_nu_LF";
@@ -81,6 +82,7 @@
         public static string IDE10_LocalDbReturnedMoreThenOneEcuGroup_nu_LF => "IDE10_LocalDbReturnedMoreThenOneEcuGroup_nu_LF";
         public static string IDE11_noVINfromICOM_nu_LF => "IDE11_noVINfromICOM_nu_LF";
         public static string IDE12_UsageOfAllTypeKeys_nu_LF => "IDE12_UsageOfAllTypeKeys_nu_LF";
+        public static string IDE13_MRBadEReiheDetected_nu_LF => "IDE13_MRBadEReiheDetected_nu_LF";
         public static string NVI09_VCMEMPTY_nu_LF => "NVI09_VCMEMPTY_nu_LF";
         public static string NVI10_GearboxHardcodedLogic_nu_LF => "NVI10_GearboxHardcodedLogic_nu_LF";
         public static string VehicleValueOverrideConflict => "VehicleValueOverrideConflict";
@@ -196,11 +198,6 @@
         public static string ISL05_LauncherServiceExternalIsUsed_nu_LF => "ISL05_LauncherServiceExternalIsUsed_nu_LF";
         public static string ISL06_InstallationErrorCorruptSDP_nu_LF => "ISL06_InstallationErrorCorruptSDP_nu_LF";
         public static string ISL07_InstallationErrorCorruptMsi_nu_LF => "ISL07_InstallationErrorCorruptMsi_nu_LF";
-        public static string SHD01_SuccessfullDbCreation_nu_LF => "SHD01_SuccessfullDbCreation_nu_LF";
-        public static string SHD02_SuccessfullDbMigration_nu_LF => "SHD02_SuccessfullDbMigration_nu_LF";
-        public static string SHD03_FailedDbCreation_nu_LF => "SHD03_FailedDbCreation_nu_LF";
-        public static string SHD04_FailedDbMigration_nu_LF => "SHD04_FailedDbMigration_nu_LF";
-        public static string SHD05_MigrationNotNecessary_nu_LF => "SHD05_MigrationNotNecessary_nu_LF";
         public static string HDD01_LanConnectionError_nu_LF => "HDD01_LanConnectionError_nu_LF";
         public static string HDD02_HddServerNotVailable_nu_LF => "HDD02_HddServerNotVailable_nu_LF";
         public static string HDD03_TherapyPlanResetNotOk_nu_LF => "HDD03_TherapyPlanResetNotOk_nu_LF";

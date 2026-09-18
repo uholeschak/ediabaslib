@@ -430,12 +430,9 @@ namespace BMW.Rheingold.VehicleCommunication
             try
             {
                 IstaIcsServiceClient ics = new IstaIcsServiceClient();
-                bool flag = false;
-                bool flag2 = false;
                 if (ConfigSettings.IsILeanActive && ics.IsAvailable())
                 {
-                    flag = ics.GetFeatureEnabledStatus("EdiabasVersionForNcar").IsActive;
-                    flag2 = ics.GetFeatureEnabledStatus("SpecialModeAllowAllBrand").IsActive;
+                    ics.GetFeatureEnabledStatus("EdiabasVersionForNcar");
                 }
 
                 detectedSpecialSecurityCase = SpecialSecurityCases.None;
@@ -444,14 +441,7 @@ namespace BMW.Rheingold.VehicleCommunication
                     CreateEdiabasPublicKeyIfNotExist(device);
                     if (isDoIP2 | isDoIP)
                     {
-                        //[-] int id = Process.GetCurrentProcess().Id;
-                        //[-] if (!flag && interactionService.RegisterAsync(new InteractionDoIpCheckModel(id)).Result.Action == InteractionButton.Yes)
-                        //[-] {
-                        //[-] boolResultObject.ErrorCodeInt = 7;
-                        //[-] boolResultObject.ErrorMessage = "Only one NCAR session is possible at a time.";
-                        //[-] boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.DoIpIsUsedByOtherOperationError.ToString();
-                        //[-] return boolResultObject;
-                        //[-] }
+                        _ = Process.GetCurrentProcess().Id;
                         if (!device.IsSimulation)
                         {
                             boolResultObject2 = HandleS29Authentication(device);
@@ -466,42 +456,31 @@ namespace BMW.Rheingold.VehicleCommunication
                             return boolResultObject2;
                         }
                     }
-                    else
+                    else if (ConfigSettings.IsILeanActive && ics.IsAvailable())
                     {
-                        if (flag && !flag2)
+                        if (!ics.GetSec4DiagEnabledInBackground())
                         {
-                            boolResultObject.ErrorCodeInt = 8;
-                            boolResultObject.ErrorMessage = "Only NCAR Vehicles are allowed with the new EDIABAS Version.";
-                            boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.NewEdiabasVersionWithoutNcarVehicle.ToString();
-                            return boolResultObject;
+                            Log.Warning(Log.CurrentMethod(), "Sec4DiagEnbaledInBackground is false");
                         }
-
-                        if (ConfigSettings.IsILeanActive && ics.IsAvailable())
-                        {
-                            if (!ics.GetSec4DiagEnabledInBackground())
-                            {
-                                Log.Warning(Log.CurrentMethod(), "Sec4DiagEnbaledInBackground is false");
-                            }
-                            else
-                            {
-                                Task.Run(delegate
-                                {
-                                    TestSubCACall(device);
-                                    if (!isTestCertReqCallExecuted && IsActiveLBPFeatureSwitchForCallCertreqProfiles(ics))
-                                    {
-                                        TestCertReqCall();
-                                        isTestCertReqCallExecuted = true;
-                                    }
-                                });
-                            }
-                        }
-                        else if (ConfigSettings.IsOssModeActive)
+                        else
                         {
                             Task.Run(delegate
                             {
                                 TestSubCACall(device);
+                                if (!isTestCertReqCallExecuted && IsActiveLBPFeatureSwitchForCallCertreqProfiles(ics))
+                                {
+                                    TestCertReqCall();
+                                    isTestCertReqCallExecuted = true;
+                                }
                             });
                         }
+                    }
+                    else if (ConfigSettings.IsOssModeActive)
+                    {
+                        Task.Run(delegate
+                        {
+                            TestSubCACall(device);
+                        });
                     }
                 }
 
@@ -548,7 +527,7 @@ namespace BMW.Rheingold.VehicleCommunication
                 if (detectedSpecialSecurityCase == SpecialSecurityCases.IpbCertificatesRequired)
                 {
                     result.SetValues(result: false, "ZgwIssue", "IPB connected without Sec4Diag");
-                    result.ErrorCodeInt = 10;
+                    result.ErrorCodeInt = 9;
                 }
                 else
                 {
@@ -567,12 +546,12 @@ namespace BMW.Rheingold.VehicleCommunication
                         case Sec4CNVehicleGen.SP18:
                             detectedSpecialSecurityCase = SpecialSecurityCases.Sec4CnTokenRequiredForSp18;
                             result.SetValues(result: false, $"Sec4CN-SP18 - {ConnectToVehicleErrorCodes.Sec4CnAuthError}", "SFA Token for SP18 Vehicle required");
-                            result.ErrorCodeInt = 11;
+                            result.ErrorCodeInt = 10;
                             break;
                         case Sec4CNVehicleGen.SP21:
                             detectedSpecialSecurityCase = SpecialSecurityCases.Sec4CnTokenRequiredForSp21;
                             result.SetValues(result: false, $"Sec4CN-SP21 - {ConnectToVehicleErrorCodes.Sec4CnAuthError}", "SFA Token for SP21 Vehicle required");
-                            result.ErrorCodeInt = 11;
+                            result.ErrorCodeInt = 10;
                             break;
                     }
 
@@ -702,8 +681,10 @@ namespace BMW.Rheingold.VehicleCommunication
         {
             if (isDoIP)
             {
-                string reserved = $"RemoteHost={device.IPAddress};selectCertificate={sec4DiagHandler.CertificateFilePathWithoutEnding};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
-                return api.apiInitExt("ENET", "_", "Rheingold", reserved);
+                string iPAddress = device.IPAddress;
+                string reserved = $"selectCertificate={sec4DiagHandler.CertificateFilePathWithoutEnding};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
+                string ifh = "ENET:Remotehost=" + iPAddress + ";Port=13400";
+                return api.apiInitExt(ifh, "_", "Rheingold", reserved);
             }
 
             //[-] return api.apiInitExtForPTT("RPLUS:ICOM_P:Remotehost=127.0.0.1;Port=6408", "_", "Rheingold", string.Empty, logging);
@@ -716,6 +697,11 @@ namespace BMW.Rheingold.VehicleCommunication
             if (slpDoIpFromIcom | isDoIP)
             {
                 return InitEdiabasForDoIP(device);
+            }
+
+            if (ConfigSettings.GetFeatureEnabledStatus("ForceEnetUsage").IsActive)
+            {
+                return api.apiInitExt("ENET:Remotehost=" + device.IPAddress, "_", "Rheingold", $"ControlPort={50161};DiagnosticPort={50160};PortDoIP={50162};VehicleProtocol=HSFZ");
             }
 
             //[-] if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
@@ -1038,7 +1024,7 @@ namespace BMW.Rheingold.VehicleCommunication
                     boolResultObject.Result = false;
                     boolResultObject.ErrorMessage = "EDIABAS PEM File not found.";
                     boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.EdiabasPemFileNotFound.ToString();
-                    boolResultObject.ErrorCodeInt = 9;
+                    boolResultObject.ErrorCodeInt = 8;
                     return boolResultObject;
                 }
 
@@ -1241,8 +1227,7 @@ namespace BMW.Rheingold.VehicleCommunication
             bool item = false;
             bool flag = false;
             int num = 399;
-            int num2 = api.apiErrorCode();
-            bool flag2 = useSpecialEdiabasVersion && num2 == num;
+            bool flag2 = api.apiErrorCode() == num;
             if (!isRetry && (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase) | flag2))
             {
                 bool flag3 = CheckAuthentificationState(base.VCI);

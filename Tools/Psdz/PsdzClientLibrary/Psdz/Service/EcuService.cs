@@ -99,7 +99,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     InstalledEcus = installedEcus.Select(EcuIdentifierMapper.Map).ToList()
                 };
-                return SvtMapper.Map(_webCallHandler.ExecuteRequest<SvtModel>(_endpointService, $"requestsvtrsvtreference\u200b/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
+                return SvtMapper.Map(_webCallHandler.ExecuteRequest<SvtModel>(_endpointService, $"requestsvtrsvtreference/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {

@@ -10,10 +10,9 @@
         UnexpectedError = 5,
         MissmatchVinOperationCancelledError = 6,
         DoIpIsUsedByOtherOperationError = 7,
-        NewEdiabasVersionWithoutNcarVehicle = 8,
-        EdiabasPemFileNotFound = 9,
-        IpbValidationFailed = 10,
-        Sec4CnAuthError = 11,
+        EdiabasPemFileNotFound = 8,
+        IpbValidationFailed = 9,
+        Sec4CnAuthError = 10,
         Undefined = -1,
         IcomNetworkFailure = -2
     }

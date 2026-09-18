@@ -16,5 +16,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
         bool UpdateMsm { get; set; }
 
         bool UpdatePiaPortierungsmaster { get; set; }
+
+        bool ShouldAddPrePostProcessorForSMP { get; set; }
     }
 }

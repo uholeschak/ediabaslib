@@ -11,14 +11,13 @@ namespace BMW.Rheingold.Module.ISTA
     public class BalkenHorizontalDlgUi : UserControl, IComponentConnector
     {
         private bool _contentLoaded;
-
         public BalkenHorizontalDlgUi()
         {
             InitializeComponent();
         }
 
         [DebuggerNonUserCode]
-        [GeneratedCode("PresentationBuildTasks", "10.0.9.0")]
+        [GeneratedCode("PresentationBuildTasks", "10.0.11.0")]
         public void InitializeComponent()
         {
             if (!_contentLoaded)
@@ -30,7 +29,7 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         [DebuggerNonUserCode]
-        [GeneratedCode("PresentationBuildTasks", "10.0.9.0")]
+        [GeneratedCode("PresentationBuildTasks", "10.0.11.0")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         void IComponentConnector.Connect(int connectionId, object target)
         {

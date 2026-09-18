@@ -8,7 +8,6 @@
 			<Text id="#KIS.Sollverbaubestimmung" name="Steuergerätekonfiguration wird ermittelt" />
 			<Text id="#email" name="E-Mail" />
 			<!-- Sec4Diag ErrorHandling-->
-			<Text id="#NCAR.OnlyNCARsAreAllowed" name="ISTA wurde in einen Spezialmodus geschaltet. Damit sind nur Fahrzeugvorgänge vom Type Neue Klasse (NA5, G70 LCI) möglich." />
 			<Text id="#Sec4Diag.EdiabasPemFileCreationError" name="Die Verbindung zum Fahrzeug ist fehlgeschlagen. Dies ist womöglich auf ein bekanntes Problem beim Arbeiten mit NA5-Fahrzeugen zurückzuführen.\n\nFür mögliche Maßnahmen siehe COMPASS-ID 89475." />
 			<Text id="#Sec4Diag.IpbValidationError" name="Die Verbindung zum Fahrzeug konnte nicht hergestellt werden. \n\nSteuergerätevalidierung des zentralen Gateways nicht erfolgreich oder fehlgeschlagen. \n\nTechnischen Support kontaktieren." />
 			<Text id="#Sec4Diag.OfflineButTokenStillValid" name="Achtung: Das vorhandene Sicherheitstoken ist noch {0}tagelang gültig. Innerhalb dieser Zeit kann die Arbeit wie gewohnt fortgesetzt werden.\nIst das vorhandene Sicherheitstoken abgelaufen, kann mit den Fahrzeugen NA5 und folgende nicht weiter gearbeitet werden.\n\nDas ISTA Gerät ist derzeit offline, muss allerdings mit dem Internet bzw. Intranet verbunden werden. Erst dann kann das vorliegenden Sicherheitstoken aktualisiert werden." />
@@ -149,33 +148,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN kann nicht geändert werden" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="Die Microsoft-Komponente “WebView2“ Version{0} wird benötigt, um das Anmeldefenster anzuzeigen. Sie ist unter dem Pfad „C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64“ zu installieren.\n\nDiese Version wird automatisch zusammen mit ISTA Launcher 1.57 oder höher installiert. Bitte stellen Sie sicher, dass Sie den ISTA Launcher neu installieren, um dieses Problem zu lösen, da Sie sich sonst nicht anmelden können." />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2 Laufzeitproblem" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AllocateICOM" name="Allocate" />
-			<Text id="#IRAP.AvailableICOM" name="Verfügbare ICOM" />
-			<Text id="#IRAP.Cancel" name="Cancel" />
-			<Text id="#IRAP.Configuration" name="Configuration" />
-			<Text id="#IRAP.Connect" name="Connect" />
-			<Text id="#IRAP.ConnectionStatusConnected" name="[Connected]" />
-			<Text id="#IRAP.ConnectionStatusConnecting" name="[Connecting]" />
-			<Text id="#IRAP.ConnectionStatusDisconnected" name="[Disconnected]" />
-			<Text id="#IRAP.ConnectionStatusDisconnecting" name="[Disconnecting]" />
-			<Text id="#IRAP.Country" name="Land: " />
-			<Text id="#IRAP.DiagnosticMessages" name="Diagnostic messages" />
-			<Text id="#IRAP.Disconnect" name="Disconnect" />
-			<Text id="#IRAP.DisconnectMessage" name="The active session will be disconnected!" />
-			<Text id="#IRAP.DisconnectedByOtherSide" name="[Disconnected] Connection closed by the other side." />
-			<Text id="#IRAP.Environment" name="Umgebung: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.ICOM" name="ICOM" />
-			<Text id="#IRAP.IP" name="IP" />
-			<Text id="#IRAP.Organization" name="Organisation: " />
-			<Text id="#IRAP.ReleaseICOM" name="Release" />
-			<Text id="#IRAP.ReleaseWarning" name="Disconnect to enable release button" />
-			<Text id="#IRAP.SelectICOMessage" name="Bitte wählen Sie einen ICOM über die Schaltfläche „Verfügbare ICOM“ unten." />
-			<Text id="#IRAP.SupportConnected" name="SUPPORTER CONNECTED" />
-			<Text id="#IRAP.SupportSession" name="Support session" />
-			<Text id="#IRAP.Ticket" name="Ticket" />
-			<Text id="#IRAP.VIN" name="VIN" />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Batterietyp" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Bitte haben Sie Verständnis dafür, dass Support-Anfragen ohne folgende Daten nicht bearbeitet werden:\n\n- Testergebnis (dieses Dokument)\n- alle Logdateien\n\nFür Support-Anfragen sollte das gesamte Verzeichnis 'Logs' als gezippte Datei zur Verfügung gestellt werden." />
@@ -439,7 +411,7 @@
 			<Text id="#072" name="Ein benötigtes Zertifikat kann nicht aus dem Windows KeyStore geladen werden." />
 			<Text id="#073" name="Die aktuelle Hardware-Konfiguration wird nicht unterstützt." />
 			<Text id="#080" name="Es ist ein technischer Fehler beim Laden der Datei &quot;{0}&quot; aufgetreten.\n\nISTA beenden und mit dem ISTA Launcher eine Reparaturinstallation durchführen.\nFalls dies ohne Erfolg bleibt, den Fehler an den technischen Support melden." />
-      <Text id="#081" name="Es existieren keine ausreichenden Zeitkontingente. Möglicherweise wurde bereits ein Zeitkontingent über das Online-Portal erworben, er wird aber wahrscheinlich noch vom Portal verarbeitet und hat noch nicht begonnen. Bitte überprüfen Sie die Gültigkeit Ihrer Sitzung im Portal." />
+			<Text id="#081" name="Es existieren keine ausreichenden Zeitkontingente. Möglicherweise wurde bereits ein Zeitkontingent über das Online-Portal erworben, er wird aber wahrscheinlich noch vom Portal verarbeitet und hat noch nicht begonnen. Bitte überprüfen Sie die Gültigkeit Ihrer Sitzung im Portal." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Die Liste konnte &lt;spe:EMPHASIZE1&gt;nicht vollständig&lt;/spe:EMPHASIZE1&gt; geladen werden. ISTA Vorgänge sind nur von diesem Gerät verfügbar. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Ursache: ISPI Process Services nicht verfügbar (IPS Fehlercode {0}). &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Hinweis: Der Status der ISPI Process Services kann mit der Funktion 'IPS Check' im ISPI Admin Client ermittelt werden. &lt;/spe:PARAGRAPH&gt; &lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Der Zugriff auf Vorgänge der ISPI Process Services ist nicht möglich. Ergänzende Informationen konnten nicht geladen werden. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Ursache: ISPI Process Services nicht verfügbar (IPS Fehlercode {0}). &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt; Hinweis: Der Status der ISPI Process Services kann mit der Funktion 'IPS Check' im ISPI Admin Client ermittelt werden. &lt;/spe:PARAGRAPH&gt; &lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;IPS-Fehlercode nicht verfügbar (Fehlercode {0}). &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Dadurch kann es gegebenenfalls zur Beeinträchtigung der Systemgeschwindigkeit kommen. Der Sitzungsvorgang steht nur lokal zur Verfügung. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Hinweis: Der IPS-Status kann mit der Funktion 'IPS Check' im ISPI Admin Client ermittelt werden. &lt;/spe:PARAGRAPH&gt; &lt;/spe:TEXTITEM&gt;" />
@@ -660,7 +632,6 @@
 			<Text id="#V.WarrentyType" name="GW-Typ (Pseudotyp)" />
 			<!-- Navigation -->
 			<Text id="#Nav.DocumentSearch" name="Dokumenten/\nSuche" />
-			<Text id="#Nav.IRAP" name="IRAP" />
 			<Text id="#Nav.Measurement" name="Messtechnik" />
 			<Text id="#Nav.Operations" name="Vorgänge" />
 			<Text id="#Nav.OperationsFinished" name="Beendet" />
@@ -1006,6 +977,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Adresse:" />
 			<Text id="#Administration" name="Administration" />
+			<Text id="#AirJumpConfiguration" name="Konfiguration für den Aufruf von AIR" />
 			<Text id="#Brands:" name="Marken:" />
 			<Text id="#BreakdownPreSelection" name="Vorauswahl Vorgangstyp Pannenfall" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA Diagnose" />
@@ -1085,6 +1057,9 @@
 			<Text id="#StartTraceOnStartup" name="Starte Trace Logging bei Vorgangsstart" />
 			<Text id="#Subsystem" name="Teilsystem" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="AIR-Client verwenden" />
+			<Text id="#UseAwpBrowser" name="AWP-Browser verwenden" />
+			<Text id="#UseAwpClient" name="AWP-Client verwenden" />
 			<Text id="#VCI Config" name="Fahrzeugschnittstelle" />
 			<Text id="#Version" name="Version" />
 			<Text id="#VersionInfo" name="Versionsstand" />
@@ -1109,7 +1084,6 @@
 			<Text id="#IcomConfirmTitle" name="Bestätigung" />
 			<Text id="#IcomDereservationConfirmText" name="Festlegung ICOM [{0}] als Standard-ICOM aufheben?" />
 			<Text id="#IcomReservationConfirmText" name="ICOM [{0}] als Standard-ICOM festlegen?" />
-			<Text id="#IrapWorkshopClient" name="Start IRAP Client" />
 			<Text id="#OnlyOneImibMessage" name="Es kann nur eine IMIB geben. Die bestehende IMIB Verbindung muss vor der Verbindung zu einer neuen IMIB beendet werden." />
 			<Text id="#SESSION" name="Sitzung gültig bis:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -1824,6 +1798,7 @@
 			<Text id="#132" name="Sicherstellen, dass ausreichend Zeitkontingent für die Programmierung vorhanden ist (min. 1 Tag).\nZeitkontingente können im Online Portal erworben werden." />
 			<Text id="#140" name="{1}: Die Batteriespannung (Klemme 30) liegt über dem zulässigen Schwellwert von {0}V.\n\nAufgrund der zu hohen Batteriespannung ist die fehlerfreie Fahrzeugbehandlung gefährdet.\n\nUm den Vorgang fortzuführen Ladespannung korrigieren.\n\nDie Korrektur kann entweder über Änderung der Ladeparameter oder Wahl eines geeignetes Ladegeräts erfolgen." />
 			<Text id="#BitsQueueFull" name="Das Bits Queue Limit ist erreicht. Es werden keine Daten an BMW übertragen, solange die Bits Queue voll ist." />
+			<Text id="#BrandTypeNotValid" name="Marke konnte nicht gesetzt werden." />
 			<Text id="#Condition" name="Bedingung" />
 			<Text id="#DIALOG_ZUENDUNGSTATUS.MESSAGE" name="Es wurde kein Zündsignal erkannt. Klicken Sie auf die Schaltfläche &quot;OK&quot;, um eine erneute Prüfung durchzuführen. Klicken Sie auf die Schaltfläche &quot;Abbruch&quot;, um die Sitzung fortzusetzen." />
 			<Text id="#DIALOG_ZUENDUNGSTATUS.TITEL" name="Zündungstatus" />
@@ -2213,7 +2188,6 @@
 			<Text id="#KIS.Sollverbaubestimmung" name="Control unit configuration is determined" />
 			<Text id="#email" name="E-mail" />
 			<!-- Sec4Diag ErrorHandling-->
-			<Text id="#NCAR.OnlyNCARsAreAllowed" name="ISTA has been switched to a special mode. This means that only vehicle operations of the Neue Klasse (NA5, G70 LCI) type are possible." />
 			<Text id="#Sec4Diag.EdiabasPemFileCreationError" name="The connection to the vehicle failed. This may be due to a known problem when working with NA5 vehicles.\n\nFor possible measures, see COMPASS ID 89475." />
 			<Text id="#Sec4Diag.IpbValidationError" name="We were unable to connect to the vehicle. \n\nControl unit validation of the central gateway not successful or failed. \n\nContact Technical Support." />
 			<Text id="#Sec4Diag.OfflineButTokenStillValid" name="Attention: The present security token is still valid for {0} days. Within this time, work can continue as usual.\nIf the existing security token has expired, it is no longer possible to work with vehicles NA5 and the following.\n\nThe ISTA device is currently offline, but must be connected to the Internet or Intranet. Only then the existing security token can be updated." />
@@ -2354,33 +2328,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN cannot be changed" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="The Microsoft component “WebView2“ version {0} is needed to display the login window. It has to be installed under the path “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64“.\n\nThis version is automatically installed alongside ISTA Launcher 1.57 or higher. Please make sure to reinstall the ISTA Launcher in order to solve this problem, otherwise you cannot log in." />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2 runtime problem" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AllocateICOM" name="Allocate" />
-			<Text id="#IRAP.AvailableICOM" name="Available ICOM" />
-			<Text id="#IRAP.Cancel" name="Cancel" />
-			<Text id="#IRAP.Configuration" name="Configuration" />
-			<Text id="#IRAP.Connect" name="Connect" />
-			<Text id="#IRAP.ConnectionStatusConnected" name="[Connected]" />
-			<Text id="#IRAP.ConnectionStatusConnecting" name="[Connecting]" />
-			<Text id="#IRAP.ConnectionStatusDisconnected" name="[Disconnected]" />
-			<Text id="#IRAP.ConnectionStatusDisconnecting" name="[Disconnecting]" />
-			<Text id="#IRAP.Country" name="Country: " />
-			<Text id="#IRAP.DiagnosticMessages" name="Diagnostic messages" />
-			<Text id="#IRAP.Disconnect" name="Disconnect" />
-			<Text id="#IRAP.DisconnectMessage" name="The active session will be disconnected!" />
-			<Text id="#IRAP.DisconnectedByOtherSide" name="[Disconnected] Connection closed by the other side." />
-			<Text id="#IRAP.Environment" name="Environment: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.ICOM" name="ICOM" />
-			<Text id="#IRAP.IP" name="IP" />
-			<Text id="#IRAP.Organization" name="Organization: " />
-			<Text id="#IRAP.ReleaseICOM" name="Release" />
-			<Text id="#IRAP.ReleaseWarning" name="Disconnect to enable release button" />
-			<Text id="#IRAP.SelectICOMessage" name="Please select an ICOM using the button `Available ICOM` below." />
-			<Text id="#IRAP.SupportConnected" name="SUPPORTER CONNECTED" />
-			<Text id="#IRAP.SupportSession" name="Support session" />
-			<Text id="#IRAP.Ticket" name="Ticket" />
-			<Text id="#IRAP.VIN" name="VIN" />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Battery type" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Please understand that support requests without the following data will not be processed:\n\n- Test result (this document)\n- all log files\n\nFor support requests, the entire 'Logs' folder should be provided as a zipped file." />
@@ -2640,7 +2587,7 @@
 			<Text id="#072" name="A required certificate cannot be loaded from the Windows KeyStore." />
 			<Text id="#073" name="The current hardware configuration is not supported." />
 			<Text id="#080" name="A technical error occurred when loading the file &quot;{0}&quot;.\n\nClose ISTA and perform a repair installation with the ISTA launcher.\nIf this is unsuccessful, report the error to technical support." />
-      <Text id="#081" name="Time allocations are missing. A time allocation may have already been acquired via online portal but it is likely still being processed by the portal and has not yet started. Please check the validity of the portal session." />
+			<Text id="#081" name="Time allocations are missing. A time allocation may have already been acquired via online portal but it is likely still being processed by the portal and has not yet started. Please check the validity of the portal session." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;The list could not be loaded fully. ISTA cases are available from this device only. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Cause: ISPI Process Services not available (IPS fault code {0}). &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Note: The status of the ISPI Process Services can be determined with the 'IPS Check' function in the ISPI admin client. &lt;/spe:PARAGRAPH&gt; &lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Access to cases of the ISPI Process Services is not possible. Supplementary information could not be loaded. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Cause: ISPI Process Services not available (IPS fault code {0}). &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt; Note: The status of the ISPI Process Services can be determined with the 'IPS Check' function in the ISPI admin client. &lt;/spe:PARAGRAPH&gt; &lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;ISPI Process Services not available (IPS fault code {0}). &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;This can lead to an impairment of the system speed. The operation is only available locally. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Note: The status of the ISPI Process Services can be determined with the 'IPS Check' function in the ISPI admin client. &lt;/spe:PARAGRAPH&gt; &lt;/spe:TEXTITEM&gt;" />
@@ -2848,7 +2795,6 @@
 			<Text id="#V.WarrentyType" name="Warranty type (pseudo type)" />
 			<!-- Navigation -->
 			<Text id="#Nav.DocumentSearch" name="Documents/\nsearch" />
-			<Text id="#Nav.IRAP" name="IRAP" />
 			<Text id="#Nav.Measurement" name="Measuring technique" />
 			<Text id="#Nav.Operations" name="Cases" />
 			<Text id="#Nav.OperationsFinished" name="Closed" />
@@ -2939,7 +2885,7 @@
 			<Text id="#FaultPatternNo" name="Number of fault patterns:" />
 			<Text id="#FaultText" name="Fault text" />
 			<Text id="#FaultTypes" name="Fault types" />
-			<Text id="#FaultsNotFound" name="Reading the data from the vehicle was successful. There are no fault memory messages." />
+			<Text id="#FaultsNotFound" name="Reading out the data from the vehicle was successful. No fault memory entries are available." />
 			<Text id="#FilterFaultCode" name="Filter fault memories" />
 			<Text id="#GlobalEnvironmentConditions" name="Global ambient conditions" />
 			<Text id="#Group" name="Group" />
@@ -3192,6 +3138,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Address:" />
 			<Text id="#Administration" name="Administration" />
+			<Text id="#AirJumpConfiguration" name="AIR Jump configuration" />
 			<Text id="#Brands:" name="Brands:" />
 			<Text id="#BreakdownPreSelection" name="Case type preselection, breakdown" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA Diagnose" />
@@ -3271,6 +3218,9 @@
 			<Text id="#StartTraceOnStartup" name="Start trace logging at case start" />
 			<Text id="#Subsystem" name="Subsystem" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="Use AIR Client" />
+			<Text id="#UseAwpBrowser" name="Use AWP Browser" />
+			<Text id="#UseAwpClient" name="Use AWP Client" />
 			<Text id="#VCI Config" name="Vehicle interface" />
 			<Text id="#Version" name="Version" />
 			<Text id="#VersionInfo" name="Version status" />
@@ -3295,7 +3245,6 @@
 			<Text id="#IcomConfirmTitle" name="Confirmation" />
 			<Text id="#IcomDereservationConfirmText" name="Cancel definition of ICOM [{0}] as default ICOM?" />
 			<Text id="#IcomReservationConfirmText" name="Define ICOM [{0}] as default ICOM?" />
-			<Text id="#IrapWorkshopClient" name="Start IRAP Client" />
 			<Text id="#OnlyOneImibMessage" name="There can only be one IMIB. The existing IMIB connection must be closed before connection to a new IMIB." />
 			<Text id="#SESSION" name="Session valid until:" />
 			<Text id="#ScanForVCI" name="Determining registered vehicle interfaces of {0}" />
@@ -4002,6 +3951,7 @@
 			<Text id="#132" name="Ensure that the time allocation is sufficient enough for the programming (minimum 1 day).\nTime allocations can be acquired in the online portal." />
 			<Text id="#140" name="{1}: The battery voltage (terminal 30) is above the permissible threshold value of {0}V.   \n\nDue to the high battery voltage, trouble-free vehicle management cannot be guaranteed.\n\nCorrect the charging voltage in order to continue the procedure.\n\nIt can be corrected either by changing the charging parameters or selecting a suitable charger." />
 			<Text id="#BitsQueueFull" name="The maximum number of transmission jobs has been reached. No data is transmitted to BMW. See ISPI DSS solution #00047275." />
+			<Text id="#BrandTypeNotValid" name="Brand type could not be set." />
 			<Text id="#Condition" name="Condition" />
 			<Text id="#DIALOG_ZUENDUNGSTATUS.MESSAGE" name="No ignition signal was detected. OK button to check again. Cancel button to resume the session." />
 			<Text id="#DIALOG_ZUENDUNGSTATUS.TITEL" name="Ignitionstate" />
@@ -4031,7 +3981,7 @@
 			<Text id="#EndProcedure" name="End of test module" />
 			<Text id="#EndSubProcedure" name="End of subprocess" />
 			<Text id="#FailedToResolveSubmoduleDetail" name="Call-up method was: {0}" />
-			<Text id="#FailedToResolveSubmoduleMessage" name="Submodule cannot be resolved: {0}" />
+			<Text id="#FailedToResolveSubmoduleMessage" name="Submodule cannot be resolved: {0}. The module may have been blocked by Windows security controls. For troubleshooting instructions, refer to the Compass article: {1}." />
 			<Text id="#FullScreen" name="Full screen" />
 			<Text id="#Keyboard" name="Keyboard" />
 			<Text id="#Next" name="Next" />
@@ -4390,7 +4340,6 @@
 			<Text id="#KIS.Sollverbaubestimmung" name="Detecting control unit configuration" />
 			<Text id="#email" name="E-mail" />
 			<!-- Sec4Diag ErrorHandling-->
-			<Text id="#NCAR.OnlyNCARsAreAllowed" name="ISTA has been switched to a special mode. This means that only vehicle operations of the Neue Klasse (NA5, G70 LCI) type are possible." />
 			<Text id="#Sec4Diag.EdiabasPemFileCreationError" name="The connection to the vehicle failed. This may be due to a known problem when working with NA5 vehicles.\n\nFor possible measures, see COMPASS ID 89475." />
 			<Text id="#Sec4Diag.IpbValidationError" name="We were unable to connect to the vehicle. \n\nControl unit validation of the central gateway not successful or failed. \n\nContact Technical Support." />
 			<Text id="#Sec4Diag.OfflineButTokenStillValid" name="Important: The existing security token is still valid for {0} days. Within this time, work can continue as usual.\nIf the existing security token has expired, it is no longer possible to work with NA5 and following vehicles.\n\nThe ISTA device is currently offline, but must be connected to the Internet or intranet. Only then can the existing security token be updated." />
@@ -4469,33 +4418,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN cannot be changed" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="The Microsoft component “WebView2” version {0} is required to display the login window. It must be installed under the path “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64”.\n\nThis version is automatically installed with ISTA Launcher 1.57 or higher. Please ensure that you reinstall the ISTA Launcher to solve this problem, otherwise you will be unable to log in." />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2 runtime problem" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AllocateICOM" name="Allocate" />
-			<Text id="#IRAP.AvailableICOM" name="Available ICOM" />
-			<Text id="#IRAP.Cancel" name="Cancel" />
-			<Text id="#IRAP.Configuration" name="Configuration" />
-			<Text id="#IRAP.Connect" name="Connect" />
-			<Text id="#IRAP.ConnectionStatusConnected" name="[Connected]" />
-			<Text id="#IRAP.ConnectionStatusConnecting" name="[Connecting]" />
-			<Text id="#IRAP.ConnectionStatusDisconnected" name="[Disconnected]" />
-			<Text id="#IRAP.ConnectionStatusDisconnecting" name="[Disconnecting]" />
-			<Text id="#IRAP.Country" name="Country " />
-			<Text id="#IRAP.DiagnosticMessages" name="Diagnostic messages" />
-			<Text id="#IRAP.Disconnect" name="Disconnect" />
-			<Text id="#IRAP.DisconnectMessage" name="The active session will be disconnected!" />
-			<Text id="#IRAP.DisconnectedByOtherSide" name="[Disconnected] Connection closed by the other side." />
-			<Text id="#IRAP.Environment" name="Environment: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.ICOM" name="ICOM" />
-			<Text id="#IRAP.IP" name="IP" />
-			<Text id="#IRAP.Organization" name="Organisation: " />
-			<Text id="#IRAP.ReleaseICOM" name="Release" />
-			<Text id="#IRAP.ReleaseWarning" name="Disconnect to enable release button" />
-			<Text id="#IRAP.SelectICOMessage" name="Please select an ICOM via the “Available ICOM” button." />
-			<Text id="#IRAP.SupportConnected" name="SUPPORTER CONNECTED" />
-			<Text id="#IRAP.SupportSession" name="Support session" />
-			<Text id="#IRAP.Ticket" name="Ticket" />
-			<Text id="#IRAP.VIN" name="VIN" />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Battery type" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Please understand that support requests will not be processed without the following data:\n\n- Test result (this document)\n- all log files\n\nFor support queries, the entire 'Logs' folder should be made available as a zip file." />
@@ -4752,7 +4674,7 @@
 			<Text id="#072" name="You cannot load the required certificate from the Windows KeyStore." />
 			<Text id="#073" name="The current hardware configuration is not supported." />
 			<Text id="#080" name="A technical fault occurred during loading of the file '{0}'.\n\nClose ISTA and carry out a repair installation using the ISTA Launcher.\nIf that is not successful, report the fault to Technical Support." />
-      <Text id="#081" name="Time allocations are missing. A time allocation may have already been acquired via online portal but it is likely still being processed by the portal and has not yet started. Please check the validity of the portal session." />
+			<Text id="#081" name="No adequate time slots are available. It is possible that a time slot has already been purchased via the online portal, but it is likely still being processed by the portal and has not yet commenced. Please check whether your session is still valid in the portal." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;The list could not be completely loaded. ISTA operations are only available from this unit. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Cause: ISPI Process Services not available (IPS fault code {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Note: The status of ISPI Process Services can be determined using the function 'IPS Check' in the ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;It is not possible to access the processes of ISPI Process Services. Additional information could not be loaded.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Cause: ISPI Process Services not available (IPS fault code {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Note: The status of ISPI Process Services can be determined using the function 'IPS Check' in the ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Data is only stored locally. That means the operation is not available for wider cooperation.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Cause: ISPI Process Services not available (IPS fault code {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Note: The status of ISPI Process Services can be determined using the function 'IPS Check' in the ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -4932,7 +4854,6 @@
 			<Text id="#V.WarrentyType" name="Warrentay type (pseudotype)" />
 			<!-- Navigation -->
 			<Text id="#Nav.DocumentSearch" name="Documents/\nsearch" />
-			<Text id="#Nav.IRAP" name="IRAP" />
 			<Text id="#Nav.Measurement" name="Measuring\ndevices" />
 			<Text id="#Nav.Operations" name="Operations" />
 			<Text id="#Nav.OperationsFinished" name="Finished" />
@@ -5270,6 +5191,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Address:" />
 			<Text id="#Administration" name="Administration" />
+			<Text id="#AirJumpConfiguration" name="Configuration for calling up AIR" />
 			<Text id="#Brands:" name="Brands:" />
 			<Text id="#BreakdownPreSelection" name="Preselection operation type breakdown" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA diagnosis" />
@@ -5284,7 +5206,7 @@
 			<Text id="#ClientSettings" name="Client settings" />
 			<Text id="#DataProtection" name="Data protection" />
 			<Text id="#DataProtectionAddExplaination" name="Enter vehicle identification number (17 digits) of the vehicle whose data should not be sent and press “Add”" />
-			<Text id="#DataProtectionAddExplaination2" name="No vehicle process must yet have been started for the vehicle identification number entered." />
+			<Text id="#DataProtectionAddExplaination2" name="No Service Case should have been started for the vehicle identification number entered." />
 			<Text id="#DataProtectionContent" name="If for the customer order there is a contradiction against the transmission of vehicle data, the transmission of diagnostic data for the affected vehicle must be suppressed before using the workshop application. To do so, the new dialogue “data protection” must be invoked within the settings. Here, the vehicle identification number of the affected vehicle must be recorded (see user guide data protection dialogue). \n\nThe suppression only applies for the specified vehicle identification number and only until the end of the workshop application.\n\nIn the course of the workshop application, after that the transmission of diagnostic data for the specified vehicle identification number is suppressed. If in the course of the workshop application a transmission is prescribed that is suppressed due to the setting, a confirmation dialogue appears (see user guide confirmation dialogue).\n\nThis makes it possible to detect whether the suppression of the transmission was effective.\n\nThe suppression of the transmission may only be used by the data protection dialogue may only be used if a permissible contradiction of the customer in accordance with the general specifications has been submitted. The suppression affects the transmission of the diagnostic protocol, programming log and FASTA data to BMW AG. The suppression does not accelerate the sequence of the workshop application and is documented for BMW AG." />
 			<Text id="#DataProtectionInteractionContent" name="If for the customer order there is a contradiction against the transmission of vehicle data, the transmission of diagnostic data for the affected vehicle must be suppressed before using the workshop application. To do so, the new dialogue “data protection” must be invoked within the settings. Here, the vehicle identification number of the affected vehicle must be recorded (see user guide data protection dialogue). \n\nThe suppression only applies for the specified vehicle identification number and only until the end of the workshop application.\n\nIn the course of the workshop application, after that the transmission of diagnostic data for the specified vehicle identification number is suppressed. If in the course of the workshop application a transmission is prescribed that is suppressed due to the setting, a confirmation dialogue appears (see user guide confirmation dialogue).\n\nThis makes it possible to detect whether the suppression of the transmission was effective.\n\nThe suppression of the transmission may only be used by the data protection dialogue may only be used if a permissible contradiction of the customer in accordance with the general specifications has been submitted. The suppression affects the transmission of the diagnostic protocol, programming log and FASTA data to BMW AG. The suppression does not accelerate the sequence of the workshop application and is documented for BMW AG." />
 			<Text id="#DataProtectionInteractionContentToyota" name="If for the customer order there is a contradiction against the transmission of vehicle data, the transmission of diagnostic data for the affected vehicle must be suppressed before using the workshop application. To do so, the new dialogue “data protection” must be invoked within the settings. Here, the vehicle identification number of the affected vehicle must be recorded (see user guide data protection dialogue). \n\nThe suppression only applies for the specified vehicle identification number and only until the end of the workshop application.\n\nIn the course of the workshop application, after that the transmission of diagnostic data for the specified vehicle identification number is suppressed. If in the course of the workshop application a transmission is prescribed that is suppressed due to the setting, a confirmation dialogue appears (see user guide confirmation dialogue).\n\nThis makes it possible to detect whether the suppression of the transmission was effective.\n\nThe suppression of the transmission may only be used by the data protection dialogue may only be used if a permissible contradiction of the customer in accordance with the general specifications has been submitted. The suppression affects the transmission of the diagnostic protocol, programming log and FASTA data to BMW AG. The suppression does not accelerate the sequence of the workshop application and is documented for the central system." />
@@ -5349,6 +5271,9 @@
 			<Text id="#StartTraceOnStartup" name="Start trace logging at start of operation" />
 			<Text id="#Subsystem" name="Subsystem" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="Use the AIR client" />
+			<Text id="#UseAwpBrowser" name="Use the AWP browser" />
+			<Text id="#UseAwpClient" name="Use the AWP client" />
 			<Text id="#VCI Config" name="Vehicle interface" />
 			<Text id="#Version" name="Version" />
 			<Text id="#VersionInfo" name="Version" />
@@ -5373,7 +5298,6 @@
 			<Text id="#IcomConfirmTitle" name="Confirmation" />
 			<Text id="#IcomDereservationConfirmText" name="Cancel specification of ICOM [{0}] as standard ICOM?" />
 			<Text id="#IcomReservationConfirmText" name="Specify ICOM [{0}] as standard ICOM?" />
-			<Text id="#IrapWorkshopClient" name="Start the IRAP client" />
 			<Text id="#OnlyOneImibMessage" name="There can only be one IMIB. The existing IMIB connection must be closed before connecting to a new IMIB." />
 			<Text id="#SESSION" name="Session valid until:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -6082,6 +6006,7 @@
 			<Text id="#132" name="Make sure that there is sufficient time allocation for programming (min. 1 day).\nTime allocations can be acquired in the online portal." />
 			<Text id="#140" name="{1}: The battery voltage (terminal 30) is above the permissible threshold value of {0}V.\n\nDue to the high battery voltage, trouble-free vehicle management cannot be guaranteed.\n\nCorrect the charging voltage in order to continue the procedure.\n\nIt can be corrected either by changing the charging parameters or selecting a suitable charger." />
 			<Text id="#BitsQueueFull" name="The maximum number of transmission jobs has been reached. No data is transmitted to BMW. See ISPI DSS solution #00047275." />
+			<Text id="#BrandTypeNotValid" name="Brand type could not be set." />
 			<Text id="#Condition" name="Condition" />
 			<Text id="#DIALOG_ZUENDUNGSTATUS.MESSAGE" name="No ignition signal was detected. Click on the &quot;OK&quot; button to perform a new check. Click on the &quot;Cancel&quot; button to resume the session." />
 			<Text id="#DIALOG_ZUENDUNGSTATUS.TITEL" name="Ignition status" />
@@ -6540,13 +6465,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="El PIN no se puede cambiar" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="Para mostrar la ventana de inicio de sesión se requiere la versión “WebView2” {0} del componente de Microsoft. Se debe instalar en la ruta “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64”.\n\nEsta versión se instala automáticamente junto con ISTA Launcher 1.57 o superior. Asegúrese de reinstalar el ISTA Launcher para resolver este problema, de lo contrario no podrá iniciar sesión." />
 			<Text id="#Auth.WebViewProblemTitle" name="Problema de ejecución de WebView2" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="ICOM disponible" />
-			<Text id="#IRAP.Country" name="País: " />
-			<Text id="#IRAP.Environment" name="Entorno: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.Organization" name="Organización: " />
-			<Text id="#IRAP.SelectICOMessage" name="Seleccione un ICOM a través del botón „ICOM disponible“ abajo." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Tipo de batería" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Tenga en cuenta que las solicitudes de soporte técnico no se tramitarán sin los siguientes datos:\n\n- Resultado de la prueba (este documento)\n- Todos los archivos de registro\n\nPara las solicitudes de soporte técnico, todo el directorio &quot;Logs&quot; debe estar disponible como un archivo comprimido." />
@@ -6797,6 +6715,7 @@
 			<Text id="#072" name="No es posible cargar un certificado necesario desde Windows KeyStore." />
 			<Text id="#073" name="La configuración actual de hardware no es compatible." />
 			<Text id="#080" name="Se ha producido un error técnico al cargar el archivo '{0}'.\n\nFinalizar ISTA y llevar a cabo una instalación de reparación con el ISTA Launcher.\nSi esta medida no tiene éxito, comunicar el fallo al soporte técnico." />
+			<Text id="#081" name="No hay contingentes de tiempo suficientes. Es posible que ya se haya adquirido un contingente de tiempo a través del portal en línea, pero es probable que el portal aún lo esté procesando y que aún no haya comenzado. Compruebe la validez de su sesión en el portal." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;No se ha podido cargar toda la lista. Los procesos ISTA solo están disponibles desde este equipo. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services no disponibles (código de avería IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Observación: El estado de los ISPI Process Services puede verse con ayuda de la función 'IPS Check' en ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;No es posible acceder a procesos de ISPI Process Services. No ha sido posible cargar información adicional.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services no disponibles (código de avería IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Observación: El estado de los ISPI Process Services puede verse con ayuda de la función ''IPS Check' en ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Los datos se guardarán solo localmente. En consecuencia, el proceso no se encuentra disponible para la colaboración superior.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services no disponibles (código de avería IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Observación: El estado de los ISPI Process Services puede verse con ayuda de la función ''IPS Check' en ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -7311,6 +7230,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Dirección:" />
 			<Text id="#Administration" name="Administración" />
+			<Text id="#AirJumpConfiguration" name="Configuración para la llamada de AIR" />
 			<Text id="#Brands:" name="Marcas:" />
 			<Text id="#BreakdownPreSelection" name="Preselección Tipo de proceso Caso de avería" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="Diagnosis ISTA" />
@@ -7325,6 +7245,7 @@
 			<Text id="#ClientSettings" name="Ajustes\ndel cliente" />
 			<Text id="#DataProtection" name="Protección de datos" />
 			<Text id="#DataProtectionAddExplaination" name="Introduzca el número de bastidor (17 dígitos) del vehículo cuyos datos no desea enviar a BMW y pulse 'Añadir'" />
+			<Text id="#DataProtectionAddExplaination2" name="Para el número de identificación del vehículo todavía no se debe haber iniciado ningún paso de taller." />
 			<Text id="#DataProtectionContent" name="En caso de que en una orden del cliente exista alguna contradicción referente a la transmisión de los datos del vehículo, antes de utilizar la aplicación del taller se debe suprimir la transmisión de los datos de diagnosis para el vehículo afectado. Para ello, en la sección de ajustes, acceder al nuevo cuadro de diálogo 'Protección de datos'. Aquí se obtiene el número de bastidor del vehículo afectado (véase el manual de usuario, cuadro de diálogo de protección de datos). \n\nEsta supresión es aplicable solo al número de bastidor indicado y solo hasta que finalice la aplicación del taller.\n\nEn el transcurso de la aplicación del taller se suprime después la transmisión de los datos de diagnosis para el número de bastidor indicado. Si en el transcurso de la aplicación del taller se prevé una transmisión que se suprimirá debido al ajuste establecido, aparece un cuadro de diálogo de confirmación (véase el manual de usuario, cuadro de diálogo de protección de datos).\n\nDe este modo es posible detectar que la transmisión se ha suprimido correctamente.\n\nSolo se debe utilizar el cuadro de diálogo de protección de datos para suprimir la transmisión en caso de que exista una contradicción admisible por parte del cliente según los datos preestablecidos generales. La supresión tiene efecto al transmitir el protocolo de diagnosis, el protocolo de programación y los datos FASTA a BMW AG. La supresión no agiliza la aplicación del taller y se documenta en BMW AG." />
 			<Text id="#DataProtectionInteractionContent" name="En caso de que en una orden del cliente exista alguna contradicción referente a la transmisión de los datos del vehículo, antes de utilizar la aplicación del taller se debe suprimir la transmisión de los datos de diagnosis para el vehículo afectado. Para ello, en la sección de ajustes, acceder al nuevo cuadro de diálogo 'Protección de datos'. Aquí se obtiene el número de bastidor del vehículo afectado (véase el manual de usuario, cuadro de diálogo de protección de datos). \n\nEsta supresión es aplicable solo al número de bastidor indicado y solo hasta que finalice la aplicación del taller.\n\nEn el transcurso de la aplicación del taller se suprime después la transmisión de los datos de diagnosis para el número de bastidor indicado. Si en el transcurso de la aplicación del taller se prevé una transmisión que se suprimirá debido al ajuste establecido, aparece un cuadro de diálogo de confirmación (véase el manual de usuario, cuadro de diálogo de protección de datos).\n\nDe este modo es posible detectar que la transmisión se ha suprimido correctamente.\n\nSolo se debe utilizar el cuadro de diálogo de protección de datos para suprimir la transmisión en caso de que exista una contradicción admisible por parte del cliente según los datos preestablecidos generales. La supresión tiene efecto al transmitir el protocolo de diagnosis, el protocolo de programación y los datos FASTA a BMW AG. La supresión no agiliza la aplicación del taller y se documenta en BMW AG." />
 			<Text id="#DataProtectionInteractionContentToyota" name="En caso de que en una orden del cliente exista alguna contradicción referente a la transmisión de los datos del vehículo, antes de utilizar la aplicación del taller se debe suprimir la transmisión de los datos de diagnosis para el vehículo afectado. Para ello, en la sección de ajustes, acceder al nuevo cuadro de diálogo 'Protección de datos'. Aquí se obtiene el número de identificación del vehículo afectado (véase el manual del usuario, cuadro de diálogo de protección de datos). \n\nEsta supresión es aplicable solo al número de identificación del vehículo y solo hasta que finalice la aplicación del taller.\n\nEn el transcurso de la aplicación del taller se suprime después la transmisión de los datos de diagnosis para el número de identificación del vehículo. Si en el transcurso de la aplicación del taller se prevé una transmisión que se suprimirá debido al ajuste establecido, aparece un cuadro de diálogo de confirmación (véase el manual de usuario, cuadro de diálogo de protección de datos).\n\nDe este modo es posible detectar que la transmisión se ha suprimido correctamente.\n\nSolo se debe utilizar el cuadro de diálogo de protección de datos para suprimir la transmisión en caso de que exista una contradicción admisible por parte del cliente según los datos preestablecidos generales. La supresión tiene efecto al transmitir el protocolo de diagnosis, el protocolo de programación y los datos FASTA a BMW AG. La supresión no agiliza la aplicación del taller y se documenta en el sistema central." />
@@ -7389,6 +7310,9 @@
 			<Text id="#StartTraceOnStartup" name="Arranque Trace Logging al iniciar el proceso" />
 			<Text id="#Subsystem" name="Subsistema" />
 			<Text id="#Trace" name="Traza" />
+			<Text id="#UseAirClient" name="Utilizar el cliente AIR" />
+			<Text id="#UseAwpBrowser" name="Utilizar el navegador AWP" />
+			<Text id="#UseAwpClient" name="Utilizar el cliente AWP" />
 			<Text id="#VCI Config" name="Interfaz del vehículo" />
 			<Text id="#Version" name="Versión" />
 			<Text id="#VersionInfo" name="Versión de software" />
@@ -7413,7 +7337,6 @@
 			<Text id="#IcomConfirmTitle" name="Confirmación" />
 			<Text id="#IcomDereservationConfirmText" name="¿Eliminar la condición de ICOM predeterminado de este ICOM [{0}]?" />
 			<Text id="#IcomReservationConfirmText" name="¿Fijar este ICOM [{0}] como ICOM predeterminado?" />
-			<Text id="#IrapWorkshopClient" name="Inicio del IRAP Client" />
 			<Text id="#OnlyOneImibMessage" name="Solo puede existir una IMIB. La conexión de IMIB existente debe finalizarse antes de la conexión a una nueva IMIB." />
 			<Text id="#SESSION" name="Sesión válida hasta:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -8122,7 +8045,7 @@
 			<Text id="#EndProcedure" name="Fin del ciclo" />
 			<Text id="#EndSubProcedure" name="Fin del desarrollo inferior" />
 			<Text id="#FailedToResolveSubmoduleDetail" name="El método de llamada ha sido: {0}" />
-			<Text id="#FailedToResolveSubmoduleMessage" name="No se puede disolver el submódulo: {0}" />
+			<Text id="#FailedToResolveSubmoduleMessage" name="No se puede resolver el submódulo: {0}" />
 			<Text id="#FullScreen" name="Pantalla completa" />
 			<Text id="#Keyboard" name="Teclado" />
 			<Text id="#Next" name="Continuar" />
@@ -8550,13 +8473,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="Le code PIN ne peut pas être modifié" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="Le composant Microsoft « WebView2 » version {0} est nécessaire pour afficher la fenêtre de connexion. Il doit être installé sous le chemin d'accès « C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64 ».\n\nCette version est automatiquement installée avec ISTA Launcher 1.57 ou supérieur. Veuillez vous assurer de réinstaller ISTA Launcher pour résoudre ce problème, sans quoi vous ne pourrez pas vous connecter." />
 			<Text id="#Auth.WebViewProblemTitle" name="Problème de durée d'exécution de WebView2" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="ICOM disponibles" />
-			<Text id="#IRAP.Country" name="Pays : " />
-			<Text id="#IRAP.Environment" name="Environnement : " />
-			<Text id="#IRAP.Gateway" name="Passerelle : " />
-			<Text id="#IRAP.Organization" name="Organisation : " />
-			<Text id="#IRAP.SelectICOMessage" name="Veuillez sélectionner un ICOM en cliquant sur le bouton « ICOM disponibles » ci-dessous." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Type de batterie" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Notez que les demandes d'assistance ne sont pas traitées en l'absence des données suivantes :\n\n- Résultat du test (ce document)\n- Tous les fichiers journaux\n\nPour les demandes d'assistance, l'intégralité du répertoire « Logs » doit être mis à disposition sous forme de fichier zippé." />
@@ -8808,6 +8724,7 @@
 			<Text id="#072" name="Il n'est pas possible de charger un certificat requis depuis le Windows KeyStore." />
 			<Text id="#073" name="La configuration matérielle actuelle n'est pas prise en charge." />
 			<Text id="#080" name="Un défaut technique s'est produit lors du chargement du fichier « {0} ».\n\nFermer ISTA est procéder à une installation de réparation avec ISTA Launcher.\nSi celle-ci est sans succès, communiquer le défaut à l'assistance technique." />
+			<Text id="#081" name="Il n’existe aucun contingent horaire suffisant. Il se peut qu'un contingent horaire ait déjà été acheté via le portail en ligne, mais le portail est probablement encore en cours de le traiter et il n'a pas encore commencé. Veuillez vérifier la validité de votre session sur le portail." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;La liste n'a pas pu être entièrement chargée. Les dossiers ISTA ne sont disponibles que de cet appareil. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Cause : Les ISPI Process Services ne sont pas disponibles (code de défaut IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Remarque : L'état des IPSI Process Services peut être déterminé par la fonction 'IPS Check' dans l'ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Accès aux procédures des IPSI Process Services impossible. Les informations complémentaires n'ont pas pu être chargées.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Cause : Les ISPI Process Services ne sont pas disponibles (code de défaut IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Remarque : L'état des IPSI Process Services peut être déterminé par la fonction 'IPS Check' dans l'ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Les données sont uniquement sauvegardées localement. La procédure n'est donc pas disponible pour la collaboration intersites.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Cause : Les ISPI Process Services ne sont pas disponibles (code de défaut IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Remarque : L'état des IPSI Process Services peut être déterminé par la fonction 'IPS Check' dans l'ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -9073,7 +8990,7 @@
 			<Text id="#FaultPatternNo" name="Nombre de types déf. :" />
 			<Text id="#FaultText" name="Texte de défaut" />
 			<Text id="#FaultTypes" name="type de défaut" />
-			<Text id="#FaultsNotFound" name="La lecture des données dans le véhicule s'est déroulée avec succès. Il n’y a aucune entrée dans la mémoire des défauts." />
+			<Text id="#FaultsNotFound" name="La lecture des données dans le véhicule s'est déroulée avec succès. Il n'y a aucune entrée dans la mémoire des défauts." />
 			<Text id="#FilterFaultCode" name="Filtrer mémoires de symptômes" />
 			<Text id="#GlobalEnvironmentConditions" name="Conditions environnantes globales" />
 			<Text id="#Group" name="Equipe" />
@@ -9322,6 +9239,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Adresse :" />
 			<Text id="#Administration" name="Administration" />
+			<Text id="#AirJumpConfiguration" name="Configuration pour l'appel d'AIR" />
 			<Text id="#Brands:" name="Marques :" />
 			<Text id="#BreakdownPreSelection" name="Présélection type de procédure en cas de panne" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="Diagnostic ISTA" />
@@ -9336,6 +9254,7 @@
 			<Text id="#ClientSettings" name="Réglages\nclient" />
 			<Text id="#DataProtection" name="Protection des données" />
 			<Text id="#DataProtectionAddExplaination" name="Saisir le numéro d'identification du véhicule (17 caractères) dont les données ne doivent pas être envoyées à BMW et appuyer sur « Ajouter »" />
+			<Text id="#DataProtectionAddExplaination2" name="Aucun dossier de Service ne doit encore avoir été lancé pour le numéro d'identification du véhicule saisi." />
 			<Text id="#DataProtectionContent" name="S'il existe une opposition au transfert des données du véhicule pour l'ordre du client, le transfert des données de diagnostic pour le véhicule concerné doit être désactivé avant d'utiliser l'application d'atelier. Pour cela, il faut ouvrir la nouvelle boîte de dialogue « Protection des données » dans les réglages. Il faut y saisir le numéro d'identification du véhicule concerné (voir la boîte de dialogue « Protection des données » du manuel de l'utilisateur). \n\nLa désactivation ne s'applique qu'au numéro d'identification du véhicule indiqué et seulement jusqu'à la fin de l'utilisation de l'application d'atelier.\n\nPendant le déroulement de l'application d'atelier, le transfert des données de diagnostic est désactivé pour le numéro d'identification du véhicule indiqué. Si un transfert est prévu pendant le déroulement de l'application d'atelier et désactivé en raison du réglage, une demande de confirmation s'affiche (voir boîte de dialogue « Confirmation» dans le manuel de l'utilisateur).\n\nCela permet de déterminer si la désactivation du transfert a été efficace.\n\nLa désactivation du transfert via la boîte de dialogue « Protection des données » ne peut être utilisée que s'il existe une opposition du client conforme aux consignes générales. La désactivation a des conséquences sur le transfert de compte-rendu de diagnostic, de compte-rendu de programmation et de données FASTA à la BMW AG. La désactivation n'accélère pas le déroulement de l'application d'atelier et est archivée au sein de la BMW AG." />
 			<Text id="#DataProtectionInteractionContent" name="S'il existe une opposition au transfert des données du véhicule pour l'ordre du client, le transfert des données de diagnostic pour le véhicule concerné doit être désactivé avant d'utiliser l'application d'atelier. Pour cela, il faut ouvrir la nouvelle boîte de dialogue « Protection des données » dans les réglages. Il faut y saisir le numéro d'identification du véhicule concerné (voir la boîte de dialogue « Protection des données » du manuel de l'utilisateur). \n\nLa désactivation ne s'applique qu'au numéro d'identification du véhicule indiqué et seulement jusqu'à la fin de l'utilisation de l'application d'atelier.\n\nPendant le déroulement de l'application d'atelier, le transfert des données de diagnostic est désactivé pour le numéro d'identification du véhicule indiqué. Si un transfert est prévu pendant le déroulement de l'application d'atelier et désactivé en raison du réglage, une demande de confirmation s'affiche (voir boîte de dialogue « Confirmation» dans le manuel de l'utilisateur).\n\nCela permet de déterminer si la désactivation du transfert a été efficace.\n\nLa désactivation du transfert via la boîte de dialogue « Protection des données » ne peut être utilisée que s'il existe une opposition du client conforme aux consignes générales. La désactivation a des conséquences sur le transfert de compte-rendu de diagnostic, de compte-rendu de programmation et de données FASTA à la BMW AG. La désactivation n'accélère pas le déroulement de l'application d'atelier et est archivée au sein de la BMW AG." />
 			<Text id="#DataProtectionInteractionContentToyota" name="S'il existe une opposition au transfert des données du véhicule pour l'ordre du client, le transfert des données de diagnostic pour le véhicule concerné doit être désactivé avant d'utiliser l'application d'atelier. Pour cela, il faut ouvrir la nouvelle boîte de dialogue « Protection des données » dans les réglages. Il faut y saisir le numéro d'identification du véhicule concerné (voir la boîte de dialogue « Protection des données » du manuel de l'utilisateur). \n\nLa suppression ne s'applique qu'au numéro d'identification du véhicule indiqué et seulement jusqu'à la fin de l'utilisation de l'application d'atelier.\n\nPendant le déroulement de l'application d'atelier, le transfert des données de diagnostic est désactivé pour le numéro d'identification du véhicule indiqué. Si un transfert est prévu pendant le déroulement de l'application d'atelier et désactivé en raison du réglage, une demande de confirmation s'affiche (voir boîte de dialogue « Confirmation» dans le manuel de l'utilisateur).\n\nCela permet de déterminer si la suppression du transfert a été efficace.\n\nLa désactivation du transfert via la boîte de dialogue « Protection des données » ne peut être utilisée que s'il existe une opposition du client conforme aux consignes générales. La désactivation a des conséquences sur le transfert de compte-rendu de diagnostic, de compte-rendu de programmation et de données FASTA à la BMW AG. La suppression n'accélère pas le déroulement de l'application d'atelier et est archivée au sein du système central." />
@@ -9400,6 +9319,9 @@
 			<Text id="#StartTraceOnStartup" name="Démarre Trace Logging lors du démarrage de la procédure" />
 			<Text id="#Subsystem" name="Sous-système" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="Utiliser AIR Client" />
+			<Text id="#UseAwpBrowser" name="Utiliser le navigateur AWP" />
+			<Text id="#UseAwpClient" name="Utiliser AWP Client" />
 			<Text id="#VCI Config" name="Interface de véhicule" />
 			<Text id="#Version" name="Version" />
 			<Text id="#VersionInfo" name="Version" />
@@ -9424,7 +9346,6 @@
 			<Text id="#IcomConfirmTitle" name="Confirmation" />
 			<Text id="#IcomDereservationConfirmText" name="Annuler définir ICOM [{0}] en tant que ICOM standard ?" />
 			<Text id="#IcomReservationConfirmText" name="Définir ICOM [{0}] en tant qu'ICOM standard ?" />
-			<Text id="#IrapWorkshopClient" name="Démarrage de IRAP Client" />
 			<Text id="#OnlyOneImibMessage" name="Il ne peut y avoir qu'un seul IMIB. La connexion IMIB existante doit être terminée avant la connexion à un nouvel IMIB." />
 			<Text id="#SESSION" name="Session valable jusqu'au :" />
 			<Text id="#ScanForVCI" name="Détermine les interfaces de véhicule enregistrées de {0}" />
@@ -10564,13 +10485,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="Il codice PIN non può essere modificato" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="Per visualizzare la finestra di accesso, è necessario il componente Microsoft “WebView2” versione {0}. Questo deve essere installato nel percorso “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64”.\n\nQuesta versione viene installata automaticamente insieme con ISTA Launcher 1.57 o superiore. Assicurarsi di installare nuovamente ISTA Launcher per eliminare questo problema, altrimenti non è più possibile eseguire il login." />
 			<Text id="#Auth.WebViewProblemTitle" name="Problema di runtime di WebView2" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="ICOM disponibili" />
-			<Text id="#IRAP.Country" name="Paese: " />
-			<Text id="#IRAP.Environment" name="Ambiente: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.Organization" name="Organisation: " />
-			<Text id="#IRAP.SelectICOMessage" name="Selezionare un ICOM utilizzando il pulsante “ICOM disponibili” in basso." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Tipo di batteria" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Si prega di comprendere che non è possibile elaborare richieste di supporto prive dei seguenti dati:\n\n- risultato del test (questo documento)\n- tutti i file di log\n\nPer le richieste di supporto è necessario mettere a disposizione l’intera directory ''Logs'' come file compresso." />
@@ -10822,6 +10736,7 @@
 			<Text id="#072" name="Non è possibile caricare un certificato necessario dal KeyStore Windows." />
 			<Text id="#073" name="La configurazione hardware corrente non è supportata." />
 			<Text id="#080" name="Si è verificato un errore tecnico durante il caricamento del file '{0}'.\n\nChiudere ISTA ed eseguire l'installazione post-riparazione con l'ISTA Launcher.\nQualora non si ottengano risultati, comunicare l'errore all'assistenza tecnica." />
+			<Text id="#081" name="Non sono disponibili pacchetti di ore sufficienti. È possibile che sia già stato acquistato un pacchetto di ore tramite il portale online; tuttavia, è probabile che tale pacchetto sia ancora in fase di elaborazione da parte del portale e che non sia ancora stato avviato. La preghiamo di verificare la validità della Sua sessione sul portale." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Non è stato possibile caricare completamente l'elenco. I processi ISTA sono disponibili solo da questo dispositivo. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services non disponibili (codice del difetto IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Osservazione: Lo stato degli ISPI Process Services può essere determinato con la funzione di 'IPS Check' nell'ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Impossibile accedere ai processi degli ISPI Process Services. Non è stato possibile caricare le informazioni aggiuntive.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services non disponibili (codice del difetto IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Osservazione: Lo stato degli ISPI Process Services può essere determinato con la funzione di 'IPS Check' nell'ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;I dati vengono memorizzati solo a livello locale. Di conseguenza il processo per la collaborazione tra diversi sistemi non è disponibile.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services non disponibili (codice del difetto IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Osservazione: Lo stato degli ISPI Process Services può essere determinato con la funzione di 'IPS Check' nell'ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -11336,6 +11251,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Indirizzo:" />
 			<Text id="#Administration" name="Amministrazione" />
+			<Text id="#AirJumpConfiguration" name="Configurazione per il richiamo di AIR" />
 			<Text id="#Brands:" name="Marche:" />
 			<Text id="#BreakdownPreSelection" name="Preselezione tipo di processo caso di avaria" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="Diagnosi ISTA" />
@@ -11350,6 +11266,7 @@
 			<Text id="#ClientSettings" name="Impostazioni \nClient" />
 			<Text id="#DataProtection" name="Protezione dei dati" />
 			<Text id="#DataProtectionAddExplaination" name="Inserire il numero d'identificazione (a 17 caratteri) del veicolo i cui dati non devono essere inviati a BMW e premere 'Aggiungi'" />
+			<Text id="#DataProtectionAddExplaination2" name="Per il numero di identificazione della vettura inserito non deve essere ancora stato avviato alcun Caso Service." />
 			<Text id="#DataProtectionContent" name="Se per l'ordine cliente è stato negato il consenso alla trasmissione dei dati relativi al veicolo, prima dell'utilizzo dell'applicazione officina è necessario disattivare la trasmissione dei dati di diagnosi per il veicolo interessato. A tal fine nelle impostazioni richiamare la nuova finestra di dialogo 'Protezione dei dati'. Qui deve essere registrato il numero d'identificazione del veicolo interessato (vedere finestra di dialogo sulla protezione dei dati nel manuale per l'utente). \n\nLa disattivazione vale solo per il numero d'identificazione veicolo e solo fino alla chiusura dell'applicazione officina.\n\nNel processo dell'applicazione officina viene quindi disattivata la trasmissione dei dati di diagnosi per il numero d'identificazione veicolo immesso. Se nel processo dell'applicazione officina è prevista la trasmissione dei dati, disattivata a causa dell'impostazione, viene visualizzata una finestra di conferma (vedere finestra di conferma nel manuale per l'utente).\n\nIn questo modo è possibile constatare che la disattivazione della trasmissione è attiva.\n\nLa disattivazione della trasmissione mediante finestra di dialogo sulla protezione dei dati può essere effettuata solo se è presente una negazione del consenso del cliente ammessa dalle direttive generali. La disattivazione ha effetto sulla trasmissione del protocollo di diagnosi, del protocollo di programmazione e dei dati FASTA alla BMW AG. Questa disattivazione non accelera il processo dell'applicazione officina e viene documentata presso la BMW AG." />
 			<Text id="#DataProtectionInteractionContent" name="Se per l'ordine cliente è stato negato il consenso alla trasmissione dei dati relativi al veicolo, prima dell'utilizzo dell'applicazione officina è necessario disattivare la trasmissione dei dati di diagnosi per il veicolo interessato. A tal fine nelle impostazioni richiamare la nuova finestra di dialogo 'Protezione dei dati'. Qui deve essere registrato il numero d'identificazione del veicolo interessato (vedere finestra di dialogo sulla protezione dei dati nel manuale per l'utente). \n\nLa disattivazione vale solo per il numero d'identificazione veicolo e solo fino alla chiusura dell'applicazione officina.\n\nNel processo dell'applicazione officina viene quindi disattivata la trasmissione dei dati di diagnosi per il numero d'identificazione veicolo immesso. Se nel processo dell'applicazione officina è prevista la trasmissione dei dati, disattivata a causa dell'impostazione, viene visualizzata una finestra di conferma (vedere finestra di conferma nel manuale per l'utente).\n\nIn questo modo è possibile constatare che la disattivazione della trasmissione è attiva.\n\nLa disattivazione della trasmissione mediante finestra di dialogo sulla protezione dei dati può essere effettuata solo se è presente una negazione del consenso del cliente ammessa dalle direttive generali. La disattivazione ha effetto sulla trasmissione del protocollo di diagnosi, del protocollo di programmazione e dei dati FASTA alla BMW AG. Questa disattivazione non accelera il processo dell'applicazione officina e viene documentata presso la BMW AG." />
 			<Text id="#DataProtectionInteractionContentToyota" name="Se per l'ordine cliente è stato negato il consenso alla trasmissione dei dati relativi al veicolo, prima dell'utilizzo dell'applicazione officina è necessario disattivare la trasmissione dei dati di diagnosi per il veicolo interessato. A tal fine nelle impostazioni richiamare la nuova finestra di dialogo 'Protezione dei dati'. Qui deve essere registrato il numero di identificazione del veicolo interessato (vedere finestra di dialogo sulla protezione dei dati nel manuale per l'utente). \n\nLa soppressione vale solo per il numero di identificazione del veicolo indicato e solo fino alla chiusura dell'applicazione officina.\n\nDurante il funzionamento dell'applicazione officina viene quindi soppressa la trasmissione dei dati di diagnosi per il numero di identificazione del veicolo indicato. Se nel processo dell'applicazione officina è prevista la trasmissione dei dati, disattivata a causa dell'impostazione, viene visualizzata una finestra di conferma (vedere finestra di conferma nel manuale per l'utente).\n\nIn questo modo è possibile constatare che la disattivazione della trasmissione è attiva.\n\nLa disattivazione della trasmissione mediante finestra di dialogo sulla protezione dei dati può essere effettuata solo se è presente una negazione del consenso del cliente ammessa dalle direttive generali. La disattivazione ha effetto sulla trasmissione del protocollo di diagnosi, del protocollo di programmazione e dei dati FASTA alla BMW AG. Questa soppressione non accelera lo svolgimento dell'applicazione officina e viene documentata presso il sistema centrale." />
@@ -11414,6 +11331,9 @@
 			<Text id="#StartTraceOnStartup" name="Avvia Trace Logging all'avvio del processo" />
 			<Text id="#Subsystem" name="Sottosistema" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="Utilizzare il Client AIR" />
+			<Text id="#UseAwpBrowser" name="Utilizzare il browser AWP" />
+			<Text id="#UseAwpClient" name="Utilizzare il Client AWP" />
 			<Text id="#VCI Config" name="Interfaccia veicolo" />
 			<Text id="#Version" name="Versione" />
 			<Text id="#VersionInfo" name="Versione" />
@@ -11438,7 +11358,6 @@
 			<Text id="#IcomConfirmTitle" name="Conferma" />
 			<Text id="#IcomDereservationConfirmText" name="Annullare la definizione dell'ICOM [{0}] come ICOM standard?" />
 			<Text id="#IcomReservationConfirmText" name="Definire l'ICOM [{0}] come ICOM standard?" />
-			<Text id="#IrapWorkshopClient" name="Avvio del client IRAP" />
 			<Text id="#OnlyOneImibMessage" name="Può essere presente solo una IMIB. Il collegamento IMIB esistente deve essere terminato prima del collegamento a una nuova IMIB." />
 			<Text id="#SESSION" name="Sessione valida fino al:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -12578,13 +12497,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN nie może zostać zmieniony" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="Aby wyświetlić okno logowania, wymagane są komponenty Microsoft “WebView2“ w wersji {0}. Muszą być zainstalowane pod ścieżką „C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64“.\n\nTa wersja jest automatycznie instalowana wraz z ISTA Launcher 1.57 lub nowszym. Upewnij się, że ponownie zainstalowałeś ISTA Launcher, aby rozwiązać ten problem, w przeciwnym razie nie będziesz mógł się zalogować." />
 			<Text id="#Auth.WebViewProblemTitle" name="Problem z czasem działania WebView2" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="Dostępne ICOM" />
-			<Text id="#IRAP.Country" name="Kraj: " />
-			<Text id="#IRAP.Environment" name="Środowisko: " />
-			<Text id="#IRAP.Gateway" name="Bramka: " />
-			<Text id="#IRAP.Organization" name="Organizacja: " />
-			<Text id="#IRAP.SelectICOMessage" name="Wybierz ICOM przyciskiem „Dostępne ICOM” poniżej." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Typ akumulatora" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Prosimy o wyrozumiałość, że zapytania do działu pomocy technicznej bez podania poniższych danych nie będą przetwarzane:\n\n- Wynik testu (ten dokument)\n– wszystkie pliki dziennika\n\nW przypadku zapytań do działu pomocy technicznej należy udostępnić cały katalog 'Pliki dziennika' w formie pliku skompresowanego." />
@@ -12836,6 +12748,7 @@
 			<Text id="#072" name="Nie jest możliwe pobranie wymaganego certyfikatu z Windows KeyStore." />
 			<Text id="#073" name="Aktualna konfiguracja sprzętowa nie jest obsługiwana." />
 			<Text id="#080" name="W trakcie ładowania pliku '{0}' wystąpił błąd techniczny.\n\nZakończ ISTA i przy użyciu ISTA Launcher przeprowadź instalację naprawczą.\nGdy to nie pomoże, zgłoś błąd działowi wsparcia technicznego." />
+			<Text id="#081" name="Nie ma wystarczającej ilości przydziałów czasu. Być może przydział czasu został już uzyskany przez portal online, jednak prawdopodobnie jest on nadal przetwarzany przez portal i nie rozpoczął się jeszcze. Proszę sprawdzić aktualność swojej sesji na portalu." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Nie było możliwe załadowanie pełnej listy. Procesy ISTA są dostępne tylko z tego urządzenia. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Przyczyna: Niedostępne ISPI Process Services (kod błędu IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Wskazówka: Status ISPI Process Services może być ustalany za pomocą funkcji 'IPS Check' w ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt; Nie jest możliwy dostęp do procesów ISPI Process Services. Nie było możliwe załadowanie informacji uzupełniających.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Przyczyna: Niedostępne ISPI Process Services (kod błędu IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Wskazówka: Status ISPI Process Services może być ustalany za pomocą funkcji 'IPS Check' w ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Dane są zapisywane tylko lokalnie. Z tego powodu proces nie jest dostępny do ogólnej współpracy.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Przyczyna: Niedostępne ISPI Process Services (kod błędu IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Wskazówka: Status ISPI Process Services może być ustalany za pomocą funkcji 'IPS Check' w ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -13350,6 +13263,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Adres:" />
 			<Text id="#Administration" name="Administracja" />
+			<Text id="#AirJumpConfiguration" name="Konfiguracja wywołania AIR" />
 			<Text id="#Brands:" name="Marki:" />
 			<Text id="#BreakdownPreSelection" name="Wybór typu procesu: awaria" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="Diagnoza ISTA" />
@@ -13364,6 +13278,7 @@
 			<Text id="#ClientSettings" name="Ustawienia\nclienta" />
 			<Text id="#DataProtection" name="Ochrona danych" />
 			<Text id="#DataProtectionAddExplaination" name="Wprowadź numer identyfikacyjny pojazdu (17 cyfr), którego dane nie mają być przesyłane do BMW, i kliknij „Dodaj”." />
+			<Text id="#DataProtectionAddExplaination2" name="Dla wprowadzonego numeru identyfikacyjnego pojazdu nie może zostać uruchomiony przebieg czynności serwisowych." />
 			<Text id="#DataProtectionContent" name="W przypadku sprzeciwu co do przekazywania danych pojazdu dla zlecenia klienta, przekazywanie danych diagnostycznych danego pojazdu musi zostać wyłączone przed rozpoczęciem korzystania z aplikacji warsztatowej. W tym celu w ustawieniach należy wywołać nowe okno dialogowe „Ochrona danych”. Należy tam wpisać numer identyfikacyjny danego pojazdu (patrz okno dialogowe „Ochrona danych” w podręczniku użytkownika). \n\nWyłączenie przekazywania danych obowiązuje tylko w odniesieniu do podanego numeru identyfikacyjnego pojazdu i tylko do momentu zamknięcia aplikacji warsztatowej.\n\nW trakcie korzystania z aplikacji warsztatowej przekazywanie danych diagnostycznych dla podanego numeru identyfikacyjnego pojazdu jest wyłączone. Jeśli w aplikacji warsztatowej przewidziane jest przekazywanie danych, które jest wyłączone ze względu na ustawienie, pojawia się okno dialogowe z potwierdzeniem (patrz okno dialogowe „Potwierdzenie” podręczniku użytkownika).\n\nPozwala to rozpoznać, że przekazywanie danych było wyłączone.\n\nWyłączenie przekazywania danych poprzez okno dialogowe „Ochrona danych” może być zastosowane tylko wtedy, gdy klient wyrazi dopuszczalny sprzeciw zgodnie z ogólnymi wymaganiami. Wyłączenie to wpływa na przekazywanie protokołu diagnostycznego, protokołu programowania i danych FASTA do BMW AG. Wyłączenie przekazywania danych nie przyspiesza działania aplikacji warsztatowej i jest dokumentowane w BMW AG." />
 			<Text id="#DataProtectionInteractionContent" name="W przypadku sprzeciwu co do przekazywania danych pojazdu dla zlecenia klienta, przekazywanie danych diagnostycznych danego pojazdu musi zostać wyłączone przed rozpoczęciem korzystania z aplikacji warsztatowej. W tym celu w ustawieniach należy wywołać nowe okno dialogowe „Ochrona danych”. Należy tam wpisać numer identyfikacyjny danego pojazdu (patrz okno dialogowe „Ochrona danych” w podręczniku użytkownika). \n\nWyłączenie przekazywania danych obowiązuje tylko w odniesieniu do podanego numeru identyfikacyjnego pojazdu i tylko do momentu zamknięcia aplikacji warsztatowej.\n\nW trakcie korzystania z aplikacji warsztatowej przekazywanie danych diagnostycznych dla podanego numeru identyfikacyjnego pojazdu jest wyłączone. Jeśli w aplikacji warsztatowej przewidziane jest przekazywanie danych, które jest wyłączone ze względu na ustawienie, pojawia się okno dialogowe z potwierdzeniem (patrz okno dialogowe „Potwierdzenie” podręczniku użytkownika).\n\nPozwala to rozpoznać, że przekazywanie danych było wyłączone.\n\nWyłączenie przekazywania danych poprzez okno dialogowe „Ochrona danych” może być zastosowane tylko wtedy, gdy klient wyrazi dopuszczalny sprzeciw zgodnie z ogólnymi wymaganiami. Wyłączenie to wpływa na przekazywanie protokołu diagnostycznego, protokołu programowania i danych FASTA do BMW AG. Wyłączenie przekazywania danych nie przyspiesza działania aplikacji warsztatowej i jest dokumentowane w BMW AG." />
 			<Text id="#DataProtectionInteractionContentToyota" name="W przypadku sprzeciwu co do przekazywania danych pojazdu dla zlecenia klienta, przekazywanie danych diagnostycznych danego pojazdu musi zostać wyłączone przed rozpoczęciem korzystania z aplikacji warsztatowej. W tym celu w ustawieniach należy wywołać nowe okno dialogowe „Ochrona danych”. Należy tam wpisać numer identyfikacyjny danego pojazdu (patrz okno dialogowe „Ochrona danych” w podręczniku użytkownika). \n\nWyłączenie przekazywania danych obowiązuje tylko w odniesieniu do podanego numeru identyfikacyjnego pojazdu i tylko do momentu zamknięcia aplikacji warsztatowej.\n\nW trakcie korzystania z aplikacji warsztatowej przekazywanie danych diagnostycznych dla podanego numeru identyfikacyjnego pojazdu jest wyłączone. Jeśli w aplikacji warsztatowej przewidziane jest przekazywanie danych, które jest wyłączone ze względu na ustawienie, pojawia się okno dialogowe z potwierdzeniem (patrz okno dialogowe „Potwierdzenie” podręczniku użytkownika).\n\nPozwala to rozpoznać, że przekazywanie danych było wyłączone.\n\nWyłączenie przekazywania danych poprzez okno dialogowe „Ochrona danych” może być zastosowane tylko wtedy, gdy klient wyrazi dopuszczalny sprzeciw zgodnie z ogólnymi wymaganiami. Wyłączenie to wpływa na przekazywanie protokołu diagnostycznego, protokołu programowania i danych FASTA do BMW AG. Wyłączenie przekazywania danych nie przyspiesza działania aplikacji warsztatowej i jest dokumentowane w centralnym systemie." />
@@ -13428,6 +13343,9 @@
 			<Text id="#StartTraceOnStartup" name="Uruchom Trace Logging przy włączaniu procesu" />
 			<Text id="#Subsystem" name="System częściowy" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="Korzystanie z programu AIR Client" />
+			<Text id="#UseAwpBrowser" name="Korzystanie z przeglądarki AWP" />
+			<Text id="#UseAwpClient" name="Korzystanie z programu AWP Client" />
 			<Text id="#VCI Config" name="Interfejs pojazdu" />
 			<Text id="#Version" name="Wersja" />
 			<Text id="#VersionInfo" name="Stan wersji" />
@@ -13452,7 +13370,6 @@
 			<Text id="#IcomConfirmTitle" name="Potwierdzenie" />
 			<Text id="#IcomDereservationConfirmText" name="Usunąć ustawienie ICOM [{0}] jako standardowego ICOM?" />
 			<Text id="#IcomReservationConfirmText" name="Ustawić ICOM [{0}] jako standardowy ICOM?" />
-			<Text id="#IrapWorkshopClient" name="Uruchamianie klienta IRAP" />
 			<Text id="#OnlyOneImibMessage" name="Może występować tylko jeden IMIB. Istniejące połączenie IMIB musi zostać zakończone przed połączeniem z nowym IMIB." />
 			<Text id="#SESSION" name="Sesja ważna do:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -14591,13 +14508,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN nelze měnit." />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="K zobrazení přihlašovacího okna je nutná komponenta Microsoft “WebView2” verze {0}. Musí se instalovat na cestě “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64”.\n\nTato verze se automaticky instaluje společně s ISTA Launcher 1.57 nebo vyšší verzí. Zajistěte, aby se znovu nainstaloval ISTA Launcher, a tím se odstranil tento problém, protože se jinak nebudete moci přihlásit." />
 			<Text id="#Auth.WebViewProblemTitle" name="Problém s platností WebView2" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="Dostupné ICOM" />
-			<Text id="#IRAP.Country" name="Země: " />
-			<Text id="#IRAP.Environment" name="Prostředí: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.Organization" name="Organizace: " />
-			<Text id="#IRAP.SelectICOMessage" name="Vyberte ICOM pomocí ikony „Dostupné ICOM“ dole." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Typ akumulátoru" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Mějte prosím pochopení, že nemůžeme zpracovat dotazy určené podpoře bez těchto dat:\n\n- Výsledek testu (tento dokument)\n- všechny soubory protokolu\n\nV případě dotazů určených podpoře je třeba poskytnout celý adresář 'Logs' jako zazipovaný soubor." />
@@ -14849,6 +14759,7 @@
 			<Text id="#072" name="Potřebný certifikát nemůže být načten z Windows KeyStore." />
 			<Text id="#073" name="Aktuální konfigurace hardwaru není podporována." />
 			<Text id="#080" name="Během načítání souboru '{0}' se vyskytla technická chyba.\n\nUkončit ISTA a přes ISTA Launcher provést instalaci opravy.\nPokud toto zůstane bez úspěchu, nahlaste chybu technické podpoře." />
+			<Text id="#081" name="K dispozici nejsou dostatečné časové kontingenty. Je možné, že byl již prostřednictvím online portálu zakoupen časový kontingent, ten však pravděpodobně teprve bude portálem zpracován a ještě nezačal. Zkontrolujte prosím platnost své relace v portálu." />
 			<Text id="#111" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Seznam nemohl být kompletně nahrán. Operace ISTA jsou k dispozici pouze z tohoto přístroje.  &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Příčina: ISPI Process Services nejsou dostupné (IPS kód závady {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Upozornění: Stav ISPI Process Services může být zjištěn pomocí funkce 'IPS Check' v ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Přístup k procesům ISPI Process Services není možný. Nepodařilo se načíst rozšiřující informace.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Příčina: ISPI Process Services nejsou dostupné (IPS kód závady {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Upozornění: Stav ISPI Process Services může být zjištěn pomocí funkce 'IPS Check' v ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Data jsou pak uložena pouze lokálně. S toho důvodu už není proces k dispozici pro širší sdílení.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Příčina: ISPI Process Services nejsou dostupné (IPS kód závady {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Upozornění: Stav ISPI Process Services může být zjištěn pomocí funkce 'IPS Check' v ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -15363,6 +15274,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Adresa:" />
 			<Text id="#Administration" name="Administrace" />
+			<Text id="#AirJumpConfiguration" name="Konfigurace k vyvolání AIR" />
 			<Text id="#Brands:" name="Značky:" />
 			<Text id="#BreakdownPreSelection" name="Předběžný výběr typu operace v případě poruchy" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="Diagnostika ISTA" />
@@ -15377,6 +15289,7 @@
 			<Text id="#ClientSettings" name="Nastavit\nklienta" />
 			<Text id="#DataProtection" name="Ochrana dat" />
 			<Text id="#DataProtectionAddExplaination" name="Zadejte identifikační číslo vozidla (17-místné), jehož údaje nemají být zaslána BMW, a stiskněte „Přidat“" />
+			<Text id="#DataProtectionAddExplaination2" name="Pro zadané identifikační číslo vozidla se ještě nesmí spustit servisní případ." />
 			<Text id="#DataProtectionContent" name="Pokud pro zákaznickou zakázku existuje námitka proti přenosu údajů vozidla, musí být před spuštěním dílenské aplikace potlačen přenos diagnostických údajů pro příslušné vozidlo. K tomu je třeba v Nastaveních otevřít dialogové okno „Ochrana dat“. Zde musí být zadáno identifikační číslo příslušného vozidla (viz uživatelská příručka, dialog Ochrana dat). \n\nPotlačení přenosu údajů platí jen pro zadané identifikační číslo vozidla a jen do ukončení dílenské aplikace.\n\nBěhem dílenské aplikace pak bude přenos diagnostických údajů pro zadané identifikační číslo vozidla potlačen. Je-li součástí dílenské aplikace přenos údajů, který byl předtím v Nastaveních potlačen, objeví se v průběhu aplikace dialogové okno pro potvrzení (viz uživatelská příručka, dialog Potvrzení).\n\nDíky tomu lze poznat, že potlačení přenosu bylo účinné.\n\nFunkce potlačení přenosu v dialogovém okně Ochrana dat smí být použita jen v případě, že existuje přípustná námitka zákazníka odpovídající všeobecným požadavkům. Potlačení se týká přenosu diagnostického protokolu, programovacího protokolu a údajů FASTA pro BMW AG. Průběh dílenské aplikace se potlačením neurychlí a potlačení je na straně BMW AG dokumentováno." />
 			<Text id="#DataProtectionInteractionContent" name="Pokud pro zákaznickou zakázku existuje námitka proti přenosu údajů vozidla, musí být před spuštěním dílenské aplikace potlačen přenos diagnostických údajů pro příslušné vozidlo. K tomu je třeba v Nastaveních otevřít dialogové okno „Ochrana dat“. Zde musí být zadáno identifikační číslo příslušného vozidla (viz uživatelská příručka, dialog Ochrana dat). \n\nPotlačení přenosu údajů platí jen pro zadané identifikační číslo vozidla a jen do ukončení dílenské aplikace.\n\nBěhem dílenské aplikace pak bude přenos diagnostických údajů pro zadané identifikační číslo vozidla potlačen. Je-li součástí dílenské aplikace přenos údajů, který byl předtím v Nastaveních potlačen, objeví se v průběhu aplikace dialogové okno pro potvrzení (viz uživatelská příručka, dialog Potvrzení).\n\nDíky tomu lze poznat, že potlačení přenosu bylo účinné.\n\nFunkce potlačení přenosu v dialogovém okně Ochrana dat smí být použita jen v případě, že existuje přípustná námitka zákazníka odpovídající všeobecným požadavkům. Potlačení se týká přenosu diagnostického protokolu, programovacího protokolu a údajů FASTA pro BMW AG. Průběh dílenské aplikace se potlačením neurychlí a potlačení je na straně BMW AG dokumentováno." />
 			<Text id="#DataProtectionInteractionContentToyota" name="Pokud pro zákaznickou zakázku existuje námitka proti přenosu údajů vozidla, musí být před spuštěním dílenské aplikace potlačen přenos diagnostických údajů pro příslušné vozidlo. K tomu je třeba v Nastaveních otevřít dialogové okno „Ochrana dat“. Zde musí být zadáno identifikační číslo příslušného vozidla (viz uživatelská příručka, dialog Ochrana dat). \n\nPotlačení přenosu údajů platí jen pro zadané identifikační číslo vozidla a jen do ukončení dílenské aplikace.\n\nBěhem dílenské aplikace pak bude přenos diagnostických údajů pro zadané identifikační číslo vozidla potlačen. Je-li součástí dílenské aplikace přenos údajů, který byl předtím v Nastaveních potlačen, objeví se v průběhu aplikace dialogové okno pro potvrzení (viz uživatelská příručka, dialog Potvrzení).\n\nDíky tomu lze poznat, že potlačení přenosu bylo účinné.\n\nFunkce potlačení přenosu v dialogovém okně Ochrana dat smí být použita jen v případě, že existuje přípustná námitka zákazníka odpovídající všeobecným požadavkům. Potlačení se týká přenosu diagnostického protokolu, programovacího protokolu a údajů FASTA pro BMW AG. Průběh dílenské aplikace se potlačením neurychlí a potlačení je dokumentováno v centrálním systému." />
@@ -15441,6 +15354,9 @@
 			<Text id="#StartTraceOnStartup" name="Při spuštění případu spouštím Trace Logging" />
 			<Text id="#Subsystem" name="Subsystém" />
 			<Text id="#Trace" name="Stopa" />
+			<Text id="#UseAirClient" name="Použijte AIR Client" />
+			<Text id="#UseAwpBrowser" name="Použijte prohlížeč AWP" />
+			<Text id="#UseAwpClient" name="Použijte AWP Client" />
 			<Text id="#VCI Config" name="Rozhraní vozidla" />
 			<Text id="#Version" name="Verze" />
 			<Text id="#VersionInfo" name="Stav verze" />
@@ -15465,7 +15381,6 @@
 			<Text id="#IcomConfirmTitle" name="Potvrzení" />
 			<Text id="#IcomDereservationConfirmText" name="Zrušit nastavení ICOM [{0}] jako Standard ICOM?" />
 			<Text id="#IcomReservationConfirmText" name="ICOM [{0}] stanovit jako Standard ICOM?" />
-			<Text id="#IrapWorkshopClient" name="Spuštění klienta IRAP" />
 			<Text id="#OnlyOneImibMessage" name="Může existovat pouze jedna IMIB. Existující spojení s IMIB musí být ukončeno před připojením nové IMIB." />
 			<Text id="#SESSION" name="Relace platná do:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -16604,13 +16519,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="O PIN não pode ser alterado" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="O componente Microsoft “WebView2” na versão {0} é necessário para apresentar a janela de início de sessão. Deve ser instalado no caminho “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64”.\n\nEsta versão é instalada automaticamente junto com o ISTA Launcher 1.57 ou superior. Para resolver este problema, certifique-se de que o ISTA Launcher é reinstalado, caso contrário, não poderá iniciar sessão." />
 			<Text id="#Auth.WebViewProblemTitle" name="Problema de tempo de execução do WebView2" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="ICOM disponível" />
-			<Text id="#IRAP.Country" name="País: " />
-			<Text id="#IRAP.Environment" name="Ambiente: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.Organization" name="Organização: " />
-			<Text id="#IRAP.SelectICOMessage" name="Selecione um ICOM através do botão “ICOM disponível” em baixo." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Modelo de bateria" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Pedimos a sua compreensão por não nos ser possível processar pedidos de suporte sem os seguintes dados:\n\n- Resultado do teste (este documento)\n- todos os ficheiros de log\n\nPara pedidos de suporte, o diretório “Logs” completo deverá ser enviado como ficheiro comprimido." />
@@ -16862,6 +16770,7 @@
 			<Text id="#072" name="Um certificado necessário não pode ser carregado da Windows KeyStore." />
 			<Text id="#073" name="As configurações actuais de hardware não são suportadas." />
 			<Text id="#080" name="Ocorreu um erro técnico ao carregar o ficheiro '{0}'.\n\nTerminar ISTA e efetuar uma instalação de reparação com o ISTA Launcher.\nCaso isto não resulte, notifique a falha ao suporte técnico." />
+			<Text id="#081" name="Não existem pacotes de horas de utilização suficientes disponíveis. É possível que já tenha sido adquirido um pacote de horas de utilização do portal online, no entanto, provavelmente ainda está a ser processado pelo portal e ainda não teve início. Verifique a validade da sua sessão no portal." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;A lista não pôde ser carregada completamente. Processos ISTA só se encontram disponíveis neste dispositivo. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services não disponíveis (código de falha IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Indicação de ajuda: O estado dos ISPI Process Services pode ser averiguado através da função 'IPS Check' no ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;O acesso a processos do ISPI Process Services não é possível. Não foi possível carregar as informações complementares.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services não disponíveis (código de falha IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Indicação de ajuda: O estado dos ISPI Process Services pode ser averiguado através da função 'IPS Check' no ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Os dados serão salvos apenas localmente. Devido a tal, o processo não está disponível para a colaboração abrangente.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Causa: ISPI Process Services não disponíveis (código de falha IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Indicação de ajuda: O estado dos ISPI Process Services pode ser averiguado através da função 'IPS Check' no ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -17376,6 +17285,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Endereço:" />
 			<Text id="#Administration" name="Administração" />
+			<Text id="#AirJumpConfiguration" name="Configuração para a chamada do AIR" />
 			<Text id="#Brands:" name="Marcas:" />
 			<Text id="#BreakdownPreSelection" name="Pré-selecção Tipo de processo Caso de avaria" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="Diagnóstico ISTA" />
@@ -17390,6 +17300,7 @@
 			<Text id="#ClientSettings" name="Definições \ndo cliente" />
 			<Text id="#DataProtection" name="Proteção de dados" />
 			<Text id="#DataProtectionAddExplaination" name="Introduza o número de identificação do veículo (17 carateres) cujos dados não devem ser enviados para a BMW e prima 'Adicionar'" />
+			<Text id="#DataProtectionAddExplaination2" name="Ainda não pode ter sido iniciado um procedimento de serviços oficinais para o número de identificação do veículo introduzido." />
 			<Text id="#DataProtectionContent" name="Se para a ordem do cliente existir uma oposição à transmissão de dados do veículo, antes da utilização da aplicação da oficina tem de se suprimir a transmissão de dados de diagnóstico para o veículo em questão. Para tal, nas definições tem de se abrir a nova caixa de diálogo 'Proteção de dados'. Aí deve ser introduzido o número de identificação do veículo em causa (ver manual do utilizador, caixa de diálogo de proteção de dados). \n\nA supressão só é aplicável ao número de identificação do veículo introduzido e apenas até ao encerramento da aplicação da oficina.\n\nNesse caso, durante a execução da aplicação da oficina, a transmissão de dados de diagnóstico é suprimida para o número de identificação do veículo introduzido. Se, durante a execução da aplicação da oficina, estiver prevista uma transmissão, que foi suprimida devido à definição, aparece uma caixa de diálogo de confirmação (ver manual do utilizador, caixa de diálogo de confirmação).\n\nIsto permite constatar que a supressão da transmissão está ativa.\n\nA supressão da transmissão através da caixa de diálogo de proteção de dados só pode ser utilizada, se existir uma oposição admissível do cliente em conformidade com as disposições gerais. A supressão tem efeito sobre a transmissão do protocolo de diagnóstico, do protocolo de programação e dos dados FASTA para a BMW AG. A supressão não torna mais célere a execução da aplicação da oficina e é documentada pela BMW AG." />
 			<Text id="#DataProtectionInteractionContent" name="Se para a ordem do cliente existir uma oposição à transmissão de dados do veículo, antes da utilização da aplicação da oficina tem de se suprimir a transmissão de dados de diagnóstico para o veículo em questão. Para tal, nas definições tem de se abrir a nova caixa de diálogo 'Proteção de dados'. Aí deve ser introduzido o número de identificação do veículo em causa (ver manual do utilizador, caixa de diálogo de proteção de dados). \n\nA supressão só é aplicável ao número de identificação do veículo introduzido e apenas até ao encerramento da aplicação da oficina.\n\nNesse caso, durante a execução da aplicação da oficina, a transmissão de dados de diagnóstico é suprimida para o número de identificação do veículo introduzido. Se, durante a execução da aplicação da oficina, estiver prevista uma transmissão, que foi suprimida devido à definição, aparece uma caixa de diálogo de confirmação (ver manual do utilizador, caixa de diálogo de confirmação).\n\nIsto permite constatar que a supressão da transmissão está ativa.\n\nA supressão da transmissão através da caixa de diálogo de proteção de dados só pode ser utilizada, se existir uma oposição admissível do cliente em conformidade com as disposições gerais. A supressão tem efeito sobre a transmissão do protocolo de diagnóstico, do protocolo de programação e dos dados FASTA para a BMW AG. A supressão não torna mais célere a execução da aplicação da oficina e é documentada pela BMW AG." />
 			<Text id="#DataProtectionInteractionContentToyota" name="Se para a ordem do cliente existir uma oposição à transmissão de dados do veículo, antes da utilização da aplicação da oficina tem de se suprimir a transmissão de dados de diagnóstico para o veículo em questão. Para tal, nas definições tem de se abrir a nova caixa de diálogo 'Proteção de dados'. Aí deve ser introduzido o número de identificação do veículo em causa (ver manual do utilizador, caixa de diálogo de proteção de dados). \n\nA supressão só é aplicável ao número de identificação do veículo introduzido e apenas até ao encerramento da aplicação da oficina.\n\nNesse caso, durante a execução da aplicação da oficina, a transmissão de dados de diagnóstico é suprimida para o número de identificação do veículo introduzido. Se, durante a execução da aplicação da oficina, estiver prevista uma transmissão, que foi suprimida devido à definição, aparece uma caixa de diálogo de confirmação (ver manual do utilizador, caixa de diálogo de confirmação).\n\nIsto permite constatar que a supressão da transmissão está ativa.\n\nA supressão da transmissão através da caixa de diálogo de proteção de dados só pode ser utilizada, se existir uma oposição admissível do cliente em conformidade com as disposições gerais. A supressão tem efeito sobre a transmissão do protocolo de diagnóstico, do protocolo de programação e dos dados FASTA para a BMW AG. A supressão não torna mais célere a execução da aplicação da oficina e é documentada pelo sistema central." />
@@ -17454,6 +17365,9 @@
 			<Text id="#StartTraceOnStartup" name="Iniciar Trace Logging ao iniciar o procedimento" />
 			<Text id="#Subsystem" name="Subsistema" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="Utilizar o AIR Client" />
+			<Text id="#UseAwpBrowser" name="Utilizar o browser AWP" />
+			<Text id="#UseAwpClient" name="Utilizar o AWP Client" />
 			<Text id="#VCI Config" name="Interface de veículo" />
 			<Text id="#Version" name="Versão" />
 			<Text id="#VersionInfo" name="Versão" />
@@ -17478,7 +17392,6 @@
 			<Text id="#IcomConfirmTitle" name="Confirmação" />
 			<Text id="#IcomDereservationConfirmText" name="Suspender a configuração do ICOM [{0}] como ICOM standard?" />
 			<Text id="#IcomReservationConfirmText" name="Configurar ICOM [{0}] como ICOM standard?" />
-			<Text id="#IrapWorkshopClient" name="Início do IRAP Client" />
 			<Text id="#OnlyOneImibMessage" name="Só pode existir uma IMIB. A ligação IMIB existente tem de ser terminada antes da ligação a uma nova IMIB." />
 			<Text id="#SESSION" name="Sessão válida até:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -18617,13 +18530,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN kodu değiştirilemiyor" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="Oturum açma penceresini görüntülemek için Microsoft bileşeni “WebView2” sürüm {0} gerekiyor. Bu, şu dizine yüklenmelidir: “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64”.\n\nBu sürüm, ISTA Launcher 1.57 veya üzeri sürümüyle birlikte otomatik yüklenir. Bu sorunu çözmek için ISTA Launcher'ı yeniden yüklediğinizden lütfen emin olun, aksi takdirde oturum açamazsınız." />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2 çalışma zamanı sorunu" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="Mevcut ICOM" />
-			<Text id="#IRAP.Country" name="Ülke: " />
-			<Text id="#IRAP.Environment" name="Ortam: " />
-			<Text id="#IRAP.Gateway" name="Ağ geçidi: " />
-			<Text id="#IRAP.Organization" name="Organizasyon: " />
-			<Text id="#IRAP.SelectICOMessage" name="Alttaki „Mevcut ICOM“ düğmesine basarak lütfen bir ICOM seçin." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Akümülatör tipi" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Destek taleplerinin aşağıdaki veriler olmadan işleme alınmadığını lütfen anlayışla karşılayın:\n\n- Test sonucu (bu belge)\n- tüm günlük dosyaları\n\nDestek talepleri için 'Logs' isimli dizinin tamamı ziplenerek gönderilmelidir." />
@@ -18875,6 +18781,7 @@
 			<Text id="#072" name="Gerekli sertifika Windows KeyStore'dan yüklenemez." />
 			<Text id="#073" name="Güncel donanım konfigürasyonu desteklenmemektedir." />
 			<Text id="#080" name="'{0}' dosyası yüklenirken teknik bir arıza ortaya çıktı.\n\nISTA'yı sonlandırınız ve ISTA Launcher ile onarım kurulumu gerçekleştiriniz.\nBu işlem başarısız sonuçlanırsa, hatayı teknik desteğe bildiriniz." />
+			<Text id="#081" name="Yeterli zaman kontenjanı yok. Çevrim içi portal üzerinden halihazırda bir zaman kontenjanı satın alınmış olabilir, ancak bu kontenjan muhtemelen hâlâ portal tarafından işleniyor ve henüz başlamadı. Lütfen portalda oturumunuzun geçerliliğini kontrol edin." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Liste tamamen yüklenemedi. ISTA işlemleri sadece bu cihazda mevcuttur. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Sebep: ISPI Process Services mevcut değil (IPS arıza kodu {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Bilgi: ISPI Process Services durumu ISPI Admin Client dahilindeki 'IPS Check' fonksiyonu tarafından takip edilebilir.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;ISPI Process Services işlemlerine erişim mümkün değildir. Tamamlayıcı bilgiler yüklenemedi.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Sebep: ISPI Process Services mevcut değil (IPS arıza kodu {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Bilgi: ISPI Process Services durumu ISPI Admin Client dahilindeki 'IPS Check' fonksiyonu tarafından takip edilebilir.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Veriler yalnızca yerel olarak kaydedilecektir. O nedenle bu işlem, genel iş birliği için kullanılamaz.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Sebep: ISPI Process Services mevcut değil (IPS arıza kodu {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Bilgi: ISPI Process Services durumu ISPI Admin Client dahilindeki 'IPS Check' fonksiyonu tarafından takip edilebilir.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -19389,6 +19296,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Adres:" />
 			<Text id="#Administration" name="Yönetim" />
+			<Text id="#AirJumpConfiguration" name="AIR'ın çalıştırılması için yapılandırma" />
 			<Text id="#Brands:" name="Markalar:" />
 			<Text id="#BreakdownPreSelection" name="Arıza durumu işlem tipi ön seçimi" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA Diyagnoz" />
@@ -19403,6 +19311,7 @@
 			<Text id="#ClientSettings" name="İstemci\nayarları" />
 			<Text id="#DataProtection" name="Veri koruması" />
 			<Text id="#DataProtectionAddExplaination" name="Verileri BMW’ye gönderilmeyecek olan aracın şase numarasını (17 hane) girin ve Ekle üzerine tıklayın." />
+			<Text id="#DataProtectionAddExplaination2" name="Girilen şase numarası için henüz bir servis kaydı başlatılmamış olmalıdır." />
 			<Text id="#DataProtectionContent" name="Müşteri siparişi için araç verilerinin aktarılmasına yönelik bir itiraz varsa, atölye uygulaması kullanılmadan önce ilgili araç için diyagnoz verilerinin aktarılması engellenmelidir. Bunun için ayarlar içerisinde yeni “Veri koruması” iletişim alanı açılmalıdır. Burada ilgili aracın şase numarası belirtilmelidir (bkz. kullanım kılavuzunda veri koruması iletişim alanı). \n\nEngelleme sadece belirtilen şase numarası için ve sadece atölye uygulaması sonlandırılana dek geçerlidir.\n\nArdından atölye uygulaması akışında belirtilen şase numarası için diyagnoz verilerinin aktarımı engellenir. Atölye uygulaması akışında ayar sebebiyle engellenen bir aktarım öngörülmüşse, bir onay iletişim alanı görüntülenir (bkz. kullanım kılavuzunda veri koruması iletişim alanı).\n\nBu şekilde aktarım engellemesinin etkili olduğu anlaşılır.\n\nVeri koruması iletişim alanı üzerinden aktarım engellemesi sadece müşterinin genel spesifikasyonlar uyarınca izin verilen bir itirazı mevcutsa kullanılabilir. Engelleme diyagnoz raporu, programlama protokolü ve FASTA verilerinin BMW AG’ye aktarımı için geçerlidir. Engelleme, atölye uygulamasının akışını hızlandırmaz ve BMW AG’de belgelenir." />
 			<Text id="#DataProtectionInteractionContent" name="Müşteri siparişi için araç verilerinin aktarılmasına yönelik bir itiraz varsa, atölye uygulaması kullanılmadan önce ilgili araç için diyagnoz verilerinin aktarılması engellenmelidir. Bunun için ayarlar içerisinde yeni “Veri koruması” iletişim alanı açılmalıdır. Burada ilgili aracın şase numarası belirtilmelidir (bkz. kullanım kılavuzunda veri koruması iletişim alanı). \n\nEngelleme sadece belirtilen şase numarası için ve sadece atölye uygulaması sonlandırılana dek geçerlidir.\n\nArdından atölye uygulaması akışında belirtilen şase numarası için diyagnoz verilerinin aktarımı engellenir. Atölye uygulaması akışında ayar sebebiyle engellenen bir aktarım öngörülmüşse, bir onay iletişim alanı görüntülenir (bkz. kullanım kılavuzunda veri koruması iletişim alanı).\n\nBu şekilde aktarım engellemesinin etkili olduğu anlaşılır.\n\nVeri koruması iletişim alanı üzerinden aktarım engellemesi sadece müşterinin genel spesifikasyonlar uyarınca izin verilen bir itirazı mevcutsa kullanılabilir. Engelleme diyagnoz raporu, programlama protokolü ve FASTA verilerinin BMW AG’ye aktarımı için geçerlidir. Engelleme, atölye uygulamasının akışını hızlandırmaz ve BMW AG’de belgelenir." />
 			<Text id="#DataProtectionInteractionContentToyota" name="Müşteri siparişi için araç verilerinin aktarılmasına yönelik bir itiraz varsa, atölye uygulaması kullanılmadan önce ilgili araç için diyagnoz verilerinin aktarılması engellenmelidir. Bunun için ayarlar içerisinde yeni “Veri koruması” iletişim alanı açılmalıdır. Burada ilgili aracın şase numarası belirtilmelidir (bkz. kullanım kılavuzunda veri koruması iletişim alanı). \n\nEngelleme sadece belirtilen şase numarası için ve sadece atölye uygulaması sonlandırılana dek geçerlidir.\n\nArdından atölye uygulaması akışında belirtilen şase numarası için diyagnoz verilerinin aktarımı engellenir. Atölye uygulaması akışında ayar sebebiyle engellenen bir aktarım öngörülmüşse, bir onay iletişim alanı görüntülenir (bkz. kullanım kılavuzunda veri koruması iletişim alanı).\n\nBu şekilde aktarım engellemesinin etkili olduğu anlaşılır.\n\nVeri koruması iletişim alanı üzerinden aktarım engellemesi sadece müşterinin genel spesifikasyonlar uyarınca izin verilen bir itirazı mevcutsa kullanılabilir. Engelleme diyagnoz raporu, programlama protokolü ve FASTA verilerinin BMW AG’ye aktarımı için geçerlidir. Engelleme, atölye uygulamasının akışını hızlandırmaz ve merkezi sistemde belgelenir." />
@@ -19467,6 +19376,9 @@
 			<Text id="#StartTraceOnStartup" name="İşlem başlatılırken izleme kaydedicisini başlat" />
 			<Text id="#Subsystem" name="Parça sistemi" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="AIR Client'ı kullan" />
+			<Text id="#UseAwpBrowser" name="AWP tarayıcısını kullan" />
+			<Text id="#UseAwpClient" name="AWP Client'ı kullan" />
 			<Text id="#VCI Config" name="Araç arayüzü" />
 			<Text id="#Version" name="Sürüm" />
 			<Text id="#VersionInfo" name="Sürüm durumu" />
@@ -19491,7 +19403,6 @@
 			<Text id="#IcomConfirmTitle" name="Onaylama" />
 			<Text id="#IcomDereservationConfirmText" name="ICOM'un [{0}] standart ICOM ayarı kaldırılsın mı?" />
 			<Text id="#IcomReservationConfirmText" name="ICOM [{0}] standart ICOM olarak ayarlansın mı?" />
-			<Text id="#IrapWorkshopClient" name="IRAP Client’ı başlat" />
 			<Text id="#OnlyOneImibMessage" name="Sadece bir IMIB var olabilir. Yeni bir IMIB ile bağlantı kurulmadan önce mevcut IMIB bağlantısı sonlandırılmalıdır." />
 			<Text id="#SESSION" name="Oturum geçerlilik zamanı:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -20628,13 +20539,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="Personligt identifikationsnummer kan inte ändras" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="Microsoft-komponenten ”WebView2” version {0} behövs för att visa inloggningsfönstret. Den ska installeras på sökvägen ”C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64”.\n\nDen här versionen installeras automatiskt tillsammans med ISTA Launcher 1.57 eller högre. Säkerställ att du installerar om ISTA Launcher för att lösa det här problemet eftersom det annars inte går att logga in." />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2-körtidsproblem" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="Tillgängliga ICOM" />
-			<Text id="#IRAP.Country" name="Land: " />
-			<Text id="#IRAP.Environment" name="Omgivning: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.Organization" name="Organisation: " />
-			<Text id="#IRAP.SelectICOMessage" name="Välj en ICOM via skärmknappen ”Tillgängliga ICOM” nedan." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Batterityp" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Vänligen respektera att supportförfrågningar utan följande data inte bearbetas:\n\n- testresultat (detta dokument)\n- alla loggfiler\n\n'För supportförfrågningar ska hela katalogen ”Logs” göras tillgänglig som zippad fil." />
@@ -20886,6 +20790,7 @@
 			<Text id="#072" name="Ett nödvändigt certifikat kan inte hämtas från Windows KeyStore." />
 			<Text id="#073" name="Aktuell hardware-konfiguration stöds inte." />
 			<Text id="#080" name="Ett tekniskt fel inträffade vid laddning av filen '{0}'.\n\nAvsluta ISTA och genomför en reparationsinstallation med ISTA Launcher.\nOm detta inte ger önskat resultat, rapportera felet till den tekniska supporten." />
+			<Text id="#081" name="Det finns inte tillräckligt med tidskvoter. Det är möjligt att en tidskvot redan har köpts via onlineportalen, men den bearbetas troligen fortfarande av portalen och har ännu inte påbörjats. Kontrollera att din session i portalen fortfarande är giltig." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Listan kunde inte laddas komplett. ISTA processer är endast tillgängliga från denna enhet .&lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Orsak: ISPI Process Services ej tillgängligt (IPS felkod {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Anvisning: Statusen för ISPI Process Services kan fastställas med funktionen 'IPS Check' i ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Åtkomsten till ISPI Process Services-processer är inte möjlig. Kompletterande information kunde inte laddas.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Orsak: ISPI Process Services ej tillgängligt (IPS felkod {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Anvisning: Statusen för ISPI Process Services kan fastställas med funktionen 'IPS Check' i ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Datan sparas endast lokalt. Därigenom står processen inte till förfogande för övergripande samarbete.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Orsak: ISPI Process Services ej tillgängligt (IPS felkod {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Anvisning: Statusen för ISPI Process Services kan fastställas med funktionen 'IPS Check' i ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -21400,6 +21305,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Adress:" />
 			<Text id="#Administration" name="Administration" />
+			<Text id="#AirJumpConfiguration" name="Konfiguration för att anropa AIR" />
 			<Text id="#Brands:" name="Märken:" />
 			<Text id="#BreakdownPreSelection" name="Förval processtyp driftstörning" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA diagnos" />
@@ -21414,6 +21320,7 @@
 			<Text id="#ClientSettings" name="Klient-\ninställningar" />
 			<Text id="#DataProtection" name="Dataskydd" />
 			<Text id="#DataProtectionAddExplaination" name="Mata in chassinummer (17-siffrigt) för det fordon, för vilket datan inte ska skickas till BMW, tryck sedan på ”Lägg till”." />
+			<Text id="#DataProtectionAddExplaination2" name="För angivet fordonsidentifieringsnummer får ingen serviceprocedur ännu ha startats." />
 			<Text id="#DataProtectionContent" name="Om det finns ett bestridande mot överföring av fordonsdata för kundordern måste överföringen av diagnosdata blockeras före användning av verkstadsapplikationen. Öppna då den nya dialogrutan ”Dataskydd” i inställningarna. Där ska chassinummer för aktuellt fordon registeras (se användarhandbok, dialogruta för dataskydd). \n\nBlockeringen gäller endast för inmatat chassinummer och endast tills verkstadsapplikationen avslutas.\n\nMedan verkstadsapplikationen pågår blockeras sedan överföringen av diagnosdata för inmatat chassinummer. Om en överföring som blockeras på grund av inställningen avses för verkstadsapplikationen visas en kvitteringsdialogruta (se användarhandbok, dialogruta för kvittering).\n\nPå så sätt går det att identifiera att blockeringen av överföringen var effektiv.\n\nBlockeringen av överföringen genom dataskyddsdialogrutan får endast användas om kunden bestrider i enlighet med de allmänna standarderna. Blockeringen gäller överföringen av diagnosprotokoll, programmeringsprotokoll och FASTA-data till BMW AG. Blockeringen påskyndar inte verkstadsapplikationens gång och dokumenteras hos BMW AG." />
 			<Text id="#DataProtectionInteractionContent" name="Om det finns ett bestridande mot överföring av fordonsdata för kundordern måste överföringen av diagnosdata blockeras före användning av verkstadsapplikationen. Öppna då den nya dialogrutan ”Dataskydd” i inställningarna. Där ska chassinummer för aktuellt fordon registeras (se användarhandbok, dialogruta för dataskydd). \n\nBlockeringen gäller endast för inmatat chassinummer och endast tills verkstadsapplikationen avslutas.\n\nMedan verkstadsapplikationen pågår blockeras sedan överföringen av diagnosdata för inmatat chassinummer. Om en överföring som blockeras på grund av inställningen avses för verkstadsapplikationen visas en kvitteringsdialogruta (se användarhandbok, dialogruta för kvittering).\n\nPå så sätt går det att identifiera att blockeringen av överföringen var effektiv.\n\nBlockeringen av överföringen genom dataskyddsdialogrutan får endast användas om kunden bestrider i enlighet med de allmänna standarderna. Blockeringen gäller överföringen av diagnosprotokoll, programmeringsprotokoll och FASTA-data till BMW AG. Blockeringen påskyndar inte verkstadsapplikationens gång och dokumenteras hos BMW AG." />
 			<Text id="#DataProtectionInteractionContentToyota" name="Om det finns ett bestridande mot överföring av fordonsdata för kundordern måste överföringen av diagnosdata blockeras före användning av verkstadsapplikationen. Öppna då den nya dialogrutan ”Dataskydd” i inställningarna. Där ska chassinumret för aktuellt fordon registreras (se användarhandbok, dialogruta för dataskydd). \n\nBlockeringen gäller endast för det angivna chassinumret och endast tills verkstadsapplikationen avslutas.\n\nMedan verkstadsapplikationen pågår, blockeras i anslutning överföringen av diagnosdata för angivet chassinummer. Om en överföring som blockeras på grund av inställningen avses för verkstadsapplikationen visas en kvitteringsdialogruta (se användarhandbok, dialogruta för kvittering).\n\nPå så sätt går det att identifiera att blockeringen av överföringen var effektiv.\n\nBlockeringen av överföringen genom dataskyddsdialogrutan får endast användas om kunden bestrider i enlighet med de allmänna standarderna. Blockeringen gäller överföringen av diagnosprotokoll, programmeringsprotokoll och FASTA-data till BMW AG. Blockeringen påskyndar inte verkstadsapplikationens process och dokumenteras i det centrala systemet hos BMW AG." />
@@ -21478,6 +21385,9 @@
 			<Text id="#StartTraceOnStartup" name="Starta Trace Logging vid procedurstart" />
 			<Text id="#Subsystem" name="Delsystem" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="Använda AIR Client" />
+			<Text id="#UseAwpBrowser" name="Använd AWP webbläsare" />
+			<Text id="#UseAwpClient" name="Använda AWP Client" />
 			<Text id="#VCI Config" name="Fordonsgränssnitt" />
 			<Text id="#Version" name="Version:" />
 			<Text id="#VersionInfo" name="Version" />
@@ -21502,7 +21412,6 @@
 			<Text id="#IcomConfirmTitle" name="Kvittering" />
 			<Text id="#IcomDereservationConfirmText" name="Upphäv ICOM som [{0}] Standard-ICOM?" />
 			<Text id="#IcomReservationConfirmText" name="Använd ICOM som [{0}] Standard-ICOM?" />
-			<Text id="#IrapWorkshopClient" name="Starta IRAP-klienten" />
 			<Text id="#OnlyOneImibMessage" name="Det kan endast finnas en IMIB. Befintlig IMIB-anslutning måste avslutas innan man ansluter till en ny IMIB." />
 			<Text id="#SESSION" name="Session giltig t.o.m.:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -22646,13 +22555,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN-code kan niet worden gewijzigd" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="De Microsoft-component “WebView2“ versie {0} of hoger is vereist om het aanmeldingsvenster weer te geven. Deze moet onder het pad „C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64“ geïnstalleerd worden.\n\nDeze versie wordt dan automatisch samen met ISTA Launcher 1.57 of hoger geïnstalleerd. Let erop dat u de ISTA Launcher opnieuw installeert om dit probleem op te lossen, omdat u zich anders niet kunt aanmelden." />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2 looptijdprobleem" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="Beschikbare ICOM" />
-			<Text id="#IRAP.Country" name="Land: " />
-			<Text id="#IRAP.Environment" name="Omgeving: " />
-			<Text id="#IRAP.Gateway" name="Gateway: " />
-			<Text id="#IRAP.Organization" name="Organisatie: " />
-			<Text id="#IRAP.SelectICOMessage" name="Selecteer een ICOM via de button „Beschikbare ICOM“ onderaan." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Accutype" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="We vragen uw om begrip, dat supportaanvragen zonder de volgende gegevens niet bewerkt worden:\n\n- Testresultaat (dit document)\n- alle loggegevens\n\nVoor supportaanvragen moet de hele map 'Logs' als zip-bestand beschikbaar worden gesteld." />
@@ -22904,6 +22806,7 @@
 			<Text id="#072" name="Een noodzakelijk certificaat kan niet uit de Windows KeyStore worden geladen." />
 			<Text id="#073" name="De actuele hardware-configuratie wordt niet ondersteund." />
 			<Text id="#080" name="Er is een technische storing opgetreden bij het laden van het bestand '{0}'.\n\nISTA afsluiten en met de ISTA Launcher een herstelinstallatie uitvoeren.\nLukt dit niet, dan dient u de fout te melden bij de technische support." />
+			<Text id="#081" name="Er is onvoldoende tijdsblokken beschikbaar. Mogelijk is er al een tijdsblok verkregen via het onlineportaal, maar dit blok wordt waarschijnlijk nog door het portaal verwerkt en is nog niet gestart. Controleert of uw sessie in het portaal nog geldig is." />
 			<Text id="#111" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;De lijst kon niet volledig worden geladen. ISTA-procedures zijn alleen voor dit apparaat beschikbaar. &lt;/spe:PARAGRAPH&gt; &lt;spe:PARAGRAPH&gt;Oorzaak: ISPI Process Services niet beschikbaar (IPS diagnosefout {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Aanwijzing: De status van de ISPI Process Services kan vastgesteld worden met de functie 'IPS Check' in de ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;De toegang tot procedures van de ISPI Process Services is niet mogelijk. Aanvullende informatie kon niet worden geladen.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Oorzaak: ISPI Process Services niet beschikbaar (IPS diagnosefout {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Aanwijzing: De status van de ISPI Process Services kan vastgesteld worden met de functie 'IPS Check' in de ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name=" &lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt; &lt;spe:PARAGRAPH&gt;Gegevens worden alleen lokaal opgeslagen. Hierdoor is de procedure voor de overkoepelende samenwerking niet mogelijk.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Oorzaak: ISPI Process Services niet beschikbaar (IPS diagnosefout {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Aanwijzing: De status van de ISPI Process Services kan vastgesteld worden met de functie 'IPS Check' in de ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -23417,6 +23320,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Adres:" />
 			<Text id="#Administration" name="Administratie" />
+			<Text id="#AirJumpConfiguration" name="Configuratie voor het oproepen van AIR" />
 			<Text id="#Brands:" name="Merken:" />
 			<Text id="#BreakdownPreSelection" name="Voorkeuze proceduretype pechgeval" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA-diagnose" />
@@ -23431,6 +23335,7 @@
 			<Text id="#ClientSettings" name="Client\ninstellingen" />
 			<Text id="#DataProtection" name="Gegevensbeveiliging" />
 			<Text id="#DataProtectionAddExplaination" name="Voer het voertuigidentificatienummer (17 posities) in waarvan de gegevens niet aan BMW moeten worden gestuurd en klik op „Toevoegen“" />
+			<Text id="#DataProtectionAddExplaination2" name="Voor het ingevoerde chassisnummer mag nog geen serviceprocedure gestart zijn." />
 			<Text id="#DataProtectionContent" name="Als er voor een klantorder bezwaar is tegen het overdragen van de voertuiggegevens, dan moet de overdracht van diagnosegegevens voor het gebruik van de werkplaatstoepassing voor het desbetreffende voertuig worden onderdrukt. Daarvoor moet in de instellingen het nieuwe dialoogvenster „Gegevensbeveiliging“ worden opgeroepen. Daar moet het voertuigidentificatienummer van het desbetreffende voertuig worden opgegeven (zie handleiding, dialoogvenster Gegevensbeveiliging). \n\nDeze onderdrukking geldt enkel voor het opgegeven voertuigidentificatienummer en enkel tot het einde van de werkplaatstoepassing.\n\nTijdens de werkplaatstoepassing wordt daarna de overdracht van de diagnosegegevens voor het opgegeven voertuigidentificatienummer onderdrukt. Als er tijdens de werkplaatstoepassing een overdracht gepland is die door die instelling onderdrukt is, dan verschijnt er een bevestigingsdialoogvenster (zie handleiding Bevestigingsdialoogvenster).\n\nDaarmee wordt gemeld dat de overdracht onderdrukt werd.\n\nDe overdracht mag enkel onderdrukt worden door middel van het dialoogvenster Gegevensbescherming als het toegestane verzet daartegen van de klant in overeenstemming met de algemene voorwaarden gebeurt. De onderdrukking heeft invloed op de overdracht aan BMW AG van het diagnoseprotocol, het programmatieprotocol en de FASTA-gegevens. de onderdrukking versnelt de werking van de werkplaatstoepassing niet en wordt bij BMW AG gedocumenteerd." />
 			<Text id="#DataProtectionInteractionContent" name="Als er voor een klantorder bezwaar is tegen het overdragen van de voertuiggegevens, dan moet de overdracht van diagnosegegevens voor het gebruik van de werkplaatstoepassing voor het desbetreffende voertuig worden onderdrukt. Daarvoor moet in de instellingen het nieuwe dialoogvenster „Gegevensbeveiliging“ worden opgeroepen. Daar moet het voertuigidentificatienummer van het desbetreffende voertuig worden opgegeven (zie handleiding, dialoogvenster Gegevensbeveiliging). \n\nDeze onderdrukking geldt enkel voor het opgegeven voertuigidentificatienummer en enkel tot het einde van de werkplaatstoepassing.\n\nTijdens de werkplaatstoepassing wordt daarna de overdracht van de diagnosegegevens voor het opgegeven voertuigidentificatienummer onderdrukt. Als er tijdens de werkplaatstoepassing een overdracht gepland is die door die instelling onderdrukt is, dan verschijnt er een bevestigingsdialoogvenster (zie handleiding Bevestigingsdialoogvenster).\n\nDaarmee wordt gemeld dat de overdracht onderdrukt werd.\n\nDe overdracht mag enkel onderdrukt worden door middel van het dialoogvenster Gegevensbescherming als het toegestane verzet daartegen van de klant in overeenstemming met de algemene voorwaarden gebeurt. De onderdrukking heeft invloed op de overdracht aan BMW AG van het diagnoseprotocol, het programmatieprotocol en de FASTA-gegevens. de onderdrukking versnelt de werking van de werkplaatstoepassing niet en wordt bij BMW AG gedocumenteerd." />
 			<Text id="#DataProtectionInteractionContentToyota" name="Als er voor een klantorder bezwaar is tegen het overdragen van de voertuiggegevens, dan moet de overdracht van diagnosegegevens voor het gebruik van de werkplaatstoepassing voor het desbetreffende voertuig worden onderdrukt. Daarvoor moet in de instellingen het nieuwe dialoogvenster „Gegevensbeveiliging“ worden opgeroepen. Daar moet het chassisnummer van het desbetreffende voertuig worden opgegeven (zie handleiding, dialoogvenster Gegevensbeveiliging). \n\nDeze onderdrukking geldt enkel voor het opgegeven chassisnummer en enkel tot het einde van de werkplaatstoepassing.\n\nTijdens de werkplaatstoepassing wordt daarna de overdracht van de diagnosegegevens voor het opgegeven chassisnummer onderdrukt. Als er tijdens de werkplaatstoepassing een overdracht gepland is die door die instelling onderdrukt is, dan verschijnt er een bevestigingsdialoogvenster (zie handleiding Bevestigingsdialoogvenster).\n\nDaarmee wordt gemeld dat de overdracht onderdrukt werd.\n\nDe overdracht mag enkel onderdrukt worden door middel van het dialoogvenster Gegevensbescherming als het toegestane verzet daartegen van de klant in overeenstemming met de algemene voorwaarden gebeurt. De onderdrukking heeft invloed op de overdracht aan BMW AG van het diagnoseprotocol, het programmatieprotocol en de FASTA-gegevens. De onderdrukking versnelt de werking van de werkplaatstoepassing niet en wordt in het centraal systeem gedocumenteerd." />
@@ -23495,6 +23400,9 @@
 			<Text id="#StartTraceOnStartup" name="Start van Trace Logging bij procedurestart" />
 			<Text id="#Subsystem" name="Deelsysteem" />
 			<Text id="#Trace" name="Trace" />
+			<Text id="#UseAirClient" name="AIR-Client gebruiken" />
+			<Text id="#UseAwpBrowser" name="AWP-browser gebruiken" />
+			<Text id="#UseAwpClient" name="AWP-Client gebruiken" />
 			<Text id="#VCI Config" name="Boordinterface" />
 			<Text id="#Version" name="Versie" />
 			<Text id="#VersionInfo" name="Versiestand" />
@@ -23519,7 +23427,6 @@
 			<Text id="#IcomConfirmTitle" name="Bevestiging" />
 			<Text id="#IcomDereservationConfirmText" name="Vastlegging ICOM [{0}] als standaard-ICOM deactiveren?" />
 			<Text id="#IcomReservationConfirmText" name="ICOM [{0}] als standaard-ICOM vastleggen?" />
-			<Text id="#IrapWorkshopClient" name="Start van de IRAP Client" />
 			<Text id="#OnlyOneImibMessage" name="Er kan maar één IMIB gebruikt worden. De bestaande IMIB-verbinding moet worden beëindigd voordat een nieuwe IMIB wordt verbonden." />
 			<Text id="#SESSION" name="Sessie geldig tot:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -24658,13 +24565,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN-код нельзя изменить" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="Для отображения окна входа в систему требуется компонент Microsoft WebView2 версии {0}. Для его установки перейдите по ссылке C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64.\n\nЭта версия автоматически устанавливается вместе с ISTA Launcher 1.57 или выше. Обязательно установите заново ISTA Launcher, чтобы решить эту проблему, так как в противном случае вы не сможете войти в систему." />
 			<Text id="#Auth.WebViewProblemTitle" name="Проблема среды выполнения WebView2" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="Доступные ICOM" />
-			<Text id="#IRAP.Country" name="Страна: " />
-			<Text id="#IRAP.Environment" name="Среда: " />
-			<Text id="#IRAP.Gateway" name="Межсетевой преобразователь: " />
-			<Text id="#IRAP.Organization" name="Организация: " />
-			<Text id="#IRAP.SelectICOMessage" name="Выберите требуемый ICOM с помощью экранной кнопки «Доступные ICOM» внизу." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="Тип аккумуляторной батареи" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="Учитывайте, что запросы в службу поддержки без указания следующих данных остаются без ответа:\n\n- Результат проверки (данный документ)\n- Все файлы регистрации\n\nДля запросов в службу поддержки необходимо предоставить всю папку «Logs» в виде файла в формате .zip." />
@@ -24916,6 +24816,7 @@
 			<Text id="#072" name="Необходимый сертификат не может быть загружен из Windows KeyStore." />
 			<Text id="#073" name="Текущая конфигурация аппаратного обеспечения не поддерживается." />
 			<Text id="#080" name="Произошла техническая ошибка при загрузке файла '{0}'.\n\nЗавершите ISTA и произведите ремонтную инсталляцию с помощью ISTA Launcher.\nЕсли это не увенчается успехом, сообщить об ошибке в техническую поддержку." />
+			<Text id="#081" name="Не хватает необходимого времени. Возможно, лимит времени уже был приобретён через онлайн-портал, однако, вероятно, он ещё находится в процессе обработки на портале и его отсчёт ещё не начался. Пожалуйста, проверьте срок действия вашего сеанса на портале." />
 			<Text id="#111" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;Не удалось полностью загрузить список. Процессы ISTA доступны только с этого устройства.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Причина: ISPI Process Services недоступны (код неисправности IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Примечание: Статус ISPI Process Services можно определить с помощью функции 'Проверка IPS' в ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;Доступ к процессам ISPI Process Services невозможен. Не удалось загрузить дополняющую информацию.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Причина: ISPI Process Services недоступны (код неисправности IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; Примечание: Статус ISPI Process Services можно определить с помощью функции 'Проверка IPS' в ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;Данные сохраняются только локально. Вследствие этого процесс для смежного сотрудничества недоступен.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Причина: ISPI Process Services недоступны (код неисправности IPS {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;Примечание: Статус ISPI Process Services можно определить с помощью функции 'Проверка IPS' в ISPI Admin Client.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -25429,6 +25330,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="Адрес:" />
 			<Text id="#Administration" name="Администр." />
+			<Text id="#AirJumpConfiguration" name="Конфигурация для вызова AIR" />
 			<Text id="#Brands:" name="Типы:" />
 			<Text id="#BreakdownPreSelection" name="Предварительный выбор Процесс Неисправность" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="Диагностика ISTA" />
@@ -25443,6 +25345,7 @@
 			<Text id="#ClientSettings" name="Настройки клиента" />
 			<Text id="#DataProtection" name="Защита данных" />
 			<Text id="#DataProtectionAddExplaination" name="Введите идентификационный номер транспортного средства (17 позиций), данные которого не следует отправлять в BMW, и нажмите «Добавить»." />
+			<Text id="#DataProtectionAddExplaination2" name="Для введенного идентификационного номера транспортного средства нельзя запустить протокол процесса сервисного обслуживания." />
 			<Text id="#DataProtectionContent" name="Если для заказа клиента имеется противоречие с передачей данных т/с, перед применением приложения ремонтной зоны следует подавить передачу данных диагностики для соответствующего т/с. Для этого в настройках нужно вызвать новое диалоговое окно «Защита данных». Там следует ввести номер идентификации соответствующего транспортного средства (см. руководство пользователя до диалоговому окну «Защита данных»). \n\nПодавление касается только указанного номера идентификации соответствующего транспортного средства и только до окончания приложения ремонтной зоны.\n\nВ ходе приложения ремонтной зоны после этого подавляется передача данных диагностики для указанного номера идентификации транспортного средства. Если в ходе приложения ремонтной зоны предусмотрена передача, которая подавляется из-за настройки, появляется диалоговое окно подтверждения (см. руководство пользователя до диалоговому окну «Подтверждение»).\n\nТаким образом можно увидеть, что передача была подавлена.\n\nПодавление передачи диалоговым окном защиты данных можно использовать только в том случае, если имеется допустимое противоречие клиента согласно общим требованиям. Подавление воздействует на передачу протокола диагностики, протокола программирования, а также данных FASTA в BMW AG. Подавление не ускоряет ход приложения ремонтной зоны и документируется в BMW AG." />
 			<Text id="#DataProtectionInteractionContent" name="Если для заказа клиента имеется противоречие с передачей данных т/с, перед применением приложения ремонтной зоны следует подавить передачу данных диагностики для соответствующего т/с. Для этого в настройках нужно вызвать новое диалоговое окно «Защита данных». Там следует ввести номер идентификации соответствующего транспортного средства (см. руководство пользователя до диалоговому окну «Защита данных»). \n\nПодавление касается только указанного номера идентификации соответствующего транспортного средства и только до окончания приложения ремонтной зоны.\n\nВ ходе приложения ремонтной зоны после этого подавляется передача данных диагностики для указанного номера идентификации транспортного средства. Если в ходе приложения ремонтной зоны предусмотрена передача, которая подавляется из-за настройки, появляется диалоговое окно подтверждения (см. руководство пользователя до диалоговому окну «Подтверждение»).\n\nТаким образом можно увидеть, что передача была подавлена.\n\nПодавление передачи диалоговым окном защиты данных можно использовать только в том случае, если имеется допустимое противоречие клиента согласно общим требованиям. Подавление воздействует на передачу протокола диагностики, протокола программирования, а также данных FASTA в BMW AG. Подавление не ускоряет ход приложения ремонтной зоны и документируется в BMW AG." />
 			<Text id="#DataProtectionInteractionContentToyota" name="Если для заказа клиента имеется противоречие с передачей данных т/с, перед применением приложения ремонтной зоны следует подавить передачу данных диагностики для соответствующего т/с. Для этого в настройках нужно вызвать новое диалоговое окно «Защита данных». Там следует ввести номер идентификации соответствующего транспортного средства (см. руководство пользователя по диалоговому окну «Защита данных»). \n\nПодавление касается только указанного номера идентификации соответствующего транспортного средства и только до окончания приложения ремонтной зоны.\n\nВ ходе приложения ремонтной зоны после этого подавляется передача данных диагностики для указанного номера идентификации транспортного средства. Если в ходе приложения ремонтной зоны предусмотрена передача, которая подавляется из-за настройки, появляется диалоговое окно подтверждения (см. руководство пользователя до диалоговому окну «Подтверждение»).\n\nТаким образом можно увидеть, что передача была подавлена.\n\nПодавление передачи диалоговым окном защиты данных можно использовать только в том случае, если имеется допустимое противоречие клиента согласно общим требованиям. Подавление воздействует на передачу протокола диагностики, протокола программирования, а также данных FASTA в BMW AG. Подавление не ускоряет ход приложения ремонтной зоны и документируется в центральной системе." />
@@ -25507,6 +25410,9 @@
 			<Text id="#StartTraceOnStartup" name="Запускается Trace Logging при запуске процесса" />
 			<Text id="#Subsystem" name="Подсистема" />
 			<Text id="#Trace" name="Трассировка" />
+			<Text id="#UseAirClient" name="Использовать AIR Client" />
+			<Text id="#UseAwpBrowser" name="Использовать браузер AWP" />
+			<Text id="#UseAwpClient" name="Использовать AWP Client" />
 			<Text id="#VCI Config" name="Сервисный разъем" />
 			<Text id="#Version" name="Вариант" />
 			<Text id="#VersionInfo" name="Уровень версии" />
@@ -25531,7 +25437,6 @@
 			<Text id="#IcomConfirmTitle" name="Квитирование" />
 			<Text id="#IcomDereservationConfirmText" name="Отменить установку ICOM [{0}] как стандартного ICOM?" />
 			<Text id="#IcomReservationConfirmText" name="Установить ICOM [{0}] как стандартный ICOM?" />
-			<Text id="#IrapWorkshopClient" name="Запуск IRAP Client" />
 			<Text id="#OnlyOneImibMessage" name="Может быть только один IMIB. Существующее соединение с должно быть завершено до установления соединения с новым IMIB." />
 			<Text id="#SESSION" name="Сеанс действителен до:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -26671,13 +26576,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="不能更改个人识别号码" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="需要 Microsoft 组件 “WebView2” 版本 {0}，才能显示登录窗口。它必须安装在路径 “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64” 下。\n\n这个版本将自动与 ISTA Launcher 1.57 或更高版本一起安装。请确保重新安装 ISTA Launcher，以解决这个问题，否则您将无法登录。" />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2 运行时问题" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="可用的 ICOM" />
-			<Text id="#IRAP.Country" name="国家： " />
-			<Text id="#IRAP.Environment" name="环境： " />
-			<Text id="#IRAP.Gateway" name="网关： " />
-			<Text id="#IRAP.Organization" name="组织： " />
-			<Text id="#IRAP.SelectICOMessage" name="请通过下部的“可用的 ICOM”按钮选择一个 ICOM。" />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="蓄电池型号" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="在没有以下数据的情况下，无法处理您的技术支持请求，敬请谅解：\n\n- 测试结果（本文件）\n- 所有日志文件\n\n在提出技术支持请求时，应以压缩文件的形式提供整个‘日志’文件夹。" />
@@ -26929,6 +26827,7 @@
 			<Text id="#072" name="无法从 Windows KeyStore 载入所需的证书。" />
 			<Text id="#073" name="不支持当前的硬件配置。" />
 			<Text id="#080" name="载入文件 '{0}' 时出现技术错误。\n\n结束 ISTA，并使用 ISTA Launcher 执行维修安装。\n如果仍不成功，则请将错误报告给技术支持部门。" />
+			<Text id="#081" name="目前没有足够的时间配额。您可能已经通过在线门户购买了时间配额，但该配额很可能仍在由门户网站进行处理，尚未开始计时。请在门户网站上核对您会话的有效性。" />
 			<Text id="#111" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;无法完整载入列表。仅本设备可使用 ISTA 工序。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;原因：ISPI 处理服务不可用（IPS 故障代码 {0}）。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;备注：可在 ISPI 管理客户端中通过 ‘IPS Check’ 功能查看 ISPI Process Services 的状态。&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;无法访问 ISPI 处理服务的过程。无法载入补充信息。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;原因：ISPI 处理服务不可用（IPS 故障代码 {0}）。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; 备注：可在 ISPI 管理客户端中通过 ‘IPS Check’ 功能查看 ISPI Process Services 的状态。&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;数据仅本地保存。这样便不可将工序用于全局合作。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;原因：ISPI 处理服务不可用（IPS 故障代码 {0}）。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;备注：可在 ISPI 管理客户端中通过 ‘IPS Check’ 功能查看 ISPI Process Services 的状态。&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -27442,6 +27341,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="地址：" />
 			<Text id="#Administration" name="管理程序" />
+			<Text id="#AirJumpConfiguration" name="调用 AIR 的配置" />
 			<Text id="#Brands:" name="品牌：" />
 			<Text id="#BreakdownPreSelection" name="抛锚情况过程类型预选" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA 诊断" />
@@ -27456,6 +27356,7 @@
 			<Text id="#ClientSettings" name="客户端设置" />
 			<Text id="#DataProtection" name="数据保护" />
 			<Text id="#DataProtectionAddExplaination" name="输入不应将数据发送至 BMW 的车辆的车辆识别号（17 位）并点击“添加”" />
+			<Text id="#DataProtectionAddExplaination2" name="对于输入的车辆识别号，必须还没有启动任何服务工作单。" />
 			<Text id="#DataProtectionContent" name="如果在客户订单中不同意传送车辆数据，则在使用修理厂应用前必须禁用相关车辆诊断数据的传送。为此，必须在设置中调用新的“数据保护”对话框。在该对话框中，需要记录相关车辆的车辆识别号（见用户手册中的数据保护对话框）。\n\n该禁用仅适用于指定的车辆识别号且在修理厂应用结束之前有效。\n\n然后，在修理厂应用运行期间会禁用对应于指定车辆识别号的诊断数据的传送。如果在修理厂应用运行期间出现了设置中被禁用的传送，则会显示确认对话框（见用户手册中的确认对话框）。\n\n藉此可以了解禁用数据传送已生效。\n\n仅当客户按照一般规定明确同意不传送车辆数据时，才可通过数据保护对话框禁用传送。该禁用会对诊断记录、编程记录及 FASTA 数据传送至 BMW AG 造成影响。该禁用不会加快修理厂应用的运行速度且由 BMW AG 负责记录。" />
 			<Text id="#DataProtectionInteractionContent" name="如果在客户订单中不同意传送车辆数据，则在使用修理厂应用前必须禁用相关车辆诊断数据的传送。为此，必须在设置中调用新的“数据保护”对话框。在该对话框中，需要记录相关车辆的车辆识别号（见用户手册中的数据保护对话框）。\n\n该禁用仅适用于指定的车辆识别号且在修理厂应用结束之前有效。\n\n然后，在修理厂应用运行期间会禁用对应于指定车辆识别号的诊断数据的传送。如果在修理厂应用运行期间出现了设置中被禁用的传送，则会显示确认对话框（见用户手册中的确认对话框）。\n\n藉此可以了解禁用数据传送已生效。\n\n仅当客户按照一般规定明确同意不传送车辆数据时，才可通过数据保护对话框禁用传送。该禁用会对诊断记录、编程记录及 FASTA 数据传送至 BMW AG 造成影响。该禁用不会加快修理厂应用的运行速度且由 BMW AG 负责记录。" />
 			<Text id="#DataProtectionInteractionContentToyota" name="如果在客户订单中不同意传送车辆数据，则在使用修理厂应用前必须禁用相关车辆诊断数据的传送。为此，必须在设置中调用新的“数据保护”对话框。在该对话框中，需要记录相关车辆的车辆识别号（见用户手册中的数据保护对话框）。\n\n该禁用仅适用于指定的车辆识别号且在修理厂应用结束之前有效。\n\n然后，在修理厂应用运行期间会禁用对应于指定车辆识别号的诊断数据的传送。如果在修理厂应用运行期间出现了设置中被禁用的传送，则会显示确认对话框（见用户手册中的确认对话框）。\n\n藉此可以了解禁用数据传送已生效。\n\n仅当客户按照一般规定明确同意不传送车辆数据时，才可通过数据保护对话框禁用传送。该禁用会对诊断记录、编程记录及 FASTA 数据传送至 BMW AG 造成影响。该禁用不会加快修理厂应用的运行速度且记录在中央系统中。" />
@@ -27520,6 +27421,9 @@
 			<Text id="#StartTraceOnStartup" name="工序开始时启动跟踪日志记录" />
 			<Text id="#Subsystem" name="子系统" />
 			<Text id="#Trace" name="跟踪记录" />
+			<Text id="#UseAirClient" name="使用 AIR 客户端" />
+			<Text id="#UseAwpBrowser" name="使用 AWP 浏览器" />
+			<Text id="#UseAwpClient" name="使用 AWP 客户端" />
 			<Text id="#VCI Config" name="车辆接口" />
 			<Text id="#Version" name="版本" />
 			<Text id="#VersionInfo" name="版本状态" />
@@ -27544,7 +27448,6 @@
 			<Text id="#IcomConfirmTitle" name="确认" />
 			<Text id="#IcomDereservationConfirmText" name="是否取消将 ICOM [{0}] 设置为标准 ICOM？" />
 			<Text id="#IcomReservationConfirmText" name="是否将 ICOM [{0}] 设置为标准 ICOM？" />
-			<Text id="#IrapWorkshopClient" name="启动 IRAP 客户端" />
 			<Text id="#OnlyOneImibMessage" name="只能有一个 IMIB。在连至新 IMIB 前必须结束现有的 IMIB 连接。" />
 			<Text id="#SESSION" name="会话有效期至：" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -29431,13 +29334,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN を変更できません" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="ログイン ウィンドウの表示には、マイクロソフト コンポーネント「WebView2」のバージョン {0} 以上が必要となります。このコンポーネントは、必ずパス 「C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64」にインストールしてください。\n\nISTA Launcher 1.57 以上では、このバージョンが自動的に ISTA Launcher と共にインストールされます。この問題を解消してログインできるようにするために、必ず、ISTA Launcher を新規インストールしてください。" />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2 の有効期限に関する問題" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="利用できる ICOM" />
-			<Text id="#IRAP.Country" name="国： " />
-			<Text id="#IRAP.Environment" name="環境： " />
-			<Text id="#IRAP.Gateway" name="ゲートウェイ： " />
-			<Text id="#IRAP.Organization" name="組織： " />
-			<Text id="#IRAP.SelectICOMessage" name="下の「利用できる ICOM」ボタンで ICOM を選択してください。" />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="バッテリータイプ" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="次のデータがない場合には、サポート リクエストに対応できませんので、あらかじめご了承下さい：\n\n- テスト結果 (本ドキュメント)\n- すべてのログ ファイル\n\nサポート リクエストには、すべての「ログ」フォルダを zip. ファイルとして添えてください。" />
@@ -29689,6 +29585,7 @@
 			<Text id="#072" name="必要な証明書を Windows KeyStore からロードできません。" />
 			<Text id="#073" name="最新のハードウェア環境設定はサポートされていません。" />
 			<Text id="#080" name="データ '{0}' のロードの際に技術的故障が発生しました。\n\nISTA を終了し、ISTA Launcher で修正インストールを実行します。\nこれが成功しない場合は、このエラーをテクニカル サポートに報告してください。" />
+			<Text id="#081" name="十分な時間的余裕がありません。オンラインポータルを経由ですでに時間枠を購入されている可能性がありますが、おそらくポータル側でまだ処理中であり、まだ開始されていないと思われます。ポータルにて、セッションの有効期限をご確認ください。" />
 			<Text id="#111" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;リストを完全には読み込むことができませんでした。ISTA サービス ケースは、このデバイスでのみ利用できます。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;原因：ISPI プロセス サービスが利用できません (IPS ディフェクト コード {0})。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;注意：ISPI プロセス サービスのステータスは、ISPI Admin Client の「IPS Check」機能によって調べることができます。&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;ISPI プロセス サービスのサービス ケースへのアクセスはできません。補足情報を読み込めませんでした！&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;原因：ISPI プロセス サービスが利用できません (IPS ディフェクト コード {0})。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; 注意：ISPI プロセス サービスのステータスは、ISPI Admin Client の「IPS Check」機能によって調べることができます。&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;データはローカルにのみ保存されます。そのため、ネットワーク間での共同作業用のサービス ケースは利用できません。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;原因：ISPI プロセス サービスが利用できません (IPS ディフェクト コード {0})。&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;注意：ISPI プロセス サービスのステータスは、ISPI Admin Client の「IPS Check」機能によって調べることができます。&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -30202,6 +30099,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="住所：" />
 			<Text id="#Administration" name="システム管理" />
+			<Text id="#AirJumpConfiguration" name="AIRの呼出し用構成" />
 			<Text id="#Brands:" name="ブランド：" />
 			<Text id="#BreakdownPreSelection" name="事前確認 案件タイプ 故障時" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA 診断" />
@@ -30216,6 +30114,7 @@
 			<Text id="#ClientSettings" name="クライアント設定" />
 			<Text id="#DataProtection" name="データ保護" />
 			<Text id="#DataProtectionAddExplaination" name="データを BMW に送信しない車両の車両識別番号 (17 桁) を入力し、「追加」を押します。" />
+			<Text id="#DataProtectionAddExplaination2" name="入力された車両識別番号には、まだサービスケースが開始されていない可能性があります。" />
 			<Text id="#DataProtectionContent" name="車両データの伝送に異議を唱える顧客オーダーがある場合は、ワークショップアプリケーションの使用前に、該当する車両の診断データの伝送を抑制する必要があります。これには、設定内で新しい「データ保護」のダイアログ画面を呼び出さなくてはいけません。ここでは、該当する車両の車両識別番号が把握されます (ユーザーハンドブック データ保護参照)。\n\n抑制は、指定されている車両識別番号にのみ有効です。また、ワークショップアプリケーションが終了すると抑制は無効になります。\n\nワークショップアプリケーションプロセス中は、指定されている車両識別番号では診断データの伝送がその後に抑制されます。ワークショップアプリケーションのプロセス中に、設定によって抑制されている伝送を行うことが想定されている場合は、確定ダイアログ画面が表示されます (ユーザーハンドブック 確定ダイアログ画面を参照)。\n\nこれにより、伝送の抑制が有効になっていたことが認識できます。\n\nデータ保護のダイアログ画面を通して伝送を抑制するのは、一般的な規定に従った顧客の異議が許容されている場合にのみ可能です。この抑制は、診断レポート、プログラミング プロトコルおよび FASTA データの BMW AG への伝送にも効力を持ちます。抑制することにより、ワークショップ アプリケーションのプロセスが加速されることはありません。また、抑制は BMW AG により記録されます。" />
 			<Text id="#DataProtectionInteractionContent" name="車両データの伝送に異議を唱える顧客オーダーがある場合は、ワークショップアプリケーションの使用前に、該当する車両の診断データの伝送を抑制する必要があります。これには、設定内で新しい「データ保護」のダイアログ画面を呼び出さなくてはいけません。ここでは、該当する車両の車両識別番号が把握されます (ユーザーハンドブック データ保護参照)。\n\n抑制は、指定されている車両識別番号にのみ有効です。また、ワークショップアプリケーションが終了すると抑制は無効になります。\n\nワークショップアプリケーションプロセス中は、指定されている車両識別番号では診断データの伝送がその後に抑制されます。ワークショップアプリケーションのプロセス中に、設定によって抑制されている伝送を行うことが想定されている場合は、確定ダイアログ画面が表示されます (ユーザーハンドブック 確定ダイアログ画面を参照)。\n\nこれにより、伝送の抑制が有効になっていたことを認識できます。\n\nデータ保護のダイアログ画面によって伝送を抑制するのは、一般的な規定に従った顧客の異議が許容されている場合にのみ可能です。この抑制は、診断レポート、プログラミング プロトコルおよび FASTA データの BMW AG への伝送にも効力を持ちます。抑制することにより、ワークショップ アプリケーションのプロセスが加速されることはありません。また、抑制は BMW AG により記録されます。" />
 			<Text id="#DataProtectionInteractionContentToyota" name="車両データの伝送に異議を唱える顧客オーダーがある場合は、ワークショップアプリケーションの使用前に、該当する車両の診断データの伝送を抑制する必要があります。これには、設定内で新しい「データ保護」のダイアログ画面を呼び出さなくてはいけません。ここでは、該当する車両の車両識別番号が把握されます (ユーザーハンドブックのデータ保護ダイアログを参照)。\n\n 抑制は、指定されている車両識別番号にのみ有効です。また、ワークショップアプリケーションが終了すると抑制は無効になります。\n\nワークショップアプリケーションプロセス中は、指定されている車両識別番号では診断データの伝送がその後に抑制されます。ワークショップアプリケーションのプロセス中に、設定によって抑制されている伝送を行うことが想定されている場合は、確定ダイアログ画面が表示されます (ユーザーハンドブック 確定ダイアログ画面を参照)。\n\nこれにより、伝送の抑制が有効になっていたことを認識できます。\n\nデータ保護のダイアログ画面によって伝送を抑制するのは、一般的な規定に従った顧客の異議が許容されている場合にのみ可能です。この抑制は、診断レポート、プログラミング プロトコルおよび FASTA データの BMW AG への伝送にも効力を持ちます。抑制することにより、ワークショップ アプリケーションのプロセスが加速されることはありません。また、抑制は AG システムにより記録されます。" />
@@ -30280,6 +30179,9 @@
 			<Text id="#StartTraceOnStartup" name="サービス ケース開始時にトレースロギングを開始" />
 			<Text id="#Subsystem" name="コンポーネント システム" />
 			<Text id="#Trace" name="トレース" />
+			<Text id="#UseAirClient" name="AIR Clientの使用" />
+			<Text id="#UseAwpBrowser" name="AWPブラウザの使用" />
+			<Text id="#UseAwpClient" name="AWP Clientの使用" />
 			<Text id="#VCI Config" name="車両インターフェース" />
 			<Text id="#Version" name="バージョン：" />
 			<Text id="#VersionInfo" name="バージョン レベル" />
@@ -30304,7 +30206,6 @@
 			<Text id="#IcomConfirmTitle" name="確定" />
 			<Text id="#IcomDereservationConfirmText" name="ICOM [{0}] の標準 ICOM としての固定を解除しますか？" />
 			<Text id="#IcomReservationConfirmText" name="ICOM [{0}] を標準 ICOM として固定しますか？" />
-			<Text id="#IrapWorkshopClient" name="IRAP Client の開始" />
 			<Text id="#OnlyOneImibMessage" name="1 つの IMIB のみが存在できます。既存の IMIB 接続は、新しい IMIB に接続する前に終了する必要があります。" />
 			<Text id="#SESSION" name="セッション有効期限：" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -31443,13 +31344,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="PIN 코드를 변경할 수 없음" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="로그인 창을 표시하려면 마이크로소프트 컴포넌트 “WebView2” 버전 {0}이 필요합니다. “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64” 경로에 설치해야 합니다.\n\n이 버전은 ISTA Launcher 1.57 이상의 버전과 함께 자동으로 설치됩니다. 이 문제를 해결하려면 ISTA Launcher를 다시 설치해야 하며, 그렇지 않으면 로그인할 수 없습니다." />
 			<Text id="#Auth.WebViewProblemTitle" name="WebView2 런타임 문제" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="사용 가능한 ICOM" />
-			<Text id="#IRAP.Country" name="국가: " />
-			<Text id="#IRAP.Environment" name="환경: " />
-			<Text id="#IRAP.Gateway" name="게이트웨이: " />
-			<Text id="#IRAP.Organization" name="조직: " />
-			<Text id="#IRAP.SelectICOMessage" name="아래의 „사용 가능한 ICOM“ 버튼을 사용하여 ICOM을 선택하십시오." />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="배터리형식" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="다음 데이터가 없으면 지원 요청이 처리되지 않음을 양해해 주시기 바랍니다.\n\n- 테스트 결과(본 문서)\n- 모든 로그 파일\n\n지원 요청의 경우 전체 ‘로그’ 폴더를 압축된 파일로 제공해야 합니다." />
@@ -31701,6 +31595,7 @@
 			<Text id="#072" name="필요한 인증을 Windows의 KeyStore에서 로드할 수 없다." />
 			<Text id="#073" name="현재의 하드웨어 구성을 지원하지 않는다." />
 			<Text id="#080" name="'{0}' 파일 로딩 시 기술적 오류가 발생했습니다.\n\nISTA를 종료하고 ISTA Launcher를 이용하여 수리 설치를 실행하십시오.\n성공적으로 실행되지 않은 경우, 고장에 대해 기술 서포트에 알리십시오." />
+			<Text id="#081" name="사용 가능한 작업 시간 할당량이 부족합니다. 온라인 포털을 통해 이미 작업 시간 할당량을 구매하셨을 수도 있으나, 해당 할당량은 아직 포털 측에서 처리 중인 상태이므로 작업이 시작되지 않았을 가능성이 높습니다. 포털에서 현재 세션의 유효성을 확인해 주십시오." />
 			<Text id="#111" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;목록을 완전히는 로드할 수 없었습니다. ISTA 과정을 이 장치만 이용할 수 있습니다.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;원인: ISPI 프로세스 서비스를 이용할 수 없습니다(IPS 고장코드 {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;참조: ISPI 프로세스 서비스의 상태를 ISPI Admin Client의 'IPS Check' 기능을 사용하여 조사할 수 있다.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;ISPI 프로세스 서비스의 과정에 액세스할 수 없습니다. 보충 정보를 로드할 수 없었습니다.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;원인: ISPI 프로세스 서비스를 이용할 수 없습니다(IPS 고장코드 {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; 참조: ISPI 프로세스 서비스의 상태를 ISPI Admin Client의 'IPS Check' 기능을 사용하여 조사할 수 있다.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;데이터는 로컬로만 저장됩니다. 따라서 공동작업을 위한 과정을 이용할 수 없습니다.&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;원인: ISPI 프로세스 서비스를 이용할 수 없습니다(IPS 고장코드 {0}).&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;참조: ISPI 프로세스 서비스의 상태를 ISPI Admin Client의 'IPS Check' 기능을 사용하여 조사할 수 있다.&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -32214,6 +32109,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="주소:" />
 			<Text id="#Administration" name="관리" />
+			<Text id="#AirJumpConfiguration" name="AIR 선택을 위한 구성" />
 			<Text id="#Brands:" name="마크:" />
 			<Text id="#BreakdownPreSelection" name="과정 타입 고장 미리 선택" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="ISTA 진단" />
@@ -32228,6 +32124,7 @@
 			<Text id="#ClientSettings" name="클라이언트 세팅" />
 			<Text id="#DataProtection" name="데이터 보호" />
 			<Text id="#DataProtectionAddExplaination" name="BMW로 전송되어서는 안 되는 데이터가 있는 차량의 차대번호(17자리)를 입력하고 ‘추가’를 누릅니다." />
+			<Text id="#DataProtectionAddExplaination2" name="입력한 차대번호(VIN 넘버)에 대한 서비스 케이스가 아직 시작되지 않았어야 합니다." />
 			<Text id="#DataProtectionContent" name="고객 주문에서 차량 데이터의 전송에 대한 이견이 있는 경우, 정비공장 애플리케이션을 사용하기 전에 해당 차량의 진단 데이터 전송을 금지해야 합니다. 이를 위해 설정 내에서 새 다이얼로그 ‘데이터 보호’를 불러내야 합니다. 거기에 기록해야 할 해당 차량의 차대번호가 있습니다(사용자 매뉴얼 데이터 보호 다이얼로그 박스 참조). \n\n금지는 오로지 입력된 차대번호에만 적용되며, 이는 정비공장 애플리케이션이 종료할 때까지만 유효합니다.\n\n정비공장 애플리케이션 작업 진행 중에 입력된 차대번호에 대한 진단 데이터 전송이 금지됩니다. 정비공장 애플리케이션 작업 진행 중에 전송이 이미 지정되어 있고, 설정으로 인해 금지된 경우에는 확인 다이얼로그 박스가 표시됩니다(사용자 매뉴얼 확인 다이얼로그 박스).\n\n그러면 전송 금지가 효력을 발생했음을 알 수 있습니다.\n\n데이터 보호 다이얼로그 박스를 통한 전송 금지는 고객의 이견이 일반 지침과 부합할 때에만 사용이 가능합니다. 금지는 진단 프로토콜, 프로그래밍 프로토콜 및 FASTA-데이터를 BMW Ag로 전송 시 실시됩니다. 금지로 인해 정비공장 애플리케이션의 작업 진행이 가속화되지 않으며, BMW AG에서 문서화됩니다." />
 			<Text id="#DataProtectionInteractionContent" name="고객 주문에서 차량 데이터의 전송에 대한 이견이 있는 경우, 정비공장 애플리케이션을 사용하기 전에 해당 차량의 진단 데이터 전송을 금지해야 합니다. 이를 위해 설정 내에서 새 다이얼로그 ‘데이터 보호’를 불러내야 합니다. 거기에 기록해야 할 해당 차량의 차대번호가 있습니다(사용자 매뉴얼 데이터 보호 다이얼로그 박스 참조). \n\n금지는 오로지 입력된 차대번호에만 적용되며, 이는 정비공장 애플리케이션이 종료할 때까지만 유효합니다.\n\n정비공장 애플리케이션의 작업 진행에서 입력된 차대번호에 대한 진단 데이터 전송이 금지됩니다. 정비공장 애플리케이션의 작업 진행에서 전송이 이미 지정되어 있고, 설정으로 인해 금지된 경우에는 확인 다이얼로그 박스가 표시됩니다(사용자 매뉴얼 확인 다이얼로그 박스).\n\n그러면 전송 금지가 효력을 발생했음을 알 수 있습니다.\n\n데이터 보호 다이얼로그 박스를 통한 전송 금지는 고객의 이견이 일반 지침과 부합할 때에만 사용이 가능합니다. 금지는 진단 프로토콜, 프로그래밍 프로토콜 및 FASTA-데이터를 BMW Ag로 전송 시 실시됩니다. 금지로 인해 정비공장 애플리케이션의 작업 진행이 가속화되지 않으며, BMW AG에서 문서화됩니다." />
 			<Text id="#DataProtectionInteractionContentToyota" name="고객 주문에서 차량 데이터의 전송에 대한 이견이 있는 경우, 정비공장 애플리케이션을 사용하기 전에 해당 차량의 진단 데이터 전송을 금지해야 합니다. 이를 위해 설정 내에서 새 다이얼로그 ‘데이터 보호’를 불러내야 합니다. 거기에 기록해야 할 해당 차량의 차량 식별 번호가 있습니다(사용자 매뉴얼 데이터 보호 다이얼로그 박스 참조). \n\n금지는 오로지 입력된 차량 식별 번호에만 적용되며, 이는 정비공장 애플리케이션이 종료할 때까지만 유효합니다.\n\n정비공장 애플리케이션의 작업 진행에서 입력된 차량 식별 번호에 대한 진단 데이터 전송이 금지됩니다. 정비공장 애플리케이션의 작업 진행에서 전송이 이미 지정되어 있고, 설정으로 인해 금지된 경우에는 확인 다이얼로그 박스가 표시됩니다(사용자 매뉴얼 확인 다이얼로그 박스).\n\n그러면 전송 금지가 효력을 발생했음을 알 수 있습니다.\n\n데이터 보호 다이얼로그 박스를 통한 전송 금지는 고객의 이견이 일반 지침과 부합할 때에만 사용이 가능합니다. 금지는 진단 프로토콜, 프로그래밍 프로토콜 및 FASTA-데이터를 BMW Ag로 전송 시 실시됩니다. 금지로 인해 정비공장 애플리케이션의 작업 진행이 가속화되지 않으며, 중앙 시스템에서 문서화됩니다." />
@@ -32292,6 +32189,9 @@
 			<Text id="#StartTraceOnStartup" name="과정 시작 시 추적 기록(Trace Logging)을 시작하십시오" />
 			<Text id="#Subsystem" name="서브시스템" />
 			<Text id="#Trace" name="추적" />
+			<Text id="#UseAirClient" name="AIR 클라이언트 사용" />
+			<Text id="#UseAwpBrowser" name="AWP 브라우저 사용" />
+			<Text id="#UseAwpClient" name="AWP 클라이언트 사용" />
 			<Text id="#VCI Config" name="차량 인터페이스" />
 			<Text id="#Version" name="버전" />
 			<Text id="#VersionInfo" name="버전 상태" />
@@ -32316,7 +32216,6 @@
 			<Text id="#IcomConfirmTitle" name="확인" />
 			<Text id="#IcomDereservationConfirmText" name="ICOM [{0}]을 표준 ICOM으로서 지정하는 것을 취소하는가?" />
 			<Text id="#IcomReservationConfirmText" name="ICOM [{0}]을 표준 ICOM으로서 지정하는가?" />
-			<Text id="#IrapWorkshopClient" name="IRAP Client 시작" />
 			<Text id="#OnlyOneImibMessage" name="오직 하나의 IMIB만 존재할 수 있습니다. 기존에 연결된 IMIB는 새로운 IMIB로 연결하기 이전에 종료되어야 합니다." />
 			<Text id="#SESSION" name="세션 유효 기간:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />
@@ -33455,13 +33354,6 @@
 			<Text id="#Auth.WebEAMUnreachableTitle" name="ไม่สามารถเปลี่ยน PIN ได้" />
 			<Text id="#Auth.WebViewNoRuntimeMessage" name="จำเป็นต้องใช้ส่วนประกอบไมโครซอฟท์ “WebView2” รุ่น {0} ในการแสดงหน้าต่างการเข้าสู่ระบบ ซึ่งต้องติดตั้งในเส้นทาง “C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Microsoft.WebView2.FixedVersionRuntime.{0}.x64”\n\nรุ่นนี้ได้รับการติดตั้งโดยอัตโนมัติพร้อมกับ ISTA Launcher 1.57 หรือใหม่กว่า โปรดตรวจสอบให้แน่ใจว่าคุณติดตั้ง ISTA Launcher ใหม่เพื่อแก้ไขปัญหานี้ ไม่เช่นนั้นคุณจะไม่สามารถเข้าสู่ระบบได้" />
 			<Text id="#Auth.WebViewProblemTitle" name="ปัญหาในระหว่างการปฏิบัติงานของ WebView2" />
-			<!-- IRAP -->
-			<Text id="#IRAP.AvailableICOM" name="ICOM ที่เข้าถึงได้" />
-			<Text id="#IRAP.Country" name="ประเทศ: " />
-			<Text id="#IRAP.Environment" name="ภูมิภาค: " />
-			<Text id="#IRAP.Gateway" name="เกตเวย์: " />
-			<Text id="#IRAP.Organization" name="องค์กร: " />
-			<Text id="#IRAP.SelectICOMessage" name="โปรดเลือก ICOM โดยใช้ปุ่ม “ICOM ที่เข้าถึงได้” ที่ด้านล่าง" />
 			<!-- ISTAHV-->
 			<Text id="#ISTAHV.BatteryType" name="ประเภทแบตเตอรี่" />
 			<Text id="#ISTAHV.CertificateFinalNote" name="โปรดเข้าใจว่า คำขอการสนับสนุนจะไม่ได้รับการดำเนินการหากไม่มีข้อมูลต่อไปนี้:\n\n- ผลการทดสอบ (เอกสารนี้)\n- ไฟล์การเข้าสู่ระบบทั้งหมด\n\nในการขอรับการสนับสนุน โฟลเดอร์ 'บันทึก' ทั้งหมด ควรมีให้ใช้งานได้ในรูปแบบไฟล์ซิป" />
@@ -33713,6 +33605,7 @@
 			<Text id="#072" name="การรับรองที่จำเป็นไม่สามารถถูกโหลดได้จาก Windows KeyStore " />
 			<Text id="#073" name="การตั้งค่าฮาร์ดแวร์ปัจจุบันไม่เป็นที่รองรับ " />
 			<Text id="#080" name="เกิดความผิดปกติทางเทคนิคขึ้นในขณะที่โหลดไฟล์ '{0}'\n\nสิ้นสุด ISTA และดำเนินการติดตั้งการซ่อมแซมด้วย ISTA Launcher\nหากสิ่งนี้ยังคงไม่ประสบผลสำเร็จ กรุณาแจ้งความผิดปกตินี้กับฝ่ายสนับสนุนทางด้านเทคนิค" />
+			<Text id="#081" name="ไม่มีโควตาเวลาเพียงพอ อาจซื้อโควตาเวลาผ่านพอร์ทัลออนไลน์ไว้แล้ว แต่พอร์ทัลอาจยังอยู่ระหว่างการประมวลผลโควตาดังกล่าวและโควตายังไม่เริ่มมีผล โปรดตรวจสอบสถานะการใช้งานของเซสชันของคุณในพอร์ทัล" />
 			<Text id="#111" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;รายการไม่สามารถถูกโหลดได้อย่างสมบูรณ์ จะมีเฉพาะขั้นตอน ISTA ของอุปกรณ์นี้&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;สาเหตุ: ไม่มี ISPI Process Services (IPS รหัสความผิดปกติ {0})&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;หมายเหตุ: สถานะของ ISPI Process Services สามารถถูกระบุได้กับฟังก์ชั่น 'IPS Check' ใน ISPI Admin Client&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#112" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;การเข้าถึงการทำงานของ ISPI Process Services ไม่สามารถเป็นไปได้ ข้อมูลเพิ่มเติมไม่สามารถถูกโหลดได้&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;สาเหตุ: ไม่มี ISPI Process Services (IPS รหัสความผิดปกติ {0})&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt; หมายเหตุ: สถานะของ ISPI Process Services สามารถถูกระบุได้กับฟังก์ชั่น 'IPS Check' ใน ISPI Admin Client&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
 			<Text id="#113" name="&lt;spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'&gt;&lt;spe:PARAGRAPH&gt;ข้อมูลจะถูกจัดเก็บเฉพาะแบบท้องถิ่นเท่านั้น ดังนั้น จึงไม่มีขั้นตอนสำหรับความร่วมมือทั้งหมด&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;สาเหตุ: ไม่มี ISPI Process Services (IPS รหัสความผิดปกติ {0})&lt;/spe:PARAGRAPH&gt;&lt;spe:PARAGRAPH&gt;หมายเหตุ: สถานะของ ISPI Process Services สามารถถูกระบุได้กับฟังก์ชั่น 'IPS Check' ใน ISPI Admin Client&lt;/spe:PARAGRAPH&gt;&lt;/spe:TEXTITEM&gt;" />
@@ -34226,6 +34119,7 @@
 			<!-- Dialog: Admin -->
 			<Text id="#Address:" name="ที่อยู่ :" />
 			<Text id="#Administration" name="การจัดการระบบ" />
+			<Text id="#AirJumpConfiguration" name="การตั้งค่าสำหรับการเรียกใช้ AIR" />
 			<Text id="#Brands:" name="ยี่ห้อ :" />
 			<Text id="#BreakdownPreSelection" name="ก่อนการเลือก รูปแบบการกระทำ ความเสียหาย" />
 			<Text id="#BreakdownPreSelectionTitle.Diagnose" name="การวิเคราะห์ ISTA" />
@@ -34240,6 +34134,7 @@
 			<Text id="#ClientSettings" name="การตั้งค่าไคลเอนต์" />
 			<Text id="#DataProtection" name="ความเป็นส่วนตัว" />
 			<Text id="#DataProtectionAddExplaination" name="ระบุหมายเลขตัวถังรถ (17 หลัก) ของยานพาหนะ ที่ซึ่งข้อมูลจะไม่ถูกส่งไปยัง BMW และกดที่ 'เพิ่ม'" />
+			<Text id="#DataProtectionAddExplaination2" name="สำหรับหมายเลขตัวถังรถที่ป้อน จะต้องยังไม่ได้เริ่มรายการรถยนต์เข้ารับบริการ" />
 			<Text id="#DataProtectionContent" name="หากมีการคัดค้านการถ่ายโอนข้อมูลรถยนต์สำหรับคำสั่งซื้อของลูกค้าอยู่ ก่อนการใช้งานของแอพพลิเคชั่นศูนย์บริการต้องทำการยับยั้งการถ่ายโอนของข้อมูลการวิเคราะห์สำหรับยานพาหนะที่เกี่ยวข้อง โดยที่ภายในการตั้งค่าต้องเรียกใช้ไดอะล็อกใหม่ 'การป้องกันข้อมูล' ในที่นั้น จะทำการรวบรวมหมายเลขตัวถังรถของยานพาหนะที่เกี่ยวข้อง (ดูที่ คำแนะนำผู้ใช้งานไดอะล็อกการป้องกันข้อมูล) \n\nการยับยั้งจะใช้เฉพาะสำหรับหมายเลขตัวถังรถที่ระบุ และเฉพาะจนถึงการเสร็จสิ้นของแอพพลิเคชั่นศูนย์บริการ\n\nหลังจากนั้น ในโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการจะทำการยับยั้งการถ่ายโอนของข้อมูลการวิเคราะห์สำหรับหมายเลขตัวถังรถที่ระบุ หากในโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการมีการถ่ายโอนข้อมูลอยู่ ที่ซึ่งต้องถูกยับยั้งเนื่องจากการตั้งค่า จะปรากฏไดอะล็อกการยืนยัน (ดูที่ คำแนะนำผู้ใช้งานไดอะล็อกการยืนยัน)\n\nดังนั้น จะสามารถระบุได้ว่า การยับยั้งของการถ่ายโอนนั้นมีผลสำเร็จหรือไม่\n\nการยับยั้งของการถ่ายโอนโดยผ่านไดอะล็อกการป้องกันข้อมูลจะอนุญาตให้ใช้ได้ เฉพาะเมื่อ มีการคัดค้านของลูกค้าที่เกี่ยวข้องกับข้อมูลจำเพาะทั่วไปอยู่ การยับยั้งจะมีผลกับการถ่ายโอนของ รายงานการวิเคราะห์ รายงานการตั้งโปรแกรม และข้อมูล FASTA ไปยัง BMW AG การยับยั้งจะไม่เร่งโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการ และจะถูกจัดทำเอกสารโดย BMW AG" />
 			<Text id="#DataProtectionInteractionContent" name="หากมีการคัดค้านการถ่ายโอนข้อมูลรถยนต์สำหรับคำสั่งซื้อของลูกค้าอยู่ ก่อนการใช้งานของแอพพลิเคชั่นศูนย์บริการต้องทำการยับยั้งการถ่ายโอนของข้อมูลการวิเคราะห์สำหรับยานพาหนะที่เกี่ยวข้อง โดยที่ภายในการตั้งค่าต้องเรียกใช้ไดอะล็อกใหม่ 'การป้องกันข้อมูล' ในที่นั้น จะทำการรวบรวมหมายเลขตัวถังรถของยานพาหนะที่เกี่ยวข้อง (ดูที่ คำแนะนำผู้ใช้งานไดอะล็อกการป้องกันข้อมูล) \n\nการยับยั้งจะใช้เฉพาะสำหรับหมายเลขตัวถังรถที่ระบุ และเฉพาะจนถึงการเสร็จสิ้นของแอพพลิเคชั่นศูนย์บริการ\n\nหลังจากนั้น ในโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการจะทำการยับยั้งการถ่ายโอนของข้อมูลการวิเคราะห์สำหรับหมายเลขตัวถังรถที่ระบุ หากในโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการมีการถ่ายโอนข้อมูลอยู่ ที่ซึ่งต้องถูกยับยั้งเนื่องจากการตั้งค่า จะปรากฏไดอะล็อกการยืนยัน (ดูที่ คำแนะนำผู้ใช้งานไดอะล็อกการยืนยัน)\n\nดังนั้น จะสามารถระบุได้ว่า การยับยั้งของการถ่ายโอนนั้นมีผลสำเร็จหรือไม่\n\nการยับยั้งของการถ่ายโอนโดยผ่านไดอะล็อกการป้องกันข้อมูลจะอนุญาตให้ใช้ได้ เฉพาะเมื่อ มีการคัดค้านของลูกค้าที่เกี่ยวข้องกับข้อมูลจำเพาะทั่วไปอยู่ การยับยั้งจะมีผลกับการถ่ายโอนของ รายงานการวิเคราะห์ รายงานการตั้งโปรแกรม และข้อมูล FASTA ไปยัง BMW AG การยับยั้งจะไม่เร่งโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการ และจะถูกจัดทำเอกสารโดย BMW AG" />
 			<Text id="#DataProtectionInteractionContentToyota" name="หากมีการคัดค้านการถ่ายโอนข้อมูลรถยนต์สำหรับคำสั่งซื้อของลูกค้าอยู่ ก่อนการใช้งานของแอพพลิเคชั่นศูนย์บริการต้องทำการยับยั้งการถ่ายโอนของข้อมูลการวิเคราะห์สำหรับยานพาหนะที่เกี่ยวข้อง โดยที่ภายในการตั้งค่าต้องเรียกใช้ไดอะล็อกใหม่ 'การป้องกันข้อมูล' ในที่นั้น จะทำการรวบรวมหมายเลขตัวถังรถของยานพาหนะที่เกี่ยวข้อง (ดูที่ คำแนะนำผู้ใช้งานไดอะล็อกการป้องกันข้อมูล) \n\nการยับยั้งจะใช้เฉพาะสำหรับหมายเลขตัวถังรถที่ระบุ และเฉพาะจนถึงการเสร็จสิ้นของแอพพลิเคชั่นศูนย์บริการ\n\nหลังจากนั้น ในโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการจะทำการยับยั้งการถ่ายโอนของข้อมูลการวิเคราะห์สำหรับหมายเลขตัวถังรถที่ระบุ หากในโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการมีการถ่ายโอนข้อมูลอยู่ ที่ซึ่งต้องถูกยับยั้งเนื่องจากการตั้งค่า จะปรากฏไดอะล็อกการยืนยัน (ดูที่ คำแนะนำผู้ใช้งานไดอะล็อกการยืนยัน)\n\nดังนั้น จะสามารถระบุได้ว่า การยับยั้งของการถ่ายโอนนั้นมีผลสำเร็จหรือไม่\n\nการยับยั้งของการถ่ายโอนโดยผ่านไดอะล็อกการป้องกันข้อมูลจะอนุญาตให้ใช้ได้ เฉพาะเมื่อ มีการคัดค้านของลูกค้าที่เกี่ยวข้องกับข้อมูลจำเพาะทั่วไปอยู่ การยับยั้งจะมีผลกับการถ่ายโอนของ รายงานการวิเคราะห์ รายงานการตั้งโปรแกรม และข้อมูล FASTA ไปยัง BMW AG การยับยั้งจะไม่เร่งโมดูลทดสอบของแอพพลิเคชั่นศูนย์บริการ และจะถูกจัดทำเอกสารโดยระบบศูนย์กลาง" />
@@ -34304,6 +34199,9 @@
 			<Text id="#StartTraceOnStartup" name="เริ่มต้น Trace Logging ในการเริ่มต้นขั้นตอน" />
 			<Text id="#Subsystem" name="ระบบย่อย" />
 			<Text id="#Trace" name="ร่องรอย" />
+			<Text id="#UseAirClient" name="ใช้งาน AIR Client" />
+			<Text id="#UseAwpBrowser" name="ใช้งานเบราว์เซอร์ AWP" />
+			<Text id="#UseAwpClient" name="ใช้งาน AWP Client" />
 			<Text id="#VCI Config" name="อินเตอร์เฟสรถยนต์" />
 			<Text id="#Version" name="รุ่น" />
 			<Text id="#VersionInfo" name="สถานะรุ่น" />
@@ -34328,7 +34226,6 @@
 			<Text id="#IcomConfirmTitle" name="การยืนยัน" />
 			<Text id="#IcomDereservationConfirmText" name="ยกเลิกการกำหนดให้ ICOM [{0}] เป็น ICOM มาตรฐาน?" />
 			<Text id="#IcomReservationConfirmText" name="กำหนดให้ ICOM [{0}] เป็น ICOM มาตรฐาน?" />
-			<Text id="#IrapWorkshopClient" name="การเริ่มต้น IRAP Client" />
 			<Text id="#OnlyOneImibMessage" name="สามารถมีได้เพียงหนึ่ง IMIB เท่านั้น ต้องทำการสิ้นสุดการเชื่อมต่อ IMIB ที่มีอยู่ ก่อนที่จะทำการเชื่อมต่อกับ IMIB ใหม่" />
 			<Text id="#SESSION" name="เซสชั่นใช้ได้ถึง:" />
 			<Text id="#ScanForVCI" name="Ermittle registrierte Fahrzeugschnittstellen von {0}" />

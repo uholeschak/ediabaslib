@@ -11,18 +11,15 @@ namespace BMW.Rheingold.Module.ISTA
     internal class DtcAnzeigeDynUi : UserControl, IComponentConnector
     {
         internal ScrollViewer scrollViewerBottom;
-
         internal ListView lvError;
-
         private bool _contentLoaded;
-
         public DtcAnzeigeDynUi()
         {
             InitializeComponent();
         }
 
         [DebuggerNonUserCode]
-        [GeneratedCode("PresentationBuildTasks", "10.0.9.0")]
+        [GeneratedCode("PresentationBuildTasks", "10.0.11.0")]
         public void InitializeComponent()
         {
             if (!_contentLoaded)
@@ -34,7 +31,7 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         [DebuggerNonUserCode]
-        [GeneratedCode("PresentationBuildTasks", "10.0.9.0")]
+        [GeneratedCode("PresentationBuildTasks", "10.0.11.0")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         void IComponentConnector.Connect(int connectionId, object target)
         {

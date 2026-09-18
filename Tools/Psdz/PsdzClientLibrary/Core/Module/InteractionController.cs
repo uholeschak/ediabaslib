@@ -14,7 +14,6 @@ namespace BMW.Rheingold.CoreFramework.Interaction
     public class InteractionController : IInteractionController, IInteractionButtonNotificationService
     {
         private readonly InteractionDataContext interactionDataContext;
-
         public IInteractionDataContext InteractionDataContext => interactionDataContext;
 
         public InteractionController()
@@ -28,17 +27,18 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    {
-                        InteractionModel model2 = e.NewItems[0] as InteractionModel;
-                        TriggerInteractionMetrics(model2, shown: true);
-                        break;
-                    }
+                {
+                    InteractionModel model2 = e.NewItems[0] as InteractionModel;
+                    TriggerInteractionMetrics(model2, shown: true);
+                    break;
+                }
+
                 case NotifyCollectionChangedAction.Remove:
-                    {
-                        InteractionModel model = e.OldItems[0] as InteractionModel;
-                        TriggerInteractionMetrics(model, shown: false);
-                        break;
-                    }
+                {
+                    InteractionModel model = e.OldItems[0] as InteractionModel;
+                    TriggerInteractionMetrics(model, shown: false);
+                    break;
+                }
             }
         }
 
@@ -48,11 +48,13 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             {
                 return;
             }
+
             string text = null;
             if (model is InteractionProgressModel || model is InteractionDoIpCheckModel)
             {
                 return;
             }
+
             if (!(model is InteractionQuestionPopupModel interactionQuestionPopupModel))
             {
                 if (!(model is InteractionQuestionModel interactionQuestionModel))
@@ -74,6 +76,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction
                 text = interactionQuestionPopupModel.Question;
                 text = text.Substring(0, Math.Min(50, text.Length));
             }
+
             Type type = model.GetType();
             string text2 = (model.IsTriggeredSynchronously ? "sync " : "async");
             string text3 = "[" + text2 + "] " + type.Name + " - " + model.Title;
@@ -81,6 +84,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             {
                 text3 = text3 + " - " + text + "...";
             }
+
             if (shown)
             {
                 TimeMetricsUtility.Instance.PopupShown(text3);
@@ -101,10 +105,12 @@ namespace BMW.Rheingold.CoreFramework.Interaction
                     InteractionDataContext.ModelCollection.Remove(model);
                 }
             }
+
             if (mode != TaskMode.RunInForeground)
             {
                 return;
             }
+
             interactionDataContext.RemoveBackgroundInteraction(model);
             if (!InteractionDataContext.ModelCollection.Contains(model))
             {
@@ -123,6 +129,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction
                 {
                     throw new ArgumentNullException("model");
                 }
+
                 model.Disposed -= InteractionModelDisposed;
                 model.OnDeregistered();
                 if (interactionDataContext.IsBackgroundInteractionAvailable(model as IInteractionProgressModel))
@@ -136,15 +143,18 @@ namespace BMW.Rheingold.CoreFramework.Interaction
                         Log.Error("InteractionController.DeregisterInteraction", "The interaction model '{0}' is not registered.", model.GetType().Name);
                         return;
                     }
+
                     if (!InteractionDataContext.ModelCollection.Last().Equals(model))
                     {
                         Log.Warning("InteractionController.DeregisterInteraction", "The interaction model '{0}' was deregistered in a wrong order.", model.GetType().Name);
                     }
+
                     lock (InteractionDataContext.ModelCollection)
                     {
                         InteractionDataContext.ModelCollection.Remove(model);
                     }
                 }
+
                 Log.Info("InteractionController.DeregisterInteraction()", "A '{0}' was deregistered.", model.GetType().Name);
             }
             catch (Exception exception)
@@ -160,7 +170,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction
 
         public void NotifyClosing(Guid modelId)
         {
-            if (GetOperationModelById(modelId) is InteractionModel interactionModel)
+            if (GetOperationModelById(modelId)is InteractionModel interactionModel)
             {
                 interactionModel.OnClosing();
                 InteractionResponse responseCloseButton = interactionModel.ResponseCloseButton;
@@ -184,7 +194,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction
 
         public bool NotifyResponse(Guid modelId, InteractionResponse response)
         {
-            if (GetOperationModelById(modelId) is IInteractionRequestModel<InteractionResponse> interactionRequestModel)
+            if (GetOperationModelById(modelId)is IInteractionRequestModel<InteractionResponse> interactionRequestModel)
             {
                 try
                 {
@@ -198,22 +208,23 @@ namespace BMW.Rheingold.CoreFramework.Interaction
                     return false;
                 }
             }
+
             Log.Error("InteractionController.NotifyResponse()", "Model not found.");
             return false;
         }
 
         public string GetInteractionModelType(Guid modelId)
         {
-            return (GetOperationModelById(modelId) as IInteractionRequestModel<InteractionResponse>).GetType().FullName;
+            return (GetOperationModelById(modelId) as IInteractionRequestModel<InteractionResponse>)?.GetType().FullName;
         }
 
         public virtual void RegisterInteraction(InteractionModel model)
         {
             try
             {
-                //[-] model.IsTriggeredSynchronously = true;
-                //[-] RegisterInteractionModel(model);
-                //[-] (model as IInteractionRequestModel<InteractionResponse>)?.WaitOnResponse();
+            //[-] model.IsTriggeredSynchronously = true;
+            //[-] RegisterInteractionModel(model);
+            //[-] (model as IInteractionRequestModel<InteractionResponse>)?.WaitOnResponse();
             }
             catch (Exception exception)
             {
@@ -221,7 +232,8 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             }
         }
 
-        public virtual Task<TResponse> RegisterInteractionAsync<TResponse>(InteractionRequestModel<TResponse> model) where TResponse : InteractionResponse
+        public virtual Task<TResponse> RegisterInteractionAsync<TResponse>(InteractionRequestModel<TResponse> model)
+            where TResponse : InteractionResponse
         {
             try
             {
@@ -237,7 +249,8 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             }
         }
 
-        public virtual TResponse RegisterInteractionSync<TResponse>(InteractionRequestModel<TResponse> model) where TResponse : InteractionResponse
+        public virtual TResponse RegisterInteractionSync<TResponse>(InteractionRequestModel<TResponse> model)
+            where TResponse : InteractionResponse
         {
             try
             {
@@ -266,11 +279,13 @@ namespace BMW.Rheingold.CoreFramework.Interaction
                 Log.Error("InteractionController.GetOperationModelById()", "The interaction model with id '{0}' is not registered.", modelId);
                 return null;
             }
+
             IInteractionModel interactionModel = InteractionDataContext.ModelCollection.First((IInteractionModel x) => x.Guid.Equals(modelId));
             if (!interactionModel.Equals(InteractionDataContext.ModelCollection.Last()))
             {
                 Log.Warning("InteractionController.GetOperationModelById()", "The received response don't match with the current model.");
             }
+
             return interactionModel;
         }
 
@@ -288,15 +303,18 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             {
                 throw new ArgumentNullException("model");
             }
+
             if (InteractionDataContext.ModelCollection.Contains(model))
             {
                 throw new ArgumentException("Model is already registered.");
             }
+
             model.Disposed += InteractionModelDisposed;
             lock (InteractionDataContext.ModelCollection)
             {
                 InteractionDataContext.ModelCollection.Add(model);
             }
+
             LogInteractionMessageModel(model);
             model.OnRegistered();
         }
@@ -307,11 +325,13 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             {
                 return;
             }
+
             if (!(model is InteractionMessageModel interactionMessageModel))
             {
                 Log.Info("InteractionController.RegisterInteractionModel()", "A '{0}' was registered. Interaction Title: '{1}'", model.GetType().Name, model.Title);
                 return;
             }
+
             Translator translator = GetTranslator();
             if (ShouldLogErrorBasedOnTitle(interactionMessageModel.Title, translator))
             {
@@ -330,7 +350,11 @@ namespace BMW.Rheingold.CoreFramework.Interaction
         private static bool ShouldLogErrorBasedOnTitle(string title, Translator translator)
         {
             string module = "ISTAGui";
-            return new string[2] { "#Error", "#Warning" }.Any((string x) => x.Equals(translator.GetId(title, module)));
+            return new string[2]
+            {
+                "#Error",
+                "#Warning"
+            }.Any((string x) => x.Equals(translator.GetId(title, module)));
         }
 
         private static string TryTranslateStringToEnglish(string toTranslation, Translator translator)
@@ -340,6 +364,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             {
                 return toTranslation;
             }
+
             string module = "ISTAGui";
             string id = translator.GetId(toTranslation, module);
             string name = translator.GetName(id, module, text);
@@ -347,6 +372,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction
             {
                 return name;
             }
+
             return toTranslation;
         }
     }

@@ -1880,6 +1880,7 @@ namespace PsdzClient.Core
             EcuGroup = ecu.EcuGroup;
             EcuRep = ecu.EcuRep;
             IsSmartActuator = ecu.IsSmartActuator;
+            ECU_ADR = ecu.ECU_ADR;
         }
 
         private IList<Bus> GetBusConnections()

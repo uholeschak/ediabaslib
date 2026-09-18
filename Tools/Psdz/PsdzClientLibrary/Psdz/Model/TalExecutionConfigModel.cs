@@ -56,5 +56,8 @@ namespace BMW.Rheingold.Psdz
 
         [JsonProperty("expectedSgbmIdValidationForSmacTransferStartActive", NullValueHandling = NullValueHandling.Ignore)]
         public bool ExpectedSgbmIdValidationForSmacTransferStartActive { get; set; }
+
+        [JsonProperty("blockTasOnIconActive", NullValueHandling = NullValueHandling.Ignore)]
+        public bool BlockTasOnIconActive { get; set; }
     }
 }

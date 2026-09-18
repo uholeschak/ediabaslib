@@ -15,5 +15,8 @@ namespace BMW.Authoring.Session
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         double KL30 { get; }
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        bool IsVehicleConnectionOnline { get; }
     }
 }

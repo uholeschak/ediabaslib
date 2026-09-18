@@ -283,6 +283,7 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         public bool IsApipa => IPAddress.StartsWith("169.254");
+        public short LanDiscoverMode { get; set; } = -1;
 
         [XmlIgnore]
         public bool IsLocalMachine => GetAllLocalIPAddresses().Contains(IPAddress);
@@ -1843,6 +1844,7 @@ namespace PsdzClient.Core
             vCIDevice.VciChannels = VciChannels;
             vCIDevice.Netmask = Netmask;
             vCIDevice.NetworkType = NetworkType;
+            vCIDevice.LanDiscoverMode = LanDiscoverMode;
             vCIDevice.UUID = UUID;
             vCIDevice.Port = Port;
             vCIDevice.ControlPort = ControlPort;

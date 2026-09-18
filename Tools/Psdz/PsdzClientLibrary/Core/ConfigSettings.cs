@@ -20,6 +20,7 @@ namespace PsdzClient.Core
     {
         public const string BMW_RHEINGOLD_CONFIG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
         private const string BMW_RHEINGOLD_GLOBALCONFIG_64_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
+        private const string BMW_RHEINGOLD_GLOBALCONFIG_32_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold";
         private const string BMW_RHEINGOLD_PERSISTENCY_DATASTORE = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold\\Persistency";
         private const string BMW_RHEINGOLD_PERSISTENCYACROSSSESSION_DATASTORE = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold\\AcrossPersistency";
         private const string BMW_ISTA_GLOBALCONFIG_64_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA";
@@ -43,6 +44,7 @@ namespace PsdzClient.Core
         private static bool runIstaRsuRepairMode;
         public static string hypenedDatabaseVersionForOnlinePatches { get; set; }
         public static CultureInfo CurrentCultureInfo => currentCultureInfo;
+        public static IList<string> SupportedTestModuleLanguages { get; set; }
         public static bool IsVerificationMode => getConfigStringAsBoolean("BMW.Rheingold.VerificationMode", defaultValue: false);
         public static bool IsTestModuleDebugMode => getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.Module.DebugMode", defaultValue: false);
 
@@ -140,6 +142,15 @@ namespace PsdzClient.Core
             }
         }
 
+        public static bool CanOpapiUseVehicleNetworkConnections
+        {
+            get
+            {
+                bool defaultValue = true;
+                return getConfigStringAsBoolean("OPAPI.UseNetworkVehicleConnections", defaultValue);
+            }
+        }
+
         public static bool IsISTAModeHO
         {
             get
@@ -175,7 +186,6 @@ namespace PsdzClient.Core
         }
 
         public static string AppBaseDirectory { get; set; }
-        public static bool IsIRAPMode { get; set; }
         public static string ConwoyDBVersion { get; set; }
         public static bool IsOssModeActive => getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.OSSModeActive", defaultValue: false);
         public static bool IsProgrammingApiModeActive { get; set; }
@@ -251,7 +261,19 @@ namespace PsdzClient.Core
 
         public static string GetLogisticBaseVersion()
         {
-            return Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", string.Empty) as string;
+            object value = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", string.Empty);
+            if (string.IsNullOrEmpty(value as string))
+            {
+                Log.Info(Log.CurrentMethod(), "no value found in 64-bit node. ISTA will try to read from 32-bit node");
+                value = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", string.Empty);
+            }
+
+            if (value != null)
+            {
+                return value as string;
+            }
+
+            return string.Empty;
         }
 
         public static string GetSwiDataUX()
@@ -271,6 +293,19 @@ namespace PsdzClient.Core
                 if (istaIcsServiceClient.IsAvailable())
                 {
                     return istaIcsServiceClient.GetEnvironment().ToLower().Contains("qa");
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsProdEnvironment()
+        {
+            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
+            {
+                if (istaIcsServiceClient.IsAvailable())
+                {
+                    return istaIcsServiceClient.GetEnvironment()?.ToLower().Contains("prod") ?? false;
                 }
             }
 
@@ -790,6 +825,11 @@ namespace PsdzClient.Core
                     }
 
                     string text = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin) ?? GetRegistryValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin);
+                    if (text == null)
+                    {
+                        text = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold", key, setOrigin) ?? null;
+                    }
+
                     if (text != null)
                     {
                         return text;
@@ -960,7 +1000,13 @@ namespace PsdzClient.Core
         {
             try
             {
-                return getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? getConfigString("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? defaultValue;
+                string text = getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? getConfigString("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null);
+                if (text == null)
+                {
+                    text = getConfigString("Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", key, defaultValue);
+                }
+
+                return text;
             }
             catch (Exception exception)
             {

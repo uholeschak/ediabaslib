@@ -42,13 +42,13 @@ namespace PsdzClient.Programming
 
         public void SetPsdzEvent(IPsdzEvent psdzEvent)
         {
-            if (psdzEvent is IPsdzTransactionProgressEvent)
+            if (psdzEvent is IPsdzTransactionProgressEvent psdzEvent2)
             {
-                UpdateProgrammingProgress((IPsdzTransactionProgressEvent)psdzEvent);
+                UpdateProgrammingProgress(psdzEvent2);
             }
-            else if (psdzEvent is IPsdzTransactionEvent)
+            else if (psdzEvent is IPsdzTransactionEvent psdzEvent3)
             {
-                UpdateProgrammingAction((IPsdzTransactionEvent)psdzEvent);
+                UpdateProgrammingAction(psdzEvent3);
             }
         }
 
@@ -103,6 +103,75 @@ namespace PsdzClient.Programming
             return diagAddrToEcuMap[num];
         }
 
+        private void UpdateProgrammingAction(IPsdzTransactionEvent psdzEvent)
+        {
+            try
+            {
+                Log.Debug("VehicleProgrammingEventHandler.UpdateProgrammingAction()", $"EcuId: {psdzEvent?.EcuId} - Message: {psdzEvent?.Message} - TransactionInfo: {psdzEvent?.TransactionInfo} - TransactionType: {psdzEvent?.TransactionType}");
+                PsdzTransactionInfo transactionInfo = psdzEvent.TransactionInfo;
+                PsdzTaCategories transactionType = psdzEvent.TransactionType;
+                if (transactionType == PsdzTaCategories.SmacTransferStatus || transactionType == PsdzTaCategories.SmacTransferStart)
+                {
+                    ProgrammingActionState? actionState = Map(transactionInfo);
+                    ProgrammingActionType? programmingActionType = Map(transactionType);
+                    if (!programmingActionType.HasValue || !actionState.HasValue)
+                    {
+                        return;
+                    }
+
+                    foreach (KeyValuePair<int, ProgrammingActionState?> item in CalculateSmacsProgrammingActionStatus(psdzEvent, actionState))
+                    {
+                        GetCorrespondingSmac(item.Key)?.UpdateSingleProgrammingAction(programmingActionType.Value, item.Value.Value, executed: false);
+                    }
+
+                    if (IsSmacMasterEcuAutoAdded(psdzEvent))
+                    {
+                        UpdateEcuProgrammingAction(psdzEvent, transactionInfo, transactionType);
+                    }
+                }
+                else
+                {
+                    UpdateEcuProgrammingAction(psdzEvent, transactionInfo, transactionType);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("VehicleProgrammingEventHandler.UpdateProgrammingAction", exception);
+            }
+        }
+
+        private Dictionary<int, ProgrammingActionState?> CalculateSmacsProgrammingActionStatus(IPsdzTransactionEvent psdzEvent, ProgrammingActionState? actionState)
+        {
+            Dictionary<int, ProgrammingActionState?> dictionary = new Dictionary<int, ProgrammingActionState?>();
+            foreach (IPsdzTalLine talLinesForEventRelatedSmac in GetTalLinesForEventRelatedSmacs(psdzEvent))
+            {
+                foreach (IPsdzTa ta in talLinesForEventRelatedSmac.TaCategory.Tas)
+                {
+                    if (ta is PsdzSmacTransferStartTA psdzSmacTransferStartTA)
+                    {
+                        foreach (string key in psdzSmacTransferStartTA.SmartActuatorData.Keys)
+                        {
+                            int offset = TalLineHelper.CalculateSmacDiagAddress(talLinesForEventRelatedSmac.EcuIdentifier.DiagnosisAddress, key).Offset;
+                            dictionary.AddIfNotContains(offset, actionState);
+                        }
+                    }
+
+                    if (!(ta is PsdzSmacTransferStatusTA psdzSmacTransferStatusTA))
+                    {
+                        continue;
+                    }
+
+                    foreach (string smartActuatorID in psdzSmacTransferStatusTA.SmartActuatorIDs)
+                    {
+                        int offset2 = TalLineHelper.CalculateSmacDiagAddress(talLinesForEventRelatedSmac.EcuIdentifier.DiagnosisAddress, smartActuatorID).Offset;
+                        dictionary.AddIfNotContains(offset2, actionState);
+                    }
+                }
+            }
+
+            return dictionary;
+        }
+
         private EcuProgrammingInfo GetCorrespondingSmac(int diagAddr)
         {
             if (!diagAddrToEcuMap.ContainsKey(diagAddr))
@@ -113,89 +182,42 @@ namespace PsdzClient.Programming
             return diagAddrToEcuMap[diagAddr];
         }
 
-        private void UpdateProgrammingAction(IPsdzTransactionEvent psdzEvent)
+        private IEnumerable<IPsdzTalLine> GetTalLinesForEventRelatedSmacs(IPsdzTransactionEvent psdzEvent)
         {
-            try
+            return psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(psdzEvent.EcuId) && (talLine.TaCategories == PsdzTaCategories.SmacTransferStart || talLine.TaCategories == PsdzTaCategories.SmacTransferStatus));
+        }
+
+        private bool IsSmacMasterEcuAutoAdded(IPsdzTransactionEvent psdzEvent)
+        {
+            return !psdzContext.Tal.TalLines.Any((IPsdzTalLine talLine) => talLine.EcuIdentifier != null && talLine.EcuIdentifier.DiagAddrAsInt == psdzEvent.EcuId.DiagAddrAsInt && talLine.EcuIdentifier.BaseVariant == psdzEvent.EcuId.BaseVariant && talLine.TaCategories != PsdzTaCategories.SmacTransferStatus && talLine.TaCategories != PsdzTaCategories.SmacTransferStart);
+        }
+
+        private void UpdateEcuProgrammingAction(IPsdzTransactionEvent psdzEvent, PsdzTransactionInfo transactionInfo, PsdzTaCategories transactionType)
+        {
+            EcuProgrammingInfo correspondingEcu = GetCorrespondingEcu(psdzEvent);
+            if (correspondingEcu == null)
             {
-                Log.Debug("VehicleProgrammingEventHandler.UpdateProgrammingAction()", $"EcuId: {psdzEvent?.EcuId} - Message: {psdzEvent?.Message} - TransactionInfo: {psdzEvent?.TransactionInfo} - TransactionType: {psdzEvent?.TransactionType}");
-                PsdzTransactionInfo transactionInfo = psdzEvent.TransactionInfo;
-                PsdzTaCategories transactionType = psdzEvent.TransactionType;
-                if (transactionType == PsdzTaCategories.SmacTransferStatus || transactionType == PsdzTaCategories.SmacTransferStart)
-                {
-                    ProgrammingActionState? item = Map(transactionInfo);
-                    ProgrammingActionType? programmingActionType = Map(transactionType);
-                    if (!programmingActionType.HasValue || !item.HasValue)
-                    {
-                        return;
-                    }
-
-                    IEnumerable<IPsdzTalLine> source = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(psdzEvent.EcuId));
-                    Dictionary<int, ProgrammingActionState?> dictionary = new Dictionary<int, ProgrammingActionState?>();
-                    foreach (IPsdzTalLine item2 in source.Where((IPsdzTalLine x) => x.TaCategories == PsdzTaCategories.SmacTransferStart || x.TaCategories == PsdzTaCategories.SmacTransferStatus))
-                    {
-                        foreach (IPsdzTa ta in item2.TaCategory.Tas)
-                        {
-                            if (ta is PsdzSmacTransferStartTA psdzSmacTransferStartTA)
-                            {
-                                foreach (string key in psdzSmacTransferStartTA.SmartActuatorData.Keys)
-                                {
-                                    int offset = TalLineHelper.CalculateSmacDiagAddress(item2.EcuIdentifier.DiagnosisAddress, key).Offset;
-                                    dictionary.AddIfNotContains(offset, item);
-                                }
-                            }
-
-                            if (!(ta is PsdzSmacTransferStatusTA psdzSmacTransferStatusTA))
-                            {
-                                continue;
-                            }
-
-                            foreach (string smartActuatorID in psdzSmacTransferStatusTA.SmartActuatorIDs)
-                            {
-                                int offset2 = TalLineHelper.CalculateSmacDiagAddress(item2.EcuIdentifier.DiagnosisAddress, smartActuatorID).Offset;
-                                dictionary.AddIfNotContains(offset2, item);
-                            }
-                        }
-                    }
-
-                    {
-                        foreach (KeyValuePair<int, ProgrammingActionState?> item3 in dictionary)
-                        {
-                            GetCorrespondingSmac(item3.Key)?.UpdateSingleProgrammingAction(programmingActionType.Value, item.Value, executed: false);
-                        }
-
-                        return;
-                    }
-                }
-
-                EcuProgrammingInfo correspondingEcu = GetCorrespondingEcu(psdzEvent);
-                if (correspondingEcu == null)
-                {
-                    return;
-                }
-
-                Log.Debug("VehicleProgrammingEventHandler.UpdateProgrammingAction", "ECU: 0x{0:X2} - transaction info: {1} - action type: {2}", correspondingEcu.Ecu.ID_SG_ADR, transactionInfo, transactionType);
-                if (transactionType == PsdzTaCategories.FscDeploy || transactionType == PsdzTaCategories.SFADeploy)
-                {
-                    IEnumerable<IPsdzTalLine> talLines = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(psdzEvent.EcuId));
-                    correspondingEcu.UpdateProgrammingActions(talLines, isTalExecuted: false);
-                    return;
-                }
-
-                ProgrammingActionType? programmingActionType2 = Map(transactionType);
-                ProgrammingActionState? programmingActionState = Map(transactionInfo);
-                if (programmingActionType2.HasValue && programmingActionState.HasValue)
-                {
-                    if (IsBootloaderFlashAndSwDeployCase(transactionType, psdzEvent.EcuId))
-                    {
-                        programmingActionType2 = ProgrammingActionType.Programming;
-                    }
-
-                    correspondingEcu.UpdateSingleProgrammingAction(programmingActionType2.Value, programmingActionState.Value, executed: false);
-                }
+                return;
             }
-            catch (Exception exception)
+
+            Log.Debug("VehicleProgrammingEventHandler.UpdateProgrammingAction", "ECU: 0x{0:X2} - transaction info: {1} - action type: {2}", correspondingEcu.Ecu.ID_SG_ADR, transactionInfo, transactionType);
+            if (transactionType == PsdzTaCategories.FscDeploy || transactionType == PsdzTaCategories.SFADeploy)
             {
-                Log.ErrorException("VehicleProgrammingEventHandler.UpdateProgrammingAction", exception);
+                IEnumerable<IPsdzTalLine> talLines = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(psdzEvent.EcuId));
+                correspondingEcu.UpdateProgrammingActions(talLines, isTalExecuted: false);
+                return;
+            }
+
+            ProgrammingActionType? programmingActionType = Map(transactionType);
+            ProgrammingActionState? programmingActionState = Map(transactionInfo);
+            if (programmingActionType.HasValue && programmingActionState.HasValue)
+            {
+                if (IsBootloaderFlashAndSwDeployCase(transactionType, psdzEvent.EcuId))
+                {
+                    programmingActionType = ProgrammingActionType.Programming;
+                }
+
+                correspondingEcu.UpdateSingleProgrammingAction(programmingActionType.Value, programmingActionState.Value, executed: false);
             }
         }
 

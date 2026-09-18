@@ -86,7 +86,19 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
             }
         }
 
-        public bool IsNCar => diagnosticsBusinessData.IsEES25Vehicle(vehicle);
+        public bool IsNCar
+        {
+            get
+            {
+                if (diagnosticsBusinessData == null)
+                {
+                    Log.Error(Log.CurrentMethod(), "DiagnosticsBusinessData is null.");
+                    return false;
+                }
+
+                return diagnosticsBusinessData.IsEES25Vehicle(vehicle);
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public VehicleClassification(IVehicle vec)

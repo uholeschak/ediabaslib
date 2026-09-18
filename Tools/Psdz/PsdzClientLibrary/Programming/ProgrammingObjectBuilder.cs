@@ -361,6 +361,7 @@ namespace BMW.Rheingold.Programming.API
             if (eCU.EcuIdentifier != null)
             {
                 eCU.ID_SG_ADR = eCU.EcuIdentifier.DiagAddrAsInt;
+                eCU.ECU_ADR = FormatConverterBase.Dec2Hex(eCU.EcuIdentifier.DiagAddrAsInt);
             }
 
             eCU.IsSmartActuator = ecuInput.IsSmartActuator;

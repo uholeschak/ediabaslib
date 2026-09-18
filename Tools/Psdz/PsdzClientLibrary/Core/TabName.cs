@@ -19,8 +19,6 @@
         Operations_Finished_OperationList,
         Operations_Active,
         Operations_Active_OperationList,
-        Operations_IRAP,
-        Operations_IRAP_WorkshopClient,
         VehicleInformation,
         VehicleInformation_VehicleDetails,
         VehicleInformation_VehicleEquipment,
