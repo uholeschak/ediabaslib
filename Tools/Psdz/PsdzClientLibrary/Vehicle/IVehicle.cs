@@ -34,8 +34,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string BaustandsMonat { get; }
 
-        [PreserveSource(Hint = "IEnumerable<ICbsInfo>", Placeholder = true)]
-        PlaceholderType CBS { get; }
+        IEnumerable<ICbsInfo> CBS { get; }
 
         [Obsolete("Use SessionInfoAccessor.SessionInfo.Ssl2RequestFailed")]
         bool Ssl2RequestFailed { get; set; }

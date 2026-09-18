@@ -69,8 +69,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private ObservableCollection<ZFSResult> zFSField;
         private List<CEMResult> cemField;
         private ECU selectedECUField;
-        [PreserveSource(Hint = "ObservableCollection<typeCBSInfo>", Placeholder = true)]
-        private PlaceholderType cBSField;
+        private ObservableCollection<typeCBSInfo> cBSField;
         private string typField;
         private string basicTypeField;
         private string driveTypeField;
@@ -425,13 +424,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        [PreserveSource(Hint = "ObservableCollection<typeCBSInfo>", Placeholder = true)]
-        public PlaceholderType CBS;
+        public ObservableCollection<typeCBSInfo> CBS;
         public string Typ
         {
             get
             {
-                AddServiceCodeAndLogsForTypeKeys(typField, "Typ");
+                VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(typField, "Typ");
                 return typField;
             }
 
@@ -2175,7 +2173,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
-                AddServiceCodeAndLogsForTypeKeys(vinRangeType, "VINRangeType");
+                VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(vinRangeType, "VINRangeType");
                 return vinRangeType;
             }
 
@@ -2274,7 +2272,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     if (FA != null && !string.IsNullOrEmpty(FA.TYPE) && FA.TYPE.Length == 4)
                     {
-                        AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.FA.TYPE");
+                        VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.FA.TYPE");
                         return FA.TYPE;
                     }
 
@@ -2285,7 +2283,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
                     if (!string.IsNullOrEmpty(VINRangeType))
                     {
-                        AddServiceCodeAndLogsForTypeKeys(VINRangeType, "GMType.VINRangeType");
+                        VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(VINRangeType, "GMType.VINRangeType");
                         return VINRangeType;
                     }
 
@@ -2322,11 +2320,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 text += "9";
                                 break;
                             default:
-                                AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.VINType");
+                                VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.VINType");
                                 return VINType;
                         }
 
-                        AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.VINType");
+                        VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.VINType");
                         return text;
                     }
                 }
@@ -2350,7 +2348,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         return null;
                     }
 
-                    AddServiceCodeAndLogsForTypeKeys(VIN17.Substring(3, 4), "VINType");
+                    VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(VIN17.Substring(3, 4), "VINType");
                     return VIN17.Substring(3, 4);
                 }
                 catch (Exception exception)
@@ -2634,9 +2632,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        [PreserveSource(Hint = "IEnumerable<ICbsInfo>", Placeholder = true)]
         [XmlIgnore]
-        PlaceholderType IVehicle.CBS => CBS;
+        IEnumerable<ICbsInfo> IVehicle.CBS => CBS;
 
         [XmlIgnore]
         IEnumerable<IDtc> IVehicle.CombinedFaults => CombinedFaults;
@@ -2880,7 +2877,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             eMotorField = new EMotor();
             heatMotorsField = new List<HeatMotor>();
             genericMotorField = new GenericMotor();
-            //[-] cBSField = new ObservableCollection<typeCBSInfo>();
+            cBSField = new ObservableCollection<typeCBSInfo>();
             selectedECUField = new ECU();
             //[-] zFSField = new ObservableCollection<ZFSResult>();
             eCUField = new ObservableCollection<ECU>();
@@ -2921,366 +2918,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             SessionInfoForSerializationOnly = new SessionInfo();
         }
 
-        protected void AddServiceCodeAndLogsForTypeKeys(string currentValue, string propertyName)
-        {
-            if (Environment.StackTrace.Contains("System.Runtime.Serialization") || Environment.StackTrace.Contains("BMW.Rheingold.ISTAGUI") || Environment.StackTrace.Contains("PropertyChangedEventHandler"))
-            {
-                return;
-            }
-
-            IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
-            if (service != null)
-            {
-            //[-] string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
-            //[-] service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
-            //[-] if (ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive)
-            //[-] {
-            //[-] Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
-            //[-] }
-            }
-        }
-
-        public List<string> PermanentSAEFehlercodesInFaultList()
-        {
-            List<string> list = new List<string>();
-            if (FaultList == null || FaultList.Count == 0)
-            {
-                return new List<string>();
-            }
-
-            foreach (Fault fault in FaultList)
-            {
-                if (fault.DTC.FortAsHexString == "S 0751")
-                {
-                    list.Add("S 0751");
-                }
-
-                if (fault.DTC.FortAsHexString == "S 0756")
-                {
-                    list.Add("S 0756");
-                }
-            }
-
-            return list;
-        }
-
-        public IEnumerable<Fault> GetEnrichedFaultList(IFFMDynamicResolver ffmDynamicResolver)
-        {
-            if (!FaultList.Any())
-            {
-                return Enumerable.Empty<Fault>();
-            }
-
-            ComputeResolveLabelsForAllFaultAsync(this, ffmDynamicResolver).ConfigureAwait(continueOnCapturedContext: false).GetAwaiter().GetResult();
-            List<Fault> list = new List<Fault>();
-            foreach (Fault fault in FaultList)
-            {
-                list.Add(fault);
-            }
-
-            return list;
-        }
-
-        public async Task ComputeResolveLabelsForAllFaultAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, string language = null)
-        {
-            if (!string.IsNullOrEmpty(language))
-            {
-                ConfigSettings.CurrentUICulture = language;
-            }
-
-            //[+] PsdzDatabase database = ClientContext.GetDatabase(this);
-            PsdzDatabase database = ClientContext.GetDatabase(this);
-            //[+] if (database == null) return;
-            if (database == null) return;
-            //[-] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = DatabaseProviderFactory.Instance.GetRefFaultLabelsLabelIdByFaultList(FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
-            //[+] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = database.GetRefFaultLabelsLabelIdByFaultList(FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
-            IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = database.GetRefFaultLabelsLabelIdByFaultList(FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
-            Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel));
-            Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> xepFaultLabelsTask = Task.Run(() => GetXepFaultLabelsByDtcFOrtEcuVariantAsync(vehicle, ffmDynamicResolver, refFaultLabel));
-            await Task.WhenAll(xepFaultModelLabelsTask, xepFaultLabelsTask).ConfigureAwait(continueOnCapturedContext: false);
-            foreach (Fault fault in FaultList)
-            {
-                fault.ResolveLabels(vehicle, ffmDynamicResolver, xepFaultModelLabelsTask.Result, xepFaultLabelsTask.Result, language);
-            }
-        }
-
-        private async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel)
-        {
-            Collection<decimal> reffaultLabelsLabelIds = new Collection<decimal>();
-            refFaultLabel.ForEach(delegate (KeyValuePair<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> x)
-            {
-                reffaultLabelsLabelIds.AddRange(x.Value);
-            });
-            IEnumerable<decimal> enumerable = reffaultLabelsLabelIds.Distinct();
-            IDictionary<decimal, XEP_FAULTMODELABELS> dictionary2;
-            if (!enumerable.Any())
-            {
-                IDictionary<decimal, XEP_FAULTMODELABELS> dictionary = new Dictionary<decimal, XEP_FAULTMODELABELS>();
-                dictionary2 = dictionary;
-            }
-            else
-            {
-                //[-] dictionary2 = DatabaseProviderFactory.Instance.GetFaultModelLabelsByIds(enumerable);
-                //[+] dictionary2 = ClientContext.GetDatabase(this).GetFaultModelLabelsByIds(enumerable);
-                dictionary2 = ClientContext.GetDatabase(this).GetFaultModelLabelsByIds(enumerable);
-            }
-
-            IDictionary<decimal, XEP_FAULTMODELABELS> modelFaultLabelAll = dictionary2;
-            Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>> faultListFault = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>(refFaultLabel.Count);
-            DtcFOrtEcuVariantKey key;
-            foreach (FaultCodeIdDtcFOrtEcuVariantKey key2 in refFaultLabel.Keys)
-            {
-                key = key2.GetDtcFOrtEcuVariantKey();
-                if (!faultListFault.ContainsKey(key))
-                {
-                    faultListFault.Add(key, new Collection<XEP_FAULTMODELABELS>());
-                }
-
-                refFaultLabel[key2].ForEach(delegate (decimal x)
-                {
-                    if (modelFaultLabelAll.ContainsKey(x) && !faultListFault[key].Contains(modelFaultLabelAll[x]))
-                    {
-                        faultListFault[key].Add(modelFaultLabelAll[x]);
-                    }
-                });
-            }
-
-            return await Task.FromResult(faultListFault);
-        }
-
-        private async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> GetXepFaultLabelsByDtcFOrtEcuVariantAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel)
-        {
-            Collection<FaultCodeIdDtcFOrtEcuVariantKey> collection = new Collection<FaultCodeIdDtcFOrtEcuVariantKey>();
-            Collection<decimal> collection2 = new Collection<decimal>();
-            foreach (FaultCodeIdDtcFOrtEcuVariantKey key2 in refFaultLabel.Keys)
-            {
-                //[-] if (DatabaseProviderFactory.Instance.EvaluateXepRulesById(key2.FaultId, vehicle, ffmDynamicResolver))
-                //[+] if (_clientContext.Database.EvaluateXepRulesById(key2.FaultId.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver))
-                if (_clientContext.Database.EvaluateXepRulesById(key2.FaultId.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver))
-                {
-                    collection.Add(key2);
-                    collection2.AddRange(refFaultLabel[key2]);
-                }
-            }
-
-            Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>> xepFaultLabelsList = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>(collection.Count);
-            if (!collection.Any() || !collection2.Any())
-            {
-                return await Task.FromResult(xepFaultLabelsList);
-            }
-
-            //[-] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = DatabaseProviderFactory.Instance.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
-            //[+] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = _clientContext.Database.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
-            IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = _clientContext.Database.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
-            DtcFOrtEcuVariantKey key;
-            foreach (FaultCodeIdDtcFOrtEcuVariantKey item in collection)
-            {
-                key = item.GetDtcFOrtEcuVariantKey();
-                if (!xepFaultLabelsList.ContainsKey(key))
-                {
-                    xepFaultLabelsList.Add(key, new Collection<XEP_FAULTLABELS>());
-                }
-
-                refFaultLabel[item].ForEach(delegate (decimal x)
-                {
-                    if (xepFaultLabels.ContainsKey(x) && !xepFaultLabelsList[key].Contains(xepFaultLabels[x]))
-                    {
-                        xepFaultLabelsList[key].Add(xepFaultLabels[x]);
-                    }
-                });
-            }
-
-            return await Task.FromResult(xepFaultLabelsList);
-        }
-
-        public static Vehicle Deserialize(string filename)
-        {
-            try
-            {
-                if (!File.Exists(filename))
-                {
-                    Log.Warning(Log.CurrentMethod() + "()", "file doesn't exist: {0}", filename);
-                    return null;
-                }
-
-                using (FileStream input = File.OpenRead(filename))
-                {
-                    using (XmlTextReader xmlReader = new XmlTextReader(input))
-                    {
-                        Vehicle obj = (Vehicle)new XmlSerializer(typeof(Vehicle)).Deserialize(xmlReader);
-                        obj.CalculateFaultProperties();
-                        return obj;
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException(Log.CurrentMethod() + "()", exception);
-            }
-
-            return null;
-        }
-
         public object Clone()
         {
             return MemberwiseClone();
-        }
-
-        public Vehicle DeepClone()
-        {
-            try
-            {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Vehicle));
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    xmlSerializer.Serialize(memoryStream, this);
-                    memoryStream.Seek(0L, SeekOrigin.Begin);
-                    Vehicle obj = (Vehicle)xmlSerializer.Deserialize(memoryStream);
-                    obj.CalculateFaultProperties();
-                    return obj;
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException(Log.CurrentMethod(), exception);
-                Log.Info(Log.CurrentMethod(), "Trying reflection based fallback.");
-                try
-                {
-                    return DeepCloneUtility.DeepClone(this);
-                }
-                catch (Exception exception2)
-                {
-                    Log.WarningException(Log.CurrentMethod(), exception2);
-                    throw;
-                }
-            }
-        }
-
-        public bool IsVINLessEReihe()
-        {
-            string ereihe = Ereihe;
-            if (ereihe != null)
-            {
-                int length = ereihe.Length;
-                if (length != 3)
-                {
-                    if (length == 4)
-                    {
-                        char c = ereihe[3];
-                        if ((uint)c <= 67u)
-                        {
-                            if (c != '9')
-                            {
-                                if (c != 'C' || !(ereihe == "259C"))
-                                {
-                                    goto IL_01b5;
-                                }
-                            }
-                            else
-                            {
-                                switch (ereihe)
-                                {
-                                    case "K569":
-                                    case "K589":
-                                    case "K599":
-                                    case "E169":
-                                    case "E189":
-                                        break;
-                                    default:
-                                        goto IL_01b5;
-                                }
-                            }
-
-                            goto IL_01b3;
-                        }
-
-                        if (c != 'E')
-                        {
-                            if (c != 'R')
-                            {
-                                if (c == 'S' && ereihe == "259S")
-                                {
-                                    goto IL_01b3;
-                                }
-                            }
-                            else if (ereihe == "259R")
-                            {
-                                goto IL_01b3;
-                            }
-                        }
-                        else if (ereihe == "247E")
-                        {
-                            goto IL_01b3;
-                        }
-                    }
-                }
-                else
-                {
-                    switch (ereihe[2])
-                    {
-                        case '1':
-                            break;
-                        case '2':
-                            goto IL_00c3;
-                        case '8':
-                            goto IL_00d8;
-                        case '7':
-                            goto IL_00fd;
-                        case '9':
-                            goto IL_0112;
-                        case '0':
-                            goto IL_0127;
-                        default:
-                            goto IL_01b5;
-                    }
-
-                    if (ereihe == "K41" || ereihe == "R21")
-                    {
-                        goto IL_01b3;
-                    }
-                }
-            }
-
-            goto IL_01b5;
-            IL_00fd:
-                if (ereihe == "247")
-                {
-                    goto IL_01b3;
-                }
-
-            goto IL_01b5;
-            IL_0127:
-                if (ereihe == "K30")
-                {
-                    goto IL_01b3;
-                }
-
-            goto IL_01b5;
-            IL_0112:
-                if (ereihe == "259")
-                {
-                    goto IL_01b3;
-                }
-
-            goto IL_01b5;
-            IL_01b3:
-                return true;
-            IL_00c3:
-                if (ereihe == "R22")
-                {
-                    goto IL_01b3;
-                }
-
-            goto IL_01b5;
-            IL_00d8:
-                if (ereihe == "R28" || ereihe == "248")
-                {
-                    goto IL_01b3;
-                }
-
-            goto IL_01b5;
-            IL_01b5:
-                return false;
         }
 
         public bool IsEreiheValid()
@@ -3291,133 +2931,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
 
             return true;
-        }
-
-        public ECU GetECUbyDTC(decimal id)
-        {
-            if (ECU != null)
-            {
-                foreach (ECU item in ECU)
-                {
-                    if (item.FEHLER != null)
-                    {
-                        foreach (DTC item2 in item.FEHLER)
-                        {
-                            if (id.Equals(item2.Id))
-                            {
-                                return item;
-                            }
-                        }
-                    }
-
-                    if (item.INFO == null)
-                    {
-                        continue;
-                    }
-
-                    foreach (DTC item3 in item.INFO)
-                    {
-                        if (id.Equals(item3.Id))
-                        {
-                            return item;
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public DTC GetDTC(decimal id)
-        {
-            if (ECU != null)
-            {
-                foreach (ECU item in ECU)
-                {
-                    if (item.FEHLER != null)
-                    {
-                        foreach (DTC item2 in item.FEHLER)
-                        {
-                            if (id.Equals(item2.Id))
-                            {
-                                return item2;
-                            }
-                        }
-                    }
-
-                    if (item.INFO == null)
-                    {
-                        continue;
-                    }
-
-                    foreach (DTC item3 in item.INFO)
-                    {
-                        if (id.Equals(item3.Id))
-                        {
-                            return item3;
-                        }
-                    }
-                }
-            }
-
-            if (CombinedFaults != null)
-            {
-                return CombinedFaults.FirstOrDefault(delegate (DTC item)
-                {
-                    decimal? id2 = item.Id;
-                    decimal num = id;
-                    return (id2.GetValueOrDefault() == num) & id2.HasValue;
-                });
-            }
-
-            return null;
-        }
-
-        public void CalculateFaultProperties(IFFMDynamicResolver ffmResolver = null)
-        {
-            ObservableCollection<Fault> observableCollection = CalculateFaultList(this, ECU, CombinedFaults, ZFS, ffmResolver);
-            //[-] SessionInfoAccessor.SessionInfo.FaultCodeSum = CalculateFaultCodeSum(ECU, observableCollection, onlyNonSignalFaultDtcs: false);
-            //[-] SessionInfoAccessor.SessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(ECU, observableCollection, onlyNonSignalFaultDtcs: true);
-            //[-] Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", FaultList?.Count, SessionInfoAccessor.SessionInfo.FaultCodeSum);
-            FaultList = new List<Fault>(observableCollection);
-        }
-
-        public typeECU_Transaction getECUTransaction(ECU transECU, string transId)
-        {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
-
-            if (transECU == null)
-            {
-                return null;
-            }
-
-            if (string.IsNullOrEmpty(transId))
-            {
-                return null;
-            }
-
-            try
-            {
-                if (transECU.TAL != null)
-                {
-                    foreach (typeECU_Transaction item in transECU.TAL)
-                    {
-                        if (string.Compare(item.transactionId, transId, StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            return item;
-                        }
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.getECUTransaction()", exception);
-            }
-
-            return null;
         }
 
         public bool hasBusType(BusType bus)
@@ -3501,25 +3014,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return false;
         }
 
-        public bool HasUnidentifiedECU()
-        {
-            bool flag = false;
-            if (ECU != null)
-            {
-                foreach (ECU item in ECU)
-                {
-                    if (string.IsNullOrEmpty(item.VARIANTE) || !item.COMMUNICATION_SUCCESSFULLY)
-                    {
-                        flag = (byte)((flag ? 1u : 0u) | 1u) != 0;
-                    }
-                }
-
-                return flag;
-            }
-
-            return true;
-        }
-
         public bool? hasFFM(string checkFFM)
         {
             if (!CoreFramework.validLicense)
@@ -3567,75 +3061,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
 
             FFM.Add(new FFMResult(ffm));
-        }
-
-        public ECU getECU(long? sgAdr)
-        {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
-
-            try
-            {
-                foreach (ECU item in ECU)
-                {
-                    if (item.ID_SG_ADR == sgAdr)
-                    {
-                        return item;
-                    }
-
-                    if (!string.IsNullOrEmpty(item.ECU_ADR))
-                    {
-                        string text = string.Empty;
-                        if (item.ECU_ADR.Length >= 4 && item.ECU_ADR.Substring(0, 2).ToLower() == "0x")
-                        {
-                            text = item.ECU_ADR.ToUpper().Substring(2);
-                        }
-
-                        if (item.ECU_ADR.Length == 2)
-                        {
-                            text = item.ECU_ADR.ToUpper();
-                        }
-
-                        if (text == string.Format(CultureInfo.InvariantCulture, "{0:X2}", sgAdr))
-                        {
-                            return item;
-                        }
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.getECU()", exception);
-            }
-
-            return null;
-        }
-
-        public ECU getECU(long? sgAdr, long? subAddress)
-        {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
-
-            try
-            {
-                foreach (ECU item in ECU)
-                {
-                    if (item.ID_SG_ADR == sgAdr && item.ID_LIN_SLAVE_ADR == subAddress)
-                    {
-                        return item;
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehcile.getECU()", exception);
-            }
-
-            return null;
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
@@ -3713,104 +3138,29 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return null;
         }
 
-        public ECU getECUbyECU_GRUPPE(string ECU_GRUPPE)
+        IEcu IVehicle.getECU(long? sgAdr)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
-
-            if (string.IsNullOrEmpty(ECU_GRUPPE))
-            {
-                Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "parameter was null or empty");
-                return null;
-            }
-
-            if (ECU == null)
-            {
-                Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "ECU was null");
-                return null;
-            }
-
-            try
-            {
-                foreach (ECU item in ECU)
-                {
-                    if (string.IsNullOrEmpty(item.ECU_GRUPPE))
-                    {
-                        continue;
-                    }
-
-                    string[] array = ECU_GRUPPE.Split('|');
-                    string[] array2 = item.ECU_GRUPPE.Split('|');
-                    foreach (string a in array2)
-                    {
-                        string[] array3 = array;
-                        foreach (string b in array3)
-                        {
-                            if (string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return item;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.getECUbyECU_GRUPPE()", exception);
-            }
-
-            return null;
+            return this.getECU(sgAdr);
         }
 
-        public uint getDiagProtECUCount(typeDiagProtocoll ecuDiag)
+        IEcu IVehicle.getECU(long? sgAdr, long? subAddress)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
-
-            uint num = 0u;
-            try
-            {
-                foreach (ECU item in ECU)
-                {
-                    if (item.DiagProtocoll == ecuDiag)
-                    {
-                        num++;
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehcile.getECU()", exception);
-            }
-
-            return num;
+            return this.getECU(sgAdr, subAddress);
         }
 
-        [PreserveSource(Cleaned = true)]
-        public PlaceholderType getCBSMeasurementValue(typeCBSMeaurementType mType)
+        IEcu IVehicle.getECUbyECU_GRUPPE(string ECU_GRUPPE)
         {
-            return PlaceholderType.Value;
+            return this.getECUbyECU_GRUPPE(ECU_GRUPPE);
         }
 
-        [PreserveSource(Cleaned = true)]
-        public bool addOrUpdateCBSMeasurementValue()
+        public bool IsProgrammingSupported(bool considerLogisticBase)
         {
+            if ((ConfigSettings.IsProgrammingEnabled() || (considerLogisticBase && ConfigSettings.IsLogisticBaseEnabled())) && this.GetProgrammingEnabledForBn(ConfigSettings.getConfigString("BMW.Rheingold.Programming.BN", "BN2020,BN2020_MOTORBIKE")))
+            {
+                return !ConfigSettings.IsISTAModeRITA;
+            }
+
             return false;
-        }
-
-        [PreserveSource(Cleaned = true)]
-        public bool addOrUpdateCBSMeasurementValues()
-        {
-            return false;
-        }
-
-        public void AddEcu(ECU ecu)
-        {
-            ECU.Add(ecu);
         }
 
         public void AddEcu(IIdentEcu ecu)
@@ -3860,561 +3210,34 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             ECU.AddIfNotContains(eCU);
         }
 
-        public bool AddOrUpdateECU(ECU nECU)
-        {
-            try
-            {
-                if (nECU == null)
-                {
-                    Log.Warning("Vehicle.AddOrUpdateECU()", "ecu was null");
-                    return false;
-                }
-
-                if (ECU == null)
-                {
-                    ECU = new ObservableCollection<ECU>();
-                }
-
-                foreach (ECU item in ECU)
-                {
-                    if (item.ID_SG_ADR == nECU.ID_SG_ADR)
-                    {
-                        int num = ECU.IndexOf(item);
-                        if (num >= 0 && num < ECU.Count)
-                        {
-                            ECU[num] = nECU;
-                            Log.Info("Vehicle.AddOrUpdateECU()", "updating ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
-                            return true;
-                        }
-                    }
-                }
-
-                ECU.Add(nECU);
-                Log.Info("Vehicle.AddOrUpdateECU()", "adding ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
-                return true;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.AddOrUpdateECU()", exception);
-            }
-
-            return false;
-        }
-
-        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
-        public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
-        {
-            //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-            //[-] IXepCharacteristicRoots characteristicRootsById = instance.GetCharacteristicRootsById(id);
-            //[+] PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
-            PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
-            if (characteristicRootsById != null)
-            {
-                //[-] return new VehicleCharacteristicVehicleHelper(instance, this).GetISTACharacteristics(characteristicRootsById.Nodeclass, out value, id, this, datavalueId, internalResult);
-                //[+] return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, this, datavalueId, internalResult);
-                return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, this, datavalueId, internalResult);
-            }
-
-            Log.Warning("Vehicle.getISTACharactersitics()", "No entry found in CharacteristicRoots for id: {0}!", id);
-            value = "???";
-            return false;
-        }
-
-        [PreserveSource(Cleaned = true)]
-        public void UpdateStatus(string name, StateType type, double? progress)
-        {
-        }
-
         public bool IsVehicleWithOnlyVin7()
         {
             return VIN10Prefix.Equals("FILLER17II", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public bool evalILevelExpression(string iLevelExpressions)
+        public IReactorFa GetFaInstance()
         {
-            bool flag = false;
-            bool flag2 = true;
-            try
-            {
-                if (string.IsNullOrEmpty(iLevelExpressions))
-                {
-                    return true;
-                }
-
-                if (string.IsNullOrEmpty(ILevel))
-                {
-                    Log.Info("Vehicle.evaILevelExpression()", "ILevel unknown; result will be true; expression was: {0}", iLevelExpressions);
-                    return true;
-                }
-
-                if (iLevelExpressions.Contains("&"))
-                {
-                    flag2 = false;
-                    flag = true;
-                }
-
-                if (CoreFramework.DebugLevel > 0)
-                {
-                    Log.Info("Vehicle.evalILevelExpression()", "expression:{0} vehicle iLEVEL:{1}", iLevelExpressions, ILevel);
-                }
-
-                string[] separator = new string[2]
-                {
-                    "&",
-                    "|"
-                };
-                string[] array = iLevelExpressions.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string text in array)
-                {
-                    string[] separator2 = new string[1]
-                    {
-                        ","
-                    };
-                    string[] array2 = text.Split(separator2, StringSplitOptions.RemoveEmptyEntries);
-                    if (array2.Length != 2)
-                    {
-                        continue;
-                    }
-
-                    Log.Info("Vehicle.evalILevelExpression()", "expression {0} {1}", ILevel, text);
-                    if (string.Compare(ILevel, 0, array2[1], 0, 4, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        switch (array2[0])
-                        {
-                            case ">":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))
-                                {
-                                    Log.Info("Vehicle.evalILevelExpression()", "> was true");
-                                }
-
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
-                                break;
-                            case "<":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))
-                                {
-                                    Log.Info("Vehicle.evalILevelExpression()", "< was true");
-                                }
-
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))));
-                                break;
-                            case "=":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))
-                                {
-                                    Log.Info("Vehicle.evalILevelExpression()", "= was true");
-                                }
-
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))));
-                                break;
-                            case ">=":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))
-                                {
-                                    Log.Info("Vehicle.evalILevelExpression()", ">= was true");
-                                }
-
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))));
-                                break;
-                            case "<=":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))
-                                {
-                                    Log.Info("Vehicle.evalILevelExpression()", "<= was true");
-                                }
-
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))));
-                                break;
-                            case "!=":
-                            case "<>":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))
-                                {
-                                    Log.Info("Vehicle.evalILevelExpression()", "!= was true");
-                                }
-
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))));
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        Log.Warning("Vehicle.evalILevelExpression()", "iLevel main type does not match");
-                    }
-                }
-
-                return flag;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.evalILevelExpression()", exception);
-                return true;
-            }
+            return new FA();
         }
 
-        public bool isECUAlreadyScanned(ECU checkSG)
+        bool IIdentVehicle.IsPreE65Vehicle()
         {
-            try
-            {
-                foreach (ECU item in ECU)
-                {
-                    if (item.ID_SG_ADR == checkSG.ID_SG_ADR)
-                    {
-                        return true;
-                    }
-
-                    if (!string.IsNullOrEmpty(item.ECU_ADR) && !string.IsNullOrEmpty(checkSG.ECU_ADR) && string.Compare(item.ECU_ADR, checkSG.ECU_ADR, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.isECUAlreadyScanned()", exception);
-            }
-
-            return false;
+            return Classification.IsPreE65Vehicle();
         }
 
-        public T getResultAs<T>(string resultName)
+        IIdentEcu IIdentVehicle.getECU(long? sgAdr)
         {
-            try
-            {
-                Type typeFromHandle = typeof(T);
-                if (!string.IsNullOrEmpty(resultName))
-                {
-                    object obj = null;
-                    switch (resultName)
-                    {
-                        case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/BaureihenVerbund":
-                            obj = BasisEReihe;
-                            break;
-                        case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/IStufe":
-                            obj = ILevel;
-                            break;
-                        case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/Fahrzeugauftrag":
-                            obj = FA.STANDARD_FA;
-                            break;
-                        case "/Result/DList":
-                        case "/Result/GruppenListe":
-                        {
-                            string text4 = string.Empty;
-                            foreach (ECU item in ECU)
-                            {
-                                text4 = text4 + item.ECU_GRUPPE + ",";
-                            }
-
-                            text4 = text4.TrimEnd(',');
-                            obj = text4;
-                            break;
-                        }
-
-                        case "/Result/SonderAusstattungsListe":
-                        {
-                            string text3 = string.Empty;
-                            foreach (string item2 in FA.SA)
-                            {
-                                text3 = text3 + item2 + ",";
-                            }
-
-                            text3 = text3.TrimEnd(',');
-                            obj = text3;
-                            break;
-                        }
-
-                        case "/Result/EWortListe":
-                        {
-                            string text2 = string.Empty;
-                            foreach (string item3 in FA.E_WORT)
-                            {
-                                text2 = text2 + item3 + ",";
-                            }
-
-                            text2 = text2.TrimEnd(',');
-                            obj = text2;
-                            break;
-                        }
-
-                        case "/Result/HOWortListe":
-                        {
-                            string text = string.Empty;
-                            foreach (string item4 in FA.HO_WORT)
-                            {
-                                text = text + item4 + ",";
-                            }
-
-                            text = text.TrimEnd(',');
-                            obj = text;
-                            break;
-                        }
-
-                        case "/Result/Baustand":
-                            obj = FA.C_DATE;
-                            break;
-                        default:
-                            Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
-                            break;
-                    }
-
-                    if (obj != null)
-                    {
-                        if (obj.GetType() != typeFromHandle)
-                        {
-                            return (T)Convert.ChangeType(obj, typeFromHandle);
-                        }
-
-                        return (T)obj;
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.getISTAResultAs(string resultName)", exception);
-            }
-
-            return default(T);
+            return this.getECU(sgAdr);
         }
 
-        public void AddDiagCode(string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList)
+        IIdentEcu IIdentVehicle.getECUbyECU_GRUPPE(string ECU_GRUPPE)
         {
-            if (!string.IsNullOrEmpty(diagCodeString))
-            {
-                if (DiagCodes == null)
-                {
-                    DiagCodes = new ObservableCollection<typeDiagCode>();
-                }
-
-                typeDiagCode typeDiagCode2 = new typeDiagCode();
-                typeDiagCode2.DiagnoseCode = diagCodeString;
-                typeDiagCode2.DiagnoseCodeSuffix = diagCodeSuffixString;
-                typeDiagCode2.Origin = ((originatingAblauf == null) ? string.Empty : originatingAblauf);
-                if (reparaturPaketList != null)
-                {
-                    typeDiagCode2.ReparaturPaket = new ObservableCollection<string>(reparaturPaketList);
-                }
-                else
-                {
-                    typeDiagCode2.ReparaturPaket = new ObservableCollection<string>();
-                }
-
-                DiagCodes.Add(typeDiagCode2);
-                if (!string.IsNullOrEmpty(diagCodeString) && !diagCodesProgramming.Contains(diagCodeString))
-                {
-                    diagCodesProgramming.Add(diagCodeString);
-                }
-            }
+            return this.getECUbyECU_GRUPPE(ECU_GRUPPE);
         }
 
-        IEcu IVehicle.getECU(long? sgAdr)
+        private List<IIdentEcu> GetEcusAsIIdentEcu()
         {
-            return getECU(sgAdr);
-        }
-
-        IEcu IVehicle.getECU(long? sgAdr, long? subAddress)
-        {
-            return getECU(sgAdr, subAddress);
-        }
-
-        IEcu IVehicle.getECUbyECU_GRUPPE(string ECU_GRUPPE)
-        {
-            return getECUbyECU_GRUPPE(ECU_GRUPPE);
-        }
-
-        public bool? IsABSVehicle()
-        {
-            if (ECU != null && ECU.Count > 0)
-            {
-                string[] array = new string[16]
-                {
-                    "ASCMK20",
-                    "absmk4",
-                    "absmk4g",
-                    "abs5",
-                    "abs_uc",
-                    "asc4gus",
-                    "asc5",
-                    "asc57",
-                    "asc57r75",
-                    "asc5d",
-                    "ascmk20",
-                    "ascmk4.prg",
-                    "ascmk4g",
-                    "ascmk4g1",
-                    "asc_l22",
-                    "asc_t"
-                };
-                ECU eCU = getECU(86L, null);
-                if (eCU != null && eCU.IDENT_SUCCESSFULLY)
-                {
-                    string[] array2 = array;
-                    for (int i = 0; i < array2.Length; i++)
-                    {
-                        if (array2[i].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-
-                eCU = getECU(41L, null);
-                if (eCU != null && eCU.IDENT_SUCCESSFULLY)
-                {
-                    string[] array2 = array;
-                    for (int i = 0; i < array2.Length; i++)
-                    {
-                        if (array2[i].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-
-                eCU = getECU(54L, null);
-                if (eCU != null && eCU.IDENT_SUCCESSFULLY)
-                {
-                    string[] array2 = array;
-                    for (int i = 0; i < array2.Length; i++)
-                    {
-                        if (array2[i].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-            }
-
-            return null;
-        }
-
-        private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
-        {
-            bool flag = true;
-            bool flag2 = true;
-            if (ConfigSettings.OperationalMode != OperationalMode.ISTA && ConfigSettings.OperationalMode != OperationalMode.OPAPI)
-            {
-                flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", defaultValue: true);
-                flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", defaultValue: false);
-            }
-
-            ObservableCollection<Fault> observableCollection = new ObservableCollection<Fault>();
-            try
-            {
-                if (ecus != null)
-                {
-                    foreach (ECU item in ecus.Where((ECU item) => item.FEHLER != null))
-                    {
-                        foreach (DTC item2 in item.FEHLER)
-                        {
-                            Fault fault = new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive);
-                            if (item2.Relevance == true)
-                            {
-                                if (ffmFesolver != null && ConfigSettings.getConfigStringAsBoolean("EnableRelevanceFaultCode", defaultValue: true))
-                                {
-                                    fault.ResolveRelevanceFaultCode(vehicle, ffmFesolver);
-                                    if (fault.DTC.Relevance == true)
-                                    {
-                                        observableCollection.AddIfNotContains(fault);
-                                    }
-                                }
-                                else
-                                {
-                                    observableCollection.AddIfNotContains(fault);
-                                }
-                            }
-                            else if (item2.Relevance == false && !flag)
-                            {
-                                observableCollection.AddIfNotContains(new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive));
-                            }
-                            else if (!item2.Relevance.HasValue && !flag2)
-                            {
-                                observableCollection.AddIfNotContains(new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive));
-                            }
-                        }
-                    }
-                }
-
-                if (combinedFaults == null)
-                {
-                    return observableCollection;
-                }
-
-                foreach (DTC combinedFault in combinedFaults)
-                {
-                    Fault fault2 = new Fault(null, combinedFault, null, vehicle.Classification.IsNewFaultMemoryActive);
-                    fault2.ResolveLabels(vehicle, null);
-                    observableCollection.AddIfNotContains(fault2);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException("Vehicle.CalculateFaultList()", exception);
-            }
-
-            return observableCollection;
-        }
-
-        public static int? CalculateFaultCodeSum(IEnumerable<IEcu> ecus, IEnumerable<Fault> faults, bool onlyNonSignalFaultDtcs)
-        {
-            int num = 0;
-            num = (onlyNonSignalFaultDtcs ? faults.Count((Fault f) => f.FaultGroupNumber != 6) : faults.Count());
-            if (num == 0 && (ecus == null || !ecus.Any() || ecus.Any((IEcu item) => !item.FS_SUCCESSFULLY && !item.BUS.ToString().Contains("VIRTUAL"))))
-            {
-                return null;
-            }
-
-            return num;
-        }
-
-        public void AddCombinedDTC(DTC dtc)
-        {
-            if (dtc == null)
-            {
-                Log.Warning("Vehicle.AddCombinedDTC()", "dtc was null");
-            }
-            else if (dtc.IsVirtual && dtc.IsCombined && CombinedFaults != null)
-            {
-                CombinedFaults.AddIfNotContains(dtc);
-            }
-        }
-
-        public bool GetProgrammingEnabledForBn(string bn)
-        {
-            return GetBnTypes(bn).Contains(BNType);
-        }
-
-        public bool IsProgrammingSupported(bool considerLogisticBase)
-        {
-            if ((ConfigSettings.IsProgrammingEnabled() || (considerLogisticBase && ConfigSettings.IsLogisticBaseEnabled())) && GetProgrammingEnabledForBn(ConfigSettings.getConfigString("BMW.Rheingold.Programming.BN", "BN2020,BN2020_MOTORBIKE")))
-            {
-                return !ConfigSettings.IsISTAModeRITA;
-            }
-
-            return false;
-        }
-
-        private static ISet<BNType> GetBnTypes(string bnTypes)
-        {
-            ISet<BNType> set = new HashSet<BNType>();
-            if (string.IsNullOrEmpty(bnTypes))
-            {
-                return set;
-            }
-
-            string[] array = bnTypes.Split(',');
-            foreach (string text in array)
-            {
-                if (Enum.TryParse<BNType>(text, ignoreCase: false, out var result))
-                {
-                    set.Add(result);
-                    continue;
-                }
-
-                Log.Error("Vehicle.GetBnTypes()", "Ignore BN \"{0}\", because of missconfiguration.", text);
-            }
-
-            return set;
+            return ECU.Cast<IIdentEcu>().ToList();
         }
 
         public int GetCustomHashCode()
@@ -4464,84 +3287,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return num;
         }
 
-        public int GetFaultListHashCode(FaultFilter filter, List<Fault> selectedFaults = null)
-        {
-            int num = 37;
-            int num2 = 327;
-            IList<int> faultGroupNumbers = filter.FaultGroupNumbers;
-            IEnumerable<(string, string)> enumerable = null;
-            IEnumerable<string> enumerable2 = null;
-            if (selectedFaults != null)
-            {
-                enumerable =
-                    from f in selectedFaults
-                    where !f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))orderby f.ECU.VARIANTE, f.DTC.FortAsHexString
-                    select (VARIANTE: f.ECU.VARIANTE, FortAsHexString: f.DTC.FortAsHexString);
-                enumerable2 =
-                    from f in selectedFaults
-                    where f.DTC.IsCombined && (f.DTC.FaultGroup == 0 || faultGroupNumbers.Contains(f.DTC.FaultGroup))orderby f.DTC.FortAsHexString
-                    select f.DTC.FortAsHexString;
-            }
-            else
-            {
-                enumerable = ECU.OrderBy((ECU e) => e.VARIANTE).SelectMany((ECU ecu) =>
-                    from dtc in ecu.FEHLER
-                    where dtc.Relevance == true && (dtc.FaultGroup == 0 || faultGroupNumbers.Contains(dtc.FaultGroup))orderby dtc.FortAsHexString
-                    select (VARIANTE: ecu.VARIANTE, FortAsHexString: dtc.FortAsHexString));
-                enumerable2 =
-                    from f in CombinedFaults
-                    where f.Relevance == true && (f.FaultGroup == 0 || faultGroupNumbers.Contains(f.FaultGroup))orderby f.FortAsHexString
-                    select f.FortAsHexString;
-            }
-
-            foreach (var item in enumerable)
-            {
-                num += item.Item1?.GetHashCode() ?? 0;
-                num += item.Item2.GetHashCode();
-            }
-
-            num *= num2;
-            foreach (string item2 in enumerable2)
-            {
-                num += item2.GetHashCode();
-            }
-
-            return num * num2;
-        }
-
-        public IReactorFa GetFaInstance()
-        {
-            return new FA();
-        }
-
-        bool IIdentVehicle.IsPreE65Vehicle()
-        {
-            return Classification.IsPreE65Vehicle();
-        }
-
-        IIdentEcu IIdentVehicle.getECU(long? sgAdr)
-        {
-            return getECU(sgAdr);
-        }
-
-        IIdentEcu IIdentVehicle.getECUbyECU_GRUPPE(string ECU_GRUPPE)
-        {
-            return getECUbyECU_GRUPPE(ECU_GRUPPE);
-        }
-
-        private List<IIdentEcu> GetEcusAsIIdentEcu()
-        {
-            return ECU.Cast<IIdentEcu>().ToList();
-        }
-
         IEcuTreeEcu IEcuTreeVehicle.getECU(long? sgAdr)
         {
-            return getECU(sgAdr);
+            return this.getECU(sgAdr);
         }
 
         IEcuTreeEcu IEcuTreeVehicle.getECU(long? sgAdr, long? subAddress)
         {
-            return getECU(sgAdr, subAddress);
+            return this.getECU(sgAdr, subAddress);
         }
 
         bool IEcuTreeVehicle.AddEcu(IEcuTreeEcu ecu)
@@ -4579,6 +3332,48 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public PlaceholderType getCBSMeasurementValue(typeCBSMeaurementType mType)
+        {
+            return PlaceholderType.Value;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool addOrUpdateCBSMeasurementValue()
+        {
+            return false;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool addOrUpdateCBSMeasurementValues()
+        {
+            return false;
+        }
+
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
+        public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
+        {
+            //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
+            //[-] IXepCharacteristicRoots characteristicRootsById = instance.GetCharacteristicRootsById(id);
+            //[+] PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
+            if (characteristicRootsById != null)
+            {
+                //[-] return new VehicleCharacteristicVehicleHelper(instance, this).GetISTACharacteristics(characteristicRootsById.Nodeclass, out value, id, this, datavalueId, internalResult);
+                //[+] return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, this, datavalueId, internalResult);
+                return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, this, datavalueId, internalResult);
+            }
+
+            Log.Warning("Vehicle.getISTACharactersitics()", "No entry found in CharacteristicRoots for id: {0}!", id);
+            value = "???";
+            return false;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public void UpdateStatus(string name, StateType type, double? progress)
+        {
         }
 
         [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]

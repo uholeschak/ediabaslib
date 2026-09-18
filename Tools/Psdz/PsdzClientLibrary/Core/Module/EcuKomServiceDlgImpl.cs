@@ -6,6 +6,7 @@ using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.RheingoldSessionController;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.VehicleCommunication;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;

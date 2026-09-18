@@ -1,7 +1,10 @@
-﻿using BMW.Rheingold.CoreFramework;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.ISPI.TRIC.ISTA.Contracts.Models.VinValidator;
+using BMW.ISPI.TRIC.ISTA.VinValidator;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
+using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Utility;
 using System;
@@ -13,9 +16,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using BMW.ISPI.TRIC.ISTA.Contracts.Models.VinValidator;
-using BMW.ISPI.TRIC.ISTA.VinValidator;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public static class VehicleFunctions
@@ -80,8 +82,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 ConfigSettings.CurrentUICulture = language;
             }
-            IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = DatabaseProviderFactory.Instance.GetRefFaultLabelsLabelIdByFaultList(vehicle.FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
-            Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel));
+            //[-] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = DatabaseProviderFactory.Instance.GetRefFaultLabelsLabelIdByFaultList(vehicle.FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
+            //[+] IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = ClientContext.GetDatabase(vehicle)?.GetRefFaultLabelsLabelIdByFaultList(vehicle.FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
+            IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = ClientContext.GetDatabase(vehicle)?.GetRefFaultLabelsLabelIdByFaultList(vehicle.FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
+            //[-] Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel));
+            //[+] Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel, vehicle));
+            Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel, vehicle));
             Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> xepFaultLabelsTask = Task.Run(() => GetXepFaultLabelsByDtcFOrtEcuVariantAsync(vehicle, ffmDynamicResolver, refFaultLabel));
             await Task.WhenAll(xepFaultModelLabelsTask, xepFaultLabelsTask).ConfigureAwait(continueOnCapturedContext: false);
             foreach (Fault fault in vehicle.FaultList)
@@ -90,7 +96,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        private static async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel)
+        [PreserveSource(Hint = "Vehicle added", SignatureModified = true)]
+        private static async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel, Vehicle vehicle)
         {
             Collection<decimal> reffaultLabelsLabelIds = new Collection<decimal>();
             refFaultLabel.ForEach(delegate (KeyValuePair<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> x)
@@ -106,7 +113,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
             else
             {
-                dictionary2 = DatabaseProviderFactory.Instance.GetFaultModelLabelsByIds(enumerable);
+                //[-] dictionary2 = DatabaseProviderFactory.Instance.GetFaultModelLabelsByIds(enumerable);
+                //[+] dictionary2 = ClientContext.GetDatabase(vehicle)?.GetFaultModelLabelsByIds(enumerable);
+                dictionary2 = ClientContext.GetDatabase(vehicle)?.GetFaultModelLabelsByIds(enumerable);
             }
             IDictionary<decimal, XEP_FAULTMODELABELS> modelFaultLabelAll = dictionary2;
             Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>> faultListFault = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>(refFaultLabel.Count);
@@ -135,9 +144,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             Collection<decimal> collection2 = new Collection<decimal>();
             foreach (FaultCodeIdDtcFOrtEcuVariantKey key2 in refFaultLabel.Keys)
             {
-                if (DatabaseProviderFactory.Instance.EvaluateXepRulesById(key2.FaultId, vehicle, ffmDynamicResolver))
+                //[-] if (DatabaseProviderFactory.Instance.EvaluateXepRulesById(key2.FaultId, vehicle, ffmDynamicResolver))
+                //[+] if (ClientContext.GetDatabase(vehicle)?.EvaluateXepRulesById(key2.FaultId.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver) == true)
+                if (ClientContext.GetDatabase(vehicle)?.EvaluateXepRulesById(key2.FaultId.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver) == true)
                 {
-                    collection.Add(key2);
+                        collection.Add(key2);
                     collection2.AddRange(refFaultLabel[key2]);
                 }
             }
@@ -146,7 +157,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return await Task.FromResult(xepFaultLabelsList);
             }
-            IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = DatabaseProviderFactory.Instance.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
+            //[-] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = DatabaseProviderFactory.Instance.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
+            //[+] IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = ClientContext.GetDatabase(vehicle)?.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
+            IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = ClientContext.GetDatabase(vehicle)?.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
             DtcFOrtEcuVariantKey key;
             foreach (FaultCodeIdDtcFOrtEcuVariantKey item in collection)
             {
@@ -416,9 +429,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public static void CalculateFaultProperties(this Vehicle vehicle, IFFMDynamicResolver ffmResolver = null)
         {
             ObservableCollection<Fault> observableCollection = CalculateFaultList(vehicle, vehicle.ECU, vehicle.CombinedFaults, vehicle.ZFS, ffmResolver);
-            SessionInfoAccessor.SessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
-            SessionInfoAccessor.SessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
-            Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", vehicle.FaultList?.Count, SessionInfoAccessor.SessionInfo.FaultCodeSum);
+            //[-] SessionInfoAccessor.SessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
+            //[-] SessionInfoAccessor.SessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
+            //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
+            SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
+            //[+] if (sessionInfo != null) sessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
+            if (sessionInfo != null) sessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
+            //[+] if (sessionInfo != null) sessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
+            if (sessionInfo != null) sessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
+            Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", vehicle.FaultList?.Count, sessionInfo.FaultCodeSum);
             vehicle.FaultList = new List<Fault>(observableCollection);
         }
 
@@ -819,11 +838,17 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public static bool getISTACharacteristics(this Vehicle vehicle, decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
         {
-            IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-            IXepCharacteristicRoots characteristicRootsById = instance.GetCharacteristicRootsById(id);
+            //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
+            //[+] PsdzDatabase instance = ClientContext.GetDatabase(vehicle);
+            PsdzDatabase instance = ClientContext.GetDatabase(vehicle);
+            //[-] IXepCharacteristicRoots characteristicRootsById = instance.GetCharacteristicRootsById(id);
+            //[+] PsdzDatabase.CharacteristicRoots characteristicRootsById = instance.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.CharacteristicRoots characteristicRootsById = instance.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
             if (characteristicRootsById != null)
             {
-                return new VehicleCharacteristicVehicleHelper(instance, vehicle).GetISTACharacteristics(characteristicRootsById.Nodeclass, out value, id, vehicle, datavalueId, internalResult);
+                //[-] return new VehicleCharacteristicVehicleHelper(instance, vehicle).GetISTACharacteristics(characteristicRootsById.Nodeclass, out value, id, vehicle, datavalueId, internalResult);
+                //[+] return new VehicleCharacteristicVehicleHelper(vehicle).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, vehicle, datavalueId, internalResult);
+                return new VehicleCharacteristicVehicleHelper(vehicle).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, vehicle, datavalueId, internalResult);
             }
             Log.Warning("Vehicle.getISTACharactersitics()", "No entry found in CharacteristicRoots for id: {0}!", id);
             value = "???";
@@ -834,16 +859,28 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             try
             {
-                string status_FunctionName = SessionInfoAccessor.SessionInfo.Status_FunctionName;
+                //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
+                SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
+                //[+] if (sessionInfo == null) return;
+                if (sessionInfo == null) return;
+                //[-] string status_FunctionName = SessionInfoAccessor.SessionInfo.Status_FunctionName;
+                //[+] string status_FunctionName = sessionInfo.Status_FunctionName;
+                string status_FunctionName = sessionInfo.Status_FunctionName;
                 StateType status_FunctionState = vehicle.Status_FunctionState;
                 Log.Info("Vehicle.UpdateStatus()", "Change state from '{0}/{1}' to '{2}/{3}'", status_FunctionName, status_FunctionState, name, type);
-                SessionInfoAccessor.SessionInfo.Status_FunctionName = name;
+                //[-] SessionInfoAccessor.SessionInfo.Status_FunctionName = name;
+                //[+] sessionInfo.Status_FunctionName = name;
+                sessionInfo.Status_FunctionName = name;
                 vehicle.Status_FunctionState = type;
                 if (progress.HasValue)
                 {
-                    SessionInfoAccessor.SessionInfo.Status_FunctionProgress = progress.Value;
+                    //[-] SessionInfoAccessor.SessionInfo.Status_FunctionProgress = progress.Value;
+                    //[+] sessionInfo.Status_FunctionProgress = progress.Value;
+                    sessionInfo.Status_FunctionProgress = progress.Value;
                 }
-                SessionInfoAccessor.SessionInfo.IsNoVehicleCommunicationRunning = vehicle.Status_FunctionState != StateType.running;
+                //[-] SessionInfoAccessor.SessionInfo.IsNoVehicleCommunicationRunning = vehicle.Status_FunctionState != StateType.running;
+                //[+] sessionInfo.IsNoVehicleCommunicationRunning = vehicle.Status_FunctionState != StateType.running;
+                sessionInfo.IsNoVehicleCommunicationRunning = vehicle.Status_FunctionState != StateType.running;
             }
             catch (Exception exception)
             {
