@@ -245,7 +245,8 @@ namespace AssemblyPatcher
 
                     if (relPath.StartsWith("runtimes") ||
                         relPath.StartsWith("x86") ||
-                        relPath.StartsWith("x64"))
+                        relPath.StartsWith("x64") ||
+                        relPath.StartsWith("arm"))
                     {
                         continue;
                     }
@@ -256,9 +257,11 @@ namespace AssemblyPatcher
                         continue;
                     }
 
-                    if (baseName.EndsWith("interop", StringComparison.OrdinalIgnoreCase) ||
+                    if (baseName.EndsWith("BuzzSharp", StringComparison.OrdinalIgnoreCase) ||
+                        baseName.EndsWith("interop", StringComparison.OrdinalIgnoreCase) ||
                         baseName.EndsWith("IDESKernel", StringComparison.OrdinalIgnoreCase) ||
                         baseName.EndsWith("procdump", StringComparison.OrdinalIgnoreCase) ||
+                        baseName.EndsWith("SkiaSharp", StringComparison.OrdinalIgnoreCase) ||
                         baseName.EndsWith("WebView2Loader", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
