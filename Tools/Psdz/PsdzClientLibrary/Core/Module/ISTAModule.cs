@@ -1252,52 +1252,43 @@ namespace BMW.Rheingold.Module.ISTA
         [AuthorAPIHidden]
         public override void callModuleRef(string refPath, ParameterContainer inParameters, ref ParameterContainer outParameters, ref ParameterContainer inAndOutParameters)
         {
-            //[-] IXepInfoObject xepInfoObject = null;
-            //[+] PsdzDatabase.SwiInfoObj xepInfoObject = null;
-            PsdzDatabase.SwiInfoObj xepInfoObject = null;
+            IXepInfoObject xepInfoObject = null;
             InteractionMessageModel interactionMessageModel = new InteractionMessageModel();
             Log.Info("ISTAModule.callModuleRef()", "CallStatement with reference path: {0}", refPath);
             try
             {
                 //[-] xepInfoObject = DBProvider.GetInfoObjectByControlId(Convert.ToInt64(refPath, CultureInfo.InvariantCulture));
-                //[+] xepInfoObject = DBProvider?.GetInfoObjectByControlId(refPath);
-                xepInfoObject = DBProvider?.GetInfoObjectByControlId(refPath);
+                //[+] xepInfoObject = XepConverter.Convert(DBProvider?.GetInfoObjectByControlId(refPath));
+                xepInfoObject = XepConverter.Convert(DBProvider?.GetInfoObjectByControlId(refPath));
             }
             catch (Exception exception)
             {
                 Log.WarningException("ISTAModule.callModuleRef()", exception);
             }
 
+            string text = "91249";
             if (xepInfoObject != null)
             {
-                //[-] if (!string.IsNullOrEmpty(xepInfoObject.Identifikator))
-                //[+] if (!string.IsNullOrEmpty(xepInfoObject.Identifier))
-                if (!string.IsNullOrEmpty(xepInfoObject.Identifier))
+                if (!string.IsNullOrEmpty(xepInfoObject.Identifikator))
                 {
-                    //[-] decimal? generell = xepInfoObject.Generell;
-                    //[+] string generell = xepInfoObject.General;
-                    string generell = xepInfoObject.General;
+                    decimal? generell = xepInfoObject.Generell;
                     decimal num = 1;
-                    //[-] if ((generell.GetValueOrDefault() == num) & generell.HasValue)
-                    //[+] if (!string.IsNullOrEmpty(generell) && generell.ConvertToInt() == num)
-                    if (!string.IsNullOrEmpty(generell) && generell.ConvertToInt() == num)
+                    if ((generell.GetValueOrDefault() == num) & generell.HasValue)
                     {
-                    //[-] feedbackViewHeaderHelper?.SetDocumentSubTitle(xepInfoObject.DocNumber, xepInfoObject.VersionNumber.Value.ToString());
+                        feedbackViewHeaderHelper?.SetDocumentSubTitle(xepInfoObject.DocNumber, xepInfoObject.VersionNumber.Value.ToString());
                     }
 
-                    //[-] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identifikator);
-                    //[+] string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identificator);
-                    string text = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identificator);
-                    Log.Info("ISTAModule.callModuleRef()", "submodule to call: {0}", text);
+                    string text2 = "BMW.Rheingold.Module.ISTA." + IstaModuleBase.ModuleNameTransformator(xepInfoObject.Identifikator);
+                    Log.Info("ISTAModule.callModuleRef()", "submodule to call: {0}", text2);
                     try
                     {
-                        string text2 = text.Replace("BMW.Rheingold.Module.ISTA.", string.Empty);
-                        //[-] Assembly assembly = PatchLoaderUtility.CheckPatchServiceProgram(text2, logic.VersionInfo.DataBaseDiagDocVersion);
+                        string text3 = text2.Replace("BMW.Rheingold.Module.ISTA.", string.Empty);
+                        //[-] Assembly assembly = PatchLoaderUtility.CheckPatchServiceProgram(text3, logic.VersionInfo.DataBaseDiagDocVersion, logic.Fasta2Service, logic?.SessionInfo?.OperationId ?? Guid.Empty);
                         //[+] Assembly assembly = null;
                         Assembly assembly = null;
                         if (assembly == null)
                         {
-                            assembly = GetModuleAssembly(text2);
+                            assembly = GetModuleAssembly(text3);
                         }
 
                         IModuleStep moduleStep = null;
@@ -1311,9 +1302,7 @@ namespace BMW.Rheingold.Module.ISTA
                             flag = (bool)_globalModuleInParameter.Parameter["PreventProtocol"];
                         }
 
-                        //[-] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identifikator) || !flag)
-                        //[+] if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identificator) || !flag)
-                        if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identificator) || !flag)
+                        if (!IsTestModulePreventedFromProtocolling(xepInfoObject.Identifikator) || !flag)
                         {
                             moduleStep = FastaCreateAndAddModuleStepTo(inParameters);
                         }
@@ -1325,13 +1314,11 @@ namespace BMW.Rheingold.Module.ISTA
                         inParameters.Parameter.Add("ISTAModule.Me", xepInfoObject);
                         inParameters.Parameter.Add("InParameterTestModuleCache", testModuleCache);
                         inParameters.Parameter.Add("PreventProtocol", flag);
-                        object obj = assembly.CreateInstance(text, ignoreCase: true, BindingFlags.ExactBinding, null, new object[1] { inParameters }, new CultureInfo(ConfigSettings.CurrentUICulture), null);
+                        object obj = assembly.CreateInstance(text2, ignoreCase: true, BindingFlags.ExactBinding, null, new object[1] { inParameters }, new CultureInfo(ConfigSettings.CurrentUICulture), null);
                         if (obj != null)
                         {
                             string name = obj.GetType().Name;
-                            //[-] ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identifikator);
-                            //[+] ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identificator);
-                            ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identificator);
+                            ISubModule subModule = FastaCreateAndAddSubmodule(moduleStep, inParameters, GetLocalizedInfoObjectTitle(xepInfoObject, name), xepInfoObject.Identifikator);
                             IFastaGrouping fastaGrouping = null;
                             if (_globalTabModuleISTA != null)
                             {
@@ -1371,11 +1358,11 @@ namespace BMW.Rheingold.Module.ISTA
                         }
                         else
                         {
-                            Log.Warning("ISTAModule.callModuleRef()", "unable to create instance of: {0}", text);
+                            Log.Warning("ISTAModule.callModuleRef()", "unable to create instance of: {0}", text2);
                             if (_globalModuleInParameter != null)
                             {
                                 interactionMessageModel.MessageText = string.Format(CultureInfo.InvariantCulture, "System error in testmodule: {0}", GetType().Name);
-                                interactionMessageModel.DetailText = string.Format(CultureInfo.InvariantCulture, "Unable to start submodule {0} / {1}", refPath, text);
+                                interactionMessageModel.DetailText = string.Format(CultureInfo.InvariantCulture, "Unable to start submodule {0} / {1}", refPath, text2);
                                 interactionMessageModel.Title = "Error";
                                 logic.Services.InteractionService.Register(interactionMessageModel);
                             }
@@ -1395,7 +1382,7 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
 
-                interactionMessageModel.MessageText = new FormatedData("#FailedToResolveSubmoduleMessage", refPath).Localize();
+                interactionMessageModel.MessageText = new FormatedData("#FailedToResolveSubmoduleMessage", refPath, text).Localize();
                 interactionMessageModel.DetailText = new FormatedData("#FailedToResolveSubmoduleDetail", base.LastCallingMethod).Localize();
                 interactionMessageModel.Title = FormatedData.Localize("#Error");
                 logic.Services.InteractionService.Register(interactionMessageModel);
@@ -1403,7 +1390,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
             else
             {
-                interactionMessageModel.MessageText = new FormatedData("#FailedToResolveSubmoduleMessage", refPath).Localize();
+                interactionMessageModel.MessageText = new FormatedData("#FailedToResolveSubmoduleMessage", refPath, text).Localize();
                 interactionMessageModel.DetailText = new FormatedData("#FailedToResolveSubmoduleDetail", base.LastCallingMethod).Localize();
                 interactionMessageModel.Title = FormatedData.Localize("#Error");
                 logic.Services.InteractionService.Register(interactionMessageModel);
@@ -1447,45 +1434,10 @@ namespace BMW.Rheingold.Module.ISTA
             return false;
         }
 
+        [PreserveSource(Hint= "Using GetModuleAssembly", Cleaned = true)]
         private Assembly GetModuleAssembly(string cleanIstaModuleName)
         {
-            //[+] return TestModuleRunner.GetModuleAssembly(logic.ClientContext, cleanIstaModuleName);
             return TestModuleRunner.GetModuleAssembly(logic.ClientContext, cleanIstaModuleName);
-            Assembly assembly = null;
-            bool flag = false;
-            string configString = ConfigSettings.getConfigString("BMW.Rheingold.Diagnostics.Module.ISTA.ISTATabModuleCore.TestmoduleType", "SingleAssemblyContainer");
-            if (!(configString == "OnTheFlyCompiler"))
-            {
-                if (!(configString == "SingleAssemblyContainer"))
-                {
-                }
-
-                string text = Path.Combine(GetAssemblyDir(), cleanIstaModuleName + ".dll");
-                assembly = Assembly.LoadFrom(text);
-                if (assembly == null)
-                {
-                    Log.Error("ISTAModule.GetModuleAssembly()", "Failed to load Single Assembly Container {0}. Does the given file exist?", text);
-                }
-            }
-            else
-            {
-                if (ShouldUseTestmoduleCache())
-                {
-                    assembly = TryGetAssemblyFromAppDomain(cleanIstaModuleName);
-                    flag = assembly == null;
-                }
-
-                if (assembly == null)
-                {
-                    assembly = CompileOnTheFly(cleanIstaModuleName);
-                    if (flag && assembly != null)
-                    {
-                        StoreInCache(assembly, cleanIstaModuleName);
-                    }
-                }
-            }
-
-            return assembly;
         }
 
         private string GetAssemblyDir()
@@ -1759,13 +1711,10 @@ namespace BMW.Rheingold.Module.ISTA
             }
         }
 
-        [PreserveSource(Hint = "IXepInfoObject replaced", SignatureModified = true)]
-        private List<LocalizedText> GetLocalizedInfoObjectTitle(PsdzDatabase.SwiInfoObj xepInfoObject, string fastaTitle)
+        private List<LocalizedText> GetLocalizedInfoObjectTitle(IXepInfoObject xepInfoObject, string fastaTitle)
         {
             List<LocalizedText> list = new List<LocalizedText>();
-            //[-] list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetLocalizedInfoObjectTitle(x) : fastaTitle, x)));
-            //[+] list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.EcuTranslation.GetTitleTranslated(x) : fastaTitle, x)));
-            list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.EcuTranslation.GetTitleTranslated(x) : fastaTitle, x)));
+            list.AddRange(logic.Lang.Select((string x) => new LocalizedText((xepInfoObject != null) ? xepInfoObject.GetLocalizedInfoObjectTitle(x) : fastaTitle, x)));
             return list;
         }
 
