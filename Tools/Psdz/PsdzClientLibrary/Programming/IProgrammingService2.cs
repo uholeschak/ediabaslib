@@ -3,6 +3,8 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework;
+using PsdzClient.Core.Container;
 
 namespace PsdzClient.Programming
 {
@@ -35,6 +37,10 @@ namespace PsdzClient.Programming
         bool ExecuteIPBEcuValidation();
         [PreserveSource(Cleaned = true)]
         bool ImportSecureTokenForSec4CnSp21();
+        [PreserveSource(Hint = "database changed")]
+        bool ImportSecureTokenForSec4CnSp18(ILogic logic, PsdzDatabase database, string seriesGroup, bool avoidTlsConnection);
+        bool RevokeSec4CnAutorizationForSp21(IProgrammingSession session);
+        bool RevokeSec4CnAutorizationForSp18(IEcuKom ecuKom);
         [PreserveSource(Cleaned = true)]
         ISvt GetCurrentSvtFromPsdzSvt();
         [PreserveSource(Cleaned = true)]

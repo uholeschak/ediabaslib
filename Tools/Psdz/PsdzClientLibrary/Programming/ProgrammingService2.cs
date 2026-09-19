@@ -10,8 +10,10 @@ using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
+using PsdzClient.Contracts;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169, CS0414
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "ProgrammingService renamed", InheritanceModified = true)]
@@ -22,6 +24,14 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private readonly PlaceholderType programmingWorker;
         private readonly IOperationServices services;
+        private readonly string ZgwAddress = "0x10";
+        private readonly string ZgwEcuGroup = "G_ZGW";
+        private readonly string FsfValueForSec4CnAuthorization = "31";
+        private readonly string SteuernRoutineJob = "STEUERN_ROUTINE";
+        private readonly string ObdFirewallStoppRoutineParam = "ARG;OBD_FIREWALL_WRITE_TOKEN;STPR;00DA18";
+        private readonly long FeatureIdForSec4CnSP21 = Convert.ToInt64("0x00DA21", 16);
+        private readonly long FeatureIdForSec4CnSP18 = Convert.ToInt64("0x00DA18", 16);
+        private readonly int EnableType = 1;
         [PreserveSource(Hint = "Changed to psdzServiceGateway.Psdz", SuppressWarning = true)]
         public IPsdz Psdz => psdzServiceGateway.Psdz;
 
@@ -204,6 +214,38 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Cleaned = true)]
+        public bool ImportSecureTokenForSec4CnSp18(ILogic logic, PsdzDatabase database, string seriesGroup, bool avoidTlsConnection)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool RevokeSec4CnAutorizationForSp21(IProgrammingSession session)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RevokeSec4CnAutorizationForSp18(IEcuKom ecuKom)
+        {
+            string method = "ProgrammingService.RevokeSec4CnAutorizationForSp18";
+            if (ecuKom == null)
+            {
+                Log.Warning(method, "The parameter ecuKom is null");
+                return false;
+            }
+
+            IEcuJob ecuJob = ecuKom?.ApiJobWithRetries(ZgwEcuGroup, SteuernRoutineJob, ObdFirewallStoppRoutineParam, string.Empty, 2);
+            if (ecuJob != null && ecuJob.IsOkay())
+            {
+                return true;
+            }
+
+            string text = ecuJob?.JobErrorText ?? "null";
+            Log.Warning(method, "The job '" + SteuernRoutineJob + "' '" + ObdFirewallStoppRoutineParam + "' was not successful on the '" + ZgwEcuGroup + "', 'jobErrorText': '" + text + "'");
+            return false;
+        }
+
         [PreserveSource(Hint = "Added istaFolder", SignatureModified = true)]
         private void PreparePsdzBackupDataPath(string istaFolder)
         {
@@ -302,6 +344,13 @@ namespace PsdzClient.Programming
         {
             Log.Info(Log.CurrentMethod(), "called.");
             string businessVehicleAction = "FZA_AL_SEC4CN_IMPORTSECURETOKEN_SP21";
+            return ExecuteBusinessServiceProgrames(businessVehicleAction, session);
+        }
+
+        private bool ExecuteSecureTokenImportForSec4CnSp18ViaBusinessServiceProgrammes(ProgrammingSession session)
+        {
+            Log.Info(Log.CurrentMethod(), "called.");
+            string businessVehicleAction = "FZA_AL_SEC4CN_IMPORTSECURETOKEN_SP18";
             return ExecuteBusinessServiceProgrames(businessVehicleAction, session);
         }
 
