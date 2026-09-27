@@ -3,6 +3,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Programming;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
@@ -221,6 +222,11 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public void UpdateSFATalFilterForSelectedEcus(IDictionary<int, ISfaPerEcuOptions> ecuOptions)
+        {
+            //programmingSession.UpdateSFATalFilterForSelectedEcus(ecuOptions);
+        }
+
+        public void UpdateSFATalFilterForSelectedEcus(IList<ISfaPerEcuOptionsPair> ecuOptions)
         {
             //programmingSession.UpdateSFATalFilterForSelectedEcus(ecuOptions);
         }
