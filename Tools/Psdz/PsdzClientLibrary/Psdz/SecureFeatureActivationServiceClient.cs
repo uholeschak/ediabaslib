@@ -115,5 +115,11 @@ namespace BMW.Rheingold.Psdz.Client
         {
             return CallFunction((ISecureFeatureActivationService service) => service.PerformEcuSwitchResetWithFlashMode(connection, svt, ecusToBeReset, performWithFlashMode));
         }
+
+        [PreserveSource(Hint = "Dummy")]
+        public IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureTokenToOBDFirewall(IPsdzConnection connection, IPsdzSecureTokenEto secureToken)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.WriteSecureTokenToOBDFirewall(connection, secureToken));
+        }
     }
 }

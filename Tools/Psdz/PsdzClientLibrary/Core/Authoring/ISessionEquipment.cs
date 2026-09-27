@@ -2,6 +2,7 @@
 using PsdzClient.Core;
 using System;
 using System.ComponentModel;
+using PsdzClientLibrary.Core.Authoring;
 
 namespace BMW.Authoring.Session
 {
@@ -27,8 +28,9 @@ namespace BMW.Authoring.Session
 
         [EditorBrowsable(EditorBrowsableState.Always)]
         bool DisconnectVCI();
-
         [EditorBrowsable(EditorBrowsableState.Always)]
         bool TryToReconnectVCI();
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        IcomNetworkConfiguration GetIcomNetworkConfiguration();
     }
 }

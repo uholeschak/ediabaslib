@@ -7,6 +7,7 @@ using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.Programming;
 using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
@@ -79,6 +80,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
         IVehicleUpdate SpecialPlanRequired(string swiActionName);
         void UpdateSFATalFilterForAllEcus(ISfaPerEcuOptions ecuOptions);
         void UpdateTalFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions);
+        void UpdateSFATalFilterForSelectedEcus(IList<ISfaPerEcuOptionsPair> ecuOptions);
+        [Obsolete("This API-Function is deprecated.")]
         void UpdateSFATalFilterForSelectedEcus(IDictionary<int, ISfaPerEcuOptions> ecuOptions);
         void UpdateTalFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions);
         [Obsolete("This API-Function is deprecated.")]
@@ -119,5 +122,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
         IBoolResultObject<long> GetDurationOfWenToken();
         bool? IsSoftwareUpToDate(string ecu);
         IEnumerable<ISgbmIdChange> GetDifferentSgbmIds(string ecu);
+        ISfaPerEcuOptions CreateSfaPerEcuOptions(TalFilterOptions categoryAction, TalFilterOptions sfaWriteAction, TalFilterOptions sfaDeleteAction);
+        ISfaPerEcuOptionsPair CreateSfaPerEcuOptionsPair(int ecuAddress, ISfaPerEcuOptions ecuOptions);
     }
 }

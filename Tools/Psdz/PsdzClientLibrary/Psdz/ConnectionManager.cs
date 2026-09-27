@@ -252,7 +252,13 @@ namespace PsdzClient.Psdz
                 X509Certificate2 subCaCertificate = null;
                 if (ConfigSettings.IsOssModeActive && ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out var service2) && ServiceLocator.Current.TryGetService<IstaLoginServiceClient>(out var service3))
                 {
-                    WebCallResponse<Sec4DiagResponseData> webCallResponse = Sec4DiagProcessorFactory.Create(service2).SendDataToBackend(service.BuildRequestModelForPSdZInAos(text), BackendServiceType.AosSec4Diag, service3.GetUserTokenByOperationId()?.UserToken);
+                    string text2 = service3.GetUserTokenByOperationId()?.UserToken;
+                    if (text2 == null)
+                    {
+                        fastaService.AddServiceCode("LOG09_AccessTokenNotFound_nu_LF ", "Access token could not be retrieved.", LayoutGroup.D);
+                    }
+
+                    WebCallResponse<Sec4DiagResponseData> webCallResponse = Sec4DiagProcessorFactory.Create(service2).SendDataToBackend(service.BuildRequestModelForPSdZInAos(text), BackendServiceType.AosSec4Diag, text2);
                     service.Sec4DiagCertificatesForPSdZInAos = service.CreateS29CertificateInstallCertificatesAndWriteToFileForAos(webCallResponse.Response.CertificateChain[0], webCallResponse.Response.CertificateChain[1], webCallResponse.Response.Certificate, writeFile: false);
                     x509Certificate = service.Sec4DiagCertificatesForPSdZInAos.S29Cert;
                     caCertificate = service.Sec4DiagCertificatesForPSdZInAos.CaCert;
@@ -324,6 +330,48 @@ namespace PsdzClient.Psdz
                 Log.Info("PsdzProg.Pause()", "Give some time for the disconnection to finish.", configint / 1000);
                 SleepUtility.ThreadSleep(configint, "ConnectionManager.Pause");
             }
+        }
+
+        private IPsdzConnection ConnectionForSIM(string projectName, string vehicleInfo, bool isTlsAllowed, out string psdzFct)
+        {
+            string url = "tcp://127.0.0.1:6801";
+            psdzFct = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverEthernet('{0}', '{1}', '{2}')", projectName, vehicleInfo, url);
+            return psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverEthernet(projectName, vehicleInfo, url, EReihe, BauIstufe, isTlsAllowed));
+        }
+
+        private IPsdzConnection ConnectionForICOM(string projectName, string vehicleInfo, int diagPort, int additionalTransmissionTimeout, bool isTlsAllowed, out string psdzFct)
+        {
+            string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", VCI?.IPAddress, diagPort);
+            psdzFct = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverIcom('{0}', '{1}', '{2}', {3}, '{4}', '{5}', '{6}', '{7}')", projectName, vehicleInfo, url, additionalTransmissionTimeout, EReihe, BauIstufe, IcomConnectionType, shouldSetConnectionToDcan);
+            return psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverIcom(projectName, vehicleInfo, url, additionalTransmissionTimeout, EReihe, BauIstufe, IcomConnectionType, shouldSetConnectionToDcan, isTlsAllowed));
+        }
+
+        private IPsdzConnection ConnectionForEDIABAS(string projectName, string vehicleInfo, int diagPort, bool isTlsAllowed, out string psdzFct)
+        {
+            string ipFromEdiabasIni = EdiabasConnection.GetIpFromEdiabasIni();
+            string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipFromEdiabasIni, diagPort);
+            psdzFct = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverEthernet('{0}', '{1}', '{2}', '{3}', '{4}')", projectName, vehicleInfo, url, EReihe, BauIstufe);
+            return psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverEthernet(projectName, vehicleInfo, url, EReihe, BauIstufe, isTlsAllowed));
+        }
+
+        private IPsdzConnection ConnectionForENET(string projectName, string vehicleInfo, int diagPort, bool isTlsAllowed, out string psdzFct)
+        {
+            string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", VCI.IPAddress, diagPort);
+            psdzFct = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverEthernet('{0}', '{1}', '{2}', '{3}', '{4}')", projectName, vehicleInfo, url, EReihe, BauIstufe);
+            return psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverEthernet(projectName, vehicleInfo, url, EReihe, BauIstufe, isTlsAllowed));
+        }
+
+        private IPsdzConnection ConnectionForPTT(string projectName, string vehicleInfo, bool isTlsAllowed, out string psdzFct)
+        {
+            BusObject busObject = new BusObject(1, "DCan");
+            psdzFct = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverPtt('{0}', '{1}', {2}, '{3}', '{4}')", projectName, vehicleInfo, busObject.Name, EReihe, BauIstufe);
+            return psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverPtt(projectName, vehicleInfo, PsdzBus.BUSNAME_D_CAN, EReihe, BauIstufe, isTlsAllowed));
+        }
+
+        private IPsdzConnection ConnectionForDefaultCases(string projectName, string vehicleInfo, bool isTlsAllowed, out string psdzFct)
+        {
+            psdzFct = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverVin('{0}', '{1}', '{2}', '{3}', '{4}')", projectName, vehicleInfo, Vin17, EReihe, BauIstufe);
+            return psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverVin(projectName, vehicleInfo, Vin17, EReihe, BauIstufe, isTlsAllowed));
         }
 
         [PreserveSource(Cleaned = true)]

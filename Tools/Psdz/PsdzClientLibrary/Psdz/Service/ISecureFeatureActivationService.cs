@@ -83,6 +83,7 @@ namespace BMW.Rheingold.Psdz
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureToken(IPsdzConnection pConnection, IEnumerable<IPsdzSecureTokenEto> secureTokens, IPsdzSvt svt);
+        IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureTokenToOBDFirewall(IPsdzConnection connection, IPsdzSecureTokenEto secureToken);
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]

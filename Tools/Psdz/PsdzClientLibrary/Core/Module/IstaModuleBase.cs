@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using PsdzClient.Programming;
 
-#pragma warning disable CS0169, CS0649, CS0162
+#pragma warning disable CS0169, CS0649, CS0162, CS0618
 namespace BMW.Rheingold.CoreFramework
 {
     public abstract class IstaModuleBase : IIstaModule, IDisposable

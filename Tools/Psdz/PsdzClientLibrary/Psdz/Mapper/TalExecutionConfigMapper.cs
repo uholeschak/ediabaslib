@@ -24,7 +24,8 @@ namespace BMW.Rheingold.Psdz
                 ProgrammingTokens = talExecutionSettings.ProgrammingTokens?.Select(ProgrammingTokenCtoMapper.Map).ToList(),
                 IgnoreSignatureForProgrammingToken = talExecutionSettings.IgnoreSignatureForProgrammingToken,
                 ExpectedSgbmidValidationActive = talExecutionSettings.ExpectedSgbmidValidationActive,
-                ExpectedSgbmIdValidationForSmacTransferStartActive = talExecutionSettings.ExpectedSgbmIdValidationForSmacTransferStartActive
+                ExpectedSgbmIdValidationForSmacTransferStartActive = talExecutionSettings.ExpectedSgbmIdValidationForSmacTransferStartActive,
+                BlockTasOnIconActive = talExecutionSettings.BlockTasOnIconActive
             };
         }
     }

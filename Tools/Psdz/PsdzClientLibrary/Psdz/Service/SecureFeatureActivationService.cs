@@ -269,6 +269,37 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
+        public IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureTokenToOBDFirewall(IPsdzConnection connection, IPsdzSecureTokenEto secureToken)
+        {
+            string method = Log.CurrentMethod();
+            Log.Info(method, "called");
+            try
+            {
+                if (connection == null)
+                {
+                    Log.Error(method, "The parameter 'connection' is null");
+                    return null;
+                }
+
+                if (secureToken == null)
+                {
+                    Log.Error(method, "The parameter 'secureToken' is null");
+                    return null;
+                }
+
+                WriteSecureTokenToOBDFirewallRequestModel requestBodyObject = new WriteSecureTokenToOBDFirewallRequestModel
+                {
+                    SecureToken = SecureTokenEtoMapper.Map(secureToken)
+                };
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"writesecuretokentoobdfirewall/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException(method, exception);
+                return null;
+            }
+        }
+
         public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFiles(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
         {
             try

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using BMW.Rheingold.CoreFramework.Programming;
 
 #pragma warning disable CS0067, CS0618, CS0649
 namespace BMW.Rheingold.Module.ISTA
@@ -20,39 +21,22 @@ namespace BMW.Rheingold.Module.ISTA
     internal class ProgrammingSessionProxy : IProgrammingSession, INotifyPropertyChanged, IDisposable
     {
         private readonly IProgrammingSessionExt programmingSession;
-
         private readonly IProtocolBasic fasta;
-
         private readonly IProgrammingApi programmingApi;
-
         private readonly IAPISecurity apiSecurity;
-
         internal IProgrammingSession ProgrammingSession => programmingSession;
-
         internal IProtocolBasic Fasta => fasta;
-
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaCurrent => programmingSession.FaCurrent;
-
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa FaTarget => programmingSession.FaTarget;
-
         public string IntegrationLevelTarget => programmingSession.IntegrationLevelTarget;
-
         public IProgrammingApi ProgrammingApi => programmingApi;
-
         public IAPISecurity APISecurity => apiSecurity;
-
         public IPsdzInfo Psdz => programmingSession.Psdz;
-
         public IPsdzContext PsdzContext => programmingSession.PsdzContext;
-
         public ISvt SvtCurrent => programmingSession.SvtCurrent;
-
         public ISvt SvtTarget => programmingSession.SvtTarget;
-
         public string TalAsXml => programmingSession.TalAsXml;
-
         public string TalFilterAsXml => programmingSession.TalFilterAsXml;
-
         public double TimeLeftSec => programmingSession.TimeLeftSec;
 
         public bool UseReferenceSvtAsTarget
@@ -61,6 +45,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return programmingSession.UseReferenceSvtAsTarget;
             }
+
             set
             {
                 programmingSession.UseReferenceSvtAsTarget = value;
@@ -68,27 +53,17 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         public ITherapyPlanApi TherapyPlanApi => programmingSession.TherapyPlanApi;
-
         public ISecureEcuModeService SecureEcuModeService => programmingSession.SecureEcuModeService;
-
         public ISecManagementService SecurityManagementService => programmingSession.SecurityManagementService;
-
         public IComponentTheftProtectionService ComponentTheftProtectionService => programmingSession.ComponentTheftProtectionService;
-
         public IValidityCondition ValidityCondition => programmingSession.ValidityCondition;
-
         public IFeatureSpecificField FeatureSpecificField => programmingSession.FeatureSpecificField;
-
         public IDictionary<IEcu, ProgrammingActionType> FailedProgrammingEcus => programmingSession.FailedProgrammingEcus;
-
         public IDictionary<IEcu, HashSet<ProgrammingActionType>> FailedProgrammingEcusActions => programmingSession.FailedProgrammingEcusActions;
-
         public ISet<ISmartActuatorEcu> FailedProgrammingSmartActuators => programmingSession.FailedProgrammingSmartActuators;
-
         public ISet<ISmartActuatorMasterEcu> FailedProgrammingSmartActuatorMasters => programmingSession.FailedProgrammingSmartActuatorMasters;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public ProgrammingSessionProxy(IProgrammingSessionExt programmingSession, IProtocolBasic fasta)
         {
             this.programmingSession = programmingSession;
@@ -97,17 +72,20 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 throw new ArgumentNullException("programmingSession");
             }
+
             if (fasta == null)
             {
                 throw new ArgumentNullException("fasta");
             }
+
             if (programmingSession.ProgrammingApi != null)
             {
-               //[-] programmingApi = new ProgrammingApiProxy(programmingSession.ProgrammingApi, fasta);
+            //[-] programmingApi = new ProgrammingApiProxy(programmingSession.ProgrammingApi, fasta);
             }
+
             if (programmingSession.APISecurity != null)
             {
-                //[-] apiSecurity = new APISecurityProxy(programmingSession.APISecurity, fasta);
+            //[-] apiSecurity = new APISecurityProxy(programmingSession.APISecurity, fasta);
             }
         }
 
@@ -220,11 +198,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void SetVehicleUpdate(IVehicleUpdate vehicleUpdate)
         {
-            IMethodCall methodCall = fasta.AddMethodCall("SetVehicleUpdate", new Dictionary<string, string> {
-        {
-            "vehicleUpdate",
-            (vehicleUpdate == null) ? "null" : vehicleUpdate.ToString()
-        } });
+            IMethodCall methodCall = fasta.AddMethodCall("SetVehicleUpdate", new Dictionary<string, string> { { "vehicleUpdate", (vehicleUpdate == null) ? "null" : vehicleUpdate.ToString() } });
             programmingSession.SetVehicleUpdate(vehicleUpdate);
             methodCall.EndTime = DateTime.Now;
         }
@@ -239,43 +213,27 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void UpdateTalFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions)
         {
-            IMethodCall methodCall = fasta.AddMethodCall("UpdateTalFilterForAllEcus", new Dictionary<string, string>
-        {
-            {
-                "taCategories",
-                LogArray(taCategories)
-            },
-            {
-                "talFilterOptions",
-                talFilterOptions.ToString()
-            }
-        });
+            IMethodCall methodCall = fasta.AddMethodCall("UpdateTalFilterForAllEcus", new Dictionary<string, string> { { "taCategories", LogArray(taCategories) }, { "talFilterOptions", talFilterOptions.ToString() } });
             programmingSession.UpdateTalFilterForAllEcus(taCategories, talFilterOptions);
             methodCall.EndTime = DateTime.Now;
         }
 
         public void UpdateSFATalFilterForAllEcus(ISfaPerEcuOptions ecuOptions)
         {
-            IMethodCall methodCall = fasta.AddMethodCall("UpdateSFATalFilterForAllEcus", new Dictionary<string, string>
-        {
-            {
-                "categoryAction",
-                ecuOptions.CategoryAction.ToString()
-            },
-            {
-                "sfaWriteAction",
-                ecuOptions.SfaWriteAction.ToString()
-            },
-            {
-                "sfaDeleteAction",
-                ecuOptions.SfaDeleteAction.ToString()
-            }
-        });
+            IMethodCall methodCall = fasta.AddMethodCall("UpdateSFATalFilterForAllEcus", new Dictionary<string, string> { { "categoryAction", ecuOptions.CategoryAction.ToString() }, { "sfaWriteAction", ecuOptions.SfaWriteAction.ToString() }, { "sfaDeleteAction", ecuOptions.SfaDeleteAction.ToString() } });
             programmingSession.UpdateSFATalFilterForAllEcus(ecuOptions);
             methodCall.EndTime = DateTime.Now;
         }
 
+        [Obsolete]
         public void UpdateSFATalFilterForSelectedEcus(IDictionary<int, ISfaPerEcuOptions> ecuOptions)
+        {
+            IMethodCall methodCall = fasta.AddMethodCall("UpdateSFATalFilterForSelectedEcus");
+            programmingSession.UpdateSFATalFilterForSelectedEcus(ecuOptions);
+            methodCall.EndTime = DateTime.Now;
+        }
+
+        public void UpdateSFATalFilterForSelectedEcus(IList<ISfaPerEcuOptionsPair> ecuOptions)
         {
             IMethodCall methodCall = fasta.AddMethodCall("UpdateSFATalFilterForSelectedEcus");
             programmingSession.UpdateSFATalFilterForSelectedEcus(ecuOptions);
@@ -284,77 +242,21 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void UpdateTalFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions)
         {
-            IMethodCall methodCall = fasta.AddMethodCall("UpdateTalFilterForSelectedEcus", new Dictionary<string, string>
-        {
-            {
-                "taCategories",
-                LogArray(taCategories)
-            },
-            {
-                "diagAddress",
-                LogArray(diagAddress)
-            },
-            {
-                "talFilterOptions",
-                talFilterOptions.ToString()
-            }
-        });
+            IMethodCall methodCall = fasta.AddMethodCall("UpdateTalFilterForSelectedEcus", new Dictionary<string, string> { { "taCategories", LogArray(taCategories) }, { "diagAddress", LogArray(diagAddress) }, { "talFilterOptions", talFilterOptions.ToString() } });
             programmingSession.UpdateTalFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions);
             methodCall.EndTime = DateTime.Now;
         }
 
         public void UpdateTalFilterForSelectedEcuOnSweLevel(int diagAddress, TaCategories taCategory, string processClass, TalFilterOptions talFilterOptions, IDictionary<string, TalFilterOptions> sweFilter)
         {
-            IMethodCall methodCall = fasta.AddMethodCall("UpdateTalFilterForSelectedEcuOnSweLevel", new Dictionary<string, string>
-        {
-            {
-                "taCategory",
-                taCategory.ToString()
-            },
-            {
-                "diagAddress",
-                diagAddress.ToString()
-            },
-            {
-                "talFilterOptions",
-                talFilterOptions.ToString()
-            },
-            { "processClass", processClass },
-            {
-                "sweFilter",
-                LogArray(sweFilter.Select((KeyValuePair<string, TalFilterOptions> x) => $"{x.Key}-{x.Value}").ToArray())
-            }
-        });
+            IMethodCall methodCall = fasta.AddMethodCall("UpdateTalFilterForSelectedEcuOnSweLevel", new Dictionary<string, string> { { "taCategory", taCategory.ToString() }, { "diagAddress", diagAddress.ToString() }, { "talFilterOptions", talFilterOptions.ToString() }, { "processClass", processClass }, { "sweFilter", LogArray(sweFilter.Select((KeyValuePair<string, TalFilterOptions> x) => $"{x.Key}-{x.Value}").ToArray()) } });
             programmingSession.UpdateTalFilterForSelectedEcuOnSweLevel(diagAddress, taCategory, processClass, talFilterOptions, sweFilter);
             methodCall.EndTime = DateTime.Now;
         }
 
         public void UpdateTalFilterForSelectedEcuOnSweLevel(int diagAddress, TaCategories taCategory, string processClass, TalFilterOptions talFilterOptions, List<string> sgbmIds, List<TalFilterOptions> sweTalFilterOptions)
         {
-            IMethodCall methodCall = fasta.AddMethodCall("UpdateTalFilterForSelectedEcuOnSweLevel", new Dictionary<string, string>
-        {
-            {
-                "taCategory",
-                taCategory.ToString()
-            },
-            {
-                "diagAddress",
-                diagAddress.ToString()
-            },
-            {
-                "talFilterOptions",
-                talFilterOptions.ToString()
-            },
-            { "processClass", processClass },
-            {
-                "sweFilter",
-                LogArray(sgbmIds.ToArray())
-            },
-            {
-                "sweTalFilterOptions",
-                LogArray(sweTalFilterOptions.ToArray())
-            }
-        });
+            IMethodCall methodCall = fasta.AddMethodCall("UpdateTalFilterForSelectedEcuOnSweLevel", new Dictionary<string, string> { { "taCategory", taCategory.ToString() }, { "diagAddress", diagAddress.ToString() }, { "talFilterOptions", talFilterOptions.ToString() }, { "processClass", processClass }, { "sweFilter", LogArray(sgbmIds.ToArray()) }, { "sweTalFilterOptions", LogArray(sweTalFilterOptions.ToArray()) } });
             programmingSession.UpdateTalFilterForSelectedEcuOnSweLevel(diagAddress, taCategory, processClass, talFilterOptions, sgbmIds, sweTalFilterOptions);
             methodCall.EndTime = DateTime.Now;
         }
@@ -382,11 +284,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         public void SetConnectionPort(int port)
         {
-            IMethodCall methodCall = fasta.AddMethodCall("SetConnectionPort", new Dictionary<string, string> {
-        {
-            "port",
-            port.ToString() ?? ""
-        } });
+            IMethodCall methodCall = fasta.AddMethodCall("SetConnectionPort", new Dictionary<string, string> { { "port", port.ToString() ?? "" } });
             programmingSession.SetConnectionPort(port);
             methodCall.EndTime = DateTime.Now;
         }
@@ -635,12 +533,29 @@ namespace BMW.Rheingold.Module.ISTA
             return durationOfWenToken;
         }
 
+        public ISfaPerEcuOptions CreateSfaPerEcuOptions(TalFilterOptions categoryAction, TalFilterOptions sfaWriteAction, TalFilterOptions sfaDeleteAction)
+        {
+            IMethodCall methodCall = fasta.AddMethodCall("CreateSfaPerEcuOptions");
+            ISfaPerEcuOptions result = programmingSession.CreateSfaPerEcuOptions(categoryAction, sfaWriteAction, sfaDeleteAction);
+            methodCall.EndTime = DateTime.Now;
+            return result;
+        }
+
+        public ISfaPerEcuOptionsPair CreateSfaPerEcuOptionsPair(int ecuAddress, ISfaPerEcuOptions ecuOptions)
+        {
+            IMethodCall methodCall = fasta.AddMethodCall("CreateSfaPerEcuOptionsPair");
+            ISfaPerEcuOptionsPair result = programmingSession.CreateSfaPerEcuOptionsPair(ecuAddress, ecuOptions);
+            methodCall.EndTime = DateTime.Now;
+            return result;
+        }
+
         private string LogArray<T>(T[] array)
         {
             if (array == null)
             {
                 return "null";
             }
+
             StringBuilder stringBuilder = new StringBuilder("[");
             foreach (object obj in array)
             {
@@ -652,13 +567,16 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     stringBuilder.Append(obj.ToString());
                 }
+
                 stringBuilder.Append(",");
             }
+
             stringBuilder.Replace(',', ']', stringBuilder.Length - 1, 1);
             if (stringBuilder[stringBuilder.Length - 1] != ']')
             {
                 stringBuilder.Append("]");
             }
+
             return stringBuilder.ToString();
         }
 
