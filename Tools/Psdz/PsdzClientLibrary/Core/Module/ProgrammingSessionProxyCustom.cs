@@ -463,6 +463,12 @@ namespace BMW.Rheingold.Module.ISTA
             return null;
         }
 
+        public ISfaPerEcuOptions CreateSfaPerEcuOptions(TalFilterOptions categoryAction, TalFilterOptions sfaWriteAction, TalFilterOptions sfaDeleteAction)
+        {
+            //ISfaPerEcuOptions result = programmingSession.CreateSfaPerEcuOptions(categoryAction, sfaWriteAction, sfaDeleteAction);
+            return null;
+        }
+
         private string LogArray<T>(T[] array)
         {
             if (array == null)
