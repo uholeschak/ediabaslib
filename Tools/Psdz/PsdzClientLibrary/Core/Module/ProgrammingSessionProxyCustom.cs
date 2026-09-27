@@ -469,6 +469,12 @@ namespace BMW.Rheingold.Module.ISTA
             return null;
         }
 
+        public ISfaPerEcuOptionsPair CreateSfaPerEcuOptionsPair(int ecuAddress, ISfaPerEcuOptions ecuOptions)
+        {
+            //ISfaPerEcuOptionsPair result = programmingSession.CreateSfaPerEcuOptionsPair(ecuAddress, ecuOptions);
+            return null;
+        }
+
         private string LogArray<T>(T[] array)
         {
             if (array == null)
