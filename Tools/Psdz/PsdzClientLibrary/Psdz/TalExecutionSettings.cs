@@ -39,5 +39,7 @@ namespace BMW.Rheingold.Psdz
         public bool ExpectedSgbmidValidationActive;
 
         public bool ExpectedSgbmIdValidationForSmacTransferStartActive;
+
+        public bool BlockTasOnIconActive;
     }
 }
