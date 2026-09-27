@@ -95,6 +95,7 @@ namespace SourceCodeSync
             "BMW.ISPI.TRIC.ISTA.MultisourceLogic",
             "BMW.ISPI.TRIC.ISTA.RuleEvaluation",
             "BMW.ISPI.TRIC.ISTA.VehicleIdentification",
+            "BMW.ISPI.TRIC.ISTA.VinValidator",
             "CommonServices",
             "DiagnosticsBusinessData",
             "IstaOperationContract",
