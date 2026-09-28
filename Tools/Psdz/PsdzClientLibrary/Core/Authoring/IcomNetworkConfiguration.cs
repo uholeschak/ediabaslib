@@ -1,7 +1,7 @@
 ﻿using PsdzClient.Core;
 using System.ComponentModel;
 
-namespace PsdzClientLibrary.Core.Authoring
+namespace BMW.Authoring.Session
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     [EditorBrowsable(EditorBrowsableState.Always)]
