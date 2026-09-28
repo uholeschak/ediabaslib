@@ -633,7 +633,7 @@ public class TestModuleRunner
             }
 
             string logFilePath = Path.ChangeExtension(assemblyPath, ".log");
-            if (File.Exists(logFilePath))
+            if (!string.IsNullOrEmpty(logFilePath) && File.Exists(logFilePath))
             {
                 File.Delete(logFilePath);
             }
@@ -719,13 +719,16 @@ public class TestModuleRunner
                     }
                 }
 
-                try
+                if (!string.IsNullOrEmpty(logFilePath))
                 {
-                    File.WriteAllLines(logFilePath, errorLines);
-                }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("CompileModuleAssembly: Writing log file Exception: {0}", ex);
+                    try
+                    {
+                        File.WriteAllLines(logFilePath, errorLines);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("CompileModuleAssembly: Writing log file Exception: {0}", ex);
+                    }
                 }
 
                 try
