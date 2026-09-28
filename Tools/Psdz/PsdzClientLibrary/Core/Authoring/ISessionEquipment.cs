@@ -2,7 +2,6 @@
 using PsdzClient.Core;
 using System;
 using System.ComponentModel;
-using PsdzClientLibrary.Core.Authoring;
 
 namespace BMW.Authoring.Session
 {
