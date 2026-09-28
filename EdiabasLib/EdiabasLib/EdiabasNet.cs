@@ -592,7 +592,7 @@ namespace EdiabasLib
             public Object OpData3;
         }
 
-        public const int EdiabasVersion = 0x772;
+        public const int EdiabasVersion = 0x773;
         public const int TraceAppendDiffHours = 1;
         public const string UserDirName = "EdiabasLib";
         public const string TraceDirName = "Trace";
@@ -1402,8 +1402,8 @@ namespace EdiabasLib
             "SEC-0045: BIG NUM ERROR",
             "SEC-0046: CONTAINER ERROR",
             "SEC-0047: BACKEND ERROR",
-            "SEC-0048",
-            "SEC-0049",
+            "SEC-0048: TIMEOUT ERROR",
+            "SEC-0049: AUTHENTICATION LOST",
         };
 
         public enum IfhStatusCodes
