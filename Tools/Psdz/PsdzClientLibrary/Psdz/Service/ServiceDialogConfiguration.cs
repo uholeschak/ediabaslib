@@ -92,7 +92,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(51937067403m, "RueckmeldeDialog", typeof(RueckmeldeDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(916704907m, null, typeof(SetSuspicionToChildrenServiceDlg), typeof(SetSuspicionToChildrenServiceDlgCmd), hasGui: false);
             Register(52672267m, null, typeof(SYS_VAR_ISTA), typeof(SysVarIstaCmd), hasGui: false);
-            //[-] Register(38122360331m, "Typmerkmal_ausISTA_UX", typeof(Typmerkmale_ausISTA_UX), typeof(Typmerkmal_ausISTA_UXCmd), hasGui: false);
+            Register(38122360331m, "Typmerkmal_ausISTA_UX", typeof(Typmerkmale_ausISTA_UX), typeof(Typmerkmal_ausISTA_UXCmd), hasGui: false);
             Register(52677899m, null, typeof(TYPMERKMAL_ISTA), typeof(TypmerkmalIstaCmd), hasGui: false);
             //[-] Register(51872651m, "VehicleStateServiceDlg", typeof(VehicleStateServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
             //[-] Register(51919115m, "ZaehlerServiceDlg", typeof(ZaehlerServiceDlgImpl), typeof(IstaOperationServiceDialogUi), null);
