@@ -3,6 +3,7 @@ using BMW.Rheingold.Module.ISTA;
 using PsdzClient.Core.Container;
 using System.Collections.Generic;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.Module.ISTA
 {
     internal class Typmerkmale_ausISTA_UX : ISTAModule
