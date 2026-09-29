@@ -5,7 +5,7 @@ using PsdzClient.Core;
 namespace BMW.Rheingold.Measurement.Common
 {
     [PreserveSource(Hint = "No update", SuppressWarning = true)]
-    public interface IStartMeasurementServiceServer
+    public interface IStartMeasurementServiceServer : IStartMeasurementService, IMeasurementService
     {
         int ConnectAndReserveImib(IVciDevice device, IFasta2Service fasta2);
 
