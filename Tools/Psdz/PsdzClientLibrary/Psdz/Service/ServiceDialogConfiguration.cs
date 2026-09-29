@@ -70,7 +70,7 @@ namespace BMW.Rheingold.Module.ISTA
             Register(53971007243m, null, typeof(FS_LISTE_ISTA_FORT), typeof(FsListeIstaFortCmd), hasGui: false);
             Register(52683531m, null, typeof(FS_LISTE_ISTA_KURZ), typeof(FsListeIstaKurzCmd), hasGui: false);
             Register(71493731211m, null, typeof(FZG_Kom_IDENT), typeof(FZG_Kom_IDENTCmd), hasGui: true);
-            //[-] Register(73271865611m, null, typeof(Identifikationstyp), typeof(IdentifikationstypCmd), hasGui: false);
+            Register(73271865611m, null, typeof(Identifikationstyp), typeof(IdentifikationstypCmd), hasGui: false);
             //[-] Register(68907559435m, null, typeof(IMIB_TB_HVA), typeof(IMIB_TB_HVACmd), hasGui: true);
             //[-] Register(68909781899m, "IMIB_TB_SYSINFO", typeof(IMIB_TB_Sysinfo), typeof(ImibTbSysinfoCmd), hasGui: true);
             Register(70271166731m, null, typeof(ISTA_Kontext_Ausstattung_Auswertung), typeof(IstaKontextAusstattungAuswertungCmd), hasGui: false);
