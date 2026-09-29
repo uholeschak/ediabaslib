@@ -67,7 +67,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(43608062091m, null, typeof(Fahrzeugauftrag_ausISTA_UX), typeof(FahrzeugauftragAusIstaUxCmd), hasGui: false);
             //[-] Register(68025234187m, "FKB_Anzeige", typeof(FKB_AnzeigeServiceDlgImpl), typeof(DtcAnzeigeDynUi), null);
             Register(52637835m, null, typeof(FS_LISTE_ISTA), typeof(FsListeIstaCmd), hasGui: false);
-            //[-] Register(53971007243m, null, typeof(FS_LISTE_ISTA_FORT), typeof(FsListeIstaFortCmd), hasGui: false);
+            Register(53971007243m, null, typeof(FS_LISTE_ISTA_FORT), typeof(FsListeIstaFortCmd), hasGui: false);
             //[-] Register(52683531m, null, typeof(FS_LISTE_ISTA_KURZ), typeof(FsListeIstaKurzCmd), hasGui: false);
             //[-] Register(71493731211m, null, typeof(FZG_Kom_IDENT), typeof(FZG_Kom_IDENTCmd), hasGui: true);
             //[-] Register(73271865611m, null, typeof(Identifikationstyp), typeof(IdentifikationstypCmd), hasGui: false);
