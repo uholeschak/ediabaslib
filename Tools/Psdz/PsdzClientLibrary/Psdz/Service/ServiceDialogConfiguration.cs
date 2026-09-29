@@ -74,7 +74,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] Register(68907559435m, null, typeof(IMIB_TB_HVA), typeof(IMIB_TB_HVACmd), hasGui: true);
             //[-] Register(68909781899m, "IMIB_TB_SYSINFO", typeof(IMIB_TB_Sysinfo), typeof(ImibTbSysinfoCmd), hasGui: true);
             //[-] Register(70271166731m, null, typeof(ISTA_Kontext_Ausstattung_Auswertung), typeof(IstaKontextAusstattungAuswertungCmd), hasGui: false);
-            //[-] Register(69973561867m, null, typeof(ISTA_Kontext_Ausstattung_Daten), typeof(IstaKontextAusstattungDatenCmd), hasGui: false);
+            Register(69973561867m, null, typeof(ISTA_Kontext_Ausstattung_Daten), typeof(IstaKontextAusstattungDatenCmd), hasGui: false);
             Register(68072409611m, null, typeof(ISTA_Kontext_DTC_Auswertung), typeof(IstaKontextDtcAuswertungCmd), hasGui: false);
             Register(67207569803m, null, typeof(ISTA_Kontext_DTC_Daten), typeof(IstaKontextDtcDatenCmd), hasGui: false);
             Register(69913852939m, null, typeof(ISTA_Kontext_FZG_Daten), typeof(ISTA_Kontext_FZG_DatenCmd), hasGui: false);
