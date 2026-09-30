@@ -10,7 +10,7 @@ namespace BMW.Rheingold.Measurement.Common
     {
         int ConnectAndReserveImib(IVciDevice device, IFasta2Service fasta2);
 
-        //IDmmManager CreateAndInititalizeDmm();
+        IDmmManager CreateAndInititalizeDmm();
 
         //IDsoManager CreateAndInitializeDso();
 
