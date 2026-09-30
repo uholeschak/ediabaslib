@@ -59,6 +59,7 @@ namespace SourceCodeSync
             {"public_static_LicenseHelper", null},
             {"internal_sealed_LicenseManager", null},
             {"public_sealed_LicenseManager", null},
+            {"internal_sealed_LicenseAOSManager", null},
             {"public_LicenseStatusChecker", null},
             {"public_LicenseWizardHelper", null },
             {"internal_CharacteristicsGenerator", null },
