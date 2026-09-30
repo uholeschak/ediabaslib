@@ -16,29 +16,21 @@ namespace BMW.Rheingold.Module.ISTA
     internal class FS_LISTE_ISTA : ISTAModule
     {
         public string strDlgInfo;
-
         public bool bWriteLog;
-
         public int m_maxAnzahlFehlerkode;
-
         public int m_maxAnzahlFehlerarten;
-
         public int m_maxAnzahlUmweltbedingungen;
-
         public int m_AnzahlSaetze;
-
         public int m_maxArrayFehlerarten;
-
         public int m_maxArrayUmweltbedingungen;
-
         public bool p_WeiterButtonEnabledStack;
-
         public FS_LISTE_ISTA(ParameterContainer InParameter)
         {
             if (InParameter != null)
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
             strDlgInfo = "16.04.2010-FS_LISTE_ISTA";
             bWriteLog = true;
@@ -67,6 +59,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Logger.WriteInformation($"IntializeDialog - {strDlgInfo}");
             }
+
             int Fehlerart_Erweitert_Anzahl = 0;
             int[] array = new int[m_maxAnzahlFehlerkode];
             int[] array2 = new int[m_maxAnzahlFehlerkode];
@@ -81,6 +74,7 @@ namespace BMW.Rheingold.Module.ISTA
                 array2[i] = 0;
                 array3[i] = 0;
             }
+
             base._DoLoopHandling = false;
             ReadingIstaListeRG(ref Anzahl_Fehlerspeicher, ref Fehlerkode_dez, ref Fehlerkode_hex, ref Fehlerkode_Text, ref Fehlerkode_Ereignis, ref Fehlerkode_SGBD, ref Fehlerart_Symptom_NR, ref Fehlerart_Symptom_Text, ref Fehlerart_Vorhanden_NR, ref Fehlerart_Vorhanden_Text, ref Fehlerart_Ready_NR, ref Fehlerart_Ready_Text, ref Fehlerart_Warnung_NR, ref Fehlerart_Warnung_Text, ref Fehlerart_Erweitert_Anzahl, ref Fehlerart_Erweitert_NR, ref Fehlerart_Erweitert_Text, ref Fehlerkode_HFK, ref Fehlerkode_HLZ, ref array, ref Kilometer_Anfang, ref Kilometer_Ende, ref array2, ref array3, ref Umweltbedingung_Anzahl, ref Umweltbedingung_NR, ref Umweltbedingung_Wert, ref Fehlerklasse);
             Logger.WriteInformation("_ExitIndex is: {0}", num);
@@ -94,6 +88,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Logger.WriteInformation($"StartFsListeLesenGesamt - {strDlgInfo}");
             }
+
             ReadingIstaListe(ref Anzahl_Fehlerspeicher, ref Fehlerkode_dez, ref Fehlerkode_hex, ref Fehlerkode_Text, ref Fehlerkode_Ereignis, ref Fehlerkode_SGBD, ref Fehlerart_Symptom_NR, ref Fehlerart_Symptom_Text, ref Fehlerart_Vorhanden_NR, ref Fehlerart_Vorhanden_Text, ref Fehlerart_Ready_NR, ref Fehlerart_Ready_Text, ref Fehlerart_Warnung_NR, ref Fehlerart_Warnung_Text, ref Fehlerart_Erweitert_Anzahl, ref Fehlerart_Erweitert_NR, ref Fehlerart_Erweitert_Text, ref Fehlerkode_HFK, ref Fehlerkode_HLZ, ref Fehlerkode_Ueberlauf, ref Kilometer_Anfang, ref Kilometer_Ende, ref Systemzeit_Anfang, ref Systemzeit_Ende, ref Umweltbedingung_Anzahl, ref Umweltbedingung_NR, ref Umweltbedingung_Wert, ref Fehlerklasse);
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
@@ -106,6 +101,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Logger.WriteInformation(strDlgInfo);
             }
+
             Anzahl_Fehlerspeicher = 0;
             Fehlerkode_Text = new string[m_maxAnzahlFehlerkode];
             Fehlerkode_dez = new int[m_maxAnzahlFehlerkode];
@@ -155,6 +151,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Systemzeit_Anfang[i] = 0;
                 Systemzeit_Ende[i] = 0;
             }
+
             base._DoLoopHandling = false;
             Fehlerart_Erweitert_NR = new int[m_maxArrayFehlerarten];
             Fehlerart_Erweitert_Text = new string[m_maxArrayFehlerarten];
@@ -164,6 +161,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Fehlerart_Erweitert_NR[j] = 0;
                 Fehlerart_Erweitert_Text[j] = "";
             }
+
             base._DoLoopHandling = false;
             Umweltbedingung_NR = new int[m_maxArrayUmweltbedingungen];
             Umweltbedingung_Wert = new double[m_maxArrayUmweltbedingungen];
@@ -173,10 +171,11 @@ namespace BMW.Rheingold.Module.ISTA
                 Umweltbedingung_NR[k] = 0;
                 Umweltbedingung_Wert[k] = 0.0;
             }
+
             base._DoLoopHandling = false;
             List<string> list = new List<string>();
             int num2 = 0;
-            if (SOCAccessor.OrderContext.System.GetProperty("FAULT_CODES_LIST") is Hashtable hashtable)
+            if (SOCAccessor.OrderContext.System.GetProperty("FAULT_CODES_LIST")is Hashtable hashtable)
             {
                 foreach (Hashtable value in hashtable.Values)
                 {
@@ -184,18 +183,21 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         continue;
                     }
+
                     foreach (Hashtable value2 in (value["ECUJobs"] as Hashtable).Values)
                     {
                         if (!value2.ContainsKey("Key") || value2["Key"].ToString().ToLower() == "virtual" || !value2.ContainsKey("ECUFaultCodes"))
                         {
                             continue;
                         }
+
                         foreach (Hashtable value3 in (value2["ECUFaultCodes"] as Hashtable).Values)
                         {
                             if (!Convert.ToBoolean(value3.ContainsKey("DiagnosisRelevance") ? value3["DiagnosisRelevance"] : ((object)false)))
                             {
                                 continue;
                             }
+
                             string text = "";
                             string text2 = "";
                             string text3 = "";
@@ -220,21 +222,25 @@ namespace BMW.Rheingold.Module.ISTA
                             {
                                 break;
                             }
+
                             Fehlerkode_dez[num2] = num7;
                             if (value.ContainsKey("Group"))
                             {
                                 text = value["Group"].ToString().ToLower();
                                 list.Add(text);
                             }
+
                             if (value.ContainsKey("Variant"))
                             {
                                 text2 = value["Variant"].ToString();
                                 Fehlerkode_SGBD[num2] = text2;
                             }
+
                             if (value3.ContainsKey("FaultClasses"))
                             {
                                 num10 = 255;
                             }
+
                             Fehlerklasse[num2] = num10;
                             value3.ContainsKey("FaultCodeTextObject");
                             Fehlerkode_Text[num2] = text3;
@@ -255,6 +261,7 @@ namespace BMW.Rheingold.Module.ISTA
                                             text9 = list2[0];
                                         }
                                     }
+
                                     if (value4.ContainsKey("FaultMode"))
                                     {
                                         List<string> list3 = value4["FaultMode"] as List<string>;
@@ -263,14 +270,17 @@ namespace BMW.Rheingold.Module.ISTA
                                             num16 = __convertToInt32(list3[0], 10);
                                         }
                                     }
+
                                     if (text9 == "F_EREIGNIS_DTC")
                                     {
                                         num8 = num16;
                                     }
+
                                     if (!value4.ContainsKey("Key"))
                                     {
                                         continue;
                                     }
+
                                     text8 = value4["Key"].ToString();
                                     if (text8 == "Fehlerart")
                                     {
@@ -302,6 +312,7 @@ namespace BMW.Rheingold.Module.ISTA
                                     }
                                 }
                             }
+
                             Fehlerart_Symptom_NR[num2] = num3;
                             Fehlerart_Vorhanden_NR[num2] = num4;
                             Fehlerart_Ready_NR[num2] = num5;
@@ -335,10 +346,12 @@ namespace BMW.Rheingold.Module.ISTA
                                             }
                                         }
                                     }
+
                                     if (value5.ContainsKey("Index"))
                                     {
                                         num22 = __convertToInt32(value5["Index"]);
                                     }
+
                                     if (value5.ContainsKey("Names"))
                                     {
                                         List<string> list5 = value5["Names"] as List<string>;
@@ -347,10 +360,12 @@ namespace BMW.Rheingold.Module.ISTA
                                             text10 = list5[0];
                                         }
                                     }
+
                                     if (!value5.ContainsKey("Key"))
                                     {
                                         continue;
                                     }
+
                                     string text11 = value5["Key"].ToString();
                                     bool flag = false;
                                     bool flag2 = false;
@@ -358,14 +373,17 @@ namespace BMW.Rheingold.Module.ISTA
                                     {
                                         flag = true;
                                     }
+
                                     if (text11.StartsWith("Umweltbedingung[i]"))
                                     {
                                         flag2 = true;
                                     }
-                                    if (flag && flag2)
+
+                                    if (flag & flag2)
                                     {
                                         flag = false;
                                     }
+
                                     if (flag)
                                     {
                                         switch (text10)
@@ -389,6 +407,7 @@ namespace BMW.Rheingold.Module.ISTA
                                                 break;
                                         }
                                     }
+
                                     if (flag2 && num17 < m_maxAnzahlUmweltbedingungen)
                                     {
                                         Umweltbedingung_Wert[num17 * 300 + num2] = num20;
@@ -399,10 +418,12 @@ namespace BMW.Rheingold.Module.ISTA
                                     }
                                 }
                             }
+
                             if (num8 == 1)
                             {
                                 num12 = num11;
                             }
+
                             Fehlerkode_HFK[num2] = num8;
                             Fehlerkode_HLZ[num2] = num9;
                             Fehlerklasse[num2] = num10;
@@ -416,14 +437,17 @@ namespace BMW.Rheingold.Module.ISTA
                         }
                     }
                 }
+
                 Anzahl_Fehlerspeicher = num2;
             }
+
             base._DoLoopHandling = true;
             for (int l = 0; l < Anzahl_Fehlerspeicher; l++)
             {
                 Fehlerkode_hex[l] = $"{Fehlerkode_dez[l]:X}";
                 Fehlerkode_SGBD[l] = Fehlerkode_SGBD[l].ToUpper();
             }
+
             base._DoLoopHandling = false;
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
@@ -434,6 +458,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Logger.WriteInformation(strDlgInfo);
             }
+
             Anzahl_Fehlerspeicher = 0;
             Fehlerkode_Text = new string[m_maxAnzahlFehlerkode];
             Fehlerkode_dez = new int[m_maxAnzahlFehlerkode];
@@ -482,6 +507,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Systemzeit_Anfang[i] = 0;
                 Systemzeit_Ende[i] = 0;
             }
+
             Fehlerart_Erweitert_NR = new int[m_maxArrayFehlerarten];
             Fehlerart_Erweitert_Text = new string[m_maxArrayFehlerarten];
             for (int j = 0; j < m_maxArrayFehlerarten; j++)
@@ -489,6 +515,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Fehlerart_Erweitert_NR[j] = 0;
                 Fehlerart_Erweitert_Text[j] = string.Empty;
             }
+
             Umweltbedingung_NR = new int[m_maxArrayUmweltbedingungen];
             Umweltbedingung_Wert = new double[m_maxArrayUmweltbedingungen];
             for (int k = 0; k < m_maxArrayUmweltbedingungen; k++)
@@ -496,6 +523,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Umweltbedingung_NR[k] = 0;
                 Umweltbedingung_Wert[k] = 0.0;
             }
+
             int num = 0;
             foreach (ECU item in Vehicle.ECU)
             {
@@ -507,10 +535,12 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             continue;
                         }
+
                         if (num >= m_maxAnzahlFehlerkode)
                         {
                             break;
                         }
+
                         //[-] ICollection<XEP_FAULTMODELABELS> ecuFaultAdditionalLabel = DatabaseProviderFactory.Instance.GetEcuFaultAdditionalLabel(dtc.F_ORT.ToString(), item.VARIANTE);
                         //[+] ICollection<XEP_FAULTMODELABELS> ecuFaultAdditionalLabel = ClientContext.GetDatabase(Vehicle)?.GetEcuFaultAdditionalLabel(dtc.F_ORT.ToString(), item.VARIANTE);
                         ICollection<XEP_FAULTMODELABELS> ecuFaultAdditionalLabel = ClientContext.GetDatabase(Vehicle)?.GetEcuFaultAdditionalLabel(dtc.F_ORT.ToString(), item.VARIANTE);
@@ -553,6 +583,7 @@ namespace BMW.Rheingold.Module.ISTA
                                 {
                                     num3 = m_maxAnzahlUmweltbedingungen;
                                 }
+
                                 for (int num4 = 0; num4 < num3; num4++)
                                 {
                                     try
@@ -572,8 +603,10 @@ namespace BMW.Rheingold.Module.ISTA
                                     }
                                 }
                             }
+
                             Umweltbedingung_Anzahl[num] = num2;
                         }
+
                         Systemzeit_Anfang[num] = (int)((dtc.First != null && dtc.First.F_UW_ZEIT_SUPREME.HasValue) ? ((int)dtc.First.F_UW_ZEIT_SUPREME.Value) : ((dtc.First != null && dtc.First.F_UW_ZEIT.HasValue) ? dtc.First.F_UW_ZEIT.Value : (-1)));
                         Systemzeit_Ende[num] = (int)((dtc.Current != null && dtc.Current.F_UW_ZEIT_SUPREME.HasValue) ? ((int)dtc.Current.F_UW_ZEIT_SUPREME.Value) : ((dtc.Current != null && dtc.Current.F_UW_ZEIT.HasValue) ? dtc.Current.F_UW_ZEIT.Value : (-1)));
                         Kilometer_Anfang[num] = (int)((dtc.First != null && dtc.First.F_UW_KM_SUPREME.HasValue) ? ((int)dtc.First.F_UW_KM_SUPREME.Value) : ((dtc.First != null && dtc.First.F_UW_KM.HasValue) ? dtc.First.F_UW_KM.Value : (-1)));
@@ -596,17 +629,20 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return 0.0;
             }
+
             try
             {
                 if ("hex".Equals(uw.F_UW_EINH, StringComparison.OrdinalIgnoreCase))
                 {
                     return Convert.ToInt64(uw.F_UW_WERT.ToString(), 16);
                 }
+
                 if ("text".Equals(uw.F_UW_EINH, StringComparison.OrdinalIgnoreCase))
                 {
                     Log.Info("FS_LISTE_ISTA.GetUmweltbedingungWert()", "Failed to convert F_UW_WERT '{0}' to double, thus returning 0. F_UW_EINH='{1}', F_UW_TEXT='{2}'", uw.F_UW_WERT, uw.F_UW_EINH, uw.F_UW_TEXT);
                     return 0.0;
                 }
+
                 return Convert.ToDouble(uw.F_UW_WERT, CultureInfo.InvariantCulture);
             }
             catch (Exception ex)
