@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
+#pragma warning disable CS0169
 namespace BMW.Rheingold.Module.ISTA
 {
     internal class PDIServiceHistory : ISTAServiceDialog
