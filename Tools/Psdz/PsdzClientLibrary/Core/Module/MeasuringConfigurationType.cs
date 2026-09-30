@@ -19,15 +19,10 @@ namespace BMW.Rheingold.Measurement.Common.Data
     public class MeasuringConfigurationType
     {
         private DmmType dmmField;
-
         private DsoType dsoField;
-
         private StgType stgField;
-
         private ImibCounterConfigData cntField;
-
         private static XmlSerializer serializer;
-
         [XmlElement(Order = 0)]
         public DmmType Dmm
         {
@@ -35,6 +30,7 @@ namespace BMW.Rheingold.Measurement.Common.Data
             {
                 return dmmField;
             }
+
             set
             {
                 dmmField = value;
@@ -48,6 +44,7 @@ namespace BMW.Rheingold.Measurement.Common.Data
             {
                 return dsoField;
             }
+
             set
             {
                 dsoField = value;
@@ -61,6 +58,7 @@ namespace BMW.Rheingold.Measurement.Common.Data
             {
                 return stgField;
             }
+
             set
             {
                 stgField = value;
@@ -74,6 +72,7 @@ namespace BMW.Rheingold.Measurement.Common.Data
             {
                 return cntField;
             }
+
             set
             {
                 cntField = value;
@@ -91,6 +90,7 @@ namespace BMW.Rheingold.Measurement.Common.Data
                 {
                     serializer = new XmlSerializer(typeof(MeasuringConfigurationType));
                 }
+
                 return serializer;
             }
         }
@@ -100,7 +100,7 @@ namespace BMW.Rheingold.Measurement.Common.Data
             stgField = new StgType();
             dsoField = new DsoType();
             dmmField = new DmmType();
-            cntField = default(ImibCounterConfigData);
+            cntField = default;
         }
 
         public virtual string Serialize()
@@ -212,6 +212,7 @@ namespace BMW.Rheingold.Measurement.Common.Data
                 {
                     return registryKey.GetValue(keyName) != null;
                 }
+
                 return false;
             }
         }
@@ -226,6 +227,7 @@ namespace BMW.Rheingold.Measurement.Common.Data
                     result = registryKey.GetValueNames().ToList();
                 }
             }
+
             return result;
         }
 

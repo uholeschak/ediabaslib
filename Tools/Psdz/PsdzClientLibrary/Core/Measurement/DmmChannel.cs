@@ -13,28 +13,23 @@ namespace BMW.Rheingold.Measurement.Common
     {
         [DataMember]
         private MeasuringSource source;
-
         [DataMember]
         private bool isHold;
-
         [DataMember]
         private bool isMinMax;
-
         [DataMember]
         private DmmMeasuredValueMinMax measuredValue;
-
         [DataMember]
         private int channelNo;
-
         [DataMember]
         private Dictionary<string, MeasuringSource> cache = new Dictionary<string, MeasuringSource>();
-
         public MeasuringSource Source
         {
             get
             {
                 return source;
             }
+
             set
             {
                 source = value;
@@ -48,6 +43,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 return isHold;
             }
+
             set
             {
                 isHold = value;
@@ -61,6 +57,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 return isMinMax;
             }
+
             set
             {
                 isMinMax = value;
@@ -74,6 +71,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 return measuredValue;
             }
+
             set
             {
                 measuredValue = value;
@@ -87,6 +85,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 return channelNo;
             }
+
             private set
             {
                 channelNo = value;
@@ -110,26 +109,29 @@ namespace BMW.Rheingold.Measurement.Common
                         dmmChannelType.Range = Source.Function.Range;
                     }
                 }
+
                 return dmmChannelType;
             }
         }
 
         public event EventHandler<PropertyChangedEventArgs> ModelChanged;
-
         public void Update(DmmChannel data)
         {
             if (ChannelNo != data.ChannelNo)
             {
                 ChannelNo = data.ChannelNo;
             }
+
             if (IsMinMax != data.IsMinMax)
             {
                 IsMinMax = data.IsMinMax;
             }
+
             if (IsHold != data.IsHold)
             {
                 IsHold = data.IsHold;
             }
+
             if (Source == null)
             {
                 Source = data.Source;
@@ -138,6 +140,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 Source.Update(data.Source);
             }
+
             if (MeasuredValue == null)
             {
                 MeasuredValue = data.MeasuredValue;
@@ -161,6 +164,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 throw new ArgumentException("Number \"no\" must not be " + no + ", but 1 or 2.");
             }
+
             MeasuredValue = new DmmMeasuredValueMinMax();
         }
 
@@ -171,6 +175,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 result = false;
             }
+
             if (cache.Keys.Contains(name.ToString()))
             {
                 Source = cache[name.ToString()];
@@ -180,12 +185,13 @@ namespace BMW.Rheingold.Measurement.Common
                 Source = new MeasuringSource(name);
                 cache.Add(name.ToString(), Source);
             }
+
             return result;
         }
 
         public void NotifyModelChanged(string propName)
         {
-            this.ModelChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            ModelChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
         public void Reset()

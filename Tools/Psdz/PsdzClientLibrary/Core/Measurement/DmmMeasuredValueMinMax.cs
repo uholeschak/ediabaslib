@@ -8,22 +8,19 @@ namespace BMW.Rheingold.Measurement.Common
     {
         [DataMember]
         private float max;
-
         [DataMember]
         private bool resetMinMax;
-
         [DataMember]
         private float min;
-
         [DataMember]
         private string range;
-
         public float Max
         {
             get
             {
                 return max;
             }
+
             private set
             {
                 max = value;
@@ -37,6 +34,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 return min;
             }
+
             private set
             {
                 min = value;
@@ -50,6 +48,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 return range;
             }
+
             private set
             {
                 range = value;
@@ -58,7 +57,6 @@ namespace BMW.Rheingold.Measurement.Common
         }
 
         public event EventHandler MeasuredValueChanged;
-
         public void Update(DmmMeasuredValueMinMax data)
         {
             Update((DmmMeasuredValue)data);
@@ -66,10 +64,12 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 Range = data.Range;
             }
+
             if (Min != data.Min)
             {
                 Min = data.Min;
             }
+
             if (Max != data.Max)
             {
                 Max = data.Max;
@@ -79,7 +79,7 @@ namespace BMW.Rheingold.Measurement.Common
         public void SetMeasuredValue(float readValue, string range, MeasuringRangeStatus readRangeStatus, bool setMinMax, string unit)
         {
             bool flag = false;
-            base.Unit = unit;
+            Unit = unit;
             if (setMinMax)
             {
                 if (resetMinMax)
@@ -96,6 +96,7 @@ namespace BMW.Rheingold.Measurement.Common
                         Min = readValue;
                         flag = true;
                     }
+
                     if (readValue > Max)
                     {
                         Max = readValue;
@@ -110,15 +111,16 @@ namespace BMW.Rheingold.Measurement.Common
                 Max = 0f;
                 flag = true;
             }
-            flag = flag || base.RangeStatus != readRangeStatus;
-            base.RangeStatus = readRangeStatus;
-            flag = flag || base.Value != readValue;
-            base.Value = readValue;
+
+            flag = flag || RangeStatus != readRangeStatus;
+            RangeStatus = readRangeStatus;
+            flag = flag || Value != readValue;
+            Value = readValue;
             flag = flag || (!string.IsNullOrEmpty(range) && Range != range);
             Range = (string.IsNullOrEmpty(range) ? string.Empty : range);
-            if (flag && this.MeasuredValueChanged != null)
+            if (flag && MeasuredValueChanged != null)
             {
-                this.MeasuredValueChanged(this, EventArgs.Empty);
+                MeasuredValueChanged(this, EventArgs.Empty);
             }
         }
     }
