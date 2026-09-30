@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using BMW.Rheingold.Measurement.Model;
 
 namespace BMW.Rheingold.MeasurementCommunication
 {
