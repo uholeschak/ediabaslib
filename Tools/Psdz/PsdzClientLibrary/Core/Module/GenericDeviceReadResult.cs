@@ -15,12 +15,10 @@ namespace BMW.Rheingold.Measurement.Common
         private struct ReadingInformation
         {
             public int Start;
-
             public int Length;
         }
 
         private const string ItemToFind = "Result:Single[]={";
-
         public float[] Values { get; private set; }
 
         public GenericDeviceReadResult(float[] values)
@@ -73,6 +71,7 @@ namespace BMW.Rheingold.Measurement.Common
             {
                 num += itemToFind.Length;
             }
+
             return num;
         }
 
@@ -83,13 +82,14 @@ namespace BMW.Rheingold.Measurement.Common
 
         private ReadingInformation GetReadInfo(byte[] data, string startString)
         {
-            ReadingInformation result = default(ReadingInformation);
+            ReadingInformation result = default;
             string text = Encoding.ASCII.GetString(data);
             int num = ((!string.IsNullOrEmpty(startString)) ? GenericDeviceResultPos(startString, text) : 0);
             if (num == -1)
             {
                 return result;
             }
+
             Regex regex = new Regex("#8\\d{8}");
             Regex regex2 = new Regex("\\d{8}$");
             Match match = regex.Match(text, num);
@@ -98,6 +98,7 @@ namespace BMW.Rheingold.Measurement.Common
                 result.Start = match.Index + match.Length;
                 result.Length = int.Parse(regex2.Match(match.Value).Value);
             }
+
             return result;
         }
 
@@ -117,6 +118,7 @@ namespace BMW.Rheingold.Measurement.Common
                     Log.ErrorException("GenericDeviceReadResult.NormalizeMeasuringDataGeneric()", exception);
                 }
             }
+
             return array;
         }
 
@@ -139,6 +141,7 @@ namespace BMW.Rheingold.Measurement.Common
                     }
                 }
             }
+
             return array;
         }
 
@@ -147,13 +150,13 @@ namespace BMW.Rheingold.Measurement.Common
             Dictionary<string, GenericDeviceStatusInfo> dictionary = new Dictionary<string, GenericDeviceStatusInfo>();
             if (!string.IsNullOrEmpty(statusResult))
             {
-                foreach (string item in from x in statusResult.Trim().Split(new string[3] { "[FileList]", "[PlugIns]", "[Hardware]" }, StringSplitOptions.None)
-                                        where !string.IsNullOrEmpty(x)
-                                        select x)
+                foreach (string item in
+                    from x in statusResult.Trim().Split(new string[3] { "[FileList]", "[PlugIns]", "[Hardware]" }, StringSplitOptions.None)
+                    where !string.IsNullOrEmpty(x)select x)
                 {
-                    foreach (string item2 in from x in item.Split(new string[1] { "\r\n" }, StringSplitOptions.None)
-                                             where !string.IsNullOrEmpty(x)
-                                             select x)
+                    foreach (string item2 in
+                        from x in item.Split(new string[1] { "\r\n" }, StringSplitOptions.None)
+                        where !string.IsNullOrEmpty(x)select x)
                     {
                         string[] array = item2.Split('=');
                         if (array.Count() > 1)
@@ -161,10 +164,12 @@ namespace BMW.Rheingold.Measurement.Common
                             dictionary.Add(array[0], new GenericDeviceStatusInfo(array[1]));
                             continue;
                         }
+
                         Log.Info("GenericDeviceReadResult.ParseStatusResult()", "The string '{0}' is has not name = value pair", item2);
                     }
                 }
             }
+
             return dictionary;
         }
 
@@ -176,6 +181,7 @@ namespace BMW.Rheingold.Measurement.Common
                 string text2 = string.Join(", ", Values.Select((float x) => x.ToString(CultureInfo.InvariantCulture)));
                 text = text + ", Values: " + text2;
             }
+
             return text;
         }
     }
