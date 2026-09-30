@@ -106,4 +106,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Measurement\" />
+  </ItemGroup>
 </Project>
