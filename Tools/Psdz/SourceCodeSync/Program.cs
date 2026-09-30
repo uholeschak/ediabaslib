@@ -109,6 +109,7 @@ namespace SourceCodeSync
             "RheingoldISPINext",
             "RheingoldISTACoreFramework",
             "RheingoldMeasurementCommon",
+            "RheingoldMeasurementCommunication",
             "RheingoldPresentationFramework",
             "RheingoldProgramming",
             "RheingoldPsdzWebApi.Adapter",
