@@ -77,6 +77,7 @@ namespace BMW.Rheingold.xVM
             }
         }
 
+        [PreserveSource(Hint="No change", SignatureModified = true)]
         private void SendRequestToIVD()
         {
             while (!stopSendRequestToIVD)
