@@ -21,49 +21,27 @@ namespace BMW.Rheingold.xVM
     public sealed class VciDeviceServiceOld : IDeviceService, IDisposable
     {
         private readonly IPEndPoint multicastEndpoint = new IPEndPoint(IPAddress.Any, 0);
-
         private readonly HashSet<VCIDevice> receivedDevices;
-
         private readonly ConcurrentQueue<SLPHeader> receivedResponses;
-
         private readonly AutoResetEvent autoEvent;
-
         private readonly System.Timers.Timer gcReceivedDevices;
-
-        private readonly object syncVariableDevs = new object();
-
+        private readonly object syncVariableDevs = new object ();
         private readonly string[] acceptedMeasurementDeviceTypes;
-
         private readonly bool imibDeviceReservation;
-
         private bool disposed;
-
         private Socket multicastSenderAndListener;
-
         private bool stopCreatingVciDevices;
-
         private bool stopCyclicBroadcast;
-
         private bool unicastClientReceivingIsRunning;
-
         private UdpClient unicastClient;
-
         private Socket unicastClientSocket;
-
         private Socket unicastListener;
-
         private bool isRunning;
-
         private bool sendVCIBroadCasts;
-
         private string xVM_ZGW_BROADCASTMask;
-
         public const string SLP_MCAST_ADDRESS = "239.255.255.253";
-
         public const int SLP_RESERVED_PORT = 427;
-
         private IVDDeviceService subDeviceServiceIVD;
-
         public IList<VCIDevice> Devices
         {
             get
@@ -81,6 +59,7 @@ namespace BMW.Rheingold.xVM
             {
                 return Filter.ToString();
             }
+
             set
             {
                 Filter = new Regex(value);
@@ -90,7 +69,6 @@ namespace BMW.Rheingold.xVM
         public Regex Filter { get; set; }
 
         public event EventHandler<NotifyCollectionChangedEventArgs> DevicesChanged;
-
         public VciDeviceServiceOld()
         {
             receivedDevices = new HashSet<VCIDevice>();
@@ -123,33 +101,40 @@ namespace BMW.Rheingold.xVM
             {
                 return;
             }
+
             if (disposing)
             {
                 if (multicastSenderAndListener != null)
                 {
                     multicastSenderAndListener.Dispose();
                 }
+
                 if (unicastListener != null)
                 {
                     unicastListener.Dispose();
                 }
+
                 if (unicastClient != null)
                 {
                     unicastClient.Close();
                 }
+
                 if (unicastClientSocket != null)
                 {
                     unicastClientSocket.Close();
                 }
+
                 if (gcReceivedDevices != null)
                 {
                     gcReceivedDevices.Stop();
                 }
+
                 if (gcReceivedDevices != null)
                 {
                     gcReceivedDevices.Dispose();
                 }
             }
+
             disposed = true;
         }
 
@@ -195,10 +180,13 @@ namespace BMW.Rheingold.xVM
                     {
                         return deviceA.VciChannels.Equals(deviceB.VciChannels);
                     }
+
                     return false;
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -208,6 +196,7 @@ namespace BMW.Rheingold.xVM
             {
                 return device.IsSupportedImibOrICOM(acceptedMeasurementDeviceTypes);
             }
+
             return true;
         }
 
@@ -220,29 +209,35 @@ namespace BMW.Rheingold.xVM
                 {
                     autoEvent.WaitOne();
                 }
+
                 if (stopCreatingVciDevices || !receivedResponses.TryDequeue(out var result) || result.functionid != 7 || result.length <= 25)
                 {
                     continue;
                 }
+
                 SLPAttrRply sLPAttrRply = (SLPAttrRply)result;
                 if (string.IsNullOrEmpty(sLPAttrRply.attrlist))
                 {
                     continue;
                 }
+
                 Match match = null;
                 if (Filter != null)
                 {
                     match = Filter.Match(sLPAttrRply.attrlist);
                 }
+
                 if (match != null && !match.Success)
                 {
                     continue;
                 }
+
                 VCIDevice newDevice = SLP.ScanDeviceFromAttrList(sLPAttrRply);
                 if (newDevice == null || !IsValidDevice(newDevice))
                 {
                     continue;
                 }
+
                 NotifyCollectionChangedEventArgs e = null;
                 lock (syncVariableDevs)
                 {
@@ -271,9 +266,11 @@ namespace BMW.Rheingold.xVM
                         {
                             newDevice.IsMarkedToDefault = true;
                         }
+
                         receivedDevices.Add(newDevice);
                         e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newDevice);
                     }
+
                     if (e != null)
                     {
                         OnDevicesChanged(e);
@@ -287,7 +284,7 @@ namespace BMW.Rheingold.xVM
             if (!string.IsNullOrEmpty(xVM_ZGW_BROADCASTMask))
             {
                 string[] array = xVM_ZGW_BROADCASTMask.Split(',');
-                array.ForEach(delegate (string x)
+                array.ForEach((string x) =>
                 {
                     x.Trim();
                 });
@@ -296,6 +293,7 @@ namespace BMW.Rheingold.xVM
                 {
                     list.AddIfNotContains("169.254.255.255");
                 }
+
                 SendUnicastToDevice(slpRequest, list);
             }
         }
@@ -322,11 +320,13 @@ namespace BMW.Rheingold.xVM
                 {
                     Log.WarningException("VciDeviceService.CyclicBroadcastDeviceRequest()", exception);
                 }
+
                 SendUnicastToDevice(sLPAttrRqst, subDeviceServiceIVD.DeviceIPs);
                 if (sendVCIBroadCasts)
                 {
                     SendVciBroadcasts(sLPAttrRqst);
                 }
+
                 Thread.Sleep(500);
             }
         }
@@ -359,8 +359,10 @@ namespace BMW.Rheingold.xVM
                 {
                     Log.Info("VciDeviceService.InitializeMulticastSender()", "MULTICAST TTL found: {0}; new value: {1}", socketOption, SLP.MulticastTimeToLive);
                 }
+
                 multicastSenderAndListener.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, SLP.MulticastTimeToLive.Value);
             }
+
             multicastSenderAndListener.Bind(new IPEndPoint(IPAddress.Any, 427));
             NetworkInterface[] allNetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface networkInterface in allNetworkInterfaces)
@@ -369,11 +371,13 @@ namespace BMW.Rheingold.xVM
                 {
                     continue;
                 }
+
                 IEnumerable<UnicastIPAddressInformation> enumerable = networkInterface.GetIPProperties().UnicastAddresses.Where((UnicastIPAddressInformation x) => x.Address != null && x.Address.AddressFamily == AddressFamily.InterNetwork);
                 if (enumerable == null)
                 {
                     continue;
                 }
+
                 foreach (UnicastIPAddressInformation item in enumerable)
                 {
                     IPv4InterfaceProperties iPv4Properties = networkInterface.GetIPProperties().GetIPv4Properties();
@@ -391,6 +395,7 @@ namespace BMW.Rheingold.xVM
                     }
                 }
             }
+
             byte[] buffer = new byte[4096];
             SocketState state = new SocketState(multicastSenderAndListener, buffer, "multicastSender");
             EndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
@@ -443,7 +448,7 @@ namespace BMW.Rheingold.xVM
 
         private void OnDevicesChanged(NotifyCollectionChangedEventArgs args)
         {
-            this.DevicesChanged?.Invoke(this, args);
+            DevicesChanged?.Invoke(this, args);
         }
 
         private void SendUnicastToDevice(SLPAttrRqst myAttrRqst, IList<string> deviceIPs)
@@ -452,6 +457,7 @@ namespace BMW.Rheingold.xVM
             {
                 return;
             }
+
             if (!unicastClientReceivingIsRunning)
             {
                 try
@@ -466,6 +472,7 @@ namespace BMW.Rheingold.xVM
                     Log.ErrorException("VciDeviceService.SendUnicastToDevice()", exception);
                 }
             }
+
             foreach (string deviceIP in deviceIPs)
             {
                 try
@@ -492,6 +499,7 @@ namespace BMW.Rheingold.xVM
                 {
                     return;
                 }
+
                 try
                 {
                     EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -534,6 +542,7 @@ namespace BMW.Rheingold.xVM
                 {
                     return;
                 }
+
                 try
                 {
                     EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -577,6 +586,7 @@ namespace BMW.Rheingold.xVM
                 {
                     return;
                 }
+
                 UdpState udpState = ar.AsyncState as UdpState;
                 IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
                 try
@@ -623,6 +633,7 @@ namespace BMW.Rheingold.xVM
                 {
                     return;
                 }
+
                 SocketState socketState = ar.AsyncState as SocketState;
                 EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
                 SocketFlags socketFlags = SocketFlags.None;

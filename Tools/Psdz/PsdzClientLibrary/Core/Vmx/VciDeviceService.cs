@@ -23,47 +23,26 @@ namespace BMW.Rheingold.xVM
     public sealed class VciDeviceService : IDeviceService, IDisposable
     {
         private SynchronizedCollection<SlpClientData> udpClients = new SynchronizedCollection<SlpClientData>();
-
         private bool disposed;
-
         private bool cyclicSlpRequestIsRunning;
-
         private bool vciDevicesCreatingLoopIsRunning;
-
         private readonly BlockingCollection<SLPHeader> receivedResponses;
-
         private readonly SynchronizedCollection<VCIDevice> receivedDevices;
-
         private readonly string[] acceptedMeasurementDeviceTypes;
-
         private readonly bool imibDeviceReservation;
-
         private readonly System.Timers.Timer gcReceivedDevices;
-
         private readonly string serialOfDefaultIcom;
-
         private bool isAlreadyRunning;
-
         private const int SlpRequestWaitingTime = 1000;
-
         private IEnumerable<string> knownIpAdresses;
-
         private static bool isDHCPActivationCalled;
-
         private bool icomDHCPActivationFailed;
-
         private CancellationTokenSource receivedResponsesTokenSource;
-
         private string icomDHCPNetwork = "192.168.4.0";
-
         private string icomDHCPNetworkMask = "255.255.255.0";
-
         private readonly IVDDeviceService subDeviceServiceIVD;
-
         private readonly IEcuKom ecuKom;
-
         public IList<VCIDevice> Devices => receivedDevices.ToList();
-
         public Regex Filter { get; set; }
 
         public string FilterAsString
@@ -72,6 +51,7 @@ namespace BMW.Rheingold.xVM
             {
                 return Filter.ToString();
             }
+
             set
             {
                 Filter = new Regex(value);
@@ -79,7 +59,6 @@ namespace BMW.Rheingold.xVM
         }
 
         public event EventHandler<NotifyCollectionChangedEventArgs> DevicesChanged;
-
         public VciDeviceService(IEcuKom ecuKom)
         {
             serialOfDefaultIcom = ConfigSettings.getConfigString("Bmw.Rheingold.ConnectionManager.DefaultICOMData", "");
@@ -106,6 +85,7 @@ namespace BMW.Rheingold.xVM
             {
                 array[i] = (byte)(addressBytes2[i] | ~addressBytes[i]);
             }
+
             return new IPAddress(array);
         }
 
@@ -132,6 +112,7 @@ namespace BMW.Rheingold.xVM
                 {
                     continue;
                 }
+
                 foreach (UnicastIPAddressInformation item in networkInterface.GetIPProperties().UnicastAddresses.Where((UnicastIPAddressInformation x) => x.Address.AddressFamily == AddressFamily.InterNetwork))
                 {
                     if (!udpClients.Select((SlpClientData b) => (b.UdpClient.Client.LocalEndPoint as IPEndPoint).Address.ToString()).Contains(item.Address.ToString()))
@@ -148,10 +129,12 @@ namespace BMW.Rheingold.xVM
                             Log.ErrorException("VciDeviceService.GetRegisteredNetworkadapter()", exception);
                             continue;
                         }
+
                         synchronizedCollection.Add(slpClientData);
                     }
                 }
             }
+
             return synchronizedCollection;
         }
 
@@ -188,15 +171,25 @@ namespace BMW.Rheingold.xVM
                     Log.WarningException("VciDeviceService.TaskFinished()", exception);
                     goto IL_0181;
                 }
+
                 continue;
                 IL_0181:
-                await Task.Delay(5000);
+                    await Task.Delay(5000);
             }
         }
 
         private void LogIncorrectHeader(SLPHeader header, IPEndPoint remoteIp)
         {
-            string arg = ((header == null) ? "is null" : (header.validParsed ? $"has byte function: {header.functionid}" : "was not parsed correctly"));
+            string arg;
+            if (header == null)
+            {
+                arg = "is null";
+            }
+            else
+            {
+                arg = (header.validParsed ? $"has byte function: {header.functionid}" : "was not parsed correctly");
+            }
+
             Log.Info("TaskFinished", $"Packet from {remoteIp} ignored because header {arg}");
         }
 
@@ -205,7 +198,7 @@ namespace BMW.Rheingold.xVM
             while (cyclicSlpRequestIsRunning)
             {
                 SearchForNewAvailableNetworks();
-                udpClients.ForEach(delegate (SlpClientData x)
+                udpClients.ForEach((SlpClientData x) =>
                 {
                     x.Send();
                 });
@@ -219,6 +212,7 @@ namespace BMW.Rheingold.xVM
             {
                 return device.IsSupportedImibOrICOM(acceptedMeasurementDeviceTypes);
             }
+
             return true;
         }
 
@@ -232,16 +226,19 @@ namespace BMW.Rheingold.xVM
                     {
                         return deviceA.VciChannels.Equals(deviceB.VciChannels);
                     }
+
                     return false;
                 }
+
                 return true;
             }
+
             return false;
         }
 
         private void OnDevicesChanged(NotifyCollectionChangedEventArgs args)
         {
-            this.DevicesChanged?.Invoke(this, args);
+            DevicesChanged?.Invoke(this, args);
         }
 
         private void CreateVciDevices()
@@ -258,6 +255,7 @@ namespace BMW.Rheingold.xVM
                     Log.Info("CreateVciDevices()", "Exit loop with: '{0}'", num);
                     break;
                 }
+
                 SLPHeader item;
                 try
                 {
@@ -271,6 +269,7 @@ namespace BMW.Rheingold.xVM
                         {
                             Log.Info("CreateVciDevices()", "slpPacket is null after dequeuing trial");
                         }
+
                         continue;
                     }
                 }
@@ -278,6 +277,7 @@ namespace BMW.Rheingold.xVM
                 {
                     continue;
                 }
+
                 SLPAttrRply sLPAttrRply = item as SLPAttrRply;
                 if (sLPAttrRply != null)
                 {
@@ -287,27 +287,32 @@ namespace BMW.Rheingold.xVM
                 {
                     Log.Info("VciDeviceService.CreateVciDevices()", "slpReply is null");
                 }
+
                 if (string.IsNullOrEmpty(sLPAttrRply?.attrlist))
                 {
                     Log.Info("CreateVciDevices()", "Loop continued, slpReply.attrlist is null or empty");
                     continue;
                 }
+
                 Match match = null;
                 if (Filter != null)
                 {
                     match = Filter.Match(sLPAttrRply.attrlist);
                 }
+
                 if (match != null && !match.Success)
                 {
                     Log.Info("CreateVciDevices()", "Match is null or its flag Success is set to false, m.Success: {0}", match.Success);
                     continue;
                 }
+
                 VCIDevice newDevice = SLP.ScanDeviceFromAttrList(sLPAttrRply);
                 if (newDevice == null || !IsValidDevice(newDevice))
                 {
                     Log.Info("CreateVciDevices()", "newDevice is null or invalid");
                     continue;
                 }
+
                 NotifyCollectionChangedEventArgs e = null;
                 VCIDevice vCIDevice = receivedDevices.SingleOrDefault((VCIDevice x) => x.Equals(newDevice));
                 Log.Debug("VciDeviceService.CreateVciDevices()", "Match of registered {0} and reveived vci device: {1}", vCIDevice, receivedDevices);
@@ -316,10 +321,12 @@ namespace BMW.Rheingold.xVM
                     Log.Info(Log.CurrentMethod(), "Following properties are detected for {0}: IP-Address {1}, Gateway ECU Diag-Address {2}", newDevice.DevId, newDevice.IPAddress, newDevice.Gateway);
                     list.Add(newDevice.DevId);
                 }
+
                 if (ActivateIcomDhcpServerForApipaNetworkIfNeccessary(newDevice.IPAddress))
                 {
                     continue;
                 }
+
                 if (vCIDevice != null)
                 {
                     vCIDevice.SetAlive();
@@ -344,9 +351,11 @@ namespace BMW.Rheingold.xVM
                     {
                         newDevice.IsMarkedToDefault = true;
                     }
+
                     receivedDevices.Add(newDevice);
                     e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newDevice);
                 }
+
                 if (e != null)
                 {
                     OnDevicesChanged(e);
@@ -377,7 +386,7 @@ namespace BMW.Rheingold.xVM
         {
             bool num = !icomDHCPActivationFailed && deviceIpAddress.StartsWith("169.254");
             bool flag = NetworkInterface.GetAllNetworkInterfaces().Any((NetworkInterface adapter) => adapter.Supports(NetworkInterfaceComponent.IPv4) && adapter.GetIPProperties().GetIPv4Properties().IsAutomaticPrivateAddressingActive);
-            if (num && flag)
+            if (num & flag)
             {
                 if (!isDHCPActivationCalled)
                 {
@@ -394,14 +403,17 @@ namespace BMW.Rheingold.xVM
                         Log.Warning(Log.CurrentMethod(), $"Executing {text} failed with Error: {0}", ecuJob?.JobErrorText ?? "Job result was null");
                         icomDHCPActivationFailed = true;
                     }
+
                     SetIsDHCPActivationCalled(value: true);
                     return true;
                 }
+
                 if (!icomDHCPNetwork.StartsWith("169.254"))
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -416,7 +428,7 @@ namespace BMW.Rheingold.xVM
             if (list.Any())
             {
                 NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list);
-                list.ForEach(delegate (VCIDevice d)
+                list.ForEach((VCIDevice d) =>
                 {
                     receivedDevices.Remove(d);
                 });
@@ -439,9 +451,10 @@ namespace BMW.Rheingold.xVM
 
         private void SearchForNewAvailableNetworks()
         {
-            IEnumerable<string> first = (from b in NetworkInterface.GetAllNetworkInterfaces()
-                                         where b.OperationalStatus == OperationalStatus.Up
-                                         select b).SelectMany((NetworkInterface a) => a.GetIPProperties().UnicastAddresses.Select((UnicastIPAddressInformation b) => b.Address.ToString()));
+            IEnumerable<string> first = (
+                from b in NetworkInterface.GetAllNetworkInterfaces()
+                where b.OperationalStatus == OperationalStatus.Up
+                select b).SelectMany((NetworkInterface a) => a.GetIPProperties().UnicastAddresses.Select((UnicastIPAddressInformation b) => b.Address.ToString()));
             IEnumerable<string> obj = ((knownIpAdresses != null) ? first.Except(knownIpAdresses) : null);
             if (obj != null && obj.Any())
             {
@@ -455,6 +468,7 @@ namespace BMW.Rheingold.xVM
                     Log.ErrorException("VciDeviceService.SearchForNewAvailableNetworks()", exception);
                 }
             }
+
             knownIpAdresses = first;
         }
 
@@ -520,9 +534,10 @@ namespace BMW.Rheingold.xVM
             {
                 return;
             }
+
             if (disposing)
             {
-                udpClients.ForEach(delegate (SlpClientData x)
+                udpClients.ForEach((SlpClientData x) =>
                 {
                     x.Close();
                 });
@@ -531,6 +546,7 @@ namespace BMW.Rheingold.xVM
                 udpClients.Clear();
                 receivedDevices.Clear();
             }
+
             disposed = true;
         }
     }

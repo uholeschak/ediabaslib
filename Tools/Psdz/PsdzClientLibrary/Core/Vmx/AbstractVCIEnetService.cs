@@ -23,27 +23,16 @@ namespace BMW.Rheingold.xVM.ENET
     public abstract class AbstractVCIEnetService : IDeviceService, IDisposable
     {
         private const string LOOPBACK_ADDRESS = "127.0.0.1";
-
         private readonly System.Timers.Timer gcReceivedDevices;
-
         private readonly HashSet<VCIDevice> receivedDevices;
-
-        private readonly object syncVariableDevs = new object();
-
+        private readonly object syncVariableDevs = new object ();
         private Dictionary<IPAddress, UdpState> broadCastDictionary;
-
         private readonly ILogic logic;
-
         private bool disposed;
-
         private bool isRunning;
-
         internal bool stopZgwReceiving;
-
         internal bool stopZgwSending;
-
         internal abstract int ZgwReservedPort { get; }
-
         internal abstract byte[] ZgwBuffer { get; }
 
         private IEnumerable<VCIDevice> ConnectedDevices
@@ -56,11 +45,13 @@ namespace BMW.Rheingold.xVM.ENET
                 {
                     list.AddIfNotContains(vCIDevice);
                 }
+
                 VCIDevice vCIDevice2 = logic.VecInfo?.VCI;
                 if (vCIDevice2 != null)
                 {
                     list.AddIfNotContains(vCIDevice2);
                 }
+
                 return list;
             }
         }
@@ -75,8 +66,10 @@ namespace BMW.Rheingold.xVM.ENET
                 {
                     return Filter.ToString();
                 }
+
                 return string.Empty;
             }
+
             set
             {
                 Filter = new Regex(value);
@@ -86,7 +79,6 @@ namespace BMW.Rheingold.xVM.ENET
         public Regex Filter { get; set; }
 
         public event EventHandler<NotifyCollectionChangedEventArgs> DevicesChanged;
-
         public AbstractVCIEnetService(ILogic logic)
         {
             this.logic = logic;
@@ -121,9 +113,9 @@ namespace BMW.Rheingold.xVM.ENET
 
         private void OnDevicesChanged(NotifyCollectionChangedEventArgs args)
         {
-            if (this.DevicesChanged != null)
+            if (DevicesChanged != null)
             {
-                this.DevicesChanged(this, args);
+                DevicesChanged(this, args);
             }
         }
 
@@ -167,8 +159,8 @@ namespace BMW.Rheingold.xVM.ENET
             broadCastDictionary = new Dictionary<IPAddress, UdpState>();
             try
             {
-                foreach (IPAddress item in (from a in GetBroadcastInfos()
-                                            select a.BroadcastAddress).ToList())
+                foreach (IPAddress item in (
+                    from a in GetBroadcastInfos()select a.BroadcastAddress).ToList())
                 {
                     if (!broadCastDictionary.Keys.Contains(item))
                     {
@@ -186,10 +178,11 @@ namespace BMW.Rheingold.xVM.ENET
 
         private IEnumerable<(IPAddress BroadcastAddress, IPAddress Address)> GetBroadcastInfos()
         {
-            IEnumerable<NetworkInterface> enumerable = from a in NetworkInterface.GetAllNetworkInterfaces()
-                                                       where a.NetworkInterfaceType != NetworkInterfaceType.Loopback
-                                                       where a.OperationalStatus == OperationalStatus.Up
-                                                       select a;
+            IEnumerable<NetworkInterface> enumerable =
+                from a in NetworkInterface.GetAllNetworkInterfaces()
+                where a.NetworkInterfaceType != NetworkInterfaceType.Loopback
+                where a.OperationalStatus == OperationalStatus.Up
+                select a;
             foreach (NetworkInterface item2 in enumerable)
             {
                 UnicastIPAddressInformationCollection unicastAddresses = item2.GetIPProperties().UnicastAddresses;
@@ -197,6 +190,7 @@ namespace BMW.Rheingold.xVM.ENET
                 {
                     continue;
                 }
+
                 foreach (UnicastIPAddressInformation item3 in unicastAddresses.Where((UnicastIPAddressInformation a) => a.Address.AddressFamily == AddressFamily.InterNetwork))
                 {
                     IPAddress item = new IPAddress((item3.Address.Address | ~item3.IPv4Mask.Address) & 0xFFFFFFFFu);
@@ -232,7 +226,6 @@ namespace BMW.Rheingold.xVM.ENET
         }
 
         public abstract void ReceiveCallback(IAsyncResult ar);
-
         internal void CreateAndUpdateEnetVciDevice(string vin, string serialNumber, string ipAddress, string macAddress, bool isDoip)
         {
             //[-] VCIDevice vCIDevice = new VCIDevice();
@@ -274,6 +267,7 @@ namespace BMW.Rheingold.xVM.ENET
                     vCIDevice.SetAlive();
                     return;
                 }
+
                 device.SetAlive();
                 receivedDevices.AddIfNotContains(device);
                 NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, device);
@@ -303,7 +297,7 @@ namespace BMW.Rheingold.xVM.ENET
                     UdpClient udpClient = item.Value.UdpClient;
                     IPAddress key = item.Key;
                     udpClient.Send(ZgwBuffer, ZgwBuffer.Length, new IPEndPoint(key, ZgwReservedPort));
-                    //[-] Log.Debug(xVM.DebugLevel, 5, Log.CurrentMethod(), "Broadcast has been sent from port '{0}' to IP '{1}:{2}'", ((IPEndPoint)item.Value.UdpClient.Client.LocalEndPoint).Port.ToString(), key.ToString(), ZgwReservedPort);
+                //[-] Log.Debug(xVM.DebugLevel, 5, Log.CurrentMethod(), "Broadcast has been sent from port '{0}' to IP '{1}:{2}'", ((IPEndPoint)item.Value.UdpClient.Client.LocalEndPoint).Port.ToString(), key.ToString(), ZgwReservedPort);
                 }
                 catch (Exception exception)
                 {
@@ -353,14 +347,17 @@ namespace BMW.Rheingold.xVM.ENET
             {
                 return;
             }
+
             if (disposing)
             {
                 if (isRunning)
                 {
                     Stop();
                 }
+
                 gcReceivedDevices.Dispose();
             }
+
             disposed = true;
         }
 

@@ -17,19 +17,12 @@ namespace BMW.Rheingold.xVM
     public class ConnectionManagerDeviceService : IDeviceService, IDisposable
     {
         private readonly HashSet<VCIDevice> devices;
-
         private readonly ILogic logic;
-
         private readonly List<IDeviceService> registeredDeviceServices;
-
         private bool disposed;
-
         private bool isServiceRunning;
-
         private Regex filter;
-
         private string filterAsString;
-
         private IEnumerable<VCIDevice> SimulationData
         {
             get
@@ -45,12 +38,13 @@ namespace BMW.Rheingold.xVM
                     else
                     {
                         list = logic.FindConnections().ToList();
-                        list.ForEach(delegate (VCIDevice x)
+                        list.ForEach((VCIDevice x) =>
                         {
                             x.DeviceState = DeviceState.Free;
                         });
                     }
                 }
+
                 return list;
             }
         }
@@ -65,11 +59,13 @@ namespace BMW.Rheingold.xVM
                 {
                     list.AddIfNotContains(vCIDevice);
                 }
+
                 VCIDevice vCIDevice2 = logic.VecInfo?.VCI;
                 if (vCIDevice2 != null)
                 {
                     list.AddIfNotContains(vCIDevice2);
                 }
+
                 return list;
             }
         }
@@ -82,6 +78,7 @@ namespace BMW.Rheingold.xVM
             {
                 return filter;
             }
+
             set
             {
                 filter = value;
@@ -98,6 +95,7 @@ namespace BMW.Rheingold.xVM
             {
                 return filterAsString;
             }
+
             set
             {
                 filterAsString = value;
@@ -109,7 +107,6 @@ namespace BMW.Rheingold.xVM
         }
 
         public event EventHandler<NotifyCollectionChangedEventArgs> DevicesChanged;
-
         public ConnectionManagerDeviceService(ILogic logic, bool showAlreadyConnectedDeviceTypes, string vciTypesToShow, bool excludeAlreadyConnectedDevices = false, bool includeEnetDevices = true)
         {
             devices = new HashSet<VCIDevice>();
@@ -121,6 +118,7 @@ namespace BMW.Rheingold.xVM
                 (deviceService as IDisposable)?.Dispose();
                 deviceService = new VciDeviceServiceOld();
             }
+
             deviceService.DevicesChanged += DeviceDevicesChanged;
             registeredDeviceServices.Add(deviceService);
             if (includeEnetDevices)
@@ -132,6 +130,7 @@ namespace BMW.Rheingold.xVM
                 deviceService3.DevicesChanged += DeviceDevicesChanged;
                 registeredDeviceServices.Add(deviceService3);
             }
+
             FilterAsString = CreateFilter(ConnectedDevices, vciTypesToShow, showAlreadyConnectedDeviceTypes);
             if (vciTypesToShow != "MIB" && !excludeAlreadyConnectedDevices)
             {
@@ -143,6 +142,7 @@ namespace BMW.Rheingold.xVM
                     }
                 }
             }
+
             devices.AddRange(SimulationData);
         }
 
@@ -153,6 +153,7 @@ namespace BMW.Rheingold.xVM
             {
                 return null;
             }
+
             return deviceService as VciDeviceService;
         }
 
@@ -163,7 +164,7 @@ namespace BMW.Rheingold.xVM
 
         public void Start()
         {
-            registeredDeviceServices.ForEach(delegate (IDeviceService x)
+            registeredDeviceServices.ForEach((IDeviceService x) =>
             {
                 x.Start();
             });
@@ -172,7 +173,7 @@ namespace BMW.Rheingold.xVM
 
         public void Stop()
         {
-            registeredDeviceServices.ForEach(delegate (IDeviceService x)
+            registeredDeviceServices.ForEach((IDeviceService x) =>
             {
                 x.Stop();
             });
@@ -189,11 +190,12 @@ namespace BMW.Rheingold.xVM
                     Start();
                     flag = true;
                 }
+
                 return GetVCIDevice(serialOfVci);
             }
             finally
             {
-                if (isServiceRunning && flag)
+                if (isServiceRunning & flag)
                 {
                     Stop();
                 }
@@ -211,9 +213,11 @@ namespace BMW.Rheingold.xVM
                 {
                     return vCIDevice;
                 }
+
                 num2++;
                 Thread.Sleep(500);
             }
+
             return null;
         }
 
@@ -236,6 +240,7 @@ namespace BMW.Rheingold.xVM
                     {
                         text += string.Format("(Serial={0})|", item.Serial.Replace("-", "\\-"));
                     }
+
                     if (item.VCIType == VCIDeviceType.IMIB)
                     {
                         VCIDevice vCIDevice = logic.VecInfo?.MIB;
@@ -243,6 +248,7 @@ namespace BMW.Rheingold.xVM
                         {
                             flag = true;
                         }
+
                         if (int.Parse(item.State) == 4 && logic.WasImibConnected && item.Serial == vCIDevice.Serial)
                         {
                             text = string.Empty;
@@ -253,10 +259,12 @@ namespace BMW.Rheingold.xVM
                         flag2 = true;
                     }
                 }
+
                 if (!flag && (vciDeviceTypeToShow == "MIB" || vciDeviceTypeToShow == "ALL"))
                 {
                     text += "(DevType=IMIB)|";
                 }
+
                 if (!flag2 && (vciDeviceTypeToShow == "VCI" || vciDeviceTypeToShow == "ALL"))
                 {
                     text += "(DevType=ICOM|ENET|ICOM-Next)|";
@@ -268,21 +276,24 @@ namespace BMW.Rheingold.xVM
                 {
                     text += "(DevType=IMIB)|";
                 }
+
                 if (vciDeviceTypeToShow == "VCI" || vciDeviceTypeToShow == "ALL")
                 {
                     text += "(DevType=ICOM|ENET|ICOM-Next)|";
                 }
             }
+
             if (!string.IsNullOrEmpty(text))
             {
                 text = text.TrimEnd('|');
             }
+
             return text;
         }
 
         private void OnDevicesChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            this.DevicesChanged?.Invoke(sender, args);
+            DevicesChanged?.Invoke(sender, args);
         }
 
         private void DeviceDevicesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -291,6 +302,7 @@ namespace BMW.Rheingold.xVM
             {
                 devices.RemoveWhere((VCIDevice x) => e.OldItems.Contains(x));
             }
+
             if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Replace)
             {
                 foreach (VCIDevice vciDevice in e.NewItems)
@@ -309,11 +321,14 @@ namespace BMW.Rheingold.xVM
                                 }
                             }
                         }
+
                         vciDevice.IsConnected = true;
                     }
+
                     devices.Add(vciDevice);
                 }
             }
+
             OnDevicesChanged(sender, e);
         }
 
@@ -337,6 +352,7 @@ namespace BMW.Rheingold.xVM
             {
                 return;
             }
+
             if (disposing)
             {
                 foreach (IDeviceService registeredDeviceService in registeredDeviceServices)
@@ -347,8 +363,10 @@ namespace BMW.Rheingold.xVM
                         ((IDisposable)registeredDeviceService).Dispose();
                     }
                 }
+
                 registeredDeviceServices.Clear();
             }
+
             disposed = true;
         }
     }
