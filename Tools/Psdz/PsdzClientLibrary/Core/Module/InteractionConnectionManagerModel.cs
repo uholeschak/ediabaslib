@@ -13,32 +13,22 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
     public class InteractionConnectionManagerModel : InteractionRequestModel<InteractionConnectionManagerResponse>
     {
         private readonly ILogic logic;
-
         [DataMember]
         private readonly bool shouldLogin;
-
         [DataMember]
         private bool doImibReservation;
-
         [DataMember]
         private string reservationIcomType;
-
         [DataMember]
         private IVciDevice connectedVci;
-
         [DataMember]
         private IVciDevice connectedImib;
-
         [DataMember]
         private ConnectionTargetTypes vciTypesToShow;
-
         [DataMember]
         private ObservableCollection<IVciDevice> devices;
-
         private const string RegPathImibIsvmApplication = "HKEY_LOCAL_MACHINE\\SOFTWARE\\DiTest\\Dix\\IMIBNextApplication";
-
         private const string RegPathImibIsvmApplication32bit = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\DiTest\\Dix\\IMIBNextApplication";
-
         public bool ShouldLogin => shouldLogin;
 
         public string ReservationIcomType
@@ -47,6 +37,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return reservationIcomType;
             }
+
             set
             {
                 reservationIcomType = value;
@@ -60,6 +51,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return doImibReservation;
             }
+
             set
             {
                 doImibReservation = value;
@@ -73,6 +65,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return devices;
             }
+
             set
             {
                 devices = value;
@@ -85,6 +78,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return connectedVci;
             }
+
             set
             {
                 connectedVci = value;
@@ -98,6 +92,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return connectedImib;
             }
+
             set
             {
                 connectedImib = value;
@@ -111,6 +106,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return vciTypesToShow;
             }
+
             set
             {
                 vciTypesToShow = value;
@@ -146,14 +142,16 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return false;
             }
+
             if (string.Equals(connectedImib?.Serial, device.Serial) && int.Parse(device.State) == 4)
             {
                 connectedImib = null;
             }
+
             bool num = device.VCIType == VCIDeviceType.IMIB && string.Equals(connectedImib?.Serial, device.Serial) && (ReadConfigStringValue("STATESWITCH") != "0" || int.Parse(device.State) != 4);
             bool flag = (device.VCIType == VCIDeviceType.ICOM || device.VCIType == VCIDeviceType.SIM || device.VCIType == VCIDeviceType.ENET) && string.Equals(connectedVci?.Serial, device.Serial);
             bool flag2 = (device.VCIType == VCIDeviceType.EDIABAS || device.VCIType == VCIDeviceType.PTT) && connectedVci != null;
-            return num || flag || flag2;
+            return num | flag | flag2;
         }
 
         public bool CanConnect(IVciDevice device)
@@ -162,21 +160,24 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return false;
             }
+
             if (logic?.VecInfo != null && ConfigSettings.IsLightModeActive)
             {
                 return false;
             }
+
             if (VCIDeviceType.IMIB.Equals(device.VCIType) && ReadConfigStringValue("STATESWITCH") == "0" && device.IsConnectable && connectedImib != null)
             {
                 ConnectedImib = null;
             }
+
             bool num = VCIDeviceType.IMIB.Equals(device.VCIType) && (connectedImib == null || connectedImib.VCIType == VCIDeviceType.UNKNOWN) && (!doImibReservation || !device.IsConnected);
             bool flag = VCIDeviceType.ICOM.Equals(device.VCIType) && device.VCIReservation == VCIReservationType.NONE && (connectedVci == null || connectedVci.VCIType == VCIDeviceType.UNKNOWN || connectedVci.VCIType == VCIDeviceType.INFOSESSION) && (string.Compare(ReservationIcomType, "none", StringComparison.OrdinalIgnoreCase) == 0 || device.IsConnectable);
             bool flag2 = VCIDeviceType.ENET.Equals(device.VCIType) && device.VCIReservation == VCIReservationType.NONE && (connectedVci == null || connectedVci.VCIType == VCIDeviceType.UNKNOWN || connectedVci == null || connectedVci.VCIType == VCIDeviceType.INFOSESSION);
             bool flag3 = VCIDeviceType.SIM.Equals(device.VCIType) && (connectedVci == null || connectedVci.VCIType == VCIDeviceType.UNKNOWN || connectedVci.VCIType == VCIDeviceType.INFOSESSION);
             bool flag4 = VCIDeviceType.EDIABAS.Equals(device.VCIType) && (connectedVci == null || connectedVci.VCIType == VCIDeviceType.UNKNOWN || connectedVci.VCIType == VCIDeviceType.INFOSESSION);
             bool flag5 = VCIDeviceType.PTT.Equals(device.VCIType) && (connectedVci == null || connectedVci.VCIType == VCIDeviceType.UNKNOWN || connectedVci.VCIType == VCIDeviceType.INFOSESSION);
-            return num || flag || flag2 || flag3 || flag4 || flag5;
+            return num | flag | flag2 | flag3 | flag4 | flag5;
         }
 
         private string ReadConfigStringValue(string regkey)
@@ -187,6 +188,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 obj = configString ?? "0";
             }
+
             return (string)obj;
         }
 
@@ -197,6 +199,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 result = true;
             }
+
             return result;
         }
 
