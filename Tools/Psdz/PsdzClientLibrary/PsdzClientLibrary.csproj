@@ -108,5 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Core\Measurement\" />
+    <Folder Include="Core\Vmx\" />
   </ItemGroup>
 </Project>
