@@ -66,7 +66,7 @@ namespace BMW.Rheingold.CoreFramework
 
         new IFasta2Service Fasta2Service { get; }
 
-        //EnumVCIConnectionType VciConnType { get; }
+        EnumVCIConnectionType VciConnType { get; }
 
         IEcuKom EcuKomInterface { get; }
 

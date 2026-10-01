@@ -317,9 +317,9 @@ namespace BMW.Rheingold.RheingoldSessionController
                 throw new NotSupportedException("ApplicationState only available from operation.");
             }
         }
-
-        public EnumVCIConnectionType VciConnType => GlobalSettings.AppVCIConnectionType;
 #endif
+        public EnumVCIConnectionType VciConnType => EnumVCIConnectionType.ediabas;
+
         public Dealer Dealer
         {
             get
