@@ -17,13 +17,13 @@ namespace BMW.Rheingold.Measurement.Common
 
         // IStiManager StiManager { get; }
 
-        // bool CheckConnectionToImibInServiceDialog(MeasuringFunction measuringType = MeasuringFunction.None);
+        bool CheckConnectionToImibInServiceDialog(MeasuringFunction measuringType = MeasuringFunction.None);
 
         bool CheckImibConnection(IProgressMonitor progressMonitor);
 
         // void FinishMeasurement(CallingSource callingSource);
 
-        // void InitQuickCommandMeasuringType(MeasuringFunction measuringType);
+        void InitQuickCommandMeasuringType(MeasuringFunction measuringType);
 
         void LoadLastSettings();
 
