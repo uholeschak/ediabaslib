@@ -116,7 +116,8 @@ namespace SourceCodeSync
             "RheingoldPsdzWebApi.Adapter",
             "RheingoldPsdzWebApi.Adapter.Contracts",
             "RheingoldSessionController",
-            "RheingoldVehicleCommunication"
+            "RheingoldVehicleCommunication",
+            "RheingoldxVM"
         ];
 
         private static readonly string[] _decompileAssemblies2 =
