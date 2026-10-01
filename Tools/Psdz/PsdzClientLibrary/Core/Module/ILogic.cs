@@ -118,6 +118,8 @@ namespace BMW.Rheingold.CoreFramework
 
         int OpenedRepairManualsCount { get; set; }
 
+        bool WasImibConnected { get; }
+
         IEcuKom EcuKom { get; }
 
         //void ExportDocument(IProgressMonitor monitor, IXepInfoObject infoObject);

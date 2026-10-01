@@ -458,6 +458,8 @@ namespace BMW.Rheingold.RheingoldSessionController
 
         public Task EslTask { get; set; }
 
+        public bool WasImibConnected { get; set; }
+
         public bool IsVehicleIdentifyedAndVinNotXxxxxxx
         {
             get
