@@ -26,7 +26,7 @@ namespace BMW.Rheingold.Measurement.Common.Contract
 
         IDeviceGeneric VirtualDevice { get; }
 
-        // IGenericMeasurementDevice GenericMeasurementDevice { get; }
+        IGenericMeasurementDevice GenericMeasurementDevice { get; }
 
         // IDictionary<int, IEnumerable<MeasuringSensor>> CurrentConnectorToSensor { get; }
 
