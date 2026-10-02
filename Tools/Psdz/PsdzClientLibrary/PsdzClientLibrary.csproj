@@ -107,6 +107,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\Contracts\Vehicle\" />
     <Folder Include="Core\Measurement\" />
     <Folder Include="Core\Vmx\" />
   </ItemGroup>
