@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
 
-namespace PsdzClient.Contracts
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ICertType

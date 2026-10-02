@@ -7,7 +7,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 
-namespace PsdzClient.Contracts
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IAPISecurity

@@ -1,7 +1,7 @@
 ﻿using System;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace PsdzClient.Contracts
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public interface ILifeCycleDependencyProvider
     {

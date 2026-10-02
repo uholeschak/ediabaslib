@@ -11,6 +11,7 @@ using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.InfoProvider.HDD.HDDLookup;
 using BMW.Rheingold.InfoProvider.SWT.DTOs;

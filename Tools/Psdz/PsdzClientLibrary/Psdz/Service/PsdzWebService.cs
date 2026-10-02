@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace BMW.Rheingold.Psdz
 {

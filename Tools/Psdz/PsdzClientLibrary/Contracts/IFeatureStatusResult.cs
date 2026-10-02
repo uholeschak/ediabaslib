@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient.Core;
 
-namespace PsdzClient.Contracts
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IFeatureStatusResult

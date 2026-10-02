@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace BMW.Rheingold.Psdz
 {

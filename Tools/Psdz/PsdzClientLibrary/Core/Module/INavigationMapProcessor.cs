@@ -1,6 +1,7 @@
 ﻿using PsdzClient.Contracts;
 using PsdzClient.Core;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Rheingold.ISTA.CoreFramework
 {

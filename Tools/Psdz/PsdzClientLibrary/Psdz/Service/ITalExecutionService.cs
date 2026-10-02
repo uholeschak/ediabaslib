@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.ServiceModel;
 using System.Threading;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace BMW.Rheingold.Psdz
 {
