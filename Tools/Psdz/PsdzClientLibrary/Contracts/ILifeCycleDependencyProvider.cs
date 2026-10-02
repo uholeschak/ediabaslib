@@ -1,4 +1,5 @@
 ﻿using System;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace PsdzClient.Contracts
 {

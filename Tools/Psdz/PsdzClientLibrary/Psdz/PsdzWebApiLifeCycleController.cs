@@ -3,6 +3,7 @@ using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace BMW.Rheingold.Psdz
 {

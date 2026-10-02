@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace BMW.Rheingold.Psdz
 {

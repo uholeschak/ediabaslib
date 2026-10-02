@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Contracts
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public class DependencyCountChangedEventArgs : EventArgs
     {
