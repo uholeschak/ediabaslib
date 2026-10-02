@@ -6,6 +6,7 @@ using PsdzClient.Core;
 using PsdzClient.Programming;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Rheingold.CoreFramework
 {

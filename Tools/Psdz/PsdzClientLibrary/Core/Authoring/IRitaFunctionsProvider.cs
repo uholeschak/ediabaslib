@@ -2,6 +2,7 @@
 using PsdzClient.Core;
 using System;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 
 namespace BMW.Authoring.API.Interface.Rita

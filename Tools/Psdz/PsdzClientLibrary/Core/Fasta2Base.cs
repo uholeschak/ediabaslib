@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 #pragma warning disable CS0649

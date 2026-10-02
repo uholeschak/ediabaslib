@@ -10,6 +10,7 @@ using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Rheingold.FASTA.Model
 {

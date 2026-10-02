@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Rheingold.VehicleCommunication
 {

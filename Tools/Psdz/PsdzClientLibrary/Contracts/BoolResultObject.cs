@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Contracts
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     public class BoolResultObject : IBoolResultObject
     {

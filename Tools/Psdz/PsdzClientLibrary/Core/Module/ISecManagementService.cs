@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
+using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
 

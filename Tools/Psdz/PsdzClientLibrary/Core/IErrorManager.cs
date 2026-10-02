@@ -1,6 +1,7 @@
 ﻿using java.lang;
 using PsdzClient.Contracts;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace PsdzClient.Core
 {
