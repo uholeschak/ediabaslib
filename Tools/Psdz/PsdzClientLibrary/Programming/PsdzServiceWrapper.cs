@@ -5,6 +5,7 @@ using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
 using System.Diagnostics;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using PsdzClient;
 
 namespace BMW.Rheingold.Programming

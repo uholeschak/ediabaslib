@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using BMW.Rheingold.CoreFramework.Contracts;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
@@ -11,11 +8,9 @@ using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using PsdzClient.Core;
 using PsdzClient.Programming;
-using IFa = BMW.Rheingold.CoreFramework.Contracts.Programming.IFa;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface IPsdzObjectBuilder
     {
