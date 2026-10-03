@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Client;
-using PsdzClient.Contracts;
+using BMW.Rheingold.Psdz.Client;
 using PsdzClient.Core;
 using System;
 using System.Collections.Concurrent;

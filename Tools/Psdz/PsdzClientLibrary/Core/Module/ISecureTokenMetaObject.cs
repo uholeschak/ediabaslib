@@ -1,4 +1,3 @@
-﻿using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using System.Collections.Generic;

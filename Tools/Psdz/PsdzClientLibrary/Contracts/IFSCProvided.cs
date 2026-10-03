@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts;
-using PsdzClient.Core;
-using PsdzClient.Programming;
+﻿using PsdzClient.Core;
 
-namespace PsdzClient.Contracts
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IFSCProvided

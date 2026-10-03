@@ -1,9 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient;
-using PsdzClient.Contracts;
 using System;
 using System.IO;
 using System.ServiceModel;

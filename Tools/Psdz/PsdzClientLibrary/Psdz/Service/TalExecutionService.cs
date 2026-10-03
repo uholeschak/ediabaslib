@@ -1,8 +1,7 @@
-﻿using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Events;
 using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClient.Contracts;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;

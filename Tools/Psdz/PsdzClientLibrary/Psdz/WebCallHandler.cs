@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using PsdzClient.Contracts;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;

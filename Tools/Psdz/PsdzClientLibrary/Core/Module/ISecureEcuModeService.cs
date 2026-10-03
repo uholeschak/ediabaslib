@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Psdz;
-using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using BMW.ISPI.IstaOperation.Impl;
+using BMW.ISPI.IstaOperation.Impl;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
@@ -10,7 +10,6 @@ using BMW.Rheingold.FASTA;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient;
-using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;

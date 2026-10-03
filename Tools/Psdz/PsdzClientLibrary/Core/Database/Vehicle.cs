@@ -1,8 +1,7 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
 using BMW.Rheingold.Programming.Common;
 using PsdzClient;
-using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;

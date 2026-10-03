@@ -1,9 +1,8 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Security.Cryptography.X509Certificates;
 using BMW.Rheingold.CoreFramework.Contracts;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
-using PsdzClient.Contracts;
 
 namespace PsdzClient.Core
 {

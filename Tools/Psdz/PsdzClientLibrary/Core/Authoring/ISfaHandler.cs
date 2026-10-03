@@ -1,7 +1,6 @@
 ﻿using BMW.Authoring;
 using BMW.Authoring.API.Implementation.Sfa.Models.Request;
 using BMW.Authoring.API.Interface.Sfa.Models;
-using PsdzClient.Contracts;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;

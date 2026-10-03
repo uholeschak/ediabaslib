@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using Ediabas;
 using EdiabasLib;
-using PsdzClient.Contracts;
 using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;

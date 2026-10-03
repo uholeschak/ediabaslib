@@ -1,10 +1,9 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
-using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;

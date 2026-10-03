@@ -1,4 +1,3 @@
-﻿using PsdzClient.Contracts;
 using System.Collections.Generic;
 using System.Net.Http;
 using RestSharp;

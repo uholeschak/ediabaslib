@@ -1,10 +1,9 @@
-﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using BMW.Rheingold.CoreFramework.Utility;
 using BMW.Rheingold.ISTA.CoreFramework;
-using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;

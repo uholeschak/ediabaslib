@@ -1,4 +1,3 @@
-﻿using PsdzClient.Contracts;
 using System;
 
 namespace PsdzClient.Core

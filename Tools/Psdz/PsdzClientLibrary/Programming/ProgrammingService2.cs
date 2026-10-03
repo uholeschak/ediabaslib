@@ -1,4 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming;
@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
-using PsdzClient.Contracts;
 
 #pragma warning disable CS0169, CS0414
 namespace PsdzClient.Programming
