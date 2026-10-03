@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.Programming.Common;
 
 #pragma warning disable CS0169
 namespace BMW.Rheingold.Programming.API
@@ -111,7 +112,7 @@ namespace BMW.Rheingold.Programming.API
         }
 
         [PreserveSource(Hint = "baureiheReader added", SignatureModified = true)]
-        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput, Psdz.BaureiheReader baureiheReader)
+        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput, BaureiheReader baureiheReader)
         {
             if (faInput == null)
             {

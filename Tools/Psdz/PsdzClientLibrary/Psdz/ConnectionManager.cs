@@ -11,6 +11,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using BMW.Rheingold.Psdz.Model.Ecu;

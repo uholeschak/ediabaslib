@@ -1,11 +1,6 @@
-﻿using BMW.Rheingold.Psdz.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BMW.Rheingold.Psdz;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     public interface IPsdzService
     {

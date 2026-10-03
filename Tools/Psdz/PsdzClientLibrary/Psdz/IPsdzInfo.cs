@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IPsdzInfo

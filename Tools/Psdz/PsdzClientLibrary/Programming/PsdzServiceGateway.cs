@@ -4,6 +4,8 @@ using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz;
 using System.Threading.Tasks;
 using System;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.Programming.PSdZ;
 using PsdzClient.Core;
 
 namespace PsdzClient.Programming

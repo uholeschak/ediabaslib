@@ -2,8 +2,9 @@
 using PsdzClient.Core;
 using PsdzClient.Utility;
 using System;
+using BMW.Rheingold.CoreFramework.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.Programming.Common
 {
     public class BaureiheReader
     {

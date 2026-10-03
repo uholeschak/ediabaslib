@@ -4,6 +4,7 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient.Core.Container;
 
 namespace PsdzClient.Programming

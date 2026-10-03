@@ -5,8 +5,10 @@ using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
 using System.Diagnostics;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Programming
 {

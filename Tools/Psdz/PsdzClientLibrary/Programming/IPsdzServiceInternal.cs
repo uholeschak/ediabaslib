@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using PsdzClient.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public interface IPsdzServiceInternal : IPsdzService, IDisposable
     {

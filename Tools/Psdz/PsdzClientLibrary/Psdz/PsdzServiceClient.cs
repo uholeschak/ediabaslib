@@ -6,6 +6,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Psdz.Client
 {
