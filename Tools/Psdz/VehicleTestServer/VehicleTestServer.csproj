@@ -15,7 +15,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="HttpMultipartParser">
-      <Version>10.0.0</Version>
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="SimpleHttpListener.Rx" Version="[6.1.0]" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
