@@ -2,7 +2,7 @@
 using PsdzClient;
 using System.ServiceModel;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public interface IPsdzEventListener
     {

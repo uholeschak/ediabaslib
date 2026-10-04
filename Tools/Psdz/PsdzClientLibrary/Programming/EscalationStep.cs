@@ -3,8 +3,10 @@ using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     internal class EscalationStep : IEscalationStep
     {

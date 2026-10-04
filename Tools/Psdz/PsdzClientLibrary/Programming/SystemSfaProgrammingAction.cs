@@ -2,8 +2,10 @@
 using PsdzClient.Core;
 using System;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     internal class SystemSfaProgrammingAction : ProgrammingAction, ISystemSfaProgrammingAction, IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>, ITherapyPlanAction2, ITherapyPlanAction
     {

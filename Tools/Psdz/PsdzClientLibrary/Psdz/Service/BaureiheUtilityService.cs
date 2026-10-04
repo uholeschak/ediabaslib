@@ -3,8 +3,9 @@ using System.Net.Http;
 using BMW.Rheingold.Psdz;
 using PsdzClient.Core;
 using PsdzClient.Utility;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     internal class BaureiheUtilityService : IBaureiheUtilityService
     {

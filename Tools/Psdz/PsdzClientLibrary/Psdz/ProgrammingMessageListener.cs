@@ -1,6 +1,8 @@
-﻿using PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using PsdzClient.Core;
+using PsdzClient.Psdz;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Programming
 {
     public abstract class ProgrammingMessageListener
     {

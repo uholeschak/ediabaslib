@@ -1,8 +1,10 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.Programming;
 using PsdzClient.Psdz;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     public abstract class VehicleProgBase : ProgrammingMessageListener
     {

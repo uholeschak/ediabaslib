@@ -3,8 +3,10 @@ using System.Net.Http;
 using BMW.Rheingold.Psdz;
 using PsdzClient.Core;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     internal class HttpConfigurationService : IHttpConfigurationService
     {

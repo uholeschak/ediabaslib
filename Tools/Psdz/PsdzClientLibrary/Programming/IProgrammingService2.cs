@@ -5,9 +5,11 @@ using BMW.Rheingold.Psdz.Model;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using PsdzClient;
 using PsdzClient.Core.Container;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [PreserveSource(Hint = "IProgrammingService renamed", InheritanceModified = true)]
     public interface IProgrammingService2

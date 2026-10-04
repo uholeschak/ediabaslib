@@ -9,6 +9,9 @@ using System.Net.Http;
 using System.Threading;
 using System.Timers;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Psdz
 {

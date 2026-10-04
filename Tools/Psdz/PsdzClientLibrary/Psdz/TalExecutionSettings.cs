@@ -1,8 +1,9 @@
 ﻿using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public struct TalExecutionSettings
     {

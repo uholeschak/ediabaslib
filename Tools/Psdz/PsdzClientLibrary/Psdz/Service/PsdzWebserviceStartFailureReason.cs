@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz
+﻿namespace BMW.Rheingold.CoreFramework
 {
     public enum PsdzWebserviceStartFailureReason
     {

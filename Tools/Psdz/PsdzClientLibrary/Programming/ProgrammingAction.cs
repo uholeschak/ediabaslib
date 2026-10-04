@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClient;
 using PsdzClient.Core;
+using PsdzClient.Programming;
 
 #pragma warning disable CS0169
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     public class ProgrammingAction : IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>, ITherapyPlanAction2, ITherapyPlanAction

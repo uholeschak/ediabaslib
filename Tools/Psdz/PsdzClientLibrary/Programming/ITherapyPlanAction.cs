@@ -3,7 +3,7 @@ using PsdzClient.Programming;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface ITherapyPlanAction : INotifyPropertyChanged
     {

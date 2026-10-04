@@ -12,10 +12,13 @@ using System.Collections.Generic;
 using System.IO;
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.Programming.ProgrammingEngine;
+using PsdzClient;
+using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
 #pragma warning disable CS0169, CS0414
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     [PreserveSource(Hint = "ProgrammingService renamed", InheritanceModified = true)]
     public class ProgrammingService2 : IProgrammingService2, IDisposable

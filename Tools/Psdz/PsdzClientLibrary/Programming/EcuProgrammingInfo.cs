@@ -13,9 +13,12 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     public class EcuProgrammingInfo : IEcuProgrammingInfo, INotifyPropertyChanged

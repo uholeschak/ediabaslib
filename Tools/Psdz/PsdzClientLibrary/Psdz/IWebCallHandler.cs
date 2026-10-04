@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
-using RestSharp;
-using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public interface IWebCallHandler : ILifeCycleDependencyProvider
     {

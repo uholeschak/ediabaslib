@@ -5,8 +5,9 @@ using BMW.Rheingold.Psdz.Model.Kds;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient;
 using System.ServiceModel;
+using BMW.Rheingold.Psdz;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]

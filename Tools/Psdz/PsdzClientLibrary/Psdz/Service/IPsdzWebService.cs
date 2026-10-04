@@ -1,16 +1,10 @@
 ﻿using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
-    internal enum WebserviceSessionStatus
-    {
-        Created,
-        ProcessStarted,
-        Running
-    }
-
     public interface IPsdzWebService
     {
         IBaureiheUtilityService BaureiheUtilityService { get; }

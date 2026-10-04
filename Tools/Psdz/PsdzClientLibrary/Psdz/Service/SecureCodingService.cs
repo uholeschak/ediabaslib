@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Psdz
 {

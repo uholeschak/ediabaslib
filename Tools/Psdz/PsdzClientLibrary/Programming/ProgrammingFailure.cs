@@ -1,7 +1,8 @@
 ﻿using PsdzClient.Programming;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     internal class ProgrammingFailure : IProgrammingFailure
     {

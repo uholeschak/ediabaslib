@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz.Client
+namespace RheingoldPsdzWebApi.Adapter
 {
     internal class PsdzProgressListenerDispatcher : IPsdzProgressListener
     {

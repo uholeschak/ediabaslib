@@ -19,6 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.Programming;
 using BmwFileReader;
 
 #pragma warning disable CS0169

@@ -4,8 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Programming.ProgrammingEngine.Events;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.ProgrammingEngine.Events
 {
     internal class ProgrammingTaskEventArgs : ProgrammingEventArgs
     {

@@ -7,9 +7,12 @@ using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using BMW.Rheingold.Psdz;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     public class ProgrammingService : IProgrammingService
     {

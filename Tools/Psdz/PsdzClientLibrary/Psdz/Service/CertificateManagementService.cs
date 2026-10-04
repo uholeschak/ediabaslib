@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace BMW.Rheingold.Psdz
 {

@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.Psdz
 {

@@ -1,7 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Tal;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     public interface IProgrammingTokenService
     {

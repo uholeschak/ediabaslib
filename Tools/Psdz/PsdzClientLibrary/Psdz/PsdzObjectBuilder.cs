@@ -18,10 +18,12 @@ using System.Reflection;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Programming.Common;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Mapper;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     internal class PsdzObjectBuilder : IPsdzObjectBuilder
     {

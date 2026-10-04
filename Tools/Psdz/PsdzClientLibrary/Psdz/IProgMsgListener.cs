@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface IProgMsgListener
     {

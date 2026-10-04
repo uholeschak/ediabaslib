@@ -24,6 +24,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Interaction;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 #pragma warning disable CS0649, CS0618, CS0169
 namespace BMW.Rheingold.RheingoldSessionController

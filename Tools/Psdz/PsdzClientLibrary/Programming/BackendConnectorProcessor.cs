@@ -1,7 +1,8 @@
 using BMW.Rheingold.CoreFramework.Contracts;
+using PsdzClient;
 using PsdzClient.Core;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.InfoProvider.BackendConnector
 {
     [PreserveSource(Hint = "Dummy class", SuppressWarning = true)]
     public class BackendConnectorProcessor

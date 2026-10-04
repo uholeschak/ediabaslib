@@ -8,16 +8,19 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClient;
 using PsdzClient.Core;
+using PsdzClient.Programming;
 
 #pragma warning disable CS0169
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     public class EcuProgrammingInfos : IEcuProgrammingInfos, IEnumerable<IEcuProgrammingInfo>, IEnumerable

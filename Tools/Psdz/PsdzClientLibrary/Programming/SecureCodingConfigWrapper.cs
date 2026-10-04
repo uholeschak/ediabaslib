@@ -4,9 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BMW.Rheingold.InfoProvider.BackendConnector;
+using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.Data
 {
     internal sealed class SecureCodingConfigWrapper : BackendConnectorProcessor
     {

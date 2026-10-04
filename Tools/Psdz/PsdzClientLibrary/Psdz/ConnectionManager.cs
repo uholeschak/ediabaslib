@@ -12,13 +12,19 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
+using BMW.Rheingold.Programming.PSdZ;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient;
+using PsdzClient.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using IPsdzProg = PsdzClient.Programming.IPsdzProg;
 
 #pragma warning disable CS0169, CS0612, CS0649
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Programming
 {
     public class ConnectionManager : ProgrammingMessageListener, IPsdzProg
     {

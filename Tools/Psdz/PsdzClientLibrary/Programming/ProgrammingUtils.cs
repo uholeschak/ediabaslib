@@ -20,6 +20,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.Programming.Data;
+using BMW.Rheingold.Programming.ProgrammingEngine;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 #pragma warning disable CS0612
 namespace BMW.Rheingold.Programming.Common
@@ -841,7 +845,7 @@ namespace BMW.Rheingold.Programming.Common
         }
 
         [PreserveSource(Added = true)]
-        public static TalExecutionSettings GetTalExecutionSettings(PsdzClient.Programming.ProgrammingService2 programmingService)
+        public static TalExecutionSettings GetTalExecutionSettings(ProgrammingService2 programmingService)
         {
             TalExecutionSettings talExecutionSettings = new TalExecutionSettings
             {

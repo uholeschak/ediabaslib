@@ -7,8 +7,10 @@ using BMW.Rheingold.Psdz.Model.Kds;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient.Core;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     internal class KdsService : IKdsService
     {
