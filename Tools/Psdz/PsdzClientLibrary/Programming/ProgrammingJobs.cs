@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace PsdzClient.Programming
 {

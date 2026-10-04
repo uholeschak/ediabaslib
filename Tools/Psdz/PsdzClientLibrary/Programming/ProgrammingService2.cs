@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
 using BMW.Rheingold.CoreFramework.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 #pragma warning disable CS0169, CS0414
 namespace PsdzClient.Programming

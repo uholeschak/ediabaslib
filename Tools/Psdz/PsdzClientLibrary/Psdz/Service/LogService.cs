@@ -6,6 +6,8 @@ using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Psdz
 {

@@ -6,6 +6,7 @@ using PsdzClient.Programming;
 using System;
 using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Programming.PSdZ

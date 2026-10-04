@@ -1,5 +1,6 @@
 ﻿using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Psdz
 {

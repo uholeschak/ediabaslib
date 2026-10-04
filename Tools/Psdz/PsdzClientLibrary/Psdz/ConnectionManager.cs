@@ -15,6 +15,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 #pragma warning disable CS0169, CS0612, CS0649
 namespace PsdzClient.Psdz

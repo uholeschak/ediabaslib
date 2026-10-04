@@ -1,18 +1,10 @@
 ﻿using BMW.Rheingold.Psdz.Model.Exceptions;
 using PsdzClient;
 using System.ServiceModel;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
-    public enum PsdzLoglevel
-    {
-        INFO = 1,
-        FINE,
-        DEBUG,
-        TRACE,
-        DEEP_TRACE
-    }
-
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required)]
     public interface ILogService
