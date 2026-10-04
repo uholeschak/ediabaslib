@@ -1,6 +1,7 @@
 ﻿using System;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     [AuthorAPI]
     public static class Base64
