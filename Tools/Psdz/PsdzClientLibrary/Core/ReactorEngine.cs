@@ -1,17 +1,19 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using log4net.Core;
 using PsdzClient.Core;
 using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
+using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
+using BMW.Rheingold.ISTA.CoreFramework;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 {
     public class ReactorEngine
     {
-        private readonly MultisourceLogic multisourceLogic;
+        private readonly MultisourceLogic.MultisourceLogic multisourceLogic;
         private readonly FallbackMechanisms fallback;
         private readonly IReactorVehicle vehicle;
         private readonly ILogger log;
@@ -22,7 +24,7 @@ namespace PsdzClient.Core
         {
             log = logger;
             this.dataHolder = dataHolder;
-            multisourceLogic = new MultisourceLogic(dataHolder, log, new MultisourceProperties(), new ValueValidator());
+            multisourceLogic = new MultisourceLogic.MultisourceLogic(dataHolder, log, new MultisourceProperties(), new ValueValidator());
             fallback = new FallbackMechanisms(dataHolder);
             vehicle = reactorVehicle;
         }

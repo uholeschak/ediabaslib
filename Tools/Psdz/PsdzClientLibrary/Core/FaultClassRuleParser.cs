@@ -4,9 +4,11 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling
 {
     internal sealed class FaultClassRuleParser
     {

@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
 #pragma warning disable CS0618

@@ -23,7 +23,10 @@ using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.Programming.ProgrammingEngine;
 using PsdzClientLibrary;
 
 namespace PsdzClient

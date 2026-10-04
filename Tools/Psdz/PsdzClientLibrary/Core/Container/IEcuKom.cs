@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClient.Core.Container
 {

@@ -2,8 +2,9 @@
 using System;
 using System.Linq;
 using System.Text;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.API
 {
     internal class VehicleProfileChecksum : IVehicleProfileChecksum, ICloneable
     {

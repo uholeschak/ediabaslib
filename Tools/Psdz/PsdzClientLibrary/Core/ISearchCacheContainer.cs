@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using PsdzClient.Core;
 
 #pragma warning disable CS0109
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
 {
     public interface ISearchCacheContainer
     {

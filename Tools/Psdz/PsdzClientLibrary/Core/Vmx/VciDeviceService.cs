@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 #pragma warning disable CS4014
 namespace BMW.Rheingold.xVM

@@ -9,6 +9,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.xVM.ENET;
 
 #pragma warning disable CS0618

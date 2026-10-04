@@ -1,7 +1,8 @@
 ﻿using System.Globalization;
 using System;
+using BMW.Rheingold.ISTA.CoreFramework;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Common
 {
     public class FormatConverterBase
     {

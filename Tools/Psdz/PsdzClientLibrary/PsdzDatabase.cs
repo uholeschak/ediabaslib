@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 
 namespace PsdzClient
 {

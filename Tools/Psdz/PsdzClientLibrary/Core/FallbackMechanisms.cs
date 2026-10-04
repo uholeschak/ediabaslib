@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.MultisourceLogic
 {
     public class FallbackMechanisms
     {

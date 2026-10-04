@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.VehicleCommunication;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;

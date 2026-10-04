@@ -5,6 +5,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;

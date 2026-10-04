@@ -6,9 +6,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
+using BMW.ISPI.TRIC.ISTA.FusionReactor;
+using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
+using BMW.Rheingold.ISTA.CoreFramework;
 using PsdzClient;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.FusionReactor
 {
     public class Reactor : ReactorEngine
     {

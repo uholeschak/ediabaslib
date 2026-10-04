@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
 namespace BMW.Rheingold.xVM

@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Utility
+﻿namespace BMW.Rheingold.CoreFramework.ImportantLogging
 {
     public enum TYPES
     {

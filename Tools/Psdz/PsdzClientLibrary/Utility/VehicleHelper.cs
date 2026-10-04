@@ -1,7 +1,9 @@
 ﻿using PsdzClient.Core;
 using System;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using PsdzClient;
 
-namespace PsdzClient.Utility
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation
 {
     internal class VehicleHelper
     {

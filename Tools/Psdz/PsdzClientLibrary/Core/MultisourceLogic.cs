@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BMW.Rheingold.ISTA.CoreFramework;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.MultisourceLogic
 {
     public class MultisourceLogic
     {

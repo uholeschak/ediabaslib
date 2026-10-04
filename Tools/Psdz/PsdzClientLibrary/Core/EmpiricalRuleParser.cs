@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling
 {
     internal sealed class EmpiricalRuleParser
     {

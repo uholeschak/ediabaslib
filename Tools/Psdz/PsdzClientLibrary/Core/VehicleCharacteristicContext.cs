@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using BMW.ISPI.TRIC.ISTA.Contracts;
 
 namespace BMW.Rheingold.CoreFramework
 {

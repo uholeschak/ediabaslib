@@ -9,6 +9,7 @@ using BMW.ISPI.ISTA.Contracts.Interfaces.VinValidator;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations.Models;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models;
+using BMW.Rheingold.ISTA.CoreFramework;
 using PsdzClientLibrary.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.VinValidator

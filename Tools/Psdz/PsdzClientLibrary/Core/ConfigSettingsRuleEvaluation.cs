@@ -1,7 +1,9 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider.RuleVariantHandling
 {
     public class ConfigSettingsRuleEvaluation : IConfigSettingsRuleEvaluation
     {

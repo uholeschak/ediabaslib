@@ -1,6 +1,7 @@
 ﻿using PsdzClient.Core;
 using System.Runtime.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Responses
 {

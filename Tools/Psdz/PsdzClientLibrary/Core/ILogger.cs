@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using PsdzClient;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.ISTA.CoreFramework
 {
     public interface ILogger
     {

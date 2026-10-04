@@ -6,9 +6,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
+using BMW.Rheingold.ISTA.CoreFramework;
+using PsdzClient;
+using PsdzClient.Core;
 using PsdzClientLibrary;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {
     public class SaLaPaExpression : SingleAssignmentExpression
     {

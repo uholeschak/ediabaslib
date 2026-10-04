@@ -5,10 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using BMW.ISPI.TRIC.ISTA.Contracts;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
+using BMW.ISPI.TRIC.ISTA.FusionReactor;
+using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.ISTA.CoreFramework;
+using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification
 {
     public sealed class VehicleCharacteristicIdent : VehicleCharacteristicAbstract
     {

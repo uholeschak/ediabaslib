@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IPsdzContext

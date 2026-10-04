@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.ISTA.CoreFramework;
+using PsdzClient;
+using PsdzClient.Core;
 
 #pragma warning disable CA2022
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {
     [Serializable]
     public class AndExpression : RuleExpression

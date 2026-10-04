@@ -4,11 +4,15 @@ using System.IO;
 using System;
 using System.Globalization;
 using System.Linq;
+using BMW.ISPI.TRIC.ISTA.Contracts;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
 #pragma warning disable CS0649, CS0169
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling
 {
     public class RuleEvaluationUtill
     {

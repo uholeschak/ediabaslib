@@ -1,4 +1,8 @@
-﻿namespace PsdzClient.Core
+﻿using BMW.ISPI.TRIC.ISTA.Contracts;
+using PsdzClient;
+using PsdzClient.Core;
+
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public sealed class VehicleCharacteristicVCIDeviceHelper : VehicleCharacteristicAbstract
     {

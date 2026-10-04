@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.RuleVariantHandling;
+using BMW.Rheingold.ISTA.CoreFramework;
+using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {
     [Serializable]
     public abstract class RuleExpression : IRuleExpression

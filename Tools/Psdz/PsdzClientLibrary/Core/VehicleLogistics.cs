@@ -9,6 +9,7 @@ using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Utilities;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.DiagnosticsBusinessDataCore;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Utility;

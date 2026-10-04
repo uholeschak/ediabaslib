@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.MultisourceLogic
 {
     public class ValueValidator : IValueValidator
     {

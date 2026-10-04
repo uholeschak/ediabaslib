@@ -16,6 +16,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation;
 
 #pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

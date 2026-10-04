@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Core
+﻿namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {
     public enum ECompareOperator
     {

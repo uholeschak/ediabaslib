@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
 #pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle

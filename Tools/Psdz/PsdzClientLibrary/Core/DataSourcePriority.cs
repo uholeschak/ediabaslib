@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
+using BMW.Rheingold.ISTA.CoreFramework;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.MultisourceLogic
 {
     public class DataSourcePriority
     {

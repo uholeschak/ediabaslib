@@ -5,12 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient.Utility;
 using PsdzClient;
+using PsdzClient.Core;
 
 #pragma warning disable CS0169, CA2022
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {
     [Serializable]
     public class IStufeXExpression : RuleExpression

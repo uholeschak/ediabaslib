@@ -11,9 +11,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient;
+using PsdzClient.Core;
 
 #pragma warning disable CS0414
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class VCIDevice : IComparable, IVciDevice, INotifyPropertyChanged, IVciDeviceRuleEvaluation, ICloneable
     {

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using PsdzClient;
 
 #pragma warning disable CS0649

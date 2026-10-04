@@ -17,15 +17,23 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
+using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
+using BMW.ISPI.TRIC.ISTA.VehicleIdentification;
 using BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming;
 using BmwFileReader;
+using PsdzClient;
+using PsdzClient.Programming;
 
 #pragma warning disable CS0169
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.ProgrammingEngine
 {
     [PreserveSource(Hint = "IDisposable added", AccessModified = true, InheritanceModified = true)]
     public class PsdzContext : IPsdzContext, IDisposable

@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 
 namespace BMW.Rheingold.Module.ISTA
 {

@@ -6,12 +6,19 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
+using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.FusionReactor;
+using BMW.Rheingold.DiagnosticsBusinessDataCore;
 using BMW.Rheingold.VehicleCommunication;
+using PsdzClient.Core;
 
 #pragma warning disable CS0414
-namespace PsdzClient.Core
+namespace BMW.Rheingold.DiagnosticsBusinessDataCore
 {
     public delegate object DoECUIdentDelegate(IVehicle vecInfo, ECU mECU, IEcuKom ecuKom, ref bool resetMOSTGWdone, IProgressMonitor monitor, int retry, bool forceReRead, bool tryReanimation, bool IdentForceOnUnidentified = false);
     public class DiagnosticsBusinessData : DiagnosticsBusinessDataCore, IDiagnosticsBusinessData

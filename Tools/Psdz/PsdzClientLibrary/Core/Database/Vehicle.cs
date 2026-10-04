@@ -20,8 +20,15 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
+using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.FusionReactor;
 using PsdzClientLibrary;
 
 #pragma warning disable CS0169, CS0649, CS0618, CS0612

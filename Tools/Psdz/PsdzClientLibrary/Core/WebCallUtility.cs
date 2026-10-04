@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Net.NetworkInformation;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     public static class WebCallUtility
     {

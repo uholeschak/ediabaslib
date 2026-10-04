@@ -41,6 +41,7 @@ using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Programming.Data;
+using BMW.Rheingold.Programming.ProgrammingEngine;
 using BMW.Rheingold.Programming.ProgrammingEngine.Events;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 

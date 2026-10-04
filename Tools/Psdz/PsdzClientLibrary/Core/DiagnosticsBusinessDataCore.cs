@@ -3,8 +3,11 @@ using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
+using BMW.Rheingold.ISTA.CoreFramework;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.DiagnosticsBusinessDataCore
 {
     public class DiagnosticsBusinessDataCore
     {

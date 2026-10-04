@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 #pragma warning disable CS0618
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling
 {
     [Serializable]
     public class ClientDefinition : ICloneable

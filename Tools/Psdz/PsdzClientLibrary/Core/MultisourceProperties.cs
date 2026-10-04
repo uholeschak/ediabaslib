@@ -1,4 +1,6 @@
-﻿namespace PsdzClient.Core
+﻿using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
+
+namespace PsdzClient.Core
 {
     public class MultisourceProperties : IMultisourceProperties
     {

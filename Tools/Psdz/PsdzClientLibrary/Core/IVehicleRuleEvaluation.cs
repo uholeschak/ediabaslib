@@ -3,7 +3,7 @@ using PsdzClient.Core;
 using System.Collections.Generic;
 using System;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
 {
     public interface IVehicleRuleEvaluation
     {

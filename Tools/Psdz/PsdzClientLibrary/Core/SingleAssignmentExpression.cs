@@ -1,9 +1,14 @@
 ﻿using System;
 using System.IO;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.ISTA.CoreFramework;
+using PsdzClient;
+using PsdzClient.Core;
 
 #pragma warning disable CA2022
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {
     [Serializable]
     public abstract class SingleAssignmentExpression : RuleExpression

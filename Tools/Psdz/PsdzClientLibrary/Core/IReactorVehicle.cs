@@ -3,7 +3,7 @@ using PsdzClient.Core;
 using System.ComponentModel;
 using System;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor
 {
     public interface IReactorVehicle : INotifyPropertyChanged
     {

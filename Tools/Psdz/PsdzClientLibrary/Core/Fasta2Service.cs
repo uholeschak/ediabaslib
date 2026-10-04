@@ -2,8 +2,11 @@
 using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
+using BMW.Rheingold.FASTA.Models;
+using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.FASTA
 {
     [PreserveSource(Hint = "Class cleaned", SuppressWarning = true)]
     public class Fasta2Service : Fasta2Base, IFasta2Service

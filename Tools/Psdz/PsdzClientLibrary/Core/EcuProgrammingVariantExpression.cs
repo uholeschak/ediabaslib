@@ -7,9 +7,12 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
+using BMW.Rheingold.ISTA.CoreFramework;
+using PsdzClient.Core;
 using PsdzClientLibrary;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {
     public class EcuProgrammingVariantExpression : SingleAssignmentExpression
     {

@@ -5,7 +5,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.Common;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
+using BMW.ISPI.TRIC.ISTA.FusionReactor;
+using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.ISTA.CoreFramework;
 using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility

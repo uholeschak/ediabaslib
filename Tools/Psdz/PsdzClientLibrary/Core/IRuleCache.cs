@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts
 {
     public interface IRuleCache
     {
