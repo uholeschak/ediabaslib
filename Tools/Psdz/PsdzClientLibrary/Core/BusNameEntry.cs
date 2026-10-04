@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {
     [Serializable]
     [XmlType("BusNameEntry")]

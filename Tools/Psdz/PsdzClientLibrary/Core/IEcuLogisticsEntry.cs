@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {
     public interface IEcuLogisticsEntry
     {

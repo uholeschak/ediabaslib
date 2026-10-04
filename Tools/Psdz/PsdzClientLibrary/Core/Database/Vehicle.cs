@@ -21,6 +21,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using PsdzClientLibrary;
 
 #pragma warning disable CS0169, CS0649, CS0618, CS0612

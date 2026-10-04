@@ -1,8 +1,9 @@
 ﻿using PsdzClient.Core;
 using System;
 using System.Linq;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 
-namespace PsdzClient.Utility
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Utilities
 {
     public static class Utilities
     {

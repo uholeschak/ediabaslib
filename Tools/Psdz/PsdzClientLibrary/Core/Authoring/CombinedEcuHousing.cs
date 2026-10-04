@@ -6,6 +6,7 @@ using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
 using BMW.Authoring.Programming.API.Models.Implementation;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Wrappers;
 
 namespace BMW.Authoring.Programming.API.Implementation

@@ -9,9 +9,11 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
+using PsdzClient.Core;
 
 #pragma warning disable CA2022
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics
 {
     [Serializable]
     [XmlRoot("EcuTreeConfiguration", Namespace = "http://bmw.com/Rheingold/EcuTreeConfiguration")]

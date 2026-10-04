@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Programming.Data;
 using BMW.Rheingold.Programming.ProgrammingEngine.Events;

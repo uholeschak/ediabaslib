@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {
     [Serializable]
     [XmlType("EcuLogisticsEntry")]

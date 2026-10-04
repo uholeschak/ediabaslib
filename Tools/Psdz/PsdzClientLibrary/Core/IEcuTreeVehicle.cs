@@ -1,9 +1,10 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
 using System.Collections.Generic;
+using PsdzClient.Core;
 using static PsdzClient.PsdzDatabase;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree
 {
     public interface IEcuTreeVehicle
     {

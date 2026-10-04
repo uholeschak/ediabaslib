@@ -3,9 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using BMW.ISPI.TRIC.ISTA.Common;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics
 {
     internal class F01EcuCharacteristics : BaseEcuCharacteristics
     {

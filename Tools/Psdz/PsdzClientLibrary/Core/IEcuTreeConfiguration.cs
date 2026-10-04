@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {
     public interface IEcuTreeConfiguration
     {

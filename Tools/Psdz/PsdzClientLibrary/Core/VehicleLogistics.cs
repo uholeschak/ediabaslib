@@ -3,11 +3,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Utilities;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient;
+using PsdzClient.Core;
 using PsdzClient.Utility;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet
 {
     public class VehicleLogistics
     {

@@ -8,11 +8,15 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient;
+using PsdzClient.Core;
 using PsdzClient.Utility;
 using PsdzClientLibrary;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {
     public abstract class BaseEcuCharacteristics
     {

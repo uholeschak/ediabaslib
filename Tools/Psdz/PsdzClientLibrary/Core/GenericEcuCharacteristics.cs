@@ -1,4 +1,6 @@
-﻿namespace PsdzClient.Core
+﻿using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
+
+namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics
 {
     public class GenericEcuCharacteristics : BaseEcuCharacteristics
     {
