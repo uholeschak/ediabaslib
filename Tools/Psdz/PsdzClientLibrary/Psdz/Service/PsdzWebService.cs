@@ -12,6 +12,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using RheingoldPsdzWebApi.Adapter.Services;
 
 namespace BMW.Rheingold.Psdz
 {

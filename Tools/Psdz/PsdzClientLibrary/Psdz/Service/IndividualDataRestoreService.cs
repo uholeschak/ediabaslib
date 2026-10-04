@@ -13,8 +13,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     internal class IndividualDataRestoreService : IIndividualDataRestoreService
     {

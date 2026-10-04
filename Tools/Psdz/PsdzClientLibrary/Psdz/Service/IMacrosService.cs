@@ -5,7 +5,7 @@ using PsdzClient;
 using System.Collections.Generic;
 using System.ServiceModel;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required)]
