@@ -5,6 +5,7 @@ using PsdzClient.Core;
 using System;
 using System.Net.Http;
 using RestSharp;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace BMW.Rheingold.Psdz
 {
