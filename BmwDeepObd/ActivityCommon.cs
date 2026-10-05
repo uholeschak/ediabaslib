@@ -13209,9 +13209,11 @@ using System.Threading;"
         {
             if (SelectedManufacturer == ManufacturerType.Bmw)
             {
+                ResetUdsReader();   // free VAG reader memory
                 return InitEcuFunctionReaderThread(bmwPath, handler);
             }
 
+            ResetEcuFunctionReader();   // free BMW reader memory
             return InitUdsReaderThread(vagPath, handler);
         }
 
