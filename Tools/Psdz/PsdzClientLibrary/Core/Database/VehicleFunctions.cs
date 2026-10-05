@@ -470,8 +470,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
             //[+] if (sessionInfo == null)
             if (sessionInfo == null)
-              //[+] return;
-              return;
+                //[+] return;
+                return;
             //[+] sessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
             sessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
             //[+] sessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
@@ -947,8 +947,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 //[+] if (sessionInfo == null) return;
                 if (sessionInfo == null)
-                    //[+] return;
                     return;
+                //[+] return;
+                return;
                 //[-] string status_FunctionName = SessionInfoAccessor.SessionInfo.Status_FunctionName;
                 //[+] string status_FunctionName = sessionInfo.Status_FunctionName;
                 string status_FunctionName = sessionInfo.Status_FunctionName;
