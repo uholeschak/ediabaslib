@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.NetworkInformation;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using PsdzClient;
 using PsdzClient.Core;
 

@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.Authoring.API.Interface.Sfa;
+using BMW.ISPI.TRIC.ISTA.Common.Session;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.Interaction.Models;

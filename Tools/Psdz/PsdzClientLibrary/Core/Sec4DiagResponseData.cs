@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.InfoProvider.Sec4Diag.Models
 {
     public class Sec4DiagResponseData
     {

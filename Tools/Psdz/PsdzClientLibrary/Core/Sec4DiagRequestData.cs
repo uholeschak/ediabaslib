@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Crmf;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Sec4Diag
 {
     public class Sec4DiagRequestData
     {

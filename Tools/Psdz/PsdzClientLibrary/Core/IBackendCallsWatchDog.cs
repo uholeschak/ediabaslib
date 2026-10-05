@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Enums
 {
     public enum BackendServiceType
     {

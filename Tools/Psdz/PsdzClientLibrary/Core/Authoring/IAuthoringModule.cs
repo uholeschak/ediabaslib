@@ -8,7 +8,9 @@ using PsdzClient.Core.Container;
 using PsdzClientLibrary.Core.Module;
 using System;
 using BMW.Authoring.API.Interface.Sfa;
+using BMW.ISPI.TRIC.ISTA.Common.Session;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Authoring.API
 {

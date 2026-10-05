@@ -1,10 +1,14 @@
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Security.Cryptography.X509Certificates;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations.Sec4Diag;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Contracts;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Sec4Diag
 {
     public interface ISec4DiagHandler
     {

@@ -17,6 +17,7 @@ using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Localization;
+using BMW.Rheingold.Programming.ProgrammingEngine;
 using PsdzClient;
 using PsdzClient.Programming;
 

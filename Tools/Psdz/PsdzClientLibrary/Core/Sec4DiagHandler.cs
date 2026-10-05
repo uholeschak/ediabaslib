@@ -19,10 +19,16 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Text;
 using System;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Implementations.Sec4Diag;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Sec4Diag;
+using PsdzClient;
+using PsdzClient.Core;
 
 #pragma warning disable CS0618, SYSLIB0057
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Sec4Diag
 {
     public sealed class Sec4DiagHandler : ISec4DiagHandler
     {

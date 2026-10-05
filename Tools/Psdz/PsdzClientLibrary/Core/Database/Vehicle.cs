@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Common.Session;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;

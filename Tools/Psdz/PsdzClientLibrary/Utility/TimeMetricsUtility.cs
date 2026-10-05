@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using PsdzClient;
+using PsdzClient.Utility;
 
 #pragma warning disable CS0169, CS0414, CS0649
-namespace PsdzClient.Utility
+namespace BMW.Rheingold.CoreFramework.Metrics
 {
     public class TimeMetricsUtility
     {

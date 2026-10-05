@@ -7,6 +7,7 @@ using System;
 using BMW.Authoring.Programming.API.Implementation;
 using BMW.Authoring.Programming.API.Interface;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 #pragma warning disable CS0618
 namespace BMW.Authoring.Vehicle

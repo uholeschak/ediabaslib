@@ -1,3 +1,4 @@
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 using PsdzClient.Core;

@@ -2,6 +2,7 @@
 using PsdzClient;
 using System;
 using System.Globalization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient.Core;

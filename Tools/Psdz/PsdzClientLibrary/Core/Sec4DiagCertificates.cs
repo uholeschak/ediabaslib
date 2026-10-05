@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Sec4Diag;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Implementations.Sec4Diag
 {
     public sealed class Sec4DiagCertificates : ISec4DiagCertificates
     {

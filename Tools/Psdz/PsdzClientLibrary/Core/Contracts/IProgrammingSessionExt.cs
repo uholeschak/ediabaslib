@@ -9,6 +9,7 @@ using BMW.ISPI.IstaServices.Contract.PUK.Data;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

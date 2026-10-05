@@ -1,4 +1,9 @@
-﻿namespace PsdzClient.Core
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Sec4Diag;
+using BMW.Rheingold.InfoProvider.Sec4Diag.Models;
+using PsdzClient.Core;
+
+namespace BMW.Rheingold.InfoProvider.Sec4Diag
 {
     public interface ISec4DiagProcessorImpl
     {

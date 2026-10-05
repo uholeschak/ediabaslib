@@ -39,6 +39,7 @@ using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
+using BMW.Rheingold.CoreFramework.Sec4Diag;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Programming.Data;
 using BMW.Rheingold.Programming.ProgrammingEngine;

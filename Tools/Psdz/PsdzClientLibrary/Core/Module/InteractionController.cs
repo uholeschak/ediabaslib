@@ -9,6 +9,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Localization;
+using BMW.Rheingold.CoreFramework.Metrics;
 
 namespace BMW.Rheingold.CoreFramework.Interaction
 {

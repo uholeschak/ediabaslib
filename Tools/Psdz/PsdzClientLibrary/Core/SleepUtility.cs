@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
 using System.Threading;
+using BMW.Rheingold.CoreFramework.Metrics;
 using PsdzClient.Utility;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Utility
 {
     public class SleepUtility
     {

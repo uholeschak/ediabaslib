@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.IstaServices.Contract.PUK.Data
 {
     public class typeBasicFeatures : INotifyPropertyChanged
     {

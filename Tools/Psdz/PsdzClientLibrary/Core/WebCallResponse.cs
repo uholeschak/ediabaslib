@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.InfoProvider
 {
     public class WebCallResponse
     {

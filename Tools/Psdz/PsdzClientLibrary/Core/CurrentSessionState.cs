@@ -2,8 +2,9 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Common.Session
 {
     [DataContract]
     public class CurrentSessionState : INotifyPropertyChanged

@@ -7,6 +7,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient.Core;

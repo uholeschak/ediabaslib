@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Sec4Diag
 {
     public class ProofOfPossession
     {

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.ISPI.TRIC.ISTA.Common.Session;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using log4net;
 using PsdzClient.Core;

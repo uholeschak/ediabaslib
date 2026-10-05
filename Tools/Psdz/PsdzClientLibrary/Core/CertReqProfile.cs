@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Sec4Diag
 {
     internal sealed class CertReqProfile
     {
