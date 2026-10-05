@@ -55,7 +55,7 @@ The source for the firmware could be found in the subdirectory `CanAdapterElm`.
 If not explicitly specified, default LED layout is: (RX LED: PB6, TX LED: BP7).  
 The subdirectory names below are the Bluetooth chip types:
 * `default`: For unmodified ELM327L adapter with any Bluetooth chip. Baud rate 38400
-* `def115200`: For ELM327L adapter with any Bluetooth chip but modified baud rate 115200 (E.g. external YC1021 with modified EEPROM)
+* `def115200`: For ELM327L adapter with any Bluetooth chip but modified baud rate 115200 (E.g. external YC1021 with modified EEPROM. Changing the baud rate depends from the Bluetooth chip and firmware. **Only for experts.**)
 * `bc04`: For adapter with BK3231 Bluetooth chip and bc04 firmware
 * `hc04`: For adapter with BC417 Bluetooth chip and hc04, hc05 and hc06 firmware
 * `hc06`: For adapter with BC417 BLE (Bluetooth Low Energy) chip and hc06 firmware

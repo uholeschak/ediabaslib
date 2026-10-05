@@ -40,7 +40,7 @@ This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter 
 * Write the changed binary back to the 24C32/24C64A eeprom (again powered from programmer, not from obd side).  
 
 ## Step2: Program the PIC18F25K80
-* Connect your PicKit 3/4 to MCLR, PGD, PGC, GND (Vss) and 5V (Vcc) (take care, do not apply power from PicKit 3/4)
+* Connect your PicKit 3/4 to MCLR, PGD, PGC, GND (Vss) and 5V (Vcc) (take care, do not apply power from PicKit 3/4 and from the OBD socket at the same time!)
 * Power the Elm327 adapter (from obd side)
 * From subdirectory `CanAdapterElm` select either `default` (baudrate 38400), `def115200` (baudrate 115200) or `yc1021` firmware (recommended for non standard LED allocation) (baudrate 115200), always use `CanAdapterElm.X.production.unified.hex` for this first upload
 * Flash the selected firmware to the PIC18F25K80

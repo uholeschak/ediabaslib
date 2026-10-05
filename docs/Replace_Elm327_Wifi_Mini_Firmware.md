@@ -31,7 +31,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 * **Hint: A power on reset is required before every single flash operation.**
 
 ## Step2: Program the PIC18F25K80
-* Connect your PicKit 3/4 to MCLR, PGD, PGC, GND (Vss) and 5V (Vcc) (take care, do not apply power from PicKit 3/4)
+* Connect your PicKit 3/4 to MCLR, PGD, PGC, GND (Vss) and 5V (Vcc) (take care, do not apply power from PicKit 3/4 and from the OBD socket at the same time!)
 * Power the Elm327 adapter
 * From subdirectory `CanAdapterElm` select either `default` firmware when using baudrate 38400 (take care slightly misallocated led usage) or `wifi_esp8266ex (correct name/fill)` (recommended) when using 115200 baudrate, always use `CanAdapterElm.X.production.unified.hex` for this first upload
 * Flash the selected firmware to the PIC18F25K80
