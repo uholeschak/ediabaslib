@@ -45,14 +45,14 @@ namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
         [PreserveSource(Hint = "dataProvider removed, vec added", SignatureModified = true)]
         public static IStufeXExpression Deserialize(Stream ms, Vehicle vec)
         {
-            byte num = (byte)ms.ReadByte();
+            byte b = (byte)ms.ReadByte();
             ILevelyType levelyType = (ILevelyType)ms.ReadByte();
             byte[] array = new byte[8];
             ms.Read(array, 0, 8);
             long ilevelid = BitConverter.ToInt64(array, 0);
-            //[-] return new IStufeXExpression((ECompareOperator)num, ilevelid, levelyType, dataProvider);
-            //[+] return new IStufeXExpression((ECompareOperator)num, ilevelid, levelyType, vec);
-            return new IStufeXExpression((ECompareOperator)num, ilevelid, levelyType, vec);
+            //[-] return new IStufeXExpression((ECompareOperator)b, ilevelid, levelyType, dataProvider);
+            //[+] return new IStufeXExpression((ECompareOperator)b, ilevelid, levelyType, vec);
+            return new IStufeXExpression((ECompareOperator)b, ilevelid, levelyType, vec);
         }
 
         [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
