@@ -1,6 +1,10 @@
-﻿namespace PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 
-[AuthorAPI(SelectableTypeDeclaration = true)]
-public interface ICombinedFaultLocator : IFaultCodeLocator, ISPELocator
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface ICombinedFaultLocator : IFaultCodeLocator, ISPELocator
+    {
+    }
 }

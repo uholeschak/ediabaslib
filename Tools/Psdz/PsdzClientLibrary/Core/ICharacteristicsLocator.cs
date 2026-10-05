@@ -1,13 +1,16 @@
-﻿namespace PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
 
-[AuthorAPI(SelectableTypeDeclaration = true)]
-public interface ICharacteristicsLocator : ISPELocator
+namespace BMW.Rheingold.CoreFramework
 {
-    decimal ParentId { get; }
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface ICharacteristicsLocator : ISPELocator
+    {
+        decimal ParentId { get; }
 
-    string Title { get; }
+        string Title { get; }
 
-    string Title_dede { get; }
+        string Title_dede { get; }
 
-    string Name { get; }
+        string Name { get; }
+    }
 }

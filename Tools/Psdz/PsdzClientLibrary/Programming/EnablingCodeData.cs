@@ -1,9 +1,7 @@
-﻿using PsdzClient.Core;
-using PsdzClient.Programming;
-using System.Globalization;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+﻿using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public class EnablingCodeData
     {
@@ -18,7 +16,7 @@ namespace PsdzClient.Programming
         public FscState FscState { get; set; }
 
         [PreserveSource(Cleaned = true)]
-        public static string GetEnablingCodeName(int applicationId, int upgradeIndex, Vehicle vehicle, IFFMDynamicResolver dynamicResolver)
+        public static string GetEnablingCodeName(int applicationId, int upgradeIndex, DatabaseProvider.Vehicle vehicle, IFFMDynamicResolver dynamicResolver)
         {
             return string.Empty;
         }

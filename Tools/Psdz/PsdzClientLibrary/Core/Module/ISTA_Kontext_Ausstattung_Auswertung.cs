@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.Module.ISTA;
 using PsdzClient.Core.Container;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.Module.ISTA
 {

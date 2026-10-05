@@ -1,38 +1,9 @@
-﻿using PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using PsdzClient.Core;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum FscCertificateState
-    {
-        Accepted,
-        Imported,
-        Invalid,
-        NotAvailable,
-        Rejected
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum SwtActionType
-    {
-        ActivateStore,
-        ActivateUpdate,
-        ActivateUpgrade,
-        Deactivate,
-        ReturnState,
-        WriteVin
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum SwtType
-    {
-        Full,
-        Light,
-        PreEnabFull,
-        PreEnabLight,
-        Short,
-        Unknown
-    }
 
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISwtApplication : ISwtApplicationReport

@@ -11,6 +11,7 @@ using BMW.Authoring.API.Interface.HighVoltageBattery;
 using BMW.Authoring.API.Interface.SeamLM2Demand;
 using BMW.Authoring.API.OBFCM;
 using BMW.Authoring.API.TVV;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API
 {

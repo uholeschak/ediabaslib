@@ -1,4 +1,6 @@
-﻿namespace PsdzClient.Core
+﻿using BMW.Rheingold.CoreFramework;
+
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     public interface IServiceProgramLocator : ISPELocator
     {

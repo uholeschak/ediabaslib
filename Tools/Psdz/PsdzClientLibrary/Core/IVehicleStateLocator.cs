@@ -1,7 +1,11 @@
-﻿namespace PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
 
-[AuthorAPI(SelectableTypeDeclaration = true)]
-public interface IVehicleStateLocator : ISPELocator
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
-    string Title { get; }
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IVehicleStateLocator : ISPELocator
+    {
+        string Title { get; }
+    }
+
 }

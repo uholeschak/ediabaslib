@@ -33,12 +33,12 @@ namespace RheingoldPsdzWebApi.Adapter.Contracts
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
         [PreserveSource(Hint = "Namespace modified", SuppressWarning = true)]
-        private readonly PsdzClient.Programming.FscStateEnumMapper fscStateEnumMapper = new PsdzClient.Programming.FscStateEnumMapper();
+        private readonly BMW.Rheingold.Programming.Common.FscStateEnumMapper fscStateEnumMapper = new BMW.Rheingold.Programming.Common.FscStateEnumMapper();
         [PreserveSource(Hint = "Namespace modified", SuppressWarning = true)]
-        private readonly PsdzClient.Programming.SwtTypeEnumMapper swtTypeEnumMapper = new PsdzClient.Programming.SwtTypeEnumMapper();
+        private readonly BMW.Rheingold.Programming.Common.SwtTypeEnumMapper swtTypeEnumMapper = new BMW.Rheingold.Programming.Common.SwtTypeEnumMapper();
         private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
         [PreserveSource(Hint = "Namespace modified", SuppressWarning = true)]
-        private readonly PsdzClient.Programming.SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new PsdzClient.Programming.SoftwareSigStateEnumMapper();
+        private readonly BMW.Rheingold.Programming.Common.SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new BMW.Rheingold.Programming.Common.SoftwareSigStateEnumMapper();
         private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
         [PreserveSource(Hint = "iPsdz added", SignatureModified = true)]
         public PsdzObjectBuilder(IObjectBuilderService objectBuilderService, IPsdz iPsdz)

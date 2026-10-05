@@ -1,7 +1,9 @@
 ﻿using PsdzClient.Core.Container;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ITextLocator : ISPELocator

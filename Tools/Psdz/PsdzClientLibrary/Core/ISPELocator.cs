@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISPELocator

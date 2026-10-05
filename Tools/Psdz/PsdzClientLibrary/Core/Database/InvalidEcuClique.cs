@@ -1,4 +1,5 @@
-﻿using PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework.Localization;
+using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {

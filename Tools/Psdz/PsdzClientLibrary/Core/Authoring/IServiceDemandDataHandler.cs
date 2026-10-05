@@ -3,6 +3,7 @@ using BMW.Authoring.API;
 using PsdzClient.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API.ServiceDemand
 {

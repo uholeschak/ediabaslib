@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Tal;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.Common
 {
     internal sealed class TaCategoriesEnumMapper : ProgrammingEnumMapperBase<PsdzTaCategories, TaCategories>
     {

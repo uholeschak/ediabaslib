@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using PsdzClient.Core;
 
 namespace BMW.Rheingold.VehicleCommunication

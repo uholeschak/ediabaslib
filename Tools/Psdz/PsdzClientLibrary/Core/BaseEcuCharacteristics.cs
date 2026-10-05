@@ -11,6 +11,7 @@ using System.Xml.Schema;
 using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
+using BMW.ISPI.TRIC.ISTA.EcuTree.Models;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Utilities;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;

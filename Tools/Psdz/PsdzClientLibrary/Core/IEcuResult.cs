@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using BMW.Rheingold.CoreFramework;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuResult : INotifyPropertyChanged

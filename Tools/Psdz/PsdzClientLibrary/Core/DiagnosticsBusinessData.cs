@@ -11,6 +11,7 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.FusionReactor;
 using BMW.Rheingold.DiagnosticsBusinessDataCore;

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework;
 using PsdzClient;
 
 #pragma warning disable CS0649

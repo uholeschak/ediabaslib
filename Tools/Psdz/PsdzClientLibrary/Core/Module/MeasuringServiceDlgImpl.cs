@@ -12,6 +12,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.Measurement;
 using BMW.Rheingold.Measurement.Common;

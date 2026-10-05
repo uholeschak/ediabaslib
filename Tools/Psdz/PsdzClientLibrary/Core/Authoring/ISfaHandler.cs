@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using BMW.Authoring.API.Implementation.Sfa.Models;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Authoring.API.Interface.Sfa

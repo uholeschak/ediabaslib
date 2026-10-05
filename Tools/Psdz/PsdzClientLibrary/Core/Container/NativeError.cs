@@ -1,5 +1,7 @@
 ﻿
-namespace PsdzClient.Core.Container
+using BMW.Rheingold.CoreFramework.Contracts;
+
+namespace BMW.Rheingold.ISTA.CoreFramework
 {
     internal class NativeError : INativeError
     {

@@ -3,6 +3,8 @@ using PsdzClient.Core;
 using PsdzClient.Programming;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.Psdz.Model.Ecu
 {

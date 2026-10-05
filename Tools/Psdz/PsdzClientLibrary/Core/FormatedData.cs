@@ -3,8 +3,11 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Serialization;
 using System;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Localization
 {
     [Serializable]
     public class FormatedData : BaseFormatedData

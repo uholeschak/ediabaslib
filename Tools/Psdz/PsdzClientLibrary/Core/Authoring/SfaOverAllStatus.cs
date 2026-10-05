@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Core;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API.Implementation.Sfa.Models
 {

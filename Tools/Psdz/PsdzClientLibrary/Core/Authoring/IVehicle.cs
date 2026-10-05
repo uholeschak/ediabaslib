@@ -3,6 +3,7 @@ using PsdzClient.Core;
 using System.ComponentModel;
 using BMW.Authoring.Programming.API.Interface;
 using BMW.Authoring.Vehicle.Interface;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.Vehicle
 {

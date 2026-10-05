@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 
 #pragma warning disable CS0067
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

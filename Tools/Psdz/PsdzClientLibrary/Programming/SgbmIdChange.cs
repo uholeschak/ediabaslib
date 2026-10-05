@@ -6,8 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     public class SgbmIdChange : ISgbmIdChange, INotifyPropertyChanged
     {

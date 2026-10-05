@@ -3,6 +3,7 @@ using BMW.Rheingold.Psdz;
 using PsdzClient.Core;
 using System;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API.ServiceRide
 {

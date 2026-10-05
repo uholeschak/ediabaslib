@@ -3,8 +3,10 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.Diagnostics.Common
 {
     public abstract class ActiveGatewayUtils
     {

@@ -1,6 +1,7 @@
 ﻿using PsdzClient.Core;
 using System;
 using System.Globalization;
+using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 using PsdzClientLibrary;
 

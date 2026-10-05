@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using BMW.Authoring.API.Implementation.Sfa.Models.Request;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API.Interface.Sfa.Models
 {

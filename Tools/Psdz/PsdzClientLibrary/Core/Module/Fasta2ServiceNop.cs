@@ -7,6 +7,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.FASTA.Model;
 
 namespace BMW.Rheingold.FASTA

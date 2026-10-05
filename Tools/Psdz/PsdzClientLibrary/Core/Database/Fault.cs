@@ -11,6 +11,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
+using BMW.Rheingold.CoreFramework.Localization;
 using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using BMW.Rheingold.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge.Multisession;
 using PsdzClient;
 

@@ -1,5 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework;
-namespace PsdzClient.Core.Container
+using PsdzClient.Core.Container;
+
+namespace BMW.Rheingold.CoreFramework
 {
     public interface IParameters
     {

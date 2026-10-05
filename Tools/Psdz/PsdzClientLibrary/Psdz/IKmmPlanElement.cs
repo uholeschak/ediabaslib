@@ -3,8 +3,10 @@ using BMW.Rheingold.Psdz;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.KMM;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework.Contracts.KMM
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IKmmPlanElement : IComparable<IKmmPlanElement>

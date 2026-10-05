@@ -9,6 +9,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.RheingoldSessionController.Module;
 using PsdzClient;
 

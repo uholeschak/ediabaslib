@@ -6,6 +6,7 @@ using System;
 using System.Windows.Controls;
 using System.Windows.Input;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
 namespace BMW.Rheingold.PresentationFramework
 {

@@ -16,6 +16,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
+using BMW.Rheingold.CoreFramework.Localization;
 using PsdzClient.Programming;
 
 #pragma warning disable CS0169, CS0649, CS0162, CS0618

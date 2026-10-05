@@ -1,6 +1,7 @@
-﻿using PsdzClient.Programming;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate
 {
     internal class KeypackDetailStatus : IKeypackDetailStatus
     {

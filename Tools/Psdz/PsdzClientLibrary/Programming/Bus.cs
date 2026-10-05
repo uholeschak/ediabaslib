@@ -1,7 +1,8 @@
-﻿using PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
+using PsdzClient.Core;
 using PsdzClient;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [PreserveSource(Hint = "Obsolete removed", AttributesModified = true)]
     [AuthorAPI(SelectableTypeDeclaration = true)]

@@ -1,14 +1,12 @@
-﻿using PsdzClient.Core.Container;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using System;
-using System.Globalization;
-using System.Linq;
-using BMW.Rheingold.CoreFramework;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Localization
 {
     public class Translator
     {

@@ -1,4 +1,5 @@
-﻿using PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
+using PsdzClient.Core;
 
 namespace PBMW.Rheingold.CoreFramework.Contracts
 {

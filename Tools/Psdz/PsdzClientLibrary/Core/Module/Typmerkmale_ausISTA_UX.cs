@@ -2,6 +2,7 @@
 using BMW.Rheingold.Module.ISTA;
 using PsdzClient.Core.Container;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.Module.ISTA

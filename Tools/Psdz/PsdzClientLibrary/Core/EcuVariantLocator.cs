@@ -7,10 +7,12 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient.Core;
 using PsdzClientLibrary;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class EcuVariantLocator : IEcuVariantLocator, ISPELocator
     {

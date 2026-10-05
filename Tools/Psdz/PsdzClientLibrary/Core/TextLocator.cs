@@ -1,6 +1,10 @@
 ﻿using PsdzClient.Core.Container;
 using System.Collections.Generic;
 using System;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace PsdzClient.Core
 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using BMW.Authoring.Vehicle.Enums;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.Vehicle
 {

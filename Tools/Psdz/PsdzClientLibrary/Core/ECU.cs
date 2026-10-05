@@ -16,9 +16,13 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using PsdzClient.Core;
 
 #pragma warning disable CS0169
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class ECU : ICloneable, IEcu, INotifyPropertyChanged, IIdentEcu, IEcuTreeEcu, IEcuObj
     {

@@ -3,7 +3,7 @@ using System;
 using BmwFileReader;
 
 #pragma warning disable CS0649
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class SPELocator : ISPELocator
     {

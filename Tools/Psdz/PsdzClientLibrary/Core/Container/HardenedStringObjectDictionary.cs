@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.CoreFramework
 {
     public class HardenedStringObjectDictionary : Dictionary<string, object>
     {

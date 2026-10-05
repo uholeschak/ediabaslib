@@ -15,8 +15,11 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.ISTA.CoreFramework;
+using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using BMW.Rheingold.VehicleCommunication;
 

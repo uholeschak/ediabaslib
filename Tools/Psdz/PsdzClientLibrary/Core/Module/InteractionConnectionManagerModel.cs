@@ -7,6 +7,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Localization;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {

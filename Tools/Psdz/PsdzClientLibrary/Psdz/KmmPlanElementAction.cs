@@ -1,6 +1,7 @@
-﻿using PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
+using PsdzClient.Core;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework.Contracts.KMM
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum KmmPlanElementAction : uint

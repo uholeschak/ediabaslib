@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClientLibrary;
 
 #pragma warning disable CS0618, CS0649

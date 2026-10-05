@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
     public class AuthorAPIAttribute : Attribute

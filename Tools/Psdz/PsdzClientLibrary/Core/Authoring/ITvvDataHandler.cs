@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Core;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API.TVV
 {

@@ -1,6 +1,7 @@
 ﻿using System;
+using BMW.Rheingold.CoreFramework;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     [Serializable]
     [AuthorAPI]

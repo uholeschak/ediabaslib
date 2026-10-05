@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {

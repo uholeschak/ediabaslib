@@ -1,7 +1,8 @@
 ﻿using System;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.ISTA.CoreFramework;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.ISTA.CoreFramework
 {
     internal class AdapterError : IAdapterError
     {

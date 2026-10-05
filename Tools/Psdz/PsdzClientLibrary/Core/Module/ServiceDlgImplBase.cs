@@ -7,6 +7,8 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.Localization;
 
 namespace BMW.Rheingold.Module.ISTA
 {

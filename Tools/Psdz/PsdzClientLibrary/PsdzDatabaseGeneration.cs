@@ -24,8 +24,11 @@ using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.ISTA.CoreFramework.Module;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using PsdzClientLibrary;
 

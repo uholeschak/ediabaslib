@@ -1,7 +1,8 @@
 ﻿using System;
+using BMW.Rheingold.CoreFramework;
 using PsdzClient.Core;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [Flags]
     [AuthorAPI(SelectableTypeDeclaration = true)]

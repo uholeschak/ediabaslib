@@ -6,11 +6,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using PsdzClient;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.Common
 {
     internal class TargetSelectorChooser
     {

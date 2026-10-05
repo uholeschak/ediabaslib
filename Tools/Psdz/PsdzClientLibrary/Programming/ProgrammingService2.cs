@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.DiagnosticsBusinessDataCore;
 using BMW.Rheingold.FASTA;
 using BMW.Rheingold.Programming.ProgrammingEngine;

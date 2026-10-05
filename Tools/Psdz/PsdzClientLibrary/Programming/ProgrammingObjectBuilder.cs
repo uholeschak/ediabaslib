@@ -20,6 +20,7 @@ using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
 
 #pragma warning disable CS0169
 namespace BMW.Rheingold.Programming.API

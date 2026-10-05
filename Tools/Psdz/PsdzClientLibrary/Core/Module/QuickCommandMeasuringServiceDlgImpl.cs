@@ -11,8 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Interaction.Responses;
+using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.xVM;
 
 namespace BMW.Rheingold.Module.ISTA

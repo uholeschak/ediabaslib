@@ -9,8 +9,14 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.Module;
+using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.ISTA.CoreFramework.Module
 {
     public class TextContentManager : ITextContentManager
     {
@@ -553,7 +559,7 @@ namespace PsdzClient.Core
             List<LocalizedText> list = new List<LocalizedText>();
             string spe = $"<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>{text}</spe:PARAGRAPH></spe:TEXTITEM>";
             spe = text;
-            Extensions.AddRange(list, lang.Select((string x) => new LocalizedText(spe, x)));
+            BMW.Rheingold.CoreFramework.Extensions.AddRange(list, lang.Select((string x) => new LocalizedText(spe, x)));
             return new TextLocator(list);
         }
 
@@ -571,7 +577,7 @@ namespace PsdzClient.Core
                 {
                     string tmp = string.Format(CultureInfo.CurrentCulture, "<TextItem>{0}</TextItem>", xmlText);
                     List<LocalizedText> list = new List<LocalizedText>();
-                    Extensions.AddRange(list, lang.Select((string x) => new LocalizedText(tmp, x)));
+                    BMW.Rheingold.CoreFramework.Extensions.AddRange(list, lang.Select((string x) => new LocalizedText(tmp, x)));
                     return new TextLocator(list);
                 }
 

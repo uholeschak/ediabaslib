@@ -7,6 +7,8 @@ using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using BMW.ISPI.IstaServices.Contract.PUK.Data;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.FASTA

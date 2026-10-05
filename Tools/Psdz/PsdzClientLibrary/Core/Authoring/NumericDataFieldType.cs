@@ -2,6 +2,7 @@
 using PsdzClient.Core;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using BMW.Rheingold.CoreFramework;
 using Newtonsoft.Json;
 
 namespace BMW.Authoring.API.MetaData.Enum

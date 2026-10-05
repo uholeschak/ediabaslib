@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using System.Xml;
+using BMW.Rheingold.CoreFramework.Contracts;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Module
 {
     public struct __TextParameter
     {

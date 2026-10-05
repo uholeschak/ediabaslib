@@ -1,11 +1,14 @@
-﻿namespace PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
 
-[AuthorAPI(SelectableTypeDeclaration = true)]
-public interface IEcuProgrammingVariantLocator : ISPELocator
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
-    string Name { get; }
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IEcuProgrammingVariantLocator : ISPELocator
+    {
+        string Name { get; }
 
-    decimal? FlashLimit { get; }
+        decimal? FlashLimit { get; }
 
-    decimal EcuVariantId { get; }
+        decimal EcuVariantId { get; }
+    }
 }

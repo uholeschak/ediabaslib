@@ -10,8 +10,15 @@ using System.Xml.Xsl;
 using System.Xml;
 using System;
 using System.Web.UI;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Localization;
+using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     public class TextContent : SPELocator, ITextContent, ISPELocator
     {

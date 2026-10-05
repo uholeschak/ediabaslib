@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Localization;
 
 namespace BMW.Rheingold.Module.ISTA
 {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using BMW.ISPI.TRIC.ISTA.FusionReactor;

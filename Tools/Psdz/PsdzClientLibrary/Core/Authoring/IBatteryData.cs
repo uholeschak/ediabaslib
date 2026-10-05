@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models.BatteryDemandService;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API.Interface.BatteryService
 {

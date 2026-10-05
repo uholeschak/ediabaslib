@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient.Core.Container;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuKom : IEcuKomApi

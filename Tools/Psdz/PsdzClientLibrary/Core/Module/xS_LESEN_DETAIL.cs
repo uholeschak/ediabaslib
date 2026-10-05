@@ -6,6 +6,8 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
 namespace BMW.Rheingold.Module.ISTA
 {

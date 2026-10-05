@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Converters;
 using PsdzClient.Core;
 using System.Runtime.Serialization;
+using BMW.Rheingold.CoreFramework;
 using Newtonsoft.Json;
 
 namespace BMW.Authoring.API.Implementation.Sfa.Models.Request

@@ -7,6 +7,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.Module.ISTA
 {

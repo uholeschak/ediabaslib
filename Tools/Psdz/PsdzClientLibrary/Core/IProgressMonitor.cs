@@ -1,6 +1,7 @@
-﻿using PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework.Localization;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     public enum ProgressCancelBehavior
     {

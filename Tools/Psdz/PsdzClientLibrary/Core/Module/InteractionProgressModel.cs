@@ -1,6 +1,7 @@
 ﻿using PsdzClient.Core;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using BMW.Rheingold.CoreFramework.Localization;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {

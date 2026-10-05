@@ -4,6 +4,8 @@ using PsdzClient.Core;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Authoring.Vehicle
 {

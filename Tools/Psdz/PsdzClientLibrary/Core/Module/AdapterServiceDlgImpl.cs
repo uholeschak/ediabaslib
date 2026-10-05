@@ -6,6 +6,8 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.ISTA.CoreFramework;
 
 namespace BMW.Rheingold.Module.ISTA

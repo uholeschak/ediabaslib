@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.Module.ISTA
 {
     [Serializable]
     [XmlInclude(typeof(StepRange))]

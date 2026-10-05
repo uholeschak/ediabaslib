@@ -7,6 +7,7 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Utilities;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.DiagnosticsBusinessDataCore;

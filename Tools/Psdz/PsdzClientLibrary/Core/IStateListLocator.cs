@@ -1,7 +1,11 @@
-﻿namespace PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
+using PsdzClient.Core;
 
-[AuthorAPI(SelectableTypeDeclaration = true)]
-public interface IStateListLocator : ISPELocator
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
-    IStateLocator GetState(object obj);
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IStateListLocator : ISPELocator
+    {
+        IStateLocator GetState(object obj);
+    }
 }

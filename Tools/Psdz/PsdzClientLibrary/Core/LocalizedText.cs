@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 {
     [DataContract]
     public class LocalizedText : ICloneable

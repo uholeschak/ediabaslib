@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework;
 using RheingoldPsdzWebApi.Adapter;
 
 namespace BMW.Rheingold.Psdz

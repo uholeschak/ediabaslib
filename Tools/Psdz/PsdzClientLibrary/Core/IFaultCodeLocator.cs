@@ -1,15 +1,20 @@
-﻿namespace PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
+using PsdzClient.Core;
 
-[AuthorAPI(SelectableTypeDeclaration = true)]
-public interface IFaultCodeLocator : ISPELocator
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
-    ITextContent TextContent { get; }
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IFaultCodeLocator : ISPELocator
+    {
+        ITextContent TextContent { get; }
 
-    string Code { get; }
+        string Code { get; }
 
-    IDocumentLocator GetDocument();
+        IDocumentLocator GetDocument();
 
-    IDocumentLocator GetDocument(string docType);
+        IDocumentLocator GetDocument(string docType);
 
-    void Set();
+        void Set();
+    }
 }

@@ -3,6 +3,7 @@ using PsdzClient.Core;
 using System;
 using System.Globalization;
 using System.Linq;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.CoreFramework

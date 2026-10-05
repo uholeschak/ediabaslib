@@ -5,6 +5,7 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
 using System.Globalization;
+using BMW.Rheingold.ISTA.CoreFramework.Module;
 using PsdzClient;
 using PsdzClientLibrary;
 

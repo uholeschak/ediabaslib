@@ -5,6 +5,7 @@ using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Localization;
 using PsdzClient;
 using RheingoldPsdzWebApi.Adapter;
 using RheingoldPsdzWebApi.Adapter.Contracts;

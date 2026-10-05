@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using BMW.Rheingold.CoreFramework.Localization;
 
 namespace BMW.Rheingold.Psdz
 {

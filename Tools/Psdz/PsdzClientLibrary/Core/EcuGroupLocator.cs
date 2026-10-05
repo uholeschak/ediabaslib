@@ -2,11 +2,13 @@
 using PsdzClient;
 using System;
 using System.Globalization;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using PsdzClient.Core;
 using PsdzClientLibrary;
 
 #pragma warning disable CS0649
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class EcuGroupLocator : IEcuGroupLocator, ISPELocator
     {

@@ -37,10 +37,13 @@ using System.Xml;
 using System.Xml.Serialization;
 using BMW.Authoring.API.Interface.Sfa;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
+using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.FASTA;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
 using BMW.Rheingold.RheingoldSessionController;
+using MW.Rheingold.CoreFramework;
 using PsdzClientLibrary;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 

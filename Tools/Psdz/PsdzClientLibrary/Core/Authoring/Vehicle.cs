@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using System;
 using BMW.Authoring.Programming.API.Implementation;
 using BMW.Authoring.Programming.API.Interface;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
 #pragma warning disable CS0618
 namespace BMW.Authoring.Vehicle

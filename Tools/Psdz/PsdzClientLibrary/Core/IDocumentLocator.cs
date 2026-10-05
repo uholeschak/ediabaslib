@@ -1,6 +1,9 @@
-﻿namespace PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
 
-[AuthorAPI(SelectableTypeDeclaration = true)]
-public interface IDocumentLocator : ISPELocator
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IDocumentLocator : ISPELocator
+    {
+    }
 }

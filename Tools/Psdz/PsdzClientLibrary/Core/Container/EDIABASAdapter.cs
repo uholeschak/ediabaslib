@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
+using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.VehicleCommunication;
 using PsdzClient.Utility;
 using PsdzClient;
+using PsdzClient.Core;
+using PsdzClient.Core.Container;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.ISTA.CoreFramework
 {
     internal class EDIABASAdapter : BaseAdapter
     {

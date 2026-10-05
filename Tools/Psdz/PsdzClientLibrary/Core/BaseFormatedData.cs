@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public abstract class BaseFormatedData : INotifyPropertyChanged
     {

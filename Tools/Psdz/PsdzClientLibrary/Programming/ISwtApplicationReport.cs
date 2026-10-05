@@ -3,21 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework;
 using PsdzClient.Core;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum FscState
-    {
-        Accepted,
-        Cancelled,
-        Imported,
-        Invalid,
-        NotAvailable,
-        Rejected
-    }
-
     public interface ISwtApplicationReport
     {
         int DiagAddrAsInt { get; set; }

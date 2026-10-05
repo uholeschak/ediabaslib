@@ -1,7 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.Module.ISTA
 {
     [Serializable]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]

@@ -1,7 +1,10 @@
-﻿namespace PsdzClient.Core;
+﻿using BMW.Rheingold.CoreFramework;
 
-[AuthorAPI]
-public interface IVehicleAdapterLocator : ISPELocator
+namespace BMW.Rheingold.CoreFramework
 {
-    string Title { get; }
+    [AuthorAPI]
+    public interface IVehicleAdapterLocator : ISPELocator
+    {
+        string Title { get; }
+    }
 }

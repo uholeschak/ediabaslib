@@ -2,11 +2,10 @@
 using System.ComponentModel;
 using BMW.Authoring.API.Math;
 using BMW.Authoring.Database;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API
 {
-    using Vehicle = BMW.Authoring.Vehicle.Vehicle;
-
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public static class AuthoringApiFactory
     {
