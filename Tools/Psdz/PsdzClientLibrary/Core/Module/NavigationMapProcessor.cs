@@ -1,4 +1,4 @@
-using BMW.Rheingold.CoreFramework;
+﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
@@ -186,7 +186,15 @@ namespace BMW.Rheingold.Module.ISTA
 
                     BrandName? brandName = BrandMapping.ConvertToBrandName(brand2, product2);
                     Contract contract = null;
-                    //[-] contract = ((brandName != EnumConverter.ConvertBrandNameToContractsBrandName(BrandName.TOYOTA)) ? (brandName.HasValue ? dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, "T") : null) : dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, null));
+                    if (brandName != EnumConverter.ConvertBrandNameToContractsBrandName(BrandName.TOYOTA))
+                    {
+                        //[-] contract = (brandName.HasValue ? dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, "T") : null);
+                    }
+                    else
+                    {
+                        //[-] contract = dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, null);
+                    }
+
                     if (contract != null)
                     {
                         Log.Info("NavigationMapProcessor.GetInternationalDealerNumber()", "international dpno was: {0}", contract.internationalDealerNumber);
@@ -231,7 +239,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[+] string[] array = Array.Empty<string>();
             string[] array = Array.Empty<string>();
             List<string> haendlerNrs = new List<string>();
-            array.ForEach(delegate (string m)
+            array.ForEach((string m) =>
             {
                 AddInternationalDealerNumberToList(GetInternationalDealerNumber(m, product), haendlerNrs);
             });
