@@ -75,7 +75,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 if (document == null)
                 {
-                //[-] document = InfoObjectFactory.Instance.GetFaultCodeDocument(base.ID, FortAsHexString, vehicleContext);
+                    //[-] document = InfoObjectFactory.Instance.GetFaultCodeDocument(ID, FortAsHexString, vehicleContext);
                 }
 
                 return document;
@@ -155,9 +155,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         return DTC.F_ORT;
                     }
 
-                    if (!string.IsNullOrEmpty(base.CODE))
+                    if (!string.IsNullOrEmpty(CODE))
                     {
-                        return Convert.ToInt64(base.CODE);
+                        return Convert.ToInt64(CODE);
                     }
                 }
                 catch (Exception exception)
@@ -177,7 +177,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        public string Id => base.ID.ToString(CultureInfo.InvariantCulture);
+        public string Id => ID.ToString(CultureInfo.InvariantCulture);
 
         public string[] IncomingLinkNames
         {
@@ -249,9 +249,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantByName(ECU.VARIANTE));
                 }
 
-                if (xEP_ECUVARIANTS == null && base.ECUVARIANTID.HasValue)
+                if (xEP_ECUVARIANTS == null && ECUVARIANTID.HasValue)
                 {
-                    //[-] xEP_ECUVARIANTS = DatabaseProviderFactory.Instance.GetEcuVariantById(base.ECUVARIANTID.Value);
+                    //[-] xEP_ECUVARIANTS = DatabaseProviderFactory.Instance.GetEcuVariantById(ECUVARIANTID.Value);
                     //[+] xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(base.ECUVARIANTID.Value.ToString(CultureInfo.InvariantCulture)));
                     xEP_ECUVARIANTS = XepConverter.Convert(ClientContext.GetDatabase(vehicleContext)?.GetEcuVariantById(base.ECUVARIANTID.Value.ToString(CultureInfo.InvariantCulture)));
                 }
@@ -267,7 +267,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        public decimal SignedId => base.ID;
+        public decimal SignedId => ID;
 
         public ITextContent TextContent
         {
@@ -275,7 +275,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 if (!IsVirtualDTC)
                 {
-                    //[-] XEP_FAULTLABELS xepFaultLabelByFaultCodeId = DatabaseProviderFactory.Instance.GetXepFaultLabelByFaultCodeId(base.ID);
+                    //[-] XEP_FAULTLABELS xepFaultLabelByFaultCodeId = DatabaseProviderFactory.Instance.GetXepFaultLabelByFaultCodeId(ID);
                     //[+] XEP_FAULTLABELS xepFaultLabelByFaultCodeId = ClientContext.GetDatabase(vehicleContext)?.GetXepFaultLabelByFaultCodeId(base.ID.ToString(CultureInfo.InvariantCulture));
                     XEP_FAULTLABELS xepFaultLabelByFaultCodeId = ClientContext.GetDatabase(vehicleContext)?.GetXepFaultLabelByFaultCodeId(base.ID.ToString(CultureInfo.InvariantCulture));
                     if (xepFaultLabelByFaultCodeId != null)
@@ -286,7 +286,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
                 if (IsVirtualDTC)
                 {
-                    //[-] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = DatabaseProviderFactory.Instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(base.ID);
+                    //[-] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = DatabaseProviderFactory.Instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(ID);
                     //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = ClientContext.GetDatabase(vehicleContext)?.GetXepVirtualFaultLabelsByVirtualFaultCodeId(base.ID);
                     XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = ClientContext.GetDatabase(vehicleContext)?.GetXepVirtualFaultLabelsByVirtualFaultCodeId(base.ID);
                     if (xepVirtualFaultLabelsByVirtualFaultCodeId != null)
@@ -294,7 +294,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         return new TextContent(xepVirtualFaultLabelsByVirtualFaultCodeId.Title);
                     }
 
-                    //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelById = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelById(base.ID);
+                    //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelById = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelById(ID);
                     //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelById = ClientContext.GetDatabase(vehicleContext)?.GetXepCombiFaultLabelById(base.ID);
                     XEP_COMBIFAULTLABELS xepCombiFaultLabelById = ClientContext.GetDatabase(vehicleContext)?.GetXepCombiFaultLabelById(base.ID);
                     if (xepCombiFaultLabelById != null)
@@ -345,7 +345,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
-                decimal? rELEVANCE = base.RELEVANCE;
+                decimal? rELEVANCE = RELEVANCE;
                 if ((rELEVANCE.GetValueOrDefault() == 0m) & rELEVANCE.HasValue)
                 {
                     return false;
@@ -708,20 +708,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             switch (name.ToUpperInvariant())
             {
                 case "ID":
-                    return base.ID.ToString(CultureInfo.InvariantCulture);
+                    return ID.ToString(CultureInfo.InvariantCulture);
                 case "CODE":
-                    if (base.CODE != null)
+                    if (CODE != null)
                     {
-                        return base.CODE;
+                        return CODE;
                     }
 
                     return string.Empty;
                 case "F_SELEKT_CODE":
-                    if (base.CODE != null && dtc != null && dtc.F_ORT.HasValue)
+                    if (CODE != null && dtc != null && dtc.F_ORT.HasValue)
                     {
                         if (dtc.IsCombined || dtc.IsVirtual)
                         {
-                            return base.CODE;
+                            return CODE;
                         }
 
                         return $"{dtc.F_ORT:X}";
@@ -729,25 +729,25 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
                     return string.Empty;
                 case "DATATYPE":
-                    return base.DATATYPE;
+                    return DATATYPE;
                 case "WEIGHTING":
-                    return base.WEIGHTING.ToString();
+                    return WEIGHTING.ToString();
                 case "SCHEINFEHLER":
-                    return base.SCHEINFEHLER;
+                    return SCHEINFEHLER;
                 case "AUSBLENDINDEX":
-                    return base.AUSBLENDINDEX;
+                    return AUSBLENDINDEX;
                 case "RELEVANCE":
-                    return base.RELEVANCE.ToString();
+                    return RELEVANCE.ToString();
                 case "SICHERHEITSRELEVANT":
-                    return base.SICHERHEITSRELEVANT.ToString();
+                    return SICHERHEITSRELEVANT.ToString();
                 case "VALIDTO":
-                    return base.VALIDTO.ToString();
+                    return VALIDTO.ToString();
                 case "VALIDFROM":
-                    return base.VALIDFROM.ToString();
+                    return VALIDFROM.ToString();
                 case "DIAGNOSEINDEX":
-                    return base.DIAGNOSEINDEX;
+                    return DIAGNOSEINDEX;
                 case "ECUVARIANTID":
-                    return base.ECUVARIANTID.ToString();
+                    return ECUVARIANTID.ToString();
                 default:
                     return string.Empty;
             }
@@ -759,40 +759,40 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             switch (name.ToUpperInvariant())
             {
                 case "ID":
-                    obj = base.ID;
+                    obj = ID;
                     break;
                 case "CODE":
-                    obj = base.CODE;
+                    obj = CODE;
                     break;
                 case "DATATYPE":
-                    obj = base.DATATYPE;
+                    obj = DATATYPE;
                     break;
                 case "WEIGHTING":
-                    obj = base.WEIGHTING;
+                    obj = WEIGHTING;
                     break;
                 case "SCHEINFEHLER":
-                    obj = base.SCHEINFEHLER;
+                    obj = SCHEINFEHLER;
                     break;
                 case "AUSBLENDINDEX":
-                    obj = base.AUSBLENDINDEX;
+                    obj = AUSBLENDINDEX;
                     break;
                 case "RELEVANCE":
-                    obj = base.RELEVANCE;
+                    obj = RELEVANCE;
                     break;
                 case "SICHERHEITSRELEVANT":
-                    obj = base.SICHERHEITSRELEVANT;
+                    obj = SICHERHEITSRELEVANT;
                     break;
                 case "VALIDTO":
-                    obj = base.VALIDTO;
+                    obj = VALIDTO;
                     break;
                 case "VALIDFROM":
-                    obj = base.VALIDFROM;
+                    obj = VALIDFROM;
                     break;
                 case "DIAGNOSEINDEX":
-                    obj = base.DIAGNOSEINDEX;
+                    obj = DIAGNOSEINDEX;
                     break;
                 case "ECUVARIANTID":
-                    obj = base.ECUVARIANTID;
+                    obj = ECUVARIANTID;
                     break;
             }
 
@@ -814,7 +814,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 Log.WarningException("FaultCode.GetDataValue<T>()", exception);
             }
 
-            return default(T);
+            return default;
         }
 
         public InfoObject GetDocument()
@@ -894,7 +894,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     }
                 }
 
-                list.Sort(delegate (F_UW_Display x, F_UW_Display y)
+                list.Sort((F_UW_Display x, F_UW_Display y) =>
                 {
                     if (x.F_UW_TEXT == null && y.F_UW_TEXT == null)
                     {
@@ -974,11 +974,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public void LoadInfoObj()
         {
-            //[-] IXepInfoObject xepInfoObject = DatabaseProviderFactory.Instance.LoadXepInfoObjForFaultCodeId(base.ID);
+            //[-] IXepInfoObject xepInfoObject = DatabaseProviderFactory.Instance.LoadXepInfoObjForFaultCodeId(ID);
             //[+] IXepInfoObject xepInfoObject = ClientContext.GetDatabase(vehicleContext)?.LoadXepInfoObjForFaultCodeId(base.ID);
             IXepInfoObject xepInfoObject = ClientContext.GetDatabase(vehicleContext)?.LoadXepInfoObjForFaultCodeId(base.ID);
             //[+] if (xepInfoObject == null) return;
-            if (xepInfoObject == null) return;
+            if (xepInfoObject == null)
+                return;
             XepInfoObject xepInfoObjectCasted = Document.XepInfoObjectCasted;
             xepInfoObjectCasted.Title_dede = xepInfoObject.Title_dede;
             xepInfoObjectCasted.Title_el = xepInfoObject.Title_el;
