@@ -1,4 +1,4 @@
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X509;
@@ -49,17 +49,18 @@ namespace PsdzClient.Core
         {
             //[+] if (!string.IsNullOrEmpty(istaFolder))
             if (!string.IsNullOrEmpty(istaFolder))
-                //[+] {
+            //[+] {
             {
                 //[+] ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
                 ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
                 //[+] istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
                 istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
-                //[+] }
+            //[+] }
             }
+
             IstaKeyPair = LoadKeyPairFromFile(istaKeyPairPath, "G#8x!9sD2@qZ6&lF1");
             Service29KeyPair = GenerateKeyPair();
-            //[-] ediabaasS29Path = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
+        //[-] ediabaasS29Path = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
         }
 
         public AsymmetricCipherKeyPair LoadKeyPairFromFile(string filePath, string password)
@@ -200,9 +201,9 @@ namespace PsdzClient.Core
 
         public AsymmetricCipherKeyPair GenerateKeyPair()
         {
-            ECKeyPairGenerator obj = (ECKeyPairGenerator)GeneratorUtilities.GetKeyPairGenerator("ECDSA");
-            obj.Init(new ECKeyGenerationParameters(SecObjectIdentifiers.SecP384r1, new SecureRandom()));
-            return obj.GenerateKeyPair();
+            ECKeyPairGenerator eCKeyPairGenerator = (ECKeyPairGenerator)GeneratorUtilities.GetKeyPairGenerator("ECDSA");
+            eCKeyPairGenerator.Init(new ECKeyGenerationParameters(SecObjectIdentifiers.SecP384r1, new SecureRandom()));
+            return eCKeyPairGenerator.GenerateKeyPair();
         }
 
         public void WriteCertificateToFile(ISec4DiagCertificates sec4DiagResponse)

@@ -15,9 +15,7 @@ namespace BMW.Rheingold.Module.ISTA
     public abstract class ISTAServiceDialog : ISTAModule, IServiceDialog
     {
         private SidisPanel sidisPanel;
-
         private DateTime lastInvokeExecutionTime = DateTime.Now;
-
         public IModuleExecutionStep CurrentStep { get; set; }
 
         internal SidisPanel Panel
@@ -28,12 +26,12 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     sidisPanel = new SidisPanel(_globalTabModuleISTA);
                 }
+
                 return sidisPanel;
             }
         }
 
-        internal ISPEUserInterface UserInterface => base.SPEUserInterface;
-
+        internal ISPEUserInterface UserInterface => SPEUserInterface;
         public IModuleExecutionStep ServiceDialogUI { get; set; }
 
         public virtual void SetResultSetFromServiceProgram(IResult resultSet)
@@ -42,10 +40,11 @@ namespace BMW.Rheingold.Module.ISTA
 
         protected IProtocolBasic RetrieveFasta(ParameterContainer inParameters)
         {
-            if (inParameters.getParameter("FASTA") is IFastaGrouping fastaGrouping)
+            if (inParameters.getParameter("FASTA")is IFastaGrouping fastaGrouping)
             {
                 return fastaGrouping.ProtocolingInstance;
             }
+
             return null;
         }
 
@@ -56,11 +55,11 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("ISTAServiceDialog.GetInfoObjStarted()", "Infoobject is null.");
             }
+
             return obj;
         }
 
         public abstract void Invoke(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam);
-
         public void InvokeMain(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
             BeforeInvoke(method, inParam, inoutParam);
@@ -88,16 +87,18 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Thread.Sleep((int)num);
             }
+
             lastInvokeExecutionTime = DateTime.Now;
         }
 
         protected ITextContent GetText(ParameterContainer inParam, string key)
         {
             ITextContent textContent = TextLocator.Empty.TextContent;
-            if (inParam.getParameter(key) is List<ITextLocator> list && list.Count > 0)
+            if (inParam.getParameter(key)is List<ITextLocator> list && list.Count > 0)
             {
                 textContent = list[0].TextContent;
             }
+
             return textContent;
         }
 
@@ -112,6 +113,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("ISTAServiceDialog.GetContent()", "Couldn't retrieve text from textconent.");
             }
+
             return result;
         }
     }

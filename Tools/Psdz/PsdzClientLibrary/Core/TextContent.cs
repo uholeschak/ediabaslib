@@ -22,20 +22,19 @@ namespace BMW.Rheingold.CoreFramework
 {
     public class TextContent : SPELocator, ITextContent, ISPELocator
     {
-        private readonly string[] elementWithAttributeXmlSpace = new string[4] { "PARAGRAPH", "HINT", "CAUTION", "WARNING" };
-
+        private readonly string[] elementWithAttributeXmlSpace = new string[4]
+        {
+            "PARAGRAPH",
+            "HINT",
+            "CAUTION",
+            "WARNING"
+        };
         private string myText = string.Empty;
-
         private bool toStringAsPlainText;
-
         private string localPlainText = string.Empty;
-
         private IList<LocalizedText> locText;
-
         private static XslCompiledTransform transformer;
-
         public IList<LocalizedText> TextLocalized => locText;
-
         private bool IsLocalized => locText != null;
 
         public string FormattedText
@@ -46,12 +45,12 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return locText[0].TextItem;
                 }
+
                 return myText;
             }
         }
 
         public string PlainText => BuildPlainText(FormattedText);
-
         public string Text => FormattedText;
 
         private static XslCompiledTransform CompiledTransformer
@@ -62,6 +61,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     transformer = CreateTransformer();
                 }
+
                 return transformer;
             }
         }
@@ -91,6 +91,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return TextLocator.Empty.TextContent.FormattedText;
             }
+
             try
             {
                 XElement xElement = null;
@@ -99,6 +100,7 @@ namespace BMW.Rheingold.CoreFramework
                     xElement = ParseXml(text);
                     return xElement.Print(removeWhiteSpace: false);
                 }
+
                 string plainText = EscapeXmlElementContent(text);
                 xElement = ParseXml(Create(plainText));
                 return xElement.Print();
@@ -117,6 +119,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return content.Replace("&", "&amp;").Replace("<", "&lt;");
             }
+
             return content;
         }
 
@@ -127,6 +130,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 xElement2.Add(new XText(text));
             }
+
             return new TextContent(xElement.Print());
         }
 
@@ -141,8 +145,10 @@ namespace BMW.Rheingold.CoreFramework
                         return item.TextItem;
                     }
                 }
+
                 throw new ArgumentException("Unsupported language \"" + language + "\".");
             }
+
             return myText;
         }
 
@@ -164,6 +170,7 @@ namespace BMW.Rheingold.CoreFramework
                 string text = (IsLocalized ? locText[i].TextItem : myText);
                 list.Add(new LocalizedText(BuildPlainText(text), lang[i]));
             }
+
             return list;
         }
 
@@ -188,6 +195,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     flag = false;
                 }
+
                 foreach (XNode item in root.Nodes())
                 {
                     if (item.NodeType == XmlNodeType.Text)
@@ -211,11 +219,13 @@ namespace BMW.Rheingold.CoreFramework
                         }
                     }
                 }
+
                 if (flag)
                 {
                     return stringBuilder.ToString().Trim();
                 }
             }
+
             return stringBuilder.ToString();
         }
 
@@ -225,6 +235,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return false;
             }
+
             string localName = element.Name.LocalName;
             if ("UNIT".Equals(localName) || "SYMBOL".Equals(localName))
             {
@@ -233,8 +244,10 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     result.Append(attibuteValue);
                 }
+
                 return true;
             }
+
             if ("VALUEUNIT".Equals(localName))
             {
                 string attibuteValue = GetAttibuteValue("VALUE", element);
@@ -242,14 +255,17 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     result.Append(attibuteValue);
                 }
+
                 attibuteValue = GetAttibuteValue("UNIT", element);
                 if (attibuteValue != null)
                 {
                     result.Append(" ");
                     result.Append(attibuteValue);
                 }
+
                 return true;
             }
+
             if ("PARAMETER".Equals(localName) && !element.HasElements)
             {
                 string attibuteValue = GetAttibuteValue("ID", element);
@@ -257,14 +273,17 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     result.Append(attibuteValue);
                 }
+
                 attibuteValue = GetAttibuteValue("UNIT", element, logMissing: false);
                 if (attibuteValue != null)
                 {
                     result.Append(" ");
                     result.Append(attibuteValue);
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -277,8 +296,10 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     Log.Warning("TextContentManager.GetAttibuteValue()", "Element \"{0}\" has no attribute \"{1}\", retuning null.", element?.Name?.LocalName, name);
                 }
+
                 return null;
             }
+
             return xAttribute.Value;
         }
 
@@ -302,6 +323,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 xsltArgumentList.AddParam("fullHtml", string.Empty, true);
             }
+
             xsltArgumentList.AddParam("lang", string.Empty, language);
             using (StringReader input = new StringReader(textItem))
             {
@@ -387,11 +409,11 @@ namespace BMW.Rheingold.CoreFramework
                                 string localizedXmlValue = null;
                                 //[+] if (ecuTranslation != null)
                                 if (ecuTranslation != null)
-                                    //[+] {
+                                //[+] {
                                 {
                                     //[+] localizedXmlValue = ecuTranslation.GetTitle(language);
                                     localizedXmlValue = ecuTranslation.GetTitle(language);
-                                    //[+] }
+                                //[+] }
                                 }
 
                                 XElement content;
@@ -430,6 +452,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 throw new ArgumentNullException("textContent");
             }
+
             if (IsLocalized)
             {
                 if (textContent.IsLocalized && locText.Count == textContent.TextLocalized.Count())
@@ -439,10 +462,13 @@ namespace BMW.Rheingold.CoreFramework
                         LocalizedText localizedText = locText[i];
                         localizedText.TextItem = ConcatFormattedText(localizedText.TextItem, textContent.TextLocalized[i].TextItem);
                     }
+
                     return new TextContent(new List<LocalizedText>(locText));
                 }
+
                 return Concat(textContent.FormattedText);
             }
+
             if (textContent.IsLocalized)
             {
                 IList<LocalizedText> list = new List<LocalizedText>();
@@ -452,10 +478,12 @@ namespace BMW.Rheingold.CoreFramework
                     LocalizedText localizedText2 = textContent.TextLocalized[j];
                     list.Add(new LocalizedText(ConcatFormattedText(formattedText, localizedText2.TextItem), localizedText2.Language));
                 }
+
                 myText = string.Empty;
                 locText = list;
                 return new TextContent(new List<LocalizedText>(locText));
             }
+
             return Concat(textContent.FormattedText);
         }
 
@@ -463,12 +491,13 @@ namespace BMW.Rheingold.CoreFramework
         {
             if (locText != null)
             {
-                locText.ForEach(delegate (LocalizedText x)
+                locText.ForEach((LocalizedText x) =>
                 {
                     x.TextItem = ConcatFormattedText(x.TextItem, add);
                 });
                 return new TextContent(locText);
             }
+
             myText = ConcatFormattedText(myText, add);
             return new TextContent(myText.Clone() as string);
         }
@@ -491,6 +520,7 @@ namespace BMW.Rheingold.CoreFramework
                     list.Add(new LocalizedText(textItem, plainText[j].Language));
                 }
             }
+
             return new TextContent(list);
         }
 
@@ -531,6 +561,7 @@ namespace BMW.Rheingold.CoreFramework
                 xElement5.Add(new XText(appendPlain));
                 xElement.Add(xElement5);
             }
+
             return xElement.Print();
         }
 
@@ -544,8 +575,10 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     break;
                 }
+
                 xElement2 = firstNode as XElement;
             }
+
             return xElement2;
         }
 
@@ -583,6 +616,7 @@ namespace BMW.Rheingold.CoreFramework
                     xElement.Add(xElement4);
                 }
             }
+
             return xElement.Print();
         }
 
@@ -598,6 +632,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 text += theMetaInformation;
             }
+
             return Concat(text);
         }
 
@@ -607,20 +642,24 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return false;
             }
+
             if (!(obj is TextContent textContent))
             {
                 return false;
             }
+
             if (textContent.myText != myText)
             {
                 return false;
             }
+
             if (textContent.locText != null)
             {
                 if (locText == null || locText.Count != textContent.locText.Count)
                 {
                     return false;
                 }
+
                 for (int i = 0; i < locText.Count; i++)
                 {
                     if (!locText.Equals(textContent.locText))
@@ -633,60 +672,73 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return false;
             }
-            if (textContent.Children != base.Children)
+
+            if (textContent.Children != Children)
             {
                 return false;
             }
-            if (textContent.DataClassName != base.DataClassName)
+
+            if (textContent.DataClassName != DataClassName)
             {
                 return false;
             }
-            if (textContent.Exception != base.Exception)
+
+            if (textContent.Exception != Exception)
             {
                 return false;
             }
+
             if (textContent.FormattedText != FormattedText)
             {
                 return false;
             }
-            if (textContent.HasException != base.HasException)
+
+            if (textContent.HasException != HasException)
             {
                 return false;
             }
-            if (textContent.Id != base.Id)
+
+            if (textContent.Id != Id)
             {
                 return false;
             }
-            if (textContent.IncomingLinkNames != base.IncomingLinkNames)
+
+            if (textContent.IncomingLinkNames != IncomingLinkNames)
             {
                 return false;
             }
-            if (textContent.OutgoingLinkNames != base.OutgoingLinkNames)
+
+            if (textContent.OutgoingLinkNames != OutgoingLinkNames)
             {
                 return false;
             }
-            if (textContent.Parents != base.Parents)
+
+            if (textContent.Parents != Parents)
             {
                 return false;
             }
+
             if (textContent.PlainText != PlainText)
             {
                 return false;
             }
-            if (textContent.SignedId != base.SignedId)
+
+            if (textContent.SignedId != SignedId)
             {
                 return false;
             }
+
             if (textContent.Text != Text)
             {
                 return false;
             }
+
             return true;
         }
 
         public override int GetHashCode()
         {
-            return (FormattedText + base.Children?.ToString() + base.DataClassName + base.Exception?.ToString() + FormattedText + base.HasException + base.Id + base.IncomingLinkNames?.ToString() + base.OutgoingLinkNames?.ToString() + base.Parents?.ToString() + PlainText + base.SignedId + Text).GetHashCode();
+            return (FormattedText + Children?.ToString() + DataClassName + Exception?.ToString() + FormattedText + HasException + Id + IncomingLinkNames?.ToString() + OutgoingLinkNames?.ToString() + Parents?.ToString() + PlainText + SignedId + Text).GetHashCode();
         }
 
         public override string ToString()
@@ -695,6 +747,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return PlainText;
             }
+
             return FormattedText;
         }
     }

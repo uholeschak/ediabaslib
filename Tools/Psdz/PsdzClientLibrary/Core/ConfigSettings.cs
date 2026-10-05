@@ -821,7 +821,17 @@ namespace PsdzClient.Core
                 {
                     if (!isMaster)
                     {
-                        return (!currentConfigValues.ContainsKey(key)) ? defaultValue : ((currentConfigValues[key].Value == null) ? null : Convert.ToString(currentConfigValues[key].Value, CultureInfo.InvariantCulture));
+                        string result;
+                        if (currentConfigValues.ContainsKey(key))
+                        {
+                            result = ((currentConfigValues[key].Value == null) ? null : Convert.ToString(currentConfigValues[key].Value, CultureInfo.InvariantCulture));
+                        }
+                        else
+                        {
+                            result = defaultValue;
+                        }
+
+                        return result;
                     }
 
                     string text = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin) ?? GetRegistryValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin);
@@ -1035,10 +1045,10 @@ namespace PsdzClient.Core
         {
             try
             {
-                bool num = currentConfigValues.ContainsKey(key);
-                string text = (num ? (currentConfigValues[key].Value as string) : null);
+                bool flag = currentConfigValues.ContainsKey(key);
+                string text = (flag ? (currentConfigValues[key].Value as string) : null);
                 currentConfigValues[key] = new ConfigValue(value, null);
-                if (num)
+                if (flag)
                 {
                     LogInfo("ConfigSettings.PutConfigStringForMultisession()", "Change value for key \"{0}\": from \"{1}\" to \"{2}\"", key, text, value);
                 }
@@ -1258,8 +1268,8 @@ namespace PsdzClient.Core
 
         public static bool IsIgnoreIstaPackageCheckEnabled()
         {
-            bool defaultValue = IsLightModeActive;
-            return getConfigStringAsBoolean("BMW.Rheingold.ISTAGui.IgnoreCommandCheckISTAPackages", defaultValue);
+            bool isLightModeActive = IsLightModeActive;
+            return getConfigStringAsBoolean("BMW.Rheingold.ISTAGui.IgnoreCommandCheckISTAPackages", isLightModeActive);
         }
 
         public static bool IsPatchVersion(string appVersion)

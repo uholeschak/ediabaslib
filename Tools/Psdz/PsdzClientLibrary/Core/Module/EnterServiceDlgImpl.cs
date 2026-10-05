@@ -89,7 +89,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         public ParameterContainer FinishDialog(ParameterContainer inoutParam)
         {
-            outParameter.setParameter("Result", base.Model.TextInput);
+            outParameter.setParameter("Result", Model.TextInput);
             outParameter.setParameter("_FASTA", fastaParameter);
             if (fasta != null)
             {
@@ -104,7 +104,7 @@ namespace BMW.Rheingold.Module.ISTA
                 }
 
                 fastaDialog.SpecialAction.CreateAndAddMessageText(list);
-                string answerText = ((string.IsNullOrEmpty(base.Model.TextInput) || string.IsNullOrEmpty(base.Model.TextInput.Trim())) ? "(empty)" : base.Model.TextInput);
+                string answerText = ((string.IsNullOrEmpty(Model.TextInput) || string.IsNullOrEmpty(Model.TextInput.Trim())) ? "(empty)" : Model.TextInput);
                 List<LocalizedText> list2 = new List<LocalizedText>();
                 list2.AddRange(logic.Lang.Select((string x) => new LocalizedText(answerText, x)));
                 fastaDialog.SpecialAction.AddAnswer(list2, null);
@@ -129,21 +129,21 @@ namespace BMW.Rheingold.Module.ISTA
                 return;
             }
 
-            bool num = (bool)inParameters.getParameter("MaxTextLengthUsed", false);
+            bool flag = (bool)inParameters.getParameter("MaxTextLengthUsed", false);
             txtParam = inParameters.getParameter("txtParam", TextLocator.Empty) as ITextLocator;
-            base.Model.TxtParamFlow = GetContent(txtParam.TextContent);
-            if (num)
+            Model.TxtParamFlow = GetContent(txtParam.TextContent);
+            if (flag)
             {
                 object parameter = inParameters.getParameter("MaxTextLength");
                 if (parameter != null)
                 {
                     maxTextLength = (int)parameter;
-                    base.Model.TextInputMaxLength = maxTextLength;
+                    Model.TextInputMaxLength = maxTextLength;
                 }
             }
             else
             {
-                base.Model.TextInputMaxLength = 0;
+                Model.TextInputMaxLength = 0;
             }
 
             dataType = (DataType)inParameters.getParameter("Datentyp", 1);
@@ -172,16 +172,16 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     if (rdcResponseReceived && !flag)
                     {
-                        base.Model.TextInput = rdcTriggerToolReport;
+                        Model.TextInput = rdcTriggerToolReport;
                         flag = true;
                         TextChangedCommand();
                     }
 
-                    ServiceProgramAction serviceProgramAction = base.ServiceProgramController.AwaitUserAction(1000);
+                    ServiceProgramAction serviceProgramAction = ServiceProgramController.AwaitUserAction(1000);
                     if (serviceProgramAction is ServiceProgramTextChangedAction serviceProgramTextChangedAction)
                     {
                         Log.Info("EnterServiceDlg.WaitForContinue()", "Keyboard action: {0}", serviceProgramTextChangedAction.NewText);
-                        base.Model.TextInput = serviceProgramTextChangedAction.NewText;
+                        Model.TextInput = serviceProgramTextChangedAction.NewText;
                         TextChangedCommand();
                     }
 
@@ -245,7 +245,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void TextChangedCommand()
         {
-            string textInput = base.Model.TextInput;
+            string textInput = Model.TextInput;
             try
             {
                 if (string.IsNullOrEmpty(textInput) || textInput.Trim().Length > maxTextLength)
@@ -309,7 +309,7 @@ namespace BMW.Rheingold.Module.ISTA
                         break;
                 }
 
-                base.Model.InputTypeHint = __Text(num.ToString()).TextContent.PlainText;
+                Model.InputTypeHint = __Text(num.ToString()).TextContent.PlainText;
             }
             catch (Exception ex)
             {

@@ -12,19 +12,16 @@ namespace BMW.Rheingold.Module.ISTA
     internal class FS_LISTE_ISTA_KURZ : ISTAModule
     {
         public string strDlgInfo;
-
         public int m_maxAnzahlFehlerkode;
-
         public bool bWriteLog;
-
         public bool p_WeiterButtonEnabledStack;
-
         public FS_LISTE_ISTA_KURZ(ParameterContainer InParameter)
         {
             if (InParameter != null)
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
             strDlgInfo = "V32-2020-10-22-FS_LISTE_ISTA_KURZ";
             m_maxAnzahlFehlerkode = 300;
@@ -50,7 +47,7 @@ namespace BMW.Rheingold.Module.ISTA
             Fehlerkode_dez = new int[m_maxAnzahlFehlerkode];
             Fehlerkode_hex = new string[m_maxAnzahlFehlerkode];
             Fehlerkode_SGBD = new string[m_maxAnzahlFehlerkode];
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int i = 0; i < m_maxAnzahlFehlerkode; i++)
             {
                 Fehlerkode_Text[i] = "";
@@ -58,7 +55,8 @@ namespace BMW.Rheingold.Module.ISTA
                 Fehlerkode_hex[i] = "";
                 Fehlerkode_SGBD[i] = "";
             }
-            base._DoLoopHandling = false;
+
+            _DoLoopHandling = false;
             List<int> list = new List<int>();
             List<string> list2 = new List<string>();
             List<string> list3 = new List<string>();
@@ -75,15 +73,18 @@ namespace BMW.Rheingold.Module.ISTA
                         list4.Add(fault.ECU.ECU_SGBD);
                         continue;
                     }
+
                     if (!string.IsNullOrEmpty(fault.ECU.VARIANTE))
                     {
                         list4.Add(fault.ECU.VARIANTE);
                         continue;
                     }
+
                     Log.Info(Log.CurrentMethod(), "adding fallback value '#NV' because SGBD and Variante are null or empty");
                     list4.Add("#NV");
                 }
             }
+
             Anzahl_Fehlerspeicher = list.Count;
             Fehlerkode_dez = list.ToArray();
             Fehlerkode_hex = list2.ToArray();
@@ -115,6 +116,7 @@ namespace BMW.Rheingold.Module.ISTA
                     num4++;
                 }
             }
+
             Anzahl_Fehlerspeicher = num2;
             Logger.WriteInformation($"{strDlgInfo}, Methode(LeseAnzahlFehlerspeicher) Ende(Anzahl_Fehlerspeicher={Anzahl_Fehlerspeicher})");
             Logger.WriteInformation("_ExitIndex is: {0}", num);
@@ -128,6 +130,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Logger.WriteInformation($"{strDlgInfo}, Methode(FSPvorhanden_pruefen) Start");
             }
+
             FSPvorhanden = false;
             if (VehicleContext != null && Vehicle.ECU != null)
             {
@@ -143,10 +146,12 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
+
             if (bWriteLog)
             {
                 Logger.WriteInformation($"{strDlgInfo}, Methode(FSPvorhanden_pruefen) Ende(FSPvorhanden={FSPvorhanden})");
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 
@@ -158,6 +163,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Logger.WriteInformation($"{strDlgInfo}, Methode(FSPvorhanden_pruefen) Start");
             }
+
             bool flag = false;
             if (VehicleContext != null && Vehicle.ECU != null)
             {
@@ -167,6 +173,7 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         continue;
                     }
+
                     foreach (DTC item2 in item.FEHLER)
                     {
                         if (item2.Relevance == true && !item2.IsVirtual && !item2.IsCombined && item2.F_ORT == FehlerCode)
@@ -176,11 +183,13 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
+
             isVorhanden = flag;
             if (bWriteLog)
             {
                 Logger.WriteInformation($"{strDlgInfo}, Methode(FSPvorhanden_pruefen) Ende(FSPvorhanden={isVorhanden})");
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 
@@ -207,6 +216,7 @@ namespace BMW.Rheingold.Module.ISTA
                     num4++;
                 }
             }
+
             anzahlFehlerkodes = num2;
             anzahlVirtuelleFehlerkodes = num3;
             anzahlSammelfehlerkodes = num4;
@@ -246,11 +256,13 @@ namespace BMW.Rheingold.Module.ISTA
                             list5.Add(fault.ECU.ECU_SGBD);
                             continue;
                         }
+
                         if (!string.IsNullOrEmpty(fault.ECU.VARIANTE))
                         {
                             list5.Add(fault.ECU.VARIANTE);
                             continue;
                         }
+
                         Log.Info(Log.CurrentMethod(), "adding fallback value '#NV' because SGBD and Variante are null or empty");
                         list5.Add("#NV");
                     }
@@ -264,6 +276,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException(Log.CurrentMethod(), exception);
             }
+
             anzahl_Fehlerspeicher = list2.Count;
             fehlerkode_NodeID = list;
             fehlerkode_dez = list2;
@@ -303,15 +316,18 @@ namespace BMW.Rheingold.Module.ISTA
                         list5.Add(fault.ECU.ECU_SGBD);
                         continue;
                     }
+
                     if (!string.IsNullOrEmpty(fault.ECU.VARIANTE))
                     {
                         list5.Add(fault.ECU.VARIANTE);
                         continue;
                     }
+
                     Log.Info(Log.CurrentMethod(), "adding fallback value '#NV' because SGBD and Variante are null or empty");
                     list5.Add("#NV");
                 }
             }
+
             anzahl_Fehlerspeicher = list2.Count;
             fehlerkode_NodeID = list;
             fehlerkode_dez = list2;
@@ -349,6 +365,7 @@ namespace BMW.Rheingold.Module.ISTA
                     list5.Add("NV");
                 }
             }
+
             anzahl_Fehlerspeicher = list2.Count;
             fehlerkode_NodeID = list;
             fehlerkode_dez = list2;

@@ -19,6 +19,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
         }
 
@@ -47,6 +48,7 @@ namespace BMW.Rheingold.Module.ISTA
                 outParam.setParameter("UW_WERT_letztes_Auftreten", UW_WERT_letztes_Auftreten);
                 return;
             }
+
             if ("IS_UW_LESEN".Equals(method))
             {
                 string gruppe2 = inParam.getParameter("Gruppe", "") as string;
@@ -60,6 +62,7 @@ namespace BMW.Rheingold.Module.ISTA
                 outParam.setParameter("UW_WERT_letztes_Auftreten", UW_WERT_letztes_Auftreten2);
                 return;
             }
+
             if ("HS_UW_LESEN".Equals(method))
             {
                 string gruppe3 = inParam.getParameter("Gruppe", "") as string;
@@ -73,6 +76,7 @@ namespace BMW.Rheingold.Module.ISTA
                 outParam.setParameter("UW_WERT_letztes_Auftreten", UW_WERT_letztes_Auftreten3);
                 return;
             }
+
             if ("UW_LESEN".Equals(method))
             {
                 string gruppe4 = inParam.getParameter("Gruppe", "") as string;
@@ -87,6 +91,7 @@ namespace BMW.Rheingold.Module.ISTA
                 outParam.setParameter("UW_WERT_letztes_Auftreten", UW_WERT_letztes_Auftreten4);
                 return;
             }
+
             throw new ServiceDialogMethodUnsupportedException(method);
         }
 
@@ -123,12 +128,14 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 job = "IS_LESEN_DETAIL";
             }
+
             if (FS_IS_HS_LESEN_DETAIL == 3)
             {
                 job = "HS_LESEN_DETAIL";
             }
+
             string param = F_ORT.ToString();
-            IEcuJob ecuJob = base.EcuKom.ApiJob((!string.IsNullOrEmpty(Variante)) ? Variante : Gruppe, job, param);
+            IEcuJob ecuJob = EcuKom.ApiJob((!string.IsNullOrEmpty(Variante)) ? Variante : Gruppe, job, param);
             IDictionary<int, string> dictionary = new Dictionary<int, string>();
             IDictionary<string, string> dictionary2 = new Dictionary<string, string>();
             IDictionary<string, string> dictionary3 = new Dictionary<string, string>();
@@ -145,6 +152,7 @@ namespace BMW.Rheingold.Module.ISTA
                             dictionary.Add(key, value);
                         }
                     }
+
                     if (item.Name.EndsWith("_WERT"))
                     {
                         string key2 = item.Name.Replace("F_UW", string.Empty).Replace("_WERT", string.Empty);
@@ -161,9 +169,10 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
+
             UW_WERT_erstes_Auftreten = new List<string>();
             UW_WERT_letztes_Auftreten = new List<string>();
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int num2 = 0; num2 < UW_NR.Count; num2++)
             {
                 if (dictionary.ContainsKey(UW_NR[num2]) && dictionary2.ContainsKey(dictionary[UW_NR[num2]]))
@@ -180,7 +189,8 @@ namespace BMW.Rheingold.Module.ISTA
                     UW_WERT_letztes_Auftreten.Add("");
                 }
             }
-            base._DoLoopHandling = false;
+
+            _DoLoopHandling = false;
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
     }

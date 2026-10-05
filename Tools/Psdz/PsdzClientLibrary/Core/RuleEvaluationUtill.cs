@@ -121,8 +121,8 @@ namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling
 
         private void UpdateRuleSetsFromCachedRulesResults()
         {
-            IRuleCache obj = ruleCache;
-            if (obj == null || obj.SearchCacheContainer?.CacheMode != SearchCacheMode.CacheFirst || !rulesToEvaluate.Any())
+            IRuleCache ruleCache = this.ruleCache;
+            if (ruleCache == null || ruleCache.SearchCacheContainer?.CacheMode != SearchCacheMode.CacheFirst || !rulesToEvaluate.Any())
             {
                 return;
             }
@@ -130,13 +130,13 @@ namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling
             HashSet<decimal> hashSet = new HashSet<decimal>();
             foreach (decimal item in rulesToEvaluate)
             {
-                if (ruleCache.SearchCacheContainer.CheckRuleHit(item))
+                if (this.ruleCache.SearchCacheContainer.CheckRuleHit(item))
                 {
-                    if (!ruleCache.SearchCacheContainer.GetRuleHit(item))
+                    if (!this.ruleCache.SearchCacheContainer.GetRuleHit(item))
                     {
                         AddIfNotContains(notValidRulesIds, item);
-                        ruleCache.SearchCacheContainer.SetDiagObj(item, validity: false);
-                        ruleCache.SearchCacheContainer.SetInfoObj(item, validity: false);
+                        this.ruleCache.SearchCacheContainer.SetDiagObj(item, validity: false);
+                        this.ruleCache.SearchCacheContainer.SetInfoObj(item, validity: false);
                     }
 
                     AddIfNotContains(hashSet, item);
@@ -207,16 +207,16 @@ namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling
                 if (!flag)
                 {
                     AddIfNotContains(notValidRulesIds, key);
-                    ruleCache?.SearchCacheContainer.SetDiagObj(key, validity: false);
-                    ruleCache?.SearchCacheContainer?.SetInfoObj(key, validity: false);
+                    this.ruleCache?.SearchCacheContainer.SetDiagObj(key, validity: false);
+                    this.ruleCache?.SearchCacheContainer?.SetInfoObj(key, validity: false);
                 }
 
-                if (ruleCache?.SearchCacheContainer != null)
+                if (this.ruleCache?.SearchCacheContainer != null)
                 {
-                    IRuleCache obj = ruleCache;
-                    if (obj != null && obj.SearchCacheContainer.CacheMode == SearchCacheMode.CacheFirst)
+                    IRuleCache ruleCache = this.ruleCache;
+                    if (ruleCache != null && ruleCache.SearchCacheContainer.CacheMode == SearchCacheMode.CacheFirst)
                     {
-                        ruleCache?.SearchCacheContainer.SetRule(key, flag);
+                        this.ruleCache?.SearchCacheContainer.SetRule(key, flag);
                     }
                 }
             }

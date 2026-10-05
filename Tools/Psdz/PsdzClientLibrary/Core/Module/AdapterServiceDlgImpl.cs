@@ -15,13 +15,9 @@ namespace BMW.Rheingold.Module.ISTA
     internal class AdapterServiceDlgImpl : ServiceDlgImplBase<AdapterServiceDlgModel>
     {
         private IProtocolBasic fasta;
-
         private readonly VehicleAdapters installedAdapters;
-
         private string callingMethod;
-
-        public AdapterServiceDlgImpl(ParameterContainer inParam)
-            : base(inParam)
+        public AdapterServiceDlgImpl(ParameterContainer inParam) : base(inParam)
         {
             installedAdapters = new VehicleAdapters(logic.VecInfo);
         }
@@ -42,11 +38,12 @@ namespace BMW.Rheingold.Module.ISTA
                 WriteFasta(now, txtParam, adapter, flag);
                 if (flag)
                 {
-                    NavigateTo(base.Model);
+                    NavigateTo(Model);
                     SetNextButtonEnabled(value: true);
                     WaitForContinueButton();
                 }
             }
+
             SetNextButtonEnabled(nextButtonEnabled);
         }
 
@@ -63,13 +60,15 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 textLocator2 = new TextLocator().Concat(txtParam, theAddAfterLineBreak: true);
             }
+
             ITextLocator ezText = textLocator2;
             TextParser(ref ezText);
             if (display)
             {
                 SetNextButtonEnabled(value: true);
-                base.Model.Text = GetContent(ezText.TextContent);
+                Model.Text = GetContent(ezText.TextContent);
             }
+
             if (install)
             {
                 AddAdapter(adapter);
@@ -78,6 +77,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 RemoveAdapter(adapter);
             }
+
             if (ezText.TextContent != null && ezText.TextContent.PlainText != null)
             {
                 Log.Info("AdapterServiceDialogImpl.InitializeDialog()", "AdapterServiceDlg called with text: {0}", ezText.TextContent.PlainText);
@@ -93,6 +93,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     return;
                 }
+
                 ITextLocator obj = ezText;
                 ITextLocator textLocator = new TextLocator();
                 string formattedText = obj.TextContent.FormattedText;
@@ -119,6 +120,7 @@ namespace BMW.Rheingold.Module.ISTA
                         text += text2;
                     }
                 }
+
                 textLocator.TextContent = textLocator.TextContent.Concat(text);
                 ezText = textLocator;
             }
@@ -158,10 +160,12 @@ namespace BMW.Rheingold.Module.ISTA
                 IList<LocalizedText> textForUI = new TextContent(text).GetTextForUI(logic.Lang);
                 messageText = action.SpecialAction.CreateAndAddMessageText(textForUI);
             }
+
             if (adapter == null)
             {
                 Log.Warning("AdapterServiceDlg.InitializeGUI()", "adaptert was null");
             }
+
             IList<LocalizedText> list = new List<LocalizedText>();
             foreach (ITextLocator item in txtParam)
             {
@@ -177,6 +181,7 @@ namespace BMW.Rheingold.Module.ISTA
                     list.AddRangeIfNotContains(new TextContent("(empty)").GetTextForUI(logic.Lang));
                 }
             }
+
             messageText?.AddText(list);
         }
     }

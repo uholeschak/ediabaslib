@@ -369,7 +369,7 @@ namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics
             {
                 xmlFileStream.Position = 0L;
                 XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
-                xmlReaderSettings.ValidationEventHandler += delegate
+                xmlReaderSettings.ValidationEventHandler += (object sender, ValidationEventArgs args) =>
                 {
                     successfull = false;
                 };

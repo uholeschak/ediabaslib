@@ -9,9 +9,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
     public class InteractionQuestionModel : InteractionRequestModel<InteractionButtonResponse>, IInteractionQuestionModel, IInteractionModel, INotifyPropertyChanged
     {
         private string questionText;
-
         private string questionTextHtml;
-
         [DataMember]
         public string QuestionText
         {
@@ -19,6 +17,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return questionText;
             }
+
             set
             {
                 questionText = value;
@@ -33,6 +32,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return questionTextHtml;
             }
+
             set
             {
                 questionTextHtml = value;
@@ -46,13 +46,11 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
         [DataMember]
         public string CmdNoLabel { get; set; }
 
-        public InteractionQuestionModel()
-            : this("", "")
+        public InteractionQuestionModel() : this("", "")
         {
         }
 
-        public InteractionQuestionModel(string questionText)
-            : this("", questionText)
+        public InteractionQuestionModel(string questionText) : this("", questionText)
         {
         }
 
@@ -60,7 +58,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
         {
             CmdYesLabel = new FormatedData("#Yes").Localize();
             CmdNoLabel = new FormatedData("#No").Localize();
-            base.Title = title;
+            Title = title;
             QuestionText = questionText;
         }
 

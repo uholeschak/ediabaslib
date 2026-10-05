@@ -9,13 +9,13 @@ namespace BMW.Rheingold.Module.ISTA
     public class SetSuspicionToChildrenServiceDlg : ISTAModule
     {
         public bool p_WeiterButtonEnabledStack;
-
         public SetSuspicionToChildrenServiceDlg(ParameterContainer InParameter)
         {
             if (InParameter != null)
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
             p_WeiterButtonEnabledStack = false;
         }
@@ -40,7 +40,7 @@ namespace BMW.Rheingold.Module.ISTA
                     ISPELocator[] parents = diagnosticObjectLocator.Parents;
                     if (parents != null && parents.Length != 0)
                     {
-                        base._DoLoopHandling = true;
+                        _DoLoopHandling = true;
                         ISPELocator[] children = parents[0].Children;
                         foreach (ISPELocator iSPELocator in children)
                         {
@@ -49,10 +49,12 @@ namespace BMW.Rheingold.Module.ISTA
                                 __SetSuspiciousItem(iSPELocator as IDiagnosticObjectLocator);
                             }
                         }
-                        base._DoLoopHandling = false;
+
+                        _DoLoopHandling = false;
                     }
                 }
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
     }

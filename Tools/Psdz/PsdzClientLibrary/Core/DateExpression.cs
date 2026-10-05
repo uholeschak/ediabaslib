@@ -30,11 +30,11 @@ namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
         [PreserveSource(Hint = "vec added", SignatureModified = true)]
         public static DateExpression Deserialize(Stream ms, Vehicle vec)
         {
-            byte num = (byte)ms.ReadByte();
+            byte b = (byte)ms.ReadByte();
             byte[] array = new byte[8];
             ms.Read(array, 0, 8);
-            long num2 = BitConverter.ToInt64(array, 0);
-            return new DateExpression((ECompareOperator)num, num2);
+            long num = BitConverter.ToInt64(array, 0);
+            return new DateExpression((ECompareOperator)b, num);
         }
 
         [PreserveSource(Hint = "dataprovider removed", SignatureModified = true)]

@@ -10,7 +10,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class DocumentLocator : IDocumentLocator, ISPELocator
     {
         private readonly InfoObject infoObject;
-
         public ISPELocator[] Children
         {
             get
@@ -35,6 +34,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return -1m;
                 }
+
                 return infoObject.XepInfoObject.Id;
             }
         }
@@ -45,8 +45,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 if (infoObject.XepInfoObject.Nodeclass.HasValue)
                 {
-                    //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(infoObject.XepInfoObject.Nodeclass.Value);
+                //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(infoObject.XepInfoObject.Nodeclass.Value);
                 }
+
                 return string.Empty;
             }
         }
@@ -129,7 +130,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public T GetDataValue<T>(string name)
         {
-            return default(T);
+            return default;
         }
 
         public InfoObject GetDocument()

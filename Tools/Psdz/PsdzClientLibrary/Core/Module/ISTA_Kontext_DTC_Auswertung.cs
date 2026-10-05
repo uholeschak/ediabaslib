@@ -15,6 +15,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
         }
 
@@ -72,6 +73,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     throw new ServiceDialogMethodUnsupportedException(method);
                 }
+
                 string kode = inParam.getParameter("Kode", null) as string;
                 bool Kode_Eingetragen = false;
                 Sammelfehler_Einzeln(kode, ref Kode_Eingetragen);
@@ -100,6 +102,7 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 
@@ -135,6 +138,7 @@ namespace BMW.Rheingold.Module.ISTA
                         list4.Add(Convert.ToInt32(item, 16));
                     }
                 }
+
                 List<string> list5 = new List<string>();
                 List<int> list6 = new List<int>();
                 List<string> list7 = new List<string>();
@@ -147,6 +151,7 @@ namespace BMW.Rheingold.Module.ISTA
                         list7.Add(Convert.ToString((int)fault.DTC.F_ORT.Value, 16).ToUpper() + " " + ((fault.XepFaultLabel != null && !string.IsNullOrEmpty(fault.XepFaultLabel.Title)) ? fault.XepFaultLabel.Title : FaultCodeConverters.LocalizedFaultLabel(fault.ECU, fault.DTC, Vehicle, FFMResolver)));
                     }
                 }
+
                 num2 = list6.Count;
                 list2 = list6;
                 list = list5;
@@ -171,20 +176,23 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         DTC_Eingetragen_Alle = true;
                     }
+
                     DTC_Eingetragen_Anzahl = num2;
                     text += "<spe:TEXTITEM  xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:LIST>";
-                    base._DoLoopHandling = true;
+                    _DoLoopHandling = true;
                     for (int i = 0; i < list.Count; i++)
                     {
                         text = text + "<spe:LISTENTRY>" + list3[i] + "</spe:LISTENTRY>";
                     }
-                    base._DoLoopHandling = false;
+
+                    _DoLoopHandling = false;
                     text += "</spe:LIST></spe:TEXTITEM>";
                     DTC_Eingetragen_String = text;
                     DTC_Eingetragen_Liste_HEX = list;
                     DTC_Eingetragen_Liste_DEZ = list2;
                 }
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 
@@ -226,6 +234,7 @@ namespace BMW.Rheingold.Module.ISTA
                         list6.Add(Convert.ToString((int)fault.DTC.F_ORT.Value, 16).ToUpper() + " " + ((fault.XepFaultLabel != null && !string.IsNullOrEmpty(fault.XepFaultLabel.Title)) ? fault.XepFaultLabel.Title : FaultCodeConverters.LocalizedFaultLabel(fault.ECU, fault.DTC, Vehicle, FFMResolver)));
                     }
                 }
+
                 num4 = list5.Count;
                 list2 = list5;
                 list = list4;
@@ -250,20 +259,23 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         DTC_Eingetragen_Alle = true;
                     }
+
                     DTC_Eingetragen_Anzahl = num4;
                     text += "<spe:TEXTITEM  xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:LIST>";
-                    base._DoLoopHandling = true;
+                    _DoLoopHandling = true;
                     for (int i = 0; i < list.Count; i++)
                     {
                         text = text + "<spe:LISTENTRY>" + list3[i] + "</spe:LISTENTRY>";
                     }
-                    base._DoLoopHandling = false;
+
+                    _DoLoopHandling = false;
                     text += "</spe:LIST></spe:TEXTITEM>";
                     DTC_Eingetragen_String = text;
                     DTC_Eingetragen_Liste_HEX = list;
                     DTC_Eingetragen_Liste_DEZ = list2;
                 }
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 
@@ -281,13 +293,15 @@ namespace BMW.Rheingold.Module.ISTA
                 ParameterContainer parameterContainer = new ParameterContainer();
                 ParameterContainer parameterContainer2 = new ParameterContainer();
                 ParameterContainer parameterContainer3 = new ParameterContainer();
-                base.Factory.CreateServiceDialog(this, "Sammelfehler_Einzeln", "52683531", _globalTabModuleISTA, 2722, parameterContainer, parameterContainer3).Invoke("Sammelfehlerkodes", parameterContainer, parameterContainer2, parameterContainer3);
+                Factory.CreateServiceDialog(this, "Sammelfehler_Einzeln", "52683531", _globalTabModuleISTA, 2722, parameterContainer, parameterContainer3).Invoke("Sammelfehlerkodes", parameterContainer, parameterContainer2, parameterContainer3);
                 if (parameterContainer2.getParameter("fehlerkode_hex") != null)
                 {
                     list = (List<string>)parameterContainer2.getParameter("fehlerkode_hex");
                 }
+
                 Kode_Eingetragen = list?.Contains(Kode.TrimStart('S', ' ', '0')) ?? false;
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
     }

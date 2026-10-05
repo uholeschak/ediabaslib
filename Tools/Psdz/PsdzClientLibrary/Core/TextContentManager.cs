@@ -394,7 +394,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
                 IEnumerable<XNode> enumerable = parameterElement.NodesAfterSelf();
                 XElement xElement2 = new XElement(XName.Get("PARAGRAPH", "http://bmw.com/2014/Spe_Text_2.0"));
                 xElement2.AddFirst(enumerable);
-                enumerable.ForEach(delegate (XNode x)
+                enumerable.ForEach((XNode x) =>
                 {
                     x.Remove();
                 });

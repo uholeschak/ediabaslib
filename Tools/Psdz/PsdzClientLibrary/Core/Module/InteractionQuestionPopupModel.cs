@@ -10,22 +10,19 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
     {
         [DataMember]
         private string question;
-
         [DataMember]
         private QuestionPopupDialogAnswer answerLeft;
-
         [DataMember]
         private QuestionPopupDialogAnswer answerMiddle;
-
         [DataMember]
         private QuestionPopupDialogAnswer answerRight;
-
         public string Question
         {
             get
             {
                 return question;
             }
+
             set
             {
                 question = value;
@@ -39,6 +36,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return answerLeft;
             }
+
             set
             {
                 if (answerLeft == null || answerLeft.Equals(value))
@@ -55,6 +53,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return answerMiddle;
             }
+
             set
             {
                 if (answerMiddle == null || answerMiddle.Equals(value))
@@ -71,6 +70,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return answerRight;
             }
+
             set
             {
                 if (answerRight == null || answerRight.Equals(value))
@@ -88,14 +88,17 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 set.Add(AnswerLeft.ButtonId);
             }
+
             if (AnswerMiddle != null && !string.IsNullOrEmpty(AnswerMiddle.ButtonId))
             {
                 set.Add(AnswerMiddle.ButtonId);
             }
+
             if (AnswerRight != null && !string.IsNullOrEmpty(AnswerRight.ButtonId))
             {
                 set.Add(AnswerRight.ButtonId);
             }
+
             return set;
         }
 
@@ -116,21 +119,24 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 text4 = text4 + "[" + text + "]";
             }
+
             if (text2 != null)
             {
                 text4 = text4 + "[" + text2 + "]";
             }
+
             if (text3 != null)
             {
                 text4 = text4 + "[" + text3 + "]";
             }
-            Log.Warning("InteractionQuestionPopupModel.LogMessage", "\n\t[TestAutomationInteraction]\n\tTitle: [" + base.Title + "]\n\tAnswers: " + text4 + "\n\tQuestion: [" + Question + "]");
+
+            Log.Warning("InteractionQuestionPopupModel.LogMessage", "\n\t[TestAutomationInteraction]\n\tTitle: [" + Title + "]\n\tAnswers: " + text4 + "\n\tQuestion: [" + Question + "]");
         }
 
         public override void LogResponseMessage(object response)
         {
             string text = ((InteractionQuestionPopupResponse)response).Answer.Text;
-            Log.Info("InteractionQuestionPopupModel.LogResponseMessage", "\n\t[TestAutomationInteraction]\n\tTitle: [" + base.Title + "]\n\tAnswer: [" + text + "]\n\tQuestion: [" + Question + "]");
+            Log.Info("InteractionQuestionPopupModel.LogResponseMessage", "\n\t[TestAutomationInteraction]\n\tTitle: [" + Title + "]\n\tAnswer: [" + text + "]\n\tQuestion: [" + Question + "]");
         }
     }
 }

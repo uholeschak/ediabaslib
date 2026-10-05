@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using PsdzClient.Core;
@@ -75,7 +75,7 @@ namespace BMW.Rheingold.Psdz
                 if (!endpoint.Equals("isready") && !_isPsdzInitialized())
                 {
                     Log.Debug(Log.CurrentMethod(), "WebService is not initialized. Cannot execute request");
-                    return new ApiResult<T>(default(T), isSuccessful: false);
+                    return new ApiResult<T>(default, isSuccessful: false);
                 }
 
                 HttpRequestMessage request = PrepareRequest(serviceName, endpoint, method, requestBodyObject, queryParameters);
@@ -99,12 +99,12 @@ namespace BMW.Rheingold.Psdz
                 DecrementRequestCounts();
             }
 
-            return new ApiResult<T>(default(T), isSuccessful: false);
+            return new ApiResult<T>(default, isSuccessful: false);
         }
 
         private static T GetResponseData<T>(HttpResponseMessage response)
         {
-            T result = default(T);
+            T result = default;
             if (response != null && response.StatusCode != HttpStatusCode.NoContent)
             {
                 string result2 = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();

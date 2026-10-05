@@ -7,28 +7,28 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class SetSuspicionToChildrenServiceDlgCmd : ServiceDialogCmdBase
     {
-        public SetSuspicionToChildrenServiceDlgCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo)
-            : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
+        public SetSuspicionToChildrenServiceDlgCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo) : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
         {
         }
 
         public override void CreateDialog(ParameterContainer inParam, ParameterContainer inoutParam)
         {
             Log.Info("SetSuspicionToChildrenServiceDlgCmd.CreateDialog()", "SetSuspicionToChildrenServiceDlg init started.");
-            base.Display = false;
+            Display = false;
         }
 
         public override void DoInvoke(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
-            if (base.CallingModule == null)
+            if (CallingModule == null)
             {
                 Log.Error("SetSuspicionToChildrenServiceDlgCmd.DoInvoke()", "Failed to invoke method {0}, because calling module is null.", method);
                 return;
             }
-            ModuleParameter value = base.CallingModule.__RheinGoldCoreModuleParameters__.Clone();
+
+            ModuleParameter value = CallingModule.__RheinGoldCoreModuleParameters__.Clone();
             inParam.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
-            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", base.CallingModule.GlobalTabModuleISTA);
-            inParam.Parameter.Add("__RheinGoldSOCAccessor__", base.CallingModule.SOCAccessor);
+            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", CallingModule.GlobalTabModuleISTA);
+            inParam.Parameter.Add("__RheinGoldSOCAccessor__", CallingModule.SOCAccessor);
             if (method == "InitializeDialog")
             {
                 bool bCollectiveResultSetNotOk = (bool)inParam.getParameter("bCollectiveResultSetNotOk", false);

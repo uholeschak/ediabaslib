@@ -124,9 +124,9 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             ConnectedVci = connectedVci;
             ConnectedImib = connectedImib;
             VciTypesToShow = vciTypesToShow;
-            base.DialogSize = 2;
-            base.Title = FormatedData.Localize("#ConnectionManager");
-            base.IsCloseButtonEnabled = true;
+            DialogSize = 2;
+            Title = FormatedData.Localize("#ConnectionManager");
+            IsCloseButtonEnabled = true;
             doImibReservation = ConfigSettings.getConfigStringAsBoolean("TesterGUI.IMIBDeviceReservation", defaultValue: true);
             reservationIcomType = ConfigSettings.getConfigString("xVM_VCI_RESERVATION_TYPE", "ivm");
         }
@@ -184,14 +184,14 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
 
         private string ReadConfigStringValue(string regkey)
         {
-            object obj = ConfigSettings.getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\DiTest\\Dix\\IMIBNextApplication", regkey, null);
+            string text = ConfigSettings.getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\DiTest\\Dix\\IMIBNextApplication", regkey, null);
             string configString = ConfigSettings.getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\DiTest\\Dix\\IMIBNextApplication", regkey, null);
-            if (obj == null)
+            if (text == null)
             {
-                obj = configString ?? "0";
+                text = configString ?? "0";
             }
 
-            return (string)obj;
+            return text;
         }
 
         public bool CanConfigInterface(IVciDevice device)

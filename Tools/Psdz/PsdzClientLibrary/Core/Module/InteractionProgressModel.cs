@@ -9,11 +9,8 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
     public class InteractionProgressModel : InteractionModel, IInteractionProgressModel, IInteractionModel, INotifyPropertyChanged
     {
         private string description;
-
         private bool isIndeterminate;
-
         private double processProgress;
-
         [DataMember]
         public string Description
         {
@@ -21,6 +18,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return description;
             }
+
             set
             {
                 description = value;
@@ -35,9 +33,21 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return processProgress;
             }
+
             set
             {
-                processProgress = ((value > 1.0) ? 0.0 : ((value < 0.0) ? 0.0 : value));
+                ref double reference = ref processProgress;
+                double num;
+                if (value > 1.0)
+                {
+                    num = 0.0;
+                }
+                else
+                {
+                    num = ((value < 0.0) ? 0.0 : value);
+                }
+
+                reference = num;
                 OnPropertyChanged("ProcessProgress");
             }
         }
@@ -49,6 +59,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return isIndeterminate;
             }
+
             set
             {
                 isIndeterminate = value;
@@ -58,12 +69,12 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
 
         public InteractionProgressModel()
         {
-            base.Title = FormatedData.Localize("#BackgroundProcessOngoing");
+            Title = FormatedData.Localize("#BackgroundProcessOngoing");
             description = FormatedData.Localize("#PleaseBePatient");
             isIndeterminate = true;
             processProgress = 0.0;
-            base.IsPrintButtonVisible = false;
-            base.DialogSize = -1;
+            IsPrintButtonVisible = false;
+            DialogSize = -1;
         }
     }
 }

@@ -7,29 +7,29 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class FsListeIstaCmd : ServiceDialogCmdBase
     {
-        public FsListeIstaCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo)
-            : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
+        public FsListeIstaCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo) : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
         {
         }
 
         public override void CreateDialog(ParameterContainer inParam, ParameterContainer inoutParam)
         {
-            Log.Info("FsListeIstaKurzCmd.CreateDialog()", $"{base.ServiceDialogConfig.Name} init started.");
-            base.Display = false;
+            Log.Info("FsListeIstaKurzCmd.CreateDialog()", $"{ServiceDialogConfig.Name} init started.");
+            Display = false;
         }
 
         public override void DoInvoke(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
-            if (base.CallingModule == null)
+            if (CallingModule == null)
             {
                 Log.Error("FsListeIstaCmd.DoInvoke()", "Failed to invoke method {0}, because calling module is null.", method);
                 return;
             }
+
             Log.Info("FsListeIstaCmd.DoInvoke()", "FS_LISTE_ISTA");
-            ModuleParameter value = base.CallingModule.__RheinGoldCoreModuleParameters__.Clone();
+            ModuleParameter value = CallingModule.__RheinGoldCoreModuleParameters__.Clone();
             inParam.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
-            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", base.CallingModule.GlobalTabModuleISTA);
-            inParam.Parameter.Add("__RheinGoldSOCAccessor__", base.CallingModule.SOCAccessor);
+            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", CallingModule.GlobalTabModuleISTA);
+            inParam.Parameter.Add("__RheinGoldSOCAccessor__", CallingModule.SOCAccessor);
             if ("InitializeDialog".Equals(method))
             {
                 int num = 300;
@@ -104,6 +104,7 @@ namespace BMW.Rheingold.Module.ISTA
                     array19[i] = 255;
                     array22[i] = 0;
                 }
+
                 array20 = new int[num5];
                 array8 = new string[num5];
                 for (int j = 0; j < num5; j++)
@@ -111,6 +112,7 @@ namespace BMW.Rheingold.Module.ISTA
                     array20[j] = 0;
                     array8[j] = string.Empty;
                 }
+
                 array21 = new int[num6];
                 array23 = new double[num6];
                 for (int k = 0; k < num6; k++)
@@ -118,6 +120,7 @@ namespace BMW.Rheingold.Module.ISTA
                     array21[k] = 0;
                     array23[k] = 0.0;
                 }
+
                 new FS_LISTE_ISTA(inParam).InitializeDialog(ref array2, ref num7, ref array15, ref array, ref array3, ref array10, ref array4, ref array9, ref array5, ref array11, ref array6, ref array12, ref array7, ref array20, ref array8, ref array21, ref array23, ref array17, ref array18, ref array19, ref array16, ref array13, ref array14, ref array22);
                 inoutParam.setParameter("Fehlerkode_Text", array2);
                 inoutParam.setParameter("Anzahl_Fehlerspeicher", num7);
@@ -150,6 +153,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     throw new ServiceDialogMethodUnsupportedException();
                 }
+
                 int Anzahl_Fehlerspeicher = (int)inoutParam.getParameter("Anzahl_Fehlerspeicher");
                 int[] Fehlerkode_dez = (int[])inoutParam.getParameter("Fehlerkode_dez");
                 string[] Fehlerkode_hex = (string[])inoutParam.getParameter("Fehlerkode_hex");

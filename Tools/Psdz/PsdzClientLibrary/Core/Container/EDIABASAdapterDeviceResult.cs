@@ -79,7 +79,16 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                                 if (!string.IsNullOrEmpty(item.Key) && item.Value != null && item.Key.StartsWith(text + "States/State[", StringComparison.Ordinal) && item.Key.EndsWith("]/Value", StringComparison.Ordinal))
                                 {
                                     string text2 = item.Value.ToString();
-                                    string value = ((iSTAResult is char) ? FormatConverter.CompareChar((char)iSTAResult, text2) : ((!(iSTAResult is double)) ? iSTAResult.ToString() : FormatConverter.CompareDouble((double)iSTAResult, text2)));
+                                    string value;
+                                    if (iSTAResult is char)
+                                    {
+                                        value = FormatConverter.CompareChar((char)iSTAResult, text2);
+                                    }
+                                    else
+                                    {
+                                        value = ((!(iSTAResult is double)) ? iSTAResult.ToString() : FormatConverter.CompareDouble((double)iSTAResult, text2));
+                                    }
+
                                     if (text2.Equals(value) && inParameters.getParameter(item.Key.Replace("/Value", "/Text"))is ITextLocator textLocator)
                                     {
                                         return textLocator.Text;

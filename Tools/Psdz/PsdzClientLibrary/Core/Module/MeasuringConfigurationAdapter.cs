@@ -12,13 +12,9 @@ namespace BMW.Rheingold.ISTA.CoreFramework
     internal class MeasuringConfigurationAdapter : BaseAdapter
     {
         private ConfigurationContainer config;
-
         private List<string> nodeName = new List<string>();
-
         private MeasuringConfigurationType result;
-
-        public MeasuringConfigurationAdapter(ConfigurationContainer config)
-            : base(StandardErrorHandling: false, config)
+        public MeasuringConfigurationAdapter(ConfigurationContainer config) : base(StandardErrorHandling: false, config)
         {
             this.config = config;
             result = new MeasuringConfigurationType();
@@ -36,14 +32,17 @@ namespace BMW.Rheingold.ISTA.CoreFramework
             {
                 throw new ArgumentNullException("No usefull configuration.");
             }
+
             if (!"BMW IMIB".Equals(config.Body.Configuration.Name) && !"BMW IMIB_SpExtract".Equals(config.Body.Configuration.Name))
             {
                 throw new ArgumentNullException("No configuration for BMW IMIB, but \"" + config.Body.Configuration.Name + "\".");
             }
+
             if (!"Device".Equals(config.Body.Configuration.Parametrization.Name))
             {
                 throw new ArgumentNullException("No parametrization for BMW IMIB Device, but for \"" + config.Body.Configuration.Parametrization.Name + "\".");
             }
+
             foreach (ANode child in config.Body.Configuration.Parametrization.Children)
             {
                 result.Dmm = new DmmType();
@@ -58,18 +57,22 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                     KonfigureDmm(child, result.Dmm.Channel[0]);
                     continue;
                 }
+
                 if ("DMM2".Equals(child.Name))
                 {
                     KonfigureDmm(child, result.Dmm.Channel[1]);
                     continue;
                 }
+
                 if ("CNT".Equals(child.Name))
                 {
                     result.CntField = ConfigureCnt(child);
                     continue;
                 }
+
                 Log.Error("MeasuringConfigurationAdapter.ParseParametrization()", "Unsupported device {0} will be skipped", child.Name);
             }
+
             return result;
         }
 
@@ -80,46 +83,55 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                 ParseSingleChoice(node as SingleChoice);
                 return;
             }
+
             if (node is MultipleChoice)
             {
                 ParseMultipleChoice(node as MultipleChoice);
                 return;
             }
+
             if (node is QuantityChoice)
             {
                 ParseQuantityChoice(node as QuantityChoice);
                 return;
             }
+
             if (node is AChoice)
             {
                 ParseChoice(node as AChoice);
                 return;
             }
+
             if (node is Sequence)
             {
                 ParseSequence(node as Sequence);
                 return;
             }
+
             if (node is Executable)
             {
                 ParseExecutable(node as Executable);
                 return;
             }
+
             if (node is All)
             {
                 ParseAll(node as All);
                 return;
             }
+
             if (node is ABranch)
             {
                 ParseBranch(node as ABranch);
                 return;
             }
+
             if (node is Value)
             {
                 ParseValue(node as Value);
                 return;
             }
+
             Log.Error("MeasuringConfigurationAdapter.Parse()", "Unknown node type {0}.", node.GetType());
         }
 
@@ -134,6 +146,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
             {
                 return;
             }
+
             foreach (ANode child in node.Children)
             {
                 Parse(child);
@@ -166,6 +179,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
             {
                 return;
             }
+
             foreach (ANode child in node.Children)
             {
                 Parse(child);
@@ -200,10 +214,12 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                 Log.Warning("MeasuringConfigurationAdapter.GetFirstChildName()", "No node found with name {0} found, use given default value {1}.", property, defaultValue);
                 return defaultValue;
             }
+
             if (aNode is ABranch)
             {
                 return (T)GetFirstChildName((ABranch)aNode, defaultValue as string);
             }
+
             return GetContent(aNode, property, defaultValue);
         }
 
@@ -213,10 +229,12 @@ namespace BMW.Rheingold.ISTA.CoreFramework
             {
                 return root;
             }
+
             if (!(root is ABranch aBranch) || aBranch.Children == null)
             {
                 return null;
             }
+
             foreach (ANode child in aBranch.Children)
             {
                 ANode aNode = FindNodeWithName(name, child);
@@ -225,6 +243,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                     return aNode;
                 }
             }
+
             return null;
         }
 
@@ -235,21 +254,25 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                 Log.Warning("MeasuringConfigurationAdapter.GetLiteralText()", "Child of node with name {0} is not of type Value. Use given default value {1}.", parentName, defaultValue);
                 return defaultValue;
             }
+
             ValueLiteral literal = value.Literal;
             if (literal == null)
             {
                 Log.Warning("MeasuringConfigurationAdapter.GetLiteralText()", "Child of node with name {0} is of type Value, but has no ValueLiteral. Use given default value {1}.", parentName, defaultValue);
                 return defaultValue;
             }
+
             if (literal.ItemType == "Float" || literal.ItemType == "Double" || literal.ItemType == "UShort")
             {
                 return (T)literal.Item;
             }
+
             if (literal.ItemType == "Text")
             {
                 return (T)GetLiteralText(literal, parentName, defaultValue as string);
             }
-            return default(T);
+
+            return default;
         }
 
         private object GetFirstChildName(ABranch parent, string defaultValue)
@@ -258,6 +281,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
             {
                 return parent.Children[0].Name;
             }
+
             Log.Warning("MeasuringConfigurationAdapter.GetFirstChildName()", "No child of node with name {0} found, use given default value {1}.", parent.Name, defaultValue);
             return defaultValue;
         }
@@ -269,11 +293,13 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                 Log.Warning("MeasuringConfigurationAdapter.GetLiteralText()", "Child of node with name {0} is of type Value, and has a ValueLiteral, but this has no Item of type Text. Use given default value {1}.", parentName, defaultValue);
                 return defaultValue;
             }
+
             if (text.Value == null)
             {
                 Log.Warning("MeasuringConfigurationAdapter.GetLiteralText()", "Child of node with name {0} is of type Value, and has a ValueLiteral, and has an Item of type Text, but this has no Value. Use given default value {1}.", parentName, defaultValue);
                 return defaultValue;
             }
+
             return text.Value;
         }
 

@@ -13,16 +13,15 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
     {
         [DataMember]
         private ObservableCollection<IVciDevice> devices;
-
         [DataMember]
         private List<string> localAddresses;
-
         public ObservableCollection<IVciDevice> Devices
         {
             get
             {
                 return devices;
             }
+
             set
             {
                 devices = value;
@@ -35,6 +34,7 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
             {
                 return localAddresses;
             }
+
             set
             {
                 localAddresses = value;
@@ -45,9 +45,9 @@ namespace BMW.Rheingold.CoreFramework.Interaction.Models
         {
             devices = new ObservableCollection<IVciDevice>();
             this.localAddresses = localAddresses;
-            base.DialogSize = 2;
-            base.Title = FormatedData.Localize("#SearchForIMIB");
-            base.IsCloseButtonEnabled = false;
+            DialogSize = 2;
+            Title = FormatedData.Localize("#SearchForIMIB");
+            IsCloseButtonEnabled = false;
         }
 
         public override void OnResponseReceived(InteractionConnectionManagerResponse response)

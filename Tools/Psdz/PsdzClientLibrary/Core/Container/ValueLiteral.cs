@@ -151,7 +151,7 @@ namespace BMW.Rheingold.Module.ISTA
                 return (T)Item;
             }
 
-            return default(T);
+            return default;
         }
     }
 }

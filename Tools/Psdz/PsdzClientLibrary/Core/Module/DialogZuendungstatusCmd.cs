@@ -9,31 +9,31 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class DialogZuendungstatusCmd : ServiceDialogCmdBase
     {
-        public DialogZuendungstatusCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo)
-            : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
+        public DialogZuendungstatusCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo) : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
         {
         }
 
         public override void CreateDialog(ParameterContainer inParam, ParameterContainer inoutParam)
         {
             Log.Info("DialogZuendungstatusCmd.CreateDialog()", "Dialog_Zuendungstatus init started.");
-            base.Display = false;
+            Display = false;
         }
 
         public override void DoInvoke(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
-            if (base.CallingModule == null)
+            if (CallingModule == null)
             {
                 Log.Error("DialogZuendungstatusCmd.DoInvoke()", "Failed to invoke method {0}, because calling module is null.", method);
                 return;
             }
+
             Log.Info("DialogZuendungstatusCmd.DoInvoke()", "Dialog_Zuendungstatus");
             try
             {
-                ModuleParameter value = base.CallingModule.__RheinGoldCoreModuleParameters__.Clone();
+                ModuleParameter value = CallingModule.__RheinGoldCoreModuleParameters__.Clone();
                 inParam.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
-                inParam.Parameter.Add("__RheinGoldTabModuleISTA__", base.CallingModule.GlobalTabModuleISTA);
-                inParam.Parameter.Add("__RheinGoldSOCAccessor__", base.CallingModule.SOCAccessor);
+                inParam.Parameter.Add("__RheinGoldTabModuleISTA__", CallingModule.GlobalTabModuleISTA);
+                inParam.Parameter.Add("__RheinGoldSOCAccessor__", CallingModule.SOCAccessor);
                 bool i_automatic = (bool)inParam.getParameter("i_automatic", true);
                 bool i_PopUp = (bool)inParam.getParameter("i_PopUp", false);
                 string i_hilfsvariable = inParam.getParameter("i_hilfsvariable", string.Empty) as string;
@@ -53,6 +53,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     Log.Error("DialogZuendungstatusCmd.DoInvoke()", "Unsupported method {0} will be ignored.", method);
                 }
+
                 outParam.setParameter("i_KL15spg", i_KL15spg);
             }
             catch (Exception exception)

@@ -22,34 +22,20 @@ namespace BMW.Rheingold.Module.ISTA
     internal class HealthIndicatorDlgImpl : ServiceDlgImplBase<HealthIndicatorDlgModel>
     {
         private Task _listenToActionsTask;
-
         private CancellationTokenSource _listenToActionsToken;
-
         private bool m_ShouldQuitDialog;
-
         private Dictionary<int, KeyValuePair<int, int>> m_BlockBarIndecesByBarIndices = new Dictionary<int, KeyValuePair<int, int>>();
-
         private HealthIndicatorProtocoller m_Protocoller;
-
         private List<BarProtocolData> m_CurrentBarProtocolData = new List<BarProtocolData>();
-
         private DateTime m_StartTimeForProtocol;
-
         private int m_LastCountOfParameters;
-
         private int m_CurrentCountOfParameters;
-
         private bool IsConfirmNecessary;
-
         private bool IsProtocollingEnabled = true;
-
         private int Timeout = -1;
-
         private const int AWAIT_USER_ACTION_TIMEOUT = 100;
-
         private readonly AutoResetEvent resumeEvent = new AutoResetEvent(initialState: false);
-
-        private bool IsInitialized => base.Model.BlockContainerData != null;
+        private bool IsInitialized => Model.BlockContainerData != null;
 
         private bool ShouldQuitDialog
         {
@@ -57,6 +43,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return m_ShouldQuitDialog;
             }
+
             set
             {
                 if (value != m_ShouldQuitDialog)
@@ -70,8 +57,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
         }
 
-        public HealthIndicatorDlgImpl(ParameterContainer inParam)
-            : base(inParam)
+        public HealthIndicatorDlgImpl(ParameterContainer inParam) : base(inParam)
         {
         }
 
@@ -90,6 +76,7 @@ namespace BMW.Rheingold.Module.ISTA
                     HandleHideMethod(outParam);
                     return;
                 }
+
                 HandleFastaProtocolling();
                 if (!IsConfirmNecessary)
                 {
@@ -99,6 +86,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     HandleStaticUsecase(outParam);
                 }
+
                 m_LastCountOfParameters = m_CurrentCountOfParameters;
             }
             catch (Exception exception)
@@ -124,9 +112,9 @@ namespace BMW.Rheingold.Module.ISTA
         {
             ClearCurrentBarProtocolData();
             ShouldQuitDialog = false;
-            base.Model.BlockContainerData = null;
-            base.Model.PastText = string.Empty;
-            base.Model.PriorText = string.Empty;
+            Model.BlockContainerData = null;
+            Model.PastText = string.Empty;
+            Model.PriorText = string.Empty;
             m_BlockBarIndecesByBarIndices.Clear();
             m_Protocoller = null;
             if (_listenToActionsTask != null && _listenToActionsTask.Status == TaskStatus.Running)
@@ -146,18 +134,19 @@ namespace BMW.Rheingold.Module.ISTA
         {
             if (m_Protocoller != null && IsProtocollingEnabled)
             {
-                m_Protocoller.EndCollectingBarProtocolData(base.Model.PriorText, base.Model.PastText);
+                m_Protocoller.EndCollectingBarProtocolData(Model.PriorText, Model.PastText);
             }
+
             ProtocolToFasta("hide");
             HardReset();
             outParam.setParameter("Quit", true);
-            base.ServiceDialogUI.IsDialogShown = false;
+            ServiceDialogUI.IsDialogShown = false;
         }
 
         private void HandleStaticUsecase(ParameterContainer outParam)
         {
             ListenToActions(isAsync: false);
-            base.ServiceDialogUI.IsDialogShown = false;
+            ServiceDialogUI.IsDialogShown = false;
             outParam.setParameter("Quit", true);
         }
 
@@ -168,7 +157,7 @@ namespace BMW.Rheingold.Module.ISTA
             if (ShouldQuitDialog)
             {
                 ShouldQuitDialog = false;
-                base.ServiceDialogUI.IsDialogShown = false;
+                ServiceDialogUI.IsDialogShown = false;
                 outParam.setParameter("Quit", true);
             }
             else
@@ -180,28 +169,28 @@ namespace BMW.Rheingold.Module.ISTA
         private void ReadGeneralParameters(ParameterContainer inParam)
         {
             m_CurrentCountOfParameters = inParam.Count;
-            GetValueFromParam(inParam, "Confirm", delegate (bool x)
+            GetValueFromParam(inParam, "Confirm", (bool x) =>
             {
                 IsConfirmNecessary = x;
             }, defaultValue: false);
-            GetValueFromParam(inParam, "Timeout", delegate (int x)
+            GetValueFromParam(inParam, "Timeout", (int x) =>
             {
                 Timeout = x;
             }, 0);
-            GetValueFromParam(inParam, "Protocol", delegate (bool x)
+            GetValueFromParam(inParam, "Protocol", (bool x) =>
             {
                 IsProtocollingEnabled = x;
             }, defaultValue: false);
-            GetValueFromParam(inParam, "Fullscreen", delegate (bool x)
+            GetValueFromParam(inParam, "Fullscreen", (bool x) =>
             {
-                base.Model.IsFullScreen = x;
+                Model.IsFullScreen = x;
             }, defaultValue: false);
         }
 
         private void ReadBarParameters(ParameterContainer inParam)
         {
             SetPriorAndPastText(inParam);
-            if (base.Model.BlockContainerData == null || m_CurrentCountOfParameters != m_LastCountOfParameters)
+            if (Model.BlockContainerData == null || m_CurrentCountOfParameters != m_LastCountOfParameters)
             {
                 InitializeBarDisplay(inParam);
             }
@@ -216,23 +205,24 @@ namespace BMW.Rheingold.Module.ISTA
             BlockContainerControlViewModel blockContainerControlViewModel = CreateBlockContainerAndBlocks();
             SetBlockHeader(inParam, blockContainerControlViewModel);
             CreateBars(inParam, blockContainerControlViewModel);
-            base.Model.BlockContainerData = blockContainerControlViewModel;
+            Model.BlockContainerData = blockContainerControlViewModel;
         }
 
         private void UpdateBarDisplay(ParameterContainer inParam)
         {
-            if (inParam == null || base.Model.BlockContainerData == null || m_BlockBarIndecesByBarIndices.Count == 0)
+            if (inParam == null || Model.BlockContainerData == null || m_BlockBarIndecesByBarIndices.Count == 0)
             {
                 return;
             }
-            SetBlockHeader(inParam, base.Model.BlockContainerData);
+
+            SetBlockHeader(inParam, Model.BlockContainerData);
             for (int i = 0; i < 32; i++)
             {
                 if (m_BlockBarIndecesByBarIndices.ContainsKey(i))
                 {
                     int key = m_BlockBarIndecesByBarIndices[i].Key;
                     int value = m_BlockBarIndecesByBarIndices[i].Value;
-                    SetBarValues(inParam, base.Model.BlockContainerData.Blocks[key].Bars[value], i + 1);
+                    SetBarValues(inParam, Model.BlockContainerData.Blocks[key].Bars[value], i + 1);
                 }
             }
         }
@@ -244,6 +234,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 blockContainerControlViewModel.Blocks.Add(new BlockControlViewModel(i));
             }
+
             return blockContainerControlViewModel;
         }
 
@@ -251,19 +242,19 @@ namespace BMW.Rheingold.Module.ISTA
         {
             if (inParam != null && blockContainer != null)
             {
-                GetValueFromParam(inParam, "Blockheader1", delegate (string x)
+                GetValueFromParam(inParam, "Blockheader1", (string x) =>
                 {
                     blockContainer.Blocks[0].BlockHeader = x;
                 }, null);
-                GetValueFromParam(inParam, "Blockheader2", delegate (string x)
+                GetValueFromParam(inParam, "Blockheader2", (string x) =>
                 {
                     blockContainer.Blocks[1].BlockHeader = x;
                 }, null);
-                GetValueFromParam(inParam, "Blockheader3", delegate (string x)
+                GetValueFromParam(inParam, "Blockheader3", (string x) =>
                 {
                     blockContainer.Blocks[2].BlockHeader = x;
                 }, null);
-                GetValueFromParam(inParam, "Blockheader4", delegate (string x)
+                GetValueFromParam(inParam, "Blockheader4", (string x) =>
                 {
                     blockContainer.Blocks[3].BlockHeader = x;
                 }, null);
@@ -274,13 +265,13 @@ namespace BMW.Rheingold.Module.ISTA
         {
             if (inParam != null)
             {
-                GetValueFromParam(inParam, "PriorText", delegate (string x)
+                GetValueFromParam(inParam, "PriorText", (string x) =>
                 {
-                    base.Model.PriorText = x;
+                    Model.PriorText = x;
                 }, null);
-                GetValueFromParam(inParam, "PastText", delegate (string x)
+                GetValueFromParam(inParam, "PastText", (string x) =>
                 {
-                    base.Model.PastText = x;
+                    Model.PastText = x;
                 }, null);
             }
         }
@@ -300,6 +291,7 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         blockContainer.Blocks[num].Bars.Add(new BarControlViewModel());
                     }
+
                     SetBarConstantData(barControlViewModel);
                     blockContainer.Blocks[num].Bars[array[num]] = barControlViewModel;
                     barControlViewModel.BlockBarIndex = array[num];
@@ -314,44 +306,45 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return false;
             }
+
             bar.BarIndex = index;
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "Blocknumber", delegate (int x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "Blocknumber", (int x) =>
             {
                 bar.BlockNumber = x;
             }, 0);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "RightText", delegate (string x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "RightText", (string x) =>
             {
                 bar.RightText = x;
             }, null);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "TopText", delegate (string x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "TopText", (string x) =>
             {
                 bar.TopText = x;
             }, null);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "Minimum", delegate (double x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "Minimum", (double x) =>
             {
                 bar.MinValue = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "Maximum", delegate (double x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "Maximum", (double x) =>
             {
                 bar.MaxValue = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "MajorDivisions", delegate (int x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "MajorDivisions", (int x) =>
             {
                 bar.MajorDivisions = x;
             }, 0);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "MinorDivisions", delegate (int x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "MinorDivisions", (int x) =>
             {
                 bar.MinorDivisions = x;
             }, 0);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "ScaleLabelPosition", delegate (int x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "ScaleLabelPosition", (int x) =>
             {
                 bar.ScalarValuesPosition = x;
             }, 0);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "ColorAreas", delegate (Dictionary<double, ServiceDialogColor> x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "ColorAreas", (Dictionary<double, ServiceDialogColor> x) =>
             {
                 bar.BarColorsControlViewModel.ColorPositions = new Dictionary<double, ServiceDialogColor>(x);
             }, null);
-            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "Value", delegate (double x)
+            GetValueFromParam(inParam, "Bar" + index.ToString("00") + "Value", (double x) =>
             {
                 bar.CurrentValue = x;
             }, double.NaN);
@@ -359,6 +352,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 m_CurrentBarProtocolData.Add(new BarProtocolData(bar.BarIndex, bar.CurrentValue));
             }
+
             return bar.IsActive;
         }
 
@@ -391,6 +385,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     value = (parameter as Dictionary<double, string>).ToDictionary((KeyValuePair<double, string> x) => x.Key, (KeyValuePair<double, string> x) => (ServiceDialogColor)Enum.Parse(typeof(ServiceDialogColor), CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x.Value.ToString())));
                 }
+
                 assignAction((T)Convert.ChangeType(value, typeof(T)));
             }
             else
@@ -401,16 +396,17 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void ListenToActions(bool isAsync)
         {
-            Action listenAction = delegate
+            Action listenAction = () =>
             {
                 int millisecondsTimeout = ((Timeout > 0) ? Timeout : 100);
                 while (!ShouldQuitDialog)
                 {
-                    ServiceProgramAction serviceProgramAction = base.ServiceProgramController.AwaitUserAction(millisecondsTimeout);
+                    ServiceProgramAction serviceProgramAction = ServiceProgramController.AwaitUserAction(millisecondsTimeout);
                     if (_listenToActionsToken != null && _listenToActionsToken.Token.IsCancellationRequested)
                     {
                         break;
                     }
+
                     if (parentTab.ModuleData.IsExecutionCompleted)
                     {
                         ShouldQuitDialog = true;
@@ -427,7 +423,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     parentTab.ModuleData.PropertyChanged += OnParentTabModuleStateChanged;
                     _listenToActionsToken = new CancellationTokenSource();
-                    _listenToActionsTask = Task.Run(delegate
+                    _listenToActionsTask = Task.Run(() =>
                     {
                         listenAction();
                     }, _listenToActionsToken.Token);
@@ -468,6 +464,7 @@ namespace BMW.Rheingold.Module.ISTA
                     m_Protocoller = new HealthIndicatorProtocoller(logic.Lang);
                     m_StartTimeForProtocol = DateTime.Now;
                 }
+
                 m_Protocoller.CollectBarProtocolData(m_CurrentBarProtocolData);
             }
         }
@@ -476,13 +473,13 @@ namespace BMW.Rheingold.Module.ISTA
         {
             if (!IsInitialized)
             {
-                if (base.Model.IsFullScreen)
+                if (Model.IsFullScreen)
                 {
-                    base.ServiceProgramController.SetDisplayMode(DisplayMode.FullPrimary);
+                    ServiceProgramController.SetDisplayMode(DisplayMode.FullPrimary);
                 }
                 else
                 {
-                    base.ServiceProgramController.SetDisplayMode(DisplayMode.Split);
+                    ServiceProgramController.SetDisplayMode(DisplayMode.Split);
                 }
             }
         }

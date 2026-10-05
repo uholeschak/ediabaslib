@@ -14,12 +14,15 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return 0;
                 }
+
                 return -1;
             }
+
             if (!y.HasValue)
             {
                 return 1;
             }
+
             return x.Value.CompareTo(y.Value);
         }
 
@@ -31,16 +34,20 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return 0;
                 }
+
                 return -1;
             }
+
             if (!y.HasValue)
             {
                 return 1;
             }
+
             return x.Value.Date.CompareTo(y.Value.Date);
         }
 
-        public static int CompareNullable<T>(T? x, T? y) where T : struct, IComparable
+        public static int CompareNullable<T>(T? x, T? y)
+            where T : struct, IComparable
         {
             if (!x.HasValue)
             {
@@ -48,12 +55,15 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return 0;
                 }
+
                 return -1;
             }
+
             if (!y.HasValue)
             {
                 return 1;
             }
+
             return x.Value.CompareTo(y.Value);
         }
 
@@ -65,12 +75,15 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return 0;
                 }
+
                 return -1;
             }
+
             if (!y.HasValue)
             {
                 return 1;
             }
+
             return Math.Sign(x.Value - y.Value);
         }
 
@@ -82,20 +95,25 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return 0;
                 }
+
                 return -1;
             }
+
             if (!y.HasValue)
             {
                 return 1;
             }
+
             if (x > y)
             {
                 return 1;
             }
+
             if (x < y)
             {
                 return -1;
             }
+
             return 0;
         }
 
@@ -107,20 +125,25 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return 0;
                 }
+
                 return -1;
             }
+
             if (!y.HasValue)
             {
                 return 1;
             }
+
             if (x > y)
             {
                 return 1;
             }
+
             if (x < y)
             {
                 return -1;
             }
+
             return 0;
         }
 
@@ -137,12 +160,15 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return 0;
                 }
+
                 return -1;
             }
+
             if (y == null)
             {
                 return 1;
             }
+
             if (!ignoreLength)
             {
                 int num = x.Length.CompareTo(y.Length);
@@ -151,6 +177,7 @@ namespace BMW.Rheingold.CoreFramework
                     return num;
                 }
             }
+
             int num2 = string.Compare(x, y, StringComparison.Ordinal);
             if (num2 > 1)
             {
@@ -160,6 +187,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 num2 = -1;
             }
+
             return num2;
         }
 
@@ -174,6 +202,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return 0;
             }
+
             switch (x)
             {
                 case typeDiagObjectState.Minimized:
@@ -183,40 +212,54 @@ namespace BMW.Rheingold.CoreFramework
                     {
                         return -1;
                     }
+
                     break;
                 case typeDiagObjectState.Suspected:
                     if (typeDiagObjectState.Minimized == y || y == typeDiagObjectState.NotCalled)
                     {
                         return -1;
                     }
+
                     break;
                 case typeDiagObjectState.Canceled:
                     if (typeDiagObjectState.Minimized == y || y == typeDiagObjectState.NotCalled || typeDiagObjectState.Suspected == y)
                     {
                         return -1;
                     }
+
                     break;
                 case typeDiagObjectState.Performed:
                     if (typeDiagObjectState.Minimized == y || y == typeDiagObjectState.NotCalled || typeDiagObjectState.Suspected == y || typeDiagObjectState.Canceled == y)
                     {
                         return -1;
                     }
+
                     break;
                 case typeDiagObjectState.Running:
                     if (typeDiagObjectState.Minimized == y || y == typeDiagObjectState.NotCalled || typeDiagObjectState.Suspected == y || typeDiagObjectState.Canceled == y || typeDiagObjectState.Performed == y)
                     {
                         return -1;
                     }
+
                     break;
             }
+
             return 1;
         }
 
         public static int CompareWarningLights(int x, int y)
         {
-            List<int> obj = new List<int> { 4, 5, 0, 1, 2, 3 };
-            int num = obj.IndexOf(x);
-            int value = obj.IndexOf(y);
+            List<int> list = new List<int>
+            {
+                4,
+                5,
+                0,
+                1,
+                2,
+                3
+            };
+            int num = list.IndexOf(x);
+            int value = list.IndexOf(y);
             return num.CompareTo(value);
         }
     }

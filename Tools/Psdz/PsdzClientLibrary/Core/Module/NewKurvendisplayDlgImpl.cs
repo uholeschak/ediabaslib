@@ -19,35 +19,24 @@ namespace BMW.Rheingold.Module.ISTA
     internal class NewKurvendisplayDlgImpl : ServiceDlgImplBase<NewKurvendisplayDlgModel>
     {
         private static readonly string CURVE_LINE_COLOR_PARAM_TEMPLATE = "Kurve{0:00}_Farbe";
-
         private static readonly string CURVE_LINE_STYLE_PARAM_TEMPLATE = "Kurve{0:00}_Anzeige";
-
         private static readonly string CURVE_LINE_WIDTH_PARAM_TEMPLATE = "Kurve{0:00}_Strichstaerke";
-
         private static readonly string CURVE_TEXT_PARAM_TEMPLATE = "Kurve{0:00}_Text";
-
         private static readonly string CURVE_YAXIS_PARAM_TEMPLATE = "Kurve{0:00}_YAchse";
-
         private static readonly string CURVE_YPOINT_PARAM_TEMPLATE = "Kurve{0:00}_Y";
-
         private static readonly string CURVE_YPOINTS_LIST_PARAM_TEMPLATE = "Kurve{0:00}_Y_List";
-
         private bool displayLast;
-
         private bool hasDynamicDisplayBeenInitialized;
-
         private Thread listenToActionsThread;
-
         private bool shouldQuitDialog;
-
         private AutoResetEvent resumeEvent = new AutoResetEvent(initialState: false);
-
         private bool ShouldQuitDialog
         {
             get
             {
                 return shouldQuitDialog;
             }
+
             set
             {
                 if (shouldQuitDialog != value)
@@ -61,8 +50,7 @@ namespace BMW.Rheingold.Module.ISTA
             }
         }
 
-        public NewKurvendisplayDlgImpl(ParameterContainer inParam)
-            : base(inParam)
+        public NewKurvendisplayDlgImpl(ParameterContainer inParam) : base(inParam)
         {
         }
 
@@ -73,42 +61,44 @@ namespace BMW.Rheingold.Module.ISTA
             if ("statische_Anzeige".Equals(method))
             {
                 Reset();
-                base.Model.IsStatic = true;
-                base.Model.BackgroundColor = new ObservableCollection<string>(new string[4] { "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC" });
+                Model.IsStatic = true;
+                Model.BackgroundColor = new ObservableCollection<string>(new string[4] { "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC" });
                 InitializeGraph(inParam);
                 UpdateStaticCurvePoints(inParam);
-                base.Model.UpdateReferenceVerticalAxis();
+                Model.UpdateReferenceVerticalAxis();
             }
             else if ("dynamische_Anzeige".Equals(method))
             {
-                base.Model.IsStatic = false;
-                base.Model.BackgroundColor = new ObservableCollection<string>(new string[4] { "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF" });
+                Model.IsStatic = false;
+                Model.BackgroundColor = new ObservableCollection<string>(new string[4] { "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF" });
                 if (!hasDynamicDisplayBeenInitialized)
                 {
                     Reset();
                     ListenToActions(isAsync: true);
                     InitializeGraph(inParam);
                     hasDynamicDisplayBeenInitialized = true;
-                    base.Model.UpdateReferenceVerticalAxis();
+                    Model.UpdateReferenceVerticalAxis();
                 }
+
                 UpdateDynamicTextValues(inParam);
                 UpdateDynamicCurvePoints(inParam);
             }
             else if ("letzte_Anzeige".Equals(method))
             {
-                base.Model.BackgroundColor = new ObservableCollection<string>(new string[4] { "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC" });
+                Model.BackgroundColor = new ObservableCollection<string>(new string[4] { "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC" });
                 displayLast = true;
                 ShouldQuitDialog = false;
-                base.Model.ActionButtons.Clear();
-                base.Model.IsStatic = true;
+                Model.ActionButtons.Clear();
+                Model.IsStatic = true;
                 InitializeGraph(inParam);
-                base.Model.UpdateReferenceVerticalAxis();
+                Model.UpdateReferenceVerticalAxis();
             }
             else if ("Dialog_Ausblenden".Equals(method))
             {
                 Reset();
-                base.ServiceDialogUI.IsDialogShown = false;
+                ServiceDialogUI.IsDialogShown = false;
             }
+
             if (!Convert.ToBoolean(inParam.getParameter("Bestaetigung", false)))
             {
                 int milliseconds = Convert.ToInt32(inParam.getParameter("Anzeigedauer", 0));
@@ -121,9 +111,10 @@ namespace BMW.Rheingold.Module.ISTA
             else
             {
                 ListenToActions(isAsync: false);
-                base.ServiceDialogUI.IsDialogShown = false;
+                ServiceDialogUI.IsDialogShown = false;
                 outParam.setParameter("QUIT", true);
             }
+
             SetOutParams(outParam);
         }
 
@@ -136,13 +127,13 @@ namespace BMW.Rheingold.Module.ISTA
                     Content = contentText,
                     ButtonNumber = buttonNumber
                 };
-                base.Model.ActionButtons.Add(item);
+                Model.ActionButtons.Add(item);
             }
         }
 
         private void CreateSampledPointsContainer(int targetSamplePointsOnXAxis, int maxSamplePointsOnXAxis)
         {
-            base.Model.SampledPointsContainer = new SampledPointsIndexContainer(base.Model.MinXValue, base.Model.MaxXValue, base.Model.Curves.Count, targetSamplePointsOnXAxis, maxSamplePointsOnXAxis);
+            Model.SampledPointsContainer = new SampledPointsIndexContainer(Model.MinXValue, Model.MaxXValue, Model.Curves.Count, targetSamplePointsOnXAxis, maxSamplePointsOnXAxis);
         }
 
         private List<NewCurveData> GetCurvesForDynamicDisplay(ParameterContainer inParam)
@@ -150,7 +141,7 @@ namespace BMW.Rheingold.Module.ISTA
             List<NewCurveData> list = new List<NewCurveData>();
             for (int i = 1; i <= 30; i++)
             {
-                double? num = inParam.getParameter(string.Format(CURVE_YPOINT_PARAM_TEMPLATE, i), null) as double?;
+                double? num = inParam.getParameter(string.Format(CURVE_YPOINT_PARAM_TEMPLATE, i), null) as double? ;
                 int num2 = Convert.ToInt32(inParam.getParameter(string.Format(CURVE_YAXIS_PARAM_TEMPLATE, i), -1));
                 string legendText = (inParam.getParameter(string.Format(CURVE_TEXT_PARAM_TEMPLATE, i), i) as ITextLocator)?.TextContent?.PlainText;
                 int thickness = Convert.ToInt32(inParam.getParameter(string.Format(CURVE_LINE_WIDTH_PARAM_TEMPLATE, i), 1));
@@ -169,6 +160,7 @@ namespace BMW.Rheingold.Module.ISTA
                     list.Add(newCurveData);
                 }
             }
+
             return list.OrderBy((NewCurveData x) => x.YAxis).ToList();
         }
 
@@ -196,6 +188,7 @@ namespace BMW.Rheingold.Module.ISTA
                     list.Add(newCurveData);
                 }
             }
+
             return list.OrderBy((NewCurveData x) => x.YAxis).ToList();
         }
 
@@ -209,6 +202,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     value = ((!getPlainText) ? GetContent(textLocator.TextContent) : textLocator.TextContent?.PlainText);
                 }
+
                 assignAction((T)Convert.ChangeType(value, typeof(T)));
             }
             else if (!displayLast)
@@ -220,187 +214,187 @@ namespace BMW.Rheingold.Module.ISTA
         private void InitializeGraph(ParameterContainer inParam)
         {
             SetNextButtonEnabled(value: true);
-            GetValueFromParam(inParam, "Ueberschrift", delegate (string x)
+            GetValueFromParam(inParam, "Ueberschrift", (string x) =>
             {
-                base.Model.HeaderText = x;
+                Model.HeaderText = x;
             }, null);
-            GetValueFromParam(inParam, "Einleitung", delegate (string x)
+            GetValueFromParam(inParam, "Einleitung", (string x) =>
             {
-                base.Model.IntroductionText = x;
+                Model.IntroductionText = x;
             }, null);
-            GetValueFromParam(inParam, "Abschluss", delegate (string x)
+            GetValueFromParam(inParam, "Abschluss", (string x) =>
             {
-                base.Model.ConclusionText = x;
+                Model.ConclusionText = x;
             }, null);
-            GetValueFromParam(inParam, "Text_Legende_Y1Achse", delegate (string x)
+            GetValueFromParam(inParam, "Text_Legende_Y1Achse", (string x) =>
             {
-                base.Model.YAxisLegendName[0] = x;
+                Model.YAxisLegendName[0] = x;
             }, null);
-            GetValueFromParam(inParam, "Text_Legende_Y2Achse", delegate (string x)
+            GetValueFromParam(inParam, "Text_Legende_Y2Achse", (string x) =>
             {
-                base.Model.YAxisLegendName[1] = x;
+                Model.YAxisLegendName[1] = x;
             }, null);
-            GetValueFromParam(inParam, "Text_Legende_Y3Achse", delegate (string x)
+            GetValueFromParam(inParam, "Text_Legende_Y3Achse", (string x) =>
             {
-                base.Model.YAxisLegendName[2] = x;
+                Model.YAxisLegendName[2] = x;
             }, null);
-            GetValueFromParam(inParam, "Text_Legende_Y4Achse", delegate (string x)
+            GetValueFromParam(inParam, "Text_Legende_Y4Achse", (string x) =>
             {
-                base.Model.YAxisLegendName[3] = x;
+                Model.YAxisLegendName[3] = x;
             }, null);
-            GetValueFromParam(inParam, "Text_XAchse", delegate (string x)
+            GetValueFromParam(inParam, "Text_XAchse", (string x) =>
             {
-                base.Model.XAxisText = x;
+                Model.XAxisText = x;
             }, null, getPlainText: true);
-            GetValueFromParam(inParam, "Text_Y1Achse", delegate (string x)
+            GetValueFromParam(inParam, "Text_Y1Achse", (string x) =>
             {
-                base.Model.YAxisText[0] = x;
+                Model.YAxisText[0] = x;
             }, null, getPlainText: true);
-            GetValueFromParam(inParam, "Text_Y2Achse", delegate (string x)
+            GetValueFromParam(inParam, "Text_Y2Achse", (string x) =>
             {
-                base.Model.YAxisText[1] = x;
+                Model.YAxisText[1] = x;
             }, null, getPlainText: true);
-            GetValueFromParam(inParam, "Text_Y3Achse", delegate (string x)
+            GetValueFromParam(inParam, "Text_Y3Achse", (string x) =>
             {
-                base.Model.YAxisText[2] = x;
+                Model.YAxisText[2] = x;
             }, null, getPlainText: true);
-            GetValueFromParam(inParam, "Text_Y4Achse", delegate (string x)
+            GetValueFromParam(inParam, "Text_Y4Achse", (string x) =>
             {
-                base.Model.YAxisText[3] = x;
+                Model.YAxisText[3] = x;
             }, null, getPlainText: true);
-            GetValueFromParam(inParam, "Minwert_XAchse", delegate (double x)
+            GetValueFromParam(inParam, "Minwert_XAchse", (double x) =>
             {
-                base.Model.MinXValue = x;
+                Model.MinXValue = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Maxwert_XAchse", delegate (double x)
+            GetValueFromParam(inParam, "Maxwert_XAchse", (double x) =>
             {
-                base.Model.MaxXValue = x;
+                Model.MaxXValue = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Teiler_XAchse", delegate (double x)
+            GetValueFromParam(inParam, "Teiler_XAchse", (double x) =>
             {
-                base.Model.XAxisDivision = x;
+                Model.XAxisDivision = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Teiler_Y1Achse", delegate (double x)
+            GetValueFromParam(inParam, "Teiler_Y1Achse", (double x) =>
             {
-                base.Model.YAxisDivision[0] = x;
+                Model.YAxisDivision[0] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Teiler_Y2Achse", delegate (double x)
+            GetValueFromParam(inParam, "Teiler_Y2Achse", (double x) =>
             {
-                base.Model.YAxisDivision[1] = x;
+                Model.YAxisDivision[1] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Teiler_Y3Achse", delegate (double x)
+            GetValueFromParam(inParam, "Teiler_Y3Achse", (double x) =>
             {
-                base.Model.YAxisDivision[2] = x;
+                Model.YAxisDivision[2] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Teiler_Y4Achse", delegate (double x)
+            GetValueFromParam(inParam, "Teiler_Y4Achse", (double x) =>
             {
-                base.Model.YAxisDivision[3] = x;
+                Model.YAxisDivision[3] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Minwert_Y1Achse", delegate (double x)
+            GetValueFromParam(inParam, "Minwert_Y1Achse", (double x) =>
             {
-                base.Model.MinYValue[0] = x;
+                Model.MinYValue[0] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Minwert_Y2Achse", delegate (double x)
+            GetValueFromParam(inParam, "Minwert_Y2Achse", (double x) =>
             {
-                base.Model.MinYValue[1] = x;
+                Model.MinYValue[1] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Minwert_Y3Achse", delegate (double x)
+            GetValueFromParam(inParam, "Minwert_Y3Achse", (double x) =>
             {
-                base.Model.MinYValue[2] = x;
+                Model.MinYValue[2] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Minwert_Y4Achse", delegate (double x)
+            GetValueFromParam(inParam, "Minwert_Y4Achse", (double x) =>
             {
-                base.Model.MinYValue[3] = x;
+                Model.MinYValue[3] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Maxwert_Y1Achse", delegate (double x)
+            GetValueFromParam(inParam, "Maxwert_Y1Achse", (double x) =>
             {
-                base.Model.MaxYValue[0] = x;
+                Model.MaxYValue[0] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Maxwert_Y2Achse", delegate (double x)
+            GetValueFromParam(inParam, "Maxwert_Y2Achse", (double x) =>
             {
-                base.Model.MaxYValue[1] = x;
+                Model.MaxYValue[1] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Maxwert_Y3Achse", delegate (double x)
+            GetValueFromParam(inParam, "Maxwert_Y3Achse", (double x) =>
             {
-                base.Model.MaxYValue[2] = x;
+                Model.MaxYValue[2] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Maxwert_Y4Achse", delegate (double x)
+            GetValueFromParam(inParam, "Maxwert_Y4Achse", (double x) =>
             {
-                base.Model.MaxYValue[3] = x;
+                Model.MaxYValue[3] = x;
             }, 0.0);
-            GetValueFromParam(inParam, "Grenze1_Y1Achse", delegate (double x)
+            GetValueFromParam(inParam, "Grenze1_Y1Achse", (double x) =>
             {
-                base.Model.UpperLimitY[0] = x;
+                Model.UpperLimitY[0] = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Grenze1_Y2Achse", delegate (double x)
+            GetValueFromParam(inParam, "Grenze1_Y2Achse", (double x) =>
             {
-                base.Model.UpperLimitY[1] = x;
+                Model.UpperLimitY[1] = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Grenze1_Y3Achse", delegate (double x)
+            GetValueFromParam(inParam, "Grenze1_Y3Achse", (double x) =>
             {
-                base.Model.UpperLimitY[2] = x;
+                Model.UpperLimitY[2] = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Grenze1_Y4Achse", delegate (double x)
+            GetValueFromParam(inParam, "Grenze1_Y4Achse", (double x) =>
             {
-                base.Model.UpperLimitY[3] = x;
+                Model.UpperLimitY[3] = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Grenze2_Y1Achse", delegate (double x)
+            GetValueFromParam(inParam, "Grenze2_Y1Achse", (double x) =>
             {
-                base.Model.LowerLimitY[0] = x;
+                Model.LowerLimitY[0] = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Grenze2_Y2Achse", delegate (double x)
+            GetValueFromParam(inParam, "Grenze2_Y2Achse", (double x) =>
             {
-                base.Model.LowerLimitY[1] = x;
+                Model.LowerLimitY[1] = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Grenze2_Y3Achse", delegate (double x)
+            GetValueFromParam(inParam, "Grenze2_Y3Achse", (double x) =>
             {
-                base.Model.LowerLimitY[2] = x;
+                Model.LowerLimitY[2] = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Grenze2_Y4Achse", delegate (double x)
+            GetValueFromParam(inParam, "Grenze2_Y4Achse", (double x) =>
             {
-                base.Model.LowerLimitY[3] = x;
+                Model.LowerLimitY[3] = x;
             }, double.NaN);
-            GetValueFromParam(inParam, "Kurvendarstellung", delegate (bool x)
+            GetValueFromParam(inParam, "Kurvendarstellung", (bool x) =>
             {
-                base.Model.LinearInterpolationEnabled = x;
+                Model.LinearInterpolationEnabled = x;
             }, defaultValue: true);
-            GetValueFromParam(inParam, "Refresh", delegate (bool x)
+            GetValueFromParam(inParam, "Refresh", (bool x) =>
             {
-                base.Model.HorizontalOverflowScrollingEnabled = x;
+                Model.HorizontalOverflowScrollingEnabled = x;
             }, defaultValue: true);
-            GetValueFromParam(inParam, "Kurvennummerierung", delegate (bool x)
+            GetValueFromParam(inParam, "Kurvennummerierung", (bool x) =>
             {
-                base.Model.ShowCurveNumbers = x;
+                Model.ShowCurveNumbers = x;
             }, defaultValue: false);
-            GetValueFromParam(inParam, "Button03_Text", delegate (string x)
+            GetValueFromParam(inParam, "Button03_Text", (string x) =>
             {
                 AddToActionButtonCollection(3, x);
             }, null, getPlainText: true);
-            GetValueFromParam(inParam, "Button02_Text", delegate (string x)
+            GetValueFromParam(inParam, "Button02_Text", (string x) =>
             {
                 AddToActionButtonCollection(2, x);
             }, null, getPlainText: true);
-            GetValueFromParam(inParam, "Button01_Text", delegate (string x)
+            GetValueFromParam(inParam, "Button01_Text", (string x) =>
             {
                 AddToActionButtonCollection(1, x);
             }, null, getPlainText: true);
             if (Convert.ToBoolean(inParam.getParameter("Vollbild", false)))
             {
-                base.ServiceProgramController.SetDisplayMode(DisplayMode.FullPrimary);
+                ServiceProgramController.SetDisplayMode(DisplayMode.FullPrimary);
             }
             else
             {
-                base.ServiceProgramController.SetDisplayMode(DisplayMode.Split);
+                ServiceProgramController.SetDisplayMode(DisplayMode.Split);
             }
         }
 
         private void ListenToActions(bool isAsync)
         {
-            Action listenAction = delegate
+            Action listenAction = () =>
             {
                 while (!ShouldQuitDialog)
                 {
-                    ServiceProgramAction serviceProgramAction = base.ServiceProgramController.AwaitUserAction(-1);
+                    ServiceProgramAction serviceProgramAction = ServiceProgramController.AwaitUserAction(-1);
                     if (parentTab.ModuleData.IsExecutionCompleted)
                     {
                         ShouldQuitDialog = true;
@@ -414,7 +408,7 @@ namespace BMW.Rheingold.Module.ISTA
                         ServiceProgramButtonSelectionAction buttonAction = serviceProgramAction as ServiceProgramButtonSelectionAction;
                         if (buttonAction != null)
                         {
-                            base.Model.ActionButtons.FirstOrDefault((KurvenDisplayActionButton x) => x.ButtonNumber == buttonAction.SelectedIndex)?.ToogleExecuteState();
+                            Model.ActionButtons.FirstOrDefault((KurvenDisplayActionButton x) => x.ButtonNumber == buttonAction.SelectedIndex)?.ToogleExecuteState();
                         }
                     }
                 }
@@ -422,7 +416,7 @@ namespace BMW.Rheingold.Module.ISTA
             if (isAsync)
             {
                 parentTab.ModuleData.PropertyChanged += OnParentTabModuleStateChanged;
-                listenToActionsThread = new Thread((ThreadStart)delegate
+                listenToActionsThread = new Thread(() =>
                 {
                     listenAction();
                 });
@@ -447,15 +441,15 @@ namespace BMW.Rheingold.Module.ISTA
         {
             hasDynamicDisplayBeenInitialized = false;
             ShouldQuitDialog = false;
-            base.Model.SampledPointsContainer = null;
-            base.Model.ActionButtons.Clear();
-            base.Model.XPoints.Clear();
-            base.Model.Curves.Clear();
+            Model.SampledPointsContainer = null;
+            Model.ActionButtons.Clear();
+            Model.XPoints.Clear();
+            Model.Curves.Clear();
         }
 
         private void SetOutParams(ParameterContainer outParam)
         {
-            foreach (KurvenDisplayActionButton actionButton in base.Model.ActionButtons)
+            foreach (KurvenDisplayActionButton actionButton in Model.ActionButtons)
             {
                 if (actionButton.ExecuteAction)
                 {
@@ -479,21 +473,22 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void UpdateDynamicCurvePoints(ParameterContainer inParam)
         {
-            if (base.Model.Curves == null || base.Model.Curves.Count == 0)
+            if (Model.Curves == null || Model.Curves.Count == 0)
             {
                 List<NewCurveData> curvesForDynamicDisplay = GetCurvesForDynamicDisplay(inParam);
-                base.Model.Curves.AddRange(curvesForDynamicDisplay);
+                Model.Curves.AddRange(curvesForDynamicDisplay);
                 CreateSampledPointsContainer(80, 120);
             }
             else
             {
-                foreach (NewCurveData curf in base.Model.Curves)
+                foreach (NewCurveData curf in Model.Curves)
                 {
-                    double? num = inParam.getParameter(string.Format(CURVE_YPOINT_PARAM_TEMPLATE, curf.Index), null) as double?;
+                    double? num = inParam.getParameter(string.Format(CURVE_YPOINT_PARAM_TEMPLATE, curf.Index), null) as double? ;
                     if (num.HasValue)
                     {
                         curf.YPoints.Add(Math.Round(num.Value, 2));
                     }
+
                     int num2 = Convert.ToInt32(inParam.getParameter(string.Format(CURVE_LINE_STYLE_PARAM_TEMPLATE, curf.Index), -1));
                     if (num2 != -1)
                     {
@@ -501,31 +496,32 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
-            double? num3 = inParam.getParameter("Kurven_X", null) as double?;
+
+            double? num3 = inParam.getParameter("Kurven_X", null) as double? ;
             if (num3.HasValue)
             {
-                base.Model.XPoints.Add(Math.Round(num3.Value, 2));
-                base.Model.SampledPointsContainer.TryAddingSampleIndex(base.Model.XPoints.Count - 1, num3.Value);
+                Model.XPoints.Add(Math.Round(num3.Value, 2));
+                Model.SampledPointsContainer.TryAddingSampleIndex(Model.XPoints.Count - 1, num3.Value);
             }
         }
 
         private void UpdateDynamicTextValues(ParameterContainer inParam)
         {
-            GetValueFromParam(inParam, "Ueberschrift", delegate (string x)
+            GetValueFromParam(inParam, "Ueberschrift", (string x) =>
             {
-                base.Model.HeaderText = x;
+                Model.HeaderText = x;
             }, null);
-            GetValueFromParam(inParam, "Einleitung", delegate (string x)
+            GetValueFromParam(inParam, "Einleitung", (string x) =>
             {
-                base.Model.IntroductionText = x;
+                Model.IntroductionText = x;
             }, null);
-            GetValueFromParam(inParam, "Abschluss", delegate (string x)
+            GetValueFromParam(inParam, "Abschluss", (string x) =>
             {
-                base.Model.ConclusionText = x;
+                Model.ConclusionText = x;
             }, null);
-            foreach (KurvenDisplayActionButton button in base.Model.ActionButtons)
+            foreach (KurvenDisplayActionButton button in Model.ActionButtons)
             {
-                GetValueFromParam(inParam, $"Button{button.ButtonNumber:00}_Text", delegate (string x)
+                GetValueFromParam(inParam, $"Button{button.ButtonNumber:00}_Text", (string x) =>
                 {
                     button.Content = x;
                 }, null, getPlainText: true);
@@ -534,19 +530,19 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void UpdateSampledPoints()
         {
-            for (int i = 0; i < base.Model.XPoints.Count; i++)
+            for (int i = 0; i < Model.XPoints.Count; i++)
             {
-                base.Model.SampledPointsContainer.TryAddingSampleIndex(i, base.Model.XPoints.ElementAt(i));
+                Model.SampledPointsContainer.TryAddingSampleIndex(i, Model.XPoints.ElementAt(i));
             }
         }
 
         private void UpdateStaticCurvePoints(ParameterContainer inParam)
         {
-            if (inParam.getParameter("Kurven_X_List", null) is List<double> items)
+            if (inParam.getParameter("Kurven_X_List", null)is List<double> items)
             {
-                base.Model.XPoints.AddRange(items);
+                Model.XPoints.AddRange(items);
                 List<NewCurveData> curvesForStaticDisplay = GetCurvesForStaticDisplay(inParam);
-                base.Model.Curves.AddRange(curvesForStaticDisplay);
+                Model.Curves.AddRange(curvesForStaticDisplay);
                 CreateSampledPointsContainer(2000, 2000);
                 UpdateSampledPoints();
             }

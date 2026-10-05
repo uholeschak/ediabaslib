@@ -13,15 +13,10 @@ namespace PsdzClient.Utility
     public class Logger
     {
         private readonly ILog _logger;
-
         private readonly string _iCsVersion;
-
         private static bool _initGuard = false;
-
-        private static readonly object _initLock = new object();
-
+        private static readonly object _initLock = new object ();
         private static Logger loggerInstance;
-
         internal Logger()
         {
             _logger = LogManager.GetLogger(typeof(Logger));
@@ -35,6 +30,7 @@ namespace PsdzClient.Utility
             {
                 return " (iCS Version unknown)";
             }
+
             return " (iCS Version:" + version?.ToString() + ")";
         }
 
@@ -44,21 +40,25 @@ namespace PsdzClient.Utility
             {
                 return loggerInstance;
             }
+
             lock (_initLock)
             {
                 if (loggerInstance != null)
                 {
                     return loggerInstance;
                 }
+
                 if (_initGuard)
                 {
                     return null;
                 }
+
                 _initGuard = true;
                 Logger logger = new Logger();
                 Thread.MemoryBarrier();
                 loggerInstance = logger;
             }
+
             return loggerInstance;
         }
 
@@ -100,6 +100,7 @@ namespace PsdzClient.Utility
                     {
                         _logger.Debug(logMessage, exception);
                     }
+
                     break;
                 case LogLevel.Error:
                     if (exception == null)
@@ -110,6 +111,7 @@ namespace PsdzClient.Utility
                     {
                         _logger.Error(logMessage, exception);
                     }
+
                     break;
                 case LogLevel.Fatal:
                     if (exception == null)
@@ -120,6 +122,7 @@ namespace PsdzClient.Utility
                     {
                         _logger.Fatal(logMessage, exception);
                     }
+
                     break;
                 case LogLevel.Info:
                     if (exception == null)
@@ -130,6 +133,7 @@ namespace PsdzClient.Utility
                     {
                         _logger.Info(logMessage, exception);
                     }
+
                     break;
                 case LogLevel.Warning:
                     if (exception == null)
@@ -140,6 +144,7 @@ namespace PsdzClient.Utility
                     {
                         _logger.Warn(logMessage, exception);
                     }
+
                     break;
             }
         }
@@ -170,6 +175,7 @@ namespace PsdzClient.Utility
             catch (MissingManifestResourceException)
             {
             }
+
             return result;
         }
 
@@ -179,17 +185,19 @@ namespace PsdzClient.Utility
             {
                 return string.Empty;
             }
-            object obj = rm.GetString(errCode.ToString(), cultureInfo);
-            if (obj == null)
+
+            string text = rm.GetString(errCode.ToString(), cultureInfo);
+            if (text == null)
             {
-                obj = rm.GetString(errCode.ToText(), cultureInfo);
-                if (obj == null)
+                text = rm.GetString(errCode.ToText(), cultureInfo);
+                if (text == null)
                 {
                     T val = errCode;
-                    obj = rm.GetString("_" + val, cultureInfo) ?? rm.GetString("_" + errCode.ToText(), cultureInfo);
+                    text = rm.GetString("_" + val, cultureInfo) ?? rm.GetString("_" + errCode.ToText(), cultureInfo);
                 }
             }
-            return (string)obj;
+
+            return text;
         }
 
         public void ChangeLogLevel(string logLevel)
@@ -216,6 +224,7 @@ namespace PsdzClient.Utility
                     level = Level.Info;
                     break;
             }
+
             Log(ICSEventId.ICS0022, "ChangeLogLevel:ChangeLogLevel", "Switching Loglevel to " + level.DisplayName, EventKind.Technical, LogLevel.Info);
             ((Hierarchy)LogManager.GetRepository()).Root.Level = level;
             ((Hierarchy)LogManager.GetRepository()).RaiseConfigurationChanged(EventArgs.Empty);

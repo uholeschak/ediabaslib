@@ -51,7 +51,7 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
             (
                 from x in xDocument.Descendants().FirstOrDefault((XElement p) => p.Name.LocalName == "header").Attributes()
                 where x.Name == "date" || x.Name == "time" || x.Name == "createdBy"
-                select x).Select(delegate (XAttribute x)
+                select x).Select((XAttribute x) =>
             {
                 x.Value = string.Empty;
                 return x;

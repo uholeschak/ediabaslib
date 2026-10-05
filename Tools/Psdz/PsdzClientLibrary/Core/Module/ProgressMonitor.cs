@@ -85,7 +85,7 @@ namespace BMW.Rheingold.CoreFramework
 
                 if (dispatcher != null)
                 {
-                    dispatcher.InvokeIfNoAccess(delegate
+                    dispatcher.InvokeIfNoAccess(() =>
                     {
                         cancelBehavior = value;
                         NotifyPropertyChanged("CancelBehavior");
@@ -132,7 +132,7 @@ namespace BMW.Rheingold.CoreFramework
 
                 if (dispatcher != null)
                 {
-                    dispatcher.InvokeIfNoAccess(delegate
+                    dispatcher.InvokeIfNoAccess(() =>
                     {
                         processProgress = progressOffset + value * progressMultiplier * progressMultiplierCmdList;
                         NotifyPropertyChanged("ProcessProgress");
@@ -177,7 +177,7 @@ namespace BMW.Rheingold.CoreFramework
 
                 if (dispatcher != null)
                 {
-                    dispatcher.InvokeIfNoAccess(delegate
+                    dispatcher.InvokeIfNoAccess(() =>
                     {
                         taskDescription = value;
                         NotifyPropertyChanged("TaskDescription");
@@ -207,7 +207,7 @@ namespace BMW.Rheingold.CoreFramework
 
                 if (dispatcher != null)
                 {
-                    dispatcher.InvokeIfNoAccess(delegate
+                    dispatcher.InvokeIfNoAccess(() =>
                     {
                         processDescription = value;
                         NotifyPropertyChanged("ProcessDescription");

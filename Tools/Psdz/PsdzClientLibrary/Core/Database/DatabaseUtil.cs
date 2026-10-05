@@ -584,7 +584,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             if (source == null)
             {
-                return default(T);
+                return default;
             }
 
             T val = (T)Activator.CreateInstance(typeof(T));

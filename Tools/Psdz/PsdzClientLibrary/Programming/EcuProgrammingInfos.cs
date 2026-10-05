@@ -237,7 +237,7 @@ namespace BMW.Rheingold.Programming
                 programmingObjectBuilder = new ProgrammingObjectBuilder((Vehicle)vehicle, ffmResolver);
                 CreateEcuProgrammingInfos(vehicle.ECU);
                 ecuProgrammingInfosMap = new Dictionary<IEcu, EcuProgrammingInfo>();
-                ecuProgrammingInfos.ForEach(delegate (EcuProgrammingInfo info)
+                ecuProgrammingInfos.ForEach((EcuProgrammingInfo info) =>
                 {
                     ecuProgrammingInfosMap.Add(info.Ecu, info);
                 });

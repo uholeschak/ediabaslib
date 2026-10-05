@@ -50,7 +50,7 @@ namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
         internal BaseEcuCharacteristics(string xmlCharacteristic)
         {
             IEcuTreeConfiguration ecuTreeConfiguration = null;
-            ValidationEventHandler veh = delegate (object sender, ValidationEventArgs e)
+            ValidationEventHandler veh = (object sender, ValidationEventArgs e) =>
             {
                 EcuTreeLogger.Instance.Warning("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation: {0}", e.Message));
             };
@@ -796,6 +796,7 @@ namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
                     return ClientContext.GetDatabase(vecInfo).EvaluateXepRulesById(ecuGroupByName.Id.ToString(CultureInfo.InvariantCulture), vecInfo, ffmResolver);
                 }
             }
+
             return false;
         }
 

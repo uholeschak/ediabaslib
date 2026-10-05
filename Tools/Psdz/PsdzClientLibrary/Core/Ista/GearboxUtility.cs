@@ -20,7 +20,7 @@ namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility
     public static class GearboxUtility
     {
         private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
-        private static Predicate<IReactorVehicle> useLegacyGearboxTypeDetection = delegate (IReactorVehicle v)
+        private static Predicate<IReactorVehicle> useLegacyGearboxTypeDetection = (IReactorVehicle v) =>
         {
             try
             {

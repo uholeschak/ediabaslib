@@ -113,10 +113,10 @@ namespace BMW.Rheingold.Module.ISTA
 
             if (display)
             {
-                base.SPEUserInterface.DisplayWaitCursor(bWaitCursor: false);
-                base.Model.IsCustomButton0Enabled = true;
-                base.Model.IsCustomButton0Visible = true;
-                base.Model.TxtParamFlow = ((TextContent)concatTxt.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
+                SPEUserInterface.DisplayWaitCursor(bWaitCursor: false);
+                Model.IsCustomButton0Enabled = true;
+                Model.IsCustomButton0Visible = true;
+                Model.TxtParamFlow = ((TextContent)concatTxt.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
                 DoStartStopAsynch();
                 if (p_DSCError && p_Fehlermeldung)
                 {
@@ -125,15 +125,15 @@ namespace BMW.Rheingold.Module.ISTA
 
                 if (m_IOFrage)
                 {
-                    base.Model.IOFrageTextFlow = ((TextContent)m_IOFrageText.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
-                    base.Model.TextInfo[0] = __Text("51945227").TextContent.PlainText;
-                    base.Model.TextInfo[1] = __Text("51943563").TextContent.PlainText;
-                    base.Model.IsButtonBarVisible = true;
+                    Model.IOFrageTextFlow = ((TextContent)m_IOFrageText.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
+                    Model.TextInfo[0] = __Text("51945227").TextContent.PlainText;
+                    Model.TextInfo[1] = __Text("51943563").TextContent.PlainText;
+                    Model.IsButtonBarVisible = true;
                     SetNextButtonEnabled(value: true);
-                    base.SPEUserInterface.DisplayWaitCursor(bWaitCursor: false);
-                    NavigateTo(base.Model);
+                    SPEUserInterface.DisplayWaitCursor(bWaitCursor: false);
+                    NavigateTo(Model);
                     WaitOnUserInteraction();
-                    base.SPEUserInterface.DisplayWaitCursor(bWaitCursor: true);
+                    SPEUserInterface.DisplayWaitCursor(bWaitCursor: true);
                     if (selectionIndex == 0)
                     {
                         callingModule.ResultSet.CollectiveResult = CollectiveResultSet.Ok;
@@ -145,12 +145,12 @@ namespace BMW.Rheingold.Module.ISTA
                 }
                 else
                 {
-                    base.Model.IsButtonBarVisible = false;
-                    NavigateTo(base.Model);
+                    Model.IsButtonBarVisible = false;
+                    NavigateTo(Model);
                     SetNextButtonEnabled(value: true);
                     WaitForContinueButton(-1);
-                    base.Model.IsCustomButton0Enabled = false;
-                    base.Model.IsCustomButton0Visible = false;
+                    Model.IsCustomButton0Enabled = false;
+                    Model.IsCustomButton0Visible = false;
                 }
 
                 if (executionTimer != null)
@@ -249,7 +249,7 @@ namespace BMW.Rheingold.Module.ISTA
                 try
                 {
                     Log.Info("EcuKomServiceDlgImpl.ExecuteAdapter()", "called");
-                    EDIABASAdapter eDIABASAdapter = new EDIABASAdapter(StandardErrorHandling: true, base.EcuKom, configContainer);
+                    EDIABASAdapter eDIABASAdapter = new EDIABASAdapter(StandardErrorHandling: true, EcuKom, configContainer);
                     eDIABASAdapter.DoParameterization();
                     dscJob = eDIABASAdapter.Execute(inParameters);
                     SetupGUI();
@@ -375,7 +375,7 @@ namespace BMW.Rheingold.Module.ISTA
                             }
                         }
 
-                        base.Model.WertFeldFlow1 = ((TextContent)wertFeld1.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
+                        Model.WertFeldFlow1 = ((TextContent)wertFeld1.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
                     }
                 }
                 else if (p_Fehlermeldung)
@@ -396,7 +396,7 @@ namespace BMW.Rheingold.Module.ISTA
 
                 if (wertFeld != null)
                 {
-                    base.Model.WertFeldFlow = ((TextContent)wertFeld.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
+                    Model.WertFeldFlow = ((TextContent)wertFeld.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
                 }
                 else
                 {
@@ -429,9 +429,9 @@ namespace BMW.Rheingold.Module.ISTA
         {
             bool flag = false;
             bool flag2 = true;
-            if (cfgContainer != null && parentTab != null && base.EcuKom != null)
+            if (cfgContainer != null && parentTab != null && EcuKom != null)
             {
-                EDIABASAdapter eDIABASAdapter = new EDIABASAdapter(StandardErrorHandling: true, base.EcuKom, cfgContainer);
+                EDIABASAdapter eDIABASAdapter = new EDIABASAdapter(StandardErrorHandling: true, EcuKom, cfgContainer);
                 eDIABASAdapter.DoParameterization();
                 IDiagnosticDeviceResult diagnosticDeviceResult = eDIABASAdapter.Execute(inParameters);
                 if (diagnosticDeviceResult.ECUJob != null && diagnosticDeviceResult.ECUJob.JobResultSets > 0)
@@ -561,7 +561,7 @@ namespace BMW.Rheingold.Module.ISTA
                 }
                 finally
                 {
-                    base.Model.CustomButton0Content = __Text("51944459").TextContent.PlainText;
+                    Model.CustomButton0Content = __Text("51944459").TextContent.PlainText;
                     if (!m_IOFrage)
                     {
                         SetNextButtonEnabled(value: true);
@@ -586,7 +586,7 @@ namespace BMW.Rheingold.Module.ISTA
                     executionTimer.Change(0, 500);
                 }
 
-                base.Model.CustomButton0Content = __Text("51942795").TextContent.PlainText;
+                Model.CustomButton0Content = __Text("51942795").TextContent.PlainText;
             }
 
             Log.Info("EcuKomServiceDlgImpl.DoStartStopAsynch()", "_ExitIndex is: {0}", EventKind.T, 0);
@@ -615,9 +615,9 @@ namespace BMW.Rheingold.Module.ISTA
             }
             finally
             {
-                for (int i = 0; i < base.Model.CheckedInfo.Count; i++)
+                for (int i = 0; i < Model.CheckedInfo.Count; i++)
                 {
-                    base.Model.CheckedInfo[i] = i == buttonIdx;
+                    Model.CheckedInfo[i] = i == buttonIdx;
                 }
             }
         }
@@ -658,7 +658,7 @@ namespace BMW.Rheingold.Module.ISTA
                 ServiceProgramNavigationAction serviceProgramNavigationAction;
                 while (true)
                 {
-                    ServiceProgramAction serviceProgramAction = base.ServiceProgramController.AwaitUserAction(-1);
+                    ServiceProgramAction serviceProgramAction = ServiceProgramController.AwaitUserAction(-1);
                     serviceProgramNavigationAction = serviceProgramAction as ServiceProgramNavigationAction;
                     if (serviceProgramNavigationAction != null)
                     {

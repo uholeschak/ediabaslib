@@ -12,15 +12,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class EcuProgrammingVariantLocator : IEcuProgrammingVariantLocator, ISPELocator
     {
         private readonly XEP_ECUPROGRAMMINGVARIANT ecuVariant;
-
         private ISPELocator[] children;
-
         private ISPELocator[] parents;
-
         private readonly Vehicle vecInfo;
-
         private readonly IFFMDynamicResolver ffmResolver;
-
         public ISPELocator[] Children
         {
             get
@@ -29,6 +24,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return children;
                 }
+
                 List<ISPELocator> list = new List<ISPELocator>();
                 children = list.ToArray();
                 return children;
@@ -45,6 +41,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return parents;
                 }
+
                 List<ISPELocator> list = new List<ISPELocator>();
                 //[-] XEP_ECUVARIANTS ecuVariantById = DatabaseProviderFactory.Instance.GetEcuVariantById(ecuVariant.EcuVariantId);
                 //[+] XEP_ECUVARIANTS ecuVariantById = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuVariantById(ecuVariant.EcuVariantId.ToString(CultureInfo.InvariantCulture)));
@@ -54,17 +51,21 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     list.Add(new EcuVariantLocator(ecuVariantById, vecInfo, ffmResolver));
                     parents = list.ToArray();
                 }
+
                 return parents;
             }
         }
 
         public string DataClassName => "ECUProgrammingVariant";
-
         public string[] OutgoingLinkNames => new string[0];
-
         public string[] IncomingLinkNames => new string[0];
-
-        public string[] DataValueNames => new string[4] { "ID", "NAME", "FLASHLIMIT", "ECUVARIANTID" };
+        public string[] DataValueNames => new string[4]
+        {
+            "ID",
+            "NAME",
+            "FLASHLIMIT",
+            "ECUVARIANTID"
+        };
 
         public decimal SignedId
         {
@@ -74,18 +75,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return -1m;
                 }
+
                 return ecuVariant.Id;
             }
         }
 
         public Exception Exception => null;
-
         public bool HasException => false;
-
         public decimal EcuVariantId => ecuVariant.EcuVariantId;
-
         public decimal? FlashLimit => ecuVariant.FlashLimit;
-
         public string Name => ecuVariant.Name;
 
         [PreserveSource(Hint = "No change", SignatureModified = true)]
@@ -109,6 +107,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.Warning("EcuProgrammingVariantLocator.CreateEcuProgrammingVariantLocator", "No or more than one ECU programming variant found by name: {0}", ecuVariant);
             }
+
             return result;
         }
 
@@ -137,6 +136,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return null;
             }
+
             switch (name.ToUpperInvariant())
             {
                 case "ID":
@@ -150,6 +150,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return null;
                     }
+
                     return ecuVariant.FlashLimit.Value.ToString(CultureInfo.InvariantCulture);
                 case "ECUVARIANTID":
                     return ecuVariant.EcuVariantId.ToString(CultureInfo.InvariantCulture);
@@ -200,6 +201,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             obj = ecuVariant.EcuVariantId;
                             break;
                     }
+
                     if (obj != null)
                     {
                         return (T)Convert.ChangeType(obj, typeof(T));
@@ -210,7 +212,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("EcuProgrammingVariantLocator.GetDataValue<T>()", exception);
             }
-            return default(T);
+
+            return default;
         }
     }
 }

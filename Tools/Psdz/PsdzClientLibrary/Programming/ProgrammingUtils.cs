@@ -180,8 +180,8 @@ namespace BMW.Rheingold.Programming.Common
 
         private static bool ProhibitionIsCircumvented()
         {
-            bool defaultValue = ConfigSettings.IsLightModeActive;
-            return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.RheingoldSessionController.CircumventProgramingProhibition", defaultValue);
+            bool isLightModeActive = ConfigSettings.IsLightModeActive;
+            return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.RheingoldSessionController.CircumventProgramingProhibition", isLightModeActive);
         }
 
         [PreserveSource(Cleaned = true, OriginalHash = "A4E9AB03DE103323608792E045FBE180")]

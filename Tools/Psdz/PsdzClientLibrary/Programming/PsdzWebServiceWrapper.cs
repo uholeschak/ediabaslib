@@ -51,7 +51,7 @@ namespace BMW.Rheingold.Programming.PSdZ
         public ILogService LogService => PsdzWebservice.LogService;
         public IMacrosService MacrosService => PsdzWebservice.MacrosService;
         public IObjectBuilderService ObjectBuilderService => PsdzWebservice.ObjectBuilderService;
-        public IProgrammingService ProgrammingService => PsdzWebservice.ProgrammingService;
+        public RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService ProgrammingService => PsdzWebservice.ProgrammingService;
         public ISecureCodingService SecureCodingService => PsdzWebservice.SecureCodingService;
         public ISecureFeatureActivationService SecureFeatureActivationService => PsdzWebservice.SecureFeatureActivationService;
         public ISecurityManagementService SecurityManagementService => PsdzWebservice.SecurityManagementService;

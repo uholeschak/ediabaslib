@@ -7,30 +7,30 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class Typmerkmal_ausISTA_UXCmd : ServiceDialogCmdBase
     {
-        public Typmerkmal_ausISTA_UXCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo)
-            : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
+        public Typmerkmal_ausISTA_UXCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo) : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
         {
         }
 
         public override void CreateDialog(ParameterContainer inParam, ParameterContainer inoutParam)
         {
-            Log.Info("Typmerkmal_ausISTA_UXCmd.CreateDialog()", $"{base.ServiceDialogConfig.Name} init started.");
-            base.Display = false;
+            Log.Info("Typmerkmal_ausISTA_UXCmd.CreateDialog()", $"{ServiceDialogConfig.Name} init started.");
+            Display = false;
         }
 
         public override void DoInvoke(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
             try
             {
-                if (base.CallingModule == null)
+                if (CallingModule == null)
                 {
                     Log.Error("Typmerkmal_ausISTA_UXCmd.Invoke()", "Failed to invoke method {0}, because calling module is null.", method);
                     return;
                 }
-                ModuleParameter value = base.CallingModule.__RheinGoldCoreModuleParameters__.Clone();
+
+                ModuleParameter value = CallingModule.__RheinGoldCoreModuleParameters__.Clone();
                 inParam.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
-                inParam.Parameter.Add("__RheinGoldTabModuleISTA__", base.CallingModule.GlobalTabModuleISTA);
-                inParam.Parameter.Add("__RheinGoldSOCAccessor__", base.CallingModule.SOCAccessor);
+                inParam.Parameter.Add("__RheinGoldTabModuleISTA__", CallingModule.GlobalTabModuleISTA);
+                inParam.Parameter.Add("__RheinGoldSOCAccessor__", CallingModule.SOCAccessor);
                 Typmerkmale_ausISTA_UX typmerkmale_ausISTA_UX = new Typmerkmale_ausISTA_UX(inParam);
                 if ("InitializeDialog".Equals(method))
                 {
@@ -41,6 +41,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("Sonderausstattungen", Sonderausstattungen);
                     return;
                 }
+
                 if ("Fahrgestellnummer".Equals(method))
                 {
                     string PFahrgestellnummer = null;
@@ -48,6 +49,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PFahrgestellnummer", PFahrgestellnummer);
                     return;
                 }
+
                 if ("Marke".Equals(method))
                 {
                     string PMarke = null;
@@ -55,6 +57,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PMarke", PMarke);
                     return;
                 }
+
                 if ("Baureihe".Equals(method))
                 {
                     string PBaureihe = null;
@@ -62,6 +65,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PBaureihe", PBaureihe);
                     return;
                 }
+
                 if ("EBezeichnung".Equals(method))
                 {
                     string PEBezeichnung = null;
@@ -69,6 +73,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PEBezeichnung", PEBezeichnung);
                     return;
                 }
+
                 if ("Verkaufsbezeichnung".Equals(method))
                 {
                     string PVerkaufsbezeichnung = null;
@@ -76,6 +81,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PVerkaufsbezeichnung", PVerkaufsbezeichnung);
                     return;
                 }
+
                 if ("Länderausführung".Equals(method))
                 {
                     string PLänderausführung = null;
@@ -83,6 +89,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PLänderausführung", PLänderausführung);
                     return;
                 }
+
                 if ("Baujahr".Equals(method))
                 {
                     string PBaujahr = null;
@@ -90,6 +97,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PBaujahr", PBaujahr);
                     return;
                 }
+
                 if ("Baumonat".Equals(method))
                 {
                     string PBaumonat = null;
@@ -97,6 +105,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PBaumonat", PBaumonat);
                     return;
                 }
+
                 if ("Typschlüssel".Equals(method))
                 {
                     string PTypschlüssel = null;
@@ -104,6 +113,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PTypschlüssel", PTypschlüssel);
                     return;
                 }
+
                 if ("IStufeHO".Equals(method))
                 {
                     string PIStufeHO = null;
@@ -111,6 +121,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PIStufeHO", PIStufeHO);
                     return;
                 }
+
                 if ("IStufeWerk".Equals(method))
                 {
                     string PIStufeWerk = null;
@@ -118,6 +129,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PIStufeWerk", PIStufeWerk);
                     return;
                 }
+
                 if ("Sicherheitsrelevant".Equals(method))
                 {
                     string PSicherheitsrelevant = null;
@@ -125,6 +137,7 @@ namespace BMW.Rheingold.Module.ISTA
                     outParam.setParameter("PSicherheitsrelevant", PSicherheitsrelevant);
                     return;
                 }
+
                 throw new ServiceDialogMethodUnsupportedException();
             }
             catch (ServiceDialogMethodUnsupportedException)

@@ -103,7 +103,7 @@ namespace BMW.Rheingold.Psdz
 
         public InteractionMessageModel(string title, string messageText, string details)
         {
-            base.Title = title;
+            Title = title;
             MessageText = messageText;
             DetailText = details;
             IsDetailButtonVisible = true;
@@ -120,13 +120,13 @@ namespace BMW.Rheingold.Psdz
 
         public override void LogMessage()
         {
-            Log.Warning("InteractionMessageModel.LogMessage", "\n\t[TestAutomationInteraction]\n\tTitle: [" + base.Title + "]\n\tAnswers: [Commit]\n\tQuestion: [" + MessageText + "]");
+            Log.Warning("InteractionMessageModel.LogMessage", "\n\t[TestAutomationInteraction]\n\tTitle: [" + Title + "]\n\tAnswers: [Commit]\n\tQuestion: [" + MessageText + "]");
         }
 
         public override void LogResponseMessage(object response)
         {
             string name = Enum.GetName(typeof(InteractionButton), ((InteractionButtonResponse)response).Action);
-            Log.Info("InteractionMessageModel.LogResponseMessage", "\n\t[TestAutomationInteraction]\n\tTitle: [" + base.Title + "]\n\tAnswer: [" + name + "]\n\tQuestion: [" + MessageText + "]");
+            Log.Info("InteractionMessageModel.LogResponseMessage", "\n\t[TestAutomationInteraction]\n\tTitle: [" + Title + "]\n\tAnswer: [" + name + "]\n\tQuestion: [" + MessageText + "]");
         }
     }
 }

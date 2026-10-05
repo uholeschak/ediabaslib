@@ -5,7 +5,6 @@ namespace PsdzClient.Core
     public class WebCallResponse
     {
         public string Error { get; set; }
-
         public HttpStatusCode? HttpStatus { get; set; }
 
         public virtual bool IsSuccessful
@@ -16,6 +15,7 @@ namespace PsdzClient.Core
                 {
                     return HttpStatus.Value <= (HttpStatusCode)299;
                 }
+
                 return false;
             }
         }
@@ -31,12 +31,14 @@ namespace PsdzClient.Core
             {
                 if (!base.IsSuccessful)
                 {
-                    if (!base.HttpStatus.HasValue)
+                    if (!HttpStatus.HasValue)
                     {
                         return Response != null;
                     }
+
                     return false;
                 }
+
                 return true;
             }
         }

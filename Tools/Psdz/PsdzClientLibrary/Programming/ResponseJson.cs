@@ -23,25 +23,19 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 
         [DataMember(Name = "status")]
         public readonly Status status;
-
         [DataMember(Name = "vin17")]
         public readonly string vin17;
-
         [DataMember(Name = "signedNcd")]
         public readonly SignedNcd[] signedNcd;
-
         [DataMember(Name = "vpcRequest")]
         public readonly string vpcRequest;
-
         [DataMember(Name = "vpcResponse")]
         public readonly string vpcResponse;
-
         [DataMember(Name = "FP")]
         public readonly string fp;
-
         internal void SaveToFile(string fileDirectory)
         {
-            signedNcd.ForEach(delegate (SignedNcd x)
+            signedNcd.ForEach((SignedNcd x) =>
             {
                 Log.Info(Log.CurrentMethod(), "Saving calculated NCD: " + x.ToString());
                 string btld = x.btld;
@@ -54,7 +48,7 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 
         public override string ToString()
         {
-            object[] obj = new object[5]
+            object[] array = new object[5]
             {
                 status?.ToString(),
                 vin17,
@@ -62,9 +56,9 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
                 vpcResponse,
                 null
             };
-            SignedNcd[] array = signedNcd;
-            obj[4] = ((array != null && array.Any()) ? string.Join("/", signedNcd.Select((SignedNcd r) => r?.ToString())) : string.Empty);
-            return string.Format("Status: {0} - Vin17 :{1} - vpcRequest:{2} - vpcResponse:{3} - SignedNcd:{4}", obj);
+            SignedNcd[] array2 = signedNcd;
+            array[4] = ((array2 != null && array2.Any()) ? string.Join("/", signedNcd.Select((SignedNcd r) => r?.ToString())) : string.Empty);
+            return string.Format("Status: {0} - Vin17 :{1} - vpcRequest:{2} - vpcResponse:{3} - SignedNcd:{4}", array);
         }
 
         internal CalculationStatus CheckCalculationStatus()

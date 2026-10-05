@@ -248,7 +248,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
 
         private void MarkAsFastaRelevant(IEcuJob job, IEnumerable<string> jobNames)
         {
-            jobNames.ForEach(delegate (string fastaRelevantJobName)
+            jobNames.ForEach((string fastaRelevantJobName) =>
             {
                 job.maskResultFASTARelevant(0, -1, fastaRelevantJobName);
             });

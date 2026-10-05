@@ -16,33 +16,19 @@ namespace BMW.Rheingold.Module.ISTA
     internal class MeldungNeuImpl : ServiceDlgImplBase<MeldungNeuModel>
     {
         private ISTAModule callingModule;
-
         private bool p_Quittierung;
-
         private bool p_Quitted;
-
         private ParameterContainer outParameter = new ParameterContainer();
-
         private ITextLocator txtParam;
-
         private bool m_bDisplayed;
-
         private bool p_Protocol = true;
-
         private int p_TIMEOUT = 5000;
-
         private ITextLocator WertFeld;
-
         private ParameterContainer fastaParameter = new ParameterContainer();
-
         private IProtocolBasic fasta;
-
         private string callingMethod;
-
         private IAction<IUiDialog> fastaUiAction;
-
-        public MeldungNeuImpl(ParameterContainer inParam)
-            : base(inParam)
+        public MeldungNeuImpl(ParameterContainer inParam) : base(inParam)
         {
             callingModule = inParam.getParameter("__CallingModule__") as ISTAModule;
         }
@@ -71,6 +57,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Warning("MeldungNeuImpl.InitDialog()", "No FASTA available.");
             }
+
             object parameter = inParam.getParameter("txtParam");
             if (parameter != null)
             {
@@ -80,16 +67,19 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 txtParam = new TextLocator("MessageServiceDlg txtParam was empty.");
             }
+
             parameter = inParam.getParameter("WertFeld");
             if (parameter != null)
             {
                 WertFeld = (ITextLocator)parameter;
             }
+
             parameter = inParam.getParameter("Quittierung");
             if (parameter != null)
             {
                 p_Quittierung = (bool)parameter;
             }
+
             parameter = inParam.getParameter("Display");
             if (parameter != null)
             {
@@ -99,21 +89,25 @@ namespace BMW.Rheingold.Module.ISTA
                     fastaUiAction.SpecialAction.Display = m_bDisplayed;
                 }
             }
+
             parameter = inParam.getParameter("Protocol");
             if (parameter != null)
             {
                 p_Protocol = (bool)parameter;
             }
+
             parameter = inParam.getParameter("TIMEOUT");
             if (parameter != null)
             {
                 p_TIMEOUT = (int)parameter;
             }
-            base.Model.TxtParamFlow = ((TextContent)txtParam.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
+
+            Model.TxtParamFlow = ((TextContent)txtParam.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
             if (WertFeld != null)
             {
-                base.Model.WertFeldFlow = ((TextContent)WertFeld.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
+                Model.WertFeldFlow = ((TextContent)WertFeld.TextContent).GetTextForUI(logic.Lang)[0].TextItem;
             }
+
             List<LocalizedText> list = new List<LocalizedText>();
             if (fastaUiAction != null)
             {
@@ -125,8 +119,10 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     list.AddRangeIfNotContains(new TextContent("n/a").GetTextForUI(logic.Lang));
                 }
+
                 fastaUiAction.SpecialAction.CreateAndAddMessageText(list);
             }
+
             outParameter.setParameter("Quit", p_Quitted);
             outParameter.setParameter("_FASTA", fastaParameter);
         }
@@ -143,6 +139,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     p_Quitted = parentTab.NextButtonPressedWithinLastSecond;
                 }
+
                 string answer = (p_Quitted ? "NEXT button pressed" : "timeout reached");
                 List<LocalizedText> list = new List<LocalizedText>();
                 list.AddRange(logic.Lang.Select((string x) => new LocalizedText(answer, x)));
@@ -162,12 +159,14 @@ namespace BMW.Rheingold.Module.ISTA
                                 logic.VecInfo.AddDiagCode(diagCodeString, null, FindIdentifierInfoObjStarted(), null);
                             }
                         }
+
                         if (!p_Quittierung)
                         {
                             p_Quitted = WaitForContinueButton(-1);
                         }
                     }
                 }
+
                 outParameter.setParameter("Quit", p_Quitted);
                 outParameter.setParameter("_FASTA", fastaParameter);
                 return p_Quitted;
@@ -176,6 +175,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("MeldungNeuImpl.WaitForContinue()", exception);
             }
+
             p_Quitted = false;
             outParameter.setParameter("Quit", p_Quitted);
             outParameter.setParameter("_FASTA", fastaParameter);

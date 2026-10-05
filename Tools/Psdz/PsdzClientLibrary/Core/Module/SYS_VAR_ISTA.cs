@@ -9,15 +9,14 @@ namespace BMW.Rheingold.Module.ISTA
     internal class SYS_VAR_ISTA : ISTAModule
     {
         public string strDlgInfo;
-
         public bool p_WeiterButtonEnabledStack;
-
         public SYS_VAR_ISTA(ParameterContainer InParameter)
         {
             if (InParameter != null)
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
             strDlgInfo = "03.06.2008-SYS_VAR_ISTA";
             p_WeiterButtonEnabledStack = false;
@@ -37,16 +36,18 @@ namespace BMW.Rheingold.Module.ISTA
             Logger.WriteInformation("InitializeDialogcalled");
             Logger.WriteInformation(strDlgInfo);
             ISTA_Systemvariable = new string[20];
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int i = 0; i < ISTA_Systemvariable.Length; i++)
             {
                 ISTA_Systemvariable[i] = "";
             }
-            base._DoLoopHandling = false;
-            if (SOCAccessor.SessionContext.GetProperty("/UserContext/UserData/Country") is string text)
+
+            _DoLoopHandling = false;
+            if (SOCAccessor.SessionContext.GetProperty("/UserContext/UserData/Country")is string text)
             {
                 ISTA_Systemvariable[0] = text;
             }
+
             ISTA_Systemvariable[1] = DateTime.Now.ToString("dd.MM.yyyy");
             ISTA_Systemvariable[2] = DateTime.Now.ToString("HH:mm:ss");
             Logger.WriteInformation("_ExitIndex is: {0}", num);
@@ -56,10 +57,11 @@ namespace BMW.Rheingold.Module.ISTA
         {
             int num = 0;
             Logger.WriteInformation("LandTestercalled");
-            if (SOCAccessor.SessionContext.GetProperty("/UserContext/UserData/Country") is string text)
+            if (SOCAccessor.SessionContext.GetProperty("/UserContext/UserData/Country")is string text)
             {
                 PLandTester = text;
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 

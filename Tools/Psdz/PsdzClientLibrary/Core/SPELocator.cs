@@ -73,7 +73,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public T GetDataValue<T>(string name)
         {
-            return default(T);
+            return default;
         }
     }
 }

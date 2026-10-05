@@ -46,11 +46,11 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [DebuggerNonUserCode]
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [Browsable(false)]
-            public int Count => base.Rows.Count;
+            public int Count => Rows.Count;
 
             [DebuggerNonUserCode]
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public ModuleRow this[int index] => (ModuleRow)base.Rows[index];
+            public ModuleRow this[int index] => (ModuleRow)Rows[index];
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public event ModuleRowChangeEventHandler ModuleRowChanging;
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
@@ -63,7 +63,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public ModuleDataTable()
             {
-                base.TableName = "Module";
+                TableName = "Module";
                 BeginInit();
                 InitClass();
                 EndInit();
@@ -73,24 +73,24 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal ModuleDataTable(DataTable table)
             {
-                base.TableName = table.TableName;
+                TableName = table.TableName;
                 if (table.CaseSensitive != table.DataSet.CaseSensitive)
                 {
-                    base.CaseSensitive = table.CaseSensitive;
+                    CaseSensitive = table.CaseSensitive;
                 }
 
                 if (table.Locale.ToString() != table.DataSet.Locale.ToString())
                 {
-                    base.Locale = table.Locale;
+                    Locale = table.Locale;
                 }
 
                 if (table.Namespace != table.DataSet.Namespace)
                 {
-                    base.Namespace = table.Namespace;
+                    Namespace = table.Namespace;
                 }
 
-                base.Prefix = table.Prefix;
-                base.MinimumCapacity = table.MinimumCapacity;
+                Prefix = table.Prefix;
+                MinimumCapacity = table.MinimumCapacity;
             }
 
             [DebuggerNonUserCode]
@@ -104,7 +104,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void AddModuleRow(ModuleRow row)
             {
-                base.Rows.Add(row);
+                Rows.Add(row);
             }
 
             [DebuggerNonUserCode]
@@ -118,7 +118,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
                     null
                 };
                 moduleRow.ItemArray = itemArray;
-                base.Rows.Add(moduleRow);
+                Rows.Add(moduleRow);
                 return moduleRow;
             }
 
@@ -126,9 +126,9 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public override DataTable Clone()
             {
-                ModuleDataTable obj = (ModuleDataTable)base.Clone();
-                obj.InitVars();
-                return obj;
+                ModuleDataTable moduleDataTable = (ModuleDataTable)base.Clone();
+                moduleDataTable.InitVars();
+                return moduleDataTable;
             }
 
             [DebuggerNonUserCode]
@@ -142,8 +142,8 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal void InitVars()
             {
-                columnname = base.Columns["name"];
-                columnModule_Id = base.Columns["Module_Id"];
+                columnname = Columns["name"];
+                columnModule_Id = Columns["Module_Id"];
             }
 
             [DebuggerNonUserCode]
@@ -151,10 +151,10 @@ namespace BMW.Rheingold.CoreFramework.Localization
             private void InitClass()
             {
                 columnname = new DataColumn("name", typeof(string), null, MappingType.Attribute);
-                base.Columns.Add(columnname);
+                Columns.Add(columnname);
                 columnModule_Id = new DataColumn("Module_Id", typeof(int), null, MappingType.Hidden);
-                base.Columns.Add(columnModule_Id);
-                base.Constraints.Add(new UniqueConstraint("Constraint1", new DataColumn[1] { columnModule_Id }, isPrimaryKey: true));
+                Columns.Add(columnModule_Id);
+                Constraints.Add(new UniqueConstraint("Constraint1", new DataColumn[1] { columnModule_Id }, isPrimaryKey: true));
                 columnname.Namespace = "";
                 columnModule_Id.AutoIncrement = true;
                 columnModule_Id.AllowDBNull = false;
@@ -231,7 +231,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void RemoveModuleRow(ModuleRow row)
             {
-                base.Rows.Remove(row);
+                Rows.Remove(row);
             }
 
             [DebuggerNonUserCode]
@@ -272,9 +272,9 @@ namespace BMW.Rheingold.CoreFramework.Localization
                         IEnumerator enumerator = xs.Schemas(schemaSerializable.TargetNamespace).GetEnumerator();
                         while (enumerator.MoveNext())
                         {
-                            XmlSchema obj = (XmlSchema)enumerator.Current;
+                            XmlSchema xmlSchema = (XmlSchema)enumerator.Current;
                             memoryStream2.SetLength(0L);
-                            obj.Write(memoryStream2);
+                            xmlSchema.Write(memoryStream2);
                             if (memoryStream.Length == memoryStream2.Length)
                             {
                                 memoryStream.Position = 0L;
@@ -329,11 +329,11 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [DebuggerNonUserCode]
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [Browsable(false)]
-            public int Count => base.Rows.Count;
+            public int Count => Rows.Count;
 
             [DebuggerNonUserCode]
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public LanguageRow this[int index] => (LanguageRow)base.Rows[index];
+            public LanguageRow this[int index] => (LanguageRow)Rows[index];
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public event LanguageRowChangeEventHandler LanguageRowChanging;
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
@@ -346,7 +346,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public LanguageDataTable()
             {
-                base.TableName = "Language";
+                TableName = "Language";
                 BeginInit();
                 InitClass();
                 EndInit();
@@ -356,24 +356,24 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal LanguageDataTable(DataTable table)
             {
-                base.TableName = table.TableName;
+                TableName = table.TableName;
                 if (table.CaseSensitive != table.DataSet.CaseSensitive)
                 {
-                    base.CaseSensitive = table.CaseSensitive;
+                    CaseSensitive = table.CaseSensitive;
                 }
 
                 if (table.Locale.ToString() != table.DataSet.Locale.ToString())
                 {
-                    base.Locale = table.Locale;
+                    Locale = table.Locale;
                 }
 
                 if (table.Namespace != table.DataSet.Namespace)
                 {
-                    base.Namespace = table.Namespace;
+                    Namespace = table.Namespace;
                 }
 
-                base.Prefix = table.Prefix;
-                base.MinimumCapacity = table.MinimumCapacity;
+                Prefix = table.Prefix;
+                MinimumCapacity = table.MinimumCapacity;
             }
 
             [DebuggerNonUserCode]
@@ -387,7 +387,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void AddLanguageRow(LanguageRow row)
             {
-                base.Rows.Add(row);
+                Rows.Add(row);
             }
 
             [DebuggerNonUserCode]
@@ -408,7 +408,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
                 }
 
                 languageRow.ItemArray = array;
-                base.Rows.Add(languageRow);
+                Rows.Add(languageRow);
                 return languageRow;
             }
 
@@ -416,9 +416,9 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public override DataTable Clone()
             {
-                LanguageDataTable obj = (LanguageDataTable)base.Clone();
-                obj.InitVars();
-                return obj;
+                LanguageDataTable languageDataTable = (LanguageDataTable)base.Clone();
+                languageDataTable.InitVars();
+                return languageDataTable;
             }
 
             [DebuggerNonUserCode]
@@ -432,10 +432,10 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal void InitVars()
             {
-                columnculture = base.Columns["culture"];
-                columndefCulture = base.Columns["defCulture"];
-                columnLanguage_Id = base.Columns["Language_Id"];
-                columnModule_Id = base.Columns["Module_Id"];
+                columnculture = Columns["culture"];
+                columndefCulture = Columns["defCulture"];
+                columnLanguage_Id = Columns["Language_Id"];
+                columnModule_Id = Columns["Module_Id"];
             }
 
             [DebuggerNonUserCode]
@@ -443,14 +443,14 @@ namespace BMW.Rheingold.CoreFramework.Localization
             private void InitClass()
             {
                 columnculture = new DataColumn("culture", typeof(string), null, MappingType.Attribute);
-                base.Columns.Add(columnculture);
+                Columns.Add(columnculture);
                 columndefCulture = new DataColumn("defCulture", typeof(string), null, MappingType.Attribute);
-                base.Columns.Add(columndefCulture);
+                Columns.Add(columndefCulture);
                 columnLanguage_Id = new DataColumn("Language_Id", typeof(int), null, MappingType.Hidden);
-                base.Columns.Add(columnLanguage_Id);
+                Columns.Add(columnLanguage_Id);
                 columnModule_Id = new DataColumn("Module_Id", typeof(int), null, MappingType.Hidden);
-                base.Columns.Add(columnModule_Id);
-                base.Constraints.Add(new UniqueConstraint("Constraint1", new DataColumn[1] { columnLanguage_Id }, isPrimaryKey: true));
+                Columns.Add(columnModule_Id);
+                Constraints.Add(new UniqueConstraint("Constraint1", new DataColumn[1] { columnLanguage_Id }, isPrimaryKey: true));
                 columnculture.Namespace = "";
                 columndefCulture.Namespace = "";
                 columnLanguage_Id.AutoIncrement = true;
@@ -529,7 +529,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void RemoveLanguageRow(LanguageRow row)
             {
-                base.Rows.Remove(row);
+                Rows.Remove(row);
             }
 
             [DebuggerNonUserCode]
@@ -570,9 +570,9 @@ namespace BMW.Rheingold.CoreFramework.Localization
                         IEnumerator enumerator = xs.Schemas(schemaSerializable.TargetNamespace).GetEnumerator();
                         while (enumerator.MoveNext())
                         {
-                            XmlSchema obj = (XmlSchema)enumerator.Current;
+                            XmlSchema xmlSchema = (XmlSchema)enumerator.Current;
                             memoryStream2.SetLength(0L);
-                            obj.Write(memoryStream2);
+                            xmlSchema.Write(memoryStream2);
                             if (memoryStream.Length == memoryStream2.Length)
                             {
                                 memoryStream.Position = 0L;
@@ -622,11 +622,11 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [DebuggerNonUserCode]
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [Browsable(false)]
-            public int Count => base.Rows.Count;
+            public int Count => Rows.Count;
 
             [DebuggerNonUserCode]
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public TextRow this[int index] => (TextRow)base.Rows[index];
+            public TextRow this[int index] => (TextRow)Rows[index];
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public event TextRowChangeEventHandler TextRowChanging;
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
@@ -639,7 +639,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public TextDataTable()
             {
-                base.TableName = "Text";
+                TableName = "Text";
                 BeginInit();
                 InitClass();
                 EndInit();
@@ -649,24 +649,24 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal TextDataTable(DataTable table)
             {
-                base.TableName = table.TableName;
+                TableName = table.TableName;
                 if (table.CaseSensitive != table.DataSet.CaseSensitive)
                 {
-                    base.CaseSensitive = table.CaseSensitive;
+                    CaseSensitive = table.CaseSensitive;
                 }
 
                 if (table.Locale.ToString() != table.DataSet.Locale.ToString())
                 {
-                    base.Locale = table.Locale;
+                    Locale = table.Locale;
                 }
 
                 if (table.Namespace != table.DataSet.Namespace)
                 {
-                    base.Namespace = table.Namespace;
+                    Namespace = table.Namespace;
                 }
 
-                base.Prefix = table.Prefix;
-                base.MinimumCapacity = table.MinimumCapacity;
+                Prefix = table.Prefix;
+                MinimumCapacity = table.MinimumCapacity;
             }
 
             [DebuggerNonUserCode]
@@ -680,7 +680,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void AddTextRow(TextRow row)
             {
-                base.Rows.Add(row);
+                Rows.Add(row);
             }
 
             [DebuggerNonUserCode]
@@ -700,7 +700,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
                 }
 
                 textRow.ItemArray = array;
-                base.Rows.Add(textRow);
+                Rows.Add(textRow);
                 return textRow;
             }
 
@@ -708,9 +708,9 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public override DataTable Clone()
             {
-                TextDataTable obj = (TextDataTable)base.Clone();
-                obj.InitVars();
-                return obj;
+                TextDataTable textDataTable = (TextDataTable)base.Clone();
+                textDataTable.InitVars();
+                return textDataTable;
             }
 
             [DebuggerNonUserCode]
@@ -724,9 +724,9 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal void InitVars()
             {
-                columnid = base.Columns["id"];
-                columnname = base.Columns["name"];
-                columnLanguage_Id = base.Columns["Language_Id"];
+                columnid = Columns["id"];
+                columnname = Columns["name"];
+                columnLanguage_Id = Columns["Language_Id"];
             }
 
             [DebuggerNonUserCode]
@@ -734,11 +734,11 @@ namespace BMW.Rheingold.CoreFramework.Localization
             private void InitClass()
             {
                 columnid = new DataColumn("id", typeof(string), null, MappingType.Attribute);
-                base.Columns.Add(columnid);
+                Columns.Add(columnid);
                 columnname = new DataColumn("name", typeof(string), null, MappingType.Attribute);
-                base.Columns.Add(columnname);
+                Columns.Add(columnname);
                 columnLanguage_Id = new DataColumn("Language_Id", typeof(int), null, MappingType.Hidden);
-                base.Columns.Add(columnLanguage_Id);
+                Columns.Add(columnLanguage_Id);
                 columnid.Namespace = "";
                 columnname.Namespace = "";
                 columnLanguage_Id.Namespace = "";
@@ -813,7 +813,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void RemoveTextRow(TextRow row)
             {
-                base.Rows.Remove(row);
+                Rows.Remove(row);
             }
 
             [DebuggerNonUserCode]
@@ -854,9 +854,9 @@ namespace BMW.Rheingold.CoreFramework.Localization
                         IEnumerator enumerator = xs.Schemas(schemaSerializable.TargetNamespace).GetEnumerator();
                         while (enumerator.MoveNext())
                         {
-                            XmlSchema obj = (XmlSchema)enumerator.Current;
+                            XmlSchema xmlSchema = (XmlSchema)enumerator.Current;
                             memoryStream2.SetLength(0L);
-                            obj.Write(memoryStream2);
+                            xmlSchema.Write(memoryStream2);
                             if (memoryStream.Length == memoryStream2.Length)
                             {
                                 memoryStream.Position = 0L;
@@ -928,7 +928,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal ModuleRow(DataRowBuilder rb) : base(rb)
             {
-                tableModule = (ModuleDataTable)base.Table;
+                tableModule = (ModuleDataTable)Table;
             }
 
             [DebuggerNonUserCode]
@@ -949,12 +949,12 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public LanguageRow[] GetLanguageRows()
             {
-                if (base.Table.ChildRelations["Module_Language"] == null)
+                if (Table.ChildRelations["Module_Language"] == null)
                 {
                     return new LanguageRow[0];
                 }
 
-                return (LanguageRow[])GetChildRows(base.Table.ChildRelations["Module_Language"]);
+                return (LanguageRow[])GetChildRows(Table.ChildRelations["Module_Language"]);
             }
         }
 
@@ -1048,12 +1048,12 @@ namespace BMW.Rheingold.CoreFramework.Localization
             {
                 get
                 {
-                    return (ModuleRow)GetParentRow(base.Table.ParentRelations["Module_Language"]);
+                    return (ModuleRow)GetParentRow(Table.ParentRelations["Module_Language"]);
                 }
 
                 set
                 {
-                    SetParentRow(value, base.Table.ParentRelations["Module_Language"]);
+                    SetParentRow(value, Table.ParentRelations["Module_Language"]);
                 }
             }
 
@@ -1061,7 +1061,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal LanguageRow(DataRowBuilder rb) : base(rb)
             {
-                tableLanguage = (LanguageDataTable)base.Table;
+                tableLanguage = (LanguageDataTable)Table;
             }
 
             [DebuggerNonUserCode]
@@ -1110,12 +1110,12 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public TextRow[] GetTextRows()
             {
-                if (base.Table.ChildRelations["Language_Text"] == null)
+                if (Table.ChildRelations["Language_Text"] == null)
                 {
                     return new TextRow[0];
                 }
 
-                return (TextRow[])GetChildRows(base.Table.ChildRelations["Language_Text"]);
+                return (TextRow[])GetChildRows(Table.ChildRelations["Language_Text"]);
             }
         }
 
@@ -1194,12 +1194,12 @@ namespace BMW.Rheingold.CoreFramework.Localization
             {
                 get
                 {
-                    return (LanguageRow)GetParentRow(base.Table.ParentRelations["Language_Text"]);
+                    return (LanguageRow)GetParentRow(Table.ParentRelations["Language_Text"]);
                 }
 
                 set
                 {
-                    SetParentRow(value, base.Table.ParentRelations["Language_Text"]);
+                    SetParentRow(value, Table.ParentRelations["Language_Text"]);
                 }
             }
 
@@ -1207,7 +1207,7 @@ namespace BMW.Rheingold.CoreFramework.Localization
             [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             internal TextRow(DataRowBuilder rb) : base(rb)
             {
-                tableText = (TextDataTable)base.Table;
+                tableText = (TextDataTable)Table;
             }
 
             [DebuggerNonUserCode]
@@ -1415,12 +1415,12 @@ namespace BMW.Rheingold.CoreFramework.Localization
                     base.Tables.Add(new TextDataTable(dataSet.Tables["Text"]));
                 }
 
-                base.DataSetName = dataSet.DataSetName;
-                base.Prefix = dataSet.Prefix;
-                base.Namespace = dataSet.Namespace;
-                base.Locale = dataSet.Locale;
-                base.CaseSensitive = dataSet.CaseSensitive;
-                base.EnforceConstraints = dataSet.EnforceConstraints;
+                DataSetName = dataSet.DataSetName;
+                Prefix = dataSet.Prefix;
+                Namespace = dataSet.Namespace;
+                Locale = dataSet.Locale;
+                CaseSensitive = dataSet.CaseSensitive;
+                EnforceConstraints = dataSet.EnforceConstraints;
                 Merge(dataSet, preserveChanges: false, MissingSchemaAction.Add);
                 InitVars();
             }
@@ -1448,10 +1448,10 @@ namespace BMW.Rheingold.CoreFramework.Localization
         [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         public override DataSet Clone()
         {
-            Localization obj = (Localization)base.Clone();
-            obj.InitVars();
-            obj.SchemaSerializationMode = SchemaSerializationMode;
-            return obj;
+            Localization localization = (Localization)base.Clone();
+            localization.InitVars();
+            localization.SchemaSerializationMode = SchemaSerializationMode;
+            return localization;
         }
 
         [DebuggerNonUserCode]
@@ -1492,12 +1492,12 @@ namespace BMW.Rheingold.CoreFramework.Localization
                     base.Tables.Add(new TextDataTable(dataSet.Tables["Text"]));
                 }
 
-                base.DataSetName = dataSet.DataSetName;
-                base.Prefix = dataSet.Prefix;
-                base.Namespace = dataSet.Namespace;
-                base.Locale = dataSet.Locale;
-                base.CaseSensitive = dataSet.CaseSensitive;
-                base.EnforceConstraints = dataSet.EnforceConstraints;
+                DataSetName = dataSet.DataSetName;
+                Prefix = dataSet.Prefix;
+                Namespace = dataSet.Namespace;
+                Locale = dataSet.Locale;
+                CaseSensitive = dataSet.CaseSensitive;
+                EnforceConstraints = dataSet.EnforceConstraints;
                 Merge(dataSet, preserveChanges: false, MissingSchemaAction.Add);
                 InitVars();
             }
@@ -1555,10 +1555,10 @@ namespace BMW.Rheingold.CoreFramework.Localization
         [GeneratedCode("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
         private void InitClass()
         {
-            base.DataSetName = "Localization";
-            base.Prefix = "";
-            base.Locale = new CultureInfo("en-US");
-            base.EnforceConstraints = true;
+            DataSetName = "Localization";
+            Prefix = "";
+            Locale = new CultureInfo("en-US");
+            EnforceConstraints = true;
             SchemaSerializationMode = SchemaSerializationMode.IncludeSchema;
             tableModule = new ModuleDataTable();
             base.Tables.Add(tableModule);
@@ -1637,9 +1637,9 @@ namespace BMW.Rheingold.CoreFramework.Localization
                     IEnumerator enumerator = xs.Schemas(schemaSerializable.TargetNamespace).GetEnumerator();
                     while (enumerator.MoveNext())
                     {
-                        XmlSchema obj = (XmlSchema)enumerator.Current;
+                        XmlSchema xmlSchema = (XmlSchema)enumerator.Current;
                         memoryStream2.SetLength(0L);
-                        obj.Write(memoryStream2);
+                        xmlSchema.Write(memoryStream2);
                         if (memoryStream.Length == memoryStream2.Length)
                         {
                             memoryStream.Position = 0L;

@@ -10,21 +10,17 @@ namespace BMW.Rheingold.Module.ISTA
     internal class Typmerkmale_ausISTA_UX : ISTAModule
     {
         public string strDlgInfo;
-
         public bool bWriteLog;
-
         public int m_maxAnzahlSonderausstattungen;
-
         public string[] Typmerkmale;
-
         public string[] Sonderausstattungen;
-
         public Typmerkmale_ausISTA_UX(ParameterContainer InParameter)
         {
             if (InParameter != null)
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
             strDlgInfo = "14.07.2009-Typmerkmale_ausISTA_UX";
             bWriteLog = true;
@@ -47,20 +43,23 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Logger.WriteInformation(strDlgInfo);
             }
+
             Typmerkmale = new string[20];
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int i = 0; i < Typmerkmale.Length; i++)
             {
                 Typmerkmale[i] = "";
             }
-            base._DoLoopHandling = false;
+
+            _DoLoopHandling = false;
             Sonderausstattungen = new string[m_maxAnzahlSonderausstattungen];
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int j = 0; j < Sonderausstattungen.Length; j++)
             {
                 Sonderausstattungen[j] = "";
             }
-            base._DoLoopHandling = false;
+
+            _DoLoopHandling = false;
             Typmerkmale[0] = __convertToString(SOCAccessor.OrderContext.System.GetProperty("/ExternalData/VehicleIdentification/BaseCharacteristics/VehicleIdentificationNumber"));
             Typmerkmale[1] = __convertToString(SOCAccessor.OrderContext.System.GetProperty("/ExternalData/VehicleIdentification/BaseCharacteristics/Marke/Title"));
             Typmerkmale[2] = __convertToString(SOCAccessor.OrderContext.System.GetProperty("/ExternalData/VehicleIdentification/BaseCharacteristics/Baureihe/Title"));
@@ -82,50 +81,59 @@ namespace BMW.Rheingold.Module.ISTA
             int num4 = 0;
             int num5 = 0;
             text = "/ExternalData/VehicleIdentification/AdditionalData/Sonderausstattungen";
-            if (SOCAccessor.OrderContext.System.GetProperty(text) is List<string> list)
+            if (SOCAccessor.OrderContext.System.GetProperty(text)is List<string> list)
             {
-                base._DoLoopHandling = true;
+                _DoLoopHandling = true;
                 for (int k = 0; k < list.Count; k++)
                 {
                     if (num2 < m_maxAnzahlSonderausstattungen)
                     {
                         Sonderausstattungen[num2] = list[k];
                     }
+
                     num2++;
                     num3++;
                 }
-                base._DoLoopHandling = false;
+
+                _DoLoopHandling = false;
             }
+
             text = "/ExternalData/VehicleIdentification/AdditionalData/E_Worte";
-            if (SOCAccessor.OrderContext.System.GetProperty(text) is List<string> list2)
+            if (SOCAccessor.OrderContext.System.GetProperty(text)is List<string> list2)
             {
-                base._DoLoopHandling = true;
+                _DoLoopHandling = true;
                 for (int l = 0; l < list2.Count; l++)
                 {
                     if (num2 < m_maxAnzahlSonderausstattungen)
                     {
                         Sonderausstattungen[num2] = list2[l];
                     }
+
                     num2++;
                     num4++;
                 }
-                base._DoLoopHandling = false;
+
+                _DoLoopHandling = false;
             }
+
             text = "/ExternalData/VehicleIdentification/AdditionalData/K_Worte";
-            if (SOCAccessor.OrderContext.System.GetProperty(text) is List<string> list3)
+            if (SOCAccessor.OrderContext.System.GetProperty(text)is List<string> list3)
             {
-                base._DoLoopHandling = true;
+                _DoLoopHandling = true;
                 for (int m = 0; m < list3.Count; m++)
                 {
                     if (num2 < m_maxAnzahlSonderausstattungen)
                     {
                         Sonderausstattungen[num2] = list3[m];
                     }
+
                     num2++;
                     num5++;
                 }
-                base._DoLoopHandling = false;
+
+                _DoLoopHandling = false;
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 

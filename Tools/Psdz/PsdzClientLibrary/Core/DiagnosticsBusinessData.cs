@@ -22,7 +22,7 @@ using PsdzClient.Core;
 namespace BMW.Rheingold.DiagnosticsBusinessDataCore
 {
     public delegate object DoECUIdentDelegate(IVehicle vecInfo, ECU mECU, IEcuKom ecuKom, ref bool resetMOSTGWdone, IProgressMonitor monitor, int retry, bool forceReRead, bool tryReanimation, bool IdentForceOnUnidentified = false);
-    public class DiagnosticsBusinessData : DiagnosticsBusinessDataCore, IDiagnosticsBusinessData
+    public class DiagnosticsBusinessData : BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore, IDiagnosticsBusinessData
     {
         internal class EcuKomConfig
         {
@@ -793,7 +793,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
                                     list.Add(16);
                                     list.Add(64);
                                 }
-                                else if (vecInfo.C_DATETIME >= base.DTime2022_07)
+                                else if (vecInfo.C_DATETIME >= DTime2022_07)
                                 {
                                     list.Add(16);
                                 }
@@ -811,7 +811,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
                                     list.Add(16);
                                     list.Add(64);
                                 }
-                                else if (vecInfo.C_DATETIME >= base.DTime2023_03)
+                                else if (vecInfo.C_DATETIME >= DTime2023_03)
                                 {
                                     list.Add(16);
                                 }
@@ -829,7 +829,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
                                     list.Add(16);
                                     list.Add(64);
                                 }
-                                else if (vecInfo.C_DATETIME >= base.DTime2023_07)
+                                else if (vecInfo.C_DATETIME >= DTime2023_07)
                                 {
                                     list.Add(16);
                                 }
@@ -1101,7 +1101,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
 
             if (vehicle.BrandName != BrandName.BMWMOTORRAD)
             {
-                return !base.ProductLinesEpmBlacklist.Contains(vehicle.Produktlinie);
+                return !ProductLinesEpmBlacklist.Contains(vehicle.Produktlinie);
             }
 
             return false;
@@ -1259,7 +1259,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
 
                 if ("E36".Equals(ereihe))
                 {
-                    return c_DateTime < DiagnosticsBusinessDataCore.LciDateE36;
+                    return c_DateTime < BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore.LciDateE36;
                 }
             }
 
@@ -1281,7 +1281,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
             switch (productLine.ToUpper())
             {
                 case "PL6-ALT":
-                    if (fa != null && c_DateTime > DiagnosticsBusinessDataCore.LciDateE60)
+                    if (fa != null && c_DateTime > BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore.LciDateE60)
                     {
                         return true;
                     }
@@ -1334,7 +1334,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
 
         private void MaskResultFASTARelevant(IEcuJob ecuJob, ushort startSet, int stopSet, IList<string> fsLesenExpertResultNames)
         {
-            fsLesenExpertResultNames.ForEach(delegate (string x)
+            fsLesenExpertResultNames.ForEach((string x) =>
             {
                 ecuJob.maskResultFASTARelevant(startSet, stopSet, x);
             });
@@ -1962,7 +1962,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
 
         public string SgbdNext(IEcuKom ecuKom)
         {
-            Dictionary<string, EcuKomSamples> obj = new Dictionary<string, EcuKomSamples>
+            Dictionary<string, EcuKomSamples> dictionary = new Dictionary<string, EcuKomSamples>
             {
                 {
                     "FIELD",
@@ -1978,7 +1978,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
                 }
             };
             List<EcuKomSamples> list = new List<EcuKomSamples>();
-            foreach (KeyValuePair<string, EcuKomSamples> item in obj)
+            foreach (KeyValuePair<string, EcuKomSamples> item in dictionary)
             {
                 list.Add(item.Value);
             }
@@ -2276,7 +2276,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessDataCore
                 }
 
                 array = Array.CreateInstance(type, sizes);
-                T val = default(T);
+                T val = default;
                 if (initValue != null && typeof(T).IsAssignableFrom(initValue.GetType()))
                 {
                     val = (T)initValue;

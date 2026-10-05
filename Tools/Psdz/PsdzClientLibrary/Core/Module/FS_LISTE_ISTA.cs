@@ -67,7 +67,7 @@ namespace BMW.Rheingold.Module.ISTA
             array = new int[m_maxAnzahlFehlerkode];
             array2 = new int[m_maxAnzahlFehlerkode];
             array3 = new int[m_maxAnzahlFehlerkode];
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int i = 0; i < m_maxAnzahlFehlerkode; i++)
             {
                 array[i] = 0;
@@ -75,7 +75,7 @@ namespace BMW.Rheingold.Module.ISTA
                 array3[i] = 0;
             }
 
-            base._DoLoopHandling = false;
+            _DoLoopHandling = false;
             ReadingIstaListeRG(ref Anzahl_Fehlerspeicher, ref Fehlerkode_dez, ref Fehlerkode_hex, ref Fehlerkode_Text, ref Fehlerkode_Ereignis, ref Fehlerkode_SGBD, ref Fehlerart_Symptom_NR, ref Fehlerart_Symptom_Text, ref Fehlerart_Vorhanden_NR, ref Fehlerart_Vorhanden_Text, ref Fehlerart_Ready_NR, ref Fehlerart_Ready_Text, ref Fehlerart_Warnung_NR, ref Fehlerart_Warnung_Text, ref Fehlerart_Erweitert_Anzahl, ref Fehlerart_Erweitert_NR, ref Fehlerart_Erweitert_Text, ref Fehlerkode_HFK, ref Fehlerkode_HLZ, ref array, ref Kilometer_Anfang, ref Kilometer_Ende, ref array2, ref array3, ref Umweltbedingung_Anzahl, ref Umweltbedingung_NR, ref Umweltbedingung_Wert, ref Fehlerklasse);
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
@@ -125,7 +125,7 @@ namespace BMW.Rheingold.Module.ISTA
             Fehlerkode_Ueberlauf = new int[m_maxAnzahlFehlerkode];
             Systemzeit_Anfang = new int[m_maxAnzahlFehlerkode];
             Systemzeit_Ende = new int[m_maxAnzahlFehlerkode];
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int i = 0; i < m_maxAnzahlFehlerkode; i++)
             {
                 Fehlerkode_Text[i] = "";
@@ -152,27 +152,27 @@ namespace BMW.Rheingold.Module.ISTA
                 Systemzeit_Ende[i] = 0;
             }
 
-            base._DoLoopHandling = false;
+            _DoLoopHandling = false;
             Fehlerart_Erweitert_NR = new int[m_maxArrayFehlerarten];
             Fehlerart_Erweitert_Text = new string[m_maxArrayFehlerarten];
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int j = 0; j < m_maxArrayFehlerarten; j++)
             {
                 Fehlerart_Erweitert_NR[j] = 0;
                 Fehlerart_Erweitert_Text[j] = "";
             }
 
-            base._DoLoopHandling = false;
+            _DoLoopHandling = false;
             Umweltbedingung_NR = new int[m_maxArrayUmweltbedingungen];
             Umweltbedingung_Wert = new double[m_maxArrayUmweltbedingungen];
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int k = 0; k < m_maxArrayUmweltbedingungen; k++)
             {
                 Umweltbedingung_NR[k] = 0;
                 Umweltbedingung_Wert[k] = 0.0;
             }
 
-            base._DoLoopHandling = false;
+            _DoLoopHandling = false;
             List<string> list = new List<string>();
             int num2 = 0;
             if (SOCAccessor.OrderContext.System.GetProperty("FAULT_CODES_LIST")is Hashtable hashtable)
@@ -441,14 +441,14 @@ namespace BMW.Rheingold.Module.ISTA
                 Anzahl_Fehlerspeicher = num2;
             }
 
-            base._DoLoopHandling = true;
+            _DoLoopHandling = true;
             for (int l = 0; l < Anzahl_Fehlerspeicher; l++)
             {
                 Fehlerkode_hex[l] = $"{Fehlerkode_dez[l]:X}";
                 Fehlerkode_SGBD[l] = Fehlerkode_SGBD[l].ToUpper();
             }
 
-            base._DoLoopHandling = false;
+            _DoLoopHandling = false;
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 
@@ -607,10 +607,54 @@ namespace BMW.Rheingold.Module.ISTA
                             Umweltbedingung_Anzahl[num] = num2;
                         }
 
-                        Systemzeit_Anfang[num] = (int)((dtc.First != null && dtc.First.F_UW_ZEIT_SUPREME.HasValue) ? ((int)dtc.First.F_UW_ZEIT_SUPREME.Value) : ((dtc.First != null && dtc.First.F_UW_ZEIT.HasValue) ? dtc.First.F_UW_ZEIT.Value : (-1)));
-                        Systemzeit_Ende[num] = (int)((dtc.Current != null && dtc.Current.F_UW_ZEIT_SUPREME.HasValue) ? ((int)dtc.Current.F_UW_ZEIT_SUPREME.Value) : ((dtc.Current != null && dtc.Current.F_UW_ZEIT.HasValue) ? dtc.Current.F_UW_ZEIT.Value : (-1)));
-                        Kilometer_Anfang[num] = (int)((dtc.First != null && dtc.First.F_UW_KM_SUPREME.HasValue) ? ((int)dtc.First.F_UW_KM_SUPREME.Value) : ((dtc.First != null && dtc.First.F_UW_KM.HasValue) ? dtc.First.F_UW_KM.Value : (-1)));
-                        Kilometer_Ende[num] = (int)((dtc.Current != null && dtc.Current.F_UW_KM_SUPREME.HasValue) ? ((int)dtc.Current.F_UW_KM_SUPREME.Value) : ((dtc.Current != null && dtc.Current.F_UW_KM.HasValue) ? dtc.Current.F_UW_KM.Value : Kilometer_Anfang[num]));
+                        ref int reference = ref Systemzeit_Anfang[num];
+                        int num5;
+                        if (dtc.First != null && dtc.First.F_UW_ZEIT_SUPREME.HasValue)
+                        {
+                            num5 = (int)dtc.First.F_UW_ZEIT_SUPREME.Value;
+                        }
+                        else
+                        {
+                            num5 = (int)((dtc.First != null && dtc.First.F_UW_ZEIT.HasValue) ? dtc.First.F_UW_ZEIT.Value : (-1));
+                        }
+
+                        reference = num5;
+                        ref int reference2 = ref Systemzeit_Ende[num];
+                        int num6;
+                        if (dtc.Current != null && dtc.Current.F_UW_ZEIT_SUPREME.HasValue)
+                        {
+                            num6 = (int)dtc.Current.F_UW_ZEIT_SUPREME.Value;
+                        }
+                        else
+                        {
+                            num6 = (int)((dtc.Current != null && dtc.Current.F_UW_ZEIT.HasValue) ? dtc.Current.F_UW_ZEIT.Value : (-1));
+                        }
+
+                        reference2 = num6;
+                        ref int reference3 = ref Kilometer_Anfang[num];
+                        int num7;
+                        if (dtc.First != null && dtc.First.F_UW_KM_SUPREME.HasValue)
+                        {
+                            num7 = (int)dtc.First.F_UW_KM_SUPREME.Value;
+                        }
+                        else
+                        {
+                            num7 = (int)((dtc.First != null && dtc.First.F_UW_KM.HasValue) ? dtc.First.F_UW_KM.Value : (-1));
+                        }
+
+                        reference3 = num7;
+                        ref int reference4 = ref Kilometer_Ende[num];
+                        int num8;
+                        if (dtc.Current != null && dtc.Current.F_UW_KM_SUPREME.HasValue)
+                        {
+                            num8 = (int)dtc.Current.F_UW_KM_SUPREME.Value;
+                        }
+                        else
+                        {
+                            num8 = (int)((dtc.Current != null && dtc.Current.F_UW_KM.HasValue) ? dtc.Current.F_UW_KM.Value : Kilometer_Anfang[num]);
+                        }
+
+                        reference4 = num8;
                         Fehlerkode_Ueberlauf[num] = 0;
                         Anzahl_Fehlerspeicher++;
                         num++;

@@ -188,10 +188,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer
         {
             if (contract.businessLine == BusinessLine.Service)
             {
-                bool num = contract.startDate < DateTime.Now;
-                bool flag = !contract.endServiceDateSpecified || contract.endServiceDate > DateTime.Now;
-                bool flag2 = !contract.endContractDateSpecified || contract.endContractDate > DateTime.Now;
-                return num & flag & flag2;
+                bool flag = contract.startDate < DateTime.Now;
+                bool flag2 = !contract.endServiceDateSpecified || contract.endServiceDate > DateTime.Now;
+                bool flag3 = !contract.endContractDateSpecified || contract.endContractDate > DateTime.Now;
+                return flag & flag2 & flag3;
             }
 
             return false;

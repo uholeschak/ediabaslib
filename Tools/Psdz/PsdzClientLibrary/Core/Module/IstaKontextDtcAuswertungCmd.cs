@@ -8,28 +8,28 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class IstaKontextDtcAuswertungCmd : ServiceDialogCmdBase
     {
-        public IstaKontextDtcAuswertungCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo)
-            : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
+        public IstaKontextDtcAuswertungCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo) : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
         {
         }
 
         public override void CreateDialog(ParameterContainer inParam, ParameterContainer inoutParam)
         {
             Log.Info("IstaKontextDtcAuswertungCmd.CreateDialog()", "ISTA_Kontext_DTC_Auswertung init started.");
-            base.Display = false;
+            Display = false;
         }
 
         public override void DoInvoke(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
-            if (base.CallingModule == null)
+            if (CallingModule == null)
             {
                 Log.Error("IstaKontextDtcAuswertungCmd.Invoke()", "Failed to invoke method {0}, because calling module is null.", method);
                 return;
             }
-            ModuleParameter value = base.CallingModule.__RheinGoldCoreModuleParameters__.Clone();
+
+            ModuleParameter value = CallingModule.__RheinGoldCoreModuleParameters__.Clone();
             inParam.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
-            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", base.CallingModule.GlobalTabModuleISTA);
-            inParam.Parameter.Add("__RheinGoldSOCAccessor__", base.CallingModule.SOCAccessor);
+            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", CallingModule.GlobalTabModuleISTA);
+            inParam.Parameter.Add("__RheinGoldSOCAccessor__", CallingModule.SOCAccessor);
             if ("DTC_Bereich".Equals(method))
             {
                 string f_ORT_NR_HEX_MIN = inParam.getParameter("F_ORT_NR_HEX_MIN", "-1") as string;
@@ -74,6 +74,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     throw new ServiceDialogMethodUnsupportedException();
                 }
+
                 string kode = inParam.getParameter("Kode", null) as string;
                 bool Kode_Eingetragen = false;
                 new ISTA_Kontext_DTC_Auswertung(inParam).Sammelfehler_Einzeln(kode, ref Kode_Eingetragen);

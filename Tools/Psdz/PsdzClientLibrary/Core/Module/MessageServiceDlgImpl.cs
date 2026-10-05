@@ -113,10 +113,10 @@ namespace BMW.Rheingold.Module.ISTA
 
             if (Display)
             {
-                base.Model.Text = text[0].TextItem;
+                Model.Text = text[0].TextItem;
                 if (value != null)
                 {
-                    base.Model.Value = value[0].TextItem;
+                    Model.Value = value[0].TextItem;
                 }
 
                 return HandleGui(Quittierung);
@@ -140,31 +140,31 @@ namespace BMW.Rheingold.Module.ISTA
 
         private bool HandleGui(bool Quittierung)
         {
-            if (!base.Model.IsDialogShown)
+            if (!Model.IsDialogShown)
             {
-                NavigateTo(base.Model);
-                base.Model.IsDialogShown = true;
+                NavigateTo(Model);
+                Model.IsDialogShown = true;
                 parentTab.ResetNextButtonLatency();
             }
 
             SetNextButtonEnabled(value: true);
-            bool num = WaitForContinueButton(Quittierung ? (-1) : p_TIMEOUT);
-            if (num)
+            bool flag = WaitForContinueButton(Quittierung ? (-1) : p_TIMEOUT);
+            if (flag)
             {
                 SetNextButtonEnabled(value: false);
             }
 
-            return num;
+            return flag;
         }
 
         private void HideDialog()
         {
             Log.Info("MessageServiceDlgImpl.HideDialog()", "called");
-            if (base.Model.IsDialogShown)
+            if (Model.IsDialogShown)
             {
-                base.Model.Text = null;
-                base.Model.Value = null;
-                base.Model.IsDialogShown = false;
+                Model.Text = null;
+                Model.Value = null;
+                Model.IsDialogShown = false;
             }
 
             parentTab.ResetNextButtonLatency();

@@ -73,10 +73,10 @@ namespace BMW.Rheingold.Programming.API
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IVehicleProfile Build(IPsdzFp fp)
         {
-            VehicleProfile obj = (VehicleProfile)Build((IPsdzStandardFp)fp);
-            obj.Baureihenverbund = fp.Baureihenverbund;
-            obj.Entwicklungsbaureihe = fp.Entwicklungsbaureihe;
-            return obj;
+            VehicleProfile vehicleProfile = (VehicleProfile)Build((IPsdzStandardFp)fp);
+            vehicleProfile.Baureihenverbund = fp.Baureihenverbund;
+            vehicleProfile.Entwicklungsbaureihe = fp.Entwicklungsbaureihe;
+            return vehicleProfile;
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]

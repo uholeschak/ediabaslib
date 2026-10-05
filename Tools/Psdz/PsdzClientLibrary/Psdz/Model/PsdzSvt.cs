@@ -17,10 +17,11 @@ namespace BMW.Rheingold.Psdz.Model
 
         public override bool Equals(object obj)
         {
-            if (obj is PsdzSvt psdzSvt && base.Equals((object)psdzSvt) && IsValid.Equals(psdzSvt.IsValid))
+            if (obj is PsdzSvt psdzSvt && base.Equals(psdzSvt) && IsValid.Equals(psdzSvt.IsValid))
             {
                 return string.Equals(Vin, psdzSvt.Vin);
             }
+
             return false;
         }
 

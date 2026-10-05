@@ -15,39 +15,28 @@ namespace BMW.Rheingold.Module.ISTA
     internal class Dialog_BalkenhorizontalBase : ServiceDlgImplBase<BalkenHorizontalDlgModel>
     {
         private const string NEWROW = "<br/>";
-
         private const string SEP = ";";
-
         private const string FirstMinMaxLastPlaceholder = "{MinFirstLastMax}";
-
         private bool isProtocoled;
-
         private int barCount;
-
-        private double?[] firstValues;
-
+        private double? [] firstValues;
         private double[] lastValues;
-
         private double[] smallestValues;
-
         private double[] largestValues;
-
         private Queue<string>[] savedValues;
-
         protected DateTime startTime;
-
-        public Dialog_BalkenhorizontalBase(ParameterContainer InParameter, int barCount)
-            : base(InParameter)
+        public Dialog_BalkenhorizontalBase(ParameterContainer InParameter, int barCount) : base(InParameter)
         {
             isProtocoled = false;
             this.barCount = barCount;
             savedValues = new Queue<string>[barCount];
             for (int i = 0; i < barCount; i++)
             {
-                base.Model.Balken.Add(new BalkenHorizontalControlModel());
+                Model.Balken.Add(new BalkenHorizontalControlModel());
                 savedValues[i] = new Queue<string>();
             }
-            firstValues = new double?[barCount];
+
+            firstValues = new double? [barCount];
             lastValues = new double[barCount];
             smallestValues = new double[barCount];
             largestValues = new double[barCount];
@@ -64,22 +53,25 @@ namespace BMW.Rheingold.Module.ISTA
                 ResetLastTimeNextButtonPressed();
                 return;
             }
+
             if ($"AnzeigeAus_Formular_{barCount}BalkenH".Equals(method))
             {
                 AnzeigeAus_Formular_BalkenH(outParam);
-                if (base.ServiceDialogUI != null)
+                if (ServiceDialogUI != null)
                 {
-                    base.ServiceDialogUI.IsDialogShown = false;
+                    ServiceDialogUI.IsDialogShown = false;
                 }
+
                 return;
             }
+
             throw new ServiceDialogMethodUnsupportedException(method);
         }
 
         protected void AnzeigeEin_Formular_BalkenH(ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
             Logger.WriteInformation($"AnzeigeEin_Formular_{barCount}BalkenH" + " called");
-            base.Model.SetValues(logic.Lang, inParam, outParam, inoutParam);
+            Model.SetValues(logic.Lang, inParam, outParam, inoutParam);
             SetNextButtonEnabled(value: true);
             Logger.WriteInformation("_ExitIndex is: {0}", 0);
         }
@@ -88,13 +80,14 @@ namespace BMW.Rheingold.Module.ISTA
         {
             for (int i = 0; i < barCount; i++)
             {
-                double barValue = base.Model.Balken[i].BarValue;
+                double barValue = Model.Balken[i].BarValue;
                 inoutParam.setParameter($"i_Balkenwert{i + 1}", barValue);
-                savedValues[i].Enqueue(FormatBarValue(barValue, base.Model.Balken[i].BarValueFormat));
+                savedValues[i].Enqueue(FormatBarValue(barValue, Model.Balken[i].BarValueFormat));
                 if (savedValues[i].Count > 100)
                 {
                     savedValues[i].Dequeue();
                 }
+
                 firstValues[i] = (firstValues[i].HasValue ? firstValues[i].Value : barValue);
                 lastValues[i] = barValue;
                 smallestValues[i] = ((smallestValues[i] < barValue) ? smallestValues[i] : barValue);
@@ -110,6 +103,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 WriteFasta($"AnzeigeAus_Formular_{barCount}BalkenH", outParam);
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", 0);
         }
 
@@ -130,18 +124,19 @@ namespace BMW.Rheingold.Module.ISTA
         private string ConstructFastaMessage()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(base.Model.TxtObereTextbox);
+            stringBuilder.Append(Model.TxtObereTextbox);
             stringBuilder.Append("<br/>");
             for (int i = 0; i < barCount; i++)
             {
-                if (!string.IsNullOrWhiteSpace(base.Model.Balken[i].TxtOverBalkenTextbox))
+                if (!string.IsNullOrWhiteSpace(Model.Balken[i].TxtOverBalkenTextbox))
                 {
-                    stringBuilder.Append(base.Model.Balken[i].TxtOverBalkenTextbox);
+                    stringBuilder.Append(Model.Balken[i].TxtOverBalkenTextbox);
                     stringBuilder.Append("<br/>");
                 }
+
                 stringBuilder.Append("{MinFirstLastMax}");
                 stringBuilder.Append("<br/>");
-                string barValueFormat = base.Model.Balken[i].BarValueFormat;
+                string barValueFormat = Model.Balken[i].BarValueFormat;
                 string text = FormatBarValue(firstValues[i].HasValue ? firstValues[i].Value : 0.0, barValueFormat) ?? "";
                 stringBuilder.Append(string.IsNullOrWhiteSpace(text) ? "-" : text);
                 stringBuilder.Append(";");
@@ -159,7 +154,8 @@ namespace BMW.Rheingold.Module.ISTA
                 stringBuilder.Append("<br/>");
                 stringBuilder.Append("<br/>");
             }
-            stringBuilder.Append(base.Model.TxtUntereTextbox);
+
+            stringBuilder.Append(Model.TxtUntereTextbox);
             return stringBuilder.ToString();
         }
 
@@ -169,6 +165,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return string.Format("{0:" + format + "}", barValue);
             }
+
             return barValue.ToString();
         }
     }

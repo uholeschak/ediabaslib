@@ -1,4 +1,4 @@
-using BMW.Rheingold.Psdz.Client;
+﻿using BMW.Rheingold.Psdz.Client;
 using PsdzClient.Core;
 using System;
 using System.Collections.Concurrent;
@@ -275,11 +275,11 @@ namespace RheingoldPsdzWebApi.Adapter
         internal Process CreateMonitoredProcess(string javaExePath, string arguments)
         {
             Process process = CreateBaseProcess(javaExePath, arguments);
-            process.OutputDataReceived += delegate (object s, DataReceivedEventArgs a)
+            process.OutputDataReceived += (object s, DataReceivedEventArgs a) =>
             {
                 HandleProcessStartupLine(a.Data, DataType.Output);
             };
-            process.ErrorDataReceived += delegate (object s, DataReceivedEventArgs a)
+            process.ErrorDataReceived += (object s, DataReceivedEventArgs a) =>
             {
                 HandleProcessStartupLine(a.Data, DataType.Error);
             };

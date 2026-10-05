@@ -11,27 +11,19 @@ namespace BMW.Rheingold.Module.ISTA
     internal class HealthIndicatorProtocoller
     {
         private readonly IList<string> m_Languages;
-
         private readonly Dictionary<string, StringBuilder> m_FastaMessagePerLanguage = new Dictionary<string, StringBuilder>();
-
         private List<LocalizedText> m_ProtocolLocalized = new List<LocalizedText>();
-
         private List<IEnumerable<BarProtocolData>> m_BarProtocolData = new List<IEnumerable<BarProtocolData>>();
-
         private string m_PriorText = string.Empty;
-
         private string m_PastText = string.Empty;
-
         public Dictionary<string, StringBuilder> FastaMessagePerLanguage => m_FastaMessagePerLanguage;
-
         public IList<LocalizedText> ProtocolLocalized => m_ProtocolLocalized;
-
         public bool HasData => m_BarProtocolData.Any();
 
         public HealthIndicatorProtocoller(IList<string> languages)
         {
             m_Languages = languages;
-            m_Languages.ForEach(delegate (string x)
+            m_Languages.ForEach((string x) =>
             {
                 m_FastaMessagePerLanguage.Add(x, new StringBuilder());
             });
@@ -50,12 +42,14 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return;
             }
+
             foreach (KeyValuePair<string, StringBuilder> item in m_FastaMessagePerLanguage)
             {
                 ProtocolHeader(item.Value);
                 ProtocolAllValues(item.Value);
                 ProtocolFooter(item.Value);
             }
+
             TextContent textContent = new TextContent(m_FastaMessagePerLanguage.Select((KeyValuePair<string, StringBuilder> x) => new LocalizedText(x.Value.ToString(), x.Key)).ToList());
             m_ProtocolLocalized = textContent.GetTextForUI(m_Languages).ToList();
         }
@@ -66,6 +60,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return;
             }
+
             fastaMessage.Append("<spe:TEXTITEM xmlns:spe=\"http://bmw.com/2014/Spe_Text_2.0\">");
             if (!string.IsNullOrEmpty(m_PriorText))
             {
@@ -73,6 +68,7 @@ namespace BMW.Rheingold.Module.ISTA
                 fastaMessage.Append(m_PriorText);
                 fastaMessage.Append("</spe:PARAGRAPH>");
             }
+
             IEnumerable<BarProtocolData> enumerable = m_BarProtocolData.First();
             fastaMessage.Append("<spe:TABLE><spe:TGROUP><spe:THEAD><spe:HEADROW><spe:HEADENTRY>");
             fastaMessage.Append("Zeit");
@@ -81,6 +77,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 ProtocolHeaderEntry(item, fastaMessage);
             }
+
             fastaMessage.Append("</spe:HEADROW></spe:THEAD><spe:TBODY>");
         }
 
@@ -109,6 +106,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 ProtocolValue(barDatum.BarValue, fastaMessage);
             }
+
             fastaMessage.Append("</spe:ROW>");
         }
 
@@ -128,6 +126,7 @@ namespace BMW.Rheingold.Module.ISTA
                 fastaMessage.Append(m_PastText);
                 fastaMessage.Append("</spe:PARAGRAPH>");
             }
+
             fastaMessage.Append("</spe:TEXTITEM>");
         }
     }

@@ -13,6 +13,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
         }
 
@@ -38,15 +39,17 @@ namespace BMW.Rheingold.Module.ISTA
                 ParameterContainer parameterContainer = new ParameterContainer();
                 ParameterContainer parameterContainer2 = new ParameterContainer();
                 ParameterContainer parameterContainer3 = new ParameterContainer();
-                base.Factory.CreateServiceDialog(this, "SA_Einzeln", "69973561867", _globalTabModuleISTA, 2499, parameterContainer, parameterContainer3).Invoke("SA_Liste", parameterContainer, parameterContainer2, parameterContainer3);
+                Factory.CreateServiceDialog(this, "SA_Einzeln", "69973561867", _globalTabModuleISTA, 2499, parameterContainer, parameterContainer3).Invoke("SA_Liste", parameterContainer, parameterContainer2, parameterContainer3);
                 if (parameterContainer2.getParameter("SAs") != null)
                 {
                     list = (List<string>)parameterContainer2.getParameter("SAs");
                 }
+
                 if (parameterContainer2.getParameter("SA_Anzahl") != null)
                 {
                     _ = (int)parameterContainer2.getParameter("SA_Anzahl");
                 }
+
                 if (list.Contains(SA.ToUpper()))
                 {
                     SA_Vorhanden = true;
@@ -56,6 +59,7 @@ namespace BMW.Rheingold.Module.ISTA
                     SA_Vorhanden = false;
                 }
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
 
@@ -77,15 +81,17 @@ namespace BMW.Rheingold.Module.ISTA
                 ParameterContainer parameterContainer = new ParameterContainer();
                 ParameterContainer parameterContainer2 = new ParameterContainer();
                 ParameterContainer parameterContainer3 = new ParameterContainer();
-                base.Factory.CreateServiceDialog(this, "SA_Liste", "69973561867", _globalTabModuleISTA, 3052, parameterContainer, parameterContainer3).Invoke("SA_Liste", parameterContainer, parameterContainer2, parameterContainer3);
+                Factory.CreateServiceDialog(this, "SA_Liste", "69973561867", _globalTabModuleISTA, 3052, parameterContainer, parameterContainer3).Invoke("SA_Liste", parameterContainer, parameterContainer2, parameterContainer3);
                 if (parameterContainer2.getParameter("SAs") != null)
                 {
                     list = (List<string>)parameterContainer2.getParameter("SAs");
                 }
+
                 if (parameterContainer2.getParameter("SA_Anzahl") != null)
                 {
                     _ = (int)parameterContainer2.getParameter("SA_Anzahl");
                 }
+
                 int num2 = 0;
                 int num3 = 0;
                 List<string> list2 = new List<string>();
@@ -95,16 +101,18 @@ namespace BMW.Rheingold.Module.ISTA
                 list3.Clear();
                 while (num2 < SA_LISTE.Count)
                 {
-                    base._DoLoopHandling = true;
+                    _DoLoopHandling = true;
                     if (list.Contains(SA_LISTE[num2].ToUpper()))
                     {
                         num3++;
                         list2.Add(SA_LISTE[num2].ToUpper());
                         list3.Add(SA_LISTE[num2].ToUpper());
                     }
+
                     num2++;
-                    base._DoLoopHandling = false;
+                    _DoLoopHandling = false;
                 }
+
                 list2.Sort();
                 if (num3 == 0)
                 {
@@ -124,19 +132,22 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         SA_Vorhanden_Alle = true;
                     }
+
                     SA_Vorhanden_Anzahl = num3;
                     text += "<spe:TEXTITEM  xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:LIST>";
-                    base._DoLoopHandling = true;
+                    _DoLoopHandling = true;
                     for (int i = 0; i < list2.Count; i++)
                     {
                         text = text + "<spe:LISTENTRY>" + list3[i] + "</spe:LISTENTRY>";
                     }
-                    base._DoLoopHandling = false;
+
+                    _DoLoopHandling = false;
                     text += "</spe:LIST></spe:TEXTITEM>";
                     SA_Vorhanden_String = text;
                     SA_Vorhanden_Liste = list2;
                 }
             }
+
             Logger.WriteInformation("_ExitIndex is: {0}", num);
         }
     }

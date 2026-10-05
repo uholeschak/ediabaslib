@@ -11,26 +11,22 @@ namespace BMW.Rheingold.Module.ISTA
     internal class Dialog_Zuendungstatus : ISTAServiceDialog
     {
         public IServiceDialog __MessageServiceDlg;
-
         public bool EcuErrorMessage;
-
         public short ZwischenstandZuendung;
-
         public short Klemme15Spg;
-
         public ITextLocator ZuendungText;
-
         public Dialog_Zuendungstatus(ParameterContainer InParameter)
         {
             if (InParameter != null)
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
             EcuErrorMessage = false;
             ZwischenstandZuendung = 0;
             Klemme15Spg = 0;
-            __MessageServiceDlg = base.Factory.CreateServiceDialog(this, "global", "51915403", _globalTabModuleISTA, 2642, InParameter, new ParameterContainer());
+            __MessageServiceDlg = Factory.CreateServiceDialog(this, "global", "51915403", _globalTabModuleISTA, 2642, InParameter, new ParameterContainer());
         }
 
         public virtual void Prepare()
@@ -63,7 +59,7 @@ namespace BMW.Rheingold.Module.ISTA
             parameterContainer.setParameter("/WurzelIn/DSCConfig", configurationContainer);
             parameterContainer.setParameter("/WurzelIn/StateLists/Result[0]/Path", "/Result/Rows/Row[0]/SPANNUNG_V");
             parameterContainer.setParameter("/WurzelIn/StateLists/Result[0]/Unit", "");
-            base.Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 70, parameterContainer, parameterContainer3).Invoke("InitializeDialog", parameterContainer, parameterContainer2, parameterContainer3);
+            Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 70, parameterContainer, parameterContainer3).Invoke("InitializeDialog", parameterContainer, parameterContainer2, parameterContainer3);
             diagnosticDeviceResult = (IDiagnosticDeviceResult)parameterContainer2.getParameter("/WurzelOut/DSCResult");
             int num2 = 0;
             object iSTAResultAsType = diagnosticDeviceResult.getISTAResultAsType("/Result/Rows/$Count", typeof(int));
@@ -71,6 +67,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 num2 = (int)iSTAResultAsType;
             }
+
             if (num2 > 0)
             {
                 object iSTAResultAsType2 = diagnosticDeviceResult.getISTAResultAsType("/Result/Rows/Row[0]/SPANNUNG_V", typeof(short));
@@ -79,6 +76,7 @@ namespace BMW.Rheingold.Module.ISTA
                     Klemme15Spg = (short)iSTAResultAsType2;
                 }
             }
+
             ZwischenstandZuendung = Klemme15Spg;
             int num3 = 0;
             int num4 = 0;
@@ -88,7 +86,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     while (Klemme15Spg < 8000)
                     {
-                        base._DoLoopHandling = true;
+                        _DoLoopHandling = true;
                         __MessagePopup(i_ZuendungEinText.TextContent);
                         Sleep(500);
                         ConfigurationContainer configurationContainer2 = null;
@@ -105,7 +103,7 @@ namespace BMW.Rheingold.Module.ISTA
                         parameterContainer4.setParameter("/WurzelIn/DSCConfig", configurationContainer2);
                         parameterContainer4.setParameter("/WurzelIn/StateLists/Result[0]/Path", "/Result/Rows/Row[0]/SPANNUNG_V");
                         parameterContainer4.setParameter("/WurzelIn/StateLists/Result[0]/Unit", "");
-                        base.Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 43412, parameterContainer4, parameterContainer6).Invoke("InitializeDialog", parameterContainer4, parameterContainer5, parameterContainer6);
+                        Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 43412, parameterContainer4, parameterContainer6).Invoke("InitializeDialog", parameterContainer4, parameterContainer5, parameterContainer6);
                         diagnosticDeviceResult2 = (IDiagnosticDeviceResult)parameterContainer5.getParameter("/WurzelOut/DSCResult");
                         int num5 = 0;
                         object iSTAResultAsType3 = diagnosticDeviceResult2.getISTAResultAsType("/Result/Rows/$Count", typeof(int));
@@ -113,6 +111,7 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             num5 = (int)iSTAResultAsType3;
                         }
+
                         if (num5 > 0)
                         {
                             object iSTAResultAsType4 = diagnosticDeviceResult2.getISTAResultAsType("/Result/Rows/Row[0]/SPANNUNG_V", typeof(short));
@@ -121,11 +120,13 @@ namespace BMW.Rheingold.Module.ISTA
                                 Klemme15Spg = (short)iSTAResultAsType4;
                             }
                         }
+
                         if (Vehicle.VCI.VCIType == VCIDeviceType.SIM)
                         {
                             Klemme15Spg = 12000;
                         }
-                        base._DoLoopHandling = false;
+
+                        _DoLoopHandling = false;
                     }
                 }
                 else
@@ -137,12 +138,13 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 do
                 {
-                    base._DoLoopHandling = true;
+                    _DoLoopHandling = true;
                     num3++;
                     if (num3 < 2)
                     {
                         DocumentHandler(DocumentStatementAction.Add, __Document("61055504139"), 3);
                     }
+
                     if (num4 == 0)
                     {
                         ConfigurationContainer configurationContainer3 = null;
@@ -161,7 +163,7 @@ namespace BMW.Rheingold.Module.ISTA
                         parameterContainer7.setParameter("/WurzelIn/StateLists/Result[0]/Unit", "");
                         parameterContainer7.setParameter("/WurzelIn/StateLists/Result[1]/Path", "/Result/Rows/Row[0]/FAHRZEUGAUFTRAG");
                         parameterContainer7.setParameter("/WurzelIn/StateLists/Result[1]/Unit", "");
-                        base.Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 43679, parameterContainer7, parameterContainer9).Invoke("InitializeDialog", parameterContainer7, parameterContainer8, parameterContainer9);
+                        Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 43679, parameterContainer7, parameterContainer9).Invoke("InitializeDialog", parameterContainer7, parameterContainer8, parameterContainer9);
                         diagnosticDeviceResult3 = (IDiagnosticDeviceResult)parameterContainer8.getParameter("/WurzelOut/DSCResult");
                         int num6 = 0;
                         object iSTAResultAsType5 = diagnosticDeviceResult3.getISTAResultAsType("/Result/Rows/$Count", typeof(int));
@@ -169,11 +171,13 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             num6 = (int)iSTAResultAsType5;
                         }
+
                         object iSTAResultAsType6 = diagnosticDeviceResult3.getISTAResultAsType("/Result/Status/JOB_STATUS", typeof(string));
                         if (iSTAResultAsType6 != null)
                         {
                             _ = (string)iSTAResultAsType6;
                         }
+
                         if (num6 > 0)
                         {
                             object iSTAResultAsType7 = diagnosticDeviceResult3.getISTAResultAsType("/Result/Rows/Row[0]/FAHRZEUGAUFTRAG", typeof(string));
@@ -182,6 +186,7 @@ namespace BMW.Rheingold.Module.ISTA
                                 _ = (string)iSTAResultAsType7;
                             }
                         }
+
                         num4 = 1;
                     }
                     else
@@ -202,7 +207,7 @@ namespace BMW.Rheingold.Module.ISTA
                         parameterContainer10.setParameter("/WurzelIn/StateLists/Result[0]/Unit", "");
                         parameterContainer10.setParameter("/WurzelIn/StateLists/Result[1]/Path", "/Result/Rows/Row[0]/FGNUMMER");
                         parameterContainer10.setParameter("/WurzelIn/StateLists/Result[1]/Unit", "");
-                        base.Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 43693, parameterContainer10, parameterContainer12).Invoke("InitializeDialog", parameterContainer10, parameterContainer11, parameterContainer12);
+                        Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 43693, parameterContainer10, parameterContainer12).Invoke("InitializeDialog", parameterContainer10, parameterContainer11, parameterContainer12);
                         diagnosticDeviceResult4 = (IDiagnosticDeviceResult)parameterContainer11.getParameter("/WurzelOut/DSCResult");
                         int num7 = 0;
                         object iSTAResultAsType8 = diagnosticDeviceResult4.getISTAResultAsType("/Result/Rows/$Count", typeof(int));
@@ -210,11 +215,13 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             num7 = (int)iSTAResultAsType8;
                         }
+
                         object iSTAResultAsType9 = diagnosticDeviceResult4.getISTAResultAsType("/Result/Status/JOB_STATUS", typeof(string));
                         if (iSTAResultAsType9 != null)
                         {
                             _ = (string)iSTAResultAsType9;
                         }
+
                         if (num7 > 0)
                         {
                             object iSTAResultAsType10 = diagnosticDeviceResult4.getISTAResultAsType("/Result/Rows/Row[0]/FGNUMMER", typeof(string));
@@ -223,8 +230,10 @@ namespace BMW.Rheingold.Module.ISTA
                                 _ = (string)iSTAResultAsType10;
                             }
                         }
+
                         num4 = 0;
                     }
+
                     ParameterContainer parameterContainer13 = new ParameterContainer();
                     ParameterContainer outParam = new ParameterContainer();
                     ParameterContainer inoutParam = new ParameterContainer();
@@ -249,7 +258,7 @@ namespace BMW.Rheingold.Module.ISTA
                     parameterContainer14.setParameter("/WurzelIn/DSCConfig", configurationContainer5);
                     parameterContainer14.setParameter("/WurzelIn/StateLists/Result[0]/Path", "/Result/Rows/Row[0]/SPANNUNG_V");
                     parameterContainer14.setParameter("/WurzelIn/StateLists/Result[0]/Unit", "");
-                    base.Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 43380, parameterContainer14, parameterContainer16).Invoke("InitializeDialog", parameterContainer14, parameterContainer15, parameterContainer16);
+                    Factory.CreateServiceDialog(this, "ZuendungEin", "51939083", _globalTabModuleISTA, 43380, parameterContainer14, parameterContainer16).Invoke("InitializeDialog", parameterContainer14, parameterContainer15, parameterContainer16);
                     diagnosticDeviceResult5 = (IDiagnosticDeviceResult)parameterContainer15.getParameter("/WurzelOut/DSCResult");
                     int num8 = 0;
                     object iSTAResultAsType11 = diagnosticDeviceResult5.getISTAResultAsType("/Result/Rows/$Count", typeof(int));
@@ -257,6 +266,7 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         num8 = (int)iSTAResultAsType11;
                     }
+
                     if (num8 > 0)
                     {
                         object iSTAResultAsType12 = diagnosticDeviceResult5.getISTAResultAsType("/Result/Rows/Row[0]/SPANNUNG_V", typeof(short));
@@ -265,11 +275,13 @@ namespace BMW.Rheingold.Module.ISTA
                             Klemme15Spg = (short)iSTAResultAsType12;
                         }
                     }
+
                     if (Vehicle.VCI.VCIType == VCIDeviceType.SIM)
                     {
                         Klemme15Spg = 12000;
                     }
-                    base._DoLoopHandling = false;
+
+                    _DoLoopHandling = false;
                 }
                 while (Klemme15Spg < 8000);
             }
@@ -285,6 +297,7 @@ namespace BMW.Rheingold.Module.ISTA
                 parameterContainer17.setParameter("Protocol", true);
                 __MessageServiceDlg.Invoke("InitializeDialog", parameterContainer17, outParam2, inoutParam2);
             }
+
             i_KL15spg = Klemme15Spg;
             Logger.WriteInformation("_ExitIndex is: {0}", num);
             Reset();
@@ -310,7 +323,7 @@ namespace BMW.Rheingold.Module.ISTA
             parameterContainer.setParameter("/WurzelIn/DSCConfig", configurationContainer);
             parameterContainer.setParameter("/WurzelIn/StateLists/Result[0]/Path", "/Result/Rows/Row[0]/SPANNUNG_V");
             parameterContainer.setParameter("/WurzelIn/StateLists/Result[0]/Unit", "");
-            base.Factory.CreateServiceDialog(this, "ZuendungAus", "51939083", _globalTabModuleISTA, 43570, parameterContainer, parameterContainer3).Invoke("InitializeDialog", parameterContainer, parameterContainer2, parameterContainer3);
+            Factory.CreateServiceDialog(this, "ZuendungAus", "51939083", _globalTabModuleISTA, 43570, parameterContainer, parameterContainer3).Invoke("InitializeDialog", parameterContainer, parameterContainer2, parameterContainer3);
             diagnosticDeviceResult = (IDiagnosticDeviceResult)parameterContainer2.getParameter("/WurzelOut/DSCResult");
             int num2 = 0;
             object iSTAResultAsType = diagnosticDeviceResult.getISTAResultAsType("/Result/Rows/$Count", typeof(int));
@@ -318,6 +331,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 num2 = (int)iSTAResultAsType;
             }
+
             if (num2 > 0)
             {
                 object iSTAResultAsType2 = diagnosticDeviceResult.getISTAResultAsType("/Result/Rows/Row[0]/SPANNUNG_V", typeof(short));
@@ -325,11 +339,13 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     Klemme15Spg = (short)iSTAResultAsType2;
                 }
+
                 if (Vehicle.VCI.VCIType == VCIDeviceType.SIM)
                 {
                     Klemme15Spg = 0;
                 }
             }
+
             ZwischenstandZuendung = Klemme15Spg;
             int num3 = 0;
             if (i_PopUp)
@@ -338,7 +354,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     while (Klemme15Spg >= 8000)
                     {
-                        base._DoLoopHandling = true;
+                        _DoLoopHandling = true;
                         __MessagePopup(i_ZuendungAusText.TextContent);
                         Sleep(500);
                         ConfigurationContainer configurationContainer2 = null;
@@ -355,7 +371,7 @@ namespace BMW.Rheingold.Module.ISTA
                         parameterContainer4.setParameter("/WurzelIn/DSCConfig", configurationContainer2);
                         parameterContainer4.setParameter("/WurzelIn/StateLists/Result[0]/Path", "/Result/Rows/Row[0]/SPANNUNG_V");
                         parameterContainer4.setParameter("/WurzelIn/StateLists/Result[0]/Unit", "");
-                        base.Factory.CreateServiceDialog(this, "ZuendungAus", "51939083", _globalTabModuleISTA, 43588, parameterContainer4, parameterContainer6).Invoke("InitializeDialog", parameterContainer4, parameterContainer5, parameterContainer6);
+                        Factory.CreateServiceDialog(this, "ZuendungAus", "51939083", _globalTabModuleISTA, 43588, parameterContainer4, parameterContainer6).Invoke("InitializeDialog", parameterContainer4, parameterContainer5, parameterContainer6);
                         diagnosticDeviceResult2 = (IDiagnosticDeviceResult)parameterContainer5.getParameter("/WurzelOut/DSCResult");
                         int num4 = 0;
                         object iSTAResultAsType3 = diagnosticDeviceResult2.getISTAResultAsType("/Result/Rows/$Count", typeof(int));
@@ -363,6 +379,7 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             num4 = (int)iSTAResultAsType3;
                         }
+
                         if (num4 > 0)
                         {
                             object iSTAResultAsType4 = diagnosticDeviceResult2.getISTAResultAsType("/Result/Rows/Row[0]/SPANNUNG_V", typeof(short));
@@ -371,11 +388,13 @@ namespace BMW.Rheingold.Module.ISTA
                                 Klemme15Spg = (short)iSTAResultAsType4;
                             }
                         }
+
                         if (Vehicle.VCI.VCIType == VCIDeviceType.SIM)
                         {
                             Klemme15Spg = 0;
                         }
-                        base._DoLoopHandling = false;
+
+                        _DoLoopHandling = false;
                     }
                 }
                 else
@@ -387,12 +406,13 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 do
                 {
-                    base._DoLoopHandling = true;
+                    _DoLoopHandling = true;
                     num3++;
                     if (num3 < 2)
                     {
                         DocumentHandler(DocumentStatementAction.Add, __Document("61057296779"), 3);
                     }
+
                     ParameterContainer parameterContainer7 = new ParameterContainer();
                     ParameterContainer outParam = new ParameterContainer();
                     ParameterContainer inoutParam = new ParameterContainer();
@@ -417,7 +437,7 @@ namespace BMW.Rheingold.Module.ISTA
                     parameterContainer8.setParameter("/WurzelIn/DSCConfig", configurationContainer3);
                     parameterContainer8.setParameter("/WurzelIn/StateLists/Result[0]/Path", "/Result/Rows/Row[0]/SPANNUNG_V");
                     parameterContainer8.setParameter("/WurzelIn/StateLists/Result[0]/Unit", "");
-                    base.Factory.CreateServiceDialog(this, "ZuendungAus", "51939083", _globalTabModuleISTA, 43605, parameterContainer8, parameterContainer10).Invoke("InitializeDialog", parameterContainer8, parameterContainer9, parameterContainer10);
+                    Factory.CreateServiceDialog(this, "ZuendungAus", "51939083", _globalTabModuleISTA, 43605, parameterContainer8, parameterContainer10).Invoke("InitializeDialog", parameterContainer8, parameterContainer9, parameterContainer10);
                     diagnosticDeviceResult3 = (IDiagnosticDeviceResult)parameterContainer9.getParameter("/WurzelOut/DSCResult");
                     int num5 = 0;
                     object iSTAResultAsType5 = diagnosticDeviceResult3.getISTAResultAsType("/Result/Rows/$Count", typeof(int));
@@ -425,6 +445,7 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         num5 = (int)iSTAResultAsType5;
                     }
+
                     if (num5 > 0)
                     {
                         object iSTAResultAsType6 = diagnosticDeviceResult3.getISTAResultAsType("/Result/Rows/Row[0]/SPANNUNG_V", typeof(short));
@@ -433,11 +454,13 @@ namespace BMW.Rheingold.Module.ISTA
                             Klemme15Spg = (short)iSTAResultAsType6;
                         }
                     }
+
                     if (Vehicle.VCI.VCIType == VCIDeviceType.SIM)
                     {
                         Klemme15Spg = 0;
                     }
-                    base._DoLoopHandling = false;
+
+                    _DoLoopHandling = false;
                 }
                 while (Klemme15Spg >= 8000);
             }
@@ -453,6 +476,7 @@ namespace BMW.Rheingold.Module.ISTA
                 parameterContainer11.setParameter("Protocol", true);
                 __MessageServiceDlg.Invoke("InitializeDialog", parameterContainer11, outParam2, inoutParam2);
             }
+
             i_KL15spg = Klemme15Spg;
             Logger.WriteInformation("_ExitIndex is: {0}", num);
             Reset();

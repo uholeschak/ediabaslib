@@ -3,20 +3,21 @@ using System.Collections.Generic;
 
 namespace BMW.Authoring.API
 {
-    public class RandomForestObjectCreator<T> where T : IRandomForest, new()
+    public class RandomForestObjectCreator<T>
+        where T : IRandomForest, new()
     {
         private readonly Dictionary<string, T> randomForestDictionary;
-
         public T this[string name]
         {
             get
             {
-                T value = default(T);
+                T value = default;
                 if (!randomForestDictionary.TryGetValue(name, out value))
                 {
                     value = new T();
                     randomForestDictionary[name] = value;
                 }
+
                 return value;
             }
         }

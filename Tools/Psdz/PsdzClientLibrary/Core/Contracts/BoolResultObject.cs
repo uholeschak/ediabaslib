@@ -86,7 +86,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts
 
         public BoolResultObject(bool result)
         {
-            base.Result = result;
+            Result = result;
         }
 
         public BoolResultObject(IBoolResultObject tempBoolResult)
@@ -102,12 +102,12 @@ namespace BMW.Rheingold.CoreFramework.Contracts
 
         public void CopyBoolObjectResultValues(IBoolResultObject boolResultObject)
         {
-            base.ErrorCode = boolResultObject.ErrorCode;
-            base.ErrorMessage = boolResultObject.ErrorMessage;
-            base.Result = boolResultObject.Result;
-            base.Context = boolResultObject.Context;
-            base.Time = boolResultObject.Time;
-            base.StatusCode = boolResultObject.StatusCode;
+            ErrorCode = boolResultObject.ErrorCode;
+            ErrorMessage = boolResultObject.ErrorMessage;
+            Result = boolResultObject.Result;
+            Context = boolResultObject.Context;
+            Time = boolResultObject.Time;
+            StatusCode = boolResultObject.StatusCode;
         }
     }
 }

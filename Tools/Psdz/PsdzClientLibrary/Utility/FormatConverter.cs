@@ -304,8 +304,8 @@ namespace PsdzClient.Utility
 
             if (resultValue is byte[])
             {
-                byte[] obj = (byte[])resultValue;
-                return ByteArray2String(obj, (uint)obj.Length);
+                byte[] array = (byte[])resultValue;
+                return ByteArray2String(array, (uint)array.Length);
             }
 
             return resultValue.ToString();

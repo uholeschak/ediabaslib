@@ -40,7 +40,7 @@ namespace BMW.Rheingold.VehicleCommunication
         }
 
         [XmlIgnore]
-        public virtual int NrForJobResultSets => base.JobResultSets;
+        public virtual int NrForJobResultSets => JobResultSets;
 
         public ECUJob()
         {
@@ -55,17 +55,17 @@ namespace BMW.Rheingold.VehicleCommunication
 
         public bool IsDone()
         {
-            if (base.JobErrorCode != 0)
+            if (JobErrorCode != 0)
             {
                 return false;
             }
 
-            if (base.JobResult == null)
+            if (JobResult == null)
             {
                 return false;
             }
 
-            if (base.JobResult.Count > 0)
+            if (JobResult.Count > 0)
             {
                 return true;
             }
@@ -80,9 +80,9 @@ namespace BMW.Rheingold.VehicleCommunication
                 throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
             }
 
-            if (base.JobResult != null)
+            if (JobResult != null)
             {
-                IEcuResult ecuResult = base.JobResult.FirstOrDefault((IEcuResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
+                IEcuResult ecuResult = JobResult.FirstOrDefault((IEcuResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
                 if (ecuResult != null)
                 {
                     return ecuResult.FASTARelevant;
@@ -194,19 +194,19 @@ namespace BMW.Rheingold.VehicleCommunication
             try
             {
                 StringBuilder stringBuilder = new StringBuilder();
-                if (string.IsNullOrEmpty(base.EcuName))
+                if (string.IsNullOrEmpty(EcuName))
                 {
                     return null;
                 }
 
-                if (string.IsNullOrEmpty(base.JobName))
+                if (string.IsNullOrEmpty(JobName))
                 {
                     return null;
                 }
 
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult)
+                    foreach (IEcuResult item in JobResult)
                     {
                         string arg = string.Empty;
                         if (item.Format != 7)
@@ -241,7 +241,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     byte[] resultsAs = getResultsAs<byte[]>(resultName, null, set);
                     if (resultsAs != null)
@@ -273,7 +273,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     byte[] resultsAs = getResultsAs<byte[]>(resultName);
                     if (resultsAs == null)
@@ -306,9 +306,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 1)
                         {
@@ -340,9 +340,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 1)
                         {
@@ -373,9 +373,9 @@ namespace BMW.Rheingold.VehicleCommunication
                 {
                     if (resultName == "/Result/Rows/$Count")
                     {
-                        if (base.JobResultSets > 0)
+                        if (JobResultSets > 0)
                         {
-                            return base.JobResultSets;
+                            return JobResultSets;
                         }
 
                         return 0;
@@ -446,7 +446,7 @@ namespace BMW.Rheingold.VehicleCommunication
                     if (iSTAResult == null)
                     {
                         Log.Error("ECUJob.getISTAResultAs(string resultName)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
-                        return default(T);
+                        return default;
                     }
 
                     Log.Info("ECUJob.getISTAResultAs(string resultName)", "obj type is {0} targetType is: {1}", iSTAResult.GetType().ToString(), typeFromHandle.ToString());
@@ -487,14 +487,14 @@ namespace BMW.Rheingold.VehicleCommunication
                     return (T)iSTAResult;
                 }
 
-                return default(T);
+                return default;
             }
             catch (Exception exception2)
             {
                 Log.WarningException("ECUJob.getISTAResultAs(string resultName)", exception2);
             }
 
-            return default(T);
+            return default;
         }
 
         public object getISTAResultAsType(string resultName, Type targetType)
@@ -505,9 +505,9 @@ namespace BMW.Rheingold.VehicleCommunication
                 {
                     if (resultName == "/Result/Rows/$Count")
                     {
-                        if (base.JobResultSets > 0)
+                        if (JobResultSets > 0)
                         {
-                            return base.JobResultSets;
+                            return JobResultSets;
                         }
 
                         return 0;
@@ -638,9 +638,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    IEcuResult ecuResult = base.JobResult.FirstOrDefault((IEcuResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
+                    IEcuResult ecuResult = JobResult.FirstOrDefault((IEcuResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
                     if (ecuResult != null)
                     {
                         return ecuResult.Value;
@@ -670,9 +670,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    IEcuResult ecuResult = (getLast ? base.JobResult.LastOrDefault((IEcuResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)) : base.JobResult.FirstOrDefault((IEcuResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)));
+                    IEcuResult ecuResult = (getLast ? JobResult.LastOrDefault((IEcuResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)) : JobResult.FirstOrDefault((IEcuResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)));
                     if (ecuResult != null)
                     {
                         return ecuResult.Value;
@@ -763,7 +763,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
         public T getResultsAs<T>(string resultName, T defaultRes = default(T), int set = -1)
         {
-            if (base.JobResult == null || base.JobResult.Count == 0)
+            if (JobResult == null || JobResult.Count == 0)
             {
                 return defaultRes;
             }
@@ -793,11 +793,11 @@ namespace BMW.Rheingold.VehicleCommunication
                 List<int> list = new List<int>();
                 if (flag)
                 {
-                    list.Add(base.JobResultSets);
+                    list.Add(JobResultSets);
                 }
 
                 Regex regex = new Regex("^" + resultName.Replace("[].", "[(\\d+)]\\.").Replace("[", "\\[").Replace("]", "\\]") + "$", RegexOptions.IgnoreCase);
-                foreach (IEcuResult item in base.JobResult)
+                foreach (IEcuResult item in JobResult)
                 {
                     Match match = regex.Match(item.Name);
                     if (!match.Success)
@@ -1065,10 +1065,10 @@ namespace BMW.Rheingold.VehicleCommunication
                     }
                     else
                     {
-                        base.JobResult.Max((IEcuResult res) => res.Set);
+                        JobResult.Max((IEcuResult res) => res.Set);
                     }
 
-                    IEcuResult ecuResult = base.JobResult.FirstOrDefault((IEcuResult x) => string.Equals(x.Name, resultName, StringComparison.InvariantCultureIgnoreCase) && (!isSetRelevant || x.Set == set));
+                    IEcuResult ecuResult = JobResult.FirstOrDefault((IEcuResult x) => string.Equals(x.Name, resultName, StringComparison.InvariantCultureIgnoreCase) && (!isSetRelevant || x.Set == set));
                     if (ecuResult == null)
                     {
                         return defaultRes;
@@ -1109,7 +1109,7 @@ namespace BMW.Rheingold.VehicleCommunication
                     if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
                     {
                         string currentlyRunningModuleName = TimeMetricsUtility.Instance.GetCurrentlyRunningModuleName();
-                        string value = "Source: " + currentlyRunningModuleName + ", ecu: " + base.EcuName + ", job: " + base.JobName + ", args: " + base.JobParam + ", result name: " + resultName + ", requested type: " + requestedType + ", actual type: " + actualType + ". Error: " + ex.Message;
+                        string value = "Source: " + currentlyRunningModuleName + ", ecu: " + EcuName + ", job: " + JobName + ", args: " + JobParam + ", result name: " + resultName + ", requested type: " + requestedType + ", actual type: " + actualType + ". Error: " + ex.Message;
                         //[-]if (!IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
                         {
                             service.AddServiceCode(ServiceCodes.ANA09_ResultSetFailed_nu_LF, value, LayoutGroup.D, allowMultipleEntries: true);
@@ -1194,9 +1194,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    using (IEnumerator<IEcuResult> enumerator = base.JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)).GetEnumerator())
+                    using (IEnumerator<IEcuResult> enumerator = JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)).GetEnumerator())
                     {
                         if (enumerator.MoveNext())
                         {
@@ -1229,7 +1229,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs(resultName, 0);
                 }
@@ -1254,9 +1254,9 @@ namespace BMW.Rheingold.VehicleCommunication
             IList<IEcuResult> list = new List<IEcuResult>();
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => result.Set == set))
+                    foreach (IEcuResult item in JobResult.Where((IEcuResult result) => result.Set == set))
                     {
                         list.Add(item);
                     }
@@ -1315,9 +1315,9 @@ namespace BMW.Rheingold.VehicleCommunication
             List<string> list = new List<string>();
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult)
+                    foreach (IEcuResult item in JobResult)
                     {
                         if (item.Set < startSet || item.Set > stopSet)
                         {
@@ -1375,7 +1375,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     string resultsAs = getResultsAs<string>(resultName, null, set);
                     if (resultsAs == null)
@@ -1405,7 +1405,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     string resultsAs = getResultsAs<string>(resultName);
                     if (resultsAs == null)
@@ -1435,9 +1435,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 0)
                         {
@@ -1469,9 +1469,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 0)
                         {
@@ -1503,7 +1503,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<double?>(resultName, null, set);
                 }
@@ -1527,9 +1527,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 8)
                         {
@@ -1567,7 +1567,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<long?>(resultName, null, set);
                 }
@@ -1597,7 +1597,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<long?>(resultName);
                 }
@@ -1627,7 +1627,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<int?>(resultName, null, set);
                 }
@@ -1657,7 +1657,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<int?>(resultName);
                 }
@@ -1681,7 +1681,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<short?>(resultName, null, set);
                 }
@@ -1705,7 +1705,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<short?>(resultName);
                 }
@@ -1735,7 +1735,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<uint?>(resultName, null, set);
                 }
@@ -1765,9 +1765,9 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 3)
                         {
@@ -1826,7 +1826,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<ushort?>(resultName, null, set);
                 }
@@ -1856,7 +1856,7 @@ namespace BMW.Rheingold.VehicleCommunication
 
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
                     return getResultsAs<ushort?>(resultName);
                 }
@@ -2024,9 +2024,9 @@ namespace BMW.Rheingold.VehicleCommunication
             List<object> list = new List<object>();
             try
             {
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         list.Add(item.Value);
                     }
@@ -2054,9 +2054,9 @@ namespace BMW.Rheingold.VehicleCommunication
             try
             {
                 FASTARelevant = defRelevant;
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    foreach (IEcuResult item in base.JobResult)
+                    foreach (IEcuResult item in JobResult)
                     {
                         item.FASTARelevant = defRelevant;
                     }
@@ -2084,11 +2084,11 @@ namespace BMW.Rheingold.VehicleCommunication
                 FASTARelevant = true;
                 ushort num = startSet;
                 Regex regex = new Regex("^" + resultName.Replace("[].", "[(\\d+)]\\.").Replace("[", "\\[").Replace("]", "\\]") + "$");
-                if (base.JobResult != null)
+                if (JobResult != null)
                 {
-                    num = ((stopSet < 0) ? ((ushort)(base.JobResultSets + stopSet + 1)) : ((ushort)stopSet));
+                    num = ((stopSet < 0) ? ((ushort)(JobResultSets + stopSet + 1)) : ((ushort)stopSet));
                     {
-                        foreach (IEcuResult item in base.JobResult)
+                        foreach (IEcuResult item in JobResult)
                         {
                             if (item.FASTARelevant || item.Set < startSet || item.Set > num)
                             {

@@ -40,12 +40,12 @@ namespace BMW.Rheingold.CoreFramework.Localization
         {
             get
             {
-                return base.translateValues;
+                return translateValues;
             }
 
             set
             {
-                base.translateValues = value;
+                translateValues = value;
             }
         }
 
@@ -143,8 +143,8 @@ namespace BMW.Rheingold.CoreFramework.Localization
             }
             catch (Exception ex)
             {
-                string text = ((!string.IsNullOrEmpty(base.fmtStrId)) ? ("<" + base.fmtStrId + ">") : "No message defined");
-                Log.Error("FormatedData.BuildLocalizedMessage()", "Failed to localize \"{0}\", returning \"{1}\". Reason: {2}", base.fmtStrId, text, ex);
+                string text = ((!string.IsNullOrEmpty(fmtStrId)) ? ("<" + fmtStrId + ">") : "No message defined");
+                Log.Error("FormatedData.BuildLocalizedMessage()", "Failed to localize \"{0}\", returning \"{1}\". Reason: {2}", fmtStrId, text, ex);
                 return text;
             }
         }

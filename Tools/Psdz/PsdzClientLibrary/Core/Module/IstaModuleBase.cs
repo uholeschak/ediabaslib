@@ -43,7 +43,7 @@ namespace BMW.Rheingold.CoreFramework
         public List<IDiagnosticObjectLocator> SuspiciuosItems = new List<IDiagnosticObjectLocator>();
         public List<IDiagnosticObjectLocator> OkItems = new List<IDiagnosticObjectLocator>();
         public List<IDiagnosticObjectLocator> NotOkItems = new List<IDiagnosticObjectLocator>();
-        public abstract ILogger Logger { get; }
+        public abstract BMW.Rheingold.ISTA.CoreFramework.ILogger Logger { get; }
         public abstract IProtocolBasic FastaProtocoler { get; }
         public abstract IEcuKomStatement EcuKomStatement { get; }
         public abstract IEcuKom ecuKom { get; }
@@ -58,7 +58,6 @@ namespace BMW.Rheingold.CoreFramework
         [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
         public virtual PsdzDatabase DBProvider { get; set; }
         protected ITextContentManager textContentManager { get; set; }
-
         protected IXepInfoObject Me { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -705,7 +704,7 @@ namespace BMW.Rheingold.CoreFramework
             try
             {
                 array = Array.CreateInstance(typeof(T), sizes);
-                T val = default(T);
+                T val = default;
                 if (initValue != null && typeof(T).IsAssignableFrom(initValue.GetType()))
                 {
                     val = (T)initValue;
@@ -752,7 +751,7 @@ namespace BMW.Rheingold.CoreFramework
                 list = new List<T>();
                 if (size > 0)
                 {
-                    T item = default(T);
+                    T item = default;
                     if (initValue != null && typeof(T).IsAssignableFrom(initValue.GetType()))
                     {
                         item = (T)initValue;
@@ -842,6 +841,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning("ISTAModule.__DiagnosticObject()", "result was null; maybe your testmodule will die");
                 return null;
             }
+
             return diagnosticObjectLocator;
         }
 
@@ -875,12 +875,14 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return null;
             }
+
             IList<XEP_DIAGNOSISOBJECTSEX> list = FindDiagParents(infoObjStarted);
             if (list.Count == 0)
             {
                 Log.Error("ISTAModule.SelectDiagParent()", "No parent diag object found for info object [{0}/{1}]. Returning null.", infoObjStarted.XepInfoObject.Identifikator, infoObjStarted.XepInfoObject.Id);
                 return null;
             }
+
             XEP_DIAGNOSISOBJECTSEX xEP_DIAGNOSISOBJECTSEX;
             if (list.Count == 1)
             {
@@ -900,6 +902,7 @@ namespace BMW.Rheingold.CoreFramework
                             list3.Add(item.Id);
                         }
                     }
+
                     foreach (XEP_DIAGNOSISOBJECTSEX item2 in list)
                     {
                         if (item2 != null && list3.Contains(item2.Id))
@@ -908,6 +911,7 @@ namespace BMW.Rheingold.CoreFramework
                         }
                     }
                 }
+
                 if (!list2.Any())
                 {
                     foreach (XEP_DIAGNOSISOBJECTSEX item3 in list)
@@ -915,8 +919,10 @@ namespace BMW.Rheingold.CoreFramework
                         list2.Add(item3);
                     }
                 }
+
                 xEP_DIAGNOSISOBJECTSEX = ((list2.Count != 1) ? SelectDiagParentByAskingUser(list2, callingMethod) : list2.First());
             }
+
             infoObjStarted.ParentDiagnosisObject = xEP_DIAGNOSISOBJECTSEX;
             return xEP_DIAGNOSISOBJECTSEX;
         }
@@ -965,6 +971,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning("ISTAModule.__FaultCode()", "no fault code found for reference: {0}", refCode);
                 return null;
             }
+
             return new FaultCodeLocator(faultCode, Vehicle, FFMResolver);
         }
 
@@ -976,6 +983,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning("ISTAModule.__VirtualFaultCode()", "no virtual fault code found for reference: {0}", refCode);
                 return null;
             }
+
             return new VirtualFaultCodeLocator(virtualFaultCode, Vehicle, GetRootModule());
         }
 
@@ -1141,7 +1149,6 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning(Log.CurrentMethod(), "Document is null");
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
             }
-
             else
             {
                 foreach (InfoObject infoObject in infoObjects)
@@ -1164,6 +1171,7 @@ namespace BMW.Rheingold.CoreFramework
                     }
                 }
             }
+
             if (list.Any())
             {
                 ShowMessage(FormatedData.Localize("#Note"), FormatedData.Localize("#DocumentViewer.NotFound"));
@@ -1269,6 +1277,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return new EquipmentLocator(equipmentByName);
             }
+
             return null;
         }
 
@@ -1350,6 +1359,7 @@ namespace BMW.Rheingold.CoreFramework
                     faultCodeById.VehicleContext = Vehicle;
                     return new FaultCodeLocator(faultCodeById, Vehicle, FFMResolver);
                 }
+
                 Log.Warning("ISTAModule.FaultCodeNode()", "Can not find fault code node for id: {0}", id);
                 return null;
             }
@@ -1435,6 +1445,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return new EcuGroupLocator(ecuGroupById, Vehicle, FFMResolver);
             }
+
             return null;
         }
 
@@ -1449,6 +1460,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return new EcuVariantLocator(ecuVariantByName, Vehicle, FFMResolver);
             }
+
             return null;
         }
 
@@ -1462,6 +1474,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return new EcuVariantLocator(ecuVariantById, Vehicle, FFMResolver);
             }
+
             return null;
         }
 
@@ -1482,6 +1495,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return new EcuProgrammingVariantLocator(ecuProgrammingVariantById, Vehicle, FFMResolver);
             }
+
             return null;
         }
 

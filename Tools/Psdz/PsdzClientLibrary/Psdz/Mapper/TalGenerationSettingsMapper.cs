@@ -8,7 +8,7 @@ namespace BMW.Rheingold.Psdz
         {
             if (talGenerationSettingsModel == null)
             {
-                return default(TalGenerationSettings);
+                return default;
             }
 
             return new TalGenerationSettings

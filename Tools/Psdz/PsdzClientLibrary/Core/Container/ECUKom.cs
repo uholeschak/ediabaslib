@@ -76,10 +76,10 @@ namespace BMW.Rheingold.VehicleCommunication
             //[+] api = CreateApi(ediabas);
             api = CreateApi(ediabas);
             communicationMode = CommMode.Normal;
-            base.jobList = new List<ECUJob>();
-            base.APP = app;
-            base.FromFastaConfig = false;
-            base.CacheHitCounter = 0;
+            jobList = new List<ECUJob>();
+            APP = app;
+            FromFastaConfig = false;
+            CacheHitCounter = 0;
             base.lang = lang;
             ServiceLocator.Current.TryGetService<IInteractionService>(out interactionService);
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
@@ -130,7 +130,7 @@ namespace BMW.Rheingold.VehicleCommunication
         {
             try
             {
-                if (base.VCIDeviceType != VCIDeviceType.PTT)
+                if (VCIDeviceType != VCIDeviceType.PTT)
                 {
                     api.apiSetConfig("EDIABASUnload", "1");
                 }
@@ -166,7 +166,7 @@ namespace BMW.Rheingold.VehicleCommunication
             bool result = false;
             try
             {
-                result = InitVCI(base.VCI, isDoIP).Result;
+                result = InitVCI(VCI, isDoIP).Result;
             }
             catch (Exception exception)
             {
@@ -274,7 +274,7 @@ namespace BMW.Rheingold.VehicleCommunication
             {
                 XmlTextReader xmlTextReader = new XmlTextReader(filename);
                 eCUKomBase = (ECUKomBase)new XmlSerializer(typeof(ECUKom)).Deserialize(xmlTextReader);
-                eCUKomBase.jobList.ForEach(delegate (ECUJob job)
+                eCUKomBase.jobList.ForEach((ECUJob job) =>
                 {
                     if (job?.JobResultsForSerialization != null)
                     {
@@ -373,7 +373,7 @@ namespace BMW.Rheingold.VehicleCommunication
             {
                 XmlTextWriter xmlTextWriter = new XmlTextWriter(filename, encType);
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(ECUKom));
-                ecuKom.JobList.ForEach(delegate (IEcuJob job)
+                ecuKom.JobList.ForEach((IEcuJob job) =>
                 {
                     if (job?.JobResult != null)
                     {
@@ -469,7 +469,7 @@ namespace BMW.Rheingold.VehicleCommunication
                         }
                         else
                         {
-                            Task.Run(delegate
+                            Task.Run(() =>
                             {
                                 TestSubCACall(device);
                                 if (!isTestCertReqCallExecuted && IsActiveLBPFeatureSwitchForCallCertreqProfiles(ics))
@@ -482,7 +482,7 @@ namespace BMW.Rheingold.VehicleCommunication
                     }
                     else if (ConfigSettings.IsOssModeActive)
                     {
-                        Task.Run(delegate
+                        Task.Run(() =>
                         {
                             TestSubCACall(device);
                         });
@@ -1235,13 +1235,13 @@ namespace BMW.Rheingold.VehicleCommunication
             bool flag2 = api.apiErrorCode() == num;
             if (!isRetry && (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase) | flag2))
             {
-                bool flag3 = CheckAuthentificationState(base.VCI);
+                bool flag3 = CheckAuthentificationState(VCI);
                 if (!flag3)
                 {
                     Log.Info(method, "ERROR_ECU_ZDF_REJECT where sent by the ZDF");
                     item = true;
                     End();
-                    flag = InitializeDevice(base.VCI, logging: true, isDoIP: true, slpDoIpFromIcom: true);
+                    flag = InitializeDevice(VCI, logging: true, isDoIP: true, slpDoIpFromIcom: true);
                     SetEcuPath(logging: true);
                     Log.Info(method, "Ediabas is reinitialized with status {0}", flag);
                 }
@@ -1357,14 +1357,14 @@ namespace BMW.Rheingold.VehicleCommunication
                 return null;
             }
 
-            string cfgValue = (base.IsProblemHandlingTraceRunning ? "5" : "0");
+            string cfgValue = (IsProblemHandlingTraceRunning ? "5" : "0");
             Log.Info(method, "Before ApiInitExt");
             string reserved = $"RemoteHost={icomAddress};DiagnosticPort={51560};ControlPort={51561};PortDoIP={51562};";
-            bool num = ApiInitExt("ENET", "_", "Rheingold", reserved);
+            bool flag = ApiInitExt("ENET", "_", "Rheingold", reserved);
             api.apiSetConfig("ApiTrace", cfgValue);
             api.apiSetConfig("TracePath", Path.GetFullPath(istaLogPath));
             Log.Info(method, "After ApiInitExt");
-            if (!num)
+            if (!flag)
             {
                 Log.Warning("EdiabasUtils.ExecuteJobOverEnet()", "Failed switching to ENET. The Job will not be executed. The EDIABAS connection will be refreshed.");
                 Log.Info(method, "Before invalid refresh");

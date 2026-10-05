@@ -7,35 +7,35 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class FsListeIstaFortCmd : ServiceDialogCmdBase
     {
-        public FsListeIstaFortCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo)
-            : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
+        public FsListeIstaFortCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo) : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
         {
         }
 
         public override void CreateDialog(ParameterContainer inParam, ParameterContainer inoutParam)
         {
             Log.Info("FsListeIstaFortCmd.CreateDialog()", "FS_LISTE_ISTA_FORT init started.");
-            base.Display = false;
+            Display = false;
         }
 
         public override void DoInvoke(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
-            if (base.CallingModule == null)
+            if (CallingModule == null)
             {
                 Log.Error("FsListeIstaFortCmd.DoInvoke()", "Failed to invoke method {0}, because calling module is null.", method);
                 return;
             }
-            ModuleParameter value = base.CallingModule.__RheinGoldCoreModuleParameters__.Clone();
+
+            ModuleParameter value = CallingModule.__RheinGoldCoreModuleParameters__.Clone();
             inParam.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
-            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", base.CallingModule.GlobalTabModuleISTA);
-            inParam.Parameter.Add("__RheinGoldSOCAccessor__", base.CallingModule.SOCAccessor);
+            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", CallingModule.GlobalTabModuleISTA);
+            inParam.Parameter.Add("__RheinGoldSOCAccessor__", CallingModule.SOCAccessor);
             if (method == "Details_zum_Fehlerort")
             {
                 int fehlerort = (int)inParam.getParameter("Fehlerort", 0);
                 int[] umweltbedingung_NR = (int[])inParam.getParameter("Umweltbedingung_NR", null);
                 int Umweltbedingung_Anzahl = 0;
-                double[,] Umweltbedingung_Wert = null;
-                string[,] Umweltbedingung_String = null;
+                double[, ] Umweltbedingung_Wert = null;
+                string[, ] Umweltbedingung_String = null;
                 string Fehlerkode_SGBD = null;
                 int Fehlerart_Symptom_NR = 0;
                 string Fehlerart_Symptom_Text = null;

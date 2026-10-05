@@ -13,7 +13,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 {
     public class ReactorEngine
     {
-        private readonly MultisourceLogic.MultisourceLogic multisourceLogic;
+        private readonly BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic multisourceLogic;
         private readonly FallbackMechanisms fallback;
         private readonly IReactorVehicle vehicle;
         private readonly ILogger log;
@@ -24,7 +24,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
         {
             log = logger;
             this.dataHolder = dataHolder;
-            multisourceLogic = new MultisourceLogic.MultisourceLogic(dataHolder, log, new MultisourceProperties(), new ValueValidator());
+            multisourceLogic = new BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic(dataHolder, log, new MultisourceProperties(), new ValueValidator());
             fallback = new FallbackMechanisms(dataHolder);
             vehicle = reactorVehicle;
         }
@@ -57,7 +57,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetFA(IReactorFa value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.FA = multisourceLogic.SetProperty(value, source, "FA");
             });
@@ -65,12 +65,12 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetModelltag(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Modelltag = multisourceLogic.SetProperty(value, source, "Modelltag");
-            }, delegate
+            }, () =>
             {
-                fallback.ProductionDate(delegate (DateTime d)
+                fallback.ProductionDate((DateTime d) =>
                 {
                     AssignProductionDate(d, DataSource.Fallback);
                 }, "ProductionDate", "Modelljahr", "Modellmonat", "Modelltag");
@@ -79,12 +79,12 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetModellmonat(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 AssignModellMonat(value, source);
-            }, delegate
+            }, () =>
             {
-                fallback.ProductionDate(delegate (DateTime d)
+                fallback.ProductionDate((DateTime d) =>
                 {
                     AssignProductionDate(d, DataSource.Fallback);
                 }, "ProductionDate", "Modelljahr", "Modellmonat", "Modelltag");
@@ -93,12 +93,12 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetModelljahr(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 AssignModellJahr(value, source);
-            }, delegate
+            }, () =>
             {
-                fallback.ProductionDate(delegate (DateTime d)
+                fallback.ProductionDate((DateTime d) =>
                 {
                     AssignProductionDate(d, DataSource.Fallback);
                 }, "ProductionDate", "Modelljahr", "Modellmonat", "Modelltag");
@@ -107,15 +107,15 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetVin17(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.VIN17 = multisourceLogic.SetProperty(value, source, "VIN17");
-            }, delegate
+            }, () =>
             {
-                fallback.HandleVin17Fallbacks(delegate (string s)
+                fallback.HandleVin17Fallbacks((string s) =>
                 {
                     AssignBasicType(s, DataSource.Fallback);
-                }, delegate (string s)
+                }, (string s) =>
                 {
                     AssignVinRangeType(s, DataSource.Fallback);
                 }, "VIN17", "BasicType", "VINRangeType");
@@ -124,7 +124,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetVin17WithoutFallbacks(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.VIN17 = multisourceLogic.SetProperty(value, source, "VIN17");
             });
@@ -132,7 +132,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetMarke(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Marke = multisourceLogic.SetProperty(value, source, "Marke");
             });
@@ -140,7 +140,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetProductionDate(DateTime value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 AssignProductionDate(value, source);
             });
@@ -148,7 +148,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetAntrieb(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Antrieb = multisourceLogic.SetProperty(value, source, "Antrieb");
             });
@@ -156,7 +156,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetBaureihe(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Baureihe = multisourceLogic.SetProperty(value, source, "Baureihe");
             });
@@ -164,7 +164,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetBaureihenverbund(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Baureihenverbund = multisourceLogic.SetProperty(value, source, "Baureihenverbund");
             });
@@ -172,7 +172,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetElektrischeReichweite(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.ElektrischeReichweite = multisourceLogic.SetProperty(value, source, "ElektrischeReichweite");
             });
@@ -180,7 +180,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetLenkung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Lenkung = multisourceLogic.SetProperty(value, source, "Lenkung");
             });
@@ -188,7 +188,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetAEBezeichnung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.AEBezeichnung = multisourceLogic.SetProperty(value, source, "AEBezeichnung");
             });
@@ -196,7 +196,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetAEKurzbezeichnung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.AEKurzbezeichnung = multisourceLogic.SetProperty(value, source, "AEKurzbezeichnung");
             });
@@ -204,7 +204,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetAELeistungsklasse(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.AELeistungsklasse = multisourceLogic.SetProperty(value, source, "AELeistungsklasse");
             });
@@ -212,7 +212,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetKraftstoffartEinbaulage(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.KraftstoffartEinbaulage = multisourceLogic.SetProperty(value, source, "KraftstoffartEinbaulage");
             });
@@ -220,7 +220,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetAEUeberarbeitung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.AEUeberarbeitung = multisourceLogic.SetProperty(value, source, "AEUeberarbeitung");
             });
@@ -228,7 +228,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetBaustandsJahr(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.BaustandsJahr = multisourceLogic.SetProperty(value, source, "BaustandsJahr");
             });
@@ -236,7 +236,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetBaustandsMonat(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.BaustandsMonat = multisourceLogic.SetProperty(value, source, "BaustandsMonat");
             });
@@ -244,7 +244,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetBaustand(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Baustand = multisourceLogic.SetProperty(value, source, "Baustand");
             });
@@ -252,7 +252,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEreihe(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Ereihe = multisourceLogic.SetProperty(value, source, "Ereihe");
             });
@@ -260,7 +260,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetHybridkennzeichen(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Hybridkennzeichen = multisourceLogic.SetProperty(value, source, "Hybridkennzeichen");
             });
@@ -268,7 +268,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetKarosserie(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Karosserie = multisourceLogic.SetProperty(value, source, "Karosserie");
             });
@@ -276,7 +276,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetLand(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Land = multisourceLogic.SetProperty(value, source, "Land");
             });
@@ -284,7 +284,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetBasicType(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 AssignBasicType(value, source);
             });
@@ -292,7 +292,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetBaseVersion(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.BaseVersion = multisourceLogic.SetProperty(value, source, "BaseVersion");
             });
@@ -300,7 +300,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetBrandName(BrandName? value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.BrandName = multisourceLogic.SetProperty(value, source, "BrandName");
             });
@@ -308,7 +308,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetCountryOfAssembly(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.CountryOfAssembly = multisourceLogic.SetProperty(value, source, "CountryOfAssembly");
             });
@@ -316,7 +316,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetProdart(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Prodart = multisourceLogic.SetProperty(value, source, "Prodart");
             });
@@ -324,7 +324,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetProduktlinie(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Produktlinie = multisourceLogic.SetProperty(value, source, "Produktlinie");
             });
@@ -332,7 +332,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetSicherheitsrelevant(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Sicherheitsrelevant = multisourceLogic.SetProperty(value, source, "Sicherheitsrelevant");
             });
@@ -340,7 +340,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetTueren(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Tueren = multisourceLogic.SetProperty(value, source, "Tueren");
             });
@@ -348,7 +348,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetTyp(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Typ = multisourceLogic.SetProperty(value, source, "Typ");
             });
@@ -356,7 +356,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetVerkaufsBezeichnung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.VerkaufsBezeichnung = multisourceLogic.SetProperty(value, source, "VerkaufsBezeichnung");
             });
@@ -364,7 +364,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetMotor(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Motor = multisourceLogic.SetProperty(value, source, "Motor");
             });
@@ -372,7 +372,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetMotorarbeitsverfahren(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Motorarbeitsverfahren = multisourceLogic.SetProperty(value, source, "Motorarbeitsverfahren");
             });
@@ -380,7 +380,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetMOTBezeichnung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.MOTBezeichnung = multisourceLogic.SetProperty(value, source, "MOTBezeichnung");
             });
@@ -388,7 +388,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetMOTEinbaulage(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.MOTEinbaulage = multisourceLogic.SetProperty(value, source, "MOTEinbaulage");
             });
@@ -396,7 +396,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetHubraum(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Hubraum = multisourceLogic.SetProperty(value, source, "Hubraum");
             });
@@ -404,7 +404,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetKraftstoffart(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Kraftstoffart = multisourceLogic.SetProperty(value, source, "Kraftstoffart");
             });
@@ -412,7 +412,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetLeistungsklasse(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Leistungsklasse = multisourceLogic.SetProperty(value, source, "Leistungsklasse");
             });
@@ -420,7 +420,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetUeberarbeitung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Ueberarbeitung = multisourceLogic.SetProperty(value, source, "Ueberarbeitung");
             });
@@ -428,7 +428,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetDrehmoment(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Drehmoment = multisourceLogic.SetProperty(value, source, "Drehmoment");
             });
@@ -436,7 +436,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEMOTBaureihe(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.EMotor.EMOTBaureihe = multisourceLogic.SetProperty(value, source, "EMOTBaureihe");
             });
@@ -444,7 +444,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEMOTBezeichnung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.EMotor.EMOTBezeichnung = multisourceLogic.SetProperty(value, source, "EMOTBezeichnung");
             });
@@ -452,7 +452,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEMOTDrehmoment(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.EMotor.EMOTDrehmoment = multisourceLogic.SetProperty(value, source, "EMOTDrehmoment");
             });
@@ -460,7 +460,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEMOTEinbaulage(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.EMotor.EMOTEinbaulage = multisourceLogic.SetProperty(value, source, "EMOTEinbaulage");
             });
@@ -468,7 +468,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEMOTKraftstoffart(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.EMotor.EMOTKraftstoffart = multisourceLogic.SetProperty(value, source, "EMOTKraftstoffart");
             });
@@ -476,7 +476,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEMOTLeistungsklasse(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.EMotor.EMOTLeistungsklasse = multisourceLogic.SetProperty(value, source, "EMOTLeistungsklasse");
             });
@@ -484,7 +484,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEMOTUeberarbeitung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.EMotor.EMOTUeberarbeitung = multisourceLogic.SetProperty(value, source, "EMOTUeberarbeitung");
             });
@@ -492,7 +492,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetEMOTArbeitsverfahren(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.EMotor.EMOTArbeitsverfahren = multisourceLogic.SetProperty(value, source, "EMOTArbeitsverfahren");
             });
@@ -500,15 +500,15 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetILevelWerk(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.ILevelWerk = multisourceLogic.SetProperty(value, source, "ILevelWerk");
-            }, delegate
+            }, () =>
             {
-                fallback.HandleILevelWerkFallbacks(delegate (string d)
+                fallback.HandleILevelWerkFallbacks((string d) =>
                 {
                     AssignModellJahr(d, DataSource.Fallback);
-                }, delegate (string d)
+                }, (string d) =>
                 {
                     AssignModellMonat(d, DataSource.Fallback);
                 }, "ILevelWerk", "Modellmonat", "Modelljahr");
@@ -517,7 +517,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetILevel(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.ILevel = multisourceLogic.SetProperty(value, source, "ILevel");
             });
@@ -525,7 +525,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetVINRangeType(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 AssignVinRangeType(value, source);
             });
@@ -533,7 +533,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetGetriebe(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Getriebe = multisourceLogic.SetProperty(value, source, "Getriebe");
             });
@@ -541,7 +541,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetECTypeApproval(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.ECTypeApproval = multisourceLogic.SetProperty(value, source, "ECTypeApproval");
             });
@@ -549,7 +549,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetSerialBodyShell(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.SerialBodyShell = multisourceLogic.SetProperty(value, source, "SerialBodyShell");
             });
@@ -557,7 +557,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetSerialEngine(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.SerialEngine = multisourceLogic.SetProperty(value, source, "SerialEngine");
             });
@@ -565,7 +565,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetSerialGearBox(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.SerialGearBox = multisourceLogic.SetProperty(value, source, "SerialGearBox");
             });
@@ -573,7 +573,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetFirstRegistrationDate(DateTime value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.FirstRegistration = multisourceLogic.SetProperty(value, source, "FirstRegistration");
             });
@@ -581,7 +581,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetProgramVersion(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.ProgmanVersion = multisourceLogic.SetProperty(value, source, "ProgmanVersion");
             });
@@ -589,7 +589,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetTypeKey(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.TypeKey = multisourceLogic.SetProperty(value, source, "TypeKey");
             });
@@ -597,7 +597,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetTypeKeyLead(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.TypeKeyLead = multisourceLogic.SetProperty(value, source, "TypeKeyLead");
             });
@@ -605,7 +605,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetTypeKeyBasic(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.TypeKeyBasic = multisourceLogic.SetProperty(value, source, "TypeKeyBasic");
             });
@@ -613,7 +613,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetESeriesLifeCycle(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.ESeriesLifeCycle = multisourceLogic.SetProperty(value, source, "ESeriesLifeCycle");
             });
@@ -621,7 +621,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetLifeCycle(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.LifeCycle = multisourceLogic.SetProperty(value, source, "LifeCycle");
             });
@@ -629,7 +629,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetSportausfuehrung(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 vehicle.Sportausfuehrung = multisourceLogic.SetProperty(value, source, "Sportausfuehrung");
             });
@@ -648,7 +648,7 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 
         public void SetF2Date(string value, DataSource source)
         {
-            AssignPropertyAndExecuteFallback(delegate
+            AssignPropertyAndExecuteFallback(() =>
             {
                 AssignF2Date(value, source);
             });
@@ -732,367 +732,367 @@ namespace BMW.ISPI.TRIC.ISTA.FusionReactor
             switch (e.PropertyName)
             {
                 case "Modelljahr":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Modelljahr = v;
                     }, vehicle.Modelljahr, e.PropertyName);
                     break;
                 case "Modellmonat":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Modellmonat = v;
                     }, vehicle.Modellmonat, e.PropertyName);
                     break;
                 case "Modelltag":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Modelltag = v;
                     }, vehicle.Modelltag, e.PropertyName);
                     break;
                 case "ProductionDate":
-                    AssignLegacy(delegate (DateTime v)
+                    AssignLegacy((DateTime v) =>
                     {
                         vehicle.ProductionDate = v;
                     }, vehicle.ProductionDate, e.PropertyName);
                     break;
                 case "VIN17":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.VIN17 = v;
                     }, vehicle.VIN17, e.PropertyName);
                     break;
                 case "FA":
-                    AssignLegacy(delegate (IReactorFa v)
+                    AssignLegacy((IReactorFa v) =>
                     {
                         vehicle.FA = v;
                     }, vehicle.FA, e.PropertyName);
                     break;
                 case "Antrieb":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Antrieb = v;
                     }, vehicle.Antrieb, e.PropertyName);
                     break;
                 case "Baureihe":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Baureihe = v;
                     }, vehicle.Baureihe, e.PropertyName);
                     break;
                 case "Baureihenverbund":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Baureihenverbund = v;
                     }, vehicle.Baureihenverbund, e.PropertyName);
                     break;
                 case "ElektrischeReichweite":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.ElektrischeReichweite = v;
                     }, vehicle.ElektrischeReichweite, e.PropertyName);
                     break;
                 case "Lenkung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Lenkung = v;
                     }, vehicle.Lenkung, e.PropertyName);
                     break;
                 case "AEBezeichnung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.AEBezeichnung = v;
                     }, vehicle.AEBezeichnung, e.PropertyName);
                     break;
                 case "AEKurzbezeichnung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.AEKurzbezeichnung = v;
                     }, vehicle.AEKurzbezeichnung, e.PropertyName);
                     break;
                 case "AELeistungsklasse":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.AELeistungsklasse = v;
                     }, vehicle.AELeistungsklasse, e.PropertyName);
                     break;
                 case "AEUeberarbeitung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.AEUeberarbeitung = v;
                     }, vehicle.AEUeberarbeitung, e.PropertyName);
                     break;
                 case "BaustandsJahr":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.BaustandsJahr = v;
                     }, vehicle.BaustandsJahr, e.PropertyName);
                     break;
                 case "BaustandsMonat":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.BaustandsMonat = v;
                     }, vehicle.BaustandsMonat, e.PropertyName);
                     break;
                 case "Ereihe":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Ereihe = v;
                     }, vehicle.Ereihe, e.PropertyName);
                     break;
                 case "Hybridkennzeichen":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Hybridkennzeichen = v;
                     }, vehicle.Hybridkennzeichen, e.PropertyName);
                     break;
                 case "Karosserie":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Karosserie = v;
                     }, vehicle.Karosserie, e.PropertyName);
                     break;
                 case "Land":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Land = v;
                     }, vehicle.Land, e.PropertyName);
                     break;
                 case "BasicType":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.BasicType = v;
                     }, vehicle.BasicType, e.PropertyName);
                     break;
                 case "BaseVersion":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.BaseVersion = v;
                     }, vehicle.BaseVersion, e.PropertyName);
                     break;
                 case "CountryOfAssembly":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.CountryOfAssembly = v;
                     }, vehicle.CountryOfAssembly, e.PropertyName);
                     break;
                 case "Prodart":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Prodart = v;
                     }, vehicle.Prodart, e.PropertyName);
                     break;
                 case "Produktlinie":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Produktlinie = v;
                     }, vehicle.Produktlinie, e.PropertyName);
                     break;
                 case "Tueren":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Tueren = v;
                     }, vehicle.Tueren, e.PropertyName);
                     break;
                 case "Typ":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Typ = v;
                     }, vehicle.Typ, e.PropertyName);
                     break;
                 case "VerkaufsBezeichnung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.VerkaufsBezeichnung = v;
                     }, vehicle.VerkaufsBezeichnung, e.PropertyName);
                     break;
                 case "Motor":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Motor = v;
                     }, vehicle.Motor, e.PropertyName);
                     break;
                 case "Motorarbeitsverfahren":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Motorarbeitsverfahren = v;
                     }, vehicle.Motorarbeitsverfahren, e.PropertyName);
                     break;
                 case "MOTBezeichnung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.MOTBezeichnung = v;
                     }, vehicle.MOTBezeichnung, e.PropertyName);
                     break;
                 case "MOTEinbaulage":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.MOTEinbaulage = v;
                     }, vehicle.MOTEinbaulage, e.PropertyName);
                     break;
                 case "Hubraum":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Hubraum = v;
                     }, vehicle.Hubraum, e.PropertyName);
                     break;
                 case "Kraftstoffart":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Kraftstoffart = v;
                     }, vehicle.Kraftstoffart, e.PropertyName);
                     break;
                 case "Leistungsklasse":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Leistungsklasse = v;
                     }, vehicle.Leistungsklasse, e.PropertyName);
                     break;
                 case "Ueberarbeitung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Ueberarbeitung = v;
                     }, vehicle.Ueberarbeitung, e.PropertyName);
                     break;
                 case "Drehmoment":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Drehmoment = v;
                     }, vehicle.Drehmoment, e.PropertyName);
                     break;
                 case "EMOTBaureihe":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.EMotor.EMOTBaureihe = v;
                     }, vehicle.EMotor.EMOTBaureihe, e.PropertyName);
                     break;
                 case "EMOTBezeichnung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.EMotor.EMOTBezeichnung = v;
                     }, vehicle.EMotor.EMOTBezeichnung, e.PropertyName);
                     break;
                 case "EMOTDrehmoment":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.EMotor.EMOTDrehmoment = v;
                     }, vehicle.EMotor.EMOTDrehmoment, e.PropertyName);
                     break;
                 case "EMOTEinbaulage":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.EMotor.EMOTEinbaulage = v;
                     }, vehicle.EMotor.EMOTEinbaulage, e.PropertyName);
                     break;
                 case "EMOTKraftstoffart":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.EMotor.EMOTKraftstoffart = v;
                     }, vehicle.EMotor.EMOTKraftstoffart, e.PropertyName);
                     break;
                 case "EMOTLeistungsklasse":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.EMotor.EMOTLeistungsklasse = v;
                     }, vehicle.EMotor.EMOTLeistungsklasse, e.PropertyName);
                     break;
                 case "EMOTUeberarbeitung":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.EMotor.EMOTUeberarbeitung = v;
                     }, vehicle.EMotor.EMOTUeberarbeitung, e.PropertyName);
                     break;
                 case "EMOTArbeitsverfahren":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.EMotor.EMOTArbeitsverfahren = v;
                     }, vehicle.EMotor.EMOTArbeitsverfahren, e.PropertyName);
                     break;
                 case "ILevelWerk":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.ILevelWerk = v;
                     }, vehicle.ILevelWerk, e.PropertyName);
                     break;
                 case "ILevel":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.ILevel = v;
                     }, vehicle.ILevel, e.PropertyName);
                     break;
                 case "Marke":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Marke = v;
                     }, vehicle.Marke, e.PropertyName);
                     break;
                 case "VINRangeType":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Marke = v;
                     }, vehicle.Marke, e.PropertyName);
                     break;
                 case "Getriebe":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Getriebe = v;
                     }, vehicle.Getriebe, e.PropertyName);
                     break;
                 case "BrandName":
-                    AssignLegacy(delegate (BrandName? v)
+                    AssignLegacy((BrandName? v) =>
                     {
                         vehicle.BrandName = v;
                     }, vehicle.BrandName, e.PropertyName);
                     break;
                 case "Sicherheitsrelevant":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Sicherheitsrelevant = v;
                     }, vehicle.Sicherheitsrelevant, e.PropertyName);
                     break;
                 case "KraftstoffartEinbaulage":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.KraftstoffartEinbaulage = v;
                     }, vehicle.KraftstoffartEinbaulage, e.PropertyName);
                     break;
                 case "Baustand":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.Baustand = v;
                     }, vehicle.Baustand, e.PropertyName);
                     break;
                 case "SerialBodyShell":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.SerialBodyShell = v;
                     }, vehicle.SerialBodyShell, e.PropertyName);
                     break;
                 case "SerialEngine":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.SerialEngine = v;
                     }, vehicle.SerialEngine, e.PropertyName);
                     break;
                 case "SerialGearBox":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.SerialGearBox = v;
                     }, vehicle.SerialGearBox, e.PropertyName);
                     break;
                 case "FirstRegistration":
-                    AssignLegacy(delegate (DateTime? v)
+                    AssignLegacy((DateTime? v) =>
                     {
                         vehicle.FirstRegistration = v;
                     }, vehicle.FirstRegistration, e.PropertyName);
                     break;
                 case "ProgmanVersion":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.ProgmanVersion = v;
                     }, vehicle.ProgmanVersion, e.PropertyName);
                     break;
                 case "ECTypeApproval":
-                    AssignLegacy(delegate (string v)
+                    AssignLegacy((string v) =>
                     {
                         vehicle.ECTypeApproval = v;
                     }, vehicle.ECTypeApproval, e.PropertyName);

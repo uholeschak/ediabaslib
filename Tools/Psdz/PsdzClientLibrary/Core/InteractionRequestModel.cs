@@ -9,11 +9,8 @@ namespace PsdzClient.Core
     public abstract class InteractionRequestModel<TResponse> : InteractionModel, IInteractionRequestModel<TResponse>, IInteractionModel, INotifyPropertyChanged where TResponse : InteractionResponse
     {
         private TResponse response;
-
         private readonly ManualResetEvent resumeEvent;
-
         private bool showPending;
-
         [DataMember]
         public TResponse Response
         {
@@ -21,6 +18,7 @@ namespace PsdzClient.Core
             {
                 return response;
             }
+
             set
             {
                 response = value;
@@ -35,6 +33,7 @@ namespace PsdzClient.Core
             {
                 return showPending;
             }
+
             internal set
             {
                 showPending = value;
@@ -60,6 +59,7 @@ namespace PsdzClient.Core
             {
                 resumeEvent.Reset();
             }
+
             resumeEvent.WaitOne();
             return response;
         }
@@ -73,6 +73,7 @@ namespace PsdzClient.Core
                 {
                     LogResponseMessage(Response);
                 }
+
                 OnResponseRecivedAndLog(Response);
             }
             catch (InvalidCastException)
@@ -93,15 +94,15 @@ namespace PsdzClient.Core
         }
 
         public abstract void OnResponseReceived(TResponse response);
-
         public override void Dispose()
         {
-            Log.Debug("InteractionRequestModel.Dispose", string.Format("Start: {0}: {1} ", "IsDisposing", base.IsDisposing));
-            if (!base.IsDisposing)
+            Log.Debug("InteractionRequestModel.Dispose", string.Format("Start: {0}: {1} ", "IsDisposing", IsDisposing));
+            if (!IsDisposing)
             {
                 base.Dispose();
                 NotifyAboutResponseReceived();
             }
+
             Log.Debug("InteractionRequestModel.Dispose", "End");
         }
     }

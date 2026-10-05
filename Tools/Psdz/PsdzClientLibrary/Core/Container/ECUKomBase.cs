@@ -1,4 +1,4 @@
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;
@@ -332,18 +332,18 @@ namespace BMW.Rheingold.VehicleCommunication
 
                 if (string.IsNullOrEmpty(ecu))
                 {
-                    ECUJob obj = new ECUJob(fastaprotocoller)
+                    ECUJob eCUJob = new ECUJob(fastaprotocoller)
                     {
                         EcuName = string.Empty,
                         JobName = jobName,
                         JobParam = param,
                         ExecutionStartTime = DateTime.Now
                     };
-                    obj.ExecutionEndTime = obj.ExecutionStartTime;
-                    obj.JobErrorCode = 91;
-                    obj.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
-                    obj.JobResult = new List<IEcuResult>();
-                    return obj;
+                    eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
+                    eCUJob.JobErrorCode = 91;
+                    eCUJob.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
+                    eCUJob.JobResult = new List<IEcuResult>();
+                    return eCUJob;
                 }
 
                 if (param == null)
@@ -364,7 +364,7 @@ namespace BMW.Rheingold.VehicleCommunication
                         return ecuJob;
                     }
 
-                    ECUJob obj2 = new ECUJob(fastaprotocoller)
+                    ECUJob eCUJob2 = new ECUJob(fastaprotocoller)
                     {
                         EcuName = ecu,
                         JobName = jobName,
@@ -372,11 +372,11 @@ namespace BMW.Rheingold.VehicleCommunication
                         JobResultFilter = resultFilter,
                         ExecutionStartTime = DateTime.Now
                     };
-                    obj2.ExecutionEndTime = obj2.ExecutionStartTime;
-                    obj2.JobErrorCode = 19;
-                    obj2.JobErrorText = "IFH-0009: NO RESPONSE FROM CONTROLUNIT";
-                    obj2.JobResult = new List<IEcuResult>();
-                    return obj2;
+                    eCUJob2.ExecutionEndTime = eCUJob2.ExecutionStartTime;
+                    eCUJob2.JobErrorCode = 19;
+                    eCUJob2.JobErrorText = "IFH-0009: NO RESPONSE FROM CONTROLUNIT";
+                    eCUJob2.JobResult = new List<IEcuResult>();
+                    return eCUJob2;
                 }
 
                 if ((communicationMode == CommMode.CacheFirst) & cacheAdding)
@@ -390,36 +390,36 @@ namespace BMW.Rheingold.VehicleCommunication
                 }
 
                 DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
-                ECUJob eCUJob = new ECUJob(fastaprotocoller);
-                eCUJob.EcuName = ecu;
-                eCUJob.ExecutionStartTime = dateTimePrecise.Now;
-                eCUJob.JobName = jobName;
-                eCUJob.JobParam = param;
-                eCUJob.JobResultFilter = resultFilter;
-                eCUJob.JobResult = new List<IEcuResult>();
+                ECUJob eCUJob3 = new ECUJob(fastaprotocoller);
+                eCUJob3.EcuName = ecu;
+                eCUJob3.ExecutionStartTime = dateTimePrecise.Now;
+                eCUJob3.JobName = jobName;
+                eCUJob3.JobParam = param;
+                eCUJob3.JobResultFilter = resultFilter;
+                eCUJob3.JobResult = new List<IEcuResult>();
                 try
                 {
-                    ExecuteEdiabasJobAndGetResults(eCUJob, callerMember);
+                    ExecuteEdiabasJobAndGetResults(eCUJob3, callerMember);
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Log.Warning("ECUKom.apiJob()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, jobName, param, resultFilter, eCUJob.JobErrorText);
+                    Log.Warning("ECUKom.apiJob()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, jobName, param, resultFilter, eCUJob3.JobErrorText);
                 }
                 catch (Exception exception)
                 {
                     Log.WarningException("ECUKom.apiJob()", exception);
                 }
 
-                eCUJob.ExecutionEndTime = dateTimePrecise.Now;
-                AddJobInCache(eCUJob, cacheAdding);
-                string stringResult = eCUJob.getStringResult(1, "JOB_STATUS");
+                eCUJob3.ExecutionEndTime = dateTimePrecise.Now;
+                AddJobInCache(eCUJob3, cacheAdding);
+                string stringResult = eCUJob3.getStringResult(1, "JOB_STATUS");
                 (bool, ECUJob) tuple = HandleEcuAuthorizationRejection(ecu, jobName, param, resultFilter, (stringResult == null) ? string.Empty : stringResult, isRetry);
                 if (tuple.Item1)
                 {
-                    eCUJob = tuple.Item2;
+                    eCUJob3 = tuple.Item2;
                 }
 
-                return eCUJob;
+                return eCUJob3;
             }
             finally
             {
@@ -493,16 +493,16 @@ namespace BMW.Rheingold.VehicleCommunication
             {
                 if (string.IsNullOrEmpty(ecu))
                 {
-                    ECUJob obj = new ECUJob
+                    ECUJob eCUJob = new ECUJob
                     {
                         JobName = string.Empty,
                         ExecutionStartTime = DateTime.Now
                     };
-                    obj.ExecutionEndTime = obj.ExecutionStartTime;
-                    obj.JobErrorCode = 91;
-                    obj.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
-                    obj.JobResult = new List<IEcuResult>();
-                    return obj;
+                    eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
+                    eCUJob.JobErrorCode = 91;
+                    eCUJob.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
+                    eCUJob.JobResult = new List<IEcuResult>();
+                    return eCUJob;
                 }
 
                 if (!VehicleCommunication.validLicense)
@@ -541,7 +541,7 @@ namespace BMW.Rheingold.VehicleCommunication
                         Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex.ToString());
                     }
 
-                    ECUJob obj2 = new ECUJob
+                    ECUJob eCUJob2 = new ECUJob
                     {
                         EcuName = ecu,
                         JobName = job,
@@ -549,37 +549,37 @@ namespace BMW.Rheingold.VehicleCommunication
                         JobResultFilter = resultFilter,
                         ExecutionStartTime = DateTime.Now
                     };
-                    obj2.ExecutionEndTime = obj2.ExecutionStartTime;
-                    obj2.JobErrorCode = 19;
-                    obj2.JobErrorText = "IFH-0009: NO RESPONSE FROM CONTROLUNIT";
-                    obj2.JobResult = new List<IEcuResult>();
-                    return obj2;
+                    eCUJob2.ExecutionEndTime = eCUJob2.ExecutionStartTime;
+                    eCUJob2.JobErrorCode = 19;
+                    eCUJob2.JobErrorText = "IFH-0009: NO RESPONSE FROM CONTROLUNIT";
+                    eCUJob2.JobResult = new List<IEcuResult>();
+                    return eCUJob2;
                 }
 
                 DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
-                ECUJob eCUJob = new ECUJob();
-                eCUJob.EcuName = ecu;
-                eCUJob.JobName = job;
-                eCUJob.ExecutionStartTime = dateTimePrecise.Now;
-                eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
-                eCUJob.JobResultFilter = resultFilter;
-                eCUJob.JobResult = new List<IEcuResult>();
+                ECUJob eCUJob3 = new ECUJob();
+                eCUJob3.EcuName = ecu;
+                eCUJob3.JobName = job;
+                eCUJob3.ExecutionStartTime = dateTimePrecise.Now;
+                eCUJob3.ExecutionEndTime = eCUJob3.ExecutionStartTime;
+                eCUJob3.JobResultFilter = resultFilter;
+                eCUJob3.JobResult = new List<IEcuResult>();
                 try
                 {
-                    ExecuteEdiabasJobAndGetResultsWithByteParams(eCUJob, param, paramlen, callerMember);
+                    ExecuteEdiabasJobAndGetResultsWithByteParams(eCUJob3, param, paramlen, callerMember);
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Log.Warning("ECUKom.apiJobData()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, job, param, resultFilter, eCUJob.JobErrorText);
+                    Log.Warning("ECUKom.apiJobData()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, job, param, resultFilter, eCUJob3.JobErrorText);
                 }
                 catch (Exception ex3)
                 {
                     Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex3.ToString());
                 }
 
-                eCUJob.ExecutionEndTime = dateTimePrecise.Now;
-                AddJobInCache(eCUJob);
-                return eCUJob;
+                eCUJob3.ExecutionEndTime = dateTimePrecise.Now;
+                AddJobInCache(eCUJob3);
+                return eCUJob3;
             }
             finally
             {

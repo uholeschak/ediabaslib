@@ -1,4 +1,4 @@
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -701,7 +701,7 @@ Vin = vin17,
                 throw new ArgumentNullException("swtApplication");
             }
 
-            PsdzSwtApplication obj = new PsdzSwtApplication
+            PsdzSwtApplication psdzSwtApplication = new PsdzSwtApplication
             {
                 Fsc = swtApplication.Fsc,
                 FscCert = swtApplication.FscCertificate,
@@ -713,8 +713,8 @@ Vin = vin17,
                 IsBackupPossible = swtApplication.IsBackupPossible
             };
             IPsdzSwtApplicationId swtApplicationId = BuildSwtApplicationId(swtApplication.Id);
-            obj.SwtApplicationId = swtApplicationId;
-            return obj;
+            psdzSwtApplication.SwtApplicationId = swtApplicationId;
+            return psdzSwtApplication;
         }
 
         private IPsdzSwtEcu BuildSwtEcu(ISwtEcu swtEcuInput)

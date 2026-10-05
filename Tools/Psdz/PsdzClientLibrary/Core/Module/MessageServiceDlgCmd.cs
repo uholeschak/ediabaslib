@@ -6,8 +6,7 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class MessageServiceDlgCmd : ServiceDialogCmdBase
     {
-        public MessageServiceDlgCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo)
-            : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
+        public MessageServiceDlgCmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo) : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
         {
         }
 
@@ -15,7 +14,7 @@ namespace BMW.Rheingold.Module.ISTA
         {
             if ("HideDialog".Equals(method))
             {
-                base.Display = false;
+                Display = false;
             }
         }
     }

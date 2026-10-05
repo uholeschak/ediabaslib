@@ -19,22 +19,14 @@ namespace BMW.Rheingold.Module.ISTA
     internal class DtcAnzeigeDynImpl : ServiceDlgImplBase<DtcAnzeigeDynModel>
     {
         private IProtocolBasic fasta;
-
         private IList<string> lang;
-
         [PreserveSource(Hint = "IDatabaseProvider", Placeholder = true)]
         private PsdzDatabase database;
-
         private IFFMDynamicResolver ffmResolver;
-
         private ParameterContainer outParameter;
-
         private ParameterContainer inAndOutParameters;
-
         private HashSet<decimal> markedFaultCodes;
-
         private List<FaultModelDtcDyn> faults;
-
         private FaultModelDtcDyn SelectedFault { get; set; }
 
         public IList<string> Lang
@@ -43,6 +35,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return lang;
             }
+
             set
             {
                 lang = value;
@@ -50,24 +43,21 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         protected ICollection<decimal> MarkedFaultCodes => markedFaultCodes;
-
         public string CallingName { get; private set; }
-
         private ICollection<FaultModelDtcDyn> FaultList => faults;
-
         private InfoObject InfoObjectStarted { get; set; }
-
         private string SelectedFehlerOrt { get; set; }
 
         private string PriorText
         {
             get
             {
-                return base.Model.PriorText;
+                return Model.PriorText;
             }
+
             set
             {
-                base.Model.PriorText = value;
+                Model.PriorText = value;
             }
         }
 
@@ -75,11 +65,12 @@ namespace BMW.Rheingold.Module.ISTA
         {
             get
             {
-                return base.Model.PastText;
+                return Model.PastText;
             }
+
             set
             {
-                base.Model.PastText = value;
+                Model.PastText = value;
             }
         }
 
@@ -87,17 +78,17 @@ namespace BMW.Rheingold.Module.ISTA
         {
             get
             {
-                return base.Model.Title;
+                return Model.Title;
             }
+
             set
             {
-                base.Model.Title = value;
+                Model.Title = value;
             }
         }
 
         [PreserveSource(Hint = "No change", SignatureModified = true)]
-        public DtcAnzeigeDynImpl(ParameterContainer inParameters)
-            : base(inParameters)
+        public DtcAnzeigeDynImpl(ParameterContainer inParameters) : base(inParameters)
         {
             //[-] Initialize(inParameters, RetrieveFasta(inParameters), DatabaseProviderFactory.Instance);
             //[+] Initialize(inParameters, RetrieveFasta(inParameters), null);
@@ -105,8 +96,7 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         [PreserveSource(Hint = "IDatabaseProvider", SignatureModified = true)]
-        public DtcAnzeigeDynImpl(ParameterContainer InParameters, IProtocolBasic fasta, IList<string> lang, PsdzDatabase database, Vehicle vehicle, ILogic logic, Dispatcher dispatcher)
-            : base(InParameters)
+        public DtcAnzeigeDynImpl(ParameterContainer InParameters, IProtocolBasic fasta, IList<string> lang, PsdzDatabase database, Vehicle vehicle, ILogic logic, Dispatcher dispatcher) : base(InParameters)
         {
             Initialize(InParameters, fasta, database);
         }
@@ -123,10 +113,11 @@ namespace BMW.Rheingold.Module.ISTA
             lang = logic.Lang;
             Lang = logic.Lang;
             ffmResolver = logic.FFMResolver;
-            if (InParameters.getParameter("__CallingModule__") is ISTAModule iSTAModule)
+            if (InParameters.getParameter("__CallingModule__")is ISTAModule iSTAModule)
             {
                 CallingName = iSTAModule.GetType().Name;
             }
+
             Log.Info("DtcAnzeigeDynImpl.Initialize()", "calling module for fault filtering: {0}", CallingName);
         }
 
@@ -146,6 +137,7 @@ namespace BMW.Rheingold.Module.ISTA
                 inAndOutParameters.setParameter("Status_Fehlerkode_selektiert_hex", $"{0:X}");
                 inAndOutParameters.setParameter("SGBD_Fehlerkode_selektiert", string.Empty);
             }
+
             outParameter.setParameter("Result", -1);
         }
 
@@ -158,6 +150,7 @@ namespace BMW.Rheingold.Module.ISTA
                 result = true;
                 SelectFault(FaultList.ElementAt(0));
             }
+
             return result;
         }
 
@@ -173,17 +166,18 @@ namespace BMW.Rheingold.Module.ISTA
                     {
                         Log.Info("DtcAnzeigeDynImpl.GetInfoObjStarted()", "XepInfoObjectStarted is null.");
                     }
-                    //[-] else
-                    //[-] {
-                    //[-] Log.Info("DtcAnzeigeDynImpl.GetInfoObjStarted()", "Create info object from XepInfoObjectStarted.");
-                    //[-] infoObject = logic.Factory.CreateInfoObject(xep);
-                    //[-] if (infoObject != null)
-                    //[-] {
-                    //[-] infoObject.ParentDiagnosisObject = null;
-                    //[-] moduleParameter.setParameter(ModuleParameter.ParameterName.InfoObjStarted, infoObjectStarted);
-                    //[-] }
-                    //[-] }
+                //[-] else
+                //[-] {
+                //[-] Log.Info("DtcAnzeigeDynImpl.GetInfoObjStarted()", "Create info object from XepInfoObjectStarted.");
+                //[-] infoObject = logic.Factory.CreateInfoObject(xep);
+                //[-] if (infoObject != null)
+                //[-] {
+                //[-] infoObject.ParentDiagnosisObject = null;
+                //[-] moduleParameter.setParameter(ModuleParameter.ParameterName.InfoObjStarted, infoObjectStarted);
+                //[-] }
+                //[-] }
                 }
+
                 if (infoObject == null)
                 {
                     Log.Error("DtcAnzeigeDynImpl.GetInfoObjStarted()", "Failed to get info object. Returning null.");
@@ -193,6 +187,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.ErrorException("DtcAnzeigeDynImpl.GetInfoObjStarted()", exception);
             }
+
             return infoObject;
         }
 
@@ -203,6 +198,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 num = selectedFault.DTC.Id.Value;
             }
+
             if (num.HasValue)
             {
                 MarkedFaultCodes.AddIfNotContains(num.Value);
@@ -226,11 +222,11 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void UpdateFaultList(IEnumerable<FaultModelDtcDyn> list)
         {
-            base.Model.Buttons.Clear();
+            Model.Buttons.Clear();
             faults.Clear();
             foreach (FaultModelDtcDyn item in list)
             {
-                base.Model.Buttons.Add(item.ButtonModel);
+                Model.Buttons.Add(item.ButtonModel);
                 faults.Add(item);
             }
         }
@@ -251,6 +247,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     InfoObjectStarted.ParentDiagnosisObject = SelectDiagParent("Invoke()");
                 }
+
                 ShowProgressDialog(new FormatedData("#SearchingRelevantDTCs", false));
                 List<FaultModelDtcDyn> list = CalculateFaults(InfoObjectStarted);
                 CloseProgressDialog();
@@ -272,11 +269,13 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     ResetScreenMode();
                 }
+
                 SetOutParameters(outParameter, inAndOutParameters);
                 if (inoutParam != null && inAndOutParameters != null)
                 {
                     inoutParam.cloneParameters(inAndOutParameters);
                 }
+
                 if (outParam != null && outParameter != null)
                 {
                     outParam.cloneParameters(outParameter);
@@ -286,7 +285,8 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("DtcAnzeigeDynImpl.Invoke()", "Unsupported method {0} will be ignored.", method);
             }
-            base.ServiceDialogUI.IsDialogShown = false;
+
+            ServiceDialogUI.IsDialogShown = false;
         }
 
         protected void WaitOnUserInteraction()
@@ -294,13 +294,14 @@ namespace BMW.Rheingold.Module.ISTA
             ServiceProgramNavigationAction obj;
             do
             {
-                ServiceProgramAction serviceProgramAction = base.ServiceProgramController.AwaitUserAction(-1);
+                ServiceProgramAction serviceProgramAction = ServiceProgramController.AwaitUserAction(-1);
                 if (serviceProgramAction is ServiceProgramButtonSelectionAction serviceProgramButtonSelectionAction)
                 {
                     int selectedIndex = serviceProgramButtonSelectionAction.SelectedIndex;
                     Log.Info("DtcAnzeigeDynImpl.WaitOnUserInteraction()", "Selected button index: {0}", selectedIndex);
                     SelectFault(selectedIndex);
                 }
+
                 obj = serviceProgramAction as ServiceProgramNavigationAction;
             }
             while (obj == null || obj.NavigationAction != NavigationAction.Next);
@@ -310,8 +311,8 @@ namespace BMW.Rheingold.Module.ISTA
                 SelectedFault.IsMarked = true;
                 SetMarkedInformation(SelectedFault);
                 SelectedFehlerOrt = $"{SelectedFault.DTC.F_ORT:X}";
-                base.Model.SelectedIndex = SelectedFault.Index;
-                base.Model.Buttons.ForEach(delegate (DtcAnzeigeButtonModel btn)
+                Model.SelectedIndex = SelectedFault.Index;
+                Model.Buttons.ForEach((DtcAnzeigeButtonModel btn) =>
                 {
                     btn.IsEnabled = false;
                 });
@@ -321,7 +322,7 @@ namespace BMW.Rheingold.Module.ISTA
         private void SelectFault(FaultModelDtcDyn item)
         {
             item.IsSelected = true;
-            base.Model.SelectedButton(item.Index);
+            Model.SelectedButton(item.Index);
             SelectFault(item.Index);
         }
 
@@ -330,7 +331,7 @@ namespace BMW.Rheingold.Module.ISTA
             try
             {
                 SelectedFault = FaultList.ElementAt(index);
-                base.Model.SelectedFault(SelectedFault.Fault);
+                Model.SelectedFault(SelectedFault.Fault);
                 SetNextButtonEnabled(value: true);
             }
             catch (Exception exception)
@@ -366,9 +367,11 @@ namespace BMW.Rheingold.Module.ISTA
                             {
                                 Log.Error("DtcAnzeigeDynImpl.JournalizeFaultList()", "Fault contains no localized label.");
                             }
+
                             LocalizedText item = new LocalizedText($"<BR/>{arg}: {arg2}", item3);
                             list.Add(item);
                         }
+
                         fastaMsgTxt.AddText(list);
                         if (!list.Any())
                         {
@@ -379,13 +382,16 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             selectable = fastaMsgTxt.CreateAndAddSelectable("DTC_ANZEIGE_DYN");
                         }
-                        bool selectionState = object.Equals(base.Model.SelectedIndex, item2.Index);
+
+                        bool selectionState = object.Equals(Model.SelectedIndex, item2.Index);
                         selectable.AddEntry(selectionState, null, null);
                         list.Clear();
                     }
+
                     return;
                 }
             }
+
             Log.Info("DtcAnzeigeDynImpl.JournalizeFaultList()", "No faultlist to journalize.");
         }
 
@@ -394,7 +400,7 @@ namespace BMW.Rheingold.Module.ISTA
             fasta = RetrieveFasta(inParam);
             if (fasta != null)
             {
-                IAction<IUiDialog> action = fasta.CreateAndAddUiDialogFromServiceProgram("DTC_ANZEIGE_DYN", base.LastCallingMethod);
+                IAction<IUiDialog> action = fasta.CreateAndAddUiDialogFromServiceProgram("DTC_ANZEIGE_DYN", LastCallingMethod);
                 IMessageText messageText = null;
                 string text = string.Empty;
                 if (priorText != null && !string.IsNullOrEmpty(priorText.PlainText))
@@ -405,12 +411,14 @@ namespace BMW.Rheingold.Module.ISTA
                     action.StartTime = startTime;
                     messageText.AddText(textForUI);
                 }
+
                 if (messageText == null)
                 {
                     IList<LocalizedText> textForUI2 = new TextContent(text).GetTextForUI(lang);
                     messageText = action.SpecialAction.CreateAndAddMessageText(textForUI2);
                     action.StartTime = startTime;
                 }
+
                 JournalizeFaultList(action, messageText, startTime);
                 if (pastText != null && !string.IsNullOrEmpty(pastText.PlainText))
                 {
@@ -419,9 +427,11 @@ namespace BMW.Rheingold.Module.ISTA
                         IList<LocalizedText> textForUI3 = new TextContent("empty").GetTextForUI(lang);
                         messageText = action.SpecialAction.CreateAndAddMessageText(textForUI3);
                     }
+
                     IList<LocalizedText> textForUI4 = pastText.GetTextForUI(lang);
                     messageText.AddText(textForUI4);
                 }
+
                 if (!string.IsNullOrEmpty(SelectedFehlerOrt))
                 {
                     List<LocalizedText> list = new List<LocalizedText>();
@@ -448,11 +458,12 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return list;
             }
+
             foreach (string id in faultIds)
             {
                 try
                 {
-                    Fault fault = Vehicle.FaultList.FirstOrDefault(delegate (Fault x)
+                    Fault fault = Vehicle.FaultList.FirstOrDefault((Fault x) =>
                     {
                         DTC dTC = x.DTC;
                         return dTC != null && dTC.Id.HasValue && x.DTC.Id.ToString() == id;
@@ -469,15 +480,16 @@ namespace BMW.Rheingold.Module.ISTA
                     Log.ErrorException("DtcAnzeigeDynImpl.CreateFaultList()", exception);
                 }
             }
+
             return list;
         }
 
         protected void UpdateFaultList(IEnumerable<string> faultIds)
         {
-            base.Model.Buttons.Clear();
+            Model.Buttons.Clear();
             faults.Clear();
             faults.AddRange(CreateFaultList(faultIds));
-            base.Model.Buttons.AddRange(faults.Select((FaultModelDtcDyn x) => x.ButtonModel));
+            Model.Buttons.AddRange(faults.Select((FaultModelDtcDyn x) => x.ButtonModel));
         }
 
         [PreserveSource(Cleaned = true)]

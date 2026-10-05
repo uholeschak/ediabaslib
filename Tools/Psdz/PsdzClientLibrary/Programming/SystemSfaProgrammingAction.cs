@@ -9,8 +9,7 @@ namespace BMW.Rheingold.Programming
 {
     internal class SystemSfaProgrammingAction : ProgrammingAction, ISystemSfaProgrammingAction, IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>, ITherapyPlanAction2, ITherapyPlanAction
     {
-        internal SystemSfaProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
-            : base(parentEcu, type, isEditable, order)
+        internal SystemSfaProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order) : base(parentEcu, type, isEditable, order)
         {
             switch (type)
             {
@@ -23,7 +22,8 @@ namespace BMW.Rheingold.Programming
                 default:
                     throw new NotSupportedException("Creating a SystemSfaProgrammingAction with a ProgrammingActionType other than SFAWrite or SFADelete is not supported.");
             }
-            base.Title = ProgrammingAction.BuildTitle(base.Type, base.ParentEcu, ConfigSettings.CurrentUICulture, titleTextId);
+
+            Title = ProgrammingAction.BuildTitle(Type, ParentEcu, ConfigSettings.CurrentUICulture, titleTextId);
         }
     }
 }

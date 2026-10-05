@@ -385,7 +385,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 Log.WarningException("EcuVariantLocator.GetDataValue<T>()", exception);
             }
 
-            return default(T);
+            return default;
         }
     }
 }

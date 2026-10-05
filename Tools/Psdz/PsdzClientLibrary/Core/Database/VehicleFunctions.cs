@@ -110,7 +110,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private static async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel, Vehicle vehicle)
         {
             Collection<decimal> reffaultLabelsLabelIds = new Collection<decimal>();
-            refFaultLabel.ForEach(delegate (KeyValuePair<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> x)
+            refFaultLabel.ForEach((KeyValuePair<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> x) =>
             {
                 reffaultLabelsLabelIds.AddRange(x.Value);
             });
@@ -139,7 +139,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     faultListFault.Add(key, new Collection<XEP_FAULTMODELABELS>());
                 }
 
-                refFaultLabel[key2].ForEach(delegate (decimal x)
+                refFaultLabel[key2].ForEach((decimal x) =>
                 {
                     if (modelFaultLabelAll.ContainsKey(x) && !faultListFault[key].Contains(modelFaultLabelAll[x]))
                     {
@@ -184,7 +184,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     xepFaultLabelsList.Add(key, new Collection<XEP_FAULTLABELS>());
                 }
 
-                refFaultLabel[item].ForEach(delegate (decimal x)
+                refFaultLabel[item].ForEach((decimal x) =>
                 {
                     if (xepFaultLabels.ContainsKey(x) && !xepFaultLabelsList[key].Contains(xepFaultLabels[x]))
                     {
@@ -210,9 +210,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     using (XmlTextReader xmlReader = new XmlTextReader(input))
                     {
-                        Vehicle obj = (Vehicle)new XmlSerializer(typeof(Vehicle)).Deserialize(xmlReader);
-                        obj.CalculateFaultProperties();
-                        return obj;
+                        Vehicle vehicle = (Vehicle)new XmlSerializer(typeof(Vehicle)).Deserialize(xmlReader);
+                        vehicle.CalculateFaultProperties();
+                        return vehicle;
                     }
                 }
             }
@@ -233,9 +233,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     xmlSerializer.Serialize(memoryStream, vehicle);
                     memoryStream.Seek(0L, SeekOrigin.Begin);
-                    Vehicle obj = (Vehicle)xmlSerializer.Deserialize(memoryStream);
-                    obj.CalculateFaultProperties();
-                    return obj;
+                    Vehicle vehicle2 = (Vehicle)xmlSerializer.Deserialize(memoryStream);
+                    vehicle2.CalculateFaultProperties();
+                    return vehicle2;
                 }
             }
             catch (Exception exception)
@@ -450,7 +450,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
             if (vehicle.CombinedFaults != null)
             {
-                return vehicle.CombinedFaults.FirstOrDefault(delegate (DTC item)
+                return vehicle.CombinedFaults.FirstOrDefault((DTC item) =>
                 {
                     decimal? id2 = item.Id;
                     decimal num = id;
@@ -469,7 +469,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
             SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
             //[+] if (sessionInfo == null) return;
-            if (sessionInfo == null) return;
+            if (sessionInfo == null)
+                return;
             //[+] sessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
             sessionInfo.FaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
             //[+] sessionInfo.NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(vehicle.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
@@ -944,7 +945,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 //[+] if (sessionInfo == null) return;
-                if (sessionInfo == null) return;
+                if (sessionInfo == null)
+                    return;
                 //[-] string status_FunctionName = SessionInfoAccessor.SessionInfo.Status_FunctionName;
                 //[+] string status_FunctionName = sessionInfo.Status_FunctionName;
                 string status_FunctionName = sessionInfo.Status_FunctionName;
@@ -1209,7 +1211,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 Log.WarningException("Vehicle.getISTAResultAs(string resultName)", exception);
             }
 
-            return default(T);
+            return default;
         }
 
         public static void AddDiagCode(this Vehicle vehicle, string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList)

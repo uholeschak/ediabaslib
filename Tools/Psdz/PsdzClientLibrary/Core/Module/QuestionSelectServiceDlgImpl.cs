@@ -16,43 +16,32 @@ namespace BMW.Rheingold.Module.ISTA
     internal abstract class QuestionSelectServiceDlgImpl<TModel> : ServiceDlgImplBase<TModel> where TModel : QuestionSelectServiceDlgModel, new()
     {
         private string kindOfDialog;
-
         private bool disposed;
-
         private IProtocolBasic fasta;
-
         private IMessageText fastaMsgText;
-
         private IAction<IUiDialog> fastaUiDlgAction;
-
         private bool isMultiSelect;
-
         private string calledMethod;
-
         private int buttonCount = 25;
-
         private string[] buttonTexts;
-
         private DateTime startTime;
-
         public UiBrand CurrentBrand { get; private set; }
-
-        private int Result => base.Model.Buttons.FirstOrDefault((QuestionSelectButtonModel item) => item.IsChecked)?.Result ?? 0;
+        private int Result => Model.Buttons.FirstOrDefault((QuestionSelectButtonModel item) => item.IsChecked)?.Result ?? 0;
 
         private string PageTitle
         {
             get
             {
-                return base.Model.PageTitle;
+                return Model.PageTitle;
             }
+
             set
             {
-                base.Model.PageTitle = value;
+                Model.PageTitle = value;
             }
         }
 
-        public QuestionSelectServiceDlgImpl(ParameterContainer inParameters)
-            : base(inParameters)
+        public QuestionSelectServiceDlgImpl(ParameterContainer inParameters) : base(inParameters)
         {
             Initialize(inParameters);
         }
@@ -68,15 +57,16 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 throw new ArgumentException("InParameters are null.", "InParameters");
             }
-            base.Model.PriorText = string.Empty;
-            base.Model.SuccessorText = string.Empty;
+
+            Model.PriorText = string.Empty;
+            Model.SuccessorText = string.Empty;
             kindOfDialog = inParameters.getParameter("__DialogName__") as string;
             fasta = RetrieveFasta(inParameters);
         }
 
         protected int[] GetSelectionSettings()
         {
-            return base.Model.Buttons.Select((QuestionSelectButtonModel item) => item.SelectionState).ToArray();
+            return Model.Buttons.Select((QuestionSelectButtonModel item) => item.SelectionState).ToArray();
         }
 
         private ITextLocator RetrievePrioTxt(ParameterContainer inParameters)
@@ -86,14 +76,17 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 textLocator = inParameters.getParameter("priorText", null) as ITextLocator;
             }
+
             if (textLocator == null)
             {
                 textLocator = inParameters.getParameter("PriorText", null) as ITextLocator;
             }
+
             if (textLocator == null)
             {
                 textLocator = inParameters.getParameter("AnfangText", null) as ITextLocator;
             }
+
             return textLocator;
         }
 
@@ -104,28 +97,33 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 textLocator = inParameters.getParameter("pastText", null) as ITextLocator;
             }
+
             if (textLocator == null)
             {
                 textLocator = inParameters.getParameter("EndeText", null) as ITextLocator;
             }
+
             if (textLocator == null)
             {
                 textLocator = inParameters.getParameter("PastText", null) as ITextLocator;
             }
+
             if (textLocator == null)
             {
                 textLocator = new TextLocator(string.Empty);
             }
+
             return textLocator;
         }
 
         private int[] RetrieveSelectionVorgabe(ParameterContainer inParameters)
         {
-            int[] array = ((!(inParameters.getParameter("SelektionVorgabe", null) is int[] array2)) ? (inParameters.getParameter("ButtonSelect", null) as int[]) : array2);
+            int[] array = ((!(inParameters.getParameter("SelektionVorgabe", null)is int[] array2)) ? (inParameters.getParameter("ButtonSelect", null) as int[]) : array2);
             if (array == null)
             {
                 array = new int[0];
             }
+
             if (array.Length < buttonCount)
             {
                 List<int> list = new List<int>(array);
@@ -140,8 +138,10 @@ namespace BMW.Rheingold.Module.ISTA
                         list.Add(-1);
                     }
                 }
+
                 array = list.ToArray();
             }
+
             return array;
         }
 
@@ -151,7 +151,7 @@ namespace BMW.Rheingold.Module.ISTA
             if (buttonLabel != null)
             {
                 list = buttonLabel.CreatePlainText(lang);
-                list.ForEach(delegate (LocalizedText x)
+                list.ForEach((LocalizedText x) =>
                 {
                     x.TextItem = " -" + x.TextItem + "- ";
                 });
@@ -161,10 +161,12 @@ namespace BMW.Rheingold.Module.ISTA
                 list = new List<LocalizedText>();
                 list.AddRange(lang.Select((string x) => new LocalizedText(" -- ", x)));
             }
+
             if (buttonTextContent != null)
             {
                 return buttonTextContent.ConcatPlainText(list, inFront: true);
             }
+
             return new TextContent(list);
         }
 
@@ -197,24 +199,28 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("QuestionSelectServiceDlgImpl.Init()", "FASTA protocoling not available.");
             }
+
             ITextLocator textLocator = RetrievePrioTxt(inParameters);
             if (fastaUiDlgAction != null)
             {
                 fastaMsgText = Protocol4Fasta(textLocator, fastaUiDlgAction);
             }
+
             ITextLocator textLocator2 = RetrievePostTxt(inParameters);
             PageTitle = ((textLocator != null && !string.IsNullOrEmpty(textLocator.TextContent.PlainText)) ? textLocator.TextContent.PlainText : string.Empty);
             if (flag)
             {
                 if (textLocator != null)
                 {
-                    base.Model.PriorText = GetContent(textLocator.TextContent);
+                    Model.PriorText = GetContent(textLocator.TextContent);
                 }
+
                 if (textLocator2 != null)
                 {
-                    base.Model.SuccessorText = GetContent(textLocator2.TextContent);
+                    Model.SuccessorText = GetContent(textLocator2.TextContent);
                 }
             }
+
             InitButtonCount(inParameters);
             int buttonBeschriftung = (int)inParameters.getParameter("ButtonBeschriftung", 0);
             int[] selectionSettings = RetrieveSelectionVorgabe(inParameters);
@@ -241,6 +247,7 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Error("QuestionSelectServiceDlgImpl.InitButtons()", "No FASTA available.");
                     }
                 }
+
                 if (fastaMsgText != null)
                 {
                     selectable = fastaMsgText.CreateAndAddSelectable(kindOfDialog);
@@ -250,10 +257,11 @@ namespace BMW.Rheingold.Module.ISTA
                     Log.Warning("QuestionSelectServiceDlgImpl.InitButtons()", "No FASTA 2 available.");
                 }
             }
+
             bool[] array = new bool[buttonCount];
-            bool[] array2 = base.Model.Buttons.Select((QuestionSelectButtonModel questionSelectButtonModel) => questionSelectButtonModel.IsMarked).ToArray();
+            bool[] array2 = Model.Buttons.Select((QuestionSelectButtonModel questionSelectButtonModel) => questionSelectButtonModel.IsMarked).ToArray();
             Array.Copy(array2, array, array2.Length);
-            base.Model.Buttons.Clear();
+            Model.Buttons.Clear();
             for (int num = 0; num < buttonCount; num++)
             {
                 int num2 = num;
@@ -261,30 +269,34 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     num2++;
                 }
+
                 string name = string.Format(CultureInfo.InvariantCulture, "ButtonLabel{0}", num2);
                 string name2 = string.Format(CultureInfo.InvariantCulture, "ButtonText{0}", num2);
                 string name3 = string.Format(CultureInfo.InvariantCulture, "ButtonText_{0:00}", num2);
                 string name4 = string.Format(CultureInfo.InvariantCulture, "ButtonLabel_{0:00}", num2);
-                ITextLocator textLocator = ((!(buttonTextLabel.getParameter(name) is ITextLocator textLocator2)) ? (buttonTextLabel.getParameter(name4) as ITextLocator) : textLocator2);
+                ITextLocator textLocator = ((!(buttonTextLabel.getParameter(name)is ITextLocator textLocator2)) ? (buttonTextLabel.getParameter(name4) as ITextLocator) : textLocator2);
                 if (textLocator == null)
                 {
                     name = string.Format(CultureInfo.InvariantCulture, "AuswahlText_{0:00}", num2);
                     textLocator = buttonTextLabel.getParameter(name) as ITextLocator;
                 }
+
                 object parameter = buttonTextLabel.getParameter(name2);
                 if (parameter == null)
                 {
                     parameter = buttonTextLabel.getParameter(name3);
                 }
+
                 if (buttonBeschriftung == 1)
                 {
                     textLocator = new TextLocator(num2.ToString(CultureInfo.InvariantCulture));
                     Log.Info("QuestionSelectServiceDlgImpl.InitDialog()", "Text on Button was set to number {0}.", textLocator);
                 }
+
                 ITextLocator textLocator3 = parameter as ITextLocator;
                 QuestionSelectButtonModel item = InitButton(array[num], textLocator?.TextContent, textLocator3?.TextContent as TextContent, num2, fastaMsgText, selectable, selectionSettings[num], logic.Lang);
                 buttonTexts[num] = textLocator3?.TextContent?.PlainText;
-                base.Model.Buttons.Add(item);
+                Model.Buttons.Add(item);
             }
         }
 
@@ -302,24 +314,29 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 buttonTexts[result] = ((buttonTextContent == null) ? string.Empty : buttonTextContent.PlainText);
             }
+
             if (fastaMsgText != null)
             {
                 TextContent textContent = BuildButtonReport(buttonLabel as TextContent, buttonTextContent, lang);
                 fastaMsgText.AddText(textContent.GetTextForUI(lang));
             }
+
             if (buttonLabel != null)
             {
                 list.AddRange(buttonLabel.GetTextForUI(lang));
             }
+
             ISelectableEntry fastaEntry = null;
             if (selectable != null)
             {
                 fastaEntry = selectable.AddEntry(selectionState: false, list, null);
             }
+
             if (calledMethod != null && calledMethod.Equals("OnlyButtonText_25"))
             {
                 plainText = "";
             }
+
             return new QuestionSelectButtonModel(isMarked, selectionState, buttonText, plainText, label, result, fastaEntry, isMultiSelect, CurrentBrand.ToString());
         }
 
@@ -341,6 +358,7 @@ namespace BMW.Rheingold.Module.ISTA
                 list.AddRange(logic.Lang.Select((string x) => new LocalizedText("-<br/><br/>", x)));
                 result = uiDlgAction.SpecialAction.CreateAndAddMessageText(list);
             }
+
             return result;
         }
 
@@ -363,21 +381,23 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void ButtonSelection(QuestionSelectButtonModel btn)
         {
-            if (base.Model is MehrfachAuswahlDlgModel || base.Model is MultiselectServiceDlgModel || isMultiSelect)
+            if (Model is MehrfachAuswahlDlgModel || Model is MultiselectServiceDlgModel || isMultiSelect)
             {
                 btn.IsChecked = !btn.IsChecked;
             }
             else
             {
-                foreach (QuestionSelectButtonModel button in base.Model.Buttons)
+                foreach (QuestionSelectButtonModel button in Model.Buttons)
                 {
                     button.IsChecked = button == btn;
                 }
             }
+
             if (btn.FastaEntry != null)
             {
                 btn.FastaEntry.SelectionState = btn.IsChecked;
             }
+
             if (btn.IsChecked)
             {
                 SetNextButtonEnabled(value: true);
@@ -400,7 +420,7 @@ namespace BMW.Rheingold.Module.ISTA
 
         protected void DisableDisplay()
         {
-            base.Model.Buttons.ForEach(delegate (QuestionSelectButtonModel x)
+            Model.Buttons.ForEach((QuestionSelectButtonModel x) =>
             {
                 x.IsEnabled = false;
             });
@@ -414,12 +434,13 @@ namespace BMW.Rheingold.Module.ISTA
                 ServiceProgramNavigationAction serviceProgramNavigationAction;
                 while (true)
                 {
-                    ServiceProgramAction serviceProgramAction = base.ServiceProgramController.AwaitUserAction(-1);
+                    ServiceProgramAction serviceProgramAction = ServiceProgramController.AwaitUserAction(-1);
                     serviceProgramNavigationAction = serviceProgramAction as ServiceProgramNavigationAction;
                     if (serviceProgramNavigationAction != null)
                     {
                         break;
                     }
+
                     if (serviceProgramAction is ServiceProgramButtonSelectionAction serviceProgramButtonSelectionAction)
                     {
                         int num = serviceProgramButtonSelectionAction.SelectedIndex;
@@ -427,20 +448,23 @@ namespace BMW.Rheingold.Module.ISTA
                         {
                             num++;
                         }
+
                         Log.Info("QuestionSelectServiceDlg.WaitOnUserInteraction()", "Selected button index: {0}", num);
-                        QuestionSelectButtonModel btn = base.Model.Buttons[num];
+                        QuestionSelectButtonModel btn = Model.Buttons[num];
                         ButtonSelection(btn);
                     }
                 }
+
                 Log.Info("QuestionSelectServiceDlg.WaitOnUserInteraction()", "Navigation action: {0}", serviceProgramNavigationAction.NavigationAction);
-                foreach (QuestionSelectButtonModel button in base.Model.Buttons)
+                foreach (QuestionSelectButtonModel button in Model.Buttons)
                 {
                     if (button.IsChecked)
                     {
                         button.IsMarked = true;
                     }
                 }
-                base.Model.IsDialogShown = false;
+
+                Model.IsDialogShown = false;
                 DisplayWaitCursor(value: true);
                 return true;
             }
@@ -448,6 +472,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.WarningException("QuestionSelectServiceDlgBase.WaitForContinue()", exception);
             }
+
             return false;
         }
 
@@ -483,6 +508,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Init(inParam, inoutParam, method);
                 ProtocolButtonsFasta();
             }
+
             if ("ButtonLabel_Vorbelegung".Equals(method) || "InitializeDialog2".Equals(method) || "WithButtonLabel_25".Equals(method) || "OnlyButtonText_25".Equals(method))
             {
                 WaitForContinue();
@@ -492,28 +518,33 @@ namespace BMW.Rheingold.Module.ISTA
                     string answerText = string.Empty;
                     if ("MehrfachAuswahlDlg".Equals(kindOfDialog, StringComparison.OrdinalIgnoreCase) || "WithButtonLabel_25".Equals(method) || "OnlyButtonText_25".Equals(method))
                     {
-                        answerText = (from x in GetSelectionSettings()
-                                      select x.ToString(CultureInfo.InvariantCulture)).Aggregate((string a, string b) => string.Format(CultureInfo.InvariantCulture, "{0}, {1}", a, b));
+                        answerText = (
+                            from x in GetSelectionSettings()select x.ToString(CultureInfo.InvariantCulture)).Aggregate((string a, string b) => string.Format(CultureInfo.InvariantCulture, "{0}, {1}", a, b));
                     }
                     else
                     {
                         answerText = Result.ToString(CultureInfo.InvariantCulture);
                     }
+
                     list.AddRange(logic.Lang.Select((string x) => new LocalizedText(answerText, x)));
                     fastaUiDlgAction.SpecialAction.AddAnswer(list, null);
                 }
+
                 outParam.setParameter("Result", Result);
                 outParam.setParameter("SelektionAuswahl", GetSelectionSettings());
                 outParam.setParameter("ButtonSelectReturn", GetSelectionSettings());
             }
+
             if (fastaUiDlgAction != null)
             {
                 fastaUiDlgAction.EndTime = DateTime.Now;
             }
+
             if ("WithButtonLabel_25".Equals(method) || "OnlyButtonText_25".Equals(method))
             {
                 ProtocolButtonsFasta();
             }
+
             SetNextButtonEnabled(nextButtonEnabled);
             DisableDisplay();
         }
@@ -524,10 +555,11 @@ namespace BMW.Rheingold.Module.ISTA
             int num = 0;
             for (num = 0; num < buttonCount; num++)
             {
-                string key = $"Button {num} -&gt; {base.Model.Buttons[num].SelectionState}";
+                string key = $"Button {num} -&gt; {Model.Buttons[num].SelectionState}";
                 string value = buttonTexts[num];
                 dictionary.Add(key, value);
             }
+
             fasta?.AddLogStatement(kindOfDialog, dictionary, startTime);
         }
     }

@@ -17,17 +17,15 @@ namespace BMW.Rheingold.Module.ISTA
     internal class IMIB_TB_HVA : ISTAModule
     {
         public ITextLocator txtMeldung;
-
         public int i;
-
         private IDeviceGeneric tracebuffer;
-
         public IMIB_TB_HVA(ParameterContainer InParameter)
         {
             if (InParameter != null)
             {
                 _globalModuleInParameter = InParameter;
             }
+
             __handleInParameter();
             i = 0;
         }
@@ -44,16 +42,18 @@ namespace BMW.Rheingold.Module.ISTA
         {
             if (tracebuffer == null)
             {
-                IDeviceImib deviceImib = base.MeasurementLauncher.ReserveMeasurementDevice();
+                IDeviceImib deviceImib = MeasurementLauncher.ReserveMeasurementDevice();
                 if (deviceImib != null)
                 {
                     tracebuffer = deviceImib.VirtualDevice;
                 }
+
                 if (tracebuffer == null)
                 {
                     throw new ArgumentNullException("The generic device is not available.");
                 }
             }
+
             return tracebuffer;
         }
 
@@ -64,7 +64,7 @@ namespace BMW.Rheingold.Module.ISTA
             ParameterContainer parameterContainer = new ParameterContainer();
             ParameterContainer outParam = new ParameterContainer();
             ParameterContainer parameterContainer2 = new ParameterContainer();
-            base.Factory.CreateServiceDialog(this, "a_Laden", "51695499", _globalTabModuleISTA, 25877, parameterContainer, parameterContainer2).Invoke("ReserveIMIBAdapter", parameterContainer, outParam, parameterContainer2);
+            Factory.CreateServiceDialog(this, "a_Laden", "51695499", _globalTabModuleISTA, 25877, parameterContainer, parameterContainer2).Invoke("ReserveIMIBAdapter", parameterContainer, outParam, parameterContainer2);
             e_Entladen();
             IDeviceGeneric deviceGeneric = GetDeviceGeneric();
             text = (deviceGeneric.LoadPlugin("HVANoise", currentDomain: false).Status ? "True" : "False");
@@ -72,6 +72,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 text = (deviceGeneric.LoadPlugin("hvanoisemeas", currentDomain: false).Status ? "True" : "False");
             }
+
             switch (text)
             {
                 case "IMIB nicht verbunden!":
@@ -88,6 +89,7 @@ namespace BMW.Rheingold.Module.ISTA
                     text = __Text("69302222091").TextContent.PlainText;
                     break;
             }
+
             Trace.TraceInformation("Test_Message", "", DateTime.UtcNow, "IMIB_SysInfo", "TraceBuffer.LoadPlugIn(\\\"hvanoisemeas\\\",false)", Convert.ToString(text));
         }
 
@@ -110,6 +112,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("IMIB_TB_HVA.b_Start()", "No connection to IMIB");
             }
+
             if (deviceGeneric != null)
             {
                 try
@@ -125,6 +128,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("IMIB_TB_HVA.b_Start()", "No connection to IMIB");
             }
+
             if (deviceGeneric != null)
             {
                 try
@@ -138,13 +142,24 @@ namespace BMW.Rheingold.Module.ISTA
                     return;
                 }
             }
+
             Log.Error("IMIB_TB_HVA.b_Start()", "No connection to IMIB");
         }
 
         public virtual void c_Lesen(ref List<string> ErgebnisListe, ref double Status, ref double Wert1, ref double Wert2, ref double Wert3, ref double Wert4, ref double Wert5, ref double Wert6, ref double Drehzahl)
         {
             Logger.WriteInformation("c_Lesencalled");
-            ErgebnisListe = new List<string> { "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1" };
+            ErgebnisListe = new List<string>
+            {
+                "-1",
+                "-1",
+                "-1",
+                "-1",
+                "-1",
+                "-1",
+                "-1",
+                "-1"
+            };
             Status = -1.0;
             Wert1 = -1.0;
             Wert2 = -1.0;
@@ -182,6 +197,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("IMIB_TB_HVA.c_Lesen()", "No connection to IMIB");
             }
+
             Trace.TraceInformation("Test_Message", "\"\"", "DateTime.UtcNow", "\"IMIB_SysInfo\"", "\"Ergebnis Read('HVA Klackern')\"", "Read_Result");
         }
 
