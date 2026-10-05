@@ -127,12 +127,8 @@ namespace SourceCodeSync
 
         private static readonly Dictionary<string, string> _commonTextReplacements = new Dictionary<string, string>
         {
-            { "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService", "IProgrammingService" },
-            { "BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore", "DiagnosticsBusinessDataCore" },
-            { "BMW.Rheingold.CoreFramework.Extensions", "Extensions" },
             { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"},
             { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", "BusType"},
-            { "BMW.Rheingold.ISTA.CoreFramework.ILogger", "ILogger" },
         };
 
         private static readonly Dictionary<string, string> _standardTextReplacements = new Dictionary<string, string>
