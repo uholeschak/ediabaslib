@@ -142,9 +142,9 @@ namespace BMW.Rheingold.Module.ISTA
         {
             get
             {
-                if (base.FastaGrouping != null)
+                if (FastaGrouping != null)
                 {
-                    IProtocolBasic protocolingInstance = base.FastaGrouping.ProtocolingInstance;
+                    IProtocolBasic protocolingInstance = FastaGrouping.ProtocolingInstance;
                     if (protocolingInstance != null)
                     {
                         return protocolingInstance;
@@ -486,10 +486,10 @@ namespace BMW.Rheingold.Module.ISTA
             IProtocolBasic fastaProtocoler = FastaProtocoler;
             if (fastaProtocoler != null)
             {
-            //[-] IAction<IUiDialog> action = fastaProtocoler.CreateAndAddUiDialogFromServiceProgram("MessagePopup", base.LastCallingMethod);
-            //[-] action.StartTime = now;
-            //[-] action.SpecialAction.SetTitle(list);
-            //[-] action.SpecialAction.CreateAndAddMessageText(textForUI);
+                IAction<IUiDialog> action = fastaProtocoler.CreateAndAddUiDialogFromServiceProgram("MessagePopup", LastCallingMethod);
+                action.StartTime = now;
+                action.SpecialAction.SetTitle(list);
+                action.SpecialAction.CreateAndAddMessageText(textForUI);
             }
             else
             {
@@ -1167,7 +1167,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (_globalModuleInParameter != null)
                 {
-                    base.Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as IXepInfoObject;
+                    Me = _globalModuleInParameter.getParameter("ISTAModule.Me") as IXepInfoObject;
                     ModuleParameter moduleParameter = (ModuleParameter)_globalModuleInParameter.getParameter("__RheinGoldCoreModuleParameters__");
                     if (moduleParameter != null)
                     {
@@ -1193,8 +1193,8 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Warning("ISTAModule.__handleInParameter()", "failed with no TabModuleISTA handle available - this module will not work.");
                     }
 
-                    base.FastaGrouping = _globalModuleInParameter.getParameter("FASTA") as IFastaGrouping;
-                    if (base.FastaGrouping == null)
+                    FastaGrouping = _globalModuleInParameter.getParameter("FASTA") as IFastaGrouping;
+                    if (FastaGrouping == null)
                     {
                         Log.Warning("ISTAModule.__handleInParameter()", "No FASTA functionality available.");
                     }
@@ -1241,12 +1241,12 @@ namespace BMW.Rheingold.Module.ISTA
 
         private void SetTextContentManager()
         {
-            if (base.textContentManager == null)
+            if (textContentManager == null)
             {
-                base.textContentManager = _globalModuleInParameter.getParameter("ISTAModule.TextCollection") as TextContentManager;
-                if (base.textContentManager == null)
+                textContentManager = _globalModuleInParameter.getParameter("ISTAModule.TextCollection") as TextContentManager;
+                if (textContentManager == null)
                 {
-                    //[-] base.textContentManager = TextContentManager.Create(DatabaseProviderFactory.Instance, logic.Lang, base.Me);
+                    //[-] textContentManager = TextContentManager.Create(DatabaseProviderFactory.Instance, logic.Lang, Me);
                     //[+] base.textContentManager = TextContentManager.Create(DBProvider, logic.Lang, base.Me);
                     base.textContentManager = TextContentManager.Create(DBProvider, logic.Lang, base.Me);
                 }
@@ -1347,7 +1347,7 @@ namespace BMW.Rheingold.Module.ISTA
                                     }
                                     else
                                     {
-                                        Log.Error("ISTAModule.callModuleRef()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", base.ResultSet.CollectiveResult);
+                                        Log.Error("ISTAModule.callModuleRef()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", ResultSet.CollectiveResult);
                                     }
                                 }
 
@@ -1388,7 +1388,7 @@ namespace BMW.Rheingold.Module.ISTA
                 }
 
                 interactionMessageModel.MessageText = new FormatedData("#FailedToResolveSubmoduleMessage", refPath, text).Localize();
-                interactionMessageModel.DetailText = new FormatedData("#FailedToResolveSubmoduleDetail", base.LastCallingMethod).Localize();
+                interactionMessageModel.DetailText = new FormatedData("#FailedToResolveSubmoduleDetail", LastCallingMethod).Localize();
                 interactionMessageModel.Title = FormatedData.Localize("#Error");
                 logic.Services.InteractionService.Register(interactionMessageModel);
                 Log.Warning("ISTAModule.callModuleRef()", "Failed because there the identifikator of info object with ID \"{0}\" is null or empty.", xepInfoObject.Id);
@@ -1396,7 +1396,7 @@ namespace BMW.Rheingold.Module.ISTA
             else
             {
                 interactionMessageModel.MessageText = new FormatedData("#FailedToResolveSubmoduleMessage", refPath, text).Localize();
-                interactionMessageModel.DetailText = new FormatedData("#FailedToResolveSubmoduleDetail", base.LastCallingMethod).Localize();
+                interactionMessageModel.DetailText = new FormatedData("#FailedToResolveSubmoduleDetail", LastCallingMethod).Localize();
                 interactionMessageModel.Title = FormatedData.Localize("#Error");
                 logic.Services.InteractionService.Register(interactionMessageModel);
                 Log.Warning("ISTAModule.callModuleRef()", "Failed because there is no module name known for path \"{0}\".", refPath);
@@ -1439,7 +1439,7 @@ namespace BMW.Rheingold.Module.ISTA
             return false;
         }
 
-        [PreserveSource(Hint= "Using GetModuleAssembly", Cleaned = true)]
+        [PreserveSource(Hint = "Using GetModuleAssembly", Cleaned = true)]
         private Assembly GetModuleAssembly(string cleanIstaModuleName)
         {
             return TestModuleRunner.GetModuleAssembly(logic.ClientContext, cleanIstaModuleName);
@@ -1462,8 +1462,8 @@ namespace BMW.Rheingold.Module.ISTA
 
                 if (xepInfoObject == null)
                 {
-                    Log.Warning("ISTAModule.GetRootModule", "Cannot retrieve root module, using current: " + base.Me.Title);
-                    xepInfoObject = base.Me;
+                    Log.Warning("ISTAModule.GetRootModule", "Cannot retrieve root module, using current: " + Me.Title);
+                    xepInfoObject = Me;
                 }
             }
 
@@ -1499,11 +1499,11 @@ namespace BMW.Rheingold.Module.ISTA
         private IModuleStep FastaCreateAndAddModuleStepTo(ParameterContainer inParameters)
         {
             IModuleStep moduleStep = null;
-            if (base.FastaGrouping != null)
+            if (FastaGrouping != null)
             {
                 List<LocalizedText> list = new List<LocalizedText>();
-                list.AddRange(logic.Lang.Select((string x) => new LocalizedText(base.LastCallingMethod, x)));
-                moduleStep = base.FastaGrouping.CreateSubGroup(GroupingType.Ablaufschritt, list) as IModuleStep;
+                list.AddRange(logic.Lang.Select((string x) => new LocalizedText(LastCallingMethod, x)));
+                moduleStep = FastaGrouping.CreateSubGroup(GroupingType.Ablaufschritt, list) as IModuleStep;
                 if (inParameters.Parameter.ContainsKey("FASTA"))
                 {
                     inParameters.Parameter["FASTA"] = moduleStep;
@@ -1639,7 +1639,7 @@ namespace BMW.Rheingold.Module.ISTA
                             }
                             else
                             {
-                                Log.Error("ISTAModule.callModule()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", base.ResultSet.CollectiveResult);
+                                Log.Error("ISTAModule.callModule()", "Failed to set CollectiveResult \"{0}\", because FASTA2 instance of type \"ISubModule\" is null.", ResultSet.CollectiveResult);
                             }
                         }
 
@@ -2054,7 +2054,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.WarningException("ISTAModule.GetPersistentProperty<T>()", exception);
             }
 
-            return default(T);
+            return default;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -2070,7 +2070,7 @@ namespace BMW.Rheingold.Module.ISTA
                 Log.WarningException("ISTAModule.GetProperty<T>()", exception);
             }
 
-            return default(T);
+            return default;
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -2128,7 +2128,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Info(Log.CurrentMethod(), "Enter Method");
                 DateTime now = DateTime.Now;
-                string method = string.Format(CultureInfo.InvariantCulture, "{0}.{1}()", GetType().Name, base.LastCallingMethod);
+                string method = string.Format(CultureInfo.InvariantCulture, "{0}.{1}()", GetType().Name, LastCallingMethod);
                 IProtocolBasic fastaProtocoler = FastaProtocoler;
                 if (fastaProtocoler != null)
                 {
