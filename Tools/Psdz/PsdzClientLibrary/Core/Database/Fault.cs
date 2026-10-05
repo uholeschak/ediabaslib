@@ -590,9 +590,17 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
                 DtcFOrtEcuVariantKey key = new DtcFOrtEcuVariantKey(DTC.F_ORT.ToString(), ECU.VARIANTE.ToLowerInvariant());
                 XEP_FAULTLABELS xEP_FAULTLABELS = null;
-                //[-] xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : DatabaseProviderFactory.Instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
-                //[+] xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
-                xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
+                if (xepFaultLabelsCollection != null)
+                {
+                    xEP_FAULTLABELS = (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null);
+                }
+                else
+                {
+                    //[-] xEP_FAULTLABELS = DatabaseProviderFactory.Instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
+                    //[+] xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver); xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
+                    xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver); xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
+                }
+
                 string value;
                 if (xEP_FAULTLABELS == null)
                 {
@@ -884,7 +892,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 text = null;
                 foreach (XEP_STATEVALUES stateValue in stateValues)
                 {
-                    string text2 = ((resultValue is char) ? CompareChar((char)resultValue, stateValue.Statevalue, stateValue.Title) : ((resultValue is double) ? CompareDouble((double)resultValue, stateValue) : ((!(resultValue is float)) ? CompareString(resultValue.ToString(), stateValue) : CompareDouble((float)resultValue, stateValue))));
+                    string text2;
+                    if (resultValue is char)
+                    {
+                        text2 = CompareChar((char)resultValue, stateValue.Statevalue, stateValue.Title);
+                    }
+                    else if (resultValue is double)
+                    {
+                        text2 = CompareDouble((double)resultValue, stateValue);
+                    }
+                    else
+                    {
+                        text2 = ((!(resultValue is float)) ? CompareString(resultValue.ToString(), stateValue) : CompareDouble((float)resultValue, stateValue));
+                    }
+
                     if (text2 != null)
                     {
                         return text2;
