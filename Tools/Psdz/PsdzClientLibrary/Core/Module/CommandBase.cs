@@ -22,34 +22,20 @@ namespace BMW.Rheingold.PresentationFramework
     public abstract class CommandBase : ICommand
     {
         public delegate void DelegateFunction();
-
         private static readonly List<string> trace = new List<string>();
-
         protected INavigationService navigationService;
-
         protected Window owner;
-
         protected PropertyChangedEventHandler progressMonitorPropChangedEventHandler;
-
         private readonly string id;
-
         private InteractionProgressModel interactionProgressModel;
-
         private bool finishedExecution;
-
         private bool parallel;
-
         private ProgressMonitor progressMonitor;
-
         private Task doExecuteTask;
-
         private bool traceEnabled;
-
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
-
         [PreserveSource(Hint = "IMultisessionLogic", Placeholder = true)]
         private PlaceholderType logic;
-
         [PreserveSource(Hint = "IMultisessionLogic", Placeholder = true)]
         public PlaceholderType Logic
         {
@@ -57,6 +43,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 return logic;
             }
+
             set
             {
                 logic = value;
@@ -64,7 +51,6 @@ namespace BMW.Rheingold.PresentationFramework
         }
 
         public Dispatcher Dispatcher { get; private set; }
-
         public string ID => id ?? GetType().Name;
 
         public bool IsParallelExecutionUsed
@@ -73,6 +59,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 return parallel;
             }
+
             set
             {
                 parallel = value;
@@ -88,6 +75,7 @@ namespace BMW.Rheingold.PresentationFramework
                 {
                     stringBuilder.Append(item);
                 }
+
                 return stringBuilder.ToString();
             }
         }
@@ -98,6 +86,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 return interactionProgressModel;
             }
+
             set
             {
                 interactionProgressModel = value;
@@ -110,6 +99,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 return finishedExecution;
             }
+
             set
             {
                 finishedExecution = value;
@@ -122,6 +112,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 return doExecuteTask;
             }
+
             set
             {
                 doExecuteTask = value;
@@ -134,6 +125,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 return traceEnabled;
             }
+
             set
             {
                 traceEnabled = value;
@@ -146,6 +138,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 return progressMonitor;
             }
+
             set
             {
                 progressMonitor = value;
@@ -158,6 +151,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 CommandManager.RequerySuggested += value;
             }
+
             remove
             {
                 CommandManager.RequerySuggested -= value;
@@ -165,10 +159,9 @@ namespace BMW.Rheingold.PresentationFramework
         }
 
         [PreserveSource(Hint = "No change", SignatureModified = true)]
-        protected CommandBase()
-            : this(null)
+        protected CommandBase() : this(null)
         {
-            //[-] Logic = ServiceLocator.Current.GetService<IAppSessionContext>()?.Logic as IMultisessionLogic;
+        //[-] Logic = ServiceLocator.Current.GetService<IAppSessionContext>()?.Logic as IMultisessionLogic;
         }
 
         [PreserveSource(Hint = "No change", SignatureModified = true)]
@@ -178,19 +171,18 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 Log.Info("CommandBase.CommandBase(string)", "Command of type \"{0}\" instantiated with id \"{1}\".", GetType().Name, id);
             }
+
             Dispatcher = Dispatcher.CurrentDispatcher;
             this.id = id;
             VerifyAssemblyHelper.VerifyStrongName(typeof(CommandBase), force: true);
             navigationService = ServiceLocator.Current.GetService<INavigationService>();
-            //[-] Logic = ServiceLocator.Current.GetService<IAppSessionContext>()?.Logic as IMultisessionLogic;
+        //[-] Logic = ServiceLocator.Current.GetService<IAppSessionContext>()?.Logic as IMultisessionLogic;
         }
 
         public static string BuildTrace(string cmd, string method, bool start)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("[").Append(cmd).Append("-")
-                .Append(method)
-                .Append("]");
+            stringBuilder.Append("[").Append(cmd).Append("-").Append(method).Append("]");
             if (start)
             {
                 stringBuilder.Append("->");
@@ -199,6 +191,7 @@ namespace BMW.Rheingold.PresentationFramework
             {
                 stringBuilder.Append("<-");
             }
+
             return stringBuilder.ToString();
         }
 
@@ -212,6 +205,7 @@ namespace BMW.Rheingold.PresentationFramework
                     Log.Warning("CommandBase.Abort()", "called for non abortable command: {0}", ID);
                     return;
                 }
+
                 Log.Info("CommandBase.Abort()", "called for abortable command: {0}", ID);
                 if (doExecuteTask == null || FinishedExecution)
                 {
@@ -252,31 +246,34 @@ namespace BMW.Rheingold.PresentationFramework
                 await CheckForAbort(parameter);
                 FinishedExecution = false;
                 LogStart("Pre");
-                bool num = PreExecute(parameter);
+                bool flag = PreExecute(parameter);
                 LogEnd("Pre");
-                if (num)
+                if (flag)
                 {
                     FinishedExecution = true;
                     return;
                 }
+
                 InteractionProgressModel = new InteractionProgressModel
                 {
                     IsIndeterminate = true
                 };
-                long num2 = DateTime.Now.Ticks + 15000000;
+                long num = DateTime.Now.Ticks + 15000000;
                 doExecuteTask = Task.Factory.StartNew(StartExecution, parameter, cts.Token);
                 if (!IsParallelExecutionUsed)
                 {
-                    while (num2 > DateTime.Now.Ticks)
+                    while (num > DateTime.Now.Ticks)
                     {
                         if (FinishedExecution)
                         {
                             DoPostExecute(parameter);
                             return;
                         }
+
                         Thread.Sleep(100);
                     }
                 }
+
                 if (FinishedExecution)
                 {
                     DoPostExecute(parameter);
@@ -288,6 +285,7 @@ namespace BMW.Rheingold.PresentationFramework
                     {
                         ScheduleParallel();
                     }
+
                     //[-] Logic.Services.InteractionService.Register(InteractionProgressModel);
                     await doExecuteTask;
                     LogEnd("Prog");
@@ -296,11 +294,11 @@ namespace BMW.Rheingold.PresentationFramework
             }
             catch (Exception ex)
             {
-                //[-] MessageDialog.Show(ExceptionHandler.Instance.Handle(ex));
-                //[-] if (ex is AppEndException)
-                //[-] {
-                //[-] Environment.Exit(0);
-                //[-] }
+            //[-] MessageDialog.Show(ExceptionHandler.Instance.Handle(ex));
+            //[-] if (ex is AppEndException)
+            //[-] {
+            //[-] Environment.Exit(0);
+            //[-] }
             }
             finally
             {
@@ -381,13 +379,16 @@ namespace BMW.Rheingold.PresentationFramework
                 {
                     millisecondsTimeout = 100000;
                 }
+
                 doExecuteTask.Wait(millisecondsTimeout);
                 doExecuteTask = null;
             }
+
             if (ProgressMonitor != null && progressMonitorPropChangedEventHandler != null)
             {
                 ProgressMonitor.PropertyChanged -= progressMonitorPropChangedEventHandler;
             }
+
             if (obj != null)
             {
                 if (obj is Thread thread)
@@ -395,6 +396,7 @@ namespace BMW.Rheingold.PresentationFramework
                     Log.ThreadStopped("CommandBase.FinishCommand()", thread);
                     return;
                 }
+
                 Log.Error("CommandBase.FinishCommand()", "FinishCommand called with parameter of wrong type {0}", obj.GetType().FullName);
             }
         }
@@ -411,8 +413,9 @@ namespace BMW.Rheingold.PresentationFramework
                 {
                     string text = "threadManager is null";
                     Log.Info("CommandBase.CheckForAbort()", "Active threads: " + text);
-                    //[-] throw new AppException(new FormatedData("#024"), new FormatedData("#025", ID, text));
+                //[-] throw new AppException(new FormatedData("#024"), new FormatedData("#025", ID, text));
                 }
+
                 if (await CanAbordParameters())
                 {
                     Abort(parameter);
@@ -422,11 +425,11 @@ namespace BMW.Rheingold.PresentationFramework
 
         private Task<bool> CanAbordParameters()
         {
-            return Task.Run(delegate
+            return Task.Run(() =>
             {
                 InteractionQuestionModel model = new InteractionQuestionModel(new FormatedData("#Warning").Localize(), new FormatedData("#026").Localize());
-                //[-] InteractionButtonResponse obj = Logic?.Services.InteractionService.RegisterSync(model);
-                //[-] return obj != null && obj.Action == InteractionButton.Yes;
+                //[-] InteractionButtonResponse interactionButtonResponse = Logic?.Services.InteractionService.RegisterSync(model);
+                //[-] return interactionButtonResponse != null && interactionButtonResponse.Action == InteractionButton.Yes;
                 //[+] return true;
                 return true;
             });
@@ -444,7 +447,7 @@ namespace BMW.Rheingold.PresentationFramework
             Dispatcher = Dispatcher.CurrentDispatcher;
             bool finished = false;
             Exception error = null;
-            Dispatcher.Invoke((DelegateFunction)async delegate
+            Dispatcher.Invoke((DelegateFunction)(async () =>
             {
                 try
                 {
@@ -466,11 +469,12 @@ namespace BMW.Rheingold.PresentationFramework
                         FinishedExecution = true;
                     }
                 }
-            });
+            }));
             if (!finished)
             {
                 throw new Exception("PreExecute() must return with true.");
             }
+
             if (error != null)
             {
                 throw error;
@@ -503,13 +507,13 @@ namespace BMW.Rheingold.PresentationFramework
                 LogStart("Do");
                 DoExecute(ProgressMonitor, parameter);
                 LogEnd("Do");
-                ProgressMonitor obj = ProgressMonitor;
-                if (obj != null && obj.IsRunningInBackground)
+                ProgressMonitor progressMonitor = ProgressMonitor;
+                if (progressMonitor != null && progressMonitor.IsRunningInBackground)
                 {
-                    Dispatcher.Invoke((DelegateFunction)delegate
+                    Dispatcher.Invoke((DelegateFunction)(() =>
                     {
                         PostExecute(parameter);
-                    });
+                    }));
                     FinishCommandInSeparateThread();
                 }
             }
@@ -522,7 +526,8 @@ namespace BMW.Rheingold.PresentationFramework
                 //[-] {
                 //[-] Environment.Exit(0);
                 //[-] }
-                Dispatcher.Invoke((DelegateFunction)delegate
+
+                Dispatcher.Invoke((DelegateFunction)(() =>
                 {
                     try
                     {
@@ -532,7 +537,7 @@ namespace BMW.Rheingold.PresentationFramework
                     {
                         //[-] Logic.Services.InteractionService.Register(new InteractionMessageModel(ExceptionHandler.Instance.Handle(ex4).Text));
                     }
-                });
+                }));
             }
             finally
             {
@@ -542,12 +547,12 @@ namespace BMW.Rheingold.PresentationFramework
 
         private void StartParallelExecution()
         {
-            Dispatcher.Invoke((DelegateFunction)delegate
+            Dispatcher.Invoke((DelegateFunction)(() =>
             {
                 LogStart("Para");
                 ParallelExecute();
                 LogEnd("Para");
-            });
+            }));
         }
     }
 }
