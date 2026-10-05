@@ -32,7 +32,7 @@ REVS: Y
 5. Start PICkit 3 v3.01
 
 ## Step2: Program PIC18F25K80
-* Connect your PICkit 3/4 to the test points on the board of ELM327 adapter (see photo above)
+* Connect your PICkit 3/4 to the test points on the board of ELM327 adapter (see photo above). Make sure not power supply the adapter from PICkit 3/4 and OBD2 connector at the same time!
 * Connect 12V (pin 16) and GND (pin 4) from power supply to ELM327 ODB2 connector: https://www.obd-2.de/stecker-belegungen.html
 * Take `CanAdaapterElm.X.production.unified.hex` from `hc04` folder of the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package
 * Try to flash CanAdaapterElm.X.production.unified.hex. If it fails with the error "Cannot flash Device-ID", then edit it using Tools->Testmemory to the value in the original hex-file
