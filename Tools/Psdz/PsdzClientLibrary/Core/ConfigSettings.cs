@@ -12,6 +12,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.ISPI.IstaServices.Client;
+using BMW.Rheingold.CoreFramework.Print;
 using Microsoft.Win32;
 using PsdzClient;
 using PsdzClient.Core;

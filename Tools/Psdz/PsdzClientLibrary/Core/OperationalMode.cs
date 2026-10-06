@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     [Obsolete("It has been moved to Authroing API.")]
     public enum OperationalMode

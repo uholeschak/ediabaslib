@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Core
+﻿namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
 {
     public static class ServiceCodes
     {

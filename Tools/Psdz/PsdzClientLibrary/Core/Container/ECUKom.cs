@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.ISPI.IstaServices.Client;
+using BMW.ISPI.TRIC.ISTA.Configuration.Constants;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
