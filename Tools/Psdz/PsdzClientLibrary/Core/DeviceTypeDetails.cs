@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Core
+﻿namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
     public enum DeviceTypeDetails
     {

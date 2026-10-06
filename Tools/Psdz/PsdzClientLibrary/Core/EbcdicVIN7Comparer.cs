@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Common
 {
     public class EbcdicVIN7Comparer : IComparer<string>
     {
