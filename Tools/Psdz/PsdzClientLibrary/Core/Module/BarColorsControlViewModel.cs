@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using PsdzClientLibrary.Core;
+using PsdzClient.Core;
 
 namespace BMW.Rheingold.Module.ISTA
 {
