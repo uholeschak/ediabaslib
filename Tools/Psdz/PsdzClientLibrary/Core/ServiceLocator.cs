@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     public sealed class ServiceLocator : IServiceLocator
     {

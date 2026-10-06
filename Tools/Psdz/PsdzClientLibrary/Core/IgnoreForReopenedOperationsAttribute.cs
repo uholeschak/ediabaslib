@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Common.Session
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public sealed class IgnoreForReopenedOperationsAttribute : Attribute

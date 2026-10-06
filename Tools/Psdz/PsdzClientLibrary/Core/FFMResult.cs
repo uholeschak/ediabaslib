@@ -10,7 +10,7 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.Entities;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class FFMResult : FFMResultRuleEvaluation, INotifyPropertyChanged, IFfmResult, IFfmResultRuleEvaluation
     {

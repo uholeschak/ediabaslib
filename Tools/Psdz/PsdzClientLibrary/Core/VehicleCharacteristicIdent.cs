@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using BMW.ISPI.TRIC.ISTA.Contracts;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
+using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.ISPI.TRIC.ISTA.FusionReactor;
 using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;

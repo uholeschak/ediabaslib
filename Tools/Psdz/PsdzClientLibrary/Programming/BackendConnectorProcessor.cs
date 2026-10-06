@@ -1,6 +1,7 @@
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Programming.Error;
 using PsdzClient;
 using PsdzClient.Core;
 

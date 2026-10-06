@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using BMW.ISPI.TRIC.ISTA.Common;
+using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.ISPI.TRIC.ISTA.MultisourceLogic;

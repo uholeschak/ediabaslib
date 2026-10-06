@@ -2,9 +2,10 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class SVK : ISvk, INotifyPropertyChanged, IEcuTreeSvk
     {

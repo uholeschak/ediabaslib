@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Programming.Error;
 using BMW.Rheingold.InfoProvider.BackendConnector;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Model.Ecu;

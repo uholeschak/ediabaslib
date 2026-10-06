@@ -6,6 +6,7 @@ using BMW.ISPI.TRIC.ISTA.Contracts;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
