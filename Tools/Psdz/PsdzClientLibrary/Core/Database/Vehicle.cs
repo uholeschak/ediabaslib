@@ -25,6 +25,7 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VinValidator;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation;
