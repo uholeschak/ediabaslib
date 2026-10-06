@@ -1,4 +1,4 @@
-﻿namespace PBMW.Rheingold.Measurement.Model
+﻿namespace BMW.Rheingold.Measurement.Model
 {
     public enum SystemCommand
     {

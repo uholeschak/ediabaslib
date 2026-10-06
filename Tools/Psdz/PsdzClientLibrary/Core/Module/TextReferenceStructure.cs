@@ -2,7 +2,6 @@
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using PsdzClientLibrary.Core.Module;
 
 namespace BMW.Rheingold.Module.ISTA
 {

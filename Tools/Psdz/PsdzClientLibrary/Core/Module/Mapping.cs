@@ -6,8 +6,6 @@ using System.Globalization;
 using System.Linq;
 using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.MeasurementCommunication;
-using PBMW.Rheingold.Measurement.Model;
-using PsdzClient.Core;
 
 #pragma warning disable CS0219
 namespace BMW.Rheingold.Measurement.Model

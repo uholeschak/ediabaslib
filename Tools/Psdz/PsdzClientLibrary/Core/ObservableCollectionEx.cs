@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     public class ObservableCollectionEx<T> : ObservableCollection<T>
     {

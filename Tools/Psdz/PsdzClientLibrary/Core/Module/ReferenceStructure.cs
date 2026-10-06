@@ -6,73 +6,75 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using PsdzClient;
 
-namespace PsdzClientLibrary.Core.Module;
-[Serializable]
-[XmlInclude(typeof(TextReferenceStructure))]
-[GeneratedCode("Xsd2Code", "3.4.0.32990")]
-[DesignerCategory("code")]
-[XmlRoot("ReferenceElement", Namespace = "", IsNullable = false)]
-[DataContract(Name = "ReferenceStructure")]
-[PreserveSource(Hint = "XmlIncludes removed", InheritanceModified = true)]
-public abstract class ReferenceStructure : INotifyPropertyChanged
+namespace BMW.Rheingold.Module.ISTA
 {
-    private ReferenceStructureType typeField;
-    private string pathField;
-    [XmlAttribute]
-    [DefaultValue(ReferenceStructureType.CMS)]
-    [DataMember]
-    public ReferenceStructureType Type
+    [Serializable]
+    [XmlInclude(typeof(TextReferenceStructure))]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
+    [DesignerCategory("code")]
+    [XmlRoot("ReferenceElement", Namespace = "", IsNullable = false)]
+    [DataContract(Name = "ReferenceStructure")]
+    [PreserveSource(Hint = "XmlIncludes removed", InheritanceModified = true)]
+    public abstract class ReferenceStructure : INotifyPropertyChanged
     {
-        get
+        private ReferenceStructureType typeField;
+        private string pathField;
+        [XmlAttribute]
+        [DefaultValue(ReferenceStructureType.CMS)]
+        [DataMember]
+        public ReferenceStructureType Type
         {
-            return typeField;
-        }
-
-        set
-        {
-            if (!typeField.Equals(value))
+            get
             {
-                typeField = value;
-                OnPropertyChanged("Type");
+                return typeField;
+            }
+
+            set
+            {
+                if (!typeField.Equals(value))
+                {
+                    typeField = value;
+                    OnPropertyChanged("Type");
+                }
             }
         }
-    }
 
-    [XmlAttribute]
-    [DataMember]
-    public string Path
-    {
-        get
+        [XmlAttribute]
+        [DataMember]
+        public string Path
         {
-            return pathField;
-        }
-
-        set
-        {
-            if (pathField != null)
+            get
             {
-                if (!pathField.Equals(value))
+                return pathField;
+            }
+
+            set
+            {
+                if (pathField != null)
+                {
+                    if (!pathField.Equals(value))
+                    {
+                        pathField = value;
+                        OnPropertyChanged("Path");
+                    }
+                }
+                else
                 {
                     pathField = value;
                     OnPropertyChanged("Path");
                 }
             }
-            else
-            {
-                pathField = value;
-                OnPropertyChanged("Path");
-            }
         }
-    }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    public ReferenceStructure()
-    {
-        typeField = ReferenceStructureType.CMS;
-    }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public ReferenceStructure()
+        {
+            typeField = ReferenceStructureType.CMS;
+        }
 
-    public virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

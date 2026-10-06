@@ -1,6 +1,6 @@
 ﻿using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.FusionReactor
 {
     public class MultisourceProperties : IMultisourceProperties
     {

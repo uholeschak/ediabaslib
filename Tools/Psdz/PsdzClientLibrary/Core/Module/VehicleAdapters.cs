@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PBMW.Rheingold.CoreFramework.Contracts;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.ISTA.CoreFramework
 {
