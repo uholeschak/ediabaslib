@@ -1,4 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
@@ -10,7 +10,6 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
 using System;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
@@ -8,7 +8,6 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.FusionReactor;
 using BMW.Rheingold.DiagnosticsBusinessDataCore;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 
 namespace BMW.Rheingold.CoreFramework.Contracts
 {

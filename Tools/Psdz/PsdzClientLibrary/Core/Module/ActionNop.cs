@@ -5,7 +5,6 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;

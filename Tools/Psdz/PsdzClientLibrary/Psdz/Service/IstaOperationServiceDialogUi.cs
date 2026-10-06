@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.Module.ISTA;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 
 namespace BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge.Multisession
 {

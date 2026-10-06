@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -10,7 +10,6 @@ using BMW.Rheingold.VehicleCommunication;
 using PsdzClient.Utility;
 using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 
 namespace BMW.Rheingold.ISTA.CoreFramework
 {

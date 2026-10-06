@@ -1,4 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.EnergySettings;
@@ -8,7 +8,6 @@ using BMW.Rheingold.ISTA.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;

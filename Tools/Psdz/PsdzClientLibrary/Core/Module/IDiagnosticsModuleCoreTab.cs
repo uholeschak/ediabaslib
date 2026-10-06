@@ -1,7 +1,6 @@
-﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.RheingoldSessionController;
-using PsdzClient.Core.Container;
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;

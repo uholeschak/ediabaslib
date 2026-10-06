@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -14,7 +14,6 @@ using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.Metrics;
 using BMW.Rheingold.VehicleCommunication;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 
 namespace BMW.Rheingold.VehicleCommunication

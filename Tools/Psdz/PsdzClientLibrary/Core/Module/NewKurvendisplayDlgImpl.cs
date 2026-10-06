@@ -1,8 +1,7 @@
-﻿using BMW.ISPI.IstaOperation.Contract.Document;
+using BMW.ISPI.IstaOperation.Contract.Document;
 using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
 using BMW.Rheingold.Module.ISTA;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;

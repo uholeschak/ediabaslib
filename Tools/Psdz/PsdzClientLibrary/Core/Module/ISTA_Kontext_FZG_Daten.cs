@@ -1,7 +1,4 @@
-﻿using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
-using BMW.Rheingold.Module.ISTA;
-using PsdzClient.Core.Container;
-using System;
+﻿using System;
 using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.Module.ISTA

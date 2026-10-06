@@ -1,9 +1,8 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.RheingoldSessionController;
 using PBMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;

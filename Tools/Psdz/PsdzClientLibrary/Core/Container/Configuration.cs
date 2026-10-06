@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.IO;
@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 
 namespace BMW.Rheingold.Module.ISTA
 {

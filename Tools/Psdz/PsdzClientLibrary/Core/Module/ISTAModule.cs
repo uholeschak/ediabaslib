@@ -1,4 +1,4 @@
-﻿using BMW.Authoring;
+using BMW.Authoring;
 using BMW.Authoring.API;
 using BMW.Authoring.API.Interface.Rita;
 using BMW.Rheingold.CoreFramework;
@@ -18,7 +18,6 @@ using BmwFileReader;
 using PBMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 using PsdzClientLibrary.Core.Module;
 using System;

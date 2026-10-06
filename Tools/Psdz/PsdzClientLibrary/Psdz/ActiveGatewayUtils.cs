@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using System;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts;

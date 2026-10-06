@@ -1,9 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using BMW.Rheingold.Module.ISTA;
-using BMW.Rheingold.RheingoldSessionController;
-using Org.BouncyCastle.Utilities.Collections;
-using PsdzClient.Core.Container;
 using System.Collections.Generic;
 using PsdzClient;
 

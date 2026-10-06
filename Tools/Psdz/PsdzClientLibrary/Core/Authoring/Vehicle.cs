@@ -1,8 +1,7 @@
-﻿using BMW.Authoring.API;
+using BMW.Authoring.API;
 using BMW.Authoring.Vehicle.Interface;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using System;
 using BMW.Authoring.Programming.API.Implementation;
 using BMW.Authoring.Programming.API.Interface;

@@ -5,7 +5,6 @@ using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Measurement.Common.Contract;
 using BMW.Rheingold.Module.ISTA;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;

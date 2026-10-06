@@ -1,4 +1,4 @@
-﻿using BMW.ISPI.IstaOperation.Impl;
+using BMW.ISPI.IstaOperation.Impl;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Module.ISTA;
@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
 using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
 using System.CodeDom.Compiler;

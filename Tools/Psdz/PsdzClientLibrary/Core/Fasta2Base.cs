@@ -1,7 +1,6 @@
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;

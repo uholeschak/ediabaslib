@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -7,7 +7,6 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.VehicleCommunication;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 
 namespace BMW.Rheingold.ISTA.CoreFramework

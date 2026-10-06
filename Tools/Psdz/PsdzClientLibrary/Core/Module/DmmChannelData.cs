@@ -1,4 +1,4 @@
-﻿using BMW.Rheingold.Measurement.Common;
+using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Measurement.Common.Contract;
 using PsdzClient.Core;
 using System;
@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Input;
 using BMW.Rheingold.MeasurementCommunication;
 using PsdzClient;
-using PsdzClient.Core.Container;
 
 namespace BMW.Rheingold.Measurement
 {

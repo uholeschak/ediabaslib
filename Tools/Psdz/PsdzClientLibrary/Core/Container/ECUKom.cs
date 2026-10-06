@@ -1,4 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using Ediabas;
 using EdiabasLib;
 using PsdzClient.Utility;
@@ -32,7 +32,6 @@ using BMW.Rheingold.InfoProvider;
 using BMW.Rheingold.InfoProvider.Sec4Diag.Models;
 using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Psdz;
 
 #pragma warning disable CS0169, CS0649

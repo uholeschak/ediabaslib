@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using PsdzClient.Core.Container;
+using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

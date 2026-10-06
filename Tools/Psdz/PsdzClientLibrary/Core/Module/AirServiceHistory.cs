@@ -1,8 +1,7 @@
-﻿using BMW.Rheingold.Module.ISTA;
+using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.RheingoldSessionController;
 using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using System;
 using BMW.Rheingold.CoreFramework;
 

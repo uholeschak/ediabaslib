@@ -1,4 +1,4 @@
-﻿using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
+using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
@@ -9,7 +9,6 @@ using BMW.Rheingold.RheingoldSessionController;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.VehicleCommunication;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

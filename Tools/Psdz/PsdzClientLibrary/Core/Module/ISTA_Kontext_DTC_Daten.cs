@@ -1,7 +1,6 @@
-﻿using BMW.Authoring.Vehicle;
+using BMW.Authoring.Vehicle;
 using BMW.Rheingold.Module.ISTA;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using System;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
