@@ -12,9 +12,11 @@ using System.Text;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Utility;
+using BMW.Rheingold.VehicleCommunication.Core;
 
 namespace BMW.Rheingold.VehicleCommunication
 {

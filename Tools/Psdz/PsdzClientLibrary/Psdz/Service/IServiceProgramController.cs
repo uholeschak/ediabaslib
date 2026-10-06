@@ -4,6 +4,7 @@ using BMW.Rheingold.CoreFramework.ServiceProgram;
 using PsdzClient.Core.Container;
 using System.Collections.Generic;
 using BMW.ISPI.IstaOperation.Contract.Document;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 
 namespace BMW.ISPI.IstaOperation.Contract.ServiceProgram
 {

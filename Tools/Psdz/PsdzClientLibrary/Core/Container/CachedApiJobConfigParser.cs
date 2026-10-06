@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using PsdzClient;
 
-namespace PsdzClient.Core.Container
+namespace BMW.Rheingold.VehicleCommunication.Core
 {
     [PreserveSource(Hint = "Class cleaned", SuppressWarning = true)]
     public class CachedApiJobConfigParser

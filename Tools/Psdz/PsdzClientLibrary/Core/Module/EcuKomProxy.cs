@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using PsdzClient;
 

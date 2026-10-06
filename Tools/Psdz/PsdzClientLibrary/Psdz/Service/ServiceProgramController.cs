@@ -9,6 +9,7 @@ using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 
 #pragma warning disable CS0169, CS0649
 namespace BMW.ISPI.IstaOperation.Impl
