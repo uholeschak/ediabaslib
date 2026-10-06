@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Comparer
 {
     public sealed class PsdzStandardSvtComparer : IEqualityComparer<PsdzStandardSvt>
     {

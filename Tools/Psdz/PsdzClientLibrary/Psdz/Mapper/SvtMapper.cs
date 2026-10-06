@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class SvtMapper
     {

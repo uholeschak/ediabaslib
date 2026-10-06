@@ -30,6 +30,7 @@ using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.FusionReactor;
+using BMW.Rheingold.CoreFramework.Utility;
 using PsdzClientLibrary;
 
 #pragma warning disable CS0169, CS0649, CS0618, CS0612

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 
-namespace BMW.Rheingold.Psdz.Model.SecureCoding
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding
 {
     public interface IPsdzCheckNcdResultEto
     {

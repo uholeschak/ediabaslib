@@ -4,8 +4,9 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.SecurityManagement;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement.ProgrammingTokenCto
 {
     [DataContract]
     [KnownType(typeof(PsdzVin))]

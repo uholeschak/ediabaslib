@@ -1,6 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model.Svb;
+﻿using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class SollverbauungMapper
     {

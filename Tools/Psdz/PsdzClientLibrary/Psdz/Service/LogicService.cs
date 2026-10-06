@@ -3,9 +3,6 @@ using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Obd;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz.Model.Svb;
-using BMW.Rheingold.Psdz.Model.Swt;
-using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Core;
 using System;
@@ -14,7 +11,15 @@ using System.Linq;
 using System.Net.Http;
 using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
 namespace RheingoldPsdzWebApi.Adapter.Services
 {

@@ -1,8 +1,9 @@
 ﻿using BMW.Rheingold.Psdz;
 using Newtonsoft.Json;
 using PsdzClient.Psdz.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public class EcuResetMapping
     {

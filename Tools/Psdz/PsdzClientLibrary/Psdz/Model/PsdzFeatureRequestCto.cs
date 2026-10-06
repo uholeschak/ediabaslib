@@ -2,8 +2,9 @@
 using PsdzClient;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Sfa;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

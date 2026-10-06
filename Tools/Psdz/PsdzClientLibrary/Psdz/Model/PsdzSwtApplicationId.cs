@@ -1,8 +1,9 @@
 ﻿using PsdzClient;
 using System.Globalization;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 
-namespace BMW.Rheingold.Psdz.Model.Swt
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

@@ -2,8 +2,10 @@
 using PsdzClient;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Certificate
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate
 {
     [PreserveSource(AttributesModified = true)]
     [KnownType(typeof(PsdzEcuIdentifier))]

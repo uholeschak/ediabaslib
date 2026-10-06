@@ -11,10 +11,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.ISPI.IstaServices.Client;
 using Microsoft.Win32;
+using PsdzClient;
+using PsdzClient.Core;
 
 #pragma warning disable CS0618, CS0169
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     public class ConfigSettings
     {

@@ -1,9 +1,11 @@
 ﻿using System;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Sfa;
+using PsdzClient;
 using PsdzClient.Core;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public class SecureFeatureData
     {

@@ -1,6 +1,5 @@
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Events;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 using System;
@@ -11,10 +10,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using BMW.Rheingold.CoreFramework;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     public class TalExecutionService : ITalExecutionService, ILifeCycleDependencyProvider
     {

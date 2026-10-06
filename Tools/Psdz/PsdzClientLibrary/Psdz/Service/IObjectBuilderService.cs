@@ -9,10 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Communications;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Communications;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services

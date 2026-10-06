@@ -5,8 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class TaMapper
     {

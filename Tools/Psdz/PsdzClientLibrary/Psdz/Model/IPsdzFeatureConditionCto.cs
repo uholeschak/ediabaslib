@@ -1,4 +1,6 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Sfa
+﻿using BMW.Rheingold.Psdz.Model.Sfa;
+
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     public interface IPsdzFeatureConditionCto
     {

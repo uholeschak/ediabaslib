@@ -1,8 +1,10 @@
 ﻿using BMW.Rheingold.Psdz.Model.Localization;
 using PsdzClient;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
-namespace BMW.Rheingold.Psdz.Model.Tal.TalStatus
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalStatus
 {
     [PreserveSource(AttributesModified = true)]
     [KnownType(typeof(PsdzTalElement))]

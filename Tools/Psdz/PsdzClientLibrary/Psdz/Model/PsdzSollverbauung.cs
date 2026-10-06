@@ -1,7 +1,7 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
 
-namespace BMW.Rheingold.Psdz.Model.Svb
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

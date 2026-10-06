@@ -1,7 +1,10 @@
-﻿using BMW.Rheingold.Psdz.Model.Svb;
-using System.Linq;
+﻿using System.Linq;
+using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class EcuVariantInstanceMapper
     {

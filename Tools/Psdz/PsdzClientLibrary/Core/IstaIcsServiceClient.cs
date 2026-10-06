@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using BMW.ISPI.TRIC.ISTA.Configuration.Constants;
+using BMW.Rheingold.CoreFramework;
+using PsdzClient;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.IstaServices.Client
 {
     [PreserveSource(Hint = "Changed to IDisposable", InheritanceModified = true)]
     public class IstaIcsServiceClient : IDisposable

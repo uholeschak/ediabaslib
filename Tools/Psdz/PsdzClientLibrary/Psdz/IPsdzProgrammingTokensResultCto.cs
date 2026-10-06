@@ -1,7 +1,9 @@
 ﻿using BMW.Rheingold.Psdz.Model.Sfa;
 using System.Collections.Generic;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement.ProgrammingTokenCto;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement.ProgrammingTokensResultCto
 {
     public interface IPsdzProgrammingTokensResultCto
     {

@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class BindingCalculationFailureMapper
     {

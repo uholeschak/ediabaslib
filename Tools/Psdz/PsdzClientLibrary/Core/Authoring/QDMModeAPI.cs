@@ -3,6 +3,7 @@ using BMW.Authoring;
 using BMW.Authoring.API;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Interaction;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Localization;
 using PsdzClient;

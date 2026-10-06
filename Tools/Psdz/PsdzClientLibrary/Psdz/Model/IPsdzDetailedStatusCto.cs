@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     public interface IPsdzDetailedStatusCto
     {

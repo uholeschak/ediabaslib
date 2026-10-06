@@ -1,8 +1,11 @@
 ﻿using BMW.Rheingold.Psdz.Model.Tal;
 using System;
 using System.Linq;
+using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class TalElementMapper
     {

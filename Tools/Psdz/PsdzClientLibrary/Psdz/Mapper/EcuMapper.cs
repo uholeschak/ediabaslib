@@ -2,8 +2,11 @@
 using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
 using System.Linq;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class EcuMapper
     {

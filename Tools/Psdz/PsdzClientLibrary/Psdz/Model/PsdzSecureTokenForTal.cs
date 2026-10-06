@@ -1,8 +1,10 @@
 ﻿using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     [PreserveSource(AttributesModified = true)]
     [KnownType(typeof(PsdzEcuIdentifier))]

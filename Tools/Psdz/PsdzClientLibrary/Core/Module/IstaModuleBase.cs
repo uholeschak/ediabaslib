@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
+using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Localization;
 using PsdzClient.Programming;
 

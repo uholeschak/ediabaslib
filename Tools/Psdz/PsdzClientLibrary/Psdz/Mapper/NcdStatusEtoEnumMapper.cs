@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class NcdStatusEtoEnumMapper : MapperBase<PsdzNcdStatusEtoEnum, NcdStatusEto>
     {

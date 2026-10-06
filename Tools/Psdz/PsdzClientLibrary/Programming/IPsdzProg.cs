@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Programming
+﻿namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface IPsdzProg
     {

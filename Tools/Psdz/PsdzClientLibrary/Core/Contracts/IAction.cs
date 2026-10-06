@@ -10,6 +10,7 @@ using BMW.ISPI.IstaServices.Contract.PUK.Data;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 {

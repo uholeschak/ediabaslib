@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using EdiabasLib;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -945,7 +946,7 @@ namespace BmwFileReader
             }
             return brName.Substring(0, 1) + brName.Substring(2, 2);
 #else
-            PsdzClient.Core.FA fa = new PsdzClient.Core.FA
+            FA fa = new FA
             {
                 BR = brName
             };
@@ -972,7 +973,7 @@ namespace BmwFileReader
 
             return null;
 #else
-            PsdzClient.Core.FA fa = new PsdzClient.Core.FA
+            FA fa = new FA
             {
                 STANDARD_FA = standardFa
             };

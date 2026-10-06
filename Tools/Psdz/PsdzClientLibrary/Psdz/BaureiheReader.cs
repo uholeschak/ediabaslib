@@ -2,6 +2,7 @@
 using PsdzClient.Core;
 using PsdzClient.Utility;
 using System;
+using BMW.ISPI.IstaServices.Client;
 using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace BMW.Rheingold.Programming.Common

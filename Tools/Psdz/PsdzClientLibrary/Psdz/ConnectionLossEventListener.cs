@@ -1,10 +1,10 @@
 ﻿using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Events;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
 
 namespace RheingoldPsdzWebApi.Adapter
 {

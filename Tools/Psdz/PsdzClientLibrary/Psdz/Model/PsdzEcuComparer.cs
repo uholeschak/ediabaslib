@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Comparer
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Comparer
 {
     public sealed class PsdzEcuComparer : IEqualityComparer<IPsdzEcu>
     {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
+using BMW.Rheingold.Psdz.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalStatus;
 
-namespace BMW.Rheingold.Psdz.Model.Tal
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal
 {
     public interface IPsdzTalElement
     {

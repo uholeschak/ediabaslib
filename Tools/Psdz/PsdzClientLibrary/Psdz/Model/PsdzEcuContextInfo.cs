@@ -1,8 +1,9 @@
 ﻿using PsdzClient;
 using System;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

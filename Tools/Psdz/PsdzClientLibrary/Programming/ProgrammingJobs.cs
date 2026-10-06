@@ -12,11 +12,8 @@ using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.SecurityManagement;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz.Model.Svb;
-using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
@@ -40,11 +37,22 @@ using System.Threading;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.CoreFramework.Sec4Diag;
+using BMW.Rheingold.CoreFramework.Utility;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Programming.Data;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using BMW.Rheingold.Programming.ProgrammingEngine.Events;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalStatus;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Vcm;
 
 namespace PsdzClient.Programming
 {

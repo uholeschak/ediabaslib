@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public class GenerateFpInterpretationRequestModel
     {

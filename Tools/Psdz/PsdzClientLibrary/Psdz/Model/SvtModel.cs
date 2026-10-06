@@ -1,7 +1,8 @@
 ﻿using BMW.Rheingold.Psdz;
 using Newtonsoft.Json;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public class SvtModel : StandardSvtModel
     {

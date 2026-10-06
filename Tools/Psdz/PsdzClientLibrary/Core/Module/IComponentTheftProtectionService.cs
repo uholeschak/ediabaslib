@@ -5,6 +5,7 @@ using PsdzClient.Programming;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
 namespace BMW.Rheingold.CoreFramework
 {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace BMW.Rheingold.Psdz.Model.SecureCoding
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public enum BackendSignatureEto
     {

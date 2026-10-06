@@ -5,8 +5,9 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Svb
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb
 {
     [DataContract]
     [KnownType(typeof(PsdzOrderPart))]

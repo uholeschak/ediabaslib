@@ -4,8 +4,11 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Globalization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     internal class TalLineHelper
     {

@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Mapper;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
 namespace BMW.Rheingold.Programming.Common

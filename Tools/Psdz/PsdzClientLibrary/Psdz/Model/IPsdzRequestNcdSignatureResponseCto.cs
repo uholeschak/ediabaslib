@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.SecureCoding.SignatureResultCto;
+using BMW.Rheingold.Psdz.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCtos;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto
 {
     public interface IPsdzRequestNcdSignatureResponseCto
     {

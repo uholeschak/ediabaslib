@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Sfa;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.FeatureStatusTo
 {
     public interface IPsdzFeatureStatusTo
     {

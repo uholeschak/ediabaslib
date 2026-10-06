@@ -1,6 +1,9 @@
-﻿using BMW.Rheingold.Psdz.Model.Sfa;
+﻿using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class ValidityConditionCtoMapper
     {

@@ -1,4 +1,5 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Svb
+﻿
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb
 {
     public interface IPsdzSollverbauung
     {

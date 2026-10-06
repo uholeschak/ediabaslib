@@ -9,6 +9,7 @@ using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using PsdzClient;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

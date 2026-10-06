@@ -1,8 +1,10 @@
 ﻿using BMW.Rheingold.Psdz.Model.Swt;
 using PsdzClient;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 
-namespace BMW.Rheingold.Psdz.Model.Tal
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal
 {
     [PreserveSource(AttributesModified = true)]
     [KnownType(typeof(PsdzSwtApplicationId))]

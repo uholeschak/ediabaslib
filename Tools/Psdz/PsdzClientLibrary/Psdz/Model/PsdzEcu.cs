@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.Psdz.Client;
-using BMW.Rheingold.Psdz.Model.Comparer;
 using PsdzClient.Programming;
 using PsdzClient;
 using System;
@@ -8,8 +7,12 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Comparer;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     [DataContract]
     [KnownType(typeof(PsdzEcuDetailInfo))]

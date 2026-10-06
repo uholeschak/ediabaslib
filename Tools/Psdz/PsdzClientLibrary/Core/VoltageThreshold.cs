@@ -1,6 +1,9 @@
-﻿using BMW.Rheingold.Programming.Common;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.Programming.Common;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Utility
 {
     public class VoltageThreshold : IVoltageThreshold
     {

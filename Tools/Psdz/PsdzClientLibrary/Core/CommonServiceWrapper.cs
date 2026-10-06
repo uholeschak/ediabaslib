@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using BMW.ISPI.TRIC.ISTA.Configuration.Constants;
+using BMW.Rheingold.CoreFramework;
+using PsdzClient;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.RheingoldISPINext.ICS
 {
     [PreserveSource(Hint = "Class simplified", SuppressWarning = true)]
     public class CommonServiceWrapper

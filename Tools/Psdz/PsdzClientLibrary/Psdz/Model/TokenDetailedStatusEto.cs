@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public enum TokenDetailedStatusEto
     {

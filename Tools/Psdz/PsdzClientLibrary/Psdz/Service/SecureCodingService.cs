@@ -2,7 +2,6 @@
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 using System;
@@ -11,9 +10,15 @@ using System.Linq;
 using System.Net.Http;
 using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     internal class SecureCodingService : ISecureCodingService
     {

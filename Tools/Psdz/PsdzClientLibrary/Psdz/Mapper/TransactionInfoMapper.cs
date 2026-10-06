@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.Events;
+using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class TransactionInfoMapper : MapperBase<PsdzTransactionInfo, TransactionInfoModel>
     {

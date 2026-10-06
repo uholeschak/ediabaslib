@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
+using BMW.ISPI.IstaServices.Client;
+using BMW.Rheingold.CoreFramework;
 using PsdzClient;
 
 namespace BMW.Rheingold.Programming

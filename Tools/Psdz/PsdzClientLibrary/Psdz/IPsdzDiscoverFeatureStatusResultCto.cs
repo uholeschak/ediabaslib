@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.FeatureStatusTo;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     public interface IPsdzDiscoverFeatureStatusResultCto
     {

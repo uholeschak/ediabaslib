@@ -4,8 +4,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
 
-namespace BMW.Rheingold.Psdz.Model.Svb
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb
 {
     [DataContract]
     public class PsdzLogisticPart : IPsdzLogisticPart

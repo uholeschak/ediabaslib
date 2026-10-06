@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Certificate
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate
 {
     public enum PsdzEcuCertCheckingStatus
     {

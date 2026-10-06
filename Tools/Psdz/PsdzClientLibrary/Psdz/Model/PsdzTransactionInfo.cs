@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Events
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Events
 {
     public enum PsdzTransactionInfo
     {

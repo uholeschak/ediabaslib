@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using BMW.ISPI.IstaServices.Client;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using PsdzClient;
 using PsdzClient.Utility;

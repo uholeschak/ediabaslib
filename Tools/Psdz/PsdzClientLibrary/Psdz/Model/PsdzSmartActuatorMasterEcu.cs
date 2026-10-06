@@ -2,8 +2,10 @@
 using BMW.Rheingold.Psdz.Model;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     [DataContract]
     [KnownType(typeof(PsdzEcuDetailInfo))]

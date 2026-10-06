@@ -2,8 +2,10 @@
 using BMW.Rheingold.Psdz.Model.Localization;
 using PsdzClient;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
 
-namespace BMW.Rheingold.Psdz.Model.Events
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Events
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

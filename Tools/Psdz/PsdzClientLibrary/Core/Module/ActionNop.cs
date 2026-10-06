@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace BMW.Rheingold.FASTA.Model
 {

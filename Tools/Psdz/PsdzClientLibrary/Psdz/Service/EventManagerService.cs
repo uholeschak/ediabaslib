@@ -1,6 +1,5 @@
 ﻿using System;
 using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Events;
 using PsdzClient.Core;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,12 +7,16 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Timers;
+using BMW.Rheingold.CoreFramework;
 using RestSharp;
 using RheingoldPsdzWebApi.Adapter;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     internal class EventManagerService : IEventManagerService
     {

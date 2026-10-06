@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using BMW.Rheingold.Psdz.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class BindingCalculationProgessStatusToMapper : MapperBase<PsdzBindingCalculationProgessStatus, SecurityBackendRequestProgressStatusTo>
     {

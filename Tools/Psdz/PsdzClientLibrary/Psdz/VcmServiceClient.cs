@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Vcm;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Psdz.Client
 {

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Management;
 using System.Text.RegularExpressions;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.Psdz;
 using EdiabasLib;
 using PsdzClient.Core;

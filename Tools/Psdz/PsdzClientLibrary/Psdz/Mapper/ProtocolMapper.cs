@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.Communications;
-using BMW.Rheingold.Psdz.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Communications;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class ProtocolMapper : NullableEnumMapper<PsdzProtocol, ProtocolModel>
     {

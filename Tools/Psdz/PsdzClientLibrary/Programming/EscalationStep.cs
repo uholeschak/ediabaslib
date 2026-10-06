@@ -1,10 +1,11 @@
 ﻿using BMW.Rheingold.Psdz.Model.Tal;
-using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using PsdzClient.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalStatus;
 
 namespace BMW.Rheingold.Programming
 {

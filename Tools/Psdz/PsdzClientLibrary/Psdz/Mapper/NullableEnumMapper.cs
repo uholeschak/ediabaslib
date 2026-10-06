@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal abstract class NullableEnumMapper<TKey, TValue> : MapperBase<TKey?, TValue?> where TKey : struct, Enum where TValue : struct, Enum
     {

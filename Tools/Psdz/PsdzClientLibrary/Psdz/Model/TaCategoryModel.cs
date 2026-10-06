@@ -2,8 +2,10 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjectss;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     [JsonConverter(typeof(JsonInheritanceConverter), new object[] { "discriminatorType" })]
     [JsonInheritance("BlFlashModel", typeof(BlFlashModel))]

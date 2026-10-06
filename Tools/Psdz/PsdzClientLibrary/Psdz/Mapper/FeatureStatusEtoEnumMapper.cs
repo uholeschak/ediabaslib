@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class FeatureStatusEtoEnumMapper : MapperBase<PsdzFeatureStatusEtoEnum, FeatureStatusEto>
     {

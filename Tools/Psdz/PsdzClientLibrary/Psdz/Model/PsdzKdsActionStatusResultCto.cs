@@ -1,7 +1,9 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Kds;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds;
 
-namespace BMW.Rheingold.Psdz.Model.Kds
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

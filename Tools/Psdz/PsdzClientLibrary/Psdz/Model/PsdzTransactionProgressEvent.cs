@@ -2,7 +2,7 @@
 using PsdzClient;
 using System.Runtime.Serialization;
 
-namespace BMW.Rheingold.Psdz.Model.Events
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Events
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

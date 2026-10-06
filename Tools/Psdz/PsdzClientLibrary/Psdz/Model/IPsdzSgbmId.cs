@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BMW.Rheingold.Psdz.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {
     public interface IPsdzSgbmId : IComparable<IPsdzSgbmId>
     {

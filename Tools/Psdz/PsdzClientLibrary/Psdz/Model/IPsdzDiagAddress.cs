@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Ecu
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     public interface IPsdzDiagAddress
     {

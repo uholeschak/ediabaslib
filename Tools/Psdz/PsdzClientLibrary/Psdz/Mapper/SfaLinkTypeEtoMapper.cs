@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Sfa;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class SfaLinkTypeEtoMapper : MapperBase<PsdzSfaLinkTypeEtoEnum, SfaLinkTypeEto>
     {

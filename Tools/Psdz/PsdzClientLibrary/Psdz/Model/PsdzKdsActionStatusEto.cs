@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Kds
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds
 {
     public enum PsdzKdsActionStatusEto
     {

@@ -1,7 +1,11 @@
 ﻿using System.Linq;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class FetchEcuSecCheckingResultMapper
     {

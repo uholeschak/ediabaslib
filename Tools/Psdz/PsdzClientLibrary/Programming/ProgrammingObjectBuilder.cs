@@ -4,8 +4,6 @@ using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Obd;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz.Model.Svb;
-using BMW.Rheingold.Psdz.Model.Swt;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
@@ -20,7 +18,13 @@ using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Vcm;
 
 #pragma warning disable CS0169
 namespace BMW.Rheingold.Programming.API
@@ -251,7 +255,7 @@ namespace BMW.Rheingold.Programming.API
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public IVehicleProfileChecksum Build(Psdz.IPsdzReadVpcFromVcmCto vpcInput)
+        public IVehicleProfileChecksum Build(IPsdzReadVpcFromVcmCto vpcInput)
         {
             if (vpcInput == null)
             {

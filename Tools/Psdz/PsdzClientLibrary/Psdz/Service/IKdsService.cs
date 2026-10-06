@@ -6,6 +6,8 @@ using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient;
 using System.ServiceModel;
 using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {

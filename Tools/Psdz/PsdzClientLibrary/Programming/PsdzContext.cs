@@ -3,10 +3,6 @@ using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.Svb;
-using BMW.Rheingold.Psdz.Model.Swt;
-using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Core;
 using System;
@@ -31,6 +27,11 @@ using BMW.Rheingold.Programming;
 using BmwFileReader;
 using PsdzClient;
 using PsdzClient.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 #pragma warning disable CS0169
 namespace BMW.Rheingold.Programming.ProgrammingEngine

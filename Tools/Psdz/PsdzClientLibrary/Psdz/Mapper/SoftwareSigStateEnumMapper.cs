@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class SoftwareSigStateEnumMapper : NullableEnumMapper<PsdzSoftwareSigState, SoftwareSigStateModel>
     {

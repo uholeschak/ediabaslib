@@ -1,8 +1,9 @@
 ﻿using BMW.Rheingold.Psdz.Model.Sfa;
 using System.Collections.Generic;
 using System.Linq;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public class SFASessionData
     {

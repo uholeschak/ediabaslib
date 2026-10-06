@@ -4,8 +4,10 @@ using BMW.Rheingold.Psdz.Model.Exceptions;
 using PsdzClient;
 using System.Collections.Generic;
 using System.ServiceModel;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required)]

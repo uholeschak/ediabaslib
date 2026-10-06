@@ -2,8 +2,9 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {
     [DataContract]
     public abstract class InteractionModel : IInteractionModel, INotifyPropertyChanged, IDisposable

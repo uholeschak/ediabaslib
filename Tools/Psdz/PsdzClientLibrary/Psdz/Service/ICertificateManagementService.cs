@@ -3,8 +3,11 @@ using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
 using System.ServiceModel;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required)]

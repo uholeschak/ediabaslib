@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using BMW.ISPI.IstaServices.Client;
 using BMW.ISPI.TRIC.ISTA.Common.Session;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet;
@@ -32,6 +33,7 @@ using BMW.Rheingold.CoreFramework.ImportantLogging;
 using BMW.Rheingold.CoreFramework.Interaction;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.CoreFramework.Metrics;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 #pragma warning disable CS0649, CS0618, CS0169

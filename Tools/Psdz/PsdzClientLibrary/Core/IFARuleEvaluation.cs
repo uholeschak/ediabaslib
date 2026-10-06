@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
 {
     public interface IFARuleEvaluation
     {

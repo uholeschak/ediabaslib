@@ -1,7 +1,8 @@
 ﻿using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class EcuIdentifierMapper
     {

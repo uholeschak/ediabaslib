@@ -1,6 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model.Svb;
+﻿using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class LogisticPartMapper
     {

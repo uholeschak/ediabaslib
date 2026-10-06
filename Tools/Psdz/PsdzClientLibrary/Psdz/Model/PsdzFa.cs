@@ -1,7 +1,9 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
-namespace BMW.Rheingold.Psdz.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {
     [PreserveSource(Hint = "Added OLD_PSDZ_FA", SuppressWarning = true)]
     [DataContract]

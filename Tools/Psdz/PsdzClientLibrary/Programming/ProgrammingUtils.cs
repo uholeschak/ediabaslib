@@ -29,6 +29,11 @@ using BMW.Rheingold.Diagnostics.Common;
 using BMW.Rheingold.Programming.Data;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement.ProgrammingTokenCto;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 #pragma warning disable CS0612

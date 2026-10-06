@@ -7,6 +7,10 @@ using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {

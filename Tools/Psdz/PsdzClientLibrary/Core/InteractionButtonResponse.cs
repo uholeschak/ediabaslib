@@ -1,6 +1,8 @@
 ﻿using System.Runtime.Serialization;
+using BMW.Rheingold.CoreFramework.Interaction;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Interaction
 {
     [DataContract]
     public class InteractionButtonResponse : InteractionResponse

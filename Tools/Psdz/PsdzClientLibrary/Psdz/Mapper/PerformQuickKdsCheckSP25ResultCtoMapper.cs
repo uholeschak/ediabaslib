@@ -1,7 +1,11 @@
 ﻿using BMW.Rheingold.Psdz.Model.Kds;
 using System.Linq;
+using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class PerformQuickKdsCheckSP25ResultCtoMapper
     {

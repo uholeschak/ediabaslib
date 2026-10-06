@@ -22,6 +22,7 @@ using BMW.Rheingold.Programming.ProgrammingEngine;
 using PsdzClient;
 using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 #pragma warning disable CS0169, CS0414
 namespace BMW.Rheingold.Programming

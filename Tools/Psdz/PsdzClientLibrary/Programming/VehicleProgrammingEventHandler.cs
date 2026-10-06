@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.Events;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 namespace BMW.Rheingold.Programming.ProgrammingEngine
 {

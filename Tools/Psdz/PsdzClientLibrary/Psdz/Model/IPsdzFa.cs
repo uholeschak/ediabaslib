@@ -1,6 +1,7 @@
 ﻿using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
-namespace BMW.Rheingold.Psdz.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {
     [PreserveSource(Hint = "Added OLD_PSDZ_FA", SuppressWarning = true)]
     public interface IPsdzFa : IPsdzStandardFa

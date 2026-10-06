@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjectss;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class TaExecutionStateMapper : MapperBase<PsdzTaExecutionState?, TaExecutionStateModel>
     {

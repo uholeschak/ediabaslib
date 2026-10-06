@@ -2,8 +2,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor
 {
     public interface IReactorFa : INotifyPropertyChanged, IFARuleEvaluation
     {

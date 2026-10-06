@@ -1,8 +1,10 @@
 ﻿using BMW.Rheingold.Psdz.Model;
 using PsdzClient;
 using System.Linq;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class StandardFaMapper
     {

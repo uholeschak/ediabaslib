@@ -1,4 +1,9 @@
-﻿namespace BMW.Rheingold.Psdz
+﻿using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.FeatureStatusTo;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
+
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class FeatureStatusToMapper
     {

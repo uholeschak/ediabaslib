@@ -1,6 +1,10 @@
-﻿using BMW.Rheingold.Psdz.Model.Ecu;
+﻿using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     public static class EcuIdentifierCtoMapper
     {

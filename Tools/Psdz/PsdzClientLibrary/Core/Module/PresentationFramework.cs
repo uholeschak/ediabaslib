@@ -1,6 +1,7 @@
 ﻿using System;
 using PsdzClient.Core;
 using System.Windows;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.PresentationFramework
 {

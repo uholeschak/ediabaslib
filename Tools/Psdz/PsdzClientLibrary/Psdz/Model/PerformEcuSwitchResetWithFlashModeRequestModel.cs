@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public class PerformEcuSwitchResetWithFlashModeRequestModel
     {

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {
     public interface IInteractionRequestModel<out TResponse> : IInteractionModel, INotifyPropertyChanged where TResponse : InteractionResponse
     {

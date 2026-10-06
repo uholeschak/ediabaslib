@@ -1,8 +1,9 @@
 ﻿using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     [DataContract]
     [KnownType(typeof(PsdzFeatureIdCto))]

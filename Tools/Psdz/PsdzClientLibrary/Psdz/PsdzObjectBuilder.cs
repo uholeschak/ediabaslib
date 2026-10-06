@@ -19,7 +19,11 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Mapper;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 

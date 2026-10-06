@@ -1,6 +1,6 @@
-﻿using BMW.Rheingold.Psdz.Model.Events;
-using PsdzClient;
+﻿using PsdzClient;
 using System.ServiceModel;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts
 {

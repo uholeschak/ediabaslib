@@ -1,6 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model.Swt;
+﻿using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class SwtApplicationIdMapper
     {

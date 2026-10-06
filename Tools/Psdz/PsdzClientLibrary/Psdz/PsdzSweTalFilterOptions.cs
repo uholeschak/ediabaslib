@@ -2,8 +2,9 @@
 using BMW.Rheingold.Psdz;
 using System.Collections.Generic;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter
 {
     public class PsdzSweTalFilterOptions : IPsdzSweTalFilterOptions
     {

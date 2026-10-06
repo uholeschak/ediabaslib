@@ -2,9 +2,11 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using BMW.Rheingold.CoreFramework.Interaction;
+using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Localization;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {
     [DataContract]
     public class InteractionMessageModel : InteractionRequestModel<InteractionButtonResponse>, IInteractionMessageModel, IInteractionModel, INotifyPropertyChanged

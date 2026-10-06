@@ -2,6 +2,10 @@
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using System.Collections.Generic;
 using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement.ProgrammingTokenCto;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts
 {

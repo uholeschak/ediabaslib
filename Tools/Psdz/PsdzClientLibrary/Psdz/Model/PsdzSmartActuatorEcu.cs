@@ -1,7 +1,8 @@
 ﻿using BMW.Rheingold.Psdz.Model.Ecu;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     [DataContract]
     [KnownType(typeof(PsdzEcuDetailInfo))]

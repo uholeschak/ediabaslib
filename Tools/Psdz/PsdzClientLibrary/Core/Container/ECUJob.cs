@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;

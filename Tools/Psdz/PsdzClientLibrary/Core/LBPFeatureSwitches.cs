@@ -1,6 +1,7 @@
 ﻿using System;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
 {
     public static class LBPFeatureSwitches
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface ISalapaLocalizedEntry : INotifyPropertyChanged

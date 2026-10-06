@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
-namespace BMW.Rheingold.Psdz.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {
     [DataContract]
     public class PsdzSgbmId : IPsdzSgbmId, IComparable<IPsdzSgbmId>

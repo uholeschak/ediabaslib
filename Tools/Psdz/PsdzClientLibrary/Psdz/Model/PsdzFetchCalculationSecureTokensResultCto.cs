@@ -4,8 +4,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     [DataContract]
     [KnownType(typeof(PsdzDetailedStatusCto))]

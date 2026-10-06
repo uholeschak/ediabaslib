@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.Psdz.Model.Sfa;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     public interface IPsdzSecureTokenForVehicleEto
     {

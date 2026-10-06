@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Localization;
 
-namespace BMW.Rheingold.Psdz.Model.Tal.TalStatus
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalStatus
 {
     public interface IPsdzFailureCause : ILocalizableMessage
     {

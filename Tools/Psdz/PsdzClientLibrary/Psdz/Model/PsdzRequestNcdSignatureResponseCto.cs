@@ -1,9 +1,12 @@
-﻿using BMW.Rheingold.Psdz.Model.SecureCoding.SignatureResultCto;
-using PsdzClient;
+﻿using PsdzClient;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCto;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCtos;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

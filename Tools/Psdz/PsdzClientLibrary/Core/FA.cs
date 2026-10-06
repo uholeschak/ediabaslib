@@ -9,9 +9,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using BMW.ISPI.IstaServices.Client;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class FA : INotifyPropertyChanged, BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa, IFARuleEvaluation, IReactorFa
     {

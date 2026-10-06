@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public class JsonInheritanceConverter : JsonConverter
     {

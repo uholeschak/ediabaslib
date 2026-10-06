@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 
 namespace BMW.Rheingold.Programming.Common
 {

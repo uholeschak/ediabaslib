@@ -1,6 +1,9 @@
 ﻿using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     public interface IPsdzEcuFeatureTokenRelationCto
     {

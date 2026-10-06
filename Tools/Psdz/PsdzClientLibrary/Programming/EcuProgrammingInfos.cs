@@ -19,6 +19,8 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 #pragma warning disable CS0169
 namespace BMW.Rheingold.Programming

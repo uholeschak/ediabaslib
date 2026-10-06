@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.Programming.Common;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.Contracts
 {
     public interface IVoltageThreshold
     {

@@ -1,6 +1,7 @@
 ﻿using System;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     public interface IPsdzEcuIdentifier : IComparable<IPsdzEcuIdentifier>
     {

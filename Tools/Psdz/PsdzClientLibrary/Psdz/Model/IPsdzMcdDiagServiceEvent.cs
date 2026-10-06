@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.Psdz.Model.Localization;
 
-namespace BMW.Rheingold.Psdz.Model.Events
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Events
 {
     public interface IPsdzMcdDiagServiceEvent : IPsdzEvent, ILocalizableMessage
     {

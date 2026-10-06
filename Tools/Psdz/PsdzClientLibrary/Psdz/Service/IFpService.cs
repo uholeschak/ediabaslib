@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.Psdz.Model;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     public interface IFpService
     {

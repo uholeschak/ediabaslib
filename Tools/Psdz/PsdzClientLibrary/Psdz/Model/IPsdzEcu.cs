@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Client;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     public interface IPsdzEcu
     {

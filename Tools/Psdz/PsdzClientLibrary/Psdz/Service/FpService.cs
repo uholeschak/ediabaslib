@@ -4,8 +4,11 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Services
 {
     public class FpService : IFpService
     {

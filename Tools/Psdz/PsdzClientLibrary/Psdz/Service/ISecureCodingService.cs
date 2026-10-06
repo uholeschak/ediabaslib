@@ -2,12 +2,15 @@
 using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient;
 using System.Collections.Generic;
 using System.ServiceModel;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {

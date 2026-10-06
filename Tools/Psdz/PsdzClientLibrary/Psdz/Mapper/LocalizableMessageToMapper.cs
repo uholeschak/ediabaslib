@@ -1,7 +1,9 @@
-﻿using BMW.Rheingold.Psdz.Model.Sfa;
+﻿using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class LocalizableMessageToMapper
     {

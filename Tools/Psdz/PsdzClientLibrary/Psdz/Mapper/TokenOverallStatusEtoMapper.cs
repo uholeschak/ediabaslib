@@ -1,7 +1,10 @@
 ﻿using BMW.Rheingold.Psdz.Model.Sfa;
 using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class TokenOverallStatusEtoMapper : MapperBase<PsdzTokenOverallStatusEtoEnum, TokenOverallStatusEtoModel>
     {

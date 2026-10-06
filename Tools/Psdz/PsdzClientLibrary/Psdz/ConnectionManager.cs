@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
@@ -28,7 +29,6 @@ using PsdzClient;
 using PsdzClient.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
-using IPsdzProg = PsdzClient.Programming.IPsdzProg;
 
 #pragma warning disable CS0169, CS0612, CS0649
 namespace BMW.Rheingold.Programming

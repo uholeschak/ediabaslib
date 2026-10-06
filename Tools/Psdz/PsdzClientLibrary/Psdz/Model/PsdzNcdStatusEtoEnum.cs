@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.SecureCoding
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {
     public enum PsdzNcdStatusEtoEnum
     {

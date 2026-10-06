@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     public interface IPsdzReadStatusResultCto
     {

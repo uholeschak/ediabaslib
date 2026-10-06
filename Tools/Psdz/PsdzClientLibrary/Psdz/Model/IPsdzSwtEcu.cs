@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.Swt;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Swt
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt
 {
     public interface IPsdzSwtEcu
     {

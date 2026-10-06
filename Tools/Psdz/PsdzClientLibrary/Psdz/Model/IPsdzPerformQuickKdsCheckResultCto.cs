@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using BMW.Rheingold.Psdz.Model.Kds;
 
-namespace BMW.Rheingold.Psdz.Model.Kds
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds
 {
     public interface IPsdzPerformQuickKdsCheckResultCto
     {

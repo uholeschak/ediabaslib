@@ -1,6 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+﻿using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class TalFilterMapper
     {

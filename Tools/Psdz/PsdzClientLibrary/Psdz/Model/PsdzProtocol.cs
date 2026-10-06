@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Communications
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Communications
 {
     public enum PsdzProtocol
     {
