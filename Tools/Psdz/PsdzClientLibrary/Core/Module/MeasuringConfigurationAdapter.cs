@@ -1,3 +1,4 @@
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Measurement.Common.Data;

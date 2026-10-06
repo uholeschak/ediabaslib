@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using BMW.Rheingold.CoreFramework;
+using System.Xml.Linq;
 using System;
 
 namespace PsdzClient.Core

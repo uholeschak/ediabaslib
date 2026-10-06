@@ -1,3 +1,4 @@
+using BMW.Rheingold.CoreFramework;
 using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;

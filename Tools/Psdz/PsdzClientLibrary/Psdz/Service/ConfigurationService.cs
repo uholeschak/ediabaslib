@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.Psdz;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.Psdz;
 using PsdzClient.Core;
 using PsdzClient;
 using RestSharp;

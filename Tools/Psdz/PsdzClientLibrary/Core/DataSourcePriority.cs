@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BMW.Rheingold.CoreFramework;
+using System.Collections.Generic;
 using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.Rheingold.ISTA.CoreFramework;
 using PsdzClient.Core;

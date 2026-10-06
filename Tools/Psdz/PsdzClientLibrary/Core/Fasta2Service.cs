@@ -1,3 +1,4 @@
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using System;
 using System.Collections.Generic;

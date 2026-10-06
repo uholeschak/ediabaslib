@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework;
+using System;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;

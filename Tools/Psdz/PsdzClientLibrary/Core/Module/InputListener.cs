@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.Module;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Module;
 using BMW.Rheingold.RheingoldSessionController;
 using PsdzClient.Core;
 using System;

@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using PsdzClient.Core;
 using PsdzClient.Psdz;
 

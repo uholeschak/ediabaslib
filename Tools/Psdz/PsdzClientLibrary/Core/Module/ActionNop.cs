@@ -1,3 +1,4 @@
+using BMW.Rheingold.CoreFramework;
 using BMW.ISPI.IstaServices.Contract.PUK.Data;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
