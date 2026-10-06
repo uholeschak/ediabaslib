@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Core
+﻿namespace BMW.Rheingold.CoreFramework
 {
     public enum EventKind
     {
