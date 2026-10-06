@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using BMW.ISPI.IstaServices.Contract.PUK.Data;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Programming.Data.Obd;
 using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 

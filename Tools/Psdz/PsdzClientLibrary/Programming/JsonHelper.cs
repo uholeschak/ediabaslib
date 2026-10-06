@@ -9,7 +9,7 @@ using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using Newtonsoft.Json;
 
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.Controller.SecureCoding.Helper
 {
     internal class JsonHelper
     {

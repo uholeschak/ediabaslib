@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Programming.Data.Obd;
 using BMW.Rheingold.Programming.Common;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;

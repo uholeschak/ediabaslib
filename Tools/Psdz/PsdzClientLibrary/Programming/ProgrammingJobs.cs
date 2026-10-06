@@ -38,6 +38,7 @@ using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.CoreFramework.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Utility;
 using BMW.Rheingold.Programming;
+using BMW.Rheingold.Programming.Controller.SecureCoding.Helper;
 using BMW.Rheingold.Programming.Data;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using BMW.Rheingold.Programming.ProgrammingEngine.Events;

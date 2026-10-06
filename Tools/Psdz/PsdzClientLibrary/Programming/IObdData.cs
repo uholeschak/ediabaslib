@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Programming.Data.Obd
 {
     public interface IObdData
     {

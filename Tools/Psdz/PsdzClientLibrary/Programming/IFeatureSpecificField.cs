@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IFeatureSpecificField
