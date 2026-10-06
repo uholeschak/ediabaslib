@@ -8,7 +8,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {

@@ -10,7 +10,6 @@ using BMW.Rheingold.FASTA;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
 using System;

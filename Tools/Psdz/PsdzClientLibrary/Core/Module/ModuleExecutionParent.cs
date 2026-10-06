@@ -4,7 +4,6 @@ using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.ServiceProgram;
 using BMW.Rheingold.RheingoldSessionController;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

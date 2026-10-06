@@ -2,7 +2,7 @@
 using System.Xml.Linq;
 using System;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     internal static class XNodeExtension
     {

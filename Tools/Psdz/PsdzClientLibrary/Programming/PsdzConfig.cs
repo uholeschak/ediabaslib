@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.Psdz;
 using EdiabasLib;
-using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {

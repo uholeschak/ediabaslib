@@ -2,7 +2,6 @@
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.InteropHelper;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.ISTA.CoreFramework
 {

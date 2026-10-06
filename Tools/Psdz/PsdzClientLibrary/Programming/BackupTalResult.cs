@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Programming
+﻿namespace BMW.Rheingold.Programming.ProgrammingEngine.States
 {
     internal enum BackupTalResult
     {

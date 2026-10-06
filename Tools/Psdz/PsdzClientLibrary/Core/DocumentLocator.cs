@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient.Core;
 using PsdzClientLibrary;
 using System;
 using System.Globalization;

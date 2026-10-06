@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 using Windows.Globalization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {

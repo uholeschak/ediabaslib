@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 

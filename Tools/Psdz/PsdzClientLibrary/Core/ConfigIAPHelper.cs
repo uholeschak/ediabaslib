@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework
 {

@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using BMW.Authoring.API.Math;
 using BMW.Authoring.Database;
 using BMW.Rheingold.CoreFramework;

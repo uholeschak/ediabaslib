@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using PsdzClient;
+﻿using PsdzClient;
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;

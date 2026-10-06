@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.FASTA;
-using PsdzClient.Core;
 using System.Collections.Generic;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.FASTA

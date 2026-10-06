@@ -1,5 +1,4 @@
 ﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
-using PsdzClient.Core;
 using System.ComponentModel;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

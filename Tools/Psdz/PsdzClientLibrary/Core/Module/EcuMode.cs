@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-
+﻿
 namespace BMW.Rheingold.CoreFramework
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]

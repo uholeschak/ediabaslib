@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Localization
 {

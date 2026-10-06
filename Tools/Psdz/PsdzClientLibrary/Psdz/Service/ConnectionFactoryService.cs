@@ -2,7 +2,6 @@
 using System;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
-using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;

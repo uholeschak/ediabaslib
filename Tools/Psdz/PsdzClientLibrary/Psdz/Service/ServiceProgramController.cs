@@ -4,7 +4,6 @@ using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.ServiceProgram;
 using PsdzClient;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Threading;

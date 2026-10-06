@@ -1,5 +1,4 @@
 using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge;
-using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

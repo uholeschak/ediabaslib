@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
 {

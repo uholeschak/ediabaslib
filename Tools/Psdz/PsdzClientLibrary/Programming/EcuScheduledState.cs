@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
     [Flags]
     public enum EcuScheduledState

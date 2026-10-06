@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts
 {

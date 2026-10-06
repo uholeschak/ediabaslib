@@ -5,7 +5,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     public class TextLocator : SPELocator, ITextLocator, ISPELocator
     {

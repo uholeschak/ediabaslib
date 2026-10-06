@@ -4,7 +4,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework
 {

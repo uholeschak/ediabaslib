@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-
+﻿
 namespace BMW.Rheingold.CoreFramework.EnergySettings
 {
     [AuthorAPI(SelectableTypeDeclaration = false)]

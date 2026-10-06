@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.Measurement.Common;
-using PsdzClient.Core;
 using System.Text.RegularExpressions;
 
 namespace BMW.Rheingold.Measurement.Common

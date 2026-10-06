@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient.Core;
 using System;
 using System.Globalization;
 using BMW.Rheingold.ISTA.CoreFramework.Module;

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;

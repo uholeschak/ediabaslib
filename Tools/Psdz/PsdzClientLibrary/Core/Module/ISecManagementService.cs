@@ -1,6 +1,5 @@
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
 using BMW.Rheingold.CoreFramework.Contracts;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework
 {

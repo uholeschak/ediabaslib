@@ -4,7 +4,6 @@ using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Data.Sqlite;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;

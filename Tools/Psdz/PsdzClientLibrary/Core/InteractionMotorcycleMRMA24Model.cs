@@ -2,7 +2,6 @@
 using BMW.Rheingold.CoreFramework.Interaction;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Interaction.Models.Interfaces;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {

@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.Module.ISTA;
-using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

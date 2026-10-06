@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class typeECU_Transaction : IEcuTransaction, INotifyPropertyChanged
     {

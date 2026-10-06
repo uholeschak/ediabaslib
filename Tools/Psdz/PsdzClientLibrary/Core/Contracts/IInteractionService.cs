@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Interaction;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts
 {

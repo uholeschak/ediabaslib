@@ -11,7 +11,6 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.ISTA.CoreFramework;
-using PsdzClient.Core;
 
 #pragma warning disable CA2022
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics

@@ -3,7 +3,6 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BmwFileReader;
 using PsdzClient;
-using PsdzClient.Core;
 using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;

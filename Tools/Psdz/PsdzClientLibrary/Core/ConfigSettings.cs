@@ -15,7 +15,6 @@ using BMW.ISPI.IstaServices.Client;
 using BMW.Rheingold.CoreFramework.Print;
 using Microsoft.Win32;
 using PsdzClient;
-using PsdzClient.Core;
 
 #pragma warning disable CS0618, CS0169
 namespace BMW.Rheingold.CoreFramework

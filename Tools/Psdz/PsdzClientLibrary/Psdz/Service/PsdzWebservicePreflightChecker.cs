@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.Psdz;
-using PsdzClient.Core;
 using System;
 using System.Diagnostics;
 using System.IO;

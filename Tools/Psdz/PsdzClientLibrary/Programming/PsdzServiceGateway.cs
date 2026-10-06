@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.Programming.PSdZ;
-using PsdzClient.Core;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace PsdzClient.Programming

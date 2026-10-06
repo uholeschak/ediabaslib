@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using BMW.Rheingold.ISTA.CoreFramework;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework
 {

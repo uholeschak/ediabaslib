@@ -6,7 +6,6 @@ using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Kds;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using PsdzClient.Core;
 using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds;

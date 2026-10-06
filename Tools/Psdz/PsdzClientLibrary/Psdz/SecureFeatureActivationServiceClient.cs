@@ -2,7 +2,6 @@
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;

@@ -10,7 +10,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation
 {

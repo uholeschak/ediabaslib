@@ -1,12 +1,11 @@
 ﻿using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
 using System.Linq;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.Common
 {
     public class BusMapper
     {

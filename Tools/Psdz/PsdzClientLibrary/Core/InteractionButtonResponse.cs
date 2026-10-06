@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using BMW.Rheingold.CoreFramework.Interaction;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Interaction
 {

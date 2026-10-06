@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Threading;
 using BMW.Rheingold.CoreFramework;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {

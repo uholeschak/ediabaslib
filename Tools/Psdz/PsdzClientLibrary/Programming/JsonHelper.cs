@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using Newtonsoft.Json;
-using PsdzClient.Core;
 
 
 namespace PsdzClient.Programming

@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;

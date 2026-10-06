@@ -1,5 +1,4 @@
 ﻿using PsdzClient;
-using PsdzClient.Core;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework;
 

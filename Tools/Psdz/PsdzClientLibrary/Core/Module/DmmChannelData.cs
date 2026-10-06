@@ -1,6 +1,5 @@
 using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Measurement.Common.Contract;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

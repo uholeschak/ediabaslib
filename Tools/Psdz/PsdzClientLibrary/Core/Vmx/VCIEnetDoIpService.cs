@@ -3,7 +3,6 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.RheingoldSessionController;
 using BMW.Rheingold.xVM;
 using BMW.Rheingold.xVM.ENET;
-using PsdzClient.Core;
 using System;
 using System.Net;
 using System.Net.Sockets;

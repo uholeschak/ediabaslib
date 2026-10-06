@@ -1,5 +1,4 @@
 ﻿using BMW.Authoring;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

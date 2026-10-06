@@ -2,7 +2,7 @@
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.Diagnostics.Common
 {
     public static class VehicleCharacteristicsUtility
     {

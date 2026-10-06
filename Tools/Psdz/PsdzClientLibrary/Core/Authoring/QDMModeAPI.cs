@@ -7,7 +7,6 @@ using BMW.Rheingold.CoreFramework.Interaction;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Localization;
 using PsdzClient;
-using PsdzClient.Core;
 
 #pragma warning disable CS0162, CS0169
 namespace BMW.Authoring.API

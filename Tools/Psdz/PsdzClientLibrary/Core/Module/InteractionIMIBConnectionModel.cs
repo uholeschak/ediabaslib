@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.Interaction.Responses;
-using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;

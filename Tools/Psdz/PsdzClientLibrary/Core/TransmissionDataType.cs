@@ -1,6 +1,6 @@
 using System;
 
-namespace PsdzClient.Core
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Models
 {
     public class TransmissionDataType : IEquatable<TransmissionDataType>, ICloneable
     {

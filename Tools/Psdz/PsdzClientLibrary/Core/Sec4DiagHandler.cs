@@ -25,7 +25,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Sec4Diag;
 using PsdzClient;
-using PsdzClient.Core;
 
 #pragma warning disable CS0618, SYSLIB0057
 namespace BMW.Rheingold.CoreFramework.Sec4Diag

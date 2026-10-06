@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.VehicleCommunication;
-using PsdzClient.Core;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;

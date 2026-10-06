@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Authoring;
 using BMW.Authoring.API;
-using PsdzClient.Core;
 using System;
 using System.Linq;
 using System.Text;

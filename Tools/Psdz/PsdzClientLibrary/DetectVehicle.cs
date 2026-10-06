@@ -4,7 +4,6 @@ using EdiabasLib;
 using log4net;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
 using System;

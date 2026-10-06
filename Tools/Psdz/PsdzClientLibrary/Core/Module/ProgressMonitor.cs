@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Threading;
 using BMW.Rheingold.CoreFramework.Localization;
 

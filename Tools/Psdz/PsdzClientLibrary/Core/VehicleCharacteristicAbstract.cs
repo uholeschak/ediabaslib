@@ -2,7 +2,6 @@
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts
 {

@@ -2,7 +2,6 @@
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Navigation;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.IstaOperation.Impl
 {

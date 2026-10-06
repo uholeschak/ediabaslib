@@ -1,6 +1,5 @@
 ﻿using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

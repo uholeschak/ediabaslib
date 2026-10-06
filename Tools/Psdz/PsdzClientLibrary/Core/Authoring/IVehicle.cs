@@ -1,5 +1,4 @@
 ﻿using BMW.Authoring;
-using PsdzClient.Core;
 using System.ComponentModel;
 using BMW.Authoring.Programming.API.Interface;
 using BMW.Authoring.Vehicle.Interface;

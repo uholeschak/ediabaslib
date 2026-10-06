@@ -19,7 +19,6 @@ using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using PsdzClient.Core;
 
 #pragma warning disable CS0169
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

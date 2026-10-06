@@ -2,7 +2,6 @@
 using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.InteropHelper;
 using BMW.Rheingold.Psdz;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

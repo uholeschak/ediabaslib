@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using BMW.ISPI.IstaOperation.Contract.ServiceProgram;

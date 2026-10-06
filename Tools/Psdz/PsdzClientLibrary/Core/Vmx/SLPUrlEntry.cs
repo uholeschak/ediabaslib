@@ -2,7 +2,6 @@
 using System;
 using System.Text;
 using BMW.Rheingold.xVM;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.xVM
 {

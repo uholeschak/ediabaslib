@@ -4,7 +4,6 @@ using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

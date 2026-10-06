@@ -2,7 +2,6 @@
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge;
 using PsdzClient;
-using PsdzClient.Core;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;

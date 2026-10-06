@@ -1,5 +1,4 @@
 using BMW.Rheingold.Module.ISTA;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

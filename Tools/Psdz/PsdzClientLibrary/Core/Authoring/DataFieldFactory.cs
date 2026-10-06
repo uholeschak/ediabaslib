@@ -1,5 +1,4 @@
 ﻿using BMW.Authoring.API.MetaData;
-using PsdzClient.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;

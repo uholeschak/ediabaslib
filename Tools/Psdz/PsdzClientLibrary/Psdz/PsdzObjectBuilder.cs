@@ -7,7 +7,6 @@ using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
 using PsdzClient;

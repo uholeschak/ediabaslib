@@ -1,7 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.MultisourceLogic
 {

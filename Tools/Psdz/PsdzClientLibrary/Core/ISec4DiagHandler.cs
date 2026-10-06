@@ -6,7 +6,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Contracts;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Sec4Diag
 {

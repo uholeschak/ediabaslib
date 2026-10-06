@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API.MetaData

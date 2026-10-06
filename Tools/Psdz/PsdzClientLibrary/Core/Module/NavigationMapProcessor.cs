@@ -4,7 +4,6 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using BMW.Rheingold.CoreFramework.Utility;
 using BMW.Rheingold.ISTA.CoreFramework;
-using PsdzClient.Core;
 using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

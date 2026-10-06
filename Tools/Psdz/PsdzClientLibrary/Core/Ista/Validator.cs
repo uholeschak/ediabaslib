@@ -3,7 +3,6 @@ using System;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VinValidator;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models.VinValidator;
-using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
 using BMW.ISPI.ISTA.Contracts.Interfaces.VinValidator;

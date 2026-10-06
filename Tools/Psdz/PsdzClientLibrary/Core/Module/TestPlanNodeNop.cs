@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient.Core;
 using System.Collections.Generic;
 
 namespace BMW.Rheingold.FASTA.Model

@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {

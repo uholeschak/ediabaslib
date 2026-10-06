@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using BMW.Rheingold.CoreFramework;
-using PsdzClient.Core;
 
 namespace BMW.Authoring.Helper
 {

@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using PsdzClient.Core;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
 namespace BMW.Rheingold.Programming.Common

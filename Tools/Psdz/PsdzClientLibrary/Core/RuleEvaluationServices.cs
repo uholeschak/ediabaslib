@@ -2,7 +2,6 @@
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.ISTA.CoreFramework;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider.RuleVariantHandling
 {

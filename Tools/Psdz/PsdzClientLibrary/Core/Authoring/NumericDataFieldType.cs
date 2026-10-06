@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Converters;
-using PsdzClient.Core;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using BMW.Rheingold.CoreFramework;

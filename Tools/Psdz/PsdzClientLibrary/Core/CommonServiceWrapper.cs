@@ -2,7 +2,6 @@
 using BMW.ISPI.TRIC.ISTA.Configuration.Constants;
 using BMW.Rheingold.CoreFramework;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.RheingoldISPINext.ICS
 {

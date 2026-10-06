@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {

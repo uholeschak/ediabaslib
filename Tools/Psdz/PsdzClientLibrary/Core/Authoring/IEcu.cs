@@ -1,7 +1,6 @@
 ﻿using BMW.Authoring;
 using BMW.Authoring.Vehicle.Enums;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient.Core;
 using System;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework;

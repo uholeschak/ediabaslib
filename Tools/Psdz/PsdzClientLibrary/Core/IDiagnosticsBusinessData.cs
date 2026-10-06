@@ -5,9 +5,9 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Enums;
 using BMW.Rheingold.CoreFramework.FusionReactor;
 using BMW.Rheingold.DiagnosticsBusinessDataCore;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts
 {

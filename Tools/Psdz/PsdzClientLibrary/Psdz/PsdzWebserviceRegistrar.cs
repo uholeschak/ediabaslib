@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using PsdzClient;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

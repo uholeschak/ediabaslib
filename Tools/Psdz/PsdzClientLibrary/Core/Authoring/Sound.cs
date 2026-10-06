@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Media;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Media;

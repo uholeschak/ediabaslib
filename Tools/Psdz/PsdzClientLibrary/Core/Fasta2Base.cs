@@ -8,7 +8,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient;
-using PsdzClient.Core;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.FASTA.Models

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.Psdz.Model;
-using PsdzClient.Core;
 using PsdzClient;
 
 namespace BMW.Rheingold.Programming.Common

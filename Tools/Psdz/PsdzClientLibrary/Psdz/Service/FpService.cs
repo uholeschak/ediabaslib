@@ -3,7 +3,6 @@ using System;
 using System.Net.Http;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
-using PsdzClient.Core;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;

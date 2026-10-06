@@ -9,7 +9,6 @@ using HarmonyLib;
 using log4net;
 using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
-using PsdzClient.Core;
 using PsdzClient.Utility;
 using PsdzClientLibrary;
 using System;
@@ -23,6 +22,7 @@ using System.Text;
 using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.Diagnostics.Common;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 

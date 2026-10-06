@@ -7,7 +7,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
-using PsdzClient.Core;
 
 #pragma warning disable CS0169
 namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions

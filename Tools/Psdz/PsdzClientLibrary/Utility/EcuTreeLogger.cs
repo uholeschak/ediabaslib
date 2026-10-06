@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Utilities
 {

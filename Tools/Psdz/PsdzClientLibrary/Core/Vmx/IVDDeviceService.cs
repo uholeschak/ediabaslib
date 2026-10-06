@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
-using PsdzClient.Core;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;

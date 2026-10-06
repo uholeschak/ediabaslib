@@ -2,7 +2,6 @@
 using BMW.Authoring.API;
 using BMW.Authoring.Programming.API.Interface;
 using BMW.Authoring.Programming.API.Models.Interfaces;
-using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
 using BMW.Authoring.Programming.API.Models.Implementation;

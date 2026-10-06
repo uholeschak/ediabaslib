@@ -32,7 +32,6 @@ using BMW.Rheingold.CoreFramework.Utility;
 using BMW.Rheingold.InfoProvider;
 using BMW.Rheingold.InfoProvider.Sec4Diag.Models;
 using PsdzClient;
-using PsdzClient.Core;
 using PsdzClient.Psdz;
 
 #pragma warning disable CS0169, CS0649

@@ -12,7 +12,6 @@ using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;

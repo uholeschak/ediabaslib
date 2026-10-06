@@ -1,5 +1,4 @@
-﻿using PsdzClient.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using BMW.Rheingold.CoreFramework.Interaction.Responses;
 

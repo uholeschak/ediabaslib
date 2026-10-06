@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling
 {

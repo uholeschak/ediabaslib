@@ -14,7 +14,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {

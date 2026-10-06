@@ -7,7 +7,6 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Common.Session;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.Common.Session
 {

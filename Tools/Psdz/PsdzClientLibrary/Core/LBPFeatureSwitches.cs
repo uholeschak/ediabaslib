@@ -1,5 +1,4 @@
 ﻿using System;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
 {

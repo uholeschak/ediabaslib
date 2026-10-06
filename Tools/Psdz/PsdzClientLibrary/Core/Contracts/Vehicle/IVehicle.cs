@@ -1,5 +1,4 @@
 using PsdzClient;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VinValidator;
+using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
 #pragma warning disable CS0618

@@ -5,7 +5,6 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;

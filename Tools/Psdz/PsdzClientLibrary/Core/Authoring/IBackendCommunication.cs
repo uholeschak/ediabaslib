@@ -2,7 +2,6 @@
 using BMW.Authoring.API.ServiceRide;
 using BMW.Authoring.API.VPS;
 using BMW.Authoring.API.VTG;
-using PsdzClient.Core;
 using System;
 using System.ComponentModel;
 using BMW.Authoring.API.CalibrationValues;

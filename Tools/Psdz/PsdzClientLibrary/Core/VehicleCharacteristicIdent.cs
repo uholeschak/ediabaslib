@@ -15,7 +15,6 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.ISTA.CoreFramework;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification
 {

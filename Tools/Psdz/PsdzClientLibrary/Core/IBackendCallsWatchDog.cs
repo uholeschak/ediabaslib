@@ -3,7 +3,6 @@ using System.Net;
 using System;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.OnlinePatch;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Enums
 {

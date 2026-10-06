@@ -14,7 +14,6 @@ using System.Threading;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework
 {

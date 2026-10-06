@@ -1,6 +1,5 @@
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;

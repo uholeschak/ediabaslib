@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.Module.ISTA
 {

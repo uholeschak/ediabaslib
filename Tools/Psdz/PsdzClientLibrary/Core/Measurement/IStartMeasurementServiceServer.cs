@@ -2,7 +2,6 @@
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Measurement.Common.Contract;
 using PsdzClient;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.Measurement.Common
 {

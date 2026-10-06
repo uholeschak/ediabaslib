@@ -14,7 +14,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
-using PsdzClient.Core;
 
 #pragma warning disable CS0414
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

@@ -15,7 +15,6 @@ using BMW.ISPI.TRIC.ISTA.FusionReactor;
 using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.ISTA.CoreFramework;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility
 {

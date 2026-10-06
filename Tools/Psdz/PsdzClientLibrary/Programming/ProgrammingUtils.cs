@@ -9,7 +9,6 @@ using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient;
-using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework
 {

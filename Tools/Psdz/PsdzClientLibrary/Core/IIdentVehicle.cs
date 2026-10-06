@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent
 {

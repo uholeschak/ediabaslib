@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree
 {

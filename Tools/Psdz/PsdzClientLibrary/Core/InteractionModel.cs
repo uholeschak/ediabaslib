@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {

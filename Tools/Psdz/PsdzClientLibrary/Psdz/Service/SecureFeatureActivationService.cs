@@ -3,7 +3,6 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

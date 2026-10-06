@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
-using PsdzClient.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts
 {
