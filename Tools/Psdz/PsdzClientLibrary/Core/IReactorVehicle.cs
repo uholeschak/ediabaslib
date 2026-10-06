@@ -2,6 +2,7 @@
 using PsdzClient.Core;
 using System.ComponentModel;
 using System;
+using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor
 {

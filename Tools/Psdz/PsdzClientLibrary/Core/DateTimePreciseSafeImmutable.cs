@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     internal sealed class DateTimePreciseSafeImmutable
     {

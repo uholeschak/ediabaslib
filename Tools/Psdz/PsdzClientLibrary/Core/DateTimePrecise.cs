@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System;
+using PsdzClient.Core;
 
-namespace PsdzClient.Core
+namespace BMW.Rheingold.CoreFramework
 {
     public class DateTimePrecise
     {
