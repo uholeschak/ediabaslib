@@ -9,6 +9,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using BMW.ISPI.IstaServices.Client;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;

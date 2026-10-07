@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BMW.Rheingold.Psdz;
 using PsdzClient.Programming;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class SmartActuatorFlashStatusMapper
     {

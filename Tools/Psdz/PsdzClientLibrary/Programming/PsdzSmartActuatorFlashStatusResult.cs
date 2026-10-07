@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Programming
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal
 {
     public class PsdzSmartActuatorFlashStatusResult
     {

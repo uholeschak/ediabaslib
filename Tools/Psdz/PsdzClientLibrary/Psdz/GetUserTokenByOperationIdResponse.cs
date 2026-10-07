@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace PsdzClient.Psdz
+namespace BMW.ISPI.IstaServices.Contract.LOGIN.Data
 {
     [DataContract]
     public class GetUserTokenByOperationIdResponse

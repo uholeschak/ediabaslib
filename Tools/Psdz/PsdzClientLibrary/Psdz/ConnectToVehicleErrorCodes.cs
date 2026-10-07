@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Psdz
+﻿namespace BMW.ISPI.TRIC.ISTA.Contracts.Enums
 {
     public enum ConnectToVehicleErrorCodes
     {

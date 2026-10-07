@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public interface IPsdzShutdownEventProvider
     {
