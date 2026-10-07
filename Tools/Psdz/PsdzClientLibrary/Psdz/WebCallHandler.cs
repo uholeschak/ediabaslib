@@ -13,9 +13,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter
 {
     public class WebCallHandler : IWebCallHandler, ILifeCycleDependencyProvider
     {

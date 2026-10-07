@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum TalFilterOptions

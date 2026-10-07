@@ -8,6 +8,7 @@ using System.Net.Http;
 using BMW.Rheingold.CoreFramework;
 using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.DomainObjects;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace RheingoldPsdzWebApi.Adapter.Services

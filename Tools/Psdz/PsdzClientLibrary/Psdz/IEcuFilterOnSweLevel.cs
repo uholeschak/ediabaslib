@@ -1,7 +1,8 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using System.Collections.Generic;
+using BMW.Rheingold.Psdz;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface IEcuFilterOnSweLevel
     {
