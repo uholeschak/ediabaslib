@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.Psdz.Model.Localization;
+﻿
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Localization;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Events
 {

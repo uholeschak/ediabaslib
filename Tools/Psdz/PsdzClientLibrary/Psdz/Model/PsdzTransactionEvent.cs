@@ -1,7 +1,7 @@
-﻿using BMW.Rheingold.Psdz.Model.Localization;
-using BMW.Rheingold.Psdz.Model.Tal;
+﻿using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Localization;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Events
 {

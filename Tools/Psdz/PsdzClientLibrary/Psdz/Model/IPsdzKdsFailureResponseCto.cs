@@ -1,6 +1,6 @@
-﻿using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
+﻿using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.LocalizableMessageTo;
 
-namespace BMW.Rheingold.Psdz.Model.Kds
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds
 {
     public interface IPsdzKdsFailureResponseCto
     {

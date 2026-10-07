@@ -1,8 +1,6 @@
 ﻿using PsdzClient;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Kds;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds
 {

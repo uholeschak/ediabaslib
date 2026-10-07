@@ -1,9 +1,9 @@
 ﻿using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.Localization;
 using PsdzClient;
 using System.Runtime.Serialization;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Localization;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Events
 {

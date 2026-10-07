@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.LocalizableMessageTo;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {

@@ -1,6 +1,6 @@
-﻿using BMW.Rheingold.Psdz.Model.Localization;
-using BMW.Rheingold.Psdz.Model.Tal;
+﻿using BMW.Rheingold.Psdz.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Localization;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Events
 {

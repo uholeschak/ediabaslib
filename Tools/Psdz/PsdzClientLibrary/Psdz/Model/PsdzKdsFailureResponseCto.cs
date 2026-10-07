@@ -1,9 +1,10 @@
 ﻿using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
 using PsdzClient;
 using System.Runtime.Serialization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.LocalizableMessageTo;
 
-namespace BMW.Rheingold.Psdz.Model.Kds
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds
 {
     [PreserveSource(AttributesModified = true)]
     [KnownType(typeof(PsdzLocalizableMessageTo))]

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model.Localization;
-using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Localization;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.LocalizableMessageTo;
 
-namespace BMW.Rheingold.Psdz.Model.Sfa
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     [DataContract]
     public class PsdzLocalizableMessageTo : ILocalizableMessageTo, ILocalizableMessage

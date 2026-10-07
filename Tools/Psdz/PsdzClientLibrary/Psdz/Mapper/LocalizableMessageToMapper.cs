@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.LocalizableMessageTo;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper

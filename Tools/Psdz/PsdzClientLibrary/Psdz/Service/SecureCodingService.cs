@@ -12,6 +12,7 @@ using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;

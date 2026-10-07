@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Localization
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Localization
 {
     public interface ILocalizableMessage
     {
