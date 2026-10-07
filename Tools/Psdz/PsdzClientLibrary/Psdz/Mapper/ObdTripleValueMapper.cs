@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Model.Obd;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class ObdTripleValueMapper
     {
