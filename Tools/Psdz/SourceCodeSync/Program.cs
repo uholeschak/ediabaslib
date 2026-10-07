@@ -142,10 +142,6 @@ namespace SourceCodeSync
 
         private static readonly List<string> _moduleTextInsertions = new List<string>
         {
-            "using PsdzClient.Core;",
-            "using PsdzClient.Core.Container;",
-            "using PsdzClient.Contracts;",
-            "using PsdzClient.Programming;",
             "using BMW.Rheingold.Psdz;"
         };
 

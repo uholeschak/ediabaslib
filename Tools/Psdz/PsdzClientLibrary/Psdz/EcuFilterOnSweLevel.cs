@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.Programming.ProgrammingEngine
 {
     public class EcuFilterOnSweLevel : IEcuFilterOnSweLevel
     {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter
 {
     internal class GenericApiResponse<T>
     {
