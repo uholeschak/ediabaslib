@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true)]
     public class JsonInheritanceAttribute : Attribute

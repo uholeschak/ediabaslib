@@ -10,6 +10,7 @@ using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.DomainObjects;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using RheingoldPsdzWebApi.Adapter.Mapper;
 
 namespace RheingoldPsdzWebApi.Adapter.Services
 {

@@ -1,6 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class ILevelMapper
     {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public class NcdModel
     {

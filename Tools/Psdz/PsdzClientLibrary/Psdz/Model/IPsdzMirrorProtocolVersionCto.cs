@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Tal
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {
     public interface IPsdzMirrorProtocolVersionCto
     {

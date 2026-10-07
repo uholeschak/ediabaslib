@@ -2,7 +2,7 @@
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class ConnectionMapper
     {

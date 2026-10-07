@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public class ILevelModel
     {

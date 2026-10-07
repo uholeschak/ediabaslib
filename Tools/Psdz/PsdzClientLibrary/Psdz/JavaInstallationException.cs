@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework
 {
     [Serializable]
     public sealed class JavaInstallationException : Exception
