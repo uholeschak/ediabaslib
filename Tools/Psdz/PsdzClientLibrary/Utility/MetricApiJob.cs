@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClient.Utility
+namespace BMW.Rheingold.CoreFramework.Metrics
 {
     public class MetricApiJob : Metric
     {

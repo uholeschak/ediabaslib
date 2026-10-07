@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Utility
+namespace BMW.Rheingold.CoreFramework.Utility
 {
     public class SgbmIdParser
     {

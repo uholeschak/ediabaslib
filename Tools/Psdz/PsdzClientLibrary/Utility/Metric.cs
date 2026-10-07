@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace PsdzClient.Utility
+namespace BMW.Rheingold.CoreFramework.Metrics
 {
     public class Metric
     {

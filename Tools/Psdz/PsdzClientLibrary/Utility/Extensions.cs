@@ -1,6 +1,7 @@
 ﻿using System;
+using PsdzClient;
 
-namespace PsdzClient.Utility
+namespace BMW.iLean.CommonServiceSec.Logging
 {
     [PreserveSource(Hint = "Don't update, only used for logging", SuppressWarning = true)]
     public static class Extensions

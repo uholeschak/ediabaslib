@@ -6,7 +6,7 @@ using System.IO;
 using System.Security;
 using BMW.iLean.CommonServices.Logging;
 
-namespace PsdzClient.Utility
+namespace BMW.iLean.CommonServices.Models.Helper
 {
     internal static class MachineIdentifier
     {

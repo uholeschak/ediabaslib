@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Utility
+﻿namespace BMW.Rheingold.CoreFramework.Metrics
 {
     public enum TimeMetricsStage
     {

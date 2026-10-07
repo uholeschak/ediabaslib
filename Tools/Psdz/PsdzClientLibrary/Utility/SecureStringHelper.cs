@@ -4,7 +4,7 @@ using System.Security;
 using System.Security.Cryptography;
 using BMW.iLean.CommonServices.Logging;
 
-namespace PsdzClient.Utility
+namespace BMW.iLean.CommonServices.Models.Helper
 {
     internal static class SecureStringHelper
     {

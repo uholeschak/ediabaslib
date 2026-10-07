@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Management;
-using System.Windows;
 using BMW.iLean.CommonServices.Logging;
 
 #pragma warning disable CS0168
-namespace PsdzClient.Utility
+namespace BMW.iLean.CommonServices.Models.Helper
 {
     internal static class WMIInfo
     {

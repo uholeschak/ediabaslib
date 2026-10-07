@@ -8,7 +8,6 @@ using System.Security.Principal;
 using System.Text;
 using BMW.iLean.CommonServices.Logging;
 using PsdzClient;
-using PsdzClient.Utility;
 
 namespace BMW.iLean.CommonServices.Models.Helper
 {
