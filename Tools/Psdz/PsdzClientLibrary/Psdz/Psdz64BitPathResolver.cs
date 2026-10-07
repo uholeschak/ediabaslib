@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using BMW.Rheingold.CoreFramework;
 
-namespace PsdzClient.Programming
+namespace PsdzClient
 {
     [PreserveSource(Removed = true)]
     public static class Psdz64BitPathResolver

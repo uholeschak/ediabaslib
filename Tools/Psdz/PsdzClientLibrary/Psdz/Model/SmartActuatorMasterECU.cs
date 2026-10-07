@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient.Programming;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;

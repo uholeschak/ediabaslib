@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.Psdz.Client;
 using EdiabasLib;
 using PsdzClient;
-using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;

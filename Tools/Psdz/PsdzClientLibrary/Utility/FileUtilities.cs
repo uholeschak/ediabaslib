@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace PsdzClient.Utility
+namespace PsdzClient
 {
     [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public static class FileUtilities

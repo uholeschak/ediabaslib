@@ -5,7 +5,6 @@ using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

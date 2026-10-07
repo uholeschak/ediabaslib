@@ -4,7 +4,6 @@ using System.Diagnostics;
 using BMW.ISPI.IstaServices.Client;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using PsdzClient;
-using PsdzClient.Utility;
 
 #pragma warning disable CS0169, CS0414, CS0649
 namespace BMW.Rheingold.CoreFramework.Metrics

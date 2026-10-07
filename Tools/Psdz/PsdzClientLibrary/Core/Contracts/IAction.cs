@@ -1,7 +1,6 @@
 using BMW.Authoring.Session;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using BMW.ISPI.IstaServices.Contract.PUK.Data;

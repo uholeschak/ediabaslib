@@ -1,5 +1,4 @@
-﻿using PsdzClient.Programming;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 

@@ -10,7 +10,6 @@ using BMW.Rheingold.InfoProvider.BackendConnector;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
-using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 

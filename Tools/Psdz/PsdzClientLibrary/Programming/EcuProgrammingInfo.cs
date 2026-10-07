@@ -18,7 +18,6 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using PsdzClient;
-using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;

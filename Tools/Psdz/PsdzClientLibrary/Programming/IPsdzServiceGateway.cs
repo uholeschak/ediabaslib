@@ -2,7 +2,7 @@
 using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace PsdzClient.Programming
+namespace PsdzClient
 {
     [PreserveSource(Removed = true)]
     public interface IPsdzServiceGateway

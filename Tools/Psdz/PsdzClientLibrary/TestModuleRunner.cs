@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
 using PsdzClient;
-using PsdzClient.Programming;
 using PsdzClientLibrary;
 using System;
 using System.CodeDom.Compiler;

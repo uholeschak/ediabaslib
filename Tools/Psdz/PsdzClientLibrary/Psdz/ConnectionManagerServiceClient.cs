@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient.Programming;
 using PsdzClient;
 using System;
 using System.Collections.Generic;

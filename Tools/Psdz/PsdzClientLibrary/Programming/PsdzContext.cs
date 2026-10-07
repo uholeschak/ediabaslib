@@ -27,7 +27,6 @@ using BMW.Rheingold.Programming;
 using BMW.Rheingold.Programming.ProgrammingEngine.States;
 using BmwFileReader;
 using PsdzClient;
-using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;

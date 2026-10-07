@@ -1,5 +1,4 @@
 ﻿using PsdzClient;
-using PsdzClient.Programming;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 

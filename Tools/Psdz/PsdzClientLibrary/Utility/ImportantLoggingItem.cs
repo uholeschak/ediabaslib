@@ -5,7 +5,6 @@ using System.Reflection;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
-using PsdzClient.Utility;
 
 namespace BMW.Rheingold.CoreFramework.ImportantLogging
 {

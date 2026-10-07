@@ -1,6 +1,5 @@
 ﻿using EdiabasLib;
 using log4net;
-using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
@@ -13,6 +12,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PsdzClient;
 
 namespace PsdzRpcServer;
 

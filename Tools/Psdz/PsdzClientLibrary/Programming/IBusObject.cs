@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
-using PsdzClient.Programming;
 
 namespace BMW.Rheingold.CoreFramework.Programming.Data.Ecu
 {

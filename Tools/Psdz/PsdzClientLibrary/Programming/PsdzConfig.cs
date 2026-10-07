@@ -8,7 +8,7 @@ using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.Psdz;
 using EdiabasLib;
 
-namespace PsdzClient.Programming
+namespace PsdzClient
 {
     [PreserveSource(Removed = true)]
     public class PsdzConfig

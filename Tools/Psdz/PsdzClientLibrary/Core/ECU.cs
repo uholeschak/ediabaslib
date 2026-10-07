@@ -3,7 +3,6 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using PsdzClient;
-using PsdzClient.Programming;
 using System;
 using System.Collections;
 using System.Collections.Generic;

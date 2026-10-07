@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.ProgrammingEngine.Events;
-using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Programming.ProgrammingEngine
 {

@@ -7,7 +7,6 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.VehicleCommunication;
-using PsdzClient.Utility;
 using PsdzClient;
 
 namespace BMW.Rheingold.ISTA.CoreFramework

@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.Psdz.Client;
 using EdiabasLib;
 using log4net;
-using PsdzClient.Programming;
 using PsdzClient.Properties;
 using System;
 using System.Collections.Generic;

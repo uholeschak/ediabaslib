@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming

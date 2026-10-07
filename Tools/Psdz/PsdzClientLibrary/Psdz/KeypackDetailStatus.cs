@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using PsdzClient.Programming;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate
 {

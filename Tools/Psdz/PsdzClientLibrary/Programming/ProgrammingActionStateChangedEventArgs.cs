@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Programming.ProgrammingEngine.Events
 {

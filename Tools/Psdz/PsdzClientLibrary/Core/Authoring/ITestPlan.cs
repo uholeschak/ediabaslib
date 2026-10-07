@@ -1,5 +1,4 @@
-﻿using PsdzClient.Programming;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Authoring.Session

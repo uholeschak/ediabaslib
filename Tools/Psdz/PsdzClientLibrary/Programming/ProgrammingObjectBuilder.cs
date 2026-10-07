@@ -6,8 +6,6 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Obd;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient;
-using PsdzClient.Programming;
-using PsdzClient.Utility;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;

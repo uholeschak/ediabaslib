@@ -16,7 +16,6 @@ using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Psdz;
 using BmwFileReader;
 using PsdzClient;
-using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

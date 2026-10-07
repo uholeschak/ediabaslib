@@ -55,7 +55,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalStatus;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Vcm;
 
-namespace PsdzClient.Programming
+namespace PsdzClient
 {
     [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public class ProgrammingJobs : IDisposable

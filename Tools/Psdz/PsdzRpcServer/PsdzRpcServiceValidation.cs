@@ -1,5 +1,4 @@
 using PsdzClient;
-using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Runtime.CompilerServices;

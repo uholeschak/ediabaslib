@@ -1,5 +1,4 @@
-﻿using PsdzClient.Programming;
-
+﻿
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]

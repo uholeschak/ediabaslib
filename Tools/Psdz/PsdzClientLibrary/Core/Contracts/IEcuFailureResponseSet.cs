@@ -1,5 +1,4 @@
-﻿using PsdzClient.Programming;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

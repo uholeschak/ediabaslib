@@ -4,7 +4,6 @@ using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Measurement.Common.Contract;
 using BMW.Rheingold.Module.ISTA;
-using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.Linq;

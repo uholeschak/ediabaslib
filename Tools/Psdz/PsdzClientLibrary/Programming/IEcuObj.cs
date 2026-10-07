@@ -7,7 +7,6 @@ using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using PsdzClient;
-using PsdzClient.Programming;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

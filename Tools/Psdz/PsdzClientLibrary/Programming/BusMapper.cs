@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient.Programming;
 using System;
 using System.Linq;
 

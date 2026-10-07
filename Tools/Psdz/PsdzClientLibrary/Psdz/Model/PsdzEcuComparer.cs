@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Comparer

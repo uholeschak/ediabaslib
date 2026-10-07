@@ -9,7 +9,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.Programming.PSdZ;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace PsdzClient.Programming
+namespace PsdzClient
 {
     [PreserveSource(Removed = true)]
     public class PsdzServiceGateway : IPsdzServiceGateway, IDisposable

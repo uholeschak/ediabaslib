@@ -9,7 +9,6 @@ using HarmonyLib;
 using log4net;
 using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
-using PsdzClient.Utility;
 using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;

@@ -4,7 +4,6 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
-using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +18,6 @@ using BMW.Rheingold.FASTA;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using BMW.Rheingold.Programming.PSdZ;
 using PsdzClient;
-using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 

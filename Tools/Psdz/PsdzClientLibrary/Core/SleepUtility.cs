@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Threading;
 using BMW.Rheingold.CoreFramework.Metrics;
-using PsdzClient.Utility;
 
 namespace BMW.Rheingold.CoreFramework.Utility
 {

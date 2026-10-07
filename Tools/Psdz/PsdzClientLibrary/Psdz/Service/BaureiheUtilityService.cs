@@ -2,7 +2,6 @@
 using System;
 using System.Net.Http;
 using BMW.Rheingold.Psdz;
-using PsdzClient.Utility;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace RheingoldPsdzWebApi.Adapter.Services

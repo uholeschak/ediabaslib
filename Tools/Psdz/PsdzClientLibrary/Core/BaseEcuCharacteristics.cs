@@ -15,8 +15,6 @@ using BMW.ISPI.TRIC.ISTA.EcuTree.Models;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Utilities;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
-using PsdzClient.Utility;
-using PsdzClientLibrary;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {
