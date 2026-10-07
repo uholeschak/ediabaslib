@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.Module.ISTA
 {

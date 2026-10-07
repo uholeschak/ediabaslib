@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 #pragma warning disable SYSLIB0006
 namespace BMW.Rheingold.Module.ISTA

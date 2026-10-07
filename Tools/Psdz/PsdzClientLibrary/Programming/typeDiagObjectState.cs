@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Programming
+﻿namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public enum typeDiagObjectState
     {

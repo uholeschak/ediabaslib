@@ -7,7 +7,6 @@ using BMW.Rheingold.Psdz.Model.Obd;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient;
 using PsdzClient.Programming;
-using PsdzClient.Programming.BMW.Rheingold.Programming.API;
 using PsdzClient.Utility;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

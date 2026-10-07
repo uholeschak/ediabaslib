@@ -17,6 +17,7 @@ using BMW.Rheingold.CoreFramework.Metrics;
 using BMW.Rheingold.DiagnosticsBusinessDataCore;
 using BMW.Rheingold.FASTA;
 using BMW.Rheingold.Programming.ProgrammingEngine;
+using BMW.Rheingold.Programming.PSdZ;
 using PsdzClient;
 using PsdzClient.Programming;
 using RheingoldPsdzWebApi.Adapter.Contracts;

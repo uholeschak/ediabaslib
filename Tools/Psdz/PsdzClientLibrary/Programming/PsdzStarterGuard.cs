@@ -1,8 +1,9 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using System;
 using System.Reflection;
+using PsdzClient;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.PSdZ
 {
     public sealed class PsdzStarterGuard
     {

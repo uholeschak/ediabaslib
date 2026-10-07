@@ -9,81 +9,78 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.API
 {
-    namespace BMW.Rheingold.Programming.API
+    [DataContract]
+    internal class SwtApplicationIdObj : ISwtApplicationId, INotifyPropertyChanged
     {
-        [DataContract]
-        internal class SwtApplicationIdObj : ISwtApplicationId, INotifyPropertyChanged
+        [DataMember]
+        private int appNo;
+        [DataMember]
+        private int upgradeIdx;
+        public int AppNo
         {
-            [DataMember]
-            private int appNo;
-            [DataMember]
-            private int upgradeIdx;
-            public int AppNo
+            get
             {
-                get
-                {
-                    return appNo;
-                }
-
-                private set
-                {
-                    appNo = value;
-                    OnPropertyChanged("AppNo");
-                }
+                return appNo;
             }
 
-            public int UpgradeIdx
+            private set
             {
-                get
-                {
-                    return upgradeIdx;
-                }
+                appNo = value;
+                OnPropertyChanged("AppNo");
+            }
+        }
 
-                private set
-                {
-                    upgradeIdx = value;
-                    OnPropertyChanged("UpgradeIdx");
-                }
+        public int UpgradeIdx
+        {
+            get
+            {
+                return upgradeIdx;
             }
 
-            public event PropertyChangedEventHandler PropertyChanged;
-            internal SwtApplicationIdObj(int appNo, int upgradeIdx)
+            private set
             {
-                AppNo = appNo;
-                UpgradeIdx = upgradeIdx;
+                upgradeIdx = value;
+                OnPropertyChanged("UpgradeIdx");
             }
+        }
 
-            public override bool Equals(object obj)
+        public event PropertyChangedEventHandler PropertyChanged;
+        internal SwtApplicationIdObj(int appNo, int upgradeIdx)
+        {
+            AppNo = appNo;
+            UpgradeIdx = upgradeIdx;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ISwtApplicationId swtApplicationId)
             {
-                if (obj is ISwtApplicationId swtApplicationId)
+                if (AppNo == swtApplicationId.AppNo)
                 {
-                    if (AppNo == swtApplicationId.AppNo)
-                    {
-                        return UpgradeIdx == swtApplicationId.UpgradeIdx;
-                    }
-
-                    return false;
+                    return UpgradeIdx == swtApplicationId.UpgradeIdx;
                 }
 
                 return false;
             }
 
-            public override int GetHashCode()
-            {
-                return AppNo.GetHashCode() + UpgradeIdx.GetHashCode();
-            }
+            return false;
+        }
 
-            public override string ToString()
-            {
-                return string.Format(CultureInfo.InvariantCulture, "SWT-Application-ID[appNo: {0}; upgradeIdx: {1}]", AppNo, UpgradeIdx);
-            }
+        public override int GetHashCode()
+        {
+            return AppNo.GetHashCode() + UpgradeIdx.GetHashCode();
+        }
 
-            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "SWT-Application-ID[appNo: {0}; upgradeIdx: {1}]", AppNo, UpgradeIdx);
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
