@@ -18,7 +18,6 @@ using BmwFileReader;
 using EdiabasLib;
 using log4net;
 using log4net.Config;
-using PsdzClient.Psdz;
 using PsdzClientLibrary;
 using PsdzClientLibrary.Resources;
 using System;
@@ -34,6 +33,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using BMW.iLean.CommonServices.Models.Helper;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.CoreFramework.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Utility;
@@ -4107,7 +4107,7 @@ namespace PsdzClient.Programming
                         serializer.Serialize(fileStream, OperationState);
                     }
 
-                    if (!Utility.Encryption.SetFileFullAccessControl(fileName))
+                    if (!Encryption.SetFileFullAccessControl(fileName))
                     {
                         log.ErrorFormat(CultureInfo.InvariantCulture, "SaveOperationState SetFileFullAccessControl failed: {0}", fileName);
                         return false;

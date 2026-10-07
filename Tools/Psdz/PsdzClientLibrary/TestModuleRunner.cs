@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
 using PsdzClient;
 using PsdzClient.Programming;
+using PsdzClientLibrary;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
@@ -24,30 +25,30 @@ using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PsdzClientLibrary;
-
-[PreserveSource(Hint = "Custom code", SuppressWarning = true)]
-public class TestModuleRunner
+namespace PsdzClient
 {
-    public delegate bool ProgressDelegate(bool start, int progress, int failures);
+    [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
+    public class TestModuleRunner
+    {
+        public delegate bool ProgressDelegate(bool start, int progress, int failures);
 
-    private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
-    public static string IgnoreAssembliesFile = "IgnoreAssemblies.txt";
-    public static string TestModuleDir = "Testmodule";
-    public static int ProgressUpdatePeriod = 200;
+        private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
+        public static string IgnoreAssembliesFile = "IgnoreAssemblies.txt";
+        public static string TestModuleDir = "Testmodule";
+        public static int ProgressUpdatePeriod = 200;
 #if DEBUG
-    public static OptimizationLevel OptimizationLevel = OptimizationLevel.Debug;
-    public static string ConfigSubDir = "Debug";
+        public static OptimizationLevel OptimizationLevel = OptimizationLevel.Debug;
+        public static string ConfigSubDir = "Debug";
 #else
     public static string ConfigSubDir = "Release";
     public static OptimizationLevel OptimizationLevel = OptimizationLevel.Release;
 #endif
-    // Die kompilierten Module sind an die laufende Runtime gebunden,
-    // daher wird pro Zielframework ein eigenes Ausgabeverzeichnis verwendet.
-    public static string FrameworkSubDir = GetFrameworkSubDir();
-    public static string OutputSubDir = Path.Combine(ConfigSubDir, FrameworkSubDir);
-    public static readonly string[] AdditionalAssemblies =
-    {
+        // Die kompilierten Module sind an die laufende Runtime gebunden,
+        // daher wird pro Zielframework ein eigenes Ausgabeverzeichnis verwendet.
+        public static string FrameworkSubDir = GetFrameworkSubDir();
+        public static string OutputSubDir = Path.Combine(ConfigSubDir, FrameworkSubDir);
+        public static readonly string[] AdditionalAssemblies =
+        {
         "mscorlib.dll",
         "netstandard.dll",
         "System.dll",
@@ -57,276 +58,437 @@ public class TestModuleRunner
         "System.Xml.dll",
         "System.Console.dll"    // Unter .NET Framework ist Console in mscorlib enthalten, ab .NET Core in einer eigenen Assembly.
     };
-    private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
-        new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
-    private static readonly ConcurrentDictionary<string, MetadataReference> metadataReferenceCache =
-        new ConcurrentDictionary<string, MetadataReference>(StringComparer.OrdinalIgnoreCase);
-    private static Version dbVersionCache;
+        private static readonly ConcurrentDictionary<string, Assembly> assemblyCache =
+            new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
+        private static readonly ConcurrentDictionary<string, MetadataReference> metadataReferenceCache =
+            new ConcurrentDictionary<string, MetadataReference>(StringComparer.OrdinalIgnoreCase);
+        private static Version dbVersionCache;
 
-    private readonly ClientContext _clientContext;
-    private readonly ProgrammingJobs _programmingJobs;
-    private readonly IXepInfoObject _swiInfoObj;
-    private readonly Logic _logic;
-    private readonly ServiceProgramController _serviceProgramController;
-    private readonly string _moduleName;
-    private readonly string _moduleTypeName;
-    private readonly ModuleParameter _moduleParameters;
-    private readonly IModuleExecutionParent _moduleExecutionParent;
+        private readonly ClientContext _clientContext;
+        private readonly ProgrammingJobs _programmingJobs;
+        private readonly IXepInfoObject _swiInfoObj;
+        private readonly Logic _logic;
+        private readonly ServiceProgramController _serviceProgramController;
+        private readonly string _moduleName;
+        private readonly string _moduleTypeName;
+        private readonly ModuleParameter _moduleParameters;
+        private readonly IModuleExecutionParent _moduleExecutionParent;
 
-    public ModuleParameter ModuleParameters => _moduleParameters;
+        public ModuleParameter ModuleParameters => _moduleParameters;
 
-    public TestModuleRunner(ClientContext clientContext, ProgrammingJobs programmingJobs, string controlId, Dictionary<string, object> parametersDict = null)
-    {
-        _clientContext = clientContext;
-        _programmingJobs = programmingJobs;
-        if (dbVersionCache == null)
+        public TestModuleRunner(ClientContext clientContext, ProgrammingJobs programmingJobs, string controlId, Dictionary<string, object> parametersDict = null)
         {
-            dbVersionCache = GetDbVersion(_clientContext);
-        }
-
-        if (dbVersionCache == null)
-        {
-            log.Error("TestModuleRunner: Database version is null");
-            throw new ArgumentException("Database version is null");
-        }
-
-        _swiInfoObj = XepConverter.Convert(_clientContext?.Database?.GetInfoObjectByControlId(controlId));
-        if (_swiInfoObj == null)
-        {
-            log.ErrorFormat("TestModuleRunner: No SwiInfoObj found for controlId: {0}", controlId);
-            throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
-        }
-
-        _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identifikator);
-        _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
-
-        Vehicle vehicle = programmingJobs?.PsdzContext?.VecInfo;
-        DetectVehicle detectVehicle = programmingJobs?.PsdzContext?.DetectVehicle;
-        ECUKom ecuKom = detectVehicle?.CreateEcuKom("TestModuleRunner");
-
-        _logic = new Logic(clientContext, programmingJobs);
-        _logic.VecInfo = vehicle;
-        _logic.EcuKom = ecuKom;
-        _serviceProgramController = new ServiceProgramController(ModuleData.CreateModuleDataFromModuleName(_moduleName));
-
-        Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();
-        _moduleParameters = new ModuleParameter(useParametersDict);
-        _moduleParameters.setParameter(ModuleParameter.ParameterName.Logic, _logic);
-        _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, vehicle);
-        _moduleParameters.setParameter(ModuleParameter.ParameterName.ServiceProgramController, _serviceProgramController);
-
-        List<string> lang = new List<string> { ConfigSettings.CurrentUICulture };
-        ModuleImpl module = new ModuleImpl(lang, _moduleName);
-        _moduleExecutionParent = new ModuleExecutionParent(module, _swiInfoObj.Identifikator, _moduleParameters);
-    }
-
-    public bool CheckModuleAssemblyVersion(Assembly assembly)
-    {
-        Version moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
-        if (moduleVersion == null)
-        {
-            log.ErrorFormat("CheckModuleAssemblyVersion: GetGeneratedCodeVersion returned null for: {0}", _moduleTypeName);
-            return false;
-        }
-
-        if (moduleVersion.Major != dbVersionCache.Major || moduleVersion.Minor != dbVersionCache.Minor)
-        {
-            log.ErrorFormat("CheckModuleAssemblyVersion: Invalid module version {0} for: {1}", moduleVersion, _moduleTypeName);
-            return false;
-        }
-        return true;
-    }
-
-    public bool IsValid()
-    {
-        try
-        {
-            Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
-            if (assembly == null)
+            _clientContext = clientContext;
+            _programmingJobs = programmingJobs;
+            if (dbVersionCache == null)
             {
-                log.ErrorFormat("IsValid: GetModuleAssembly returned null for: {0}", _moduleName);
+                dbVersionCache = GetDbVersion(_clientContext);
+            }
+
+            if (dbVersionCache == null)
+            {
+                log.Error("TestModuleRunner: Database version is null");
+                throw new ArgumentException("Database version is null");
+            }
+
+            _swiInfoObj = XepConverter.Convert(_clientContext?.Database?.GetInfoObjectByControlId(controlId));
+            if (_swiInfoObj == null)
+            {
+                log.ErrorFormat("TestModuleRunner: No SwiInfoObj found for controlId: {0}", controlId);
+                throw new ArgumentException($"No SwiInfoObj found for controlId: {controlId}");
+            }
+
+            _moduleName = IstaModuleBase.ModuleNameTransformator(_swiInfoObj.Identifikator);
+            _moduleTypeName = "BMW.Rheingold.Module.ISTA." + _moduleName;
+
+            Vehicle vehicle = programmingJobs?.PsdzContext?.VecInfo;
+            DetectVehicle detectVehicle = programmingJobs?.PsdzContext?.DetectVehicle;
+            ECUKom ecuKom = detectVehicle?.CreateEcuKom("TestModuleRunner");
+
+            _logic = new Logic(clientContext, programmingJobs);
+            _logic.VecInfo = vehicle;
+            _logic.EcuKom = ecuKom;
+            _serviceProgramController = new ServiceProgramController(ModuleData.CreateModuleDataFromModuleName(_moduleName));
+
+            Dictionary<string, object> useParametersDict = parametersDict ?? new Dictionary<string, object>();
+            _moduleParameters = new ModuleParameter(useParametersDict);
+            _moduleParameters.setParameter(ModuleParameter.ParameterName.Logic, _logic);
+            _moduleParameters.setParameter(ModuleParameter.ParameterName.Vehicle, vehicle);
+            _moduleParameters.setParameter(ModuleParameter.ParameterName.ServiceProgramController, _serviceProgramController);
+
+            List<string> lang = new List<string> { ConfigSettings.CurrentUICulture };
+            ModuleImpl module = new ModuleImpl(lang, _moduleName);
+            _moduleExecutionParent = new ModuleExecutionParent(module, _swiInfoObj.Identifikator, _moduleParameters);
+        }
+
+        public bool CheckModuleAssemblyVersion(Assembly assembly)
+        {
+            Version moduleVersion = GetGeneratedCodeVersion(assembly, _moduleTypeName);
+            if (moduleVersion == null)
+            {
+                log.ErrorFormat("CheckModuleAssemblyVersion: GetGeneratedCodeVersion returned null for: {0}", _moduleTypeName);
                 return false;
             }
 
-            Type type = assembly.GetType(_moduleTypeName, throwOnError: false);
-            if (type == null)
+            if (moduleVersion.Major != dbVersionCache.Major || moduleVersion.Minor != dbVersionCache.Minor)
             {
-                log.ErrorFormat("IsValid: GetType returned null for: {0}", _moduleTypeName);
+                log.ErrorFormat("CheckModuleAssemblyVersion: Invalid module version {0} for: {1}", moduleVersion, _moduleTypeName);
                 return false;
             }
-
-            if (!CheckModuleAssemblyVersion(assembly))
-            {
-                log.ErrorFormat("IsValid: CheckModuleAssemblyVersion failed for: {0}", _moduleTypeName);
-                return false;
-            }
-
             return true;
         }
-        catch (Exception ex)
+
+        public bool IsValid()
         {
-            log.ErrorFormat("IsValid: Exception: {0}", ex);
-            return false;
-        }
-    }
-
-    public bool Run()
-    {
-        try
-        {
-            ParameterContainer inParameters = SetUpModuleInParameters();
-            ParameterContainer outParameters = new ParameterContainer();
-            ParameterContainer inAndOutParameters = new ParameterContainer();
-
-            //Vehicle vehicle = _moduleParameters.getParameter(ModuleParameter.ParameterName.Vehicle) as Vehicle;
-
-            Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
-            if (assembly == null)
+            try
             {
-                log.ErrorFormat("Run: GetModuleAssembly returned null for: {0}", _moduleName);
-                return false;
-            }
-
-            Type type = assembly.GetType(_moduleTypeName, throwOnError: true);
-            IIstaModule instance = type?.CreateInstance(new Type[1] { typeof(ParameterContainer) }, new object[1] { inParameters }) as IIstaModule;
-            if (instance == null)
-            {
-                log.ErrorFormat("Run: CreateInstance returned null for: {0}", _moduleTypeName);
-                return false;
-            }
-
-            if (!CheckModuleAssemblyVersion(assembly))
-            {
-                log.ErrorFormat("Run: CheckModuleAssemblyVersion failed for: {0}", _moduleTypeName);
-                return false;
-            }
-
-            MethodInfo method = instance.GetType().GetMethod("run");
-            if (method == null)
-            {
-                log.ErrorFormat("Run: GetMethod run returned null for: {0}", _moduleTypeName);
-                return false;
-            }
-            method.Invoke(instance, new object[3] { inParameters, outParameters, inAndOutParameters });
-
-            _moduleParameters.setParameter(ModuleParameter.ParameterName.OutParameters, outParameters);
-            _moduleParameters.setParameter(ModuleParameter.ParameterName.InAndOutParameters, inAndOutParameters);
-            _moduleParameters.setParameter(ModuleParameter.ParameterName.ResultSet, instance.ResultSet);
-        }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("Run: Exception: {0}", ex);
-            return false;
-        }
-        return true;
-    }
-
-    public static Version GetDbVersion(ClientContext clientContext)
-    {
-        PsdzDatabase.DbInfo dbInfo = clientContext?.Database?.GetDbInfo();
-        if (dbInfo == null)
-        {
-            log.Error("GetDbVersion: Database info is null");
-            return null;
-        }
-
-        if (!Version.TryParse(dbInfo.Version, out Version dbVersion))
-        {
-            log.ErrorFormat("GetDbVersion: Invalid version '{0}'", dbInfo.Version);
-            return null;
-        }
-
-        return dbVersion;
-    }
-
-    public static Assembly GetModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
-    {
-        Assembly compiledAssembly = CompileAndLoadModuleAssembly(clientContext, cleanIstaModuleName);
-        return compiledAssembly;
-    }
-
-    public static Version GetGeneratedCodeVersion(Assembly assembly, string moduleTypeName)
-    {
-        try
-        {
-            Type type = assembly?.GetType(moduleTypeName, throwOnError: false);
-            if (type == null)
-            {
-                log.ErrorFormat("GetGeneratedCodeVersion: GetType returned null for: {0}", moduleTypeName);
-                return null;
-            }
-
-            GeneratedCodeAttribute attribute = type.GetCustomAttribute<GeneratedCodeAttribute>();
-            if (attribute == null)
-            {
-                log.ErrorFormat("GetGeneratedCodeVersion: No GeneratedCodeAttribute found for: {0}", moduleTypeName);
-                return null;
-            }
-
-            if (!Version.TryParse(attribute.Version, out Version version))
-            {
-                log.ErrorFormat("GetGeneratedCodeVersion: Invalid version '{0}' for: {1}", attribute.Version, moduleTypeName);
-                return null;
-            }
-
-            return version;
-        }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("GetGeneratedCodeVersion: Exception: {0}", ex);
-            return null;
-        }
-    }
-
-    public static Version GetGeneratedCodeVersion(SyntaxTree syntaxTree)
-    {
-        try
-        {
-            AttributeSyntax attribute = syntaxTree.GetRoot()
-                .DescendantNodes()
-                .OfType<AttributeSyntax>()
-                .FirstOrDefault(a =>
+                Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
+                if (assembly == null)
                 {
-                    string name = a.Name.ToString();
-                    if (name == null)
+                    log.ErrorFormat("IsValid: GetModuleAssembly returned null for: {0}", _moduleName);
+                    return false;
+                }
+
+                Type type = assembly.GetType(_moduleTypeName, throwOnError: false);
+                if (type == null)
+                {
+                    log.ErrorFormat("IsValid: GetType returned null for: {0}", _moduleTypeName);
+                    return false;
+                }
+
+                if (!CheckModuleAssemblyVersion(assembly))
+                {
+                    log.ErrorFormat("IsValid: CheckModuleAssemblyVersion failed for: {0}", _moduleTypeName);
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("IsValid: Exception: {0}", ex);
+                return false;
+            }
+        }
+
+        public bool Run()
+        {
+            try
+            {
+                ParameterContainer inParameters = SetUpModuleInParameters();
+                ParameterContainer outParameters = new ParameterContainer();
+                ParameterContainer inAndOutParameters = new ParameterContainer();
+
+                //Vehicle vehicle = _moduleParameters.getParameter(ModuleParameter.ParameterName.Vehicle) as Vehicle;
+
+                Assembly assembly = GetModuleAssembly(_clientContext, _moduleName);
+                if (assembly == null)
+                {
+                    log.ErrorFormat("Run: GetModuleAssembly returned null for: {0}", _moduleName);
+                    return false;
+                }
+
+                Type type = assembly.GetType(_moduleTypeName, throwOnError: true);
+                IIstaModule instance = type?.CreateInstance(new Type[1] { typeof(ParameterContainer) }, new object[1] { inParameters }) as IIstaModule;
+                if (instance == null)
+                {
+                    log.ErrorFormat("Run: CreateInstance returned null for: {0}", _moduleTypeName);
+                    return false;
+                }
+
+                if (!CheckModuleAssemblyVersion(assembly))
+                {
+                    log.ErrorFormat("Run: CheckModuleAssemblyVersion failed for: {0}", _moduleTypeName);
+                    return false;
+                }
+
+                MethodInfo method = instance.GetType().GetMethod("run");
+                if (method == null)
+                {
+                    log.ErrorFormat("Run: GetMethod run returned null for: {0}", _moduleTypeName);
+                    return false;
+                }
+                method.Invoke(instance, new object[3] { inParameters, outParameters, inAndOutParameters });
+
+                _moduleParameters.setParameter(ModuleParameter.ParameterName.OutParameters, outParameters);
+                _moduleParameters.setParameter(ModuleParameter.ParameterName.InAndOutParameters, inAndOutParameters);
+                _moduleParameters.setParameter(ModuleParameter.ParameterName.ResultSet, instance.ResultSet);
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("Run: Exception: {0}", ex);
+                return false;
+            }
+            return true;
+        }
+
+        public static Version GetDbVersion(ClientContext clientContext)
+        {
+            PsdzDatabase.DbInfo dbInfo = clientContext?.Database?.GetDbInfo();
+            if (dbInfo == null)
+            {
+                log.Error("GetDbVersion: Database info is null");
+                return null;
+            }
+
+            if (!Version.TryParse(dbInfo.Version, out Version dbVersion))
+            {
+                log.ErrorFormat("GetDbVersion: Invalid version '{0}'", dbInfo.Version);
+                return null;
+            }
+
+            return dbVersion;
+        }
+
+        public static Assembly GetModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
+        {
+            Assembly compiledAssembly = CompileAndLoadModuleAssembly(clientContext, cleanIstaModuleName);
+            return compiledAssembly;
+        }
+
+        public static Version GetGeneratedCodeVersion(Assembly assembly, string moduleTypeName)
+        {
+            try
+            {
+                Type type = assembly?.GetType(moduleTypeName, throwOnError: false);
+                if (type == null)
+                {
+                    log.ErrorFormat("GetGeneratedCodeVersion: GetType returned null for: {0}", moduleTypeName);
+                    return null;
+                }
+
+                GeneratedCodeAttribute attribute = type.GetCustomAttribute<GeneratedCodeAttribute>();
+                if (attribute == null)
+                {
+                    log.ErrorFormat("GetGeneratedCodeVersion: No GeneratedCodeAttribute found for: {0}", moduleTypeName);
+                    return null;
+                }
+
+                if (!Version.TryParse(attribute.Version, out Version version))
+                {
+                    log.ErrorFormat("GetGeneratedCodeVersion: Invalid version '{0}' for: {1}", attribute.Version, moduleTypeName);
+                    return null;
+                }
+
+                return version;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("GetGeneratedCodeVersion: Exception: {0}", ex);
+                return null;
+            }
+        }
+
+        public static Version GetGeneratedCodeVersion(SyntaxTree syntaxTree)
+        {
+            try
+            {
+                AttributeSyntax attribute = syntaxTree.GetRoot()
+                    .DescendantNodes()
+                    .OfType<AttributeSyntax>()
+                    .FirstOrDefault(a =>
                     {
+                        string name = a.Name.ToString();
+                        if (name == null)
+                        {
+                            return false;
+                        }
+                        return string.CompareOrdinal(name, "GeneratedCode") == 0;
+                    });
+
+                if (attribute?.ArgumentList == null || attribute.ArgumentList.Arguments.Count < 2)
+                {
+                    log.ErrorFormat("GetGeneratedCodeVersion: No GeneratedCodeAttribute found in source: {0}", syntaxTree.FilePath);
+                    return null;
+                }
+
+                if (attribute.ArgumentList.Arguments[1].Expression is not LiteralExpressionSyntax literal ||
+                    !literal.IsKind(SyntaxKind.StringLiteralExpression))
+                {
+                    log.ErrorFormat("GetGeneratedCodeVersion: Version argument is no string literal in source: {0}", syntaxTree.FilePath);
+                    return null;
+                }
+
+                string versionString = literal.Token.ValueText;
+                if (!Version.TryParse(versionString, out Version version))
+                {
+                    log.ErrorFormat("GetGeneratedCodeVersion: Invalid version '{0}' in source: {1}", versionString, syntaxTree.FilePath);
+                    return null;
+                }
+
+                return version;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("GetGeneratedCodeVersion: Exception: {0}", ex);
+                return null;
+            }
+        }
+
+        public static bool CompileAllModules(ClientContext clientContext, ProgressDelegate progressDelegate = null)
+        {
+            try
+            {
+                if (dbVersionCache == null)
+                {
+                    dbVersionCache = GetDbVersion(clientContext);
+                }
+
+                if (dbVersionCache == null)
+                {
+                    log.Error("CompileAllModules: Database version is null");
+                    return false;
+                }
+
+                string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
+                if (!Directory.Exists(testModulesPath))
+                {
+                    log.ErrorFormat("CompileAllModules: Test modules directory does not exist: {0}", testModulesPath);
+                    return false;
+                }
+
+                string appDir = EdiabasNet.AssemblyDirectory;
+                if (string.IsNullOrEmpty(appDir))
+                {
+                    log.ErrorFormat("CompileAllModules: AssemblyDirectory is null or empty");
+                    return false;
+                }
+
+                List<string> ignoreAssemblies = new List<string>();
+                string ignoreAssembliesPath = Path.Combine(appDir, IgnoreAssembliesFile);
+                if (File.Exists(ignoreAssembliesPath))
+                {
+                    ignoreAssemblies.AddRange(File.ReadAllLines(ignoreAssembliesPath));
+                }
+
+                string outputDir = Path.Combine(testModulesPath, OutputSubDir);
+                if (Directory.Exists(outputDir))
+                {
+                    int csCount = Directory.EnumerateFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly).Count();
+                    int outputCount = Directory.EnumerateFiles(outputDir, "*.dll", SearchOption.TopDirectoryOnly).Count();
+                    if (outputCount + ignoreAssemblies.Count >= csCount)
+                    {
+                        log.InfoFormat("CompileAllModules: All modules are already compiled. OutputCount={0}, CsCount={1}", outputCount, csCount);
+                        return true;
+                    }
+                }
+
+                string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
+                int sourceFilesCount = sourceFiles.Length;
+                int index = 0;
+
+                if (progressDelegate != null)
+                {
+                    if (progressDelegate(true, 0, 0))
+                    {
+                        log.InfoFormat("CompileAllModules: Compilation cancelled");
                         return false;
                     }
-                    return string.CompareOrdinal(name, "GeneratedCode") == 0;
+                }
+
+                if (!Directory.Exists(outputDir))
+                {
+                    Directory.CreateDirectory(outputDir);
+                }
+
+                HashSet<string> ignoreAssemblySet = new HashSet<string>(ignoreAssemblies, StringComparer.OrdinalIgnoreCase);
+                ConcurrentBag<string> failedAssemblies = new ConcurrentBag<string>();
+                int errorCount = 0;
+                int cancelRequested = 0;
+
+                List<MetadataReference> sharedReferences = BuildReferenceSet();
+                if (sharedReferences == null)
+                {
+                    log.ErrorFormat("CompileAllModules: BuildReferenceSet failed");
+                    return false;
+                }
+
+                string buildTimestamp = CreateBuildTimestamp();
+
+                ParallelOptions parallelOptions = new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Environment.ProcessorCount * 2
+                };
+
+                Task compileTask = Task.Run(() =>
+                {
+                    Parallel.ForEach(sourceFiles, parallelOptions, (sourceFile, loopState) =>
+                    {
+                        if (loopState.ShouldExitCurrentIteration || Volatile.Read(ref cancelRequested) != 0)
+                        {
+                            loopState.Stop();
+                            return;
+                        }
+
+                        string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
+                        string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
+                        string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
+                        if (!CompileModuleAssembly(sourcePath, assemblyPath, true, sharedReferences, buildTimestamp))
+                        {
+                            failedAssemblies.Add(assemblyName);
+                            if (!ignoreAssemblySet.Contains(assemblyName))
+                            {
+                                Interlocked.Increment(ref errorCount);
+                            }
+                        }
+
+                        Interlocked.Increment(ref index);
+                    });
                 });
 
-            if (attribute?.ArgumentList == null || attribute.ArgumentList.Arguments.Count < 2)
-            {
-                log.ErrorFormat("GetGeneratedCodeVersion: No GeneratedCodeAttribute found in source: {0}", syntaxTree.FilePath);
-                return null;
-            }
+                int lastProgress = -1;
+                while (!compileTask.Wait(ProgressUpdatePeriod))
+                {
+                    if (progressDelegate == null)
+                    {
+                        continue;
+                    }
 
-            if (attribute.ArgumentList.Arguments[1].Expression is not LiteralExpressionSyntax literal ||
-                !literal.IsKind(SyntaxKind.StringLiteralExpression))
-            {
-                log.ErrorFormat("GetGeneratedCodeVersion: Version argument is no string literal in source: {0}", syntaxTree.FilePath);
-                return null;
-            }
+                    int progress = (int)(Volatile.Read(ref index) * 100.0 / sourceFilesCount);
+                    if (progress == lastProgress)
+                    {
+                        continue;
+                    }
 
-            string versionString = literal.Token.ValueText;
-            if (!Version.TryParse(versionString, out Version version))
-            {
-                log.ErrorFormat("GetGeneratedCodeVersion: Invalid version '{0}' in source: {1}", versionString, syntaxTree.FilePath);
-                return null;
-            }
+                    lastProgress = progress;
+                    int failures = Volatile.Read(ref errorCount);
+                    if (progressDelegate(false, progress, failures))
+                    {
+                        log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
+                        Volatile.Write(ref cancelRequested, 1);
+                        compileTask.Wait();
+                        break;
+                    }
+                }
 
-            return version;
+                if (Volatile.Read(ref cancelRequested) != 0)
+                {
+                    log.InfoFormat("CompileAllModules: Compilation cancelled");
+                    return false;
+                }
+
+                try
+                {
+                    List<string> failedAssemblyList = failedAssemblies.ToList();
+                    failedAssemblyList.Sort(StringComparer.OrdinalIgnoreCase);
+                    File.WriteAllText(Path.Combine(outputDir, IgnoreAssembliesFile),
+                        string.Join(Environment.NewLine, failedAssemblyList));
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("CompileAllModules: Failed to write {0}: {1}", IgnoreAssembliesFile, e);
+                }
+
+                return errorCount == 0;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("CompileAllModules: Exception: {0}", ex);
+                return false;
+            }
         }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("GetGeneratedCodeVersion: Exception: {0}", ex);
-            return null;
-        }
-    }
 
-    public static bool CompileAllModules(ClientContext clientContext, ProgressDelegate progressDelegate = null)
-    {
-        try
+        public static Assembly CompileAndLoadModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
         {
             if (dbVersionCache == null)
             {
@@ -336,327 +498,166 @@ public class TestModuleRunner
             if (dbVersionCache == null)
             {
                 log.Error("CompileAllModules: Database version is null");
-                return false;
+                return null;
             }
 
-            string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
-            if (!Directory.Exists(testModulesPath))
+            if (string.IsNullOrEmpty(cleanIstaModuleName))
             {
-                log.ErrorFormat("CompileAllModules: Test modules directory does not exist: {0}", testModulesPath);
-                return false;
+                log.ErrorFormat("CompileAndLoadModuleAssembly: cleanIstaModuleName is null or empty");
+                return null;
             }
 
             string appDir = EdiabasNet.AssemblyDirectory;
             if (string.IsNullOrEmpty(appDir))
             {
-                log.ErrorFormat("CompileAllModules: AssemblyDirectory is null or empty");
-                return false;
-            }
-
-            List<string> ignoreAssemblies = new List<string>();
-            string ignoreAssembliesPath = Path.Combine(appDir, IgnoreAssembliesFile);
-            if (File.Exists(ignoreAssembliesPath))
-            {
-                ignoreAssemblies.AddRange(File.ReadAllLines(ignoreAssembliesPath));
-            }
-
-            string outputDir = Path.Combine(testModulesPath, OutputSubDir);
-            if (Directory.Exists(outputDir))
-            {
-                int csCount = Directory.EnumerateFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly).Count();
-                int outputCount = Directory.EnumerateFiles(outputDir, "*.dll", SearchOption.TopDirectoryOnly).Count();
-                if (outputCount + ignoreAssemblies.Count >= csCount)
-                {
-                    log.InfoFormat("CompileAllModules: All modules are already compiled. OutputCount={0}, CsCount={1}", outputCount, csCount);
-                    return true;
-                }
-            }
-
-            string[] sourceFiles = Directory.GetFiles(testModulesPath, "*.cs", SearchOption.TopDirectoryOnly);
-            int sourceFilesCount = sourceFiles.Length;
-            int index = 0;
-
-            if (progressDelegate != null)
-            {
-                if (progressDelegate(true, 0, 0))
-                {
-                    log.InfoFormat("CompileAllModules: Compilation cancelled");
-                    return false;
-                }
-            }
-
-            if (!Directory.Exists(outputDir))
-            {
-                Directory.CreateDirectory(outputDir);
-            }
-
-            HashSet<string> ignoreAssemblySet = new HashSet<string>(ignoreAssemblies, StringComparer.OrdinalIgnoreCase);
-            ConcurrentBag<string> failedAssemblies = new ConcurrentBag<string>();
-            int errorCount = 0;
-            int cancelRequested = 0;
-
-            List<MetadataReference> sharedReferences = BuildReferenceSet();
-            if (sharedReferences == null)
-            {
-                log.ErrorFormat("CompileAllModules: BuildReferenceSet failed");
-                return false;
-            }
-
-            string buildTimestamp = CreateBuildTimestamp();
-
-            ParallelOptions parallelOptions = new ParallelOptions
-            {
-                MaxDegreeOfParallelism = Environment.ProcessorCount * 2
-            };
-
-            Task compileTask = Task.Run(() =>
-            {
-                Parallel.ForEach(sourceFiles, parallelOptions, (sourceFile, loopState) =>
-                {
-                    if (loopState.ShouldExitCurrentIteration || Volatile.Read(ref cancelRequested) != 0)
-                    {
-                        loopState.Stop();
-                        return;
-                    }
-
-                    string assemblyName = Path.GetFileNameWithoutExtension(sourceFile);
-                    string sourcePath = Path.Combine(testModulesPath, assemblyName + ".cs");
-                    string assemblyPath = Path.Combine(outputDir, assemblyName + ".dll");
-                    if (!CompileModuleAssembly(sourcePath, assemblyPath, true, sharedReferences, buildTimestamp))
-                    {
-                        failedAssemblies.Add(assemblyName);
-                        if (!ignoreAssemblySet.Contains(assemblyName))
-                        {
-                            Interlocked.Increment(ref errorCount);
-                        }
-                    }
-
-                    Interlocked.Increment(ref index);
-                });
-            });
-
-            int lastProgress = -1;
-            while (!compileTask.Wait(ProgressUpdatePeriod))
-            {
-                if (progressDelegate == null)
-                {
-                    continue;
-                }
-
-                int progress = (int)(Volatile.Read(ref index) * 100.0 / sourceFilesCount);
-                if (progress == lastProgress)
-                {
-                    continue;
-                }
-
-                lastProgress = progress;
-                int failures = Volatile.Read(ref errorCount);
-                if (progressDelegate(false, progress, failures))
-                {
-                    log.InfoFormat("CompileAllModules: Compilation cancelled at {0}%", progress);
-                    Volatile.Write(ref cancelRequested, 1);
-                    compileTask.Wait();
-                    break;
-                }
-            }
-
-            if (Volatile.Read(ref cancelRequested) != 0)
-            {
-                log.InfoFormat("CompileAllModules: Compilation cancelled");
-                return false;
-            }
-
-            try
-            {
-                List<string> failedAssemblyList = failedAssemblies.ToList();
-                failedAssemblyList.Sort(StringComparer.OrdinalIgnoreCase);
-                File.WriteAllText(Path.Combine(outputDir, IgnoreAssembliesFile),
-                    string.Join(Environment.NewLine, failedAssemblyList));
-            }
-            catch (Exception e)
-            {
-                log.ErrorFormat("CompileAllModules: Failed to write {0}: {1}", IgnoreAssembliesFile, e);
-            }
-
-            return errorCount == 0;
-        }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("CompileAllModules: Exception: {0}", ex);
-            return false;
-        }
-    }
-
-    public static Assembly CompileAndLoadModuleAssembly(ClientContext clientContext, string cleanIstaModuleName)
-    {
-        if (dbVersionCache == null)
-        {
-            dbVersionCache = GetDbVersion(clientContext);
-        }
-
-        if (dbVersionCache == null)
-        {
-            log.Error("CompileAllModules: Database version is null");
-            return null;
-        }
-
-        if (string.IsNullOrEmpty(cleanIstaModuleName))
-        {
-            log.ErrorFormat("CompileAndLoadModuleAssembly: cleanIstaModuleName is null or empty");
-            return null;
-        }
-
-        string appDir = EdiabasNet.AssemblyDirectory;
-        if (string.IsNullOrEmpty(appDir))
-        {
-            log.ErrorFormat("CompileAndLoadModuleAssembly: AssemblyDirectory is null or empty");
-            return null;
-        }
-
-        string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
-        string outputDir = Path.Combine(testModulesPath, OutputSubDir);
-        string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
-        string assemblyPath = Path.Combine(outputDir, cleanIstaModuleName + ".dll");
-        if (!File.Exists(sourcePath))
-        {
-            log.ErrorFormat("CompileAndLoadModuleAssembly: Source file does not exist: {0}", sourcePath);
-            return null;
-        }
-
-        if (assemblyCache.TryGetValue(assemblyPath, out Assembly cachedAssembly))
-        {
-            log.InfoFormat("CompileAndLoadModuleAssembly: Assembly found in cache: {0}", assemblyPath);
-            return cachedAssembly;
-        }
-
-        if (File.Exists(assemblyPath))
-        {
-            // Neukompilierung erzwingen, wenn die Quelldatei neuer ist als die Assembly
-            DateTime sourceTimeUtc = File.GetLastWriteTimeUtc(sourcePath);
-            DateTime assemblyTimeUtc = File.GetLastWriteTimeUtc(assemblyPath);
-            if (sourceTimeUtc > assemblyTimeUtc)
-            {
-                try
-                {
-                    File.Delete(assemblyPath);
-                }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("CompileAndLoadModuleAssembly: File.Delete Exception: {0}", ex);
-                    return null;
-                }
-            }
-        }
-
-        if (File.Exists(assemblyPath))
-        {
-            try
-            {
-                Assembly existingAssembly = Assembly.LoadFrom(assemblyPath);
-                assemblyCache.TryAdd(assemblyPath, existingAssembly);
-                return existingAssembly;
-            }
-            catch (Exception ex)
-            {
-                log.ErrorFormat("CompileAndLoadModuleAssembly: Assembly.LoadFrom Exception: {0}", ex);
-                try
-                {
-                    File.Delete(assemblyPath);
-                }
-                catch (Exception ex2)
-                {
-                    log.ErrorFormat("CompileAndLoadModuleAssembly: File.Delete Exception: {0}", ex2);
-                    return null;
-                }
-            }
-        }
-
-        try
-        {
-            if (!CompileModuleAssembly(sourcePath, assemblyPath))
-            {
+                log.ErrorFormat("CompileAndLoadModuleAssembly: AssemblyDirectory is null or empty");
                 return null;
             }
 
-            Assembly compiledAssembly = Assembly.LoadFrom(assemblyPath);
-            assemblyCache.TryAdd(assemblyPath, compiledAssembly);
-            return compiledAssembly;
-        }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("CompileAndLoadModuleAssembly: Exception: {0}", ex);
-            return null;
-        }
-    }
-
-    public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false,
-        IReadOnlyList<MetadataReference> sharedReferences = null, string buildTimestamp = null)
-    {
-        try
-        {
-            string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
-            string outputDir = Path.GetDirectoryName(assemblyPath);
-            if (string.IsNullOrEmpty(outputDir))
+            string testModulesPath = Path.Combine(clientContext.Database.DatabaseExtractPath, TestModuleDir);
+            string outputDir = Path.Combine(testModulesPath, OutputSubDir);
+            string sourcePath = Path.Combine(testModulesPath, cleanIstaModuleName + ".cs");
+            string assemblyPath = Path.Combine(outputDir, cleanIstaModuleName + ".dll");
+            if (!File.Exists(sourcePath))
             {
-                log.ErrorFormat("CompileModuleAssembly: Output directory is null or empty");
-                return false;
+                log.ErrorFormat("CompileAndLoadModuleAssembly: Source file does not exist: {0}", sourcePath);
+                return null;
             }
 
-            if (!Directory.Exists(outputDir))
+            if (assemblyCache.TryGetValue(assemblyPath, out Assembly cachedAssembly))
             {
-                Directory.CreateDirectory(outputDir);
+                log.InfoFormat("CompileAndLoadModuleAssembly: Assembly found in cache: {0}", assemblyPath);
+                return cachedAssembly;
             }
 
             if (File.Exists(assemblyPath))
             {
-                if (checkDate)
+                // Neukompilierung erzwingen, wenn die Quelldatei neuer ist als die Assembly
+                DateTime sourceTimeUtc = File.GetLastWriteTimeUtc(sourcePath);
+                DateTime assemblyTimeUtc = File.GetLastWriteTimeUtc(assemblyPath);
+                if (sourceTimeUtc > assemblyTimeUtc)
                 {
-                    DateTime sourceTimeUtc = File.GetLastWriteTimeUtc(sourcePath);
-                    DateTime assemblyTimeUtc = File.GetLastWriteTimeUtc(assemblyPath);
-                    if (sourceTimeUtc < assemblyTimeUtc)
+                    try
                     {
-                        return true;
+                        File.Delete(assemblyPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("CompileAndLoadModuleAssembly: File.Delete Exception: {0}", ex);
+                        return null;
                     }
                 }
+            }
 
+            if (File.Exists(assemblyPath))
+            {
                 try
                 {
-                    File.Delete(assemblyPath);
+                    Assembly existingAssembly = Assembly.LoadFrom(assemblyPath);
+                    assemblyCache.TryAdd(assemblyPath, existingAssembly);
+                    return existingAssembly;
                 }
                 catch (Exception ex)
                 {
-                    log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
-                    return false;
+                    log.ErrorFormat("CompileAndLoadModuleAssembly: Assembly.LoadFrom Exception: {0}", ex);
+                    try
+                    {
+                        File.Delete(assemblyPath);
+                    }
+                    catch (Exception ex2)
+                    {
+                        log.ErrorFormat("CompileAndLoadModuleAssembly: File.Delete Exception: {0}", ex2);
+                        return null;
+                    }
                 }
             }
 
-            string logFilePath = Path.ChangeExtension(assemblyPath, ".log");
-            if (!string.IsNullOrEmpty(logFilePath) && File.Exists(logFilePath))
+            try
             {
-                File.Delete(logFilePath);
+                if (!CompileModuleAssembly(sourcePath, assemblyPath))
+                {
+                    return null;
+                }
+
+                Assembly compiledAssembly = Assembly.LoadFrom(assemblyPath);
+                assemblyCache.TryAdd(assemblyPath, compiledAssembly);
+                return compiledAssembly;
             }
-
-            string sourceCode = File.ReadAllText(sourcePath);
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
-
-            if (dbVersionCache != null)
+            catch (Exception ex)
             {
-                Version generatedCodeVersion = GetGeneratedCodeVersion(syntaxTree);
-                if (generatedCodeVersion == null)
-                {
-                    log.ErrorFormat("CompileModuleAssembly: GetGeneratedCodeVersion returned null for: {0}", sourcePath);
-                    return false;
-                }
-
-                if (generatedCodeVersion.Major != dbVersionCache.Major || generatedCodeVersion.Minor != dbVersionCache.Minor)
-                {
-                    log.ErrorFormat("CompileModuleAssembly: Invalid generated code version {0} for: {1}", generatedCodeVersion, sourcePath);
-                    return false;
-                }
+                log.ErrorFormat("CompileAndLoadModuleAssembly: Exception: {0}", ex);
+                return null;
             }
+        }
 
-            string timestamp = buildTimestamp ?? CreateBuildTimestamp();
-            string assemblyInfo = $"""
+        public static bool CompileModuleAssembly(string sourcePath, string assemblyPath, bool checkDate = false,
+            IReadOnlyList<MetadataReference> sharedReferences = null, string buildTimestamp = null)
+        {
+            try
+            {
+                string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
+                string outputDir = Path.GetDirectoryName(assemblyPath);
+                if (string.IsNullOrEmpty(outputDir))
+                {
+                    log.ErrorFormat("CompileModuleAssembly: Output directory is null or empty");
+                    return false;
+                }
+
+                if (!Directory.Exists(outputDir))
+                {
+                    Directory.CreateDirectory(outputDir);
+                }
+
+                if (File.Exists(assemblyPath))
+                {
+                    if (checkDate)
+                    {
+                        DateTime sourceTimeUtc = File.GetLastWriteTimeUtc(sourcePath);
+                        DateTime assemblyTimeUtc = File.GetLastWriteTimeUtc(assemblyPath);
+                        if (sourceTimeUtc < assemblyTimeUtc)
+                        {
+                            return true;
+                        }
+                    }
+
+                    try
+                    {
+                        File.Delete(assemblyPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
+                        return false;
+                    }
+                }
+
+                string logFilePath = Path.ChangeExtension(assemblyPath, ".log");
+                if (!string.IsNullOrEmpty(logFilePath) && File.Exists(logFilePath))
+                {
+                    File.Delete(logFilePath);
+                }
+
+                string sourceCode = File.ReadAllText(sourcePath);
+                SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+
+                if (dbVersionCache != null)
+                {
+                    Version generatedCodeVersion = GetGeneratedCodeVersion(syntaxTree);
+                    if (generatedCodeVersion == null)
+                    {
+                        log.ErrorFormat("CompileModuleAssembly: GetGeneratedCodeVersion returned null for: {0}", sourcePath);
+                        return false;
+                    }
+
+                    if (generatedCodeVersion.Major != dbVersionCache.Major || generatedCodeVersion.Minor != dbVersionCache.Minor)
+                    {
+                        log.ErrorFormat("CompileModuleAssembly: Invalid generated code version {0} for: {1}", generatedCodeVersion, sourcePath);
+                        return false;
+                    }
+                }
+
+                string timestamp = buildTimestamp ?? CreateBuildTimestamp();
+                string assemblyInfo = $"""
                                    using System.Reflection;
                                    [assembly: AssemblyTitle("{assemblyName}")]
                                    [assembly: AssemblyProduct("ISTA test module")]
@@ -666,211 +667,212 @@ public class TestModuleRunner
                                    [assembly: AssemblyFileVersion("1.0.0.0")]
                                    [assembly: AssemblyInformationalVersion("Compiled {timestamp}")]
                                    """;
-            SyntaxTree assemblyInfoTree = CSharpSyntaxTree.ParseText(assemblyInfo);
+                SyntaxTree assemblyInfoTree = CSharpSyntaxTree.ParseText(assemblyInfo);
 
-            IReadOnlyList<MetadataReference> references = sharedReferences ?? BuildReferenceSet();
-            if (references == null)
-            {
-                return false;
-            }
-
-            CSharpCompilation compilation = CSharpCompilation.Create(
-                assemblyName,
-                new[] { syntaxTree, assemblyInfoTree },
-                references,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                    optimizationLevel: OptimizationLevel));
-
-            EmitResult result;
-            using (Stream win32Resources = compilation.CreateDefaultWin32Resources(
-                       versionResource: true,
-                       noManifest: true,
-                       manifestContents: null,
-                       iconInIcoFormat: null))
-            {
-                using (FileStream peStream = new FileStream(assemblyPath, FileMode.Create, FileAccess.ReadWrite))
+                IReadOnlyList<MetadataReference> references = sharedReferences ?? BuildReferenceSet();
+                if (references == null)
                 {
-                    EmitOptions emitOptions = null;
-                    if (OptimizationLevel == OptimizationLevel.Debug)
-                    {
-                        emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb);
-                    }
-                    result = compilation.Emit(peStream, win32Resources: win32Resources, options: emitOptions);
+                    return false;
                 }
-            }
 
-            if (!result.Success)
-            {
-                log.ErrorFormat("CompileModuleAssembly: Compilation of '{0}' failed", sourcePath);
+                CSharpCompilation compilation = CSharpCompilation.Create(
+                    assemblyName,
+                    new[] { syntaxTree, assemblyInfoTree },
+                    references,
+                    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
+                        optimizationLevel: OptimizationLevel));
 
-                List<string> errorLines = new List<string>
+                EmitResult result;
+                using (Stream win32Resources = compilation.CreateDefaultWin32Resources(
+                           versionResource: true,
+                           noManifest: true,
+                           manifestContents: null,
+                           iconInIcoFormat: null))
+                {
+                    using (FileStream peStream = new FileStream(assemblyPath, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        EmitOptions emitOptions = null;
+                        if (OptimizationLevel == OptimizationLevel.Debug)
+                        {
+                            emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb);
+                        }
+                        result = compilation.Emit(peStream, win32Resources: win32Resources, options: emitOptions);
+                    }
+                }
+
+                if (!result.Success)
+                {
+                    log.ErrorFormat("CompileModuleAssembly: Compilation of '{0}' failed", sourcePath);
+
+                    List<string> errorLines = new List<string>
                 {
                     $"Compilation of '{sourcePath}' failed at {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
                     string.Empty
                 };
 
-                foreach (Diagnostic diagnostic in result.Diagnostics)
-                {
-                    if (diagnostic.Severity == DiagnosticSeverity.Error)
+                    foreach (Diagnostic diagnostic in result.Diagnostics)
                     {
-                        errorLines.Add(diagnostic.ToString());
+                        if (diagnostic.Severity == DiagnosticSeverity.Error)
+                        {
+                            errorLines.Add(diagnostic.ToString());
+                        }
                     }
-                }
 
-                if (!string.IsNullOrEmpty(logFilePath))
-                {
+                    if (!string.IsNullOrEmpty(logFilePath))
+                    {
+                        try
+                        {
+                            File.WriteAllLines(logFilePath, errorLines);
+                        }
+                        catch (Exception ex)
+                        {
+                            log.ErrorFormat("CompileModuleAssembly: Writing log file Exception: {0}", ex);
+                        }
+                    }
+
                     try
                     {
-                        File.WriteAllLines(logFilePath, errorLines);
+                        File.Delete(assemblyPath);
                     }
                     catch (Exception ex)
                     {
-                        log.ErrorFormat("CompileModuleAssembly: Writing log file Exception: {0}", ex);
+                        log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
                     }
-                }
 
-                try
-                {
-                    File.Delete(assemblyPath);
+                    return false;
                 }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("CompileModuleAssembly: File.Delete Exception: {0}", ex);
-                }
-
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("CompileModuleAssembly: Exception: {0}", ex);
                 return false;
             }
-        }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("CompileModuleAssembly: Exception: {0}", ex);
-            return false;
+
+            return true;
         }
 
-        return true;
-    }
-
-    private static string GetFrameworkSubDir()
-    {
-        try
-        {
-            TargetFrameworkAttribute attribute = typeof(TestModuleRunner).Assembly
-                .GetCustomAttribute<TargetFrameworkAttribute>();
-            FrameworkName frameworkName = attribute != null && !string.IsNullOrEmpty(attribute.FrameworkName)
-                ? new FrameworkName(attribute.FrameworkName)
-                : null;
-
-            if (frameworkName != null)
-            {
-                string version = frameworkName.Version.ToString().Replace(".", string.Empty);
-                switch (frameworkName.Identifier)
-                {
-                    case ".NETFramework":
-                        return "net" + version;
-
-                    case ".NETCoreApp":
-                        return "net" + frameworkName.Version.Major + "." + frameworkName.Version.Minor;
-                }
-
-                return frameworkName.Identifier.Replace(".", string.Empty) + version;
-            }
-        }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("GetFrameworkSubDir: Exception: {0}", ex);
-        }
-
-        return "unknown";
-    }
-
-    // Alle Module eines Laufs erhalten denselben Zeitstempel, damit die erzeugten
-    // Assemblies untereinander konsistent sind.
-    private static string CreateBuildTimestamp()
-    {
-        return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-    }
-
-    // Der Referenzsatz ist fuer alle Module identisch und wird daher einmal pro Lauf
-    // aufgebaut. MetadataReference Objekte sind unveraenderlich und koennen von
-    // mehreren Compilations parallel genutzt werden.
-    private static List<MetadataReference> BuildReferenceSet()
-    {
-        List<MetadataReference> references = new List<MetadataReference>();
-        HashSet<string> addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        string runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
-        if (string.IsNullOrEmpty(runtimeDir))
-        {
-            log.ErrorFormat("BuildReferenceSet: Runtime directory is null or empty");
-            return null;
-        }
-
-        foreach (string assembly in AdditionalAssemblies)
-        {
-            AddReference(references, addedPaths, Path.Combine(runtimeDir, assembly));
-        }
-
-        foreach (Assembly loaded in AppDomain.CurrentDomain.GetAssemblies())
+        private static string GetFrameworkSubDir()
         {
             try
             {
-                if (!loaded.IsDynamic)
+                TargetFrameworkAttribute attribute = typeof(TestModuleRunner).Assembly
+                    .GetCustomAttribute<TargetFrameworkAttribute>();
+                FrameworkName frameworkName = attribute != null && !string.IsNullOrEmpty(attribute.FrameworkName)
+                    ? new FrameworkName(attribute.FrameworkName)
+                    : null;
+
+                if (frameworkName != null)
                 {
-                    AddReference(references, addedPaths, loaded.Location);
+                    string version = frameworkName.Version.ToString().Replace(".", string.Empty);
+                    switch (frameworkName.Identifier)
+                    {
+                        case ".NETFramework":
+                            return "net" + version;
+
+                        case ".NETCoreApp":
+                            return "net" + frameworkName.Version.Major + "." + frameworkName.Version.Minor;
+                    }
+
+                    return frameworkName.Identifier.Replace(".", string.Empty) + version;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Assemblies ohne Location überspringen
+                log.ErrorFormat("GetFrameworkSubDir: Exception: {0}", ex);
             }
+
+            return "unknown";
         }
 
-        return references;
-    }
-
-    private static void AddReference(List<MetadataReference> references, HashSet<string> addedPaths, string path)
-    {
-        if (!string.IsNullOrEmpty(path) && addedPaths.Add(path))
+        // Alle Module eines Laufs erhalten denselben Zeitstempel, damit die erzeugten
+        // Assemblies untereinander konsistent sind.
+        private static string CreateBuildTimestamp()
         {
-            MetadataReference reference = metadataReferenceCache.GetOrAdd(path, filePath =>
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        // Der Referenzsatz ist fuer alle Module identisch und wird daher einmal pro Lauf
+        // aufgebaut. MetadataReference Objekte sind unveraenderlich und koennen von
+        // mehreren Compilations parallel genutzt werden.
+        private static List<MetadataReference> BuildReferenceSet()
+        {
+            List<MetadataReference> references = new List<MetadataReference>();
+            HashSet<string> addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            string runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location);
+            if (string.IsNullOrEmpty(runtimeDir))
+            {
+                log.ErrorFormat("BuildReferenceSet: Runtime directory is null or empty");
+                return null;
+            }
+
+            foreach (string assembly in AdditionalAssemblies)
+            {
+                AddReference(references, addedPaths, Path.Combine(runtimeDir, assembly));
+            }
+
+            foreach (Assembly loaded in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
-                    if (!File.Exists(filePath))
+                    if (!loaded.IsDynamic)
                     {
+                        AddReference(references, addedPaths, loaded.Location);
+                    }
+                }
+                catch (Exception)
+                {
+                    // Assemblies ohne Location überspringen
+                }
+            }
+
+            return references;
+        }
+
+        private static void AddReference(List<MetadataReference> references, HashSet<string> addedPaths, string path)
+        {
+            if (!string.IsNullOrEmpty(path) && addedPaths.Add(path))
+            {
+                MetadataReference reference = metadataReferenceCache.GetOrAdd(path, filePath =>
+                {
+                    try
+                    {
+                        if (!File.Exists(filePath))
+                        {
+                            return null;
+                        }
+
+                        return MetadataReference.CreateFromFile(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("AddReference: CreateFromFile Exception for {0}: {1}", filePath, ex);
                         return null;
                     }
+                });
 
-                    return MetadataReference.CreateFromFile(filePath);
-                }
-                catch (Exception ex)
+                if (reference != null)
                 {
-                    log.ErrorFormat("AddReference: CreateFromFile Exception for {0}: {1}", filePath, ex);
-                    return null;
+                    references.Add(reference);
                 }
-            });
-
-            if (reference != null)
-            {
-                references.Add(reference);
             }
         }
-    }
 
-    private ParameterContainer SetUpModuleInParameters()
-    {
-        ParameterContainer parameterContainer = new ParameterContainer();
-        Dictionary<string, object> dictionary = _moduleParameters.Clone().callParameter[0] as Dictionary<string, object>;
-        foreach (string key in dictionary.Keys)
+        private ParameterContainer SetUpModuleInParameters()
         {
-            parameterContainer.setParameter(key, dictionary[key]);
-        }
+            ParameterContainer parameterContainer = new ParameterContainer();
+            Dictionary<string, object> dictionary = _moduleParameters.Clone().callParameter[0] as Dictionary<string, object>;
+            foreach (string key in dictionary.Keys)
+            {
+                parameterContainer.setParameter(key, dictionary[key]);
+            }
 
-        parameterContainer.setParameter("__RheinGoldCoreModuleParameters__", _moduleParameters.Clone());
-        parameterContainer.setParameter("__RheinGoldTabModuleISTA__", _moduleExecutionParent);
-        //parameterContainer.setParameter("FASTA", fasta2);
-        //parameterContainer.setParameter("MeasurementLauncher", measurementService);
-        parameterContainer.setParameter("ISTAModule.Me", _swiInfoObj);
-        return parameterContainer;
+            parameterContainer.setParameter("__RheinGoldCoreModuleParameters__", _moduleParameters.Clone());
+            parameterContainer.setParameter("__RheinGoldTabModuleISTA__", _moduleExecutionParent);
+            //parameterContainer.setParameter("FASTA", fasta2);
+            //parameterContainer.setParameter("MeasurementLauncher", measurementService);
+            parameterContainer.setParameter("ISTAModule.Me", _swiInfoObj);
+            return parameterContainer;
+        }
     }
 }

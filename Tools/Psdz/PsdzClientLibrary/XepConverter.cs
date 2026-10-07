@@ -8,428 +8,428 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace PsdzClientLibrary;
-
-[PreserveSource(Hint = "Custom code", SuppressWarning = true)]
-public static class XepConverter
+namespace PsdzClient
 {
-    public static XEP_CHARACTERISTICROOTS Convert(PsdzDatabase.CharacteristicRoots characteristicRoot)
+    [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
+    public static class XepConverter
     {
-        if (characteristicRoot == null)
+        public static XEP_CHARACTERISTICROOTS Convert(PsdzDatabase.CharacteristicRoots characteristicRoot)
         {
-            return null;
+            if (characteristicRoot == null)
+            {
+                return null;
+            }
+
+            XEP_CHARACTERISTICROOTS xepCharacteristicRoot = new XEP_CHARACTERISTICROOTS();
+            xepCharacteristicRoot.Id = characteristicRoot.Id.ConvertToInt();
+            xepCharacteristicRoot.Nodeclass = characteristicRoot.NodeClass.ConvertToInt();
+            xepCharacteristicRoot.MotorCycleSequence = characteristicRoot.MotorCycSeq.ConvertToInt();
+            xepCharacteristicRoot.VehicleSequence = characteristicRoot.VehicleSeq.ConvertToInt();
+
+            CopyEcuTranslation(characteristicRoot.EcuTranslation, xepCharacteristicRoot);
+            return xepCharacteristicRoot;
         }
 
-        XEP_CHARACTERISTICROOTS xepCharacteristicRoot = new XEP_CHARACTERISTICROOTS();
-        xepCharacteristicRoot.Id = characteristicRoot.Id.ConvertToInt();
-        xepCharacteristicRoot.Nodeclass = characteristicRoot.NodeClass.ConvertToInt();
-        xepCharacteristicRoot.MotorCycleSequence = characteristicRoot.MotorCycSeq.ConvertToInt();
-        xepCharacteristicRoot.VehicleSequence = characteristicRoot.VehicleSeq.ConvertToInt();
-
-        CopyEcuTranslation(characteristicRoot.EcuTranslation, xepCharacteristicRoot);
-        return xepCharacteristicRoot;
-    }
-
-    public static ICollection<XEP_CHARACTERISTICROOTS> Convert(ICollection<PsdzDatabase.CharacteristicRoots> characteristicRootList)
-    {
-        if (characteristicRootList == null)
+        public static ICollection<XEP_CHARACTERISTICROOTS> Convert(ICollection<PsdzDatabase.CharacteristicRoots> characteristicRootList)
         {
-            return null;
+            if (characteristicRootList == null)
+            {
+                return null;
+            }
+
+            List<XEP_CHARACTERISTICROOTS> xepCharacteristicRootList = new List<XEP_CHARACTERISTICROOTS>();
+            foreach (PsdzDatabase.CharacteristicRoots characteristicRoot in characteristicRootList)
+            {
+                xepCharacteristicRootList.Add(Convert(characteristicRoot));
+            }
+            return xepCharacteristicRootList;
         }
 
-        List<XEP_CHARACTERISTICROOTS> xepCharacteristicRootList = new List<XEP_CHARACTERISTICROOTS>();
-        foreach (PsdzDatabase.CharacteristicRoots characteristicRoot in characteristicRootList)
+        public static XEP_SALAPAS Convert(PsdzDatabase.SaLaPa saLaPa)
         {
-            xepCharacteristicRootList.Add(Convert(characteristicRoot));
-        }
-        return xepCharacteristicRootList;
-    }
+            if (saLaPa == null)
+            {
+                return null;
+            }
 
-    public static XEP_SALAPAS Convert(PsdzDatabase.SaLaPa saLaPa)
-    {
-        if (saLaPa == null)
-        {
-            return null;
-        }
+            XEP_SALAPAS xepSaLaPa = new XEP_SALAPAS();
+            xepSaLaPa.Id = saLaPa.Id.ConvertToInt();
+            xepSaLaPa.Name = saLaPa.Name;
+            xepSaLaPa.ProductType = saLaPa.ProductType;
 
-        XEP_SALAPAS xepSaLaPa = new XEP_SALAPAS();
-        xepSaLaPa.Id = saLaPa.Id.ConvertToInt();
-        xepSaLaPa.Name = saLaPa.Name;
-        xepSaLaPa.ProductType = saLaPa.ProductType;
-
-        CopyEcuTranslation(saLaPa.EcuTranslation, xepSaLaPa);
-        return xepSaLaPa;
-    }
-
-    public static ICollection<XEP_SALAPAS> Convert(ICollection<PsdzDatabase.SaLaPa> saLaPaList)
-    {
-        if (saLaPaList == null)
-        {
-            return null;
+            CopyEcuTranslation(saLaPa.EcuTranslation, xepSaLaPa);
+            return xepSaLaPa;
         }
 
-        List<XEP_SALAPAS> xepSaLaPaList = new List<XEP_SALAPAS>();
-        foreach (PsdzDatabase.SaLaPa saLaPa in saLaPaList)
+        public static ICollection<XEP_SALAPAS> Convert(ICollection<PsdzDatabase.SaLaPa> saLaPaList)
         {
-            xepSaLaPaList.Add(Convert(saLaPa));
-        }
-        return xepSaLaPaList;
-    }
+            if (saLaPaList == null)
+            {
+                return null;
+            }
 
-    public static XEP_ECUGROUPS Convert(PsdzDatabase.EcuGroup ecuGroup)
-    {
-        if (ecuGroup == null)
-        {
-            return null;
-        }
-
-        XEP_ECUGROUPS xepEcuGroup = new XEP_ECUGROUPS();
-        xepEcuGroup.Id = ecuGroup.Id.ConvertToInt();
-        xepEcuGroup.ObdIdentification = ecuGroup.ObdIdent.ConvertToInt();
-        xepEcuGroup.FaultMemoryDeleteIdentificatio = ecuGroup.FaultMemDelIdent.ConvertToInt();
-        xepEcuGroup.FaultMemoryDeleteWaitingTime = ecuGroup.FaultMemDelWaitTime.ConvertToInt();
-        xepEcuGroup.Name = ecuGroup.Name;
-        xepEcuGroup.Virtuell = ecuGroup.Virt.ConvertToInt();
-        xepEcuGroup.Sicherheitsrelevant = ecuGroup.SafetyRelevant.ConvertToInt();
-        xepEcuGroup.ValidFrom = ConvertToDateTime(ecuGroup.ValidFrom);
-        xepEcuGroup.ValidTo = ConvertToDateTime(ecuGroup.ValidTo);
-        xepEcuGroup.DiagnosticAddress = ecuGroup.DiagAddr.ConvertToInt();
-
-        return xepEcuGroup;
-    }
-
-    public static ICollection<XEP_ECUGROUPS> Convert(ICollection<PsdzDatabase.EcuGroup> ecuGroupList)
-    {
-        if (ecuGroupList == null)
-        {
-            return null;
+            List<XEP_SALAPAS> xepSaLaPaList = new List<XEP_SALAPAS>();
+            foreach (PsdzDatabase.SaLaPa saLaPa in saLaPaList)
+            {
+                xepSaLaPaList.Add(Convert(saLaPa));
+            }
+            return xepSaLaPaList;
         }
 
-        List<XEP_ECUGROUPS> xepEcuGroupList = new List<XEP_ECUGROUPS>();
-        foreach (PsdzDatabase.EcuGroup ecuGroup in ecuGroupList)
+        public static XEP_ECUGROUPS Convert(PsdzDatabase.EcuGroup ecuGroup)
         {
-            xepEcuGroupList.Add(Convert(ecuGroup));
-        }
-        return xepEcuGroupList;
-    }
+            if (ecuGroup == null)
+            {
+                return null;
+            }
 
-    public static XEP_ECUREPS Convert(PsdzDatabase.EcuReps ecuReps)
-    {
-        if (ecuReps == null)
-        {
-            return null;
-        }
+            XEP_ECUGROUPS xepEcuGroup = new XEP_ECUGROUPS();
+            xepEcuGroup.Id = ecuGroup.Id.ConvertToInt();
+            xepEcuGroup.ObdIdentification = ecuGroup.ObdIdent.ConvertToInt();
+            xepEcuGroup.FaultMemoryDeleteIdentificatio = ecuGroup.FaultMemDelIdent.ConvertToInt();
+            xepEcuGroup.FaultMemoryDeleteWaitingTime = ecuGroup.FaultMemDelWaitTime.ConvertToInt();
+            xepEcuGroup.Name = ecuGroup.Name;
+            xepEcuGroup.Virtuell = ecuGroup.Virt.ConvertToInt();
+            xepEcuGroup.Sicherheitsrelevant = ecuGroup.SafetyRelevant.ConvertToInt();
+            xepEcuGroup.ValidFrom = ConvertToDateTime(ecuGroup.ValidFrom);
+            xepEcuGroup.ValidTo = ConvertToDateTime(ecuGroup.ValidTo);
+            xepEcuGroup.DiagnosticAddress = ecuGroup.DiagAddr.ConvertToInt();
 
-        XEP_ECUREPS xepEcuReps = new XEP_ECUREPS();
-        xepEcuReps.Id = ecuReps.Id.ConvertToInt();
-        xepEcuReps.SteuergeraeteKuerzel = ecuReps.EcuShortcut;
-
-        return xepEcuReps;
-    }
-
-    public static ICollection<XEP_ECUREPS> Convert(ICollection<PsdzDatabase.EcuReps> ecuRepsList)
-    {
-        if (ecuRepsList == null)
-        {
-            return null;
-        }
-        List<XEP_ECUREPS> xepEcuRepsList = new List<XEP_ECUREPS>();
-        foreach (PsdzDatabase.EcuReps ecuReps in ecuRepsList)
-        {
-            xepEcuRepsList.Add(Convert(ecuReps));
-        }
-        return xepEcuRepsList;
-    }
-
-    public static XEP_EQUIPMENT Convert(PsdzDatabase.Equipment equipment)
-    {
-        if (equipment == null)
-        {
-            return null;
+            return xepEcuGroup;
         }
 
-        XEP_EQUIPMENT xepEquipment = new XEP_EQUIPMENT();
-        xepEquipment.ID = equipment.Id.ConvertToInt();
-        xepEquipment.NAME = equipment.Name;
-
-        CopyEcuTranslation(equipment.EcuTranslation, xepEquipment);
-        return xepEquipment;
-    }
-
-    public static ICollection<XEP_EQUIPMENT> Convert(ICollection<PsdzDatabase.Equipment> equipmentList)
-    {
-        if (equipmentList == null)
+        public static ICollection<XEP_ECUGROUPS> Convert(ICollection<PsdzDatabase.EcuGroup> ecuGroupList)
         {
-            return null;
-        }
-        List<XEP_EQUIPMENT> xepEquipmentList = new List<XEP_EQUIPMENT>();
-        foreach (PsdzDatabase.Equipment equipment in equipmentList)
-        {
-            xepEquipmentList.Add(Convert(equipment));
-        }
-        return xepEquipmentList;
-    }
+            if (ecuGroupList == null)
+            {
+                return null;
+            }
 
-    public static XEP_ECUVARIANTS Convert(PsdzDatabase.EcuVar ecuVar)
-    {
-        if (ecuVar == null)
-        {
-            return null;
+            List<XEP_ECUGROUPS> xepEcuGroupList = new List<XEP_ECUGROUPS>();
+            foreach (PsdzDatabase.EcuGroup ecuGroup in ecuGroupList)
+            {
+                xepEcuGroupList.Add(Convert(ecuGroup));
+            }
+            return xepEcuGroupList;
         }
 
-        XEP_ECUVARIANTS xepEcuVariant = new XEP_ECUVARIANTS();
-        xepEcuVariant.Id = ecuVar.Id.ConvertToInt();
-        xepEcuVariant.FaultMemoryDeleteWaitingTime = ecuVar.FaultMemDelWaitTime.ConvertToInt();
-        xepEcuVariant.Name = ecuVar.Name;
-        xepEcuVariant.EcuGroupId = ecuVar.EcuGroupId.ConvertToInt();
-        xepEcuVariant.ValidFrom = ConvertToDateTime(ecuVar.ValidFrom);
-        xepEcuVariant.ValidTo = ConvertToDateTime(ecuVar.ValidTo);
-        xepEcuVariant.Sicherheitsrelevant = ecuVar.SafetyRelevant.ConvertToInt();
-        xepEcuVariant.EcuGroupId = ecuVar.EcuGroupId.ConvertToInt();
-        xepEcuVariant.Sort = ecuVar.Sort.ConvertToInt();
-
-        CopyEcuTranslation(ecuVar.EcuTranslation, xepEcuVariant);
-        return xepEcuVariant;
-    }
-
-    public static ICollection<IXepEcuVariants> Convert(ICollection<PsdzDatabase.EcuVar> ecuVarList)
-    {
-        if (ecuVarList == null)
+        public static XEP_ECUREPS Convert(PsdzDatabase.EcuReps ecuReps)
         {
-            return null;
+            if (ecuReps == null)
+            {
+                return null;
+            }
+
+            XEP_ECUREPS xepEcuReps = new XEP_ECUREPS();
+            xepEcuReps.Id = ecuReps.Id.ConvertToInt();
+            xepEcuReps.SteuergeraeteKuerzel = ecuReps.EcuShortcut;
+
+            return xepEcuReps;
         }
 
-        List<IXepEcuVariants> xepEcuVariantList = new List<IXepEcuVariants>();
-        foreach (PsdzDatabase.EcuVar ecuVar in ecuVarList)
+        public static ICollection<XEP_ECUREPS> Convert(ICollection<PsdzDatabase.EcuReps> ecuRepsList)
         {
-            xepEcuVariantList.Add(Convert(ecuVar));
-        }
-        return xepEcuVariantList;
-    }
-
-    public static XEP_ECUPROGRAMMINGVARIANT Convert(PsdzDatabase.EcuPrgVar ecuPrgVar)
-    {
-        if (ecuPrgVar == null)
-        {
-            return null;
-        }
-
-        XEP_ECUPROGRAMMINGVARIANT xepEcuProgrammingVariant = new XEP_ECUPROGRAMMINGVARIANT();
-        xepEcuProgrammingVariant.Id = ecuPrgVar.Id.ConvertToInt();
-        xepEcuProgrammingVariant.Name = ecuPrgVar.Name;
-        xepEcuProgrammingVariant.FlashLimit = ecuPrgVar.FlashLimit.ConvertToInt();
-        xepEcuProgrammingVariant.EcuVariantId = ecuPrgVar.EcuVarId.ConvertToInt();
-
-        return xepEcuProgrammingVariant;
-    }
-
-    public static ICollection<XEP_ECUPROGRAMMINGVARIANT> Convert(ICollection<PsdzDatabase.EcuPrgVar> ecuPrgVarList)
-    {
-        if (ecuPrgVarList == null)
-        {
-            return null;
+            if (ecuRepsList == null)
+            {
+                return null;
+            }
+            List<XEP_ECUREPS> xepEcuRepsList = new List<XEP_ECUREPS>();
+            foreach (PsdzDatabase.EcuReps ecuReps in ecuRepsList)
+            {
+                xepEcuRepsList.Add(Convert(ecuReps));
+            }
+            return xepEcuRepsList;
         }
 
-        List<XEP_ECUPROGRAMMINGVARIANT> xepEcuProgrammingVariantList = new List<XEP_ECUPROGRAMMINGVARIANT>();
-        foreach (PsdzDatabase.EcuPrgVar ecuPrgVar in ecuPrgVarList)
+        public static XEP_EQUIPMENT Convert(PsdzDatabase.Equipment equipment)
         {
-            xepEcuProgrammingVariantList.Add(Convert(ecuPrgVar));
-        }
-        return xepEcuProgrammingVariantList;
-    }
+            if (equipment == null)
+            {
+                return null;
+            }
 
-    public static XEP_ECUCLIQUES Convert(PsdzDatabase.EcuClique ecuClique)
-    {
-        if (ecuClique == null)
-        {
-            return null;
-        }
+            XEP_EQUIPMENT xepEquipment = new XEP_EQUIPMENT();
+            xepEquipment.ID = equipment.Id.ConvertToInt();
+            xepEquipment.NAME = equipment.Name;
 
-        XEP_ECUCLIQUES xepEcuClique = new XEP_ECUCLIQUES();
-        xepEcuClique.ID = ecuClique.Id.ConvertToInt();
-        xepEcuClique.CLIQUENKURZBEZEICHNUNG = ecuClique.CliqueName;
-        xepEcuClique.ECUREPID = ecuClique.EcuRepId.ConvertToInt();
-        CopyEcuTranslation(ecuClique.EcuTranslation, xepEcuClique);
-        return xepEcuClique;
-    }
-
-    public static ICollection<XEP_ECUCLIQUES> Convert(ICollection<PsdzDatabase.EcuClique> ecuCliqueList)
-    {
-        if (ecuCliqueList == null)
-        {
-            return null;
+            CopyEcuTranslation(equipment.EcuTranslation, xepEquipment);
+            return xepEquipment;
         }
 
-        List<XEP_ECUCLIQUES> xepEcuCliqueList = new List<XEP_ECUCLIQUES>();
-        foreach (PsdzDatabase.EcuClique ecuClique in ecuCliqueList)
+        public static ICollection<XEP_EQUIPMENT> Convert(ICollection<PsdzDatabase.Equipment> equipmentList)
         {
-            xepEcuCliqueList.Add(Convert(ecuClique));
-        }
-        return xepEcuCliqueList;
-    }
-
-    public static XEP_REFECUCLIQUES Convert(PsdzDatabase.RefEcuClique refEcuCliques)
-    {
-        if (refEcuCliques == null)
-        {
-            return null;
-        }
-
-        XEP_REFECUCLIQUES xepRefEcuCliques = new XEP_REFECUCLIQUES();
-        xepRefEcuCliques.ID = refEcuCliques.Id.ConvertToInt();
-        xepRefEcuCliques.ECUCLIQUEID = refEcuCliques.EcuCliqueId.ConvertToInt();
-        return xepRefEcuCliques;
-    }
-
-    public static ICollection<XEP_REFECUCLIQUES> Convert(ICollection<PsdzDatabase.RefEcuClique> refEcuCliquesList)
-    {
-        if (refEcuCliquesList == null)
-        {
-            return null;
-        }
-        List<XEP_REFECUCLIQUES> xepRefEcuCliquesList = new List<XEP_REFECUCLIQUES>();
-        foreach (PsdzDatabase.RefEcuClique refEcuCliques in refEcuCliquesList)
-        {
-            xepRefEcuCliquesList.Add(Convert(refEcuCliques));
-        }
-        return xepRefEcuCliquesList;
-    }
-
-    public static XEP_SWIREGISTER Convert(PsdzDatabase.SwiRegister swiRegister)
-    {
-        if (swiRegister == null)
-        {
-            return null;
+            if (equipmentList == null)
+            {
+                return null;
+            }
+            List<XEP_EQUIPMENT> xepEquipmentList = new List<XEP_EQUIPMENT>();
+            foreach (PsdzDatabase.Equipment equipment in equipmentList)
+            {
+                xepEquipmentList.Add(Convert(equipment));
+            }
+            return xepEquipmentList;
         }
 
-        XEP_SWIREGISTER xepSwiRegister = new XEP_SWIREGISTER();
-        xepSwiRegister.Id = swiRegister.Id.ConvertToInt();
-        xepSwiRegister.Nodeclass = swiRegister.NodeClass.ConvertToInt();
-        xepSwiRegister.Name = swiRegister.Name;
-        xepSwiRegister.ParentId = swiRegister.ParentId.ConvertToInt();
-        xepSwiRegister.Remark = swiRegister.Remark;
-        xepSwiRegister.Sort = swiRegister.Sort.ConvertToInt();
-        xepSwiRegister.VersionNumber = swiRegister.VersionNum.ConvertToInt();
-        xepSwiRegister.Identifier = swiRegister.Identifier;
-        CopyEcuTranslation(swiRegister.EcuTranslation, xepSwiRegister);
-
-        return xepSwiRegister;
-    }
-
-    public static ICollection<XEP_SWIREGISTER> Convert(ICollection<PsdzDatabase.SwiRegister> swiRegisterList)
-    {
-        if (swiRegisterList == null)
+        public static XEP_ECUVARIANTS Convert(PsdzDatabase.EcuVar ecuVar)
         {
-            return null;
+            if (ecuVar == null)
+            {
+                return null;
+            }
+
+            XEP_ECUVARIANTS xepEcuVariant = new XEP_ECUVARIANTS();
+            xepEcuVariant.Id = ecuVar.Id.ConvertToInt();
+            xepEcuVariant.FaultMemoryDeleteWaitingTime = ecuVar.FaultMemDelWaitTime.ConvertToInt();
+            xepEcuVariant.Name = ecuVar.Name;
+            xepEcuVariant.EcuGroupId = ecuVar.EcuGroupId.ConvertToInt();
+            xepEcuVariant.ValidFrom = ConvertToDateTime(ecuVar.ValidFrom);
+            xepEcuVariant.ValidTo = ConvertToDateTime(ecuVar.ValidTo);
+            xepEcuVariant.Sicherheitsrelevant = ecuVar.SafetyRelevant.ConvertToInt();
+            xepEcuVariant.EcuGroupId = ecuVar.EcuGroupId.ConvertToInt();
+            xepEcuVariant.Sort = ecuVar.Sort.ConvertToInt();
+
+            CopyEcuTranslation(ecuVar.EcuTranslation, xepEcuVariant);
+            return xepEcuVariant;
         }
 
-        List<XEP_SWIREGISTER> xepSwiRegisterList = new List<XEP_SWIREGISTER>();
-        foreach (PsdzDatabase.SwiRegister swiRegister in swiRegisterList)
+        public static ICollection<IXepEcuVariants> Convert(ICollection<PsdzDatabase.EcuVar> ecuVarList)
         {
-            xepSwiRegisterList.Add(Convert(swiRegister));
-        }
-        return xepSwiRegisterList;
-    }
+            if (ecuVarList == null)
+            {
+                return null;
+            }
 
-    public static IXepInfoObject Convert(PsdzDatabase.SwiInfoObj swiInfoObj)
-    {
-        if (swiInfoObj == null)
-        {
-            return null;
-        }
-
-        XepInfoObject xepInfoObject = new XepInfoObject();
-        xepInfoObject.Id = swiInfoObj.Id.ConvertToInt();
-        xepInfoObject.Nodeclass = swiInfoObj.NodeClass.ConvertToInt();
-        xepInfoObject.Assembly = swiInfoObj.Assembly.ConvertToInt();
-        xepInfoObject.VersionNumber = swiInfoObj.VersionNum.ConvertToInt();
-        xepInfoObject.ProgramType = swiInfoObj.ProgramType;
-        xepInfoObject.SicherheitsRelevant = swiInfoObj.SafetyRelevant.ConvertToInt();
-        xepInfoObject.TitleId = swiInfoObj.TitleId.ConvertToInt();
-        xepInfoObject.Generell = swiInfoObj.General.ConvertToInt();
-        xepInfoObject.TeleserviceKennung = swiInfoObj.TelSrvId.ConvertToInt();
-        xepInfoObject.FahrzeugKommunikation = swiInfoObj.VehicleComm.ConvertToInt();
-        xepInfoObject.Messtechnik = swiInfoObj.Measurement.ConvertToInt();
-        xepInfoObject.Versteckt = swiInfoObj.Hidden.ConvertToInt();
-        xepInfoObject.Name = swiInfoObj.Name;
-        xepInfoObject.InformationsTyp = swiInfoObj.InformationType;
-        xepInfoObject.Identifikator = swiInfoObj.Identificator;
-        xepInfoObject.Informationsformat = swiInfoObj.InformationFormat;
-        xepInfoObject.SiNummer = swiInfoObj.SiNumber;
-        xepInfoObject.ZielIStufe = swiInfoObj.TargetILevel;
-        xepInfoObject.ControlId = swiInfoObj.ControlId.ConvertToInt();
-        xepInfoObject.InfoType = swiInfoObj.InfoType;
-        xepInfoObject.InfoFormat = swiInfoObj.InfoFormat;
-        xepInfoObject.DocNumber = swiInfoObj.DocNum;
-        xepInfoObject.Priority = swiInfoObj.Priority.ConvertToInt();
-        xepInfoObject.Identifier = swiInfoObj.Identifier;
-
-        CopyEcuTranslation(swiInfoObj.EcuTranslation, xepInfoObject);
-
-        return xepInfoObject;
-    }
-
-    public static ICollection<IXepInfoObject> Convert(ICollection<PsdzDatabase.SwiInfoObj> swiInfoObjList)
-    {
-        if (swiInfoObjList == null)
-        {
-            return null;
-        }
-        List<IXepInfoObject> xepInfoObjectList = new List<IXepInfoObject>();
-        foreach (PsdzDatabase.SwiInfoObj swiInfoObj in swiInfoObjList)
-        {
-            xepInfoObjectList.Add(Convert(swiInfoObj));
-        }
-        return xepInfoObjectList;
-    }
-
-    public static XEP_DIAGNOSISOBJECTSEX Convert(PsdzDatabase.SwiDiagObj swiDiagObj)
-    {
-        if (swiDiagObj == null)
-        {
-            return null;
+            List<IXepEcuVariants> xepEcuVariantList = new List<IXepEcuVariants>();
+            foreach (PsdzDatabase.EcuVar ecuVar in ecuVarList)
+            {
+                xepEcuVariantList.Add(Convert(ecuVar));
+            }
+            return xepEcuVariantList;
         }
 
-        XEP_DIAGNOSISOBJECTSEX xepDiagObject = new XEP_DIAGNOSISOBJECTSEX();
-        xepDiagObject.Id = swiDiagObj.Id.ConvertToInt();
-        xepDiagObject.Nodeclass = swiDiagObj.NodeClass.ConvertToInt();
-        xepDiagObject.TitleId = swiDiagObj.TitleId.ConvertToInt();
-        xepDiagObject.VersionNumber = swiDiagObj.VersionNum.ConvertToInt();
-        xepDiagObject.Name = swiDiagObj.Name;
-        xepDiagObject.FailureWeight = swiDiagObj.FailWeight.ConvertToInt();
-        xepDiagObject.Versteckt = swiDiagObj.Hidden.ConvertToInt();
-        xepDiagObject.ValidFrom = ConvertToDateTime(swiDiagObj.ValidFrom);
-        xepDiagObject.ValidTo = ConvertToDateTime(swiDiagObj.ValidTo);
-        xepDiagObject.SicherheitsRelevant = swiDiagObj.SafetyRelevant.ConvertToInt();
-        xepDiagObject.Grobzeichen = swiDiagObj.Grobzeichen;
-        xepDiagObject.Hg_Nummer = swiDiagObj.Hg_Nummer;
-        xepDiagObject.Hgug_Nummer = swiDiagObj.Hgug_Nummer;
-        xepDiagObject.ControlId = swiDiagObj.ControlId.ConvertToInt();
-        xepDiagObject.SortOrder = swiDiagObj.SortOrder.ConvertToInt();
-
-        CopyEcuTranslation(swiDiagObj.EcuTranslation, xepDiagObject);
-
-        return xepDiagObject;
-    }
-
-    public static ICollection<XEP_DIAGNOSISOBJECTSEX> Convert(ICollection<PsdzDatabase.SwiDiagObj> swiDiagObjList)
-    {
-        if (swiDiagObjList == null)
+        public static XEP_ECUPROGRAMMINGVARIANT Convert(PsdzDatabase.EcuPrgVar ecuPrgVar)
         {
-            return null;
-        }
-        List<XEP_DIAGNOSISOBJECTSEX> xepDiagObjectList = new List<XEP_DIAGNOSISOBJECTSEX>();
-        foreach (PsdzDatabase.SwiDiagObj swiDiagObj in swiDiagObjList)
-        {
-            xepDiagObjectList.Add(Convert(swiDiagObj));
-        }
-        return xepDiagObjectList;
-    }
+            if (ecuPrgVar == null)
+            {
+                return null;
+            }
 
-    // Property names are taken via nameof from a reference type declaring all of them,
-    // so typos and renames are detected by the compiler.
-    private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =
-    {
+            XEP_ECUPROGRAMMINGVARIANT xepEcuProgrammingVariant = new XEP_ECUPROGRAMMINGVARIANT();
+            xepEcuProgrammingVariant.Id = ecuPrgVar.Id.ConvertToInt();
+            xepEcuProgrammingVariant.Name = ecuPrgVar.Name;
+            xepEcuProgrammingVariant.FlashLimit = ecuPrgVar.FlashLimit.ConvertToInt();
+            xepEcuProgrammingVariant.EcuVariantId = ecuPrgVar.EcuVarId.ConvertToInt();
+
+            return xepEcuProgrammingVariant;
+        }
+
+        public static ICollection<XEP_ECUPROGRAMMINGVARIANT> Convert(ICollection<PsdzDatabase.EcuPrgVar> ecuPrgVarList)
+        {
+            if (ecuPrgVarList == null)
+            {
+                return null;
+            }
+
+            List<XEP_ECUPROGRAMMINGVARIANT> xepEcuProgrammingVariantList = new List<XEP_ECUPROGRAMMINGVARIANT>();
+            foreach (PsdzDatabase.EcuPrgVar ecuPrgVar in ecuPrgVarList)
+            {
+                xepEcuProgrammingVariantList.Add(Convert(ecuPrgVar));
+            }
+            return xepEcuProgrammingVariantList;
+        }
+
+        public static XEP_ECUCLIQUES Convert(PsdzDatabase.EcuClique ecuClique)
+        {
+            if (ecuClique == null)
+            {
+                return null;
+            }
+
+            XEP_ECUCLIQUES xepEcuClique = new XEP_ECUCLIQUES();
+            xepEcuClique.ID = ecuClique.Id.ConvertToInt();
+            xepEcuClique.CLIQUENKURZBEZEICHNUNG = ecuClique.CliqueName;
+            xepEcuClique.ECUREPID = ecuClique.EcuRepId.ConvertToInt();
+            CopyEcuTranslation(ecuClique.EcuTranslation, xepEcuClique);
+            return xepEcuClique;
+        }
+
+        public static ICollection<XEP_ECUCLIQUES> Convert(ICollection<PsdzDatabase.EcuClique> ecuCliqueList)
+        {
+            if (ecuCliqueList == null)
+            {
+                return null;
+            }
+
+            List<XEP_ECUCLIQUES> xepEcuCliqueList = new List<XEP_ECUCLIQUES>();
+            foreach (PsdzDatabase.EcuClique ecuClique in ecuCliqueList)
+            {
+                xepEcuCliqueList.Add(Convert(ecuClique));
+            }
+            return xepEcuCliqueList;
+        }
+
+        public static XEP_REFECUCLIQUES Convert(PsdzDatabase.RefEcuClique refEcuCliques)
+        {
+            if (refEcuCliques == null)
+            {
+                return null;
+            }
+
+            XEP_REFECUCLIQUES xepRefEcuCliques = new XEP_REFECUCLIQUES();
+            xepRefEcuCliques.ID = refEcuCliques.Id.ConvertToInt();
+            xepRefEcuCliques.ECUCLIQUEID = refEcuCliques.EcuCliqueId.ConvertToInt();
+            return xepRefEcuCliques;
+        }
+
+        public static ICollection<XEP_REFECUCLIQUES> Convert(ICollection<PsdzDatabase.RefEcuClique> refEcuCliquesList)
+        {
+            if (refEcuCliquesList == null)
+            {
+                return null;
+            }
+            List<XEP_REFECUCLIQUES> xepRefEcuCliquesList = new List<XEP_REFECUCLIQUES>();
+            foreach (PsdzDatabase.RefEcuClique refEcuCliques in refEcuCliquesList)
+            {
+                xepRefEcuCliquesList.Add(Convert(refEcuCliques));
+            }
+            return xepRefEcuCliquesList;
+        }
+
+        public static XEP_SWIREGISTER Convert(PsdzDatabase.SwiRegister swiRegister)
+        {
+            if (swiRegister == null)
+            {
+                return null;
+            }
+
+            XEP_SWIREGISTER xepSwiRegister = new XEP_SWIREGISTER();
+            xepSwiRegister.Id = swiRegister.Id.ConvertToInt();
+            xepSwiRegister.Nodeclass = swiRegister.NodeClass.ConvertToInt();
+            xepSwiRegister.Name = swiRegister.Name;
+            xepSwiRegister.ParentId = swiRegister.ParentId.ConvertToInt();
+            xepSwiRegister.Remark = swiRegister.Remark;
+            xepSwiRegister.Sort = swiRegister.Sort.ConvertToInt();
+            xepSwiRegister.VersionNumber = swiRegister.VersionNum.ConvertToInt();
+            xepSwiRegister.Identifier = swiRegister.Identifier;
+            CopyEcuTranslation(swiRegister.EcuTranslation, xepSwiRegister);
+
+            return xepSwiRegister;
+        }
+
+        public static ICollection<XEP_SWIREGISTER> Convert(ICollection<PsdzDatabase.SwiRegister> swiRegisterList)
+        {
+            if (swiRegisterList == null)
+            {
+                return null;
+            }
+
+            List<XEP_SWIREGISTER> xepSwiRegisterList = new List<XEP_SWIREGISTER>();
+            foreach (PsdzDatabase.SwiRegister swiRegister in swiRegisterList)
+            {
+                xepSwiRegisterList.Add(Convert(swiRegister));
+            }
+            return xepSwiRegisterList;
+        }
+
+        public static IXepInfoObject Convert(PsdzDatabase.SwiInfoObj swiInfoObj)
+        {
+            if (swiInfoObj == null)
+            {
+                return null;
+            }
+
+            XepInfoObject xepInfoObject = new XepInfoObject();
+            xepInfoObject.Id = swiInfoObj.Id.ConvertToInt();
+            xepInfoObject.Nodeclass = swiInfoObj.NodeClass.ConvertToInt();
+            xepInfoObject.Assembly = swiInfoObj.Assembly.ConvertToInt();
+            xepInfoObject.VersionNumber = swiInfoObj.VersionNum.ConvertToInt();
+            xepInfoObject.ProgramType = swiInfoObj.ProgramType;
+            xepInfoObject.SicherheitsRelevant = swiInfoObj.SafetyRelevant.ConvertToInt();
+            xepInfoObject.TitleId = swiInfoObj.TitleId.ConvertToInt();
+            xepInfoObject.Generell = swiInfoObj.General.ConvertToInt();
+            xepInfoObject.TeleserviceKennung = swiInfoObj.TelSrvId.ConvertToInt();
+            xepInfoObject.FahrzeugKommunikation = swiInfoObj.VehicleComm.ConvertToInt();
+            xepInfoObject.Messtechnik = swiInfoObj.Measurement.ConvertToInt();
+            xepInfoObject.Versteckt = swiInfoObj.Hidden.ConvertToInt();
+            xepInfoObject.Name = swiInfoObj.Name;
+            xepInfoObject.InformationsTyp = swiInfoObj.InformationType;
+            xepInfoObject.Identifikator = swiInfoObj.Identificator;
+            xepInfoObject.Informationsformat = swiInfoObj.InformationFormat;
+            xepInfoObject.SiNummer = swiInfoObj.SiNumber;
+            xepInfoObject.ZielIStufe = swiInfoObj.TargetILevel;
+            xepInfoObject.ControlId = swiInfoObj.ControlId.ConvertToInt();
+            xepInfoObject.InfoType = swiInfoObj.InfoType;
+            xepInfoObject.InfoFormat = swiInfoObj.InfoFormat;
+            xepInfoObject.DocNumber = swiInfoObj.DocNum;
+            xepInfoObject.Priority = swiInfoObj.Priority.ConvertToInt();
+            xepInfoObject.Identifier = swiInfoObj.Identifier;
+
+            CopyEcuTranslation(swiInfoObj.EcuTranslation, xepInfoObject);
+
+            return xepInfoObject;
+        }
+
+        public static ICollection<IXepInfoObject> Convert(ICollection<PsdzDatabase.SwiInfoObj> swiInfoObjList)
+        {
+            if (swiInfoObjList == null)
+            {
+                return null;
+            }
+            List<IXepInfoObject> xepInfoObjectList = new List<IXepInfoObject>();
+            foreach (PsdzDatabase.SwiInfoObj swiInfoObj in swiInfoObjList)
+            {
+                xepInfoObjectList.Add(Convert(swiInfoObj));
+            }
+            return xepInfoObjectList;
+        }
+
+        public static XEP_DIAGNOSISOBJECTSEX Convert(PsdzDatabase.SwiDiagObj swiDiagObj)
+        {
+            if (swiDiagObj == null)
+            {
+                return null;
+            }
+
+            XEP_DIAGNOSISOBJECTSEX xepDiagObject = new XEP_DIAGNOSISOBJECTSEX();
+            xepDiagObject.Id = swiDiagObj.Id.ConvertToInt();
+            xepDiagObject.Nodeclass = swiDiagObj.NodeClass.ConvertToInt();
+            xepDiagObject.TitleId = swiDiagObj.TitleId.ConvertToInt();
+            xepDiagObject.VersionNumber = swiDiagObj.VersionNum.ConvertToInt();
+            xepDiagObject.Name = swiDiagObj.Name;
+            xepDiagObject.FailureWeight = swiDiagObj.FailWeight.ConvertToInt();
+            xepDiagObject.Versteckt = swiDiagObj.Hidden.ConvertToInt();
+            xepDiagObject.ValidFrom = ConvertToDateTime(swiDiagObj.ValidFrom);
+            xepDiagObject.ValidTo = ConvertToDateTime(swiDiagObj.ValidTo);
+            xepDiagObject.SicherheitsRelevant = swiDiagObj.SafetyRelevant.ConvertToInt();
+            xepDiagObject.Grobzeichen = swiDiagObj.Grobzeichen;
+            xepDiagObject.Hg_Nummer = swiDiagObj.Hg_Nummer;
+            xepDiagObject.Hgug_Nummer = swiDiagObj.Hgug_Nummer;
+            xepDiagObject.ControlId = swiDiagObj.ControlId.ConvertToInt();
+            xepDiagObject.SortOrder = swiDiagObj.SortOrder.ConvertToInt();
+
+            CopyEcuTranslation(swiDiagObj.EcuTranslation, xepDiagObject);
+
+            return xepDiagObject;
+        }
+
+        public static ICollection<XEP_DIAGNOSISOBJECTSEX> Convert(ICollection<PsdzDatabase.SwiDiagObj> swiDiagObjList)
+        {
+            if (swiDiagObjList == null)
+            {
+                return null;
+            }
+            List<XEP_DIAGNOSISOBJECTSEX> xepDiagObjectList = new List<XEP_DIAGNOSISOBJECTSEX>();
+            foreach (PsdzDatabase.SwiDiagObj swiDiagObj in swiDiagObjList)
+            {
+                xepDiagObjectList.Add(Convert(swiDiagObj));
+            }
+            return xepDiagObjectList;
+        }
+
+        // Property names are taken via nameof from a reference type declaring all of them,
+        // so typos and renames are detected by the compiler.
+        private static readonly (string TitleProperty, string TextProperty)[] TitleMapping =
+        {
         (nameof(XEP_ECUVARIANTS.Title_dede), nameof(PsdzDatabase.EcuTranslation.TextDe)),
         (nameof(XEP_ECUVARIANTS.Title_engb), nameof(PsdzDatabase.EcuTranslation.TextEn)),
         (nameof(XEP_ECUVARIANTS.Title_enus), nameof(PsdzDatabase.EcuTranslation.TextUs)),
@@ -452,85 +452,86 @@ public static class XepConverter
         (nameof(XEP_ECUVARIANTS.Title_plpl), nameof(PsdzDatabase.EcuTranslation.TextPl)),
     };
 
-    private static class TitleCopier<T> where T : class
-    {
-        // Built once per XEP type, then reused. Reflection is only used during construction.
-        internal static readonly Action<PsdzDatabase.EcuTranslation, T> Copy = BuildCopyAction();
-
-        private static Action<PsdzDatabase.EcuTranslation, T> BuildCopyAction()
+        private static class TitleCopier<T> where T : class
         {
-            Type translationType = typeof(PsdzDatabase.EcuTranslation);
-            ParameterExpression translationParam = Expression.Parameter(translationType, "ecuTranslation");
-            ParameterExpression targetParam = Expression.Parameter(typeof(T), "xepObject");
-            List<Expression> assignments = new List<Expression>();
+            // Built once per XEP type, then reused. Reflection is only used during construction.
+            internal static readonly Action<PsdzDatabase.EcuTranslation, T> Copy = BuildCopyAction();
 
-            foreach ((string titleName, string textName) in TitleMapping)
+            private static Action<PsdzDatabase.EcuTranslation, T> BuildCopyAction()
             {
-                PropertyInfo titleProperty = FindTitleProperty(titleName);
-                if (titleProperty == null || !titleProperty.CanWrite || titleProperty.PropertyType != typeof(string))
+                Type translationType = typeof(PsdzDatabase.EcuTranslation);
+                ParameterExpression translationParam = Expression.Parameter(translationType, "ecuTranslation");
+                ParameterExpression targetParam = Expression.Parameter(typeof(T), "xepObject");
+                List<Expression> assignments = new List<Expression>();
+
+                foreach ((string titleName, string textName) in TitleMapping)
                 {
-                    continue;
+                    PropertyInfo titleProperty = FindTitleProperty(titleName);
+                    if (titleProperty == null || !titleProperty.CanWrite || titleProperty.PropertyType != typeof(string))
+                    {
+                        continue;
+                    }
+
+                    PropertyInfo textProperty = translationType.GetProperty(textName, BindingFlags.Public | BindingFlags.Instance);
+                    if (textProperty == null || textProperty.PropertyType != typeof(string))
+                    {
+                        continue;
+                    }
+
+                    assignments.Add(Expression.Assign(
+                        Expression.Property(targetParam, titleProperty),
+                        Expression.Property(translationParam, textProperty)));
                 }
 
-                PropertyInfo textProperty = translationType.GetProperty(textName, BindingFlags.Public | BindingFlags.Instance);
-                if (textProperty == null || textProperty.PropertyType != typeof(string))
+                if (assignments.Count == 0)
                 {
-                    continue;
+                    return (ecuTranslation, xepObject) => { };
                 }
 
-                assignments.Add(Expression.Assign(
-                    Expression.Property(targetParam, titleProperty),
-                    Expression.Property(translationParam, textProperty)));
+                return Expression.Lambda<Action<PsdzDatabase.EcuTranslation, T>>(
+                    Expression.Block(assignments), translationParam, targetParam).Compile();
             }
 
-            if (assignments.Count == 0)
+            // Some XEP classes declare the title properties in upper case (e.g. TITLE_DEDE instead of Title_dede).
+            private static PropertyInfo FindTitleProperty(string titleName)
             {
-                return (ecuTranslation, xepObject) => { };
-            }
-
-            return Expression.Lambda<Action<PsdzDatabase.EcuTranslation, T>>(
-                Expression.Block(assignments), translationParam, targetParam).Compile();
-        }
-
-        // Some XEP classes declare the title properties in upper case (e.g. TITLE_DEDE instead of Title_dede).
-        private static PropertyInfo FindTitleProperty(string titleName)
-        {
-            PropertyInfo titleProperty = typeof(T).GetProperty(titleName, BindingFlags.Public | BindingFlags.Instance);
-            if (titleProperty != null)
-            {
-                return titleProperty;
-            }
-
-            foreach (PropertyInfo property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                if (string.Equals(property.Name, titleName, StringComparison.OrdinalIgnoreCase))
+                PropertyInfo titleProperty = typeof(T).GetProperty(titleName, BindingFlags.Public | BindingFlags.Instance);
+                if (titleProperty != null)
                 {
-                    return property;
+                    return titleProperty;
                 }
+
+                foreach (PropertyInfo property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    if (string.Equals(property.Name, titleName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return property;
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        public static void CopyEcuTranslation<T>(PsdzDatabase.EcuTranslation ecuTranslation, T xepObject) where T : class
+        {
+            if (ecuTranslation == null || xepObject == null)
+            {
+                return;
             }
 
-            return null;
+            TitleCopier<T>.Copy(ecuTranslation, xepObject);
         }
-    }
 
-    public static void CopyEcuTranslation<T>(PsdzDatabase.EcuTranslation ecuTranslation, T xepObject) where T : class
-    {
-        if (ecuTranslation == null || xepObject == null)
+        public static DateTime ConvertToDateTime(string text, DateTime? defaultValue = null)
         {
-            return;
+            if (!string.IsNullOrWhiteSpace(text) &&
+                DateTime.TryParse(text.Trim(), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
+            {
+                return result;
+            }
+
+            return defaultValue ?? DateTime.MinValue;
         }
-
-        TitleCopier<T>.Copy(ecuTranslation, xepObject);
-    }
-
-    public static DateTime ConvertToDateTime(string text, DateTime? defaultValue = null)
-    {
-        if (!string.IsNullOrWhiteSpace(text) &&
-            DateTime.TryParse(text.Trim(), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
-        {
-            return result;
-        }
-
-        return defaultValue ?? DateTime.MinValue;
     }
 }

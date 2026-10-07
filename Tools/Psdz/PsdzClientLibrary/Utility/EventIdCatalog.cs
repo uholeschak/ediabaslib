@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Resources;
 using System.Runtime.CompilerServices;
+using PsdzClient;
 
-namespace PsdzClient.Utility
+namespace BMW.iLean.CommonServices.Properties
 {
     [PreserveSource(Hint = "Class simplified", SuppressWarning = true)]
     internal class EventIdCatalog

@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using PsdzClient.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
-using RheingoldPsdzWebApi.Adapter.Mapper;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper
 {

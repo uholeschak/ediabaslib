@@ -6,8 +6,10 @@ using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using PsdzClient;
+using PsdzClient.Utility;
 
-namespace PsdzClient.Utility
+namespace BMW.iLean.CommonServices.Models.Helper
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     public class Encryption

@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BMW.iLean.CommonServices.Models.Helper;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using BMW.Rheingold.Programming.PSdZ;
@@ -1218,13 +1219,13 @@ namespace PsdzClient
                 _decryptEditMode = false;
                 UpdateDisplay();
 
-                if (!Utility.Encryption.EncryptFile(text, fileName))
+                if (!Encryption.EncryptFile(text, fileName))
                 {
                     UpdateStatus(Resources.EncryptionFailed);
                     return;
                 }
 
-                if (!Utility.Encryption.SetFileFullAccessControl(fileName))
+                if (!Encryption.SetFileFullAccessControl(fileName))
                 {
                     UpdateStatus(Resources.EncryptionFailed);
                     return;
@@ -1242,7 +1243,7 @@ namespace PsdzClient
 
                 string fileName = openFileDialogDecrypt.FileName;
                 _lastDecryptFileName = fileName;
-                string text = Utility.Encryption.DecryptFile(fileName);
+                string text = Encryption.DecryptFile(fileName);
                 if (string.IsNullOrEmpty(text))
                 {
                     UpdateStatus(Resources.DecryptionFailed);

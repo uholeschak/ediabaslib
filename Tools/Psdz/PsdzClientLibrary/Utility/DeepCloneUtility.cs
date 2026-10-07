@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace PsdzClient.Utility
+namespace BMW.Rheingold.CoreFramework.Utility
 {
     public static class DeepCloneUtility
     {

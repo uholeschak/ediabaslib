@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace PsdzClient.Psdz.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public enum ResetTypeEto
     {

@@ -22,6 +22,7 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.Utility;
 
 #pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
