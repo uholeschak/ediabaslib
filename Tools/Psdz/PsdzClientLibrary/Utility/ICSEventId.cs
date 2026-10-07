@@ -1,4 +1,4 @@
-﻿namespace PsdzClient.Utility
+﻿namespace BMW.iLean.CommonServices.Logging
 {
     public enum ICSEventId
     {

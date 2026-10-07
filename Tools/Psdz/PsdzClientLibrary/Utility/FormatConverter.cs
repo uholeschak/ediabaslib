@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
-namespace PsdzClient.Utility
+namespace BMW.Rheingold.CoreFramework
 {
     public class FormatConverter
     {

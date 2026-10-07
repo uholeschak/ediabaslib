@@ -6,6 +6,7 @@ using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using BMW.iLean.CommonServices.Logging;
 using PsdzClient;
 using PsdzClient.Utility;
 

@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
+using BMW.iLean.CommonServices.Logging;
 
 namespace PsdzClient.Utility
 {

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Security;
+using BMW.iLean.CommonServices.Logging;
 
 namespace PsdzClient.Utility
 {

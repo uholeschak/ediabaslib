@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient.Utility;
 using PsdzClient;

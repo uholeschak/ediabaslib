@@ -6,12 +6,12 @@ using System.Resources;
 using System.Threading;
 using BMW.iLean.CommonServices.Models.Helper;
 using BMW.iLean.CommonServices.Properties;
-using BMW.Rheingold.CoreFramework;
 using log4net;
 using log4net.Core;
 using log4net.Repository.Hierarchy;
+using PsdzClient.Utility;
 
-namespace PsdzClient.Utility
+namespace BMW.iLean.CommonServices.Logging
 {
     public class Logger
     {
