@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.Psdz;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter
 {
     public class PsdzWebservicePreflightChecker : IPsdzWebservicePreflightChecker
     {

@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz
+﻿namespace RheingoldPsdzWebApi.Adapter
 {
     internal interface IPsdzWebservicePreflightChecker
     {
