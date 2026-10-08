@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     public interface IBaureiheUtilityService
     {
