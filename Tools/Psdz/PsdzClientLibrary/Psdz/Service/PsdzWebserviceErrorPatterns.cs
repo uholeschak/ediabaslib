@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public static class PsdzWebserviceErrorPatterns
     {

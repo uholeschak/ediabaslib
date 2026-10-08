@@ -19,6 +19,7 @@ using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Helpers;
 using RheingoldPsdzWebApi.Adapter.Services;
 
 namespace RheingoldPsdzWebApi.Adapter

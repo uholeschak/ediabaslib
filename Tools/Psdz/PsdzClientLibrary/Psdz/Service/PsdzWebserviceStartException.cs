@@ -1,7 +1,7 @@
 ﻿using System;
 using BMW.Rheingold.CoreFramework;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.CoreFramework
 {
     public class PsdzWebserviceStartException : Exception
     {
