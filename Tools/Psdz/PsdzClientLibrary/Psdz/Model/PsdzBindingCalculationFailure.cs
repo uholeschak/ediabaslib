@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using PsdzClient;
 
-namespace BMW.Rheingold.Psdz.Model.Certificate
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

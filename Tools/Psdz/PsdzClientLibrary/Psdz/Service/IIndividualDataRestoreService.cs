@@ -1,8 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.Exceptions;
-using BMW.Rheingold.Psdz.Model.SecureCoding;
-using BMW.Rheingold.Psdz.Model.Tal;
+﻿using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient;
 using System.ServiceModel;

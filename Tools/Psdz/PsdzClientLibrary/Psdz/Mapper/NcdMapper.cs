@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.SecureCoding;
-using System.Linq;
-using BMW.Rheingold.Psdz;
+﻿using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 

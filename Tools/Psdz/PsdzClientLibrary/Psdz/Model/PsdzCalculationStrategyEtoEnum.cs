@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.Sfa
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {
     public enum PsdzCalculationStrategyEtoEnum
     {

@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Psdz.Model.SecureCoding;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,8 +6,6 @@ using System.Linq;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Programming.Error;
 using BMW.Rheingold.InfoProvider.BackendConnector;
-using BMW.Rheingold.Programming;
-using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;

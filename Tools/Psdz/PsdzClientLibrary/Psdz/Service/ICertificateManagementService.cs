@@ -1,7 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Certificate;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient;
+﻿using PsdzClient;
 using System.ServiceModel;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;

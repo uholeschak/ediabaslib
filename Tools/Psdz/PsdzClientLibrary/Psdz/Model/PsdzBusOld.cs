@@ -2,7 +2,7 @@
 
 #if OLD_PSDZ_BUS
 #warning OLD_PSDZ_BUS activated. Do not use for release builds.
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     [PreserveSource(Hint = "Old implementation", Removed = true)]
     public enum PsdzBus

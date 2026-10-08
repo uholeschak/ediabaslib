@@ -1,8 +1,6 @@
 ﻿using PsdzClient;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Certificate;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate
 {

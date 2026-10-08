@@ -2,7 +2,7 @@
 using System;
 
 #if !OLD_PSDZ_BUS
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     public class PsdzBus : IComparable<PsdzBus>
     {

@@ -3,6 +3,7 @@ using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using System;
 using System.Linq;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace BMW.Rheingold.Programming.Common
 {

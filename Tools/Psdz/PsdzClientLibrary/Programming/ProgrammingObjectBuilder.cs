@@ -1,8 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Certificate;
-using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

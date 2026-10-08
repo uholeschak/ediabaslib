@@ -1,8 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Certificate;
-using BMW.Rheingold.Psdz.Model.Ecu;
 using System;
 using System.Linq;
 using System.Net.Http;

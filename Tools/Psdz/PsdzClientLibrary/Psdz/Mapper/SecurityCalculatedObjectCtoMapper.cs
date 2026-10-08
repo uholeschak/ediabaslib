@@ -1,7 +1,5 @@
-﻿using BMW.Rheingold.Psdz.Model.Certificate;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
