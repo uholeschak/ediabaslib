@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Utility;
 
 namespace BMW.Rheingold.xVM
 {

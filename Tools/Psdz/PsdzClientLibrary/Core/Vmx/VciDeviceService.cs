@@ -17,6 +17,7 @@ using System.Timers;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Utility;
 
 #pragma warning disable CS4014
 namespace BMW.Rheingold.xVM
