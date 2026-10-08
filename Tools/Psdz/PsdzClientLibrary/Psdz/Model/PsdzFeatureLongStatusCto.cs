@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa

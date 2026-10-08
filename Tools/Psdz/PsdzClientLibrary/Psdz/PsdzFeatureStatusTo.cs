@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Sfa;
-using PsdzClient;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 

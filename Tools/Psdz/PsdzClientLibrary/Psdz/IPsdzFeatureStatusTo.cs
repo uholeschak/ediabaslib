@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Sfa;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
+﻿using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.FeatureStatusTo
 {

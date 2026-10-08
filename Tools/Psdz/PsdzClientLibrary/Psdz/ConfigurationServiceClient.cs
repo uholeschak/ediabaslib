@@ -2,6 +2,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
 namespace BMW.Rheingold.Psdz.Client
 {
