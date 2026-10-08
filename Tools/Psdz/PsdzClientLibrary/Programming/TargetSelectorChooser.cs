@@ -10,6 +10,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 namespace BMW.Rheingold.Programming.Common
 {

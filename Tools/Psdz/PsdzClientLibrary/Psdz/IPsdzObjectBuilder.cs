@@ -12,6 +12,7 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 

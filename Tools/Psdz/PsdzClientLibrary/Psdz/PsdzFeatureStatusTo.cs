@@ -3,6 +3,7 @@ using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient;
 using System.Runtime.Serialization;
 using BMW.Rheingold.Psdz;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.FeatureStatusTo

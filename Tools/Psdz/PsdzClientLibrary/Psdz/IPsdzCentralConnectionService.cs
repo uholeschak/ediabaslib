@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using System;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Programming.PSdZ

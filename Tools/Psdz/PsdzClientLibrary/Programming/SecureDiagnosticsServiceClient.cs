@@ -3,6 +3,7 @@ using PsdzClient;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 namespace BMW.Rheingold.Psdz.Client

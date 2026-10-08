@@ -1,10 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using System;
 using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.SecurityManagement;
-using BMW.Rheingold.Psdz.Model.Sfa;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;

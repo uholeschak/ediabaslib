@@ -1,8 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.SecurityManagement;
-using BMW.Rheingold.Psdz.Model.Sfa;
-using PsdzClient;
+﻿using PsdzClient;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;

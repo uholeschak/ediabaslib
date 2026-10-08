@@ -8,6 +8,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using RheingoldPsdzWebApi.Adapter.Contracts.DomainObjects;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {

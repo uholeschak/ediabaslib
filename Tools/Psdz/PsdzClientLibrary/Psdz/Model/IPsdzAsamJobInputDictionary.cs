@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BMW.Rheingold.Psdz.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {
     public interface IPsdzAsamJobInputDictionary
     {

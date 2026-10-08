@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Model.SecurityManagement
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement
 {
     public interface IPsdzEcuUidCto
     {

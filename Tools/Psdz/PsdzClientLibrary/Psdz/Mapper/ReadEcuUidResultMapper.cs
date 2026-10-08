@@ -1,7 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.SecurityManagement;
-using BMW.Rheingold.Psdz.Model.Sfa;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;

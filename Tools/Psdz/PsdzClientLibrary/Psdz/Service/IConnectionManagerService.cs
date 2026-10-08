@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {

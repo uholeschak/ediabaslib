@@ -1,7 +1,7 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
 
-namespace BMW.Rheingold.Psdz.Model.Obd
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Obd
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

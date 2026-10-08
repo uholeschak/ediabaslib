@@ -1,6 +1,7 @@
 ﻿using System;
+using BMW.Rheingold.Psdz.Model;
 
-namespace BMW.Rheingold.Psdz.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {
     public interface IPsdzConnection
     {
