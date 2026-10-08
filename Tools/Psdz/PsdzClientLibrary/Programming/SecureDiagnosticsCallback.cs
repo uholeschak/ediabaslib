@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 namespace BMW.Rheingold.Psdz.Client
 {

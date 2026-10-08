@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using BMW.Rheingold.CoreFramework.Programming;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 
 #pragma warning disable CS0067, CS0618, CS0649
 namespace BMW.Rheingold.Module.ISTA

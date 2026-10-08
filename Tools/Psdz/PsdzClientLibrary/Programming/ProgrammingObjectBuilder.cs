@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using BMW.Rheingold.CoreFramework.Programming.Data.Obd;
 using BMW.Rheingold.CoreFramework.Utility;
 using BMW.Rheingold.Programming.Common;

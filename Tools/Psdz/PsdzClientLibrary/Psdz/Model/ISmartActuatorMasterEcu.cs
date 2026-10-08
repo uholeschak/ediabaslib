@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace BMW.Rheingold.CoreFramework.Programming.Data.Ecu
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISmartActuatorMasterEcu : IEcuObj

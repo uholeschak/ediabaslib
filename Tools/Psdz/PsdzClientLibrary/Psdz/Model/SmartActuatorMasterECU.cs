@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model.Ecu
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class SmartActuatorMasterECU : ECU, ISmartActuatorMasterEcu, IEcuObj
     {
