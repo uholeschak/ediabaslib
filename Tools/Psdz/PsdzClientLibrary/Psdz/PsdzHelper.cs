@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Helpers
 {
     internal static class PsdzHelper
     {

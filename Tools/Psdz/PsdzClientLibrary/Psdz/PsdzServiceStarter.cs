@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Threading;
+using RheingoldPsdzWebApi.Adapter;
 
 namespace BMW.Rheingold.Psdz.Client
 {

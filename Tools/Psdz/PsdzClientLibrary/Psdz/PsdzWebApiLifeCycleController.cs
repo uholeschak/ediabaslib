@@ -1,10 +1,10 @@
-using BMW.Rheingold.CoreFramework;
+﻿using BMW.Rheingold.CoreFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter
 {
     internal class PsdzWebApiLifeCycleController : IDisposable
     {

@@ -34,6 +34,7 @@ using BMW.Rheingold.Programming.Data;
 using BMW.Rheingold.Programming.ProgrammingEngine;
 using BMW.Rheingold.Programming.ProgrammingEngine.Events;
 using BMW.Rheingold.Programming.ProgrammingEngine.States;
+using RheingoldPsdzWebApi.Adapter;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;

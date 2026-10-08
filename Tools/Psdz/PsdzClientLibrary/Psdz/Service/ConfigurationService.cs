@@ -8,6 +8,7 @@ using System.Net.Http;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
+using RheingoldPsdzWebApi.Adapter.Helpers;
 
 namespace RheingoldPsdzWebApi.Adapter
 {

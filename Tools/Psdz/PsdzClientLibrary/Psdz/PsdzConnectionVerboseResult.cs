@@ -2,7 +2,7 @@
 using PsdzClient;
 using System.Runtime.Serialization;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {
     public class PsdzConnectionVerboseResult : IPsdzConnectionVerboseResult
     {

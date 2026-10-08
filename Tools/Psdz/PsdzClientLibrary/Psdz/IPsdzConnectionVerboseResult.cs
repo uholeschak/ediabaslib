@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz.Client
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     public interface IPsdzConnectionVerboseResult
     {

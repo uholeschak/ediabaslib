@@ -1,4 +1,4 @@
-using BMW.Rheingold.Psdz;
+﻿using BMW.Rheingold.Psdz;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,6 +13,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
+using RheingoldPsdzWebApi.Adapter.Helpers;
 
 namespace RheingoldPsdzWebApi.Adapter.Services
 {

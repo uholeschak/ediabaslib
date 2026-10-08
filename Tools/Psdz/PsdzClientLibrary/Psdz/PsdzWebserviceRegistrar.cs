@@ -11,7 +11,7 @@ using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Utility;
 using RheingoldPsdzWebApi.Adapter;
 
-namespace BMW.Rheingold.Psdz
+namespace RheingoldPsdzWebApi.Adapter
 {
     internal static class PsdzWebserviceRegistrar
     {
