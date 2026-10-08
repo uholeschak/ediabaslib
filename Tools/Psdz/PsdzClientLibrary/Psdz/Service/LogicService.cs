@@ -15,6 +15,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 using RheingoldPsdzWebApi.Adapter.Mapper;

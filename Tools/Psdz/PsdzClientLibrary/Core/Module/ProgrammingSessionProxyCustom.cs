@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
 #pragma warning disable CS0067, CS0618, CS0649
 namespace BMW.Rheingold.Module.ISTA

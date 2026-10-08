@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
     [PreserveSource(Removed = true)]
     [DataContract]

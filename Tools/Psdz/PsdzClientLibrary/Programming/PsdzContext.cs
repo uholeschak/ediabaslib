@@ -32,6 +32,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
 #pragma warning disable CS0169
 namespace BMW.Rheingold.Programming.ProgrammingEngine

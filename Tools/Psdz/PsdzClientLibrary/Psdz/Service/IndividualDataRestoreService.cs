@@ -15,6 +15,7 @@ using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 using RheingoldPsdzWebApi.Adapter.Mapper;

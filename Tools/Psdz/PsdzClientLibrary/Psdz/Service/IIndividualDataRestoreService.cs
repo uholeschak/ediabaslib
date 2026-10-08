@@ -11,6 +11,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {

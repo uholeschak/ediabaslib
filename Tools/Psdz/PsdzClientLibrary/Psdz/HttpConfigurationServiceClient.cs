@@ -6,7 +6,7 @@ using System.ServiceModel.Channels;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
     [PreserveSource(Removed = true)]
     internal sealed class HttpConfigurationServiceClient : PsdzDuplexClientBase<IHttpConfigurationService, IPsdzProgressListener>, IHttpConfigurationService
