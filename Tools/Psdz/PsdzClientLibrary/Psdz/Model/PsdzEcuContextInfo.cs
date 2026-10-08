@@ -1,7 +1,6 @@
 ﻿using PsdzClient;
 using System;
 using System.Runtime.Serialization;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {

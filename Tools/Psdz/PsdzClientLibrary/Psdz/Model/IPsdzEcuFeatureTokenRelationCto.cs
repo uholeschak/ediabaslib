@@ -1,7 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.Sfa;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
+﻿using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {

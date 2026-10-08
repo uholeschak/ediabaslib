@@ -1,6 +1,5 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {

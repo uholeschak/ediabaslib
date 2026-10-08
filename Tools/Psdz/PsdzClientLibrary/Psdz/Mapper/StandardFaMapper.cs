@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using PsdzClient;
+﻿using PsdzClient;
 using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;

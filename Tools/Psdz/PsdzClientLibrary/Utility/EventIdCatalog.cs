@@ -1,9 +1,6 @@
-﻿using System.CodeDom.Compiler;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
-using System.Runtime.CompilerServices;
 using PsdzClient;
 
 namespace BMW.iLean.CommonServices.Properties

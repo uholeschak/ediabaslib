@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

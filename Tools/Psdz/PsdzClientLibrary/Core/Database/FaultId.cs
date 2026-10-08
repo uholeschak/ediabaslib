@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

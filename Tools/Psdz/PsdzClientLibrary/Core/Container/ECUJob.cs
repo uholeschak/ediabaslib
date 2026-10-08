@@ -13,7 +13,6 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.Metrics;
-using BMW.Rheingold.VehicleCommunication;
 
 namespace BMW.Rheingold.VehicleCommunication
 {

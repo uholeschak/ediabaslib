@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework;
-using PsdzClient;
 
 #pragma warning disable CS0109
 namespace BMW.Authoring

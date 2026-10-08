@@ -1,13 +1,6 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;

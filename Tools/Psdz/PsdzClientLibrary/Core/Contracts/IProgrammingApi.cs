@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Ecu;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming

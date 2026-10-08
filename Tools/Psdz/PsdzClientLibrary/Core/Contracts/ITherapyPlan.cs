@@ -1,9 +1,7 @@
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System;
 using System.Collections.Generic;
 using PsdzClient;
-using static PsdzClient.PsdzDatabase;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

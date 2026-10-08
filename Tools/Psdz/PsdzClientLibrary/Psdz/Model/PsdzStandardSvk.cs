@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {

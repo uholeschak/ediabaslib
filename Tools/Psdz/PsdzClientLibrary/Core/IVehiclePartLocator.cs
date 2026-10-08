@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-
-namespace BMW.Rheingold.CoreFramework.Contracts
+﻿namespace BMW.Rheingold.CoreFramework.Contracts
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IVehiclePartLocator : ISPELocator

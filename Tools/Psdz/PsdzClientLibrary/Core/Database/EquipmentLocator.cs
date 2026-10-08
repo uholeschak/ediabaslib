@@ -2,7 +2,6 @@
 using System.Globalization;
 using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
-using PsdzClientLibrary;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

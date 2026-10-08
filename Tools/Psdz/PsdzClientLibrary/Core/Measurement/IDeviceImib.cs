@@ -1,7 +1,4 @@
-﻿using BMW.Rheingold.Measurement.Common.Contract;
-using PsdzClient;
-using System;
-using System.Collections.Generic;
+﻿using PsdzClient;
 
 namespace BMW.Rheingold.Measurement.Common.Contract
 {

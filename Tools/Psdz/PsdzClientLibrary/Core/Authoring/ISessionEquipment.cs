@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using System;
+﻿using System;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework;
 

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 

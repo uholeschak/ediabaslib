@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Measurement.Common;
-using System;
+﻿using System;
 
 namespace BMW.Rheingold.Measurement.Common
 {

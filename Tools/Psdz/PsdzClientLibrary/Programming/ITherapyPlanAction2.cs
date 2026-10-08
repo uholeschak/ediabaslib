@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

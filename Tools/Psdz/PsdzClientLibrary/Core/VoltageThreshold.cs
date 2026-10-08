@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts;
+﻿using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.Programming.Common;
 
 namespace BMW.Rheingold.CoreFramework.Utility

@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

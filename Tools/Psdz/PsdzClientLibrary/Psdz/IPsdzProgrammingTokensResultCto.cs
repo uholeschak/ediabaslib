@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Sfa;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement.ProgrammingTokenCto;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 

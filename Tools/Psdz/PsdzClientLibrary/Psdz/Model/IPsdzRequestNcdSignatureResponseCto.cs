@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCtos;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto

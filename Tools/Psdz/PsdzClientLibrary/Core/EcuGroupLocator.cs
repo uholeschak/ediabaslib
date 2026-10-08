@@ -1,11 +1,8 @@
-﻿using BmwFileReader;
-using PsdzClient;
+﻿using PsdzClient;
 using System;
 using System.Globalization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.Contracts;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClientLibrary;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

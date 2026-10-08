@@ -1,7 +1,5 @@
-﻿using BMW.Rheingold.Psdz.Model.Swt;
-using PsdzClient;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal

@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Psdz;
 
 namespace BMW.Rheingold.Psdz
 {

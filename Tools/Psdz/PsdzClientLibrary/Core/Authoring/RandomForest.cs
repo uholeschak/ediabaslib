@@ -1,6 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Authoring;
-using BMW.Authoring.API;
 using System;
 using System.Linq;
 using System.Text;

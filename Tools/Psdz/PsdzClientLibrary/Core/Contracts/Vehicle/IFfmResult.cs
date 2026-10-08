@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle

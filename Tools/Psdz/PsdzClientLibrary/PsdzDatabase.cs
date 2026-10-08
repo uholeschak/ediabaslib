@@ -2,14 +2,11 @@
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.Common;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
 using BmwFileReader;
 using HarmonyLib;
 using log4net;
 using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
-using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

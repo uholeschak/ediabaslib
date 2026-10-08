@@ -1,6 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using BMW.Rheingold.CoreFramework.Interaction;
-using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Interaction.Models.Interfaces;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models

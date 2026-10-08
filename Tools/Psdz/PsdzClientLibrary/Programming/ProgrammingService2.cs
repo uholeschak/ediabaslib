@@ -1,13 +1,10 @@
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;

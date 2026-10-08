@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using BMW.Rheingold.CoreFramework.Interaction;
 
 namespace BMW.Rheingold.CoreFramework.Interaction
 {

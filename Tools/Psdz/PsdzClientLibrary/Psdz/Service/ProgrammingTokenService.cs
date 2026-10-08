@@ -1,10 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using System;
 using System.Net.Http;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Tal;
-using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement.ProgrammingTokensResultCto;

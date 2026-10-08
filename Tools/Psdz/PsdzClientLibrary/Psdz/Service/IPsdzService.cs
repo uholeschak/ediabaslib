@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz;
-
-namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
     public interface IPsdzService
     {

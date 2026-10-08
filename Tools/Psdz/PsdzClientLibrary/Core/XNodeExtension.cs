@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using System;
 
 namespace BMW.Rheingold.CoreFramework

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
-using PsdzClient;
 
 #pragma warning disable CS8632
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming

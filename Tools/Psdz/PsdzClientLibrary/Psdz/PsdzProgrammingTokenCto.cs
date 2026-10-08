@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 

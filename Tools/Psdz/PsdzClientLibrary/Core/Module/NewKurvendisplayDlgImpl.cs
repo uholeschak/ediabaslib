@@ -1,6 +1,5 @@
 using BMW.ISPI.IstaOperation.Contract.Document;
 using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
-using BMW.Rheingold.Module.ISTA;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

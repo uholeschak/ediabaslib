@@ -1,8 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model.Exceptions;
-using PsdzClient;
+﻿using PsdzClient;
 using System.Collections.Generic;
 using System.ServiceModel;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Exceptions;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto;

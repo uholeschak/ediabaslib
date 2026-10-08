@@ -14,7 +14,6 @@ using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Enums;
 using BMW.Rheingold.CoreFramework.FusionReactor;
-using BMW.Rheingold.DiagnosticsBusinessDataCore;
 using BMW.Rheingold.VehicleCommunication;
 
 #pragma warning disable CS0414

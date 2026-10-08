@@ -1,13 +1,10 @@
-﻿using BMW.Authoring.Vehicle;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.ServiceModel;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
 using BMW.Rheingold.CoreFramework.Localization;

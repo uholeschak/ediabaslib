@@ -1,8 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.RheingoldSessionController;
-using BMW.Rheingold.xVM;
-using BMW.Rheingold.xVM.ENET;
 using System;
 using System.Net;
 using System.Net.Sockets;

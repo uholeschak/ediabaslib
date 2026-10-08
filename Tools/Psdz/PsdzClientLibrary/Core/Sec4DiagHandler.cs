@@ -23,7 +23,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations.Sec4Diag;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Contracts;
-using BMW.Rheingold.CoreFramework.Sec4Diag;
 using PsdzClient;
 
 #pragma warning disable CS0618, SYSLIB0057

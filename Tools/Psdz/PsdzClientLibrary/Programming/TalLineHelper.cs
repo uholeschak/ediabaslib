@@ -1,7 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.Tal;
 using System.Collections.Generic;
 using System.Globalization;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;

@@ -1,7 +1,5 @@
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
-using BMW.Rheingold.Module.ISTA;
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
+﻿using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.Interaction.Responses;
 using System;

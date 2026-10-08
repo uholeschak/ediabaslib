@@ -1,6 +1,5 @@
 ﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

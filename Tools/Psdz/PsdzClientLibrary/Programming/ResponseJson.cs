@@ -1,11 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model

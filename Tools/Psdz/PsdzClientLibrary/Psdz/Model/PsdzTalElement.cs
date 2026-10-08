@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Tal;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalStatus;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal

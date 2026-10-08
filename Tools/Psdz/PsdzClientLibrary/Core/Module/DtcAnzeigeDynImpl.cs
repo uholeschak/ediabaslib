@@ -5,7 +5,6 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
 using System.Windows.Threading;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Localization;

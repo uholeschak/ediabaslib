@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System;
-using BmwFileReader;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

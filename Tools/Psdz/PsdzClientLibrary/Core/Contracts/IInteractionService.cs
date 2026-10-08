@@ -1,6 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Interaction.Models;
-using BMW.Rheingold.Psdz;
-using PsdzClient;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;

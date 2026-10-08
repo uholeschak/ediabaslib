@@ -3,7 +3,6 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using BMW.Rheingold.Module.ISTA;
 
 namespace BMW.Rheingold.Module.ISTA
 {

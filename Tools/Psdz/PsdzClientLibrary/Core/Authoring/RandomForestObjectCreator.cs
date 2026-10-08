@@ -1,5 +1,4 @@
-﻿using BMW.Authoring.API;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BMW.Authoring.API
 {

@@ -1,6 +1,4 @@
-﻿using System;
-using BMW.Rheingold.CoreFramework;
-using PsdzClient;
+﻿using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.VehicleCommunication
 {

@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
-
-namespace BMW.Rheingold.CoreFramework.DatabaseProvider
+﻿namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class VirtualFaultInfo
     {

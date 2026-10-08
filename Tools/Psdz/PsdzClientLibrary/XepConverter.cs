@@ -1,7 +1,5 @@
-﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BmwFileReader;
-using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

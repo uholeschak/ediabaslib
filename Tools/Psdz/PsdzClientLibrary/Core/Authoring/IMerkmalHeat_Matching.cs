@@ -1,6 +1,4 @@
-﻿using BMW.Authoring;
-using BMW.Authoring.Vehicle;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace BMW.Authoring.Vehicle
 {

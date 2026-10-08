@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.xVM;
 using System;
 using System.Net;
 using System.Net.Sockets;

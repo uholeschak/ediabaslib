@@ -13,7 +13,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Threading;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.CoreFramework
 {

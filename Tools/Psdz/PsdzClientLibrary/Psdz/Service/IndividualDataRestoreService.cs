@@ -1,7 +1,3 @@
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Tal;
-using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,7 +7,6 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using BMW.Rheingold.CoreFramework;
-using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;

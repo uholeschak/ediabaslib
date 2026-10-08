@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Measurement.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Measurement.Common

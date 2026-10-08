@@ -1,6 +1,4 @@
-﻿using BMW.Authoring;
-using BMW.Authoring.Vehicle;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework;

@@ -1,5 +1,4 @@
 ﻿using System;
-using BMW.Rheingold.Psdz;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +6,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Timers;
 using BMW.Rheingold.CoreFramework;
-using RestSharp;
-using RheingoldPsdzWebApi.Adapter;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Events;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;

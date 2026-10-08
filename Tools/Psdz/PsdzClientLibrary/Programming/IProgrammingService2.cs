@@ -1,10 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
-using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;

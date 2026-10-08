@@ -1,5 +1,3 @@
-using BMW.Rheingold.CoreFramework;
-
 namespace BMW.Rheingold.CoreFramework
 {
     public interface IParameters

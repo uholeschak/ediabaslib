@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

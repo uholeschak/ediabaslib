@@ -1,6 +1,4 @@
-﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClient;
+﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System.Collections.Generic;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces

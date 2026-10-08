@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using System;
-using System.Data.SqlTypes;
 using System.Text;
 
 namespace BMW.Rheingold.xVM

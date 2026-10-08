@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.VehicleCommunication;
 using System;
 using System.Collections.Generic;

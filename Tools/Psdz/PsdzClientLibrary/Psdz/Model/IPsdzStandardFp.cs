@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
 {

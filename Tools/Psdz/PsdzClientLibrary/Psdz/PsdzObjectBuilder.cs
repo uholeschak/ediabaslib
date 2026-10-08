@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,6 @@ using BMW.Rheingold.CoreFramework.Programming;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using BMW.Rheingold.CoreFramework.Utility;
 using BMW.Rheingold.Programming.Common;
-using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;

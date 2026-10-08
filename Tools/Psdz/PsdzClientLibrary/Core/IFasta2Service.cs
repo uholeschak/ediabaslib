@@ -1,5 +1,3 @@
-using BMW.Rheingold.CoreFramework.Contracts.FASTA;
-using System;
 using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.FASTA

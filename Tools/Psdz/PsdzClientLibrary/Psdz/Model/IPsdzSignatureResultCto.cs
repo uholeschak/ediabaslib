@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model;
-
-namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCtos
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCtos
 {
     public interface IPsdzSignatureResultCto
     {

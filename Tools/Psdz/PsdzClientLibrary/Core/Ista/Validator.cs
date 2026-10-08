@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using System;
+﻿using System;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VinValidator;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models.VinValidator;

@@ -1,4 +1,3 @@
-using BMW.Rheingold.Module.ISTA;
 using System;
 using BMW.Rheingold.CoreFramework;
 

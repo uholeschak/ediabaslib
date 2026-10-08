@@ -1,6 +1,4 @@
 using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Tal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

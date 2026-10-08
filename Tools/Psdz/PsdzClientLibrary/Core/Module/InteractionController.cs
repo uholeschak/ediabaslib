@@ -1,7 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Interaction;
-using BMW.Rheingold.CoreFramework.Interaction.Models;
-using BMW.Rheingold.Psdz;
+﻿using BMW.Rheingold.CoreFramework.Interaction.Models;
 using System;
 using System.Collections.Specialized;
 using System.Linq;

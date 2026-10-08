@@ -1,10 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
 using BMW.ISPI.TRIC.ISTA.FusionReactor;
 using BMW.ISPI.TRIC.ISTA.MultisourceLogic;

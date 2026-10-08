@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using PsdzClient;
-using PsdzClientLibrary;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Localization;
+﻿using RheingoldPsdzWebApi.Adapter.Contracts.Model.Localization;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalStatus
 {

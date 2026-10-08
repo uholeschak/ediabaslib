@@ -1,9 +1,7 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Exceptions;
-using PsdzClient;
+﻿using PsdzClient;
 using System.ServiceModel;
-using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Exceptions;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Vcm;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services

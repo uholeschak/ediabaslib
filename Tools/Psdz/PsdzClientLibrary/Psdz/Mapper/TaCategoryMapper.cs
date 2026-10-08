@@ -1,9 +1,7 @@
-﻿using BMW.Rheingold.Psdz.Model.Tal;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
-using RheingoldPsdzWebApi.Adapter.Mapper;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper
 {

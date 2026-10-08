@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+﻿using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper

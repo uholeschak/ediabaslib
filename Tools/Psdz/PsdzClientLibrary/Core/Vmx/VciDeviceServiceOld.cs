@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
-using BMW.Rheingold.xVM;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;

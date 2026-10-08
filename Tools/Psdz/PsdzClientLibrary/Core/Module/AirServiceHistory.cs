@@ -1,7 +1,4 @@
-using BMW.Rheingold.Module.ISTA;
-using BMW.Rheingold.RheingoldSessionController;
 using PsdzClient;
-using System;
 using BMW.Rheingold.CoreFramework;
 
 #pragma warning disable CS0169

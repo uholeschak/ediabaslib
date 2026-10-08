@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Swt;
-
-namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt
 {
     public interface IPsdzSwtApplication
     {

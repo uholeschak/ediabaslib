@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz;
-
-namespace BMW.Rheingold.CoreFramework.Programming
+﻿namespace BMW.Rheingold.CoreFramework.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISfaPerEcuOptionsPair

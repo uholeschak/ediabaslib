@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;

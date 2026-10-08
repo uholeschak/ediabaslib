@@ -2,7 +2,6 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
 using System;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
-using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Enums;

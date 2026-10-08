@@ -1,11 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Programming;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.Swt;
-using BMW.Rheingold.Psdz.Model.Tal;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

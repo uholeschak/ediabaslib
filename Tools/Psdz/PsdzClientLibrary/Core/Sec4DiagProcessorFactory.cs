@@ -1,5 +1,4 @@
 ﻿using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
-using BMW.Rheingold.InfoProvider.Sec4Diag;
 
 namespace BMW.Rheingold.InfoProvider.Sec4Diag.Factories
 {

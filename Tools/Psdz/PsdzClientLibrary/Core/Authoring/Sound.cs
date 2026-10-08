@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Media;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Media;
 

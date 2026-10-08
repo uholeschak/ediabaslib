@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
-using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjectss;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects

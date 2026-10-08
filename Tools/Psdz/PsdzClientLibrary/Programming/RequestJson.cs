@@ -1,12 +1,10 @@
 ﻿using BMW.Rheingold.Programming.Common;
 using PsdzClient;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model

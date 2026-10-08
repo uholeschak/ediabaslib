@@ -1,5 +1,4 @@
-﻿using BMW.Authoring.Vehicle;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Models.BatteryDemandService
 {

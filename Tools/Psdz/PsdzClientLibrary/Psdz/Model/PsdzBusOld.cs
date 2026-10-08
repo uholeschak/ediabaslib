@@ -1,6 +1,4 @@
-﻿using PsdzClient;
-
-#if OLD_PSDZ_BUS
+﻿#if OLD_PSDZ_BUS
 #warning OLD_PSDZ_BUS activated. Do not use for release builds.
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {

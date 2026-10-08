@@ -1,5 +1,4 @@
-﻿using BMW.ISPI.TRIC.ISTA.Contracts.Implementations.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Implementations.Models
 {

@@ -7,7 +7,6 @@ using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using PsdzClient;
-using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

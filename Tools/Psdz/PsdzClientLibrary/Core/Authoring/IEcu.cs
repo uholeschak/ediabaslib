@@ -1,6 +1,4 @@
-﻿using BMW.Authoring;
-using BMW.Authoring.Vehicle.Enums;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Authoring.Vehicle.Enums;
 using System;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework;

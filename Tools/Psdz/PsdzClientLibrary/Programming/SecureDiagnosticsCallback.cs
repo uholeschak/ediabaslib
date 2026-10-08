@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using PsdzClient;

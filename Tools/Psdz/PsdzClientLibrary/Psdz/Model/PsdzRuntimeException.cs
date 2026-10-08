@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 #pragma warning disable CS0672, SYSLIB0051
-namespace BMW.Rheingold.Psdz.Model.Exceptions
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Exceptions
 {
     [Serializable]
     public class PsdzRuntimeException : Exception

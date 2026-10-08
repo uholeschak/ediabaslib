@@ -1,6 +1,4 @@
-﻿using BMW.Authoring;
-using BMW.Rheingold.Psdz;
-using System;
+﻿using System;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework;
 

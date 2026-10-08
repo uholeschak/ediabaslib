@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 
 namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling

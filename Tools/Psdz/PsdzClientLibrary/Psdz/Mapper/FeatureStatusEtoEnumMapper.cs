@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts;
-using RheingoldPsdzWebApi.Adapter.Mapper;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper
 {

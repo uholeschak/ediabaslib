@@ -1,8 +1,6 @@
 ﻿using System;
-using BMW.Authoring;
 using BMW.Authoring.API;
 using BMW.Authoring.Vehicle.Interface;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
 using PsdzClient;
 

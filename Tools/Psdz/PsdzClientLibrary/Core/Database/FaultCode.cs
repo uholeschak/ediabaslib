@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts;
-using PsdzClientLibrary;
 
 #pragma warning disable CS0618, CS0649
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

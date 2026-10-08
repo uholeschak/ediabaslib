@@ -1,7 +1,5 @@
-﻿using BMW.Rheingold.Psdz;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {

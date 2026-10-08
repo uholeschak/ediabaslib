@@ -1,5 +1,4 @@
-﻿using BMW.Authoring;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using BMW.Authoring.Programming.API.Interface;
 using BMW.Authoring.Vehicle.Interface;
 using BMW.Rheingold.CoreFramework;

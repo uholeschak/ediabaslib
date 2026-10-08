@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using BMW.Rheingold.Programming.Common;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Tal;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 namespace BMW.Rheingold.Programming.Common
 {

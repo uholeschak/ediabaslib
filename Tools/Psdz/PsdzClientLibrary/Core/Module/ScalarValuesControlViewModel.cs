@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using BMW.Rheingold.Module.ISTA;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;

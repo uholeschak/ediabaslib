@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using Microsoft.Data.Sqlite;
 using SQLitePCL;

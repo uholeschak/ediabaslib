@@ -1,8 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using BmwFileReader;
-using PsdzClient;
-using PsdzClientLibrary;
+﻿using PsdzClient;
 using System.Collections.Generic;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

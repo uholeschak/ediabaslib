@@ -7,8 +7,6 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using BMW.Rheingold.CoreFramework.Feedback;
 using BMW.Rheingold.FASTA;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model;
 using PsdzClient;
 using System;
 using System.Collections.Generic;

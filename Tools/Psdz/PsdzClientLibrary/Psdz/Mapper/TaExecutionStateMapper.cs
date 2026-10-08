@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjectss;
 

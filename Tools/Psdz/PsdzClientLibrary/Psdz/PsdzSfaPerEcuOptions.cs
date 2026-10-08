@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-
-namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter
 {
     public class PsdzSfaPerEcuOptions : IPsdzSfaPerEcuOptions
     {

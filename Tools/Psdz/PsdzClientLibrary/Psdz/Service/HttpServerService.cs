@@ -1,9 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.Psdz;
-using RestSharp;
 using System;
 using System.Net.Http;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using RheingoldPsdzWebApi.Adapter.Contracts;

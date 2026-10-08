@@ -1,8 +1,5 @@
-﻿using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa

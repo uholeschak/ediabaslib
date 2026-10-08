@@ -28,7 +28,6 @@ using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
 using BMW.Rheingold.Programming.ProgrammingEngine;
-using PsdzClientLibrary;
 
 namespace PsdzClient
 {

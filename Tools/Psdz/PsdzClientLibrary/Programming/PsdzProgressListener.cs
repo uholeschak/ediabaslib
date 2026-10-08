@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Programming.ProgrammingEngine;
-using BMW.Rheingold.Psdz;
-using RheingoldPsdzWebApi.Adapter.Contracts;
+﻿using RheingoldPsdzWebApi.Adapter.Contracts;
 
 namespace BMW.Rheingold.Programming.ProgrammingEngine
 {

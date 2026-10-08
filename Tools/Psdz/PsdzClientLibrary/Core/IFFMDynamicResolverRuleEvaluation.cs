@@ -1,7 +1,4 @@
-﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
-using PsdzClient;
-
-namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
+﻿namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
 {
     public interface IFFMDynamicResolverRuleEvaluation
     {

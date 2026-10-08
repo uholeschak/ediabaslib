@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
-using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

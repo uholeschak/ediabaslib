@@ -1,7 +1,5 @@
 ﻿using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Sec4Diag;
-using BMW.Rheingold.InfoProvider;
-using BMW.Rheingold.InfoProvider.Sec4Diag;
 using BMW.Rheingold.InfoProvider.Sec4Diag.Models;
 
 namespace BMW.Rheingold.InfoProvider.Sec4Diag

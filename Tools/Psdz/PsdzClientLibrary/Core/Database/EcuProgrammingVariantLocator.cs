@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts;
 using PsdzClient;
-using PsdzClientLibrary;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {

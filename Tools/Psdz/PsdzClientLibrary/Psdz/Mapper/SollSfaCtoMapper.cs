@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Sfa;
-using System.Linq;
-using BMW.Rheingold.Psdz;
+﻿using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 

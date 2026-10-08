@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Windows.UI.Text;
-using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {

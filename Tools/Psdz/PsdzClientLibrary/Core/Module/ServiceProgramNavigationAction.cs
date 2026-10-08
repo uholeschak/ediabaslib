@@ -1,5 +1,4 @@
-﻿using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using BMW.Rheingold.CoreFramework.ServiceProgram;
 
 namespace BMW.ISPI.IstaOperation.Contract.ServiceProgram

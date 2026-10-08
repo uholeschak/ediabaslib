@@ -1,5 +1,4 @@
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
 using BMW.Rheingold.Programming.Common;
 using PsdzClient;
 using System;
@@ -8,11 +7,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Common.Session;

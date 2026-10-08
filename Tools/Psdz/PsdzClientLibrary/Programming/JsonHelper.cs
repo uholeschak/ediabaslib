@@ -1,10 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using Newtonsoft.Json;
 

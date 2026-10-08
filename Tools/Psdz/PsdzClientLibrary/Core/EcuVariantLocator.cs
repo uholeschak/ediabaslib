@@ -1,16 +1,9 @@
-﻿using BmwFileReader;
-using PsdzClient;
+﻿using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.Contracts;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClientLibrary;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {

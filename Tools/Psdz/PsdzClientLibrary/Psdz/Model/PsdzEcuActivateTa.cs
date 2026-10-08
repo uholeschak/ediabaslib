@@ -1,7 +1,5 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Tal;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal
 {

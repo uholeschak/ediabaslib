@@ -1,10 +1,8 @@
-﻿using BMW.Rheingold.Psdz.Model.Exceptions;
-using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using PsdzClient;
+﻿using PsdzClient;
 using System.ServiceModel;
-using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Exceptions;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;

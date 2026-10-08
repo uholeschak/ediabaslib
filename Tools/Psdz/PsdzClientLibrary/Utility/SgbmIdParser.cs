@@ -1,11 +1,6 @@
-﻿using BMW.Rheingold.CoreFramework;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.CoreFramework.Utility
 {

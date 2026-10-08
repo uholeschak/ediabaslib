@@ -1,6 +1,5 @@
 ﻿using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
-using RheingoldPsdzWebApi.Adapter.Mapper;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper
 {

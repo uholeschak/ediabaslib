@@ -13,8 +13,6 @@ using BMW.Rheingold.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
 using BMW.Rheingold.Measurement.Common;
-using BMW.Rheingold.Psdz;
-using BmwFileReader;
 using PsdzClient;
 using System;
 using System.Collections.Generic;
@@ -41,7 +39,6 @@ using BMW.Rheingold.FASTA;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
 using BMW.Rheingold.RheingoldSessionController;
 using MW.Rheingold.CoreFramework;
-using PsdzClientLibrary;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 #pragma warning disable CS0649, CS0219, CS0809, CS0618, CS0169, CS0162

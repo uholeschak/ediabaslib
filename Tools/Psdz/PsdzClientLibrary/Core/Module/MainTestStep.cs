@@ -1,5 +1,4 @@
 ﻿using System;
-using BMW.Rheingold.Module.ISTA;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;

@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Measurement.Common;
 using System.Text.RegularExpressions;
 
 namespace BMW.Rheingold.Measurement.Common

@@ -1,9 +1,7 @@
 ﻿using PsdzClient;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Ecu;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding
 {

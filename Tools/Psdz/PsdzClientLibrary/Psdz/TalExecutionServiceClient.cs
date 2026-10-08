@@ -1,5 +1,3 @@
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient;
 using System;
 using System.ServiceModel;

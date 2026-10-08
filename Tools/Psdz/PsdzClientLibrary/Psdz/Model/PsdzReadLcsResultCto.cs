@@ -1,7 +1,6 @@
 ﻿using PsdzClient;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {

@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using PsdzClientLibrary;
-using System;
+﻿using System;
 using System.Globalization;
 using BMW.Rheingold.CoreFramework.Contracts;
 

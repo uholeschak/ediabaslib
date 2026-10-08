@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Obd
 {

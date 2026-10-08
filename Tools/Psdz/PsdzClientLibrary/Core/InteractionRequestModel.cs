@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Threading;
-using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {

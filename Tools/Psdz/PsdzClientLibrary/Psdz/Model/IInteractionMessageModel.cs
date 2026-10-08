@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using BMW.Rheingold.CoreFramework.Interaction.Models;
 
 namespace BMW.Rheingold.CoreFramework.Interaction.Models
 {

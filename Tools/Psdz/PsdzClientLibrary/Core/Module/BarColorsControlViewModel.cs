@@ -1,6 +1,5 @@
 ﻿using BMW.Authoring.Helper;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using BMW.Rheingold.Module.ISTA;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

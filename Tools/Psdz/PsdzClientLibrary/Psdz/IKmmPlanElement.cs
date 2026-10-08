@@ -1,9 +1,6 @@
 ﻿using BMW.Rheingold.Programming.Common;
-using BMW.Rheingold.Psdz;
 using System;
 using System.Collections.Generic;
-using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts.KMM;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.KMM
 {

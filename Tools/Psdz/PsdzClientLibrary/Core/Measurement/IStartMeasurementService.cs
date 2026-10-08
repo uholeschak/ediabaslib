@@ -1,5 +1,4 @@
 ﻿using PsdzClient;
-using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.Measurement.Common

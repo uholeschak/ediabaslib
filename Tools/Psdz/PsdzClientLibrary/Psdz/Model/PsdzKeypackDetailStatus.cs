@@ -1,6 +1,5 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate
 {

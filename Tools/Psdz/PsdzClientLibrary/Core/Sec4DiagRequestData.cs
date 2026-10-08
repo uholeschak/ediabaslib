@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Crmf;
 
 namespace BMW.Rheingold.CoreFramework.Sec4Diag
 {

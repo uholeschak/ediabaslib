@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.LocalizableMessageTo;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa

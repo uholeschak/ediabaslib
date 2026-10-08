@@ -1,6 +1,5 @@
 ﻿using System;
 using BMW.Rheingold.CoreFramework.Contracts;
-using BMW.Rheingold.ISTA.CoreFramework;
 
 namespace BMW.Rheingold.ISTA.CoreFramework
 {

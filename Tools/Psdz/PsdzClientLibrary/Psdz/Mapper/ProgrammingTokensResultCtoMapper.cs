@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using BMW.Rheingold.Psdz;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement.ProgrammingTokensResultCto;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 

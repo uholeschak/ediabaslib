@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-
-namespace BMW.Rheingold.CoreFramework.Contracts.KMM
+﻿namespace BMW.Rheingold.CoreFramework.Contracts.KMM
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum KmmPlanElementAction : uint

@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Xml.Serialization;
-using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {

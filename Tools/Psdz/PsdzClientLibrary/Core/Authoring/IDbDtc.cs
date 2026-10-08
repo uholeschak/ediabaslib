@@ -1,5 +1,4 @@
-﻿using BMW.Authoring;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 

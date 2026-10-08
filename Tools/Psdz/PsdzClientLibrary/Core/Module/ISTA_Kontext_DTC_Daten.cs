@@ -1,5 +1,4 @@
 using BMW.Authoring.Vehicle;
-using BMW.Rheingold.Module.ISTA;
 using System;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;

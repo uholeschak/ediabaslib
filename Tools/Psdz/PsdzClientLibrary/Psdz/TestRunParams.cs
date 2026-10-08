@@ -1,11 +1,5 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using PsdzClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 
 namespace BMW.Rheingold.Psdz

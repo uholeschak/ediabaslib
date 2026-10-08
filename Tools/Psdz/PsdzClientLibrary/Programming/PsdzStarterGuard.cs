@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using System;
-using System.Reflection;
 using PsdzClient;
 
 namespace BMW.Rheingold.Programming.PSdZ

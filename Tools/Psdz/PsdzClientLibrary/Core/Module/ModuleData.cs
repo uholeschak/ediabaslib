@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

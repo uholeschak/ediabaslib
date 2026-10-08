@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

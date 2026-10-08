@@ -1,8 +1,7 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
-namespace BMW.Rheingold.Psdz.Model.Tal.TalFilter
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

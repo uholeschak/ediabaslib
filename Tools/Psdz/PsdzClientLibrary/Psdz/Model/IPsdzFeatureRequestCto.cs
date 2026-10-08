@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecurityManagement;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa

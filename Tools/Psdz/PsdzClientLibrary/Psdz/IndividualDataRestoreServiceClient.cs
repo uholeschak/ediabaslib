@@ -1,7 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Tal;
-using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using PsdzClient;
+﻿using PsdzClient;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using RheingoldPsdzWebApi.Adapter.Contracts;

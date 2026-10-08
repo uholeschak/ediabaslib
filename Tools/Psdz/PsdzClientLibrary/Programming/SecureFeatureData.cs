@@ -1,7 +1,4 @@
-﻿using System;
-using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Sfa;
-using PsdzClient;
+﻿using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming

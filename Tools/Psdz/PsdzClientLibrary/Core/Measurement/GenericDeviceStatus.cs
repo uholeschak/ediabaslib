@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Measurement.Common;
-
-namespace BMW.Rheingold.Measurement.Common
+﻿namespace BMW.Rheingold.Measurement.Common
 {
     public class GenericDeviceStatus
     {

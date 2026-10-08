@@ -1,7 +1,6 @@
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Module.ISTA;
 using System.Collections.Generic;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;

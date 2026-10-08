@@ -2,14 +2,11 @@
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.Rheingold.ISTA.CoreFramework;
-using PsdzClientLibrary;
 
 namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
 {

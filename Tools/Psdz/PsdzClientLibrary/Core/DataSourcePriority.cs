@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-using System.Collections.Generic;
-using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
+﻿using System.Collections.Generic;
 using BMW.Rheingold.ISTA.CoreFramework;
 
 namespace BMW.ISPI.TRIC.ISTA.MultisourceLogic

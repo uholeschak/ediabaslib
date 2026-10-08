@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Client;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
+﻿using System.Collections.Generic;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {

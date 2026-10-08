@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using BMW.Rheingold.Psdz.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal
 {

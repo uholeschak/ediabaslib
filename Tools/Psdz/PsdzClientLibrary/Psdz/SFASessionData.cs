@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Sfa;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 

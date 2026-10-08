@@ -2,15 +2,11 @@ using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Measurement.Common;
-using BMW.Rheingold.Module.ISTA;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.ISTA.CoreFramework.ServiceDialoge;
 using PsdzClient;
-using PsdzClientLibrary;
 
 namespace BMW.Rheingold.Module.ISTA
 {

@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model;
-using System.Linq;
+﻿using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 

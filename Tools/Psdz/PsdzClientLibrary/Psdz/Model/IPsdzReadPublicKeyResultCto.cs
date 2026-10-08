@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Kds
 {

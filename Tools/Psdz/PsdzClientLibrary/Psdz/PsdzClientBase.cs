@@ -4,10 +4,9 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model.Exceptions;
 using PsdzClient;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Exceptions;
 
 namespace BMW.Rheingold.Psdz.Client
 {

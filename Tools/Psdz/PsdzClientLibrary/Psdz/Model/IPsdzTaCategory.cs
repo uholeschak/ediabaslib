@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
+﻿using System.Collections.Generic;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal
 {

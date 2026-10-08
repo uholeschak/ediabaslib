@@ -1,10 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.ISPI.TRIC.ISTA.Configuration.Constants;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;

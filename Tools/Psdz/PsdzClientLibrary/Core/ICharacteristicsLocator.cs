@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework;
-
-namespace BMW.Rheingold.CoreFramework
+﻿namespace BMW.Rheingold.CoreFramework
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ICharacteristicsLocator : ISPELocator

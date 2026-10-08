@@ -1,6 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Sfa;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
 {

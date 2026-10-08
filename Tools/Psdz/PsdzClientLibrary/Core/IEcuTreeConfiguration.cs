@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {

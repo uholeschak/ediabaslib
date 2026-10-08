@@ -1,5 +1,4 @@
-﻿using PsdzClient;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Windows.UI.Text;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

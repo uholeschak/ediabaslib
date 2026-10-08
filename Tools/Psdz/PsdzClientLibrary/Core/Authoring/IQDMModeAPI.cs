@@ -1,6 +1,4 @@
-﻿using BMW.Authoring;
-using BMW.Authoring.API;
-using BMW.Rheingold.CoreFramework;
+﻿using BMW.Rheingold.CoreFramework;
 using System;
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.Contracts;

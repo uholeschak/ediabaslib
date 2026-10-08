@@ -1,5 +1,4 @@
 ﻿using System;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu
 {

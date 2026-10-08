@@ -1,5 +1,3 @@
-using BMW.Rheingold.ISTA.CoreFramework.SOCAccessor;
-using BMW.Rheingold.Module.ISTA;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;
 

@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Measurement.Common;
-using System;
+﻿using System;
 using BMW.Rheingold.Measurement.Common.Data;
 
 namespace BMW.Rheingold.Measurement.Common.Contract

@@ -2,8 +2,6 @@ using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.Measurement.Common.Contract;
-using BMW.Rheingold.Module.ISTA;
-using BMW.Rheingold.RheingoldSessionController;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

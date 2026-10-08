@@ -1,11 +1,9 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Psdz;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
-using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 

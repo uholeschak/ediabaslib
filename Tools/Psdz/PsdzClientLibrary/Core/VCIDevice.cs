@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
 #pragma warning disable CS0414

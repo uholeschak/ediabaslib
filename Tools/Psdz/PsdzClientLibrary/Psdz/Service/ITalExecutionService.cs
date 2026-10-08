@@ -1,10 +1,10 @@
-using BMW.Rheingold.Psdz.Model.Exceptions;
 using PsdzClient;
 using System;
 using System.IO;
 using System.ServiceModel;
 using System.Threading;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Exceptions;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;

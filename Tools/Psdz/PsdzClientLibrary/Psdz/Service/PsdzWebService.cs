@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Client;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +15,6 @@ using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.Psdz;
 using PsdzClient;
-using RheingoldPsdzWebApi.Adapter;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 using RheingoldPsdzWebApi.Adapter.Services;

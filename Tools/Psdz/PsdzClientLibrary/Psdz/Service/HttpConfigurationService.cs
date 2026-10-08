@@ -2,7 +2,6 @@
 using System;
 using System.Net.Http;
 using BMW.Rheingold.Psdz;
-using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 

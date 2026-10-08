@@ -1,7 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Tal;
-using BMW.Rheingold.Psdz;
-using System.Collections.Generic;
-using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+﻿using System.Collections.Generic;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter
 {

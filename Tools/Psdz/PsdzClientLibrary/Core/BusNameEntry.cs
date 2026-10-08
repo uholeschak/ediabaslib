@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml.Serialization;
-using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core

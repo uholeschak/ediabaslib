@@ -1,11 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using BMW.ISPI.TRIC.ISTA.Contracts;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models;

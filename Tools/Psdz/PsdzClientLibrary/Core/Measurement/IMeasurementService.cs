@@ -1,6 +1,5 @@
 ﻿using PsdzClient;
 using System.ServiceModel;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Measurement.Common
 {

@@ -3,7 +3,6 @@ using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.Measurement.Common;
 using BMW.Rheingold.Measurement.Common.Contract;
-using BMW.Rheingold.Module.ISTA;
 using System;
 using System.Collections.Generic;
 using System.Linq;

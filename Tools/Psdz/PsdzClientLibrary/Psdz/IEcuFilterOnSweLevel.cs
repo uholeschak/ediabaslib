@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using System.Collections.Generic;
-using BMW.Rheingold.Psdz;
+﻿using System.Collections.Generic;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {

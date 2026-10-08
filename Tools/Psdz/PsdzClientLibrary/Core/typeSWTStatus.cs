@@ -1,10 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider

@@ -3,7 +3,6 @@ using BMW.ISPI.IstaServices.Contract.PUK.Data;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
 using System;
 using System.Collections.Generic;

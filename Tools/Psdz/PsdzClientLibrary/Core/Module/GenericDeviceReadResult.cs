@@ -1,9 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Measurement.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO.Pipelines;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;

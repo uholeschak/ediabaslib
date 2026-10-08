@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using RestSharp;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate;
