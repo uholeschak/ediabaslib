@@ -14,7 +14,6 @@ using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.CoreFramework.Utility;
-using BMW.Rheingold.Psdz;
 using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;

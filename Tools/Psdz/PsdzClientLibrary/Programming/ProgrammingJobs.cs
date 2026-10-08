@@ -5,7 +5,6 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
-using BMW.Rheingold.Psdz;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;

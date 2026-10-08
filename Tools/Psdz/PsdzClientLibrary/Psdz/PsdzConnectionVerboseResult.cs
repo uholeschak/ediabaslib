@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Client;
-using PsdzClient;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu

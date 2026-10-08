@@ -4,7 +4,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Utility;
-using BMW.Rheingold.Psdz;
 
 namespace RheingoldPsdzWebApi.Adapter
 {

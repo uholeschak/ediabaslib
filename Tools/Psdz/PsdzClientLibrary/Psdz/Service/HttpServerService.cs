@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.Psdz;
 using System;
 using System.Net.Http;
 using System.Threading;

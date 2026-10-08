@@ -1,7 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming;
-using BMW.Rheingold.Psdz;
 using System.Threading.Tasks;
 using System;
 using BMW.Rheingold.CoreFramework.Contracts;

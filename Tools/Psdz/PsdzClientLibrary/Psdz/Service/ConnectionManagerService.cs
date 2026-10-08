@@ -1,6 +1,4 @@
-﻿using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Client;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using BMW.Rheingold.CoreFramework;
