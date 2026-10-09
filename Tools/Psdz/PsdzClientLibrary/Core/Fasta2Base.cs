@@ -1,4 +1,4 @@
-using BMW.Rheingold.CoreFramework;
+﻿using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System;
@@ -7,10 +7,11 @@ using System.Text.RegularExpressions;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using PsdzClient;
 
 #pragma warning disable CS0649
-namespace BMW.Rheingold.FASTA.Models
+namespace BMW.Rheingold.FASTA.Model
 {
     [PreserveSource(Hint = "Class cleaned", SuppressWarning = true)]
     public abstract class Fasta2Base : IDisposable

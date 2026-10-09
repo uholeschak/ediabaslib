@@ -1,4 +1,4 @@
-using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
+﻿using BMW.ISPI.IstaOperation.Contract.ServiceProgram;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework;

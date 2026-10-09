@@ -1,8 +1,9 @@
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System;
 using System.Collections.Generic;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.FASTA

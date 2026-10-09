@@ -1,8 +1,9 @@
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
 using System.Collections.Generic;
 using BMW.ISPI.IstaServices.Contract.PUK.Data;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Programming.Data.Obd;
 using PsdzClient;

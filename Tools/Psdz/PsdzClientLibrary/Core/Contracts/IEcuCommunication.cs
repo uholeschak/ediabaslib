@@ -1,6 +1,7 @@
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 {

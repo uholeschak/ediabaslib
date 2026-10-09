@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.Module.ISTA;
 using BMW.Rheingold.VehicleCommunication;
 

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
 #pragma warning disable CS0109
-namespace BMW.Rheingold.CoreFramework.Contracts
+namespace BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuJob : INotifyPropertyChanged

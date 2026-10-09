@@ -1,6 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
 namespace BMW.Rheingold.CoreFramework
 {

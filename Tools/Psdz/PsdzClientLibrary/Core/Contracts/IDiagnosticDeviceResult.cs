@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
 namespace BMW.Rheingold.CoreFramework.Contracts
 {
