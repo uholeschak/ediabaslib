@@ -1,5 +1,6 @@
 ﻿using System;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
 namespace BMW.Rheingold.CoreFramework.Programming.Data.Ecu
 {
