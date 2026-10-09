@@ -1,4 +1,4 @@
-using CommandLine;
+﻿using CommandLine;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,6 +14,8 @@ namespace SourceCodeSync
 {
     internal class Program
     {
+        private readonly record struct DictEntry<T>(Dictionary<string, T> Dict, string Name, bool IsFullName = false, bool HasNamespace = false);
+
         /// <summary>
         /// Represents a //[-]//[+] comment line with its context (preceding and following lines)
         /// </summary>
@@ -27,10 +29,13 @@ namespace SourceCodeSync
             public int? Index { get; set; }
         }
 
+        private static Dictionary<string, ClassDeclarationSyntax> _classDictNamespace;
         private static Dictionary<string, ClassDeclarationSyntax> _classDict;
         private static Dictionary<string, ClassDeclarationSyntax> _classBareDict;
+        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDictNamespace;
         private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict;
         private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceBareDict;
+        private static Dictionary<string, EnumDeclarationSyntax> _enumDictNamespace;
         private static Dictionary<string, EnumDeclarationSyntax> _enumDict;
         private static Dictionary<string, EnumDeclarationSyntax> _enumBareDict;
 
@@ -479,10 +484,13 @@ namespace SourceCodeSync
                 {
                     WriteLine("Updating source part {0} ...", partIdx + 1);
 
+                    _classDictNamespace = new(StringComparer.Ordinal);
                     _classDict = new(StringComparer.Ordinal);
                     _classBareDict = new(StringComparer.Ordinal);
+                    _interfaceDictNamespace = new(StringComparer.Ordinal);
                     _interfaceDict = new(StringComparer.Ordinal);
                     _interfaceBareDict = new(StringComparer.Ordinal);
+                    _enumDictNamespace = new(StringComparer.Ordinal);
                     _enumDict = new(StringComparer.Ordinal);
                     _enumBareDict = new(StringComparer.Ordinal);
 
@@ -686,6 +694,7 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
+                    string classNameNamespace = GetClassName(cls, includeNamespace: true);
                     string classNameFull = GetClassName(cls, includeModifiers: true);
                     string classNameBare = GetClassName(cls);
                     string classSource = cls.ToFullString();
@@ -728,17 +737,19 @@ namespace SourceCodeSync
                         changeClassName = newClassName2;
                     }
 
-                    List<Tuple<Dictionary<string, ClassDeclarationSyntax>, string, bool>> dictList = new()
+                    List<DictEntry<ClassDeclarationSyntax>> dictList = new()
                     {
+                        new(_classDictNamespace, classNameNamespace, false, true),
                         new(_classDict, classNameFull, true),
-                        new(_classBareDict, classNameBare, false)
+                        new(_classBareDict, classNameBare)
                     };
 
-                    foreach (var tuple in dictList)
+                    foreach (DictEntry<ClassDeclarationSyntax> entry in dictList)
                     {
-                        Dictionary<string, ClassDeclarationSyntax> dict = tuple.Item1;
-                        string name = tuple.Item2;
-                        bool isFullName = tuple.Item3;
+                        Dictionary<string, ClassDeclarationSyntax> dict = entry.Dict;
+                        string name = entry.Name;
+                        bool isFullName = entry.IsFullName;
+                        bool hasNamespace = entry.HasNamespace;
 
                         ClassDeclarationSyntax classCopy = cls;
                         if (!string.IsNullOrEmpty(changeClassName))
@@ -764,7 +775,11 @@ namespace SourceCodeSync
                                 string oldClassSource = oldClassSyntax.ToFullString();
                                 if (oldClassSource != classSource)
                                 {
-                                    if (isFullName)
+                                    if (hasNamespace)
+                                    {
+                                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate namespace class name with different source: {0}", name);
+                                    }
+                                    else if (isFullName)
                                     {
                                         WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate class name with different source: {0}", name);
                                     }
@@ -832,18 +847,19 @@ namespace SourceCodeSync
                         changeInterfaceName = newInterfaceName2;
                     }
 
-                    List<Tuple<Dictionary<string, InterfaceDeclarationSyntax>, string, bool>> dictList =
-                        new List<Tuple<Dictionary<string, InterfaceDeclarationSyntax>, string, bool>>
-                        {
-                            new (_interfaceDict, interfaceNameFull, true),
-                            new (_interfaceBareDict, interfaceBareName, false)
-                        };
-
-                    foreach (var tuple in dictList)
+                    List<DictEntry<InterfaceDeclarationSyntax>> dictList = new()
                     {
-                        Dictionary<string, InterfaceDeclarationSyntax> dict = tuple.Item1;
-                        string name = tuple.Item2;
-                        bool isFullName = tuple.Item3;
+                        new(_interfaceDictNamespace, interfaceNameFull, false, true),
+                        new(_interfaceDict, interfaceNameFull, true),
+                        new(_interfaceBareDict, interfaceBareName)
+                    };
+
+                    foreach (DictEntry<InterfaceDeclarationSyntax> entry in dictList)
+                    {
+                        Dictionary<string, InterfaceDeclarationSyntax> dict = entry.Dict;
+                        string name = entry.Name;
+                        bool isFullName = entry.IsFullName;
+                        bool hasNamespace = entry.HasNamespace;
 
                         InterfaceDeclarationSyntax interfaceCopy = interfaceDecl;
                         if (!string.IsNullOrEmpty(changeInterfaceName))
@@ -866,7 +882,11 @@ namespace SourceCodeSync
                                 string oldInterfaceSource = oldInterfaceSyntax.ToFullString();
                                 if (oldInterfaceSource != interfaceSource)
                                 {
-                                    if (isFullName)
+                                    if (hasNamespace)
+                                    {
+                                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate namespace interface name with different source: {0}", name);
+                                    }
+                                    else if (isFullName)
                                     {
                                         WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate interface name with different source: {0}", name);
                                     }
@@ -892,6 +912,7 @@ namespace SourceCodeSync
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
+                    string enumNameNamespace = GetEnumName(enumDecl, includeNamespace: true);
                     string enumNameFull = GetEnumName(enumDecl, includeModifiers: true);
                     string enumBareName = GetEnumName(enumDecl);
                     string enumSource = enumDecl.ToFullString();
@@ -933,18 +954,19 @@ namespace SourceCodeSync
                         changeEnumName = newEnumName2;
                     }
 
-                    List<Tuple<Dictionary<string, EnumDeclarationSyntax>, string, bool>> dictList =
-                        new List<Tuple<Dictionary<string, EnumDeclarationSyntax>, string, bool>>
-                        {
-                            new (_enumDict, enumNameFull, true),
-                            new (_enumBareDict, enumBareName, false)
-                        };
-
-                    foreach (var tuple in dictList)
+                    List<DictEntry<EnumDeclarationSyntax>> dictList = new()
                     {
-                        Dictionary<string, EnumDeclarationSyntax> dict = tuple.Item1;
-                        string name = tuple.Item2;
-                        bool isFullName = tuple.Item3;
+                        new(_enumDictNamespace, enumNameNamespace, false, true),
+                        new(_enumDict, enumNameFull, true),
+                        new(_enumBareDict, enumBareName)
+                    };
+
+                    foreach (DictEntry<EnumDeclarationSyntax> entry in dictList)
+                    {
+                        Dictionary<string, EnumDeclarationSyntax> dict = entry.Dict;
+                        string name = entry.Name;
+                        bool isFullName = entry.IsFullName;
+                        bool hasNamespace = entry.HasNamespace;
 
                         EnumDeclarationSyntax enumCopy = enumDecl;
                         if (!string.IsNullOrEmpty(changeEnumName))
@@ -966,7 +988,11 @@ namespace SourceCodeSync
                                 string oldEnumSource = oldEnumSyntax.ToFullString();
                                 if (oldEnumSource != enumSource)
                                 {
-                                    if (isFullName)
+                                    if (hasNamespace)
+                                    {
+                                        WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate namespace enum name with different source: {0}", name);
+                                    }
+                                    else if (isFullName)
                                     {
                                         WriteLine(Options.VerbosityOption.Error, "*** Warning: Duplicate enum name with different source: {0}", name);
                                     }
@@ -1011,6 +1037,7 @@ namespace SourceCodeSync
                 List<ClassDeclarationSyntax> classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
+                    string classNameNamespace = GetClassName(cls, includeNamespace: true);
                     string classNameFull = GetClassName(cls, includeModifiers: true);
                     string classNameBare = GetClassName(cls);
                     string classSource = cls.NormalizeWhitespace().ToFullString();
@@ -1019,7 +1046,8 @@ namespace SourceCodeSync
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
                         StringBuilder sbMessage = new StringBuilder();
-                        sbMessage.AppendLine($"Class: {classNameFull}");
+                        sbMessage.AppendLine($"Class: {classNameNamespace}");
+                        sbMessage.AppendLine($"Namespace: {namespaceName}");
                         sbMessage.AppendLine("Source:");
                         sbMessage.AppendLine(classSource);
                         sbMessage.Append(new string('-', 80));
@@ -1032,11 +1060,14 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (!_classDict.TryGetValue(classNameFull, out ClassDeclarationSyntax sourceClass))
+                    if (!_classDictNamespace.TryGetValue(classNameNamespace, out ClassDeclarationSyntax sourceClass))
                     {
-                        if (!_classBareDict.TryGetValue(classNameBare, out sourceClass))
+                        if (!_classDict.TryGetValue(classNameFull, out sourceClass))
                         {
-                            sourceClass = null;
+                            if (!_classBareDict.TryGetValue(classNameBare, out sourceClass))
+                            {
+                                sourceClass = null;
+                            }
                         }
                     }
 
@@ -1157,11 +1188,14 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (!_interfaceDict.TryGetValue(interfaceNameFull, out InterfaceDeclarationSyntax sourceInterface))
+                    if (!_interfaceDictNamespace.TryGetValue(interfaceNameFull, out InterfaceDeclarationSyntax sourceInterface))
                     {
-                        if (!_interfaceBareDict.TryGetValue(interfaceNameBare, out sourceInterface))
+                        if (!_interfaceDict.TryGetValue(interfaceNameFull, out sourceInterface))
                         {
-                            sourceInterface = null;
+                            if (!_interfaceBareDict.TryGetValue(interfaceNameBare, out sourceInterface))
+                            {
+                                sourceInterface = null;
+                            }
                         }
                     }
 
