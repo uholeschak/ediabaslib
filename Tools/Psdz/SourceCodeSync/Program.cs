@@ -694,7 +694,7 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string classNameNamespace = GetClassName(cls, includeNamespace: true);
+                    string classNameNamespace = GetClassName(cls, includeModifiers: false, includeNamespace: true);
                     string classNameFull = GetClassName(cls, includeModifiers: true);
                     string classNameBare = GetClassName(cls);
                     string classSource = cls.ToFullString();
@@ -1037,7 +1037,7 @@ namespace SourceCodeSync
                 List<ClassDeclarationSyntax> classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string classNameNamespace = GetClassName(cls, includeNamespace: true);
+                    string classNameNamespace = GetClassName(cls, includeModifiers: false, includeNamespace: true);
                     string classNameFull = GetClassName(cls, includeModifiers: true);
                     string classNameBare = GetClassName(cls);
                     string classSource = cls.NormalizeWhitespace().ToFullString();
@@ -1375,10 +1375,19 @@ namespace SourceCodeSync
             string className = classDeclaration.Identifier.ValueText;
             if (includeNamespace)
             {
+                string modifiesPrefix = string.Empty;
+                if (includeModifiers)
+                {
+                    string modifiers = GetModifiersText(classDeclaration.Modifiers);
+                    if (modifiers.Length > 0)
+                    {
+                        modifiesPrefix = $"{modifiers}_";
+                    }
+                }
                 string namespaceName = GetNamespace(classDeclaration);
                 if (!string.IsNullOrEmpty(namespaceName))
                 {
-                    className = $"{namespaceName}.{className}";
+                    className = $"{namespaceName}.{modifiesPrefix}{className}";
                 }
             }
             else
