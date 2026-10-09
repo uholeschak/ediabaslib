@@ -1423,10 +1423,19 @@ namespace SourceCodeSync
             string interfaceName = interfaceDeclaration.Identifier.ValueText;
             if (includeNamespace)
             {
+                string modifiesPrefix = string.Empty;
+                if (includeModifiers)
+                {
+                    string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
+                    if (modifiers.Length > 0)
+                    {
+                        modifiesPrefix = $"{modifiers}_";
+                    }
+                }
                 string namespaceName = GetNamespace(interfaceDeclaration);
                 if (!string.IsNullOrEmpty(namespaceName))
                 {
-                    interfaceName = $"{namespaceName}.{interfaceName}";
+                    interfaceName = $"{namespaceName}.{modifiesPrefix}{interfaceName}";
                 }
             }
             else
@@ -1460,10 +1469,19 @@ namespace SourceCodeSync
             string enumName = enumDeclaration.Identifier.ValueText;
             if (includeNamespace)
             {
+                string modifiesPrefix = string.Empty;
+                if (includeModifiers)
+                {
+                    string modifiers = GetModifiersText(enumDeclaration.Modifiers);
+                    if (modifiers.Length > 0)
+                    {
+                        modifiesPrefix = $"{modifiers}_";
+                    }
+                }
                 string namespaceName = GetNamespace(enumDeclaration);
                 if (!string.IsNullOrEmpty(namespaceName))
                 {
-                    enumName = $"{namespaceName}.{enumName}";
+                    enumName = $"{namespaceName}.{modifiesPrefix}{enumName}";
                 }
             }
             else
