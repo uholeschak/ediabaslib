@@ -1372,18 +1372,19 @@ namespace SourceCodeSync
 
         public static string GetClassName(ClassDeclarationSyntax classDeclaration, bool includeModifiers = false, bool includeNamespace = false)
         {
+            string modifiesPrefix = string.Empty;
+            if (includeModifiers)
+            {
+                string modifiers = GetModifiersText(classDeclaration.Modifiers);
+                if (modifiers.Length > 0)
+                {
+                    modifiesPrefix = $"{modifiers}_";
+                }
+            }
+
             string className = classDeclaration.Identifier.ValueText;
             if (includeNamespace)
             {
-                string modifiesPrefix = string.Empty;
-                if (includeModifiers)
-                {
-                    string modifiers = GetModifiersText(classDeclaration.Modifiers);
-                    if (modifiers.Length > 0)
-                    {
-                        modifiesPrefix = $"{modifiers}_";
-                    }
-                }
                 string namespaceName = GetNamespace(classDeclaration);
                 if (!string.IsNullOrEmpty(namespaceName))
                 {
@@ -1392,15 +1393,7 @@ namespace SourceCodeSync
             }
             else
             {
-                if (includeModifiers)
-                {
-                    string modifiers = GetModifiersText(classDeclaration.Modifiers);
-                    if (modifiers.Length > 0)
-                    {
-                        className = $"{modifiers}_{className}";
-                    }
-                }
-
+                className = $"{modifiesPrefix}{className}";
                 int typeParamCount = classDeclaration.TypeParameterList?.Parameters.Count ?? 0;
                 if (typeParamCount > 0)
                 {
@@ -1420,18 +1413,19 @@ namespace SourceCodeSync
 
         public static string GetInterfaceName(InterfaceDeclarationSyntax interfaceDeclaration, bool includeModifiers = false, bool includeNamespace = false)
         {
+            string modifiesPrefix = string.Empty;
+            if (includeModifiers)
+            {
+                string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
+                if (modifiers.Length > 0)
+                {
+                    modifiesPrefix = $"{modifiers}_";
+                }
+            }
+
             string interfaceName = interfaceDeclaration.Identifier.ValueText;
             if (includeNamespace)
             {
-                string modifiesPrefix = string.Empty;
-                if (includeModifiers)
-                {
-                    string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
-                    if (modifiers.Length > 0)
-                    {
-                        modifiesPrefix = $"{modifiers}_";
-                    }
-                }
                 string namespaceName = GetNamespace(interfaceDeclaration);
                 if (!string.IsNullOrEmpty(namespaceName))
                 {
@@ -1440,15 +1434,7 @@ namespace SourceCodeSync
             }
             else
             {
-                if (includeModifiers)
-                {
-                    string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
-                    if (modifiers.Length > 0)
-                    {
-                        interfaceName = $"{modifiers}_{interfaceName}";
-                    }
-                }
-
+                interfaceName = $"{modifiesPrefix}{interfaceName}";
                 int typeParamCount = interfaceDeclaration.TypeParameterList?.Parameters.Count ?? 0;
                 if (typeParamCount > 0)
                 {
@@ -1466,18 +1452,19 @@ namespace SourceCodeSync
 
         public static string GetEnumName(EnumDeclarationSyntax enumDeclaration, bool includeModifiers = false, bool includeNamespace = false)
         {
+            string modifiesPrefix = string.Empty;
+            if (includeModifiers)
+            {
+                string modifiers = GetModifiersText(enumDeclaration.Modifiers);
+                if (modifiers.Length > 0)
+                {
+                    modifiesPrefix = $"{modifiers}_";
+                }
+            }
+
             string enumName = enumDeclaration.Identifier.ValueText;
             if (includeNamespace)
             {
-                string modifiesPrefix = string.Empty;
-                if (includeModifiers)
-                {
-                    string modifiers = GetModifiersText(enumDeclaration.Modifiers);
-                    if (modifiers.Length > 0)
-                    {
-                        modifiesPrefix = $"{modifiers}_";
-                    }
-                }
                 string namespaceName = GetNamespace(enumDeclaration);
                 if (!string.IsNullOrEmpty(namespaceName))
                 {
@@ -1486,14 +1473,7 @@ namespace SourceCodeSync
             }
             else
             {
-                if (includeModifiers)
-                {
-                    string modifiers = GetModifiersText(enumDeclaration.Modifiers);
-                    if (modifiers.Length > 0)
-                    {
-                        enumName = $"{modifiers}_{enumName}";
-                    }
-                }
+                enumName = $"{modifiesPrefix}{enumName}";
             }
 
             return enumName;
