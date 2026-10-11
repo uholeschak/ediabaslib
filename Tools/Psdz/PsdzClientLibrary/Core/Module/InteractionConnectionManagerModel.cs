@@ -4,6 +4,7 @@ using BMW.Rheingold.CoreFramework.Interaction.Responses;
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Localization;
 

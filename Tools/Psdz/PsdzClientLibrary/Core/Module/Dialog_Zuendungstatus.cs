@@ -1,6 +1,7 @@
-using BMW.Rheingold.CoreFramework.Contracts;
+﻿using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Rheingold.Module.ISTA

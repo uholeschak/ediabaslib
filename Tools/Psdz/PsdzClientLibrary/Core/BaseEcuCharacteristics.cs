@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using BMW.ISPI.TRIC.ISTA.Common;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Models;

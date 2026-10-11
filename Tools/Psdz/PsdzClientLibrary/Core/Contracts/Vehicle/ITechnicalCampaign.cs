@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum technicalCampaignTypeState

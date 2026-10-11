@@ -24,6 +24,7 @@ using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 using BMW.iLean.CommonServices.Models.Helper;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.Rheingold.CoreFramework.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Utility;
@@ -1295,7 +1296,7 @@ namespace PsdzClient
 
                 Vehicle vehicle = new Vehicle(ClientContext);
                 vehicle.VCI.VCIType = icomConnection ?
-                    global::BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ICOM : global::BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ENET;
+                    VCIDeviceType.ICOM : VCIDeviceType.ENET;
                 vehicle.VCI.IPAddress = ipAddress;
                 vehicle.VCI.Port = diagPort;
                 vehicle.VCI.NetworkType = "LAN";
@@ -1465,7 +1466,7 @@ namespace PsdzClient
                     return false;
                 }
 
-                bool icomConnection = vehicleLocal.VCI.VCIType == global::BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ICOM;
+                bool icomConnection = vehicleLocal.VCI.VCIType == VCIDeviceType.ICOM;
                 string ipAddress = vehicleLocal.VCI.IPAddress;
                 if (string.IsNullOrEmpty(ipAddress))
                 {

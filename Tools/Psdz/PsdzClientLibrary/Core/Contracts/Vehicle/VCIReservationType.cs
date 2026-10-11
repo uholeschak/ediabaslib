@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
+﻿namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public enum VCIReservationType
     {

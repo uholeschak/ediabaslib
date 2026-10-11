@@ -3,6 +3,7 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.xVM.ENET
