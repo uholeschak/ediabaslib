@@ -1164,6 +1164,7 @@ namespace SourceCodeSync
                 var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>().ToList();
                 foreach (InterfaceDeclarationSyntax interfaceDecl in interfaces)
                 {
+                    string interfaceNameNamespace = GetInterfaceName(interfaceDecl, includeNamespace: true);
                     string interfaceNameFull = GetInterfaceName(interfaceDecl, includeModifiers: true);
                     string interfaceNameBare = GetInterfaceName(interfaceDecl);
                     string interfaceSource = interfaceDecl.NormalizeWhitespace().ToFullString();
@@ -1185,7 +1186,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (!_interfaceDictNamespace.TryGetValue(interfaceNameFull, out InterfaceDeclarationSyntax sourceInterface))
+                    if (!_interfaceDictNamespace.TryGetValue(interfaceNameNamespace, out InterfaceDeclarationSyntax sourceInterface))
                     {
                         if (!_interfaceDict.TryGetValue(interfaceNameFull, out sourceInterface))
                         {
