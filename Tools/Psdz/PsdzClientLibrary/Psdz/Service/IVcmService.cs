@@ -6,14 +6,6 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Vcm;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Services
 {
-    public enum PsdzResultStateEto
-    {
-        FINISHED,
-        FINISHED_WITH_ERROR,
-        FINISHED_WITH_WARNINGS,
-        UNKNOWN
-    }
-
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required)]
     [ServiceKnownType(typeof(PsdzConnection))]
