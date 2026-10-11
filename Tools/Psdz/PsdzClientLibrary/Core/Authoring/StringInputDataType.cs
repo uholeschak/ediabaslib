@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace BMW.Authoring.API.MetaData
+namespace BMW.Authoring.API.MetaData.Enum
 {
     [JsonConverter(typeof(StringEnumConverter))]
     public enum StringInputDataType

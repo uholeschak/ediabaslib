@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BMW.Authoring.API.MetaData
+namespace BMW.Authoring.API.MetaData.Enum
 {
     [JsonConverter(typeof(StringEnumConverter))]
     public enum DataFieldType

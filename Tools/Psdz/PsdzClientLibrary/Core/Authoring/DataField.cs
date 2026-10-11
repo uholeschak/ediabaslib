@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using BMW.Authoring.API.MetaData.Enum;
 using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API.MetaData
