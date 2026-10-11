@@ -951,8 +951,8 @@ namespace SourceCodeSync
                     List<DictEntry<EnumDeclarationSyntax>> dictList = new()
                     {
                         new(_enumDictNamespace, enumNameNamespace, false, true),
-                        new(_enumDict, enumNameFull, true),
-                        new(_enumBareDict, enumNameBare)
+                        //new(_enumDict, enumNameFull, true),
+                        //new(_enumBareDict, enumNameBare)
                     };
 
                     foreach (DictEntry<EnumDeclarationSyntax> entry in dictList)
