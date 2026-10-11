@@ -1382,24 +1382,25 @@ namespace SourceCodeSync
                 }
             }
 
+            string typeParamSuffix = string.Empty;
+            int typeParamCount = classDeclaration.TypeParameterList?.Parameters.Count ?? 0;
+            if (typeParamCount > 0)
+            {
+                typeParamSuffix = $"_<{typeParamCount}>";
+            }
+
             string className = classDeclaration.Identifier.ValueText;
             if (includeNamespace)
             {
                 string namespaceName = GetNamespace(classDeclaration);
                 if (!string.IsNullOrEmpty(namespaceName))
                 {
-                    className = $"{namespaceName}.{modifiesPrefix}{className}";
+                    className = $"{namespaceName}.{modifiesPrefix}{className}{typeParamSuffix}";
                 }
             }
             else
             {
-                className = $"{modifiesPrefix}{className}";
-                int typeParamCount = classDeclaration.TypeParameterList?.Parameters.Count ?? 0;
-                if (typeParamCount > 0)
-                {
-                    className += $"_<{typeParamCount}>";
-                }
-
+                className = $"{modifiesPrefix}{className}{typeParamSuffix}";
                 if (includeModifiers)
                 {
                     if (classDeclaration.BaseList != null)
@@ -1423,23 +1424,25 @@ namespace SourceCodeSync
                 }
             }
 
+            string typeParamSuffix = string.Empty;
+            int typeParamCount = interfaceDeclaration.TypeParameterList?.Parameters.Count ?? 0;
+            if (typeParamCount > 0)
+            {
+                typeParamSuffix = $"_<{typeParamCount}>";
+            }
+
             string interfaceName = interfaceDeclaration.Identifier.ValueText;
             if (includeNamespace)
             {
                 string namespaceName = GetNamespace(interfaceDeclaration);
                 if (!string.IsNullOrEmpty(namespaceName))
                 {
-                    interfaceName = $"{namespaceName}.{modifiesPrefix}{interfaceName}";
+                    interfaceName = $"{namespaceName}.{modifiesPrefix}{interfaceName}{typeParamSuffix}";
                 }
             }
             else
             {
-                interfaceName = $"{modifiesPrefix}{interfaceName}";
-                int typeParamCount = interfaceDeclaration.TypeParameterList?.Parameters.Count ?? 0;
-                if (typeParamCount > 0)
-                {
-                    interfaceName += $"_<{typeParamCount}>";
-                }
+                interfaceName = $"{modifiesPrefix}{interfaceName}{typeParamSuffix}";
 
                 if (interfaceDeclaration.BaseList != null)
                 {
