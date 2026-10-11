@@ -692,7 +692,6 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string classNameNamespace = GetClassName(cls, includeModifiers: false, includeNamespace: true);
                     string classNameFull = GetClassName(cls, includeModifiers: true);
                     string classNameBare = GetClassName(cls);
                     string classSource = cls.ToFullString();
@@ -737,7 +736,7 @@ namespace SourceCodeSync
 
                     List<DictEntry<ClassDeclarationSyntax>> dictList = new()
                     {
-                        new(_classDictNamespace, classNameNamespace, false, true),
+                        new(_classDictNamespace, classNameWithNamespace, false, true),
                         new(_classDict, classNameFull, true),
                         new(_classBareDict, classNameBare)
                     };
@@ -847,7 +846,7 @@ namespace SourceCodeSync
 
                     List<DictEntry<InterfaceDeclarationSyntax>> dictList = new()
                     {
-                        new(_interfaceDictNamespace, interfaceNameFull, false, true),
+                        new(_interfaceDictNamespace, interfaceNameWithNamespace, false, true),
                         new(_interfaceDict, interfaceNameFull, true),
                         new(_interfaceBareDict, interfaceBareName)
                     };
