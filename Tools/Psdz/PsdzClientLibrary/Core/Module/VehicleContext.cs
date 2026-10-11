@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using BMW.ISPI.TRIC.ISTA.Common.Session;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 
 namespace BMW.Rheingold.CoreFramework
 {

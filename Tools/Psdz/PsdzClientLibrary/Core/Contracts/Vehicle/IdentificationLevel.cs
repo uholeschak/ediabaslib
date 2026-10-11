@@ -1,5 +1,5 @@
 ﻿
-namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Enums
 {
     public enum IdentificationLevel
     {

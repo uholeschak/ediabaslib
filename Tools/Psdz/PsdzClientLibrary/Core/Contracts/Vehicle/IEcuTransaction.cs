@@ -1,19 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum StateType
-    {
-        stopped,
-        running,
-        finished,
-        error,
-        unknown,
-        idle
-    }
-
     [AuthorAPI(SelectableTypeDeclaration = false)]
     public interface IEcuTransaction : INotifyPropertyChanged
     {
