@@ -1,38 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum typeCBSMeaurementType
-    {
-        MotorOil,
-        BrakeFront,
-        BrakeOil,
-        MikroFilter,
-        BrakeRear,
-        DieselFilter,
-        Batterie,
-        QMV_H_Oel,
-        IgnitionPlug,
-        VehicleCheck,
-        Kuehlfluessigkeit,
-        H2_Check,
-        VehicleCheckByGov,
-        EmissionCheck,
-        VehicleCheckCoupledWithGov,
-        Unknown
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum typeCBSVersion
-    {
-        CBS13,
-        CBS4,
-        CBS5,
-        UNKNOWN
-    }
-
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ICbsInfo : INotifyPropertyChanged
     {
