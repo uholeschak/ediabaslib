@@ -9,10 +9,10 @@ using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Utilities;
 using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.DiagnosticsBusinessDataCore;
 using PsdzClient;
+using BusType = BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet
 {

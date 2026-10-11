@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
@@ -9,9 +10,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.KMM;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
@@ -58,11 +57,10 @@ namespace BMW.Rheingold.Programming.Common
 
         public static bool IsFlashableOverMost(IEcu ecu)
         {
-            if (ecu.BUS == BusType.MOST || (ecu.BUS == BusType.VIRTUAL && ecu.ID_SG_ADR == 160))
+            if (ecu.BUS == BMW.Rheingold.CoreFramework.DatabaseProvider.BusType.MOST || (ecu.BUS == BMW.Rheingold.CoreFramework.DatabaseProvider.BusType.VIRTUAL && ecu.ID_SG_ADR == 160))
             {
                 return true;
             }
-
             return false;
         }
 

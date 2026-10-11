@@ -128,8 +128,6 @@ namespace SourceCodeSync
 
         private static readonly Dictionary<string, string> _commonTextReplacements = new Dictionary<string, string>
         {
-            { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"},
-            { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", "BusType"},
         };
 
         private static readonly Dictionary<string, string> _standardTextReplacements = new Dictionary<string, string>

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {

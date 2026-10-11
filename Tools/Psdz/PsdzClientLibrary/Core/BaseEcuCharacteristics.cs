@@ -14,7 +14,6 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Models;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Utilities;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
@@ -777,25 +776,6 @@ namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
                     }
                 }
             }
-        }
-
-        [PreserveSource(Hint = "database replaced", SignatureModified = true)]
-        protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
-        {
-            //[-] if (DatabaseProviderFactory.Instance != null && DatabaseProviderFactory.Instance.DatabaseAccessType != DatabaseType.None)
-            {
-                //[-] XEP_ECUGROUPS ecuGroupByName = DatabaseProviderFactory.Instance.GetEcuGroupByName(groupName);
-                //[+] XEP_ECUGROUPS ecuGroupByName = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuGroupByName(groupName));
-                XEP_ECUGROUPS ecuGroupByName = XepConverter.Convert(ClientContext.GetDatabase(vecInfo)?.GetEcuGroupByName(groupName));
-                if (ecuGroupByName != null)
-                {
-                    //[-] return DatabaseProviderFactory.Instance.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);
-                    //[+] return ClientContext.GetDatabase(vecInfo).EvaluateXepRulesById(ecuGroupByName.Id.ToString(CultureInfo.InvariantCulture), vecInfo, ffmResolver);
-                    return ClientContext.GetDatabase(vecInfo).EvaluateXepRulesById(ecuGroupByName.Id.ToString(CultureInfo.InvariantCulture), vecInfo, ffmResolver);
-                }
-            }
-
-            return false;
         }
 
         [PreserveSource(Cleaned = true)]
