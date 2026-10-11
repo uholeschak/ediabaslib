@@ -911,7 +911,7 @@ namespace SourceCodeSync
                 {
                     string enumNameNamespace = GetEnumName(enumDecl, includeNamespace: true);
                     string enumNameFull = GetEnumName(enumDecl, includeModifiers: true);
-                    string enumBareName = GetEnumName(enumDecl);
+                    string enumNameBare = GetEnumName(enumDecl);
                     string enumSource = enumDecl.ToFullString();
                     string namespaceName = GetNamespace(enumDecl);
 
@@ -955,7 +955,7 @@ namespace SourceCodeSync
                     {
                         new(_enumDictNamespace, enumNameNamespace, false, true),
                         new(_enumDict, enumNameFull, true),
-                        new(_enumBareDict, enumBareName)
+                        new(_enumBareDict, enumNameBare)
                     };
 
                     foreach (DictEntry<EnumDeclarationSyntax> entry in dictList)
@@ -968,7 +968,7 @@ namespace SourceCodeSync
                         EnumDeclarationSyntax enumCopy = enumDecl;
                         if (!string.IsNullOrEmpty(changeEnumName))
                         {
-                            string pattern = $@"(?<=^|[^a-zA-Z0-9]){Regex.Escape(enumBareName)}(?=[^a-zA-Z0-9]|$)";
+                            string pattern = $@"(?<=^|[^a-zA-Z0-9]){Regex.Escape(enumNameBare)}(?=[^a-zA-Z0-9]|$)";
                             name = Regex.Replace(name, pattern, changeEnumName);
                             SyntaxToken newIdentifier = SyntaxFactory.Identifier(
                                 enumDecl.Identifier.LeadingTrivia,
@@ -1257,7 +1257,9 @@ namespace SourceCodeSync
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>().ToList();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
+                    string enumNameNamespace = GetEnumName(enumDecl, includeNamespace: true);
                     string enumName = GetEnumName(enumDecl, includeModifiers: true);
+                    string enumNameBare = GetEnumName(enumDecl);
                     string enumSource = enumDecl.NormalizeWhitespace().ToFullString();
                     string namespaceName = GetNamespace(enumDecl);
 
@@ -1277,11 +1279,14 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (!_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
+                    if (!_enumDict.TryGetValue(enumNameNamespace, out EnumDeclarationSyntax sourceEnum))
                     {
-                        if (!_enumBareDict.TryGetValue(GetEnumName(enumDecl), out sourceEnum))
+                        if (!_enumDict.TryGetValue(enumName, out sourceEnum))
                         {
-                            sourceEnum = null;
+                            if (!_enumBareDict.TryGetValue(enumNameBare, out sourceEnum))
+                            {
+                                sourceEnum = null;
+                            }
                         }
                     }
 
