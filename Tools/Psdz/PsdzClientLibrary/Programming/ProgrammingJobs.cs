@@ -339,7 +339,7 @@ namespace PsdzClient
         private object _operationLock = new object();
         private object _optionsLock = new object();
         public int ThreadContextId { get; private set; }
-        public ProgrammingService2 ProgrammingService { get; private set; }
+        public ProgrammingService ProgrammingService { get; private set; }
         public List<OptionsItem> SelectedOptions { get; set; }
         public bool DisableTalFlash { get; set; }
         public PsdzDatabase.SwiRegisterGroup RegisterGroup { get; set; }
@@ -538,7 +538,7 @@ namespace PsdzClient
                 else
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ClientContext.EnablePsdzMultiSession());
-                    ProgrammingService = new ProgrammingService2(istaFolder, _dealerId);
+                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                     ProgrammingService.PsdzDatabase.AllowDbGeneration = AllowDbGeneration;
                     if (!EdiabasNet.IsDirectoryWritable(ProgrammingService.BackupDataPath))
                     {

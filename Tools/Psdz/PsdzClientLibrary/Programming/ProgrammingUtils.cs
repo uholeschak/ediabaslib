@@ -1,4 +1,4 @@
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
@@ -848,7 +848,7 @@ namespace BMW.Rheingold.Programming.Common
         }
 
         [PreserveSource(Added = true)]
-        public static TalExecutionSettings GetTalExecutionSettings(ProgrammingService2 programmingService)
+        public static TalExecutionSettings GetTalExecutionSettings(ProgrammingService programmingService)
         {
             TalExecutionSettings talExecutionSettings = new TalExecutionSettings
             {

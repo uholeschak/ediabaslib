@@ -655,9 +655,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     if (istaIcsServiceClient.IsAvailable() && istaIcsServiceClient.GetFeatureEnabledStatus("UsePsdzSeriesFormatter", istaIcsServiceClient.IsAvailable()).IsActive)
                     {
-                        //[-] return ServiceLocator.Current.GetService<IProgrammingService>()?.Psdz?.BaureiheUtilityService?.GetBaureihe(baureihe) ?? FormatConverter.ConvertToBn2020ConformModelSeries(baureihe);
-                        //[+] return ServiceLocator.Current.GetService<IProgrammingService2>()?.Psdz?.BaureiheUtilityService?.GetBaureihe(baureihe) ?? FormatConverter.ConvertToBn2020ConformModelSeries(baureihe);
-                        return ServiceLocator.Current.GetService<IProgrammingService2>()?.Psdz?.BaureiheUtilityService?.GetBaureihe(baureihe) ?? FormatConverter.ConvertToBn2020ConformModelSeries(baureihe);
+                        return ServiceLocator.Current.GetService<IProgrammingService>()?.Psdz?.BaureiheUtilityService?.GetBaureihe(baureihe) ?? FormatConverter.ConvertToBn2020ConformModelSeries(baureihe);
                     }
                 }
 

@@ -126,7 +126,7 @@ namespace BMW.Rheingold.Programming
 
         public IObjectBuilderService ObjectBuilderService => psdzServiceClient.ObjectBuilderService;
 
-        public IProgrammingService ProgrammingService => psdzServiceClient.ProgrammingService;
+        public RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService ProgrammingService => psdzServiceClient.ProgrammingService;
 
         public string PsdzDataPath => psdzServiceClient.ConfigurationService.GetRootDirectory();
 

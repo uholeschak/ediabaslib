@@ -21,7 +21,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 namespace BMW.Rheingold.Programming
 {
     [PreserveSource(Hint = "ProgrammingService renamed", InheritanceModified = true)]
-    public class ProgrammingService2 : IProgrammingService2, IDisposable
+    public class ProgrammingService : IProgrammingService, IDisposable
     {
         [PreserveSource(Hint = "PsdzWebServiceWrapper", Placeholder = true)]
         private readonly PlaceholderType psdzService;
@@ -40,7 +40,7 @@ namespace BMW.Rheingold.Programming
         public IPsdz Psdz => psdzServiceGateway.Psdz;
 
         [PreserveSource(Hint = "Modified, create services", SignatureModified = true)]
-        public ProgrammingService2(string istaFolder, string dealerId)
+        public ProgrammingService(string istaFolder, string dealerId)
         {
             //[-] this.services = services;
             //[-] psdzService = new PsdzWebServiceWrapper();

@@ -7,7 +7,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [PreserveSource(Hint = "IProgrammingService renamed", InheritanceModified = true)]
-    public interface IProgrammingService2
+    public interface IProgrammingService
     {
         IPsdz Psdz { get; }
 

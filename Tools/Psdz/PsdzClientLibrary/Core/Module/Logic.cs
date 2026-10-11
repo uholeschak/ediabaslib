@@ -1,4 +1,4 @@
-using BMW.ISPI.IstaOperation.Impl;
+﻿using BMW.ISPI.IstaOperation.Impl;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
@@ -28,7 +28,6 @@ using BMW.Rheingold.CoreFramework.Interaction;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.CoreFramework.Metrics;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
-using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
 #pragma warning disable CS0649, CS0618, CS0169
 namespace BMW.Rheingold.RheingoldSessionController
