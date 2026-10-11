@@ -1279,7 +1279,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (!_enumDict.TryGetValue(enumNameNamespace, out EnumDeclarationSyntax sourceEnum))
+                    if (!_enumDictNamespace.TryGetValue(enumNameNamespace, out EnumDeclarationSyntax sourceEnum))
                     {
                         if (!_enumDict.TryGetValue(enumName, out sourceEnum))
                         {
