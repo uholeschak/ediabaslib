@@ -81,8 +81,6 @@ namespace SourceCodeSync
 
         private static readonly Dictionary<string, string> _modifyEnumNames = new()
         {
-            {"BMW.iLean.CommonServices.Logging.EventKind", null},
-            {"BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", null},
             {"BMW.Rheingold.CoreFramework.Contracts.Programming.TherapyPlan.SwiActionCategory", null},
             {"RheingoldPsdzWebApi.Adapter.DataType", null},
             {"BMW.Rheingold.Module.ISTA.DataType", null},
@@ -941,8 +939,7 @@ namespace SourceCodeSync
                         changeEnumName = newEnumName1;
                     }
 
-                    string enumNameWithNamespace = GetEnumName(enumDecl, includeNamespace: true);
-                    if (_modifyEnumNames.TryGetValue(enumNameWithNamespace, out string newEnumName2))
+                    if (_modifyEnumNames.TryGetValue(enumNameNamespace, out string newEnumName2))
                     {
                         if (string.IsNullOrEmpty(newEnumName2))
                         {
