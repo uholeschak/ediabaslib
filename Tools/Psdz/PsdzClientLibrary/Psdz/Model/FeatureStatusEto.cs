@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace RheingoldPsdzWebApi.Adapter.Contracts
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public enum FeatureStatusEto
     {

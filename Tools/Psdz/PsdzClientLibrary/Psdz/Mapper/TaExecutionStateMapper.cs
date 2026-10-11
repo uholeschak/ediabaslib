@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
-using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjectss;
+using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper
 {

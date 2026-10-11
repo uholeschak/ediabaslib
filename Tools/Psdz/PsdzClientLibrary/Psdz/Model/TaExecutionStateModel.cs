@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjectss
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public enum TaExecutionStateModel
     {

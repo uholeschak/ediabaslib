@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper
