@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.Diagnostics.Common
 {

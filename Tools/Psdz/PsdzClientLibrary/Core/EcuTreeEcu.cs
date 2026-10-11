@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Models
 {

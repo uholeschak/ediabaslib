@@ -1,6 +1,7 @@
 ﻿using System;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Programming.ProgrammingEngine.Events;
 
 namespace BMW.Rheingold.Programming.ProgrammingEngine

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
 {

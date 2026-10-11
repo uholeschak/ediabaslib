@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
+using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BusType
