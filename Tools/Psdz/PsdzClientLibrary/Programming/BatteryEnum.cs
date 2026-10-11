@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Programming.Common
+﻿namespace BMW.Rheingold.CoreFramework.Enums
 {
     public enum BatteryEnum
     {

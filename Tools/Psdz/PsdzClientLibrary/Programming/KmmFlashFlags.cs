@@ -1,7 +1,6 @@
 ﻿using System;
-using BMW.Rheingold.CoreFramework;
 
-namespace BMW.Rheingold.Programming.Common
+namespace BMW.Rheingold.CoreFramework.Contracts.KMM
 {
     [Flags]
     [AuthorAPI(SelectableTypeDeclaration = true)]

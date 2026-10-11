@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Enums;
 using BMW.Rheingold.Programming.Common;
 
 namespace BMW.Rheingold.CoreFramework.Utility

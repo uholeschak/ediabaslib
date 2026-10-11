@@ -15,6 +15,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.KMM;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.Enums;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.Diagnostics.Common;
 using BMW.Rheingold.Programming.Data;

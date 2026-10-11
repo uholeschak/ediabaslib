@@ -1,4 +1,4 @@
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.Common;
 using PsdzClient;
 using System;
@@ -24,6 +24,7 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.CoreFramework.Enums;
 using BMW.Rheingold.CoreFramework.FusionReactor;
 using BMW.Rheingold.CoreFramework.Utility;
 
