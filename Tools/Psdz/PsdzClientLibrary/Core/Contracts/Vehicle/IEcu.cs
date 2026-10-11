@@ -3,75 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
-using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum BusType
-    {
-        ROOT,
-        ETHERNET,
-        MOST,
-        KCAN,
-        KCAN2,
-        KCAN3,
-        BCAN,
-        CASCAN,
-        BCAN2,
-        BCAN3,
-        FLEXRAY,
-        FACAN,
-        FASCAN,
-        SCAN,
-        MRCAN,
-        NONE,
-        SIBUS,
-        KBUS,
-        FCAN,
-        ACAN,
-        HCAN,
-        LOCAN,
-        ZGW,
-        DWA,
-        BYTEFLIGHT,
-        INTERNAL,
-        VIRTUAL,
-        VIRTUALBUSCHECK,
-        VIRTUALROOT,
-        IBUS,
-        LECAN,
-        LE2CAN,
-        IKCAN,
-        AECANFD,
-        FASCANFD,
-        USSCANFD,
-        APCANFD,
-        INFRACAN,
-        PSRRXXCANFD,
-        SENSORCANFD,
-        UNKNOWN
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum GenerationType
-    {
-        Classic,
-        Next,
-        Unknown
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum typeDiagProtocoll
-    {
-        UDS,
-        KWP,
-        DS2,
-        UNKNOWN
-    }
-
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcu : INotifyPropertyChanged, IIdentEcu, IEcuTreeEcu
     {
