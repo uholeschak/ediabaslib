@@ -82,8 +82,6 @@ namespace SourceCodeSync
         private static readonly Dictionary<string, string> _modifyEnumNames = new()
         {
             {"BMW.Rheingold.CoreFramework.Contracts.Programming.TherapyPlan.SwiActionCategory", null},
-            {"RheingoldPsdzWebApi.Adapter.DataType", null},
-            {"BMW.Rheingold.Module.ISTA.DataType", null},
         };
 
         private static readonly string[] _decompileAssemblies1 =
