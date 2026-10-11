@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core;
 using BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics;

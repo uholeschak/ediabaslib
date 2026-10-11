@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using BMW.Rheingold.ISTA.CoreFramework;
