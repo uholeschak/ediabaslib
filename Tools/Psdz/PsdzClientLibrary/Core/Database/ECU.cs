@@ -26,7 +26,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private string vARIANTEField;
         [PreserveSource(Hint = "private ObservableCollection<JOB>", Placeholder = true)]
         private PlaceholderType jOBSField;
-        private BMW.Rheingold.CoreFramework.DatabaseProvider.BusType bUSField;
+        private BusType bUSField;
         private short? iD_BUS_INDEXField;
         private typeDiagProtocoll diagProtocollField;
         private int eCUTreeColumnField;
@@ -70,7 +70,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private int? hW_REF_STATUSField;
         private ObservableCollection<typeSWTStatus> sWTStatusField;
         private string dATEN_REFERENZField;
-        private ObservableCollection<BMW.Rheingold.CoreFramework.DatabaseProvider.BusType> subBUSField;
+        private ObservableCollection<BusType> subBUSField;
         private string eCU_GROBNAMEField;
         private string eCU_NAMEField;
         private string eCU_SGBDField;
@@ -398,7 +398,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public bool IsSmartActuator { get; set; }
 
         [XmlIgnore]
-        IEnumerable<BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType> IEcuTreeEcu.SubBUS => SubBUS.Select((BMW.Rheingold.CoreFramework.DatabaseProvider.BusType b) => (BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType)b);
+        IEnumerable<BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType> IEcuTreeEcu.SubBUS => SubBUS.Select((BusType b) => (BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType)b);
 
         string IEcuTreeEcu.VARIANT
         {
@@ -468,11 +468,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return (BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType)BUS;
             }
+
             set
             {
-                if (BUS != (BMW.Rheingold.CoreFramework.DatabaseProvider.BusType)value)
+                if (BUS != (BusType)value)
                 {
-                    BUS = (BMW.Rheingold.CoreFramework.DatabaseProvider.BusType)value;
+                    BUS = (BusType)value;
                 }
             }
         }
@@ -1475,7 +1476,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        public ObservableCollection<BMW.Rheingold.CoreFramework.DatabaseProvider.BusType> SubBUS
+        public ObservableCollection<BusType> SubBUS
         {
             get
             {
@@ -2173,7 +2174,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             ECU_GROBNAME = ecu.ECU_GROBNAME;
             IDENT_SUCCESSFULLY = ecu.IDENT_SUCCESSFULLY;
             BUS = (BusType)ecu.BUS;
-            SubBUS = ((ecu.SubBUS == null) ? new ObservableCollection<BMW.Rheingold.CoreFramework.DatabaseProvider.BusType>() : new ObservableCollection<BMW.Rheingold.CoreFramework.DatabaseProvider.BusType>(ecu.SubBUS.Select((BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType bus) => (BMW.Rheingold.CoreFramework.DatabaseProvider.BusType)bus)));
+            SubBUS = ((ecu.SubBUS == null) ? new ObservableCollection<BusType>() : new ObservableCollection<BusType>(ecu.SubBUS.Select((BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType bus) => (BusType)bus)));
             SVK = new SVK
             {
                 XWE_SGBMID = ((ecu.Svk == null) ? new ObservableCollection<string>() : new ObservableCollection<string>(ecu.Svk.XWE_SGBMID))
