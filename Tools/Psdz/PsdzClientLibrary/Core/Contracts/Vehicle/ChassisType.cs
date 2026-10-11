@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     [Obsolete("Legacy Property, the ChassisType is retrieved from the Database and not used in test modules, thus it can be deleted.")]
     [AuthorAPI(SelectableTypeDeclaration = true)]

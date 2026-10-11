@@ -3,6 +3,7 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
 using System.Collections.Generic;
 using BMW.ISPI.TRIC.ISTA.Common;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using PsdzClient;
 
 #pragma warning disable CS0649

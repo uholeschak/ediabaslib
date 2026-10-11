@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using BMW.ISPI.TRIC.ISTA.Contracts;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 
 namespace BMW.Rheingold.CoreFramework

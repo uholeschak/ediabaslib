@@ -1,5 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider.RuleVariantHandling

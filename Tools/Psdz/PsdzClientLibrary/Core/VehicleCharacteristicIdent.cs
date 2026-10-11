@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq;
 using BMW.ISPI.TRIC.ISTA.Contracts;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.ISPI.TRIC.ISTA.FusionReactor;

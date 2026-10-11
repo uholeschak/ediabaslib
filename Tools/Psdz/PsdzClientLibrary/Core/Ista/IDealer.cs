@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
 {
