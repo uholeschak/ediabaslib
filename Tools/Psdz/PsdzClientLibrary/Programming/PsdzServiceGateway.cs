@@ -4,6 +4,7 @@ using BMW.Rheingold.Programming;
 using System.Threading.Tasks;
 using System;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Programming.PSdZ;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 
