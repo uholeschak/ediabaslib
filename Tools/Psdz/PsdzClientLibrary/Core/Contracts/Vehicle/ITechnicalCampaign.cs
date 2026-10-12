@@ -1,25 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
-namespace BMW.Rheingold.CoreFramework.DatabaseProvider
+namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum technicalCampaignTypeState
-    {
-        open,
-        active,
-        closed
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum typeTechnicalCampaignRecallType
-    {
-        NONE,
-        SAFETY,
-        EMISSION,
-        NONCOMPLIANT
-    }
-
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ITechnicalCampaign : INotifyPropertyChanged
     {
