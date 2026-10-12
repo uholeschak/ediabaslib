@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.CoreFramework.DatabaseProvider
+﻿namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
 {
     public interface IXepEcuGroups
     {
