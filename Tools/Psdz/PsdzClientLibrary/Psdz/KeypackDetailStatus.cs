@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
-namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Certificate
+namespace BMW.Rheingold.Programming.API
 {
     internal class KeypackDetailStatus : IKeypackDetailStatus
     {
