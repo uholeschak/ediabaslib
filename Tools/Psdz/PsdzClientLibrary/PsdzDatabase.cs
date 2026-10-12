@@ -19,6 +19,7 @@ using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
 using BMW.Rheingold.CoreFramework.Enums;
 using BMW.Rheingold.Diagnostics.Common;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;

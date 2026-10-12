@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
 using System;
 
-namespace BMW.Rheingold.CoreFramework.DatabaseProvider
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper
 {
     public sealed class FaultCodeIdDtcFOrtEcuVariantKey : DtcFOrtEcuVariantKey, IEquatable<FaultCodeIdDtcFOrtEcuVariantKey>
     {
