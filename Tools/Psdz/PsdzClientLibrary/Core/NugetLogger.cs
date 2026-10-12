@@ -56,6 +56,12 @@ namespace BMW.Rheingold.CoreFramework
         }
 
         [PreserveSource(Hint = "For test modules", Added = true)]
+        public void WriteInformation(string msg)
+        {
+            Log.Info("General", msg);
+        }
+
+        [PreserveSource(Hint = "For test modules", Added = true)]
         public void WriteInformation(string msg, params object[] parmArray)
         {
             Log.Info("General", msg, parmArray);
