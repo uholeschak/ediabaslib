@@ -1,83 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.OnlinePatch;
 
-namespace BMW.ISPI.TRIC.ISTA.Contracts.Enums
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
-    public enum BackendServiceType
-    {
-        ExecutionBreak,
-        ValidityPatches,
-        SdpOnlinePatch,
-        PatchServicePrograms,
-        EcuValidation,
-        SfaTokenDirect,
-        SfaTokenDirectForVehicle,
-        SfaNewestPackageForVehicle,
-        SfaTokenRequest,
-        SecureCoding,
-        BrokerMonitor,
-        ServiceHistory,
-        ServiceHistoryRest,
-        NOP,
-        SWT,
-        SWTV3,
-        CeSIM,
-        FBMImportStatus,
-        VPS,
-        OTDLSC,
-        SVMDVin7Resolver,
-        TechnicalCampaignsv030400,
-        VehicleTagsService,
-        SfaNewFeatureForVehicle,
-        EDGEObfcm,
-        EDGESpeedlink,
-        EDGEBattery,
-        SmartMaintenance,
-        SmartMaintenanceNew,
-        AIR,
-        CalibrationValue,
-        VehicleEmissionService,
-        ServiceRide,
-        EDGEPDI,
-        AosDocumentXmlData,
-        AosDocumentStreamData,
-        AosSec4Diag,
-        ServiceStateLayer2,
-        VehicleBasic,
-        ProtocolUploadState,
-        VPSProvisioning,
-        Sec4Diag,
-        SCCGetFileByName,
-        SCCPostFile,
-        SCCDeleteFileByName,
-        SCCPostVehicleSession,
-        SCCGetVehicleSession,
-        OrderData,
-        KAISendMaintenanceEntry,
-        KAIGetServiceHistory,
-        KAIServiceForecast,
-        AIRForkService,
-        BatteryService,
-        FBMUpload,
-        Sec4DiagCertReqProfil,
-        PortalIntegrationGetVersions,
-        SeamLM2DemandByCategory,
-        ConWoyVinRangesByProductionDate,
-        ConWoyVinRangesByVin17_4_7,
-        ConWoyVinRangesByBand,
-        ConWoyLocalizedSA,
-        ConWoySwiRegisterByParentId,
-        ConWoyServiceProgramByIdentifier,
-        ConWoyCharacteristicsByTypeKey,
-        HighVoltageBatteryPass,
-        TCMv2,
-        AWPForkService,
-        AIRTRZ
-    }
-
     public interface IBackendCallsWatchDog
     {
         Dictionary<BackendServiceType, HttpStatusCode> LatestBackendResponse { get; }

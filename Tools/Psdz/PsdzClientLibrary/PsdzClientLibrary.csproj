@@ -109,7 +109,6 @@
   <ItemGroup>
     <Folder Include="Core\Contracts\Vehicle\" />
     <Folder Include="Core\Measurement\" />
-    <Folder Include="Core\Ista\" />
     <Folder Include="Core\Vmx\" />
   </ItemGroup>
 </Project>
