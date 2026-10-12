@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using PsdzClient;
 

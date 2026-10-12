@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.xVM.ENET;
 

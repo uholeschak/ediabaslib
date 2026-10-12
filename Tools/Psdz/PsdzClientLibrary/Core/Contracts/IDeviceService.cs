@@ -5,7 +5,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
-namespace BMW.Rheingold.CoreFramework.Contracts
+namespace BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement
 {
     public interface IDeviceService
     {

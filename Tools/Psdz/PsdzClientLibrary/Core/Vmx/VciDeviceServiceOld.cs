@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
 namespace BMW.Rheingold.xVM

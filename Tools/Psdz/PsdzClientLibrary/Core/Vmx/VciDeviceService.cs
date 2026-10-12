@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.ConnectionManagement;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Utility;
