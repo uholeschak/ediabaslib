@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
-using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace RheingoldPsdzWebApi.Adapter.Mappers
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class SecurityBackendRequestProgressStatusToMapper : MapperBase<PsdzSecurityBackendRequestProgressStatusToEnum, SecurityBackendRequestProgressStatusTo>
     {
