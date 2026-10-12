@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
-using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal class StatusRequestFeatureTypeEtoMapper : MapperBase<PsdzStatusRequestFeatureTypeEtoEnum, StatusRequestFeatureTypeEto>
     {
