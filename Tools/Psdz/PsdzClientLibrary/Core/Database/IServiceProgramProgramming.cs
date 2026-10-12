@@ -1,8 +1,8 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
-namespace BMW.Rheingold.CoreFramework.DatabaseProvider
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface IServiceProgramProgramming
     {
