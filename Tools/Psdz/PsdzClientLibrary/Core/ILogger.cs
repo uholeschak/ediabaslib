@@ -11,6 +11,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
         void Info(string method, string msg, params object[] args);
         void Warning(string method, string msg, params object[] args);
         void WarningException(string method, Exception exception);
+        void WriteInformation(string msg);
         void WriteInformation(string msg, params object[] parmArray);
         void WriteError(string msg, params object[] parmArray);
         void WriteFatalError(string msg, params object[] parmArray);
