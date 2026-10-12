@@ -64,6 +64,7 @@ namespace SourceCodeSync
             {"internal_sealed_LicenseManager", null},
             {"public_sealed_LicenseManager", null},
             {"internal_sealed_LicenseAOSManager", null},
+            {"public_LicenseStatusChecker", null},
         };
 
         private static readonly Dictionary<string, string> _modifyInterfaceNames = new()
