@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using BMW.iLean.CommonServices.Models.Helper;
 
 namespace S29CertGenerator
 {
@@ -787,7 +788,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                string text = PsdzClient.Utility.Encryption.DecryptFile(clientConfigFile);
+                string text = Encryption.DecryptFile(clientConfigFile);
                 if (string.IsNullOrEmpty(text))
                 {
                     return false;
@@ -1060,7 +1061,7 @@ namespace S29CertGenerator
                 if (!File.Exists(bakFile))
                 {
                     File.Copy(clientConfigFile, bakFile, true);
-                    if (!PsdzClient.Utility.Encryption.SetFileFullAccessControl(bakFile))
+                    if (!Encryption.SetFileFullAccessControl(bakFile))
                     {
                         UpdateStatusText("Failed to set full access control for client backup file", true);
                         return false;
@@ -1090,13 +1091,13 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                if (!PsdzClient.Utility.Encryption.EncryptFile(xmlText, clientConfigFile))
+                if (!Encryption.EncryptFile(xmlText, clientConfigFile))
                 {
                     UpdateStatusText("Encrypt client configuration failed", true);
                     return false;
                 }
 
-                if (!PsdzClient.Utility.Encryption.SetFileFullAccessControl(clientConfigFile))
+                if (!Encryption.SetFileFullAccessControl(clientConfigFile))
                 {
                     UpdateStatusText("Failed to set full access control for client configuration file", true);
                     return false;
@@ -1129,7 +1130,7 @@ namespace S29CertGenerator
                 {
                     File.Move(bakFile, clientConfigFile, true);
                     File.SetLastWriteTime(clientConfigFile, DateTime.Now);
-                    if (!PsdzClient.Utility.Encryption.SetFileFullAccessControl(clientConfigFile))
+                    if (!Encryption.SetFileFullAccessControl(clientConfigFile))
                     {
                         UpdateStatusText("Failed to set full access control for client configuration file", true);
                         return false;
