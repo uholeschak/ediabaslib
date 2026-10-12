@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCtos;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCto;
 
 namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa.RequestNcdSignatureResponseCto
 {

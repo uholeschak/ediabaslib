@@ -1,7 +1,7 @@
 ﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using System;
 
-namespace BMW.Rheingold.CoreFramework.DatabaseProvider
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces
 {
     public interface IXepEcuVariants : IMultilanguageTitle
     {

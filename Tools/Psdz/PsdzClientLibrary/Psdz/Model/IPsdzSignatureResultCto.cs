@@ -1,4 +1,4 @@
-﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCtos
+﻿namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding.SignatureResultCto
 {
     public interface IPsdzSignatureResultCto
     {
