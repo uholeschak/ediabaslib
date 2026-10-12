@@ -9,7 +9,7 @@ using BMW.ISPI.IstaServices.Client;
 using BMW.Rheingold.CoreFramework;
 using PsdzClient;
 
-namespace BMW.Rheingold.Programming
+namespace BMW.Rheingold.Programming.PSdZ
 {
     public class PsdzWebServiceConfig
     {
