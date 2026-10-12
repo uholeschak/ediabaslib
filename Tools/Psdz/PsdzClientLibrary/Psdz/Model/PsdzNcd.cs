@@ -1,9 +1,8 @@
 ﻿using PsdzClient;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding;
 
-namespace RheingoldPsdzWebApi.Adapter.Contracts.Model
+namespace RheingoldPsdzWebApi.Adapter.Contracts.Model.SecureCoding
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]
