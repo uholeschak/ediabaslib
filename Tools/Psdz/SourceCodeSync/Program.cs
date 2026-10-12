@@ -61,12 +61,9 @@ namespace SourceCodeSync
 
         private static readonly Dictionary<string, string> _modifyClassNames = new()
         {
-            {"public_static_LicenseHelper", null},
             {"internal_sealed_LicenseManager", null},
             {"public_sealed_LicenseManager", null},
             {"internal_sealed_LicenseAOSManager", null},
-            {"public_LicenseStatusChecker", null},
-            {"public_LicenseWizardHelper", null },
         };
 
         private static readonly Dictionary<string, string> _modifyInterfaceNames = new()
