@@ -5,8 +5,9 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.EcuTree;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
-namespace BMW.Rheingold.CoreFramework.DatabaseProvider
+namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcu : INotifyPropertyChanged, IIdentEcu, IEcuTreeEcu
