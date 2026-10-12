@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using BMW.ISPI.IstaServices.Client;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.Reactor;
+using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 

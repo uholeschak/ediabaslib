@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
+namespace BMW.ISPI.TRIC.ISTA.Contracts.Models
 {
     [DataContract]
     public class LocalizedSAItem

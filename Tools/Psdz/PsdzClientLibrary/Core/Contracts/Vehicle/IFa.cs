@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
