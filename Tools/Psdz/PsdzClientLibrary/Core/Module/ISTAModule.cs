@@ -38,7 +38,6 @@ using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.FASTA;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
 using BMW.Rheingold.RheingoldSessionController;
-using MW.Rheingold.CoreFramework;
 
 #pragma warning disable CS0649, CS0219, CS0809, CS0618, CS0169, CS0162
 namespace BMW.Rheingold.Module.ISTA
