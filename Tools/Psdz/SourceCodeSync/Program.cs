@@ -76,12 +76,10 @@ namespace SourceCodeSync
 
         private static readonly Dictionary<string, string> _modifyInterfaceNames = new()
         {
-            {"BMW.Rheingold.ISTA.CoreFramework.ILogger", null}
         };
 
         private static readonly Dictionary<string, string> _modifyEnumNames = new()
         {
-            {"BMW.Rheingold.CoreFramework.Contracts.Programming.TherapyPlan.SwiActionCategory", null},
         };
 
         private static readonly string[] _decompileAssemblies1 =
@@ -841,8 +839,8 @@ namespace SourceCodeSync
                     List<DictEntry<InterfaceDeclarationSyntax>> dictList = new()
                     {
                         new(_interfaceDictNamespace, interfaceNameWithNamespace, false, true),
-                        new(_interfaceDict, interfaceNameFull, true),
-                        new(_interfaceBareDict, interfaceBareName)
+                        //new(_interfaceDict, interfaceNameFull, true),
+                        //new(_interfaceBareDict, interfaceBareName)
                     };
 
                     foreach (DictEntry<InterfaceDeclarationSyntax> entry in dictList)
