@@ -731,8 +731,8 @@ namespace SourceCodeSync
                     List<DictEntry<ClassDeclarationSyntax>> dictList = new()
                     {
                         new(_classDictNamespace, classNameWithNamespace, false, true),
-                        new(_classDict, classNameFull, true),
-                        new(_classBareDict, classNameBare)
+                        //new(_classDict, classNameFull, true),
+                        //new(_classBareDict, classNameBare)
                     };
 
                     foreach (DictEntry<ClassDeclarationSyntax> entry in dictList)
