@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 
-namespace RheingoldPsdzWebApi.Adapter.Contracts
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     [JsonConverter(typeof(JsonInheritanceConverter), new object[] { "discriminatorType" })]
     [JsonInheritance("SvtModel", typeof(SvtModel))]
