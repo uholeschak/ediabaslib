@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Localization;
 
-namespace BMW.Rheingold.CoreFramework.DatabaseProvider
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider.EcuClique
 {
     public sealed class InvalidEcuClique : XEP_ECUCLIQUES
     {
