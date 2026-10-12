@@ -10,7 +10,6 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 using RheingoldPsdzWebApi.Adapter.Mapper;
-using RheingoldPsdzWebApi.Adapter.Mappers;
 
 namespace RheingoldPsdzWebApi.Adapter.Services
 {

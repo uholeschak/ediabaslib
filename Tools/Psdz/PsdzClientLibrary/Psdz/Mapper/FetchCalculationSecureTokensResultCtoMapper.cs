@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
-using RheingoldPsdzWebApi.Adapter.Mappers;
 
 namespace RheingoldPsdzWebApi.Adapter.Mapper
 {

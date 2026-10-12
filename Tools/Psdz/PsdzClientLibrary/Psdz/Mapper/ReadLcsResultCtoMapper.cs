@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
-using RheingoldPsdzWebApi.Adapter.Mapper;
 
-namespace RheingoldPsdzWebApi.Adapter.Mappers
+namespace RheingoldPsdzWebApi.Adapter.Mapper
 {
     internal static class ReadLcsResultCtoMapper
     {
