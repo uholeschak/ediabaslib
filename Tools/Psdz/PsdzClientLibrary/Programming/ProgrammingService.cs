@@ -75,8 +75,8 @@ namespace BMW.Rheingold.Programming
             if (diagnosticsBusiness == null)
             //[+] {
             {
-                //[+] ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData());
-                ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData());
+                //[+] ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData.DiagnosticsBusinessData());
+                ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData.DiagnosticsBusinessData());
             //[+] }
             }
         }

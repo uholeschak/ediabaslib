@@ -7,6 +7,7 @@ using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Enums;
 using BMW.Rheingold.CoreFramework.FusionReactor;
+using BMW.Rheingold.DiagnosticsBusinessData;
 using BMW.Rheingold.DiagnosticsBusinessDataCore;
 
 namespace BMW.Rheingold.CoreFramework.Contracts

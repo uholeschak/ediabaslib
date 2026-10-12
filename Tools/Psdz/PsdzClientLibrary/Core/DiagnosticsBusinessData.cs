@@ -17,7 +17,7 @@ using BMW.Rheingold.CoreFramework.FusionReactor;
 using BMW.Rheingold.VehicleCommunication;
 
 #pragma warning disable CS0414
-namespace BMW.Rheingold
+namespace BMW.Rheingold.DiagnosticsBusinessData
 {
     public delegate object DoECUIdentDelegate(IVehicle vecInfo, ECU mECU, IEcuKom ecuKom, ref bool resetMOSTGWdone, IProgressMonitor monitor, int retry, bool forceReRead, bool tryReanimation, bool IdentForceOnUnidentified = false);
     public class DiagnosticsBusinessData : BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore, IDiagnosticsBusinessData
