@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using BMW.Rheingold.CoreFramework.Contracts;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
-namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
+namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     [DataContract]
     public class VehicleClassification : IVehicleClassification, INotifyPropertyChanged
