@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace RheingoldPsdzWebApi.Adapter.Contracts
+namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
 {
     public class ILevelModel
     {
