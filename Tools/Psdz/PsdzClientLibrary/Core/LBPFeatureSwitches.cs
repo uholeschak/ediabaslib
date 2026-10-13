@@ -124,13 +124,12 @@ namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
                     case "UseReducPortRangeMirror":
                     case "AllowFsLesenErrorResult":
                     case "ExecServCallCertReqProf":
-                    case "CollectLauncherLogs":
-                    case "VinRangesOverConWoy":
                     case "ShowTabFluids":
                     case "VcmComparison":
                     case "KaiServiceHistory":
                     case "RenewConAfterEcuReset":
                     case "UseQaBackendForSfaAndFsc":
+                    case "VinRangesOverConWoy":
                     case "ZgwRepOverstForIpbBoot":
                         return true;
                     default:
