@@ -43,11 +43,6 @@
     <Compile Include="..\..\..\EdiabasLib\BmwFileReader\VehicleInfoBmw.cs" Link="VehicleInfoBmw.cs" />
     <Compile Include="..\..\..\EdiabasLib\BmwFileReader\VehicleStructsBmw.cs" Link="VehicleStructsBmw.cs" />
     <Compile Include="..\..\ExtractEcuFunctions\Common\DatabaseFunctions.cs" Link="DatabaseFunctions.cs" />
-    <Compile Update="Resources\Strings.de.Designer.cs">
-      <DependentUpon>Strings.de.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Update="Resources\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -65,8 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\Strings.de.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.de.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Strings.resx">
