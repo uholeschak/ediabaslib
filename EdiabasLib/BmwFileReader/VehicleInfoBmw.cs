@@ -944,7 +944,7 @@ namespace BmwFileReader
             }
             return brName.Substring(0, 1) + brName.Substring(2, 2);
 #else
-            FA fa = new FA
+            BMW.Rheingold.CoreFramework.DatabaseProvider.FA fa = new BMW.Rheingold.CoreFramework.DatabaseProvider.FA
             {
                 BR = brName
             };
@@ -971,7 +971,7 @@ namespace BmwFileReader
 
             return null;
 #else
-            FA fa = new FA
+            BMW.Rheingold.CoreFramework.DatabaseProvider.FA fa = new BMW.Rheingold.CoreFramework.DatabaseProvider.FA
             {
                 STANDARD_FA = standardFa
             };
