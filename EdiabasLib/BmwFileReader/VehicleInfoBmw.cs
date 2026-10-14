@@ -6,9 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using EdiabasLib;
 using ICSharpCode.SharpZipLib.Zip;
 
