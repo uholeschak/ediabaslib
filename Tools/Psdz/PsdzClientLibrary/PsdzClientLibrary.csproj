@@ -69,10 +69,24 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+      <Compile Remove="Core\Contracts\**" />
+      <Compile Remove="Core\Measurement\**" />
+      <Compile Remove="Core\Vmx\**" />
+      <EmbeddedResource Remove="Core\Contracts\**" />
+      <EmbeddedResource Remove="Core\Measurement\**" />
+      <EmbeddedResource Remove="Core\Vmx\**" />
+      <None Remove="Core\Contracts\**" />
+      <None Remove="Core\Measurement\**" />
+      <None Remove="Core\Vmx\**" />
       <None Remove="Resources\**\*.xml;Resources\**\*.xsl" />
       <EmbeddedResource Include="Resources\**\*.xml;Resources\**\*.xsl">
           <LogicalName>%(Filename)%(Extension)</LogicalName>
       </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Core\Contracts\**" />
+    <Page Remove="Core\Measurement\**" />
+    <Page Remove="Core\Vmx\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
@@ -98,10 +112,5 @@
     <None Update="IgnoreAssemblies.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\Contracts\Vehicle\" />
-    <Folder Include="Core\Measurement\" />
-    <Folder Include="Core\Vmx\" />
   </ItemGroup>
 </Project>
