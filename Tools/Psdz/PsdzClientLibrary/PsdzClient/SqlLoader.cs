@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 
 namespace PsdzClient
 {
-    [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public static class SqlLoader
     {
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]

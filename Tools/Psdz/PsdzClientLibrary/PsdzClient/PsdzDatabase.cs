@@ -27,7 +27,6 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace PsdzClient
 {
-    [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public partial class PsdzDatabase : IDisposable
     {
         public const string DiagObjServiceRoot = "DiagnosticObjectServicefunctionRoot";

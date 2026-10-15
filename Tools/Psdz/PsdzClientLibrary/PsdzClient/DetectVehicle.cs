@@ -1,4 +1,4 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
@@ -23,7 +23,6 @@ using BMW.Rheingold.VehicleCommunication;
 
 namespace PsdzClient
 {
-    [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public class DetectVehicle : DetectVehicleBmwBase, IDisposable
     {
         public enum DetectResult
