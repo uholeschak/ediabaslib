@@ -4,6 +4,9 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+#if NET
+using System.Runtime.InteropServices;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -203,16 +206,57 @@ namespace PsdzRpcServer
             }
 
             using CancellationTokenSource cts = new CancellationTokenSource();
+            using ManualResetEventSlim shutdownComplete = new ManualResetEventSlim(false);
+            try
+            {
+                return await RunServerAsync(cts, shutdownComplete, licenseCheck, tcpPort, caCertPath, serverPfxPath, keepRunning).ConfigureAwait(false);
+            }
+            finally
+            {
+                shutdownComplete.Set();
+            }
+        }
+
+        private static async Task<int> RunServerAsync(CancellationTokenSource cts, ManualResetEventSlim shutdownComplete, PsdzLicenseCheck licenseCheck,
+            int? tcpPort, string caCertPath, string serverPfxPath, bool keepRunning)
+        {
+            CancellationTokenSource ctsLocal = cts;
+            Console.CancelKeyPress += (_, e) =>
+            {
+                e.Cancel = true;
+                ctsLocal.Cancel();
+            };
+
+#if NET
+            // Windows: SIGHUP = CTRL_CLOSE_EVENT, SIGTERM = CTRL_LOGOFF_EVENT / CTRL_SHUTDOWN_EVENT
+            Action<PosixSignalContext> shutdownHandler = context =>
+            {
+                context.Cancel = true;
+                if (_verbosity >= Options.VerbosityOption.Important)
+                {
+                    Console.WriteLine($"Signal {context.Signal} received, stopping server...");
+                }
+
+                try
+                {
+                    ctsLocal.Cancel();
+                    // The process is terminated after the handler returns, wait for cleanup
+                    shutdownComplete.Wait(TimeSpan.FromSeconds(4));
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Already shut down
+                }
+            };
+
+            using PosixSignalRegistration sigTermRegistration = PosixSignalRegistration.Create(PosixSignal.SIGTERM, shutdownHandler);
+            using PosixSignalRegistration sigHupRegistration = PosixSignalRegistration.Create(PosixSignal.SIGHUP, shutdownHandler);
+#endif
+
             using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, licenseCheck,
                 tcpPort, caCertPath, serverPfxPath);
             try
             {
-                CancellationTokenSource ctsLocal = cts;
-                Console.CancelKeyPress += (_, e) =>
-                {
-                    e.Cancel = true;
-                    ctsLocal.Cancel();
-                };
 
                 Console.WriteLine("Starting PsdzJsonRpcServer...");
                 if (keepRunning)
