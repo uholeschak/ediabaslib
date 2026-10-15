@@ -7,6 +7,7 @@ using log4net;
 
 namespace PsdzClient
 {
+    [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public class ClientContext : IDisposable
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ClientContext));
