@@ -75,8 +75,9 @@ namespace SourceCodeSync
         {
         };
 
-        private static readonly string[] _decompileAssemblies1 =
+        private static readonly string[] _decompileAssemblies =
         [
+            "Authoring",
             "BMW.ISPI.TRIC.ISTA.Common",
             "BMW.ISPI.TRIC.ISTA.Contracts",
             "BMW.ISPI.TRIC.ISTA.Configurations",
@@ -108,11 +109,6 @@ namespace SourceCodeSync
             "RheingoldSessionController",
             "RheingoldVehicleCommunication",
             "RheingoldxVM"
-        ];
-
-        private static readonly string[] _decompileAssemblies2 =
-        [
-            "Authoring",
         ];
 
         private static readonly Dictionary<string, string> _commonTextReplacements = new Dictionary<string, string>
@@ -386,9 +382,9 @@ namespace SourceCodeSync
 
                 List<string> searchList = new List<string> { assemblyDir };
 
-                WriteLine("Decompiling assemblies part 1...");
+                WriteLine("Decompiling assemblies ...");
                 List<string> decompileAssemblies1 = new List<string>();
-                foreach (string assemblyName in _decompileAssemblies1)
+                foreach (string assemblyName in _decompileAssemblies)
                 {
                     string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
                     decompileAssemblies1.Add(assemblyPath);
@@ -400,25 +396,10 @@ namespace SourceCodeSync
                     standardReplacements.Add(kvp.Key, kvp.Value);
                 }
 
-                string sourceSubDir1 = Path.Combine(sourceDir, "Source1");
-                if (!DecompileAssemblies(decompileAssemblies1, sourceSubDir1, overwrite, searchList, standardReplacements))
+                string sourceSubDir = Path.Combine(sourceDir, "Source");
+                if (!DecompileAssemblies(decompileAssemblies1, sourceSubDir, overwrite, searchList, standardReplacements))
                 {
                     WriteLine(Options.VerbosityOption.Error, "*** Decompile assemblies failed");
-                    return 1;
-                }
-
-                WriteLine("Decompiling assemblies part 2...");
-                List<string> decompileAssemblies2 = new List<string>();
-                foreach (string assemblyName in _decompileAssemblies2)
-                {
-                    string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
-                    decompileAssemblies2.Add(assemblyPath);
-                }
-
-                string sourceSubDir2 = Path.Combine(sourceDir, "Source2");
-                if (!DecompileAssemblies(decompileAssemblies2, sourceSubDir2, overwrite, searchList, standardReplacements))
-                {
-                    WriteLine(Options.VerbosityOption.Error, "*** Decompile assemblies part 2 failed");
                     return 1;
                 }
 
@@ -457,120 +438,89 @@ namespace SourceCodeSync
                 }
 
                 WriteLine("Dest dir: {0}", destDir);
+                WriteLine("Updating source ...");
 
-                List<string> filterSpecialDirs = new List<string>
+                _classDictNamespace = new(StringComparer.Ordinal);
+                _classDict = new(StringComparer.Ordinal);
+                _classBareDict = new(StringComparer.Ordinal);
+                _interfaceDictNamespace = new(StringComparer.Ordinal);
+                _interfaceDict = new(StringComparer.Ordinal);
+                _interfaceBareDict = new(StringComparer.Ordinal);
+                _enumDictNamespace = new(StringComparer.Ordinal);
+                _enumDict = new(StringComparer.Ordinal);
+                _enumBareDict = new(StringComparer.Ordinal);
+
+                // XML-Dateien im Zielverzeichnis aktualisieren, wenn sie im Quellverzeichnis vorhanden sind
+                string[] destXmlFiles = Directory.GetFiles(destDir, "*.xml", SearchOption.AllDirectories);
+                foreach (string destXmlFile in destXmlFiles)
                 {
-                    "Core\\Authoring"
-                };
-
-                for (int partIdx = 0; partIdx < 2; partIdx++)
-                {
-                    WriteLine("Updating source part {0} ...", partIdx + 1);
-
-                    _classDictNamespace = new(StringComparer.Ordinal);
-                    _classDict = new(StringComparer.Ordinal);
-                    _classBareDict = new(StringComparer.Ordinal);
-                    _interfaceDictNamespace = new(StringComparer.Ordinal);
-                    _interfaceDict = new(StringComparer.Ordinal);
-                    _interfaceBareDict = new(StringComparer.Ordinal);
-                    _enumDictNamespace = new(StringComparer.Ordinal);
-                    _enumDict = new(StringComparer.Ordinal);
-                    _enumBareDict = new(StringComparer.Ordinal);
-
-                    string sourceSubDir = partIdx == 0 ? sourceSubDir1 : sourceSubDir2;
-
-                    // XML-Dateien im Zielverzeichnis aktualisieren, wenn sie im Quellverzeichnis vorhanden sind
-                    string[] destXmlFiles = Directory.GetFiles(destDir, "*.xml", SearchOption.AllDirectories);
-                    foreach (string destXmlFile in destXmlFiles)
+                    string xmlFileName = Path.GetFileName(destXmlFile);
+                    string[] sourceXmlFiles = Directory.GetFiles(sourceSubDir, xmlFileName, SearchOption.AllDirectories);
+                    if (sourceXmlFiles.Length == 0)
                     {
-                        string xmlFileName = Path.GetFileName(destXmlFile);
-                        string[] sourceXmlFiles = Directory.GetFiles(sourceSubDir, xmlFileName, SearchOption.AllDirectories);
-                        if (sourceXmlFiles.Length == 0)
-                        {
-                            continue;
-                        }
-
-                        if (sourceXmlFiles.Length > 1)
-                        {
-                            WriteLine(Options.VerbosityOption.Error, "*** Multiple source XML files found for: {0}", xmlFileName);
-                            continue;
-                        }
-
-                        File.Copy(sourceXmlFiles[0], destXmlFile, true);
-                        WriteLine(Options.VerbosityOption.Info, "Updated XML file: {0}", destXmlFile);
+                        continue;
                     }
 
-                    string[] sourceFiles = Directory.GetFiles(sourceSubDir, "*.cs", SearchOption.AllDirectories);
-                    foreach (string file in sourceFiles)
+                    if (sourceXmlFiles.Length > 1)
                     {
-                        if (!GetFileSource(file))
-                        {
-                            WriteLine(Options.VerbosityOption.Error, "*** Get file source failed: {0}", file);
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "*** Multiple source XML files found for: {0}", xmlFileName);
+                        continue;
                     }
 
-                    string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
-                    foreach (string file in destFiles)
+                    File.Copy(sourceXmlFiles[0], destXmlFile, true);
+                    WriteLine(Options.VerbosityOption.Info, "Updated XML file: {0}", destXmlFile);
+                }
+
+                string[] sourceFiles = Directory.GetFiles(sourceSubDir, "*.cs", SearchOption.AllDirectories);
+                foreach (string file in sourceFiles)
+                {
+                    if (!GetFileSource(file))
                     {
-                        if (file.EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
+                        WriteLine(Options.VerbosityOption.Error, "*** Get file source failed: {0}", file);
+                    }
+                }
 
-                        string relPath = GetRelativePath(destDir, file);
-                        string relDir = Path.GetDirectoryName(relPath);
-                        if (string.IsNullOrEmpty(relDir))
-                        {
-                            continue;
-                        }
+                string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
+                foreach (string file in destFiles)
+                {
+                    if (file.EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
 
-                        bool filterDir = false;
-                        foreach (string filterPart in filterSpecialDirs)
+                    string relPath = GetRelativePath(destDir, file);
+                    string relDir = Path.GetDirectoryName(relPath);
+                    if (string.IsNullOrEmpty(relDir))
+                    {
+                        continue;
+                    }
+
+                    if (string.Compare(relDir, "PsdzClient", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        continue;
+                    }
+
+                    if (filterParts != null && filterParts.Length > 0)
+                    {
+                        bool matched = false;
+                        foreach (string filterPart in filterParts)
                         {
                             if (relDir.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
                             {
-                                filterDir = true;
+                                matched = true;
                                 break;
                             }
                         }
 
-                        if (partIdx == 0)
+                        if (!matched)
                         {
-                            if (filterDir)
-                            {
-                                continue;
-                            }
+                            continue;
                         }
-                        else
-                        {
-                            if (!filterDir)
-                            {
-                                continue;
-                            }
-                        }
+                    }
 
-                        if (filterParts != null && filterParts.Length > 0)
-                        {
-                            bool matched = false;
-                            foreach (string filterPart in filterParts)
-                            {
-                                if (relDir.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    matched = true;
-                                    break;
-                                }
-                            }
-
-                            if (!matched)
-                            {
-                                continue;
-                            }
-                        }
-
-                        if (!UpdateFile(file))
-                        {
-                            WriteLine(Options.VerbosityOption.Error, "*** Update file failed: {0}", file);
-                        }
+                    if (!UpdateFile(file))
+                    {
+                        WriteLine(Options.VerbosityOption.Error, "*** Update file failed: {0}", file);
                     }
                 }
             }
