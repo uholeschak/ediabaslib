@@ -2,10 +2,14 @@
 using ICSharpCode.Decompiler.CSharp;
 using ICSharpCode.Decompiler.CSharp.OutputVisitor;
 using ICSharpCode.Decompiler.Metadata;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Resources.Extensions;
 using System.Text;
+using System.Threading.Tasks;
 using ICSharpCode.Decompiler.TypeSystem;
 
 namespace SourceCodeSync;
@@ -47,33 +51,23 @@ public class DecompilerHelper
         };
         settings.SetLanguageVersion(LanguageVersion.CSharp7_3);
 
-        // Erstellen Sie einen Decompiler mit Einstellungen
-        CSharpDecompiler decompiler = new CSharpDecompiler(dllPath, resolver, settings);
+        // Gemeinsames Typsystem, pro Thread ein eigener Decompiler
+        using PEFile peFile = new PEFile(dllPath, PEStreamOptions.PrefetchEntireImage);
+        DecompilerTypeSystem typeSystem = new DecompilerTypeSystem(peFile, resolver, settings);
 
         if (!Directory.Exists(outputPath))
         {
             Directory.CreateDirectory(outputPath);
         }
 
-        MetadataModule module = decompiler.TypeSystem.MainModule;
-        foreach (var type in module.TopLevelTypeDefinitions)
+        MetadataModule module = typeSystem.MainModule;
+        List<ITypeDefinition> types = module.TopLevelTypeDefinitions.Where(type =>
+            type.Name != "<Module>" && !type.IsCompilerGenerated() && type.Kind != TypeKind.Delegate).ToList();
+
+        Parallel.ForEach(Partitioner.Create(types, EnumerablePartitionerOptions.NoBuffering),
+            () => new CSharpDecompiler(typeSystem, settings),
+            (type, _, decompiler) =>
         {
-            if (type.Name == "<Module>")
-            {
-                continue;
-            }
-
-
-            if (type.IsCompilerGenerated())
-            {
-                continue;
-            }
-
-            if (type.Kind == TypeKind.Delegate)
-            {
-                continue;
-            }
-
             // Erstelle Namespace-Verzeichnis
             string typeDirectory = outputPath;
             if (!noSubdirectories)
@@ -118,7 +112,8 @@ public class DecompilerHelper
             // Remove comments
             typeCode = System.Text.RegularExpressions.Regex.Replace(typeCode, @"^\s*//.*$", "", System.Text.RegularExpressions.RegexOptions.Multiline);
             File.WriteAllText(filePath, typeCode);
-        }
+            return decompiler;
+        }, _ => { });
 
         if (!noSubdirectories)
         {
