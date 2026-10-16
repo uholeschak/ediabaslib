@@ -15,6 +15,7 @@
     <Compile Remove="PsdzRpcServerStarter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MessagePack" Version="3.1.12" />
     <PackageReference Include="Nerdbank.MessagePack" Version="1.4.82" />
     <PackageReference Include="StreamJsonRpc" Version="2.25.29" />
   </ItemGroup>
