@@ -41,10 +41,6 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreNamespaces =
         [
-            @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Enums\.UserLogin$",
-            @"^BMW\.ISPI\.IstaOperation\.Contract$",
-            @"^BMW\.Rheingold\.CoreFramework\.OSS$",
-            @"^BMW\.Rheingold\.CoreFramework\.IndustrialCustomer\..*",
             @"^BMW\.Rheingold\.CoreFramework\.Contracts\.Programming\.TherapyPlan$",
             @"^BMW\.Rheingold\.FASTA\.Scheme2$",
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Models\.PortalIntegration$",
