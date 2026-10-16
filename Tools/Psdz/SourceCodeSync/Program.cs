@@ -380,11 +380,11 @@ namespace SourceCodeSync
                 List<string> searchList = new List<string> { assemblyDir };
 
                 WriteLine("Decompiling assemblies ...");
-                List<string> decompileAssemblies1 = new List<string>();
+                List<string> decompileAssemblies = new List<string>();
                 foreach (string assemblyName in _decompileAssemblies)
                 {
                     string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
-                    decompileAssemblies1.Add(assemblyPath);
+                    decompileAssemblies.Add(assemblyPath);
                 }
 
                 Dictionary<string, string> standardReplacements = new Dictionary<string, string>(_commonTextReplacements);
@@ -394,7 +394,7 @@ namespace SourceCodeSync
                 }
 
                 string sourceSubDir = Path.Combine(sourceDir, "Source");
-                if (!DecompileAssemblies(decompileAssemblies1, sourceSubDir, overwrite, searchList, standardReplacements))
+                if (!DecompileAssemblies(decompileAssemblies, sourceSubDir, overwrite, searchList, standardReplacements))
                 {
                     WriteLine(Options.VerbosityOption.Error, "*** Decompile assemblies failed");
                     return 1;
