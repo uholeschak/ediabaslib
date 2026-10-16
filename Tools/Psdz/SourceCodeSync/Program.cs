@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -205,41 +205,34 @@ namespace SourceCodeSync
 
         static Options.VerbosityOption _verbosity = Options.VerbosityOption.Important;
         static bool _progressDisplayed;
-        static readonly object _consoleLock = new object();
 
         // Beendet ggf. die Fortschrittszeile, bevor normale Ausgaben erfolgen
         static void FinishProgress()
         {
-            lock (_consoleLock)
+            if (_progressDisplayed)
             {
-                if (_progressDisplayed)
-                {
-                    Console.WriteLine();
-                    _progressDisplayed = false;
-                }
+                Console.WriteLine();
+                _progressDisplayed = false;
             }
         }
 
         // Zentrale Ausgabemethode, schlie�t eine offene Fortschrittszeile ab
         public static void WriteLine(string format = null, params object[] args)
         {
-            lock (_consoleLock)
+            FinishProgress();
+            if (format == null)
             {
-                FinishProgress();
-                if (format == null)
-                {
-                    Console.WriteLine();
-                    return;
-                }
-
-                if (args is { Length: > 0 })
-                {
-                    Console.WriteLine(format, args);
-                    return;
-                }
-
-                Console.WriteLine(format);
+                Console.WriteLine();
+                return;
             }
+
+            if (args is { Length: > 0 })
+            {
+                Console.WriteLine(format, args);
+                return;
+            }
+
+            Console.WriteLine(format);
         }
 
         // Ausgabemethode mit Verbosity-Pr�fung
@@ -261,11 +254,8 @@ namespace SourceCodeSync
                 return;
             }
 
-            lock (_consoleLock)
-            {
-                Console.Write("\r{0,3}% ({1}/{2})", current * 100 / total, current, total);
-                _progressDisplayed = true;
-            }
+            Console.Write("\r{0,3}% ({1}/{2})", current * 100 / total, current, total);
+            _progressDisplayed = true;
         }
 
         static int Main(string[] args)
@@ -549,15 +539,35 @@ namespace SourceCodeSync
             int total = decompileAssemblies.Count;
             int current = 0;
             ParallelOptions parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+            ConcurrentQueue<string> messages = new ConcurrentQueue<string>();
 
-            Parallel.ForEach(Partitioner.Create(decompileAssemblies, EnumerablePartitionerOptions.NoBuffering), parallelOptions, assemblyPath =>
+            // Ausgaben der Worker-Threads werden vom Hauptthread ausgegeben
+            void EnqueueLine(Options.VerbosityOption verbosity, string format, params object[] args)
+            {
+                if (_verbosity < verbosity)
+                {
+                    return;
+                }
+
+                messages.Enqueue(string.Format(format, args));
+            }
+
+            void FlushMessages()
+            {
+                while (messages.TryDequeue(out string message))
+                {
+                    WriteLine(message);
+                }
+            }
+
+            Task decompileTask = Task.Run(() => Parallel.ForEach(Partitioner.Create(decompileAssemblies, EnumerablePartitionerOptions.NoBuffering), parallelOptions, assemblyPath =>
             {
                 if (File.Exists(assemblyPath))
                 {
                     string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
                     if (string.IsNullOrEmpty(assemblyName))
                     {
-                        WriteLine(Options.VerbosityOption.Error, "*** Invalid assembly name: {0}", assemblyPath);
+                        EnqueueLine(Options.VerbosityOption.Error, "*** Invalid assembly name: {0}", assemblyPath);
                         Interlocked.Exchange(ref result, 0);
                         Interlocked.Increment(ref current);
                         return;
@@ -575,7 +585,7 @@ namespace SourceCodeSync
                             }
                             else
                             {
-                                WriteLine(Options.VerbosityOption.Info, "Source directory already exists, skipping decompilation: {0}", outputPath);
+                                EnqueueLine(Options.VerbosityOption.Info, "Source directory already exists, skipping decompilation: {0}", outputPath);
                                 Interlocked.Increment(ref current);
                                 return;
                             }
@@ -592,38 +602,53 @@ namespace SourceCodeSync
                             }
                             else
                             {
-                                WriteLine(Options.VerbosityOption.Info, "Source file already exists, skipping decompilation: {0}", outputFile);
+                                EnqueueLine(Options.VerbosityOption.Info, "Source file already exists, skipping decompilation: {0}", outputFile);
                                 Interlocked.Increment(ref current);
                                 return;
                             }
                         }
                     }
 
-                    WriteLine(Options.VerbosityOption.Info, "Decompiling assembly: {0}", assemblyPath);
+                    EnqueueLine(Options.VerbosityOption.Info, "Decompiling assembly: {0}", assemblyPath);
 
                     try
                     {
                         if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, textReplacements, textInsertions, noSubdirectories))
                         {
                             Interlocked.Exchange(ref result, 0);
-                            WriteLine(Options.VerbosityOption.Error, "*** Decompilation failed for assembly: {0}", assemblyPath);
+                            EnqueueLine(Options.VerbosityOption.Error, "*** Decompilation failed for assembly: {0}", assemblyPath);
                         }
                     }
                     catch (Exception ex)
                     {
                         Interlocked.Exchange(ref result, 0);
-                        WriteLine(Options.VerbosityOption.Error, "*** Decompilation failed for assembly: {0}, Exception: {1}", assemblyPath, ex.Message);
+                        EnqueueLine(Options.VerbosityOption.Error, "*** Decompilation failed for assembly: {0}, Exception: {1}", assemblyPath, ex.Message);
                     }
                 }
                 else
                 {
                     Interlocked.Exchange(ref result, 0);
-                    WriteLine(Options.VerbosityOption.Error, "*** Assembly not found for decompilation: {0}", assemblyPath);
+                    EnqueueLine(Options.VerbosityOption.Error, "*** Assembly not found for decompilation: {0}", assemblyPath);
                 }
 
-                int done = Interlocked.Increment(ref current);
-                WriteProgress(Options.VerbosityOption.Important, done, total);
-            });
+                Interlocked.Increment(ref current);
+            }));
+
+            int lastProgress = -1;
+            bool finished;
+            do
+            {
+                finished = decompileTask.Wait(100);
+                FlushMessages();
+
+                int done = Volatile.Read(ref current);
+                if (done != lastProgress)
+                {
+                    lastProgress = done;
+                    WriteProgress(Options.VerbosityOption.Important, done, total);
+                }
+            }
+            while (!finished);
 
             FinishProgress();
 
