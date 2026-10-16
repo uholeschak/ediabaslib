@@ -41,10 +41,6 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreNamespaces =
         [
-            @"^BMW\.Rheingold\.CoreFramework\.Contracts\.Programming\.TherapyPlan$",
-            @"^BMW\.Rheingold\.FASTA\.Scheme2$",
-            @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Models\.PortalIntegration$",
-            @"^BMW\.Rheingold\.InfoProvider\.(SWTOnline|Tric|Broker|igDom|service|Current|SCC|NOP|EDGE|Properties).*",
         ];
 
         private static readonly string[] _ignoreFolders =
