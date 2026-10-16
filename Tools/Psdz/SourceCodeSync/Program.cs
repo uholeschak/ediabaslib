@@ -51,6 +51,11 @@ namespace SourceCodeSync
             @"^BMW\.Rheingold\.InfoProvider\.(SWTOnline|Tric|Broker|igDom|service|Current|SCC|NOP|EDGE|Properties).*",
         ];
 
+        private static readonly string[] _ignoreFolders =
+        [
+            "PsdzClient"
+        ];
+
         private static readonly Regex[] _compiledIgnoreNamespaces = _ignoreNamespaces
                 .Select(pattern => new Regex(pattern, RegexOptions.Compiled))
                 .ToArray();
@@ -495,7 +500,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (string.Compare(relDir, "PsdzClient", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (_ignoreFolders.Contains(relDir, StringComparer.OrdinalIgnoreCase))
                     {
                         continue;
                     }
