@@ -227,26 +227,32 @@ namespace PsdzRpcServer
                 ctsLocal.Cancel();
             };
 
-#if NET
-            // Windows: SIGHUP = CTRL_CLOSE_EVENT, SIGTERM = CTRL_LOGOFF_EVENT / CTRL_SHUTDOWN_EVENT
-            Action<PosixSignalContext> shutdownHandler = context =>
+            // The process is terminated after the shutdown handlers return, wait for cleanup
+            void StopAndWaitForCleanup(string reason)
             {
-                context.Cancel = true;
                 if (_verbosity >= Options.VerbosityOption.Important)
                 {
-                    Console.WriteLine($"Signal {context.Signal} received, stopping server...");
+                    Console.WriteLine($"{reason}, stopping server...");
                 }
 
                 try
                 {
                     ctsLocal.Cancel();
-                    // The process is terminated after the handler returns, wait for cleanup
                     shutdownComplete.Wait(TimeSpan.FromSeconds(4));
                 }
                 catch (ObjectDisposedException)
                 {
                     // Already shut down
                 }
+            }
+
+#if NET
+            // Windows: SIGHUP = CTRL_CLOSE_EVENT, SIGTERM = CTRL_LOGOFF_EVENT / CTRL_SHUTDOWN_EVENT
+            // SIGTERM is only a fallback, if the ShutdownBlocker is active (user32 loaded) WM_ENDSESSION is used instead
+            Action<PosixSignalContext> shutdownHandler = context =>
+            {
+                context.Cancel = true;
+                StopAndWaitForCleanup($"Signal {context.Signal} received");
             };
 
             using PosixSignalRegistration sigTermRegistration = PosixSignalRegistration.Create(PosixSignal.SIGTERM, shutdownHandler);
@@ -255,6 +261,9 @@ namespace PsdzRpcServer
 
             using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, licenseCheck,
                 tcpPort, caCertPath, serverPfxPath);
+            // Loading user32 disables CTRL_LOGOFF/CTRL_SHUTDOWN console events, WM_ENDSESSION is used instead
+            using ShutdownBlocker shutdownBlocker = new ShutdownBlocker(() => server.ClientCount,
+                () => StopAndWaitForCleanup("Windows session ending"));
             try
             {
 
