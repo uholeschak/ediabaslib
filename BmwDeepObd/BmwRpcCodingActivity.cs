@@ -2620,7 +2620,7 @@ namespace BmwDeepObd
 
                     try
                     {
-                        if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
+                        if (_psdzRpcClient?.RpcService != null && !serviceArgs.LoggingInitialized)
                         {
                             string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzAppClient.log");
 
