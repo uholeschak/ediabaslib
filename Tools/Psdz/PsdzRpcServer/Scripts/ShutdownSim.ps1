@@ -33,7 +33,10 @@ public static class ShutdownSim
 "@
 
 $hwnd = [ShutdownSim]::Find()
-if ($hwnd -eq [IntPtr]::Zero) { "ShutdownBlocker window not found"; return }
+if ($hwnd -eq [IntPtr]::Zero)
+{
+    "ShutdownBlocker window not found"; return 
+}
 "Window: 0x{0:X}" -f $hwnd.ToInt64()
 "Block reason: " + [ShutdownSim]::Reason($hwnd)
 
