@@ -1,3 +1,10 @@
+param(
+    # Send WM_ENDSESSION after WM_QUERYENDSESSION, this stops the server
+    [switch]$EndSession
+)
+
+if (-not ('ShutdownSim' -as [type]))
+{
 Add-Type @"
 using System;
 using System.Text;
@@ -31,8 +38,9 @@ public static class ShutdownSim
     }
 }
 "@
+}
 
-$hwnd = [ShutdownSim]::Find()
+$hwnd
 if ($hwnd -eq [IntPtr]::Zero)
 {
     "ShutdownBlocker window not found"; return 
@@ -45,4 +53,8 @@ $r = [ShutdownSim]::SendMessage($hwnd, 0x11, [IntPtr]::Zero, [IntPtr]::Zero)
 "WM_QUERYENDSESSION result: $r"
 
 # WM_ENDSESSION (0x16) with wParam=1: session ends -> server stops
-# [ShutdownSim]::SendMessage($hwnd, 0x16, [IntPtr]1, [IntPtr]::Zero)
+if ($EndSession)
+{
+    [void][ShutdownSim]::SendMessage($hwnd, 0x16, [IntPtr]1, [IntPtr]::Zero)
+    "WM_ENDSESSION sent"
+}
