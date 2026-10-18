@@ -1562,7 +1562,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_psdzRpcClient.RpcService == null)
+                if (_psdzRpcClient?.RpcService == null)
                 {
                     return false;
                 }
