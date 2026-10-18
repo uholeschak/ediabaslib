@@ -179,7 +179,12 @@ namespace PsdzRpcServer
         }
         private void OnClientAccepted(Stream stream, IDisposable owner = null)
         {
-            _ = HandleClientAsync(stream, owner);
+            _ = HandleClientAsync(stream, owner).ContinueWith(t =>
+            {
+                _output?.WriteLine($"Client handler failed: {t.Exception?.GetBaseException()}");
+                owner?.Dispose();
+                stream.Dispose();
+            }, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         private async Task HandleClientAsync(Stream stream, IDisposable owner = null)
