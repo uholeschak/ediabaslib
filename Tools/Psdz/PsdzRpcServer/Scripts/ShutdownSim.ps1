@@ -40,7 +40,7 @@ public static class ShutdownSim
 "@
 }
 
-$hwnd
+$hwnd = [ShutdownSim]::Find()
 if ($hwnd -eq [IntPtr]::Zero)
 {
     "ShutdownBlocker window not found"; return 
