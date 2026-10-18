@@ -478,7 +478,7 @@ public class BmwRpcCoding : IDisposable
 
                 try
                 {
-                    if (_psdzRpcClient.RpcService != null && !serviceArgs.LoggingInitialized)
+                    if (_psdzRpcClient?.RpcService != null && !serviceArgs.LoggingInitialized)
                     {
                         string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
                         string logFile = Path.Combine(serviceArgs.HostLogDir, $"PsdzAppClient-{dateString}.log");
