@@ -55,6 +55,12 @@ $r = [ShutdownSim]::SendMessage($hwnd, 0x11, [IntPtr]::Zero, [IntPtr]::Zero)
 # WM_ENDSESSION (0x16) with wParam=1: session ends -> server stops
 if ($EndSession)
 {
+    if ($r -eq [IntPtr]::Zero)
+    {
+        "Shutdown blocked, WM_ENDSESSION not sent"
+        return
+    }
+
     [void][ShutdownSim]::SendMessage($hwnd, 0x16, [IntPtr]1, [IntPtr]::Zero)
     "WM_ENDSESSION sent"
 }
