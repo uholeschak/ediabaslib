@@ -11,18 +11,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Psdz\PsdzClientLibrary\PreserveSourceAttribute.cs" Link="PreserveSourceAttribute.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\Encryption.cs" Link="Encryption.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\EventIdCatalog.cs" Link="EventIdCatalog.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\EventKind.cs" Link="EventKind.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\Extensions.cs" Link="Extensions.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\ICSEventId.cs" Link="ICSEventId.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\Logger.cs" Link="Logger.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\LogLevel.cs" Link="LogLevel.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\MachineIdentifier.cs" Link="MachineIdentifier.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\SecureStringHelper.cs" Link="SecureStringHelper.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\TokenObject.cs" Link="TokenObject.cs" />
-    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\WMIInfo.cs" Link="WMIInfo.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServiceSec\Logging\Extensions.cs" Link="Extensions.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Logging\EventKind.cs" Link="EventKind.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Logging\ICSEventId.cs" Link="ICSEventId.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Logging\Logger.cs" Link="Logger.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Logging\LogLevel.cs" Link="LogLevel.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Models\Helper\Encryption.cs" Link="Encryption.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Models\Helper\MachineIdentifier.cs" Link="MachineIdentifier.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Models\Helper\SecureStringHelper.cs" Link="SecureStringHelper.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Models\Helper\TokenObject.cs" Link="TokenObject.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Models\Helper\WMIInfo.cs" Link="WMIInfo.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\BMW\iLean\CommonServices\Properties\EventIdCatalog.cs" Link="EventIdCatalog.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\PsdzClient\PreserveSourceAttribute.cs" Link="PreserveSourceAttribute.cs" />
   </ItemGroup>
 
   <ItemGroup>
