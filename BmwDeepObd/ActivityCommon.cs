@@ -15070,6 +15070,11 @@ using System.Threading;"
 
         public bool DownloadSpeedyPicsThread(string url, string targetFolder, DownloadSpeedyPicsThreadFinishDelegate handler)
         {
+            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(targetFolder))
+            {
+                return false;
+            }
+
             if (IsDownloadSpeedyPicsJobRunning())
             {
                 return false;
@@ -15126,6 +15131,29 @@ using System.Threading;"
                                 using (FileStream fsTemp = File.Create(tempFileName))
                                 {
                                     responseDownloadResult.CopyTo(fsTemp);
+                                }
+                            }
+
+                            for (int retry = 0; ; retry++)
+                            {
+                                try
+                                {
+                                    if (Directory.Exists(targetFolder))
+                                    {
+                                        Directory.Delete(targetFolder, true);
+                                    }
+
+                                    Directory.CreateDirectory(targetFolder);
+                                    break;
+                                }
+                                catch (Exception)
+                                {
+                                    if (retry > FileIoRetries)
+                                    {
+                                        throw;
+                                    }
+
+                                    Thread.Sleep(FileIoRetryDelay);
                                 }
                             }
 
