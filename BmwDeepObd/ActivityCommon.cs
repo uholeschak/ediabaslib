@@ -783,7 +783,7 @@ namespace BmwDeepObd
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate bool InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
-        public delegate void DownloadSpeedyPicsThreadFinishDelegate(bool result, bool aborted);
+        public delegate void DownloadSpeedyPicsThreadFinishDelegate(bool result, bool aborted = false);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
         public delegate void SendEnetBroadacstDelegate(int count);
@@ -15068,7 +15068,7 @@ using System.Threading;"
             return false;
         }
 
-        public bool DownloadSpeedyPicsThread(DownloadSpeedyPicsThreadFinishDelegate handler)
+        public bool DownloadSpeedyPicsThread(string url, DownloadSpeedyPicsThreadFinishDelegate handler)
         {
             if (IsDownloadSpeedyPicsJobRunning())
             {
@@ -15089,7 +15089,7 @@ using System.Threading;"
             }
 
             CustomProgressDialog progress = new CustomProgressDialog(_context);
-            progress.SetMessage(_context.GetString(Resource.String.send_trace_file));
+            progress.SetMessage(_context.GetString(Resource.String.downloading_file));
             progress.ButtonAbort.Enabled = false;
             progress.Show();
             SetLock(LockTypeCommunication);
@@ -15099,7 +15099,47 @@ using System.Threading;"
             {
                 try
                 {
+                    _downloadSpeedyPicsHttpClient.DefaultRequestHeaders.Authorization = null;
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _downloadSpeedyPicsHttpClient.GetAsync(url);
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
 
+                        if (progress != null)
+                        {
+                            progress.ButtonAbort.Enabled = true;
+                        }
+                    });
+
+                    HttpResponseMessage responseDownload = taskDownload.Result;
+                    bool success = responseDownload.IsSuccessStatusCode;
+                    if (success)
+                    {
+                        byte[] responseDownloadResult = responseDownload.Content.ReadAsByteArrayAsync().Result;
+                    }
+                    else
+                    {
+                        _activity?.RunOnUiThread(() =>
+                        {
+                            if (_disposed)
+                            {
+                                return;
+                            }
+
+                            if (progress != null)
+                            {
+                                progress.Dismiss();
+                                progress = null;
+                                SetLock(LockType.None);
+                            }
+                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_warning);
+                        });
+                    }
+
+                    handler?.Invoke(success);
                 }
                 catch (Exception ex)
                 {
