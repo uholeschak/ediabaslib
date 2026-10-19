@@ -15068,7 +15068,7 @@ using System.Threading;"
             return false;
         }
 
-        public bool DownloadSpeedyPicsThread(string url, DownloadSpeedyPicsThreadFinishDelegate handler)
+        public bool DownloadSpeedyPicsThread(string url, string targetFolder, DownloadSpeedyPicsThreadFinishDelegate handler)
         {
             if (IsDownloadSpeedyPicsJobRunning())
             {
@@ -15095,7 +15095,7 @@ using System.Threading;"
             SetLock(LockTypeCommunication);
             SetPreferredNetworkInterface();
 
-            Thread downloadThread = new Thread(() =>
+            _downloadSpeedyPicsThread = new Thread(() =>
             {
                 try
                 {
@@ -15118,7 +15118,33 @@ using System.Threading;"
                     bool success = responseDownload.IsSuccessStatusCode;
                     if (success)
                     {
-                        byte[] responseDownloadResult = responseDownload.Content.ReadAsByteArrayAsync().Result;
+                        string tempFileName = Path.GetTempFileName();
+                        try
+                        {
+                            using (Stream responseDownloadResult = responseDownload.Content.ReadAsStreamAsync().Result)
+                            {
+                                using (FileStream fsTemp = File.Create(tempFileName))
+                                {
+                                    responseDownloadResult.CopyTo(fsTemp);
+                                }
+                            }
+
+                            ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null, null);
+                        }
+                        finally
+                        {
+                            try
+                            {
+                                if (File.Exists(tempFileName))
+                                {
+                                    File.Delete(tempFileName);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
                     }
                     else
                     {
@@ -15166,7 +15192,7 @@ using System.Threading;"
                     });
                 }
             });
-            downloadThread.Start();
+            _downloadSpeedyPicsThread.Start();
 
             return true;
         }
