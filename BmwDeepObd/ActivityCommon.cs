@@ -783,7 +783,7 @@ namespace BmwDeepObd
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate bool InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
-        public delegate void DownloadSpeedyPicsThreadFinishDelegate(bool result, bool aborted = false);
+        public delegate void DownloadConfigThreadFinishDelegate(bool result, bool aborted = false);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
         public delegate void SendEnetBroadacstDelegate(int count);
@@ -1147,7 +1147,7 @@ namespace BmwDeepObd
         private Thread _ecuFuncReaderThread;
         private Thread _copyDocumentThread;
         private Thread _deleteDocumentThread;
-        private Thread _downloadSpeedyPicsThread;
+        private Thread _downloadConfigThread;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -1173,7 +1173,7 @@ namespace BmwDeepObd
         private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
         private HttpClient _updateHttpClient;
-        private HttpClient _downloadSpeedyPicsHttpClient;
+        private HttpClient _downloadConfigHttpClient;
         private bool _updateCheckActive;
         private bool _translateLockAquired;
         private string _yandexCloudIamToken;
@@ -1916,9 +1916,9 @@ namespace BmwDeepObd
                         _deleteDocumentThread?.Join();
                     }
 
-                    if (IsDownloadSpeedyPicsJobRunning())
+                    if (IsDownloadConfigJobRunning())
                     {
-                        _downloadSpeedyPicsThread?.Join();
+                        _downloadConfigThread?.Join();
                     }
 
                     if (_btUpdateHandler != null)
@@ -1981,18 +1981,18 @@ namespace BmwDeepObd
                         _updateHttpClient = null;
                     }
 
-                    if (_downloadSpeedyPicsHttpClient != null)
+                    if (_downloadConfigHttpClient != null)
                     {
                         try
                         {
-                            _downloadSpeedyPicsHttpClient.CancelPendingRequests();
-                            _downloadSpeedyPicsHttpClient.Dispose();
+                            _downloadConfigHttpClient.CancelPendingRequests();
+                            _downloadConfigHttpClient.Dispose();
                         }
                         catch (Exception)
                         {
                             // ignored
                         }
-                        _downloadSpeedyPicsHttpClient = null;
+                        _downloadConfigHttpClient = null;
                     }
 
                     UnRegisterInternetCellularCallback();
@@ -15068,21 +15068,21 @@ using System.Threading;"
             return false;
         }
 
-        public bool DownloadSpeedyPicsThread(string url, string targetFolder, DownloadSpeedyPicsThreadFinishDelegate handler)
+        public bool DownloadConfigThread(string url, string targetFolder, DownloadConfigThreadFinishDelegate handler)
         {
             if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(targetFolder))
             {
                 return false;
             }
 
-            if (IsDownloadSpeedyPicsJobRunning())
+            if (IsDownloadConfigJobRunning())
             {
                 return false;
             }
 
-            if (_downloadSpeedyPicsHttpClient == null)
+            if (_downloadConfigHttpClient == null)
             {
-                _downloadSpeedyPicsHttpClient = new HttpClient(new HttpClientHandler()
+                _downloadConfigHttpClient = new HttpClient(new HttpClientHandler()
                 {
                     SslProtocols = DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true,
@@ -15100,12 +15100,12 @@ using System.Threading;"
             SetLock(LockTypeCommunication);
             SetPreferredNetworkInterface();
 
-            _downloadSpeedyPicsThread = new Thread(() =>
+            _downloadConfigThread = new Thread(() =>
             {
                 try
                 {
-                    _downloadSpeedyPicsHttpClient.DefaultRequestHeaders.Authorization = null;
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _downloadSpeedyPicsHttpClient.GetAsync(url);
+                    _downloadConfigHttpClient.DefaultRequestHeaders.Authorization = null;
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _downloadConfigHttpClient.GetAsync(url);
                     _activity?.RunOnUiThread(() =>
                     {
                         if (_disposed)
@@ -15220,22 +15220,22 @@ using System.Threading;"
                     });
                 }
             });
-            _downloadSpeedyPicsThread.Start();
+            _downloadConfigThread.Start();
 
             return true;
         }
 
-        public bool IsDownloadSpeedyPicsJobRunning()
+        public bool IsDownloadConfigJobRunning()
         {
-            if (_downloadSpeedyPicsThread == null)
+            if (_downloadConfigThread == null)
             {
                 return false;
             }
-            if (_downloadSpeedyPicsThread.IsAlive)
+            if (_downloadConfigThread.IsAlive)
             {
                 return true;
             }
-            _downloadSpeedyPicsThread = null;
+            _downloadConfigThread = null;
             return false;
         }
 
