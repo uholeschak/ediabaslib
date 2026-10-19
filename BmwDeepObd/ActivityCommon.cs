@@ -15087,6 +15087,47 @@ using System.Threading;"
                     Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
                 };
             }
+
+            CustomProgressDialog progress = new CustomProgressDialog(_context);
+            progress.SetMessage(_context.GetString(Resource.String.send_trace_file));
+            progress.ButtonAbort.Enabled = false;
+            progress.Show();
+            SetLock(LockTypeCommunication);
+            SetPreferredNetworkInterface();
+
+            Thread downloadThread = new Thread(() =>
+            {
+                try
+                {
+
+                }
+                catch (Exception ex)
+                {
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress = null;
+                            SetLock(LockType.None);
+                        }
+
+                        bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
+                        if (!cancelled)
+                        {
+                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_warning);
+                        }
+
+                        handler?.Invoke(false, cancelled);
+                    });
+                }
+            });
+            downloadThread.Start();
+
             return true;
         }
 
