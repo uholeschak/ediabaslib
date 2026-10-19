@@ -121,6 +121,7 @@ namespace BmwDeepObd
         private Button _buttonStorageCopyTreeToApp;
         private Button _buttonStorageCopyTreeFromApp;
         private Button _buttonStorageDelTreeFromApp;
+        private Button _buttonDownloadSpeedyPicsConfig;
         private Button _buttonStorageLocation;
         private TextView _textViewCaptionNotifications;
         private Button _buttonManageNotifications;
@@ -360,6 +361,17 @@ namespace BmwDeepObd
                 }
 
                 SelectDeleteAppDir();
+            };
+
+            _buttonDownloadSpeedyPicsConfig = FindViewById<Button>(Resource.Id.buttonDownloadSpeedyPicsConfig);
+            _buttonDownloadSpeedyPicsConfig.Click += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                //DownloadSpeedyPicsConfig();
             };
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);

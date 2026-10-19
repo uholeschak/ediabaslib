@@ -516,6 +516,8 @@
   <string name="settings_storage_copy_tree_to_app">Копировать каталог в приложение</string>
   <string name="settings_storage_copy_tree_from_app">Копировать файл или каталог из приложения</string>
   <string name="settings_storage_del_tree_from_app">Удалить файл или каталог из приложения</string>
+  <!--Translate-->
+  <string name="settings_download_speedy_pics_config">Загрузить конфигурацию Speedy-Pics</string>
   <string name="settings_caption_storage">Носитель памяти</string>
   <string name="settings_caption_notifications">Уведомления</string>
   <string name="settings_notification_settings">Настройки уведомлений</string>
