@@ -783,6 +783,7 @@ namespace BmwDeepObd
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate bool InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
+        public delegate void DownloadSpeedyPicsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
         public delegate void SendEnetBroadacstDelegate(int count);
@@ -1146,6 +1147,7 @@ namespace BmwDeepObd
         private Thread _ecuFuncReaderThread;
         private Thread _copyDocumentThread;
         private Thread _deleteDocumentThread;
+        private Thread _downloadSpeedyPicsThread;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -1171,6 +1173,7 @@ namespace BmwDeepObd
         private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
         private HttpClient _updateHttpClient;
+        private HttpClient _downloadSpeedyPicsHttpClient;
         private bool _updateCheckActive;
         private bool _translateLockAquired;
         private string _yandexCloudIamToken;
@@ -1913,6 +1916,11 @@ namespace BmwDeepObd
                         _deleteDocumentThread?.Join();
                     }
 
+                    if (IsDownloadSpeedyPicsJobRunning())
+                    {
+                        _downloadSpeedyPicsThread?.Join();
+                    }
+
                     if (_btUpdateHandler != null)
                     {
                         try
@@ -1971,6 +1979,20 @@ namespace BmwDeepObd
                             // ignored
                         }
                         _updateHttpClient = null;
+                    }
+
+                    if (_downloadSpeedyPicsHttpClient != null)
+                    {
+                        try
+                        {
+                            _downloadSpeedyPicsHttpClient.CancelPendingRequests();
+                            _downloadSpeedyPicsHttpClient.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        _downloadSpeedyPicsHttpClient = null;
                     }
 
                     UnRegisterInternetCellularCallback();
@@ -15043,6 +15065,42 @@ using System.Threading;"
                 return true;
             }
             _deleteDocumentThread = null;
+            return false;
+        }
+
+        public bool DownloadSpeedyPicsThread(DownloadSpeedyPicsThreadFinishDelegate handler)
+        {
+            if (IsDownloadSpeedyPicsJobRunning())
+            {
+                return false;
+            }
+
+            if (_downloadSpeedyPicsHttpClient == null)
+            {
+                _downloadSpeedyPicsHttpClient = new HttpClient(new HttpClientHandler()
+                {
+                    SslProtocols = DefaultSslProtocols,
+                    ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true,
+                    Proxy = GetProxySettings()
+                })
+                {
+                    Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
+                };
+            }
+            return true;
+        }
+
+        public bool IsDownloadSpeedyPicsJobRunning()
+        {
+            if (_downloadSpeedyPicsThread == null)
+            {
+                return false;
+            }
+            if (_downloadSpeedyPicsThread.IsAlive)
+            {
+                return true;
+            }
+            _downloadSpeedyPicsThread = null;
             return false;
         }
 
