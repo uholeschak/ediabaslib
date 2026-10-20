@@ -419,8 +419,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <Button
-                android:text="@string/settings_download_speedy_pics_config"
-                android:id="@+id/buttonDownloadSpeedyPicsConfig"
+                android:text="@string/settings_download_config_files"
+                android:id="@+id/buttonDownloadConfigFiles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
