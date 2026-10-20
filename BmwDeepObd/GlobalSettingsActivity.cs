@@ -371,7 +371,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                //DownloadConfigFiles();
+                DownloadConfigFiles();
             };
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
@@ -1134,6 +1134,23 @@ namespace BmwDeepObd
             _checkBoxHciSnoopLog.Text = string.Format(GetString(Resource.String.settings_hci_snoop_log), logFileName ?? "-");
 
             _checkBoxShowOnlyRelevantErrors.Visibility = _checkBoxUseBmwDatabase.Checked ? ViewStates.Visible : ViewStates.Gone;
+        }
+
+        private void DownloadConfigFiles()
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            _activityCommon.DownloadConfigThread(@"http://download.speedy-pics.de/uploads/android/DeepOBD.zip", "",
+                (result, aborted) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                });
         }
 
         private void SelectMedia()
