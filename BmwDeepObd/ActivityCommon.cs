@@ -783,6 +783,7 @@ namespace BmwDeepObd
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate bool InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
+        public delegate void DownloadConfigThreadFinishDelegate(bool result, bool aborted = false);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
         public delegate void SendEnetBroadacstDelegate(int count);
@@ -1146,6 +1147,7 @@ namespace BmwDeepObd
         private Thread _ecuFuncReaderThread;
         private Thread _copyDocumentThread;
         private Thread _deleteDocumentThread;
+        private Thread _downloadConfigThread;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -1171,6 +1173,7 @@ namespace BmwDeepObd
         private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
         private HttpClient _updateHttpClient;
+        private HttpClient _downloadConfigHttpClient;
         private bool _updateCheckActive;
         private bool _translateLockAquired;
         private string _yandexCloudIamToken;
@@ -1913,6 +1916,11 @@ namespace BmwDeepObd
                         _deleteDocumentThread?.Join();
                     }
 
+                    if (IsDownloadConfigJobRunning())
+                    {
+                        _downloadConfigThread?.Join();
+                    }
+
                     if (_btUpdateHandler != null)
                     {
                         try
@@ -1971,6 +1979,20 @@ namespace BmwDeepObd
                             // ignored
                         }
                         _updateHttpClient = null;
+                    }
+
+                    if (_downloadConfigHttpClient != null)
+                    {
+                        try
+                        {
+                            _downloadConfigHttpClient.CancelPendingRequests();
+                            _downloadConfigHttpClient.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        _downloadConfigHttpClient = null;
                     }
 
                     UnRegisterInternetCellularCallback();
@@ -15043,6 +15065,177 @@ using System.Threading;"
                 return true;
             }
             _deleteDocumentThread = null;
+            return false;
+        }
+
+        public bool DownloadConfigThread(string url, string targetFolder, DownloadConfigThreadFinishDelegate handler)
+        {
+            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(targetFolder))
+            {
+                return false;
+            }
+
+            if (IsDownloadConfigJobRunning())
+            {
+                return false;
+            }
+
+            if (_downloadConfigHttpClient == null)
+            {
+                _downloadConfigHttpClient = new HttpClient(new HttpClientHandler()
+                {
+                    SslProtocols = DefaultSslProtocols,
+                    ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true,
+                    Proxy = GetProxySettings()
+                })
+                {
+                    Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
+                };
+            }
+
+            CustomProgressDialog progress = new CustomProgressDialog(_context);
+            progress.SetMessage(_context.GetString(Resource.String.downloading_file));
+            progress.ButtonAbort.Enabled = false;
+            progress.Show();
+            SetLock(LockTypeCommunication);
+            SetPreferredNetworkInterface();
+
+            _downloadConfigThread = new Thread(() =>
+            {
+                try
+                {
+                    _downloadConfigHttpClient.DefaultRequestHeaders.Authorization = null;
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _downloadConfigHttpClient.GetAsync(url);
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        if (progress != null)
+                        {
+                            progress.ButtonAbort.Enabled = true;
+                        }
+                    });
+
+                    HttpResponseMessage responseDownload = taskDownload.Result;
+                    bool success = responseDownload.IsSuccessStatusCode;
+                    if (success)
+                    {
+                        string tempFileName = Path.GetTempFileName();
+                        try
+                        {
+                            using (Stream responseDownloadResult = responseDownload.Content.ReadAsStreamAsync().Result)
+                            {
+                                using (FileStream fsTemp = File.Create(tempFileName))
+                                {
+                                    responseDownloadResult.CopyTo(fsTemp);
+                                }
+                            }
+
+                            for (int retry = 0; ; retry++)
+                            {
+                                try
+                                {
+                                    if (Directory.Exists(targetFolder))
+                                    {
+                                        Directory.Delete(targetFolder, true);
+                                    }
+
+                                    Directory.CreateDirectory(targetFolder);
+                                    break;
+                                }
+                                catch (Exception)
+                                {
+                                    if (retry > FileIoRetries)
+                                    {
+                                        throw;
+                                    }
+
+                                    Thread.Sleep(FileIoRetryDelay);
+                                }
+                            }
+
+                            ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null, null);
+                        }
+                        finally
+                        {
+                            try
+                            {
+                                if (File.Exists(tempFileName))
+                                {
+                                    File.Delete(tempFileName);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _activity?.RunOnUiThread(() =>
+                        {
+                            if (_disposed)
+                            {
+                                return;
+                            }
+
+                            if (progress != null)
+                            {
+                                progress.Dismiss();
+                                progress = null;
+                                SetLock(LockType.None);
+                            }
+                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_warning);
+                        });
+                    }
+
+                    handler?.Invoke(success);
+                }
+                catch (Exception ex)
+                {
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress = null;
+                            SetLock(LockType.None);
+                        }
+
+                        bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
+                        if (!cancelled)
+                        {
+                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_warning);
+                        }
+
+                        handler?.Invoke(false, cancelled);
+                    });
+                }
+            });
+            _downloadConfigThread.Start();
+
+            return true;
+        }
+
+        public bool IsDownloadConfigJobRunning()
+        {
+            if (_downloadConfigThread == null)
+            {
+                return false;
+            }
+            if (_downloadConfigThread.IsAlive)
+            {
+                return true;
+            }
+            _downloadConfigThread = null;
             return false;
         }
 

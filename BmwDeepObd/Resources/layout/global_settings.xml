@@ -418,6 +418,11 @@
                 android:id="@+id/buttonStorageDelTreeFromApp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <Button
+                android:text="@string/settings_download_config_files"
+                android:id="@+id/buttonDownloadConfigFiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
         <TextView
             android:text="@string/settings_caption_storage"
