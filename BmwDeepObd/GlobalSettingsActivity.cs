@@ -29,6 +29,8 @@ namespace BmwDeepObd
         }
 
         // Intent extra
+        public const string ExtraVagDir = "vag_dir";
+        public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraCopyFileName = "copy_file_name";
         public const string ExtraDeleteFile = "delete_file";
@@ -56,6 +58,8 @@ namespace BmwDeepObd
         }
 
         private InstanceData _instanceData = new InstanceData();
+        private string _vagDir;
+        private string _bmwDir;
         private string _appDataDir;
         private string _copyFileName;
         private bool _deleteFile;
@@ -154,6 +158,8 @@ namespace BmwDeepObd
             SetContentView(Resource.Layout.global_settings);
 
             SetResult(Android.App.Result.Canceled);
+            _vagDir = Intent.GetStringExtra(ExtraVagDir);
+            _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _copyFileName = Intent.GetStringExtra(ExtraCopyFileName);
             _deleteFile = Intent.GetBooleanExtra(ExtraDeleteFile, false);
@@ -1143,7 +1149,8 @@ namespace BmwDeepObd
                 return;
             }
 
-            _activityCommon.DownloadConfigThread(@"http://download.speedy-pics.de/uploads/android/DeepOBD.zip", "",
+            string targetFolder = Path.Combine(_bmwDir, "IbusApp");
+            _activityCommon.DownloadConfigThread(@"http://download.speedy-pics.de/uploads/android/DeepOBD.zip", targetFolder,
                 (result, aborted) =>
                 {
                     if (_activityCommon == null)

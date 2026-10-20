@@ -6951,6 +6951,8 @@ namespace BmwDeepObd
             {
                 ActivityRequest requestCode = ActivityRequest.RequestGlobalSettings;
                 Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
+                serverIntent.PutExtra(GlobalSettingsActivity.ExtraVagDir, _instanceData.VagPath);
+                serverIntent.PutExtra(GlobalSettingsActivity.ExtraBmwDir, _instanceData.BmwPath);
                 serverIntent.PutExtra(GlobalSettingsActivity.ExtraAppDataDir, _instanceData.AppDataPath);
                 if (!string.IsNullOrEmpty(selection))
                 {
