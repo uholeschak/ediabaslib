@@ -15096,6 +15096,9 @@ using System.Threading;"
             bool extractCancelled = false;
             CustomProgressDialog progress = new CustomProgressDialog(_context);
             progress.SetMessage(_context.GetString(Resource.String.downloading_file));
+            progress.Indeterminate = true;
+            progress.Progress = 0;
+            progress.Max = 100;
             progress.ButtonAbort.Enabled = false;
             progress.Show();
             progress.AbortClick = sender =>
@@ -15176,6 +15179,7 @@ using System.Threading;"
 
                             try
                             {
+                                int lastZipPercent = -1;
                                 ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null,
                                     (percent, decrypt) =>
                                     {
@@ -15183,6 +15187,24 @@ using System.Threading;"
                                         {
                                             extractCancelled = true;
                                             return true;
+                                        }
+
+                                        if (lastZipPercent != percent)
+                                        {
+                                            lastZipPercent = percent;
+                                            _activity?.RunOnUiThread(() =>
+                                            {
+                                                if (_disposed)
+                                                {
+                                                    return;
+                                                }
+                                                if (progress != null)
+                                                {
+                                                    progress.SetMessage(_context.GetString(Resource.String.extract_file));
+                                                    progress.Indeterminate = false;
+                                                    progress.Progress = percent;
+                                                }
+                                            });
                                         }
 
                                         return extractCancelled;
