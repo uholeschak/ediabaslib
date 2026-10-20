@@ -15231,27 +15231,26 @@ using System.Threading;"
                             }
                         }
                     }
-                    else
+
+                    _activity?.RunOnUiThread(() =>
                     {
-                        _activity?.RunOnUiThread(() =>
+                        if (_disposed)
                         {
-                            if (_disposed)
-                            {
-                                return;
-                            }
+                            return;
+                        }
 
-                            if (progress != null)
-                            {
-                                progress.Dismiss();
-                                progress = null;
-                                SetLock(LockType.None);
-                            }
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress = null;
+                            SetLock(LockType.None);
+                        }
 
-                            string message = extractFailed ?
-                                _context.GetString(Resource.String.extract_failed) : _context.GetString(Resource.String.download_failed);
-                            ShowAlert(message, Resource.String.alert_title_error);
-                        });
-                    }
+                        if (!success)
+                        {
+                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                        }
+                    });
 
                     handler?.Invoke(success);
                 }
@@ -15274,7 +15273,9 @@ using System.Threading;"
                         bool aborted = cancelled || extractCancelled;
                         if (!aborted)
                         {
-                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                            string message = extractFailed ?
+                                _context.GetString(Resource.String.extract_failed) : _context.GetString(Resource.String.download_failed);
+                            ShowAlert(message, Resource.String.alert_title_error);
                         }
 
                         handler?.Invoke(false, aborted);
