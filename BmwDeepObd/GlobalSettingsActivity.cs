@@ -372,6 +372,7 @@ namespace BmwDeepObd
             };
 
             _buttonDownloadConfigFiles = FindViewById<Button>(Resource.Id.buttonDownloadConfigFiles);
+            _buttonDownloadConfigFiles.Visibility = string.IsNullOrEmpty(_bmwDir) ? ViewStates.Gone : ViewStates.Visible;
             _buttonDownloadConfigFiles.Click += (sender, args) =>
             {
                 if (_activityCommon == null)
