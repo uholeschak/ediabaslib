@@ -372,7 +372,7 @@ namespace BmwDeepObd
             };
 
             _buttonDownloadConfigFiles = FindViewById<Button>(Resource.Id.buttonDownloadConfigFiles);
-            _buttonDownloadConfigFiles.Visibility = string.IsNullOrEmpty(_bmwDir) ? ViewStates.Gone : ViewStates.Visible;
+            _buttonDownloadConfigFiles.Visibility = string.IsNullOrEmpty(_appDataDir) ? ViewStates.Gone : ViewStates.Visible;
             _buttonDownloadConfigFiles.Click += (sender, args) =>
             {
                 if (_activityCommon == null)
@@ -1152,7 +1152,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            string targetFolder = Path.Combine(_bmwDir, "IbusApp");
+            string targetFolder = Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IbusApp");
             _activityCommon.DownloadConfigThread(IbusAppUrl, targetFolder,
                 (result, aborted) =>
                 {
