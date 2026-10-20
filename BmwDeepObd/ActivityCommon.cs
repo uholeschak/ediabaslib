@@ -15097,6 +15097,20 @@ using System.Threading;"
             progress.SetMessage(_context.GetString(Resource.String.downloading_file));
             progress.ButtonAbort.Enabled = false;
             progress.Show();
+            progress.AbortClick = sender =>
+            {
+                if (_downloadConfigHttpClient != null)
+                {
+                    try
+                    {
+                        _downloadConfigHttpClient.CancelPendingRequests();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            };
             SetLock(LockTypeCommunication);
             SetPreferredNetworkInterface();
 
