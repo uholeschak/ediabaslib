@@ -1153,14 +1153,33 @@ namespace BmwDeepObd
             }
 
             string targetFolder = Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IbusApp");
-            _activityCommon.DownloadConfigThread(IbusAppUrl, targetFolder,
-                (result, aborted) =>
-                {
-                    if (_activityCommon == null)
+            if (!_activityCommon.DownloadConfigThread(IbusAppUrl, targetFolder,
+                    (result, aborted) =>
                     {
-                        return;
-                    }
-                });
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (result && !aborted)
+                        {
+                            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                                .SetMessage(Resource.String.settings_extract_config_success)
+                                .SetTitle(Resource.String.alert_title_info)
+                                .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
+                                {
+
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .Show();
+                        }
+                    }))
+            {
+                return;
+            }
         }
 
         private void SelectMedia()

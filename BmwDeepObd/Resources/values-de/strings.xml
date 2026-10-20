@@ -529,8 +529,9 @@
   <string name="settings_internal_location_boot_hint">Die Bootoption ist nur verfügbar, wenn die App im internen Speicher installiert ist.</string>
   <string name="settings_old_vag_mode_hint">Der alte VAG Modus is langsam und sollte nur noch für bestehende alte Konfigurationen verwendet werden.</string>
   <string name="settings_start_app_failed">Die App konnte nicht gestartet werden.</string>
+  <string name="settings_extract_config_success">Die Konfigurationsdateien wurden erfolgreich extrahiert.\nMöchten Sie den Konfigurationsordner öffnen?</string>
 
-  <!--  EdiabasToolActivity -->
+    <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>
   <string name="tool_select_sgbd">SGBD auswählen</string>
   <string name="tool_read_sgbd">SGBD Informationen lesen</string>
