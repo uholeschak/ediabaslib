@@ -44,6 +44,8 @@ namespace BmwDeepObd
         public const string SettingsFileName = "DeepObdSettings.xml";
         public const string ExportsDir = "Exports";
 
+        public const string IbusAppUrl = @"http://download.speedy-pics.de/uploads/android/DeepOBD.zip";
+
         private enum ActivityRequest
         {
             RequestDevelopmentSettings,
@@ -1150,7 +1152,7 @@ namespace BmwDeepObd
             }
 
             string targetFolder = Path.Combine(_bmwDir, "IbusApp");
-            _activityCommon.DownloadConfigThread(@"http://download.speedy-pics.de/uploads/android/DeepOBD.zip", targetFolder,
+            _activityCommon.DownloadConfigThread(IbusAppUrl, targetFolder,
                 (result, aborted) =>
                 {
                     if (_activityCommon == null)
