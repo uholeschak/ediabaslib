@@ -15093,6 +15093,7 @@ using System.Threading;"
                 };
             }
 
+            bool extractCancelled = false;
             CustomProgressDialog progress = new CustomProgressDialog(_context);
             progress.SetMessage(_context.GetString(Resource.String.downloading_file));
             progress.ButtonAbort.Enabled = false;
@@ -15110,12 +15111,14 @@ using System.Threading;"
                         // ignored
                     }
                 }
+                extractCancelled = true;
             };
             SetLock(LockTypeCommunication);
             SetPreferredNetworkInterface();
 
             _downloadConfigThread = new Thread(() =>
             {
+                bool extractFailed = false;
                 try
                 {
                     _downloadConfigHttpClient.DefaultRequestHeaders.Authorization = null;
@@ -15171,7 +15174,25 @@ using System.Threading;"
                                 }
                             }
 
-                            ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null, null);
+                            try
+                            {
+                                ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null,
+                                    (percent, decrypt) =>
+                                    {
+                                        if (_disposed)
+                                        {
+                                            extractCancelled = true;
+                                            return true;
+                                        }
+
+                                        return extractCancelled;
+                                    });
+                            }
+                            catch (Exception)
+                            {
+                                extractFailed = true;
+                                throw;
+                            }
                         }
                         finally
                         {
@@ -15203,7 +15224,10 @@ using System.Threading;"
                                 progress = null;
                                 SetLock(LockType.None);
                             }
-                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_warning);
+
+                            string message = extractFailed ?
+                                _context.GetString(Resource.String.extract_failed) : _context.GetString(Resource.String.download_failed);
+                            ShowAlert(message, Resource.String.alert_title_error);
                         });
                     }
 
@@ -15225,12 +15249,13 @@ using System.Threading;"
                         }
 
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
-                        if (!cancelled)
+                        bool aborted = cancelled || extractCancelled;
+                        if (!aborted)
                         {
-                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_warning);
+                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                         }
 
-                        handler?.Invoke(false, cancelled);
+                        handler?.Invoke(false, aborted);
                     });
                 }
             });
