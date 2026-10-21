@@ -9,6 +9,7 @@ using Skydoves.BalloonLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace BmwDeepObd
 {
@@ -1170,33 +1171,22 @@ namespace BmwDeepObd
             ListView listView = new ListView(this);
             bool handlerCalled = false;
 
-            List<string> downloadNames = new List<string>
-            {
-                "IBUS-APP"
-            };
-
-            List<string> urlList = new List<string>
-            {
-                IbusAppUrl
-            };
-
-            List<string> targetFolderList = new List<string>
-            {
-                Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")
-            };
+            List<(string Name, string Url, string TargetFolder)> downloadList =
+            [
+                ("IBUS-APP", IbusAppUrl, Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")),
+            ];
 
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
-                Android.Resource.Layout.SimpleListItemSingleChoice, downloadNames.ToArray());
+                Android.Resource.Layout.SimpleListItemSingleChoice, downloadList.Select(item => item.Name).ToArray());
             listView.Adapter = adapter;
             listView.ChoiceMode = ChoiceMode.Single;
             listView.SetItemChecked(0, true);
             builder.SetView(listView);
             builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
             {
-                string fileName = urlList[listView.CheckedItemPosition];
-                string targetFolder = targetFolderList[listView.CheckedItemPosition];
+                var downloadItem = downloadList[listView.CheckedItemPosition];
                 handlerCalled = true;
-                handler(fileName, targetFolder);
+                handler(downloadItem.Url, downloadItem.TargetFolder);
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
