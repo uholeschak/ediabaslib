@@ -529,6 +529,7 @@
   <string name="settings_internal_location_boot_hint">The boot option is only available if the app install location is internal.</string>
   <string name="settings_old_vag_mode_hint">The old VAG mode is slow and should be only used for existing old configurations.</string>
   <string name="settings_start_app_failed">The app could not be started.</string>
+  <string name="select_download_source">Select download source.</string>
   <string name="settings_extract_config_success">The configuration files have been extracted successfully.\nDo you want to open the configuration folder?</string>
 
   <!--  EdiabasToolActivity -->
