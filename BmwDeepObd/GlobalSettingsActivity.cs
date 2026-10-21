@@ -7,7 +7,9 @@ using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.FilePicker;
 using Skydoves.BalloonLib;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace BmwDeepObd
 {
@@ -57,6 +59,8 @@ namespace BmwDeepObd
             RequestSelDirFromApp,
             RequestSelDirDelApp,
         }
+
+        public delegate void DownloadSourceSelected(string url = null, string targetFolder = null);
 
         private InstanceData _instanceData = new InstanceData();
         private string _vagDir;
@@ -1146,13 +1150,78 @@ namespace BmwDeepObd
 
         private void DownloadConfigFiles()
         {
+            SelectDownloadSourceDialog((fileName, targetFolder) =>
+            {
+                if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(targetFolder))
+                {
+                    DownloadConfigFiles(fileName, targetFolder);
+                }
+            });
+        }
+
+        public void SelectDownloadSourceDialog(DownloadSourceSelected handler)
+        {
             if (_activityCommon == null)
             {
                 return;
             }
 
-            string targetFolder = Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP");
-            if (!_activityCommon.DownloadConfigThread(IbusAppUrl, targetFolder,
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.settings_select_download_source);
+            ListView listView = new ListView(this);
+            bool handlerCalled = false;
+
+            List<(string Name, string Url, string TargetFolder)> downloadList =
+            [
+                (GetString(Resource.String.settings_download_ibus_app), IbusAppUrl, Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")),
+            ];
+
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                Android.Resource.Layout.SimpleListItemSingleChoice, downloadList.Select(item => item.Name).ToArray());
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Single;
+            listView.SetItemChecked(0, true);
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                var downloadItem = downloadList[listView.CheckedItemPosition];
+                handlerCalled = true;
+                handler(downloadItem.Url, downloadItem.TargetFolder);
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+                handlerCalled = true;
+                handler();
+            });
+
+            AlertDialog alertDialog = builder.Create();
+            if (alertDialog != null)
+            {
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (!handlerCalled)
+                    {
+                        handler();
+                    }
+                };
+
+                alertDialog.Show();
+            }
+        }
+
+        private void DownloadConfigFiles(string url, string targetFolder)
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            if (!_activityCommon.DownloadConfigThread(url, targetFolder,
                     (result, aborted) =>
                     {
                         if (_activityCommon == null)
