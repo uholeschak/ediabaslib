@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Android.Content;
-using Android.Content.Res;
+﻿using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -10,6 +6,8 @@ using AndroidX.AppCompat.App;
 using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.FilePicker;
 using Skydoves.BalloonLib;
+using System;
+using System.IO;
 
 namespace BmwDeepObd
 {
@@ -29,18 +27,23 @@ namespace BmwDeepObd
         }
 
         // Intent extra
+        public const string ExtraVagDir = "vag_dir";
+        public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraCopyFileName = "copy_file_name";
         public const string ExtraDeleteFile = "delete_file";
         public const string ExtraSelection = "selection";
         public const string SelectionStorageLocation = "storage_location";
         public const string SelectionCopyFromApp = "copy_from_app";
+        public const string ExtraOpenConfigDir = "open_config_dir";
         public const string ExtraExportFile = "export_file";
         public const string ExtraImportFile = "import_file";
-        public const string ExtraSettingsMode = "settigs_mode";
+        public const string ExtraSettingsMode = "settings_mode";
 
         public const string SettingsFileName = "DeepObdSettings.xml";
         public const string ExportsDir = "Exports";
+
+        public const string IbusAppUrl = @"http://download.speedy-pics.de/uploads/android/DeepOBD.zip";
 
         private enum ActivityRequest
         {
@@ -56,6 +59,8 @@ namespace BmwDeepObd
         }
 
         private InstanceData _instanceData = new InstanceData();
+        private string _vagDir;
+        private string _bmwDir;
         private string _appDataDir;
         private string _copyFileName;
         private bool _deleteFile;
@@ -154,6 +159,8 @@ namespace BmwDeepObd
             SetContentView(Resource.Layout.global_settings);
 
             SetResult(Android.App.Result.Canceled);
+            _vagDir = Intent.GetStringExtra(ExtraVagDir);
+            _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _copyFileName = Intent.GetStringExtra(ExtraCopyFileName);
             _deleteFile = Intent.GetBooleanExtra(ExtraDeleteFile, false);
@@ -364,6 +371,7 @@ namespace BmwDeepObd
             };
 
             _buttonDownloadConfigFiles = FindViewById<Button>(Resource.Id.buttonDownloadConfigFiles);
+            _buttonDownloadConfigFiles.Visibility = string.IsNullOrEmpty(_appDataDir) ? ViewStates.Gone : ViewStates.Visible;
             _buttonDownloadConfigFiles.Click += (sender, args) =>
             {
                 if (_activityCommon == null)
@@ -371,7 +379,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                //DownloadConfigFiles();
+                DownloadConfigFiles();
             };
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
@@ -1134,6 +1142,46 @@ namespace BmwDeepObd
             _checkBoxHciSnoopLog.Text = string.Format(GetString(Resource.String.settings_hci_snoop_log), logFileName ?? "-");
 
             _checkBoxShowOnlyRelevantErrors.Visibility = _checkBoxUseBmwDatabase.Checked ? ViewStates.Visible : ViewStates.Gone;
+        }
+
+        private void DownloadConfigFiles()
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            string targetFolder = Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP");
+            if (!_activityCommon.DownloadConfigThread(IbusAppUrl, targetFolder,
+                    (result, aborted) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (result && !aborted)
+                        {
+                            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                                .SetMessage(Resource.String.settings_extract_config_success)
+                                .SetTitle(Resource.String.alert_title_info)
+                                .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
+                                {
+                                    Intent intent = new Intent();
+                                    intent.PutExtra(ExtraOpenConfigDir, targetFolder);
+                                    SetResult(Android.App.Result.Ok, intent);
+                                    Finish();
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .Show();
+                        }
+                    }))
+            {
+                return;
+            }
         }
 
         private void SelectMedia()

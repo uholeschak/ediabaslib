@@ -15093,15 +15093,35 @@ using System.Threading;"
                 };
             }
 
+            bool extractCancelled = false;
             CustomProgressDialog progress = new CustomProgressDialog(_context);
             progress.SetMessage(_context.GetString(Resource.String.downloading_file));
+            progress.Indeterminate = true;
+            progress.Progress = 0;
+            progress.Max = 100;
             progress.ButtonAbort.Enabled = false;
             progress.Show();
+            progress.AbortClick = sender =>
+            {
+                if (_downloadConfigHttpClient != null)
+                {
+                    try
+                    {
+                        _downloadConfigHttpClient.CancelPendingRequests();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+                extractCancelled = true;
+            };
             SetLock(LockTypeCommunication);
             SetPreferredNetworkInterface();
 
             _downloadConfigThread = new Thread(() =>
             {
+                bool extractFailed = false;
                 try
                 {
                     _downloadConfigHttpClient.DefaultRequestHeaders.Authorization = null;
@@ -15157,7 +15177,44 @@ using System.Threading;"
                                 }
                             }
 
-                            ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null, null);
+                            try
+                            {
+                                int lastZipPercent = -1;
+                                ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null,
+                                    (percent, decrypt) =>
+                                    {
+                                        if (_disposed)
+                                        {
+                                            extractCancelled = true;
+                                            return true;
+                                        }
+
+                                        if (lastZipPercent != percent)
+                                        {
+                                            lastZipPercent = percent;
+                                            _activity?.RunOnUiThread(() =>
+                                            {
+                                                if (_disposed)
+                                                {
+                                                    return;
+                                                }
+                                                if (progress != null)
+                                                {
+                                                    progress.SetMessage(_context.GetString(Resource.String.extract_file));
+                                                    progress.Indeterminate = false;
+                                                    progress.Progress = percent;
+                                                }
+                                            });
+                                        }
+
+                                        return extractCancelled;
+                                    });
+                            }
+                            catch (Exception)
+                            {
+                                extractFailed = true;
+                                throw;
+                            }
                         }
                         finally
                         {
@@ -15174,26 +15231,28 @@ using System.Threading;"
                             }
                         }
                     }
-                    else
+
+                    _activity?.RunOnUiThread(() =>
                     {
-                        _activity?.RunOnUiThread(() =>
+                        if (_disposed)
                         {
-                            if (_disposed)
-                            {
-                                return;
-                            }
+                            return;
+                        }
 
-                            if (progress != null)
-                            {
-                                progress.Dismiss();
-                                progress = null;
-                                SetLock(LockType.None);
-                            }
-                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_warning);
-                        });
-                    }
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress = null;
+                            SetLock(LockType.None);
+                        }
 
-                    handler?.Invoke(success);
+                        if (!success)
+                        {
+                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                        }
+
+                        handler?.Invoke(success);
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -15203,6 +15262,7 @@ using System.Threading;"
                         {
                             return;
                         }
+
                         if (progress != null)
                         {
                             progress.Dismiss();
@@ -15211,12 +15271,15 @@ using System.Threading;"
                         }
 
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
-                        if (!cancelled)
+                        bool aborted = cancelled || extractCancelled;
+                        if (!aborted)
                         {
-                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_warning);
+                            string message = extractFailed ?
+                                _context.GetString(Resource.String.extract_failed) : _context.GetString(Resource.String.download_failed);
+                            ShowAlert(message, Resource.String.alert_title_error);
                         }
 
-                        handler?.Invoke(false, cancelled);
+                        handler?.Invoke(false, aborted);
                     });
                 }
             });
