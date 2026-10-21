@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Android.Content;
-using Android.Content.Res;
+﻿using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -10,6 +6,8 @@ using AndroidX.AppCompat.App;
 using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.FilePicker;
 using Skydoves.BalloonLib;
+using System;
+using System.IO;
 
 namespace BmwDeepObd
 {
@@ -37,9 +35,10 @@ namespace BmwDeepObd
         public const string ExtraSelection = "selection";
         public const string SelectionStorageLocation = "storage_location";
         public const string SelectionCopyFromApp = "copy_from_app";
+        public const string ExtraOpenConfigDir = "open_config_dir";
         public const string ExtraExportFile = "export_file";
         public const string ExtraImportFile = "import_file";
-        public const string ExtraSettingsMode = "settigs_mode";
+        public const string ExtraSettingsMode = "settings_mode";
 
         public const string SettingsFileName = "DeepObdSettings.xml";
         public const string ExportsDir = "Exports";
@@ -1152,7 +1151,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            string targetFolder = Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IbusApp");
+            string targetFolder = Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP");
             if (!_activityCommon.DownloadConfigThread(IbusAppUrl, targetFolder,
                     (result, aborted) =>
                     {
@@ -1168,7 +1167,10 @@ namespace BmwDeepObd
                                 .SetTitle(Resource.String.alert_title_info)
                                 .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
                                 {
-
+                                    Intent intent = new Intent();
+                                    intent.PutExtra(ExtraOpenConfigDir, targetFolder);
+                                    SetResult(Android.App.Result.Ok, intent);
+                                    Finish();
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
                                 {

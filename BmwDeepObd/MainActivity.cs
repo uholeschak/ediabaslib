@@ -1165,11 +1165,16 @@ namespace BmwDeepObd
                     {
                         if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                         {
+                            string openConfigDir = data.Extras.GetString(GlobalSettingsActivity.ExtraOpenConfigDir);
                             string exportFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraExportFile);
                             string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
                             ActivityCommon.SettingsMode settingsMode = (ActivityCommon.SettingsMode)data.Extras.GetInt(GlobalSettingsActivity.ExtraSettingsMode,
                                 (int)ActivityCommon.SettingsMode.Private);
-                            if (!string.IsNullOrEmpty(exportFileName))
+                            if (!string.IsNullOrEmpty(openConfigDir))
+                            {
+                                SelectConfigFile(openConfigDir);
+                            }
+                            else if (!string.IsNullOrEmpty(exportFileName))
                             {
                                 if (!_activityCommon.StoreSettingsToFile(_instanceData, exportFileName, settingsMode, out string errorMessage))
                                 {
@@ -7051,24 +7056,28 @@ namespace BmwDeepObd
             });
         }
 
-        private void SelectConfigFile()
+        private void SelectConfigFile(string openConfigDir = null)
         {
             if (!CheckForEcuFiles())
             {
                 return;
             }
 
-            SelectConfigFileIntent();
+            SelectConfigFileIntent(openConfigDir);
         }
 
-        private void SelectConfigFileIntent()
+        private void SelectConfigFileIntent(string openConfigDir)
         {
             // Launch the FilePickerActivity to select a configuration
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
             string initDir = _instanceData.AppDataPath;
             try
             {
-                if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                if (!string.IsNullOrEmpty(openConfigDir) && Directory.Exists(openConfigDir))
+                {
+                    initDir = openConfigDir;
+                }
+                else if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
                     initDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
                 }

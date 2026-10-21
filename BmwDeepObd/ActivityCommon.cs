@@ -15250,9 +15250,9 @@ using System.Threading;"
                         {
                             ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_error);
                         }
-                    });
 
-                    handler?.Invoke(success);
+                        handler?.Invoke(success);
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -15262,6 +15262,7 @@ using System.Threading;"
                         {
                             return;
                         }
+
                         if (progress != null)
                         {
                             progress.Dismiss();
