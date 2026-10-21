@@ -7309,6 +7309,24 @@ namespace BmwDeepObd
 #endif
         }
 
+        /// <summary>
+        /// Removes the quotes from the multipart boundary parameter.
+        /// Quoted boundaries are rejected by the server since the PHP update.
+        /// </summary>
+        /// <param name="content">Multipart content</param>
+        /// <returns>The same content instance</returns>
+        public static MultipartFormDataContent FixMultipartBoundary(MultipartFormDataContent content)
+        {
+            NameValueHeaderValue boundaryParam = content?.Headers.ContentType?.Parameters
+                .FirstOrDefault(p => string.Compare(p.Name, "boundary", StringComparison.OrdinalIgnoreCase) == 0);
+            if (boundaryParam?.Value != null)
+            {
+                boundaryParam.Value = boundaryParam.Value.Trim('"');
+            }
+
+            return content;
+        }
+
         public static bool SetEdiabasUdsCanId(EdiabasNet ediabas, VehicleInfoVag.EcuAddressEntry ecuAddressEntry = null)
         {
             if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
@@ -8331,7 +8349,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formDownload);
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, FixMultipartBoundary(formDownload));
 
                     CustomProgressDialog progressLocal = progress;
                     _activity?.RunOnUiThread(() =>
@@ -8702,7 +8720,7 @@ namespace BmwDeepObd
                             formUpload.Add(new StreamContent(fileStream), "file", Path.GetFileName(sendTraceFile));
                         }
 
-                        System.Threading.Tasks.Task<HttpResponseMessage> taskUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formUpload);
+                        System.Threading.Tasks.Task<HttpResponseMessage> taskUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, FixMultipartBoundary(formUpload));
 
                         _activity?.RunOnUiThread(() =>
                         {
@@ -9238,7 +9256,7 @@ namespace BmwDeepObd
                 }
                 formUpdate.Add(new StringContent(sb.ToString()), "info_text");
 
-                System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, formUpdate);
+                System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, FixMultipartBoundary(formUpdate));
                 _updateCheckActive = true;
                 taskDownload.ContinueWith((task, o) =>
                 {

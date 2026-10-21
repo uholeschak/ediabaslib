@@ -830,7 +830,7 @@ namespace BmwDeepObd
                         { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" },
                     };
 
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, ActivityCommon.FixMultipartBoundary(formInfo));
 
                     CustomProgressDialog progressLocal = progress;
                     RunOnUiThread(() =>

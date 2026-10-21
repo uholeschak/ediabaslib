@@ -1334,7 +1334,7 @@ namespace BmwDeepObd
                         { new StringContent(PsdzRpcServiceConstants.InterfaceVersion.ToString(CultureInfo.InvariantCulture)), "rpc_if_version" },
                     };
 
-                    Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
+                    Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, ActivityCommon.FixMultipartBoundary(formInfo));
 
                     CustomProgressDialog progressLocal = progress;
                     RunOnUiThread(() =>
