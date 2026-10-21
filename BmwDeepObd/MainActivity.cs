@@ -1172,9 +1172,12 @@ namespace BmwDeepObd
                                 (int)ActivityCommon.SettingsMode.Private);
                             if (!string.IsNullOrEmpty(openConfigDir))
                             {
+                                ClearConfiguration();
                                 SelectConfigFile(openConfigDir);
+                                break;
                             }
-                            else if (!string.IsNullOrEmpty(exportFileName))
+
+                            if (!string.IsNullOrEmpty(exportFileName))
                             {
                                 if (!_activityCommon.StoreSettingsToFile(_instanceData, exportFileName, settingsMode, out string errorMessage))
                                 {
