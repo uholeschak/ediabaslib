@@ -1221,10 +1221,6 @@ namespace BmwDeepObd
 
                     if (!string.IsNullOrEmpty(openConfigDir))
                     {
-                        if (string.IsNullOrEmpty(_instanceData.ConfigFileName) && !File.Exists(_instanceData.ConfigFileName))
-                        {
-                            ClearConfiguration();
-                        }
                         SelectConfigFile(openConfigDir);
                     }
                     break;
@@ -4833,6 +4829,8 @@ namespace BmwDeepObd
                     if (!jobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
                     {
                         ActivityCommon.RecentConfigListRemove(_instanceData.ConfigFileName);
+                        _instanceData.ConfigFileName = string.Empty;
+
                         failed = true;
                         string message = GetString(Resource.String.job_reader_read_xml_failed) + "\r\n";
                         if (!string.IsNullOrEmpty(errorMessage))
