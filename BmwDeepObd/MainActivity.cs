@@ -5492,7 +5492,7 @@ namespace BmwDeepObd
                             formDownload.Add(new StringContent(certInfo), "cert");
                         }
 
-                        taskDownload = _httpClient.PostAsync(url, formDownload);
+                        taskDownload = _httpClient.PostAsync(url, ActivityCommon.FixMultipartBoundary(formDownload));
                     }
                     else
                     {
