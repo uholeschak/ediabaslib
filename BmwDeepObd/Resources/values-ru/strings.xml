@@ -540,7 +540,8 @@
   <string name="settings_old_vag_mode_hint">Старый режим VAG медленный и должен использоваться только для существующих старых конфигураций.</string>
   <string name="settings_start_app_failed">Ошибка запуска приложения.</string>
   <!--Translate-->
-  <string name="select_download_source">Выберите источник загрузки.</string>
+  <string name="settings_select_download_source">Выберите источник загрузки.</string>
+  <string name="settings_download_ibus_app">IBUS-APP конфигурации</string>
   <string name="settings_extract_config_success">Конфигурационные файлы были успешно извлечены.\nВы хотите открыть папку с конфигурацией?</string>
 
   <!--  EdiabasToolActivity -->

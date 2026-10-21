@@ -1167,13 +1167,13 @@ namespace BmwDeepObd
             }
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.SetTitle(Resource.String.select_download_source);
+            builder.SetTitle(Resource.String.settings_select_download_source);
             ListView listView = new ListView(this);
             bool handlerCalled = false;
 
             List<(string Name, string Url, string TargetFolder)> downloadList =
             [
-                ("IBUS-APP", IbusAppUrl, Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")),
+                (GetString(Resource.String.settings_download_ibus_app), IbusAppUrl, Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")),
             ];
 
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
