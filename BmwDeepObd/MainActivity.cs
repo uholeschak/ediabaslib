@@ -1161,22 +1161,17 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestGlobalSettings:
                 case ActivityRequest.RequestGlobalSettingsCopy:
+                {
+                    string openConfigDir = null;
                     if ((ActivityRequest)requestCode == ActivityRequest.RequestGlobalSettings)
                     {
                         if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                         {
-                            string openConfigDir = data.Extras.GetString(GlobalSettingsActivity.ExtraOpenConfigDir);
+                            openConfigDir = data.Extras.GetString(GlobalSettingsActivity.ExtraOpenConfigDir);
                             string exportFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraExportFile);
                             string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
                             ActivityCommon.SettingsMode settingsMode = (ActivityCommon.SettingsMode)data.Extras.GetInt(GlobalSettingsActivity.ExtraSettingsMode,
                                 (int)ActivityCommon.SettingsMode.Private);
-                            if (!string.IsNullOrEmpty(openConfigDir))
-                            {
-                                ClearConfiguration();
-                                SelectConfigFile(openConfigDir);
-                                break;
-                            }
-
                             if (!string.IsNullOrEmpty(exportFileName))
                             {
                                 if (!_activityCommon.StoreSettingsToFile(_instanceData, exportFileName, settingsMode, out string errorMessage))
@@ -1223,7 +1218,13 @@ namespace BmwDeepObd
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     CheckForEcuFiles();
+
+                    if (!string.IsNullOrEmpty(openConfigDir))
+                    {
+                        SelectConfigFile(openConfigDir);
+                    }
                     break;
+                }
 
                 case ActivityRequest.RequestEditConfig:
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
@@ -4828,6 +4829,8 @@ namespace BmwDeepObd
                     if (!jobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
                     {
                         ActivityCommon.RecentConfigListRemove(_instanceData.ConfigFileName);
+                        _instanceData.ConfigFileName = string.Empty;
+
                         failed = true;
                         string message = GetString(Resource.String.job_reader_read_xml_failed) + "\r\n";
                         if (!string.IsNullOrEmpty(errorMessage))
