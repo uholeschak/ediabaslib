@@ -239,6 +239,7 @@ namespace BmwDeepObd
         private CustomProgressDialog _downloadProgress;
         private CustomProgressDialog _compileProgress;
         private bool _extractZipCanceled;
+        private bool _disableConfigSelect;
         private string _assetEcuFileNames;
         private long _assetEcuFileSize = -1;
         private AssetManager _assetManager;
@@ -1065,6 +1066,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestSelectConfig:
+                    _disableConfigSelect = false;
                     // When FilePickerActivity returns with a file
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
@@ -1221,6 +1223,7 @@ namespace BmwDeepObd
 
                     if (!string.IsNullOrEmpty(openConfigDir))
                     {
+                        _disableConfigSelect = true;
                         SelectConfigFile(openConfigDir);
                     }
                     break;
@@ -6761,6 +6764,12 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            if (_disableConfigSelect)
+            {
+                return;
+            }
+
             if (_lastCompileCrash)
             {
                 _lastCompileCrash = false;
