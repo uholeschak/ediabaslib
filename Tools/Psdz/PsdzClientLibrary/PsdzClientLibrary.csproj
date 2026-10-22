@@ -28,7 +28,7 @@
     </ItemGroup>
     <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
         <PackageReference Include="HtmlTextWriter" Version="3.0.2" />
-        <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.0.652802" />
+        <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.1.0" />
         <PackageReference Include="System.Runtime.Serialization.Formatters" Version="10.0.13" />
     </ItemGroup>
   <ItemGroup>
@@ -81,7 +81,7 @@
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.13" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="RestSharp" Version="114.0.0" />
+    <PackageReference Include="RestSharp" Version="114.1.0" />
     <PackageReference Include="SharpLearning.Containers" Version="0.31.8" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="2.1.11" />
@@ -90,7 +90,7 @@
     <PackageReference Include="System.Management" Version="10.0.13" />
     <PackageReference Include="System.Memory" Version="4.6.3" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="10.0.652802" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="10.1.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.13" />
   </ItemGroup>

@@ -32,8 +32,8 @@
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="MessagePack" Version="3.1.12" />
     <PackageReference Include="MySqlConnector" Version="2.6.2" />
-    <PackageReference Include="Nerdbank.MessagePack" Version="1.4.82" />
-    <PackageReference Include="StreamJsonRpc" Version="2.25.29" />
+    <PackageReference Include="Nerdbank.MessagePack" Version="1.4.95" />
+    <PackageReference Include="StreamJsonRpc" Version="2.26.150" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.13" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.13" />
   </ItemGroup>
