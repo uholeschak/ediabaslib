@@ -1199,6 +1199,16 @@ namespace BmwDeepObd
             AlertDialog alertDialog = builder.Create();
             if (alertDialog != null)
             {
+                alertDialog.ShowEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    ActivityCommon.ShowAlertDialogBallon(this, alertDialog, Resource.String.config_match_vehicle);
+                };
+
                 alertDialog.DismissEvent += (sender, args) =>
                 {
                     if (_activityCommon == null)
