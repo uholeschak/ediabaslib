@@ -1,10 +1,17 @@
-﻿using System;
+﻿using Google.Apis.AndroidPublisher.v3;
+using Google.Apis.AndroidPublisher.v3.Data;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Upload;
+using Google.Apis.Util.Store;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -12,13 +19,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using Google.Apis.AndroidPublisher.v3;
-using Google.Apis.AndroidPublisher.v3.Data;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
-using Google.Apis.Upload;
-using Google.Apis.Util;
-using Google.Apis.Util.Store;
 
 namespace ApkUploader
 {
@@ -583,7 +583,7 @@ namespace ApkUploader
                             }
                         }
 
-                        HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formAppInfo, _cts.Token).Result;
+                        HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, FixMultipartBoundary(formAppInfo), _cts.Token).Result;
                         responseAppInfo.EnsureSuccessStatusCode();
                         string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
 
@@ -709,7 +709,7 @@ namespace ApkUploader
                                 }
                                 formSerialInfo.Add(new StringContent(serialInfo.Disabled ? "1" : "0"), "disabled");
 
-                                HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, formSerialInfo, _cts.Token).Result;
+                                HttpResponseMessage responseAppInfo = httpClient.PostAsync(url, FixMultipartBoundary(formSerialInfo), _cts.Token).Result;
                                 responseAppInfo.EnsureSuccessStatusCode();
                                 string responseAppInfoXml = responseAppInfo.Content.ReadAsStringAsync().Result;
 
@@ -1688,6 +1688,24 @@ namespace ApkUploader
             _serviceThread.Start();
 
             return true;
+        }
+
+        /// <summary>
+        /// Removes the quotes from the multipart boundary parameter.
+        /// Quoted boundaries are rejected by the server since the PHP update.
+        /// </summary>
+        /// <param name="content">Multipart content</param>
+        /// <returns>The same content instance</returns>
+        private static MultipartFormDataContent FixMultipartBoundary(MultipartFormDataContent content)
+        {
+            NameValueHeaderValue boundaryParam = content?.Headers.ContentType?.Parameters
+                .FirstOrDefault(p => string.Compare(p.Name, "boundary", StringComparison.OrdinalIgnoreCase) == 0);
+            if (boundaryParam?.Value != null)
+            {
+                boundaryParam.Value = boundaryParam.Value.Trim('"');
+            }
+
+            return content;
         }
 
         private void FormMain_Load(object sender, EventArgs e)
