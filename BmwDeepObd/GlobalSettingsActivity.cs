@@ -46,6 +46,7 @@ namespace BmwDeepObd
         public const string ExportsDir = "Exports";
 
         public const string IbusAppUrl = @"http://download.speedy-pics.de/uploads/android/DeepOBD.zip";
+        public const string IbusAppEmail = "info@ibus-app.de";
 
         private enum ActivityRequest
         {
@@ -1173,9 +1174,10 @@ namespace BmwDeepObd
             ListView listView = new ListView(this);
             bool handlerCalled = false;
 
-            List<(string Name, string Url, string TargetFolder)> downloadList =
+            List<(string Name, string Url, string email, string TargetFolder)> downloadList =
             [
-                (GetString(Resource.String.settings_download_ibus_app), IbusAppUrl, Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")),
+                (GetString(Resource.String.settings_download_ibus_app), IbusAppUrl, IbusAppEmail,
+                    Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")),
             ];
 
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
