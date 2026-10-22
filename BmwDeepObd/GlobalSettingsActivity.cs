@@ -1239,6 +1239,7 @@ namespace BmwDeepObd
                                     Intent intent = new Intent();
                                     intent.PutExtra(ExtraOpenConfigDir, targetFolder);
                                     SetResult(Android.App.Result.Ok, intent);
+                                    StoreSettings();
                                     Finish();
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
