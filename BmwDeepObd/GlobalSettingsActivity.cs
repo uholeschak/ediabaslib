@@ -658,6 +658,7 @@ namespace BmwDeepObd
                                                     }
                                                 }
 
+                                                StoreSettings();
                                                 Finish();
                                             }
                                         }))
@@ -681,6 +682,7 @@ namespace BmwDeepObd
 
                     if (HasSelection())
                     {
+                        StoreSettings();
                         Finish();
                     }
                     break;
@@ -1287,6 +1289,7 @@ namespace BmwDeepObd
                     _instanceData.CopyFromAppSrcPath = _copyFileName;
                     if (!SelectCopyDocumentTree(true))
                     {
+                        StoreSettings();
                         Finish();
                     }
                     break;
@@ -1458,6 +1461,7 @@ namespace BmwDeepObd
             intent.PutExtra(ExtraExportFile, _exportFileName);
             intent.PutExtra(ExtraSettingsMode, (int)settingsMode);
             SetResult(Android.App.Result.Ok, intent);
+            StoreSettings();
             Finish();
         }
 
