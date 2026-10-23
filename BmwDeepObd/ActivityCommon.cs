@@ -7353,6 +7353,7 @@ namespace BmwDeepObd
 
             return content;
         }
+
         public static bool SetEdiabasUdsCanId(EdiabasNet ediabas, VehicleInfoVag.EcuAddressEntry ecuAddressEntry = null)
         {
             if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
