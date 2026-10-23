@@ -1632,7 +1632,7 @@ namespace BmwDeepObd
 
                 if (ActivityCommon.IsDocumentTreeSupported())
                 {
-                    ActivityCommon.ShowAlertDialogBallon(this, alertDialog, Resource.String.menu_hint_copy_folder);
+                    ActivityCommon.ShowAlertDialogBalloon(this, alertDialog, Resource.String.menu_hint_copy_folder);
                 }
             };
             alertDialog.Show();

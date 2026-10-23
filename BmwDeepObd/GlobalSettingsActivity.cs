@@ -1210,7 +1210,7 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    ActivityCommon.ShowAlertDialogBallon(this, alertDialog, Resource.String.config_match_vehicle, 20000);
+                    ActivityCommon.ShowAlertDialogBalloon(this, alertDialog, Resource.String.config_match_vehicle, 20000);
                 };
 
                 alertDialog.DismissEvent += (sender, args) =>

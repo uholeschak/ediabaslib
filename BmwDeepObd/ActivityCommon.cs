@@ -2896,7 +2896,7 @@ namespace BmwDeepObd
             return balloonBuilder;
         }
 
-        public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, int resId, int dismissDuration = BalloonDismissDuration)
+        public static bool ShowAlertDialogBalloon(Context context, AlertDialog alertDialog, int resId, int dismissDuration = BalloonDismissDuration)
         {
             View decorView = alertDialog.Window?.DecorView;
             if (decorView != null)
@@ -2912,7 +2912,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, string text, int dismissDuration = BalloonDismissDuration)
+        public static bool ShowAlertDialogBalloon(Context context, AlertDialog alertDialog, string text, int dismissDuration = BalloonDismissDuration)
         {
             View decorView = alertDialog.Window?.DecorView;
             if (decorView != null)
@@ -5336,7 +5336,7 @@ namespace BmwDeepObd
                     }
 
                     string message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.vag_mode_info_ballon), VagEndDate);
-                    ShowAlertDialogBallon(_context, _selectManufacturerAlertDialog, message, 20000);
+                    ShowAlertDialogBalloon(_context, _selectManufacturerAlertDialog, message, 20000);
                 };
 
                 _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
