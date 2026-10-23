@@ -47,6 +47,7 @@ namespace BmwDeepObd
 
         public const string IbusAppUrl = @"http://download.speedy-pics.de/uploads/android/DeepOBD.zip";
         public const string IbusAppEmail = "info@ibus-app.de";
+        public const string IbusAppFolder = "IBUS_APP";
 
         private enum ActivityRequest
         {
@@ -61,7 +62,7 @@ namespace BmwDeepObd
             RequestSelDirDelApp,
         }
 
-        public delegate void DownloadSourceSelected(string url, string email, string targetFolder);
+        public delegate void DownloadSourceSelected(string url, string email, string infoFolder, string targetFolder);
 
         private InstanceData _instanceData = new InstanceData();
         private string _vagDir;
@@ -1153,11 +1154,11 @@ namespace BmwDeepObd
 
         private void DownloadConfigFiles()
         {
-            SelectDownloadSourceDialog((fileName, email, targetFolder) =>
+            SelectDownloadSourceDialog((fileName, email, infoFolder, targetFolder) =>
             {
                 if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
                 {
-                    DownloadConfigFiles(fileName, email, targetFolder);
+                    DownloadConfigFiles(fileName, email, infoFolder, targetFolder);
                 }
             });
         }
@@ -1174,10 +1175,11 @@ namespace BmwDeepObd
             ListView listView = new ListView(this);
             bool handlerCalled = false;
 
-            List<(string Name, string Url, string Email, string TargetFolder)> downloadList =
+            List<(string Name, string Url, string Email, string InfoFolder, string TargetFolder)> downloadList =
             [
                 (GetString(Resource.String.settings_download_ibus_app), IbusAppUrl, IbusAppEmail,
-                    Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")),
+                    Path.Combine(ActivityCommon.ConfigBaseSubDir, IbusAppFolder),
+                    Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, IbusAppFolder)),
             ];
 
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
@@ -1190,12 +1192,12 @@ namespace BmwDeepObd
             {
                 var downloadItem = downloadList[listView.CheckedItemPosition];
                 handlerCalled = true;
-                handler(downloadItem.Url, downloadItem.Email, downloadItem.TargetFolder);
+                handler(downloadItem.Url, downloadItem.Email, downloadItem.InfoFolder, downloadItem.TargetFolder);
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
                 handlerCalled = true;
-                handler(null, null, null);
+                handler(null, null, null, null);
             });
 
             AlertDialog alertDialog = builder.Create();
@@ -1220,7 +1222,7 @@ namespace BmwDeepObd
 
                     if (!handlerCalled)
                     {
-                        handler(null, null, null);
+                        handler(null, null, null, null);
                     }
                 };
 
@@ -1228,7 +1230,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void DownloadConfigFiles(string url, string email, string targetFolder)
+        private void DownloadConfigFiles(string url, string email, string infoFolder, string targetFolder)
         {
             if (_activityCommon == null)
             {
