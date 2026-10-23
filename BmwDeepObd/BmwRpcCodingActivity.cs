@@ -1186,144 +1186,156 @@ namespace BmwDeepObd
 
         public bool GetConnectionInfo(InfoCheckDelegate handler)
         {
-            if (handler == null)
+            try
             {
-                return false;
-            }
-
-            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
-            {
-                if (_activityCommon.MtcBtService)
+                if (handler == null)
                 {
-                    string message = GetString(Resource.String.bmw_coding_mtc_reject);
+                    return false;
+                }
+
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
+                {
+                    if (_activityCommon.MtcBtService)
+                    {
+                        string message = GetString(Resource.String.bmw_coding_mtc_reject);
+                        handler.Invoke(false, false, null, null, false, message);
+                        return true;
+                    }
+                }
+
+                if (_activityCommon.IsElmDevice(_deviceAddress))
+                {
+                    string message = GetString(Resource.String.bmw_coding_elm_reject);
                     handler.Invoke(false, false, null, null, false, message);
                     return true;
                 }
-            }
 
-            if (_activityCommon.IsElmDevice(_deviceAddress))
-            {
-                string message = GetString(Resource.String.bmw_coding_elm_reject);
-                handler.Invoke(false, false, null, null, false, message);
-                return true;
-            }
-
-            if (_infoHttpClient == null)
-            {
-                _infoHttpClient = new HttpClient(new HttpClientHandler()
+                if (_infoHttpClient == null)
                 {
-                    SslProtocols = ActivityCommon.DefaultSslProtocols,
-                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                    Proxy = ActivityCommon.GetProxySettings()
-                })
-                {
-                    Timeout = TimeSpan.FromSeconds(ActivityCommon.HttpClientTimeout)
-                };
-            }
-
-            CustomProgressDialog progress = new CustomProgressDialog(this);
-            progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
-            progress.Indeterminate = true;
-            progress.ButtonAbort.Enabled = false;
-            progress.Show();
-            _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
-            _activityCommon.SetPreferredNetworkInterface();
-
-            Thread sendThread = new Thread(() =>
-            {
-#if STATIC_RPC_CODING
-                try
-                {
-                    EdiabasNet ediabas = _bmwRpcCoding?.EdiabasProxyClient?.Ediabas;
-                    if (ediabas != null)
+                    _infoHttpClient = new HttpClient(new HttpClientHandler()
                     {
-                        CustomProgressDialog progressLocal = progress;
-                        _ediabasJobAbort = false;
-                        DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwDir);
-                        detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
-                        detectVehicleBmw.ProgressFunc = percent =>
-                        {
-                            RunOnUiThread(() =>
-                            {
-                                if (_activityCommon == null)
-                                {
-                                    return;
-                                }
-                                if (progressLocal != null)
-                                {
-                                    progressLocal.Progress = percent;
-                                }
-                            });
-                        };
+                        SslProtocols = ActivityCommon.DefaultSslProtocols,
+                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
+                        Proxy = ActivityCommon.GetProxySettings()
+                    })
+                    {
+                        Timeout = TimeSpan.FromSeconds(ActivityCommon.HttpClientTimeout)
+                    };
+                }
 
-                        RunOnUiThread(() =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (progressLocal != null)
-                            {
-                                progressLocal.SetMessage(GetString(Resource.String.bmw_rpc_coding_checking_vehicle));
-                                progressLocal.Indeterminate = false;
-                                progressLocal.AbortClick = sender =>
-                                {
-                                    _ediabasJobAbort = true;
-                                };
-                                progressLocal.ButtonAbort.Enabled = true;
-                            }
-                        });
-
-                        bool result = detectVehicleBmw.DetectVehicleBmwFast();
-                        _bmwRpcCoding.EdiabasProxyClient.EdiabasDisconnect(0);
-                        if (!result)
-                        {
-                            RunOnUiThread(() =>
-                            {
-                                if (_activityCommon == null)
-                                {
-                                    return;
-                                }
-
-                                if (progress != null)
-                                {
-                                    progress.Dismiss();
-                                    progress = null;
-                                    _activityCommon.SetLock(ActivityCommon.LockType.None);
-                                }
-
-                                string message = GetString(Resource.String.bmw_rpc_coding_no_response);
-                                handler.Invoke(false, _ediabasJobAbort, null, null, false, message);
-                            });
-
-                            return;
-                        }
-
-                        RunOnUiThread(() =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (progressLocal != null)
-                            {
-                                progressLocal.ButtonAbort.Enabled = true;
-                            }
-                        });
+                EdiabasProxyClient ediabasProxyClient = _bmwRpcCoding?.EdiabasProxyClient;
+                if (ediabasProxyClient != null)
+                {
+                    EdiabasNet ediabas = ediabasProxyClient.Ediabas;
+                    if (ediabas != null && !ediabasProxyClient.IsEdiabasConnected())
+                    {
+                        _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress, _appDataDir);
                     }
                 }
-                catch (Exception ex)
+
+                CustomProgressDialog progress = new CustomProgressDialog(this);
+                progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+                progress.Indeterminate = true;
+                progress.ButtonAbort.Enabled = false;
+                progress.Show();
+                _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
+                _activityCommon.SetPreferredNetworkInterface();
+
+                Thread sendThread = new Thread(() =>
                 {
-                    string message = EdiabasNet.GetExceptionText(ex);
-                    handler.Invoke(false, _ediabasJobAbort, null, null, false, message);
-                    return;
-                }
+#if STATIC_RPC_CODING
+                    try
+                    {
+                        EdiabasNet ediabas = _bmwRpcCoding?.EdiabasProxyClient?.Ediabas;
+                        if (ediabas != null)
+                        {
+                            CustomProgressDialog progressLocal = progress;
+                            _ediabasJobAbort = false;
+                            DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(ediabas, _bmwDir);
+                            detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+                            detectVehicleBmw.ProgressFunc = percent =>
+                            {
+                                RunOnUiThread(() =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    if (progressLocal != null)
+                                    {
+                                        progressLocal.Progress = percent;
+                                    }
+                                });
+                            };
+
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                if (progressLocal != null)
+                                {
+                                    progressLocal.SetMessage(GetString(Resource.String.bmw_rpc_coding_checking_vehicle));
+                                    progressLocal.Indeterminate = false;
+                                    progressLocal.AbortClick = sender =>
+                                    {
+                                        _ediabasJobAbort = true;
+                                    };
+                                    progressLocal.ButtonAbort.Enabled = true;
+                                }
+                            });
+
+                            bool result = detectVehicleBmw.DetectVehicleBmwFast();
+                            _bmwRpcCoding.EdiabasProxyClient.EdiabasDisconnect(0);
+                            if (!result)
+                            {
+                                RunOnUiThread(() =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+
+                                    if (progress != null)
+                                    {
+                                        progress.Dismiss();
+                                        progress = null;
+                                        _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                    }
+
+                                    string message = GetString(Resource.String.bmw_rpc_coding_no_response);
+                                    handler.Invoke(false, _ediabasJobAbort, null, null, false, message);
+                                });
+
+                                return;
+                            }
+
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                if (progressLocal != null)
+                                {
+                                    progressLocal.ButtonAbort.Enabled = true;
+                                }
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = EdiabasNet.GetExceptionText(ex);
+                        handler.Invoke(false, _ediabasJobAbort, null, null, false, message);
+                        return;
+                    }
 #endif
-                try
-                {
-                    MultipartFormDataContent formInfo = new MultipartFormDataContent
+                    try
+                    {
+                        MultipartFormDataContent formInfo = new MultipartFormDataContent
                     {
                         { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", _activityCommon.VersionCode)), "app_ver" },
                         { new StringContent(ActivityCommon.AppId), "app_id" },
@@ -1334,56 +1346,40 @@ namespace BmwDeepObd
                         { new StringContent(PsdzRpcServiceConstants.InterfaceVersion.ToString(CultureInfo.InvariantCulture)), "rpc_if_version" },
                     };
 
-                    Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, ActivityCommon.FixMultipartBoundary(formInfo));
+                        Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, ActivityCommon.FixMultipartBoundary(formInfo));
 
-                    CustomProgressDialog progressLocal = progress;
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
+                        CustomProgressDialog progressLocal = progress;
+                        RunOnUiThread(() =>
                         {
-                            return;
-                        }
-
-                        if (progressLocal != null)
-                        {
-                            progressLocal.SetMessage(GetString(Resource.String.bmw_coding_connecting));
-                            progressLocal.Indeterminate = true;
-                            progressLocal.AbortClick = sender =>
+                            if (_activityCommon == null)
                             {
-                                try
-                                {
-                                    _infoHttpClient.CancelPendingRequests();
-                                }
-                                catch (Exception)
-                                {
-                                    // ignored
-                                }
-                            };
-                            progressLocal.ButtonAbort.Enabled = true;
-                        }
-                    });
+                                return;
+                            }
 
-                    HttpResponseMessage responseUpload = taskDownload.Result;
-                    responseUpload.EnsureSuccessStatusCode();
-                    string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
-                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out bool enableIpv6, out string message, out string dayString, out string validSerial);
-                    handler.Invoke(success, false, codingUrl, codingUrlTest, enableIpv6, message, dayString, validSerial);
+                            if (progressLocal != null)
+                            {
+                                progressLocal.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+                                progressLocal.Indeterminate = true;
+                                progressLocal.AbortClick = sender =>
+                                {
+                                    try
+                                    {
+                                        _infoHttpClient.CancelPendingRequests();
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                };
+                                progressLocal.ButtonAbort.Enabled = true;
+                            }
+                        });
 
-                    if (progress != null)
-                    {
-                        progress.Dismiss();
-                        progress = null;
-                        _activityCommon.SetLock(ActivityCommon.LockType.None);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
+                        HttpResponseMessage responseUpload = taskDownload.Result;
+                        responseUpload.EnsureSuccessStatusCode();
+                        string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
+                        bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out bool enableIpv6, out string message, out string dayString, out string validSerial);
+                        handler.Invoke(success, false, codingUrl, codingUrlTest, enableIpv6, message, dayString, validSerial);
 
                         if (progress != null)
                         {
@@ -1391,15 +1387,36 @@ namespace BmwDeepObd
                             progress = null;
                             _activityCommon.SetLock(ActivityCommon.LockType.None);
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
 
-                        bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
-                        handler.Invoke(false, cancelled);
-                    });
-                }
-            });
+                            if (progress != null)
+                            {
+                                progress.Dismiss();
+                                progress = null;
+                                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                            }
 
-            sendThread.Start();
-            return true;
+                            bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
+                            handler.Invoke(false, cancelled);
+                        });
+                    }
+                });
+
+                sendThread.Start();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out bool enableIpv6, out string message, out string dayString, out string validSerial)
