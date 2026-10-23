@@ -1237,7 +1237,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!_activityCommon.DownloadConfigThread(url, email, targetFolder,
+            if (!_activityCommon.DownloadConfigThread(url, email, infoFolder, targetFolder,
                     (result, aborted) =>
                     {
                         if (_activityCommon == null)
@@ -1247,7 +1247,7 @@ namespace BmwDeepObd
 
                         if (result && !aborted)
                         {
-                            string message = string.Format(GetString(Resource.String.settings_extract_config_success), email);
+                            string message = string.Format(GetString(Resource.String.settings_extract_config_success), infoFolder, email);
                             AlertDialog alertDialog = new AlertDialog.Builder(this)
                                 .SetMessage(message)
                                 .SetTitle(Resource.String.alert_title_info)

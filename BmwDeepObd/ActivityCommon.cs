@@ -15086,9 +15086,9 @@ using System.Threading;"
             return false;
         }
 
-        public bool DownloadConfigThread(string url, string email, string targetFolder, DownloadConfigThreadFinishDelegate handler)
+        public bool DownloadConfigThread(string url, string email, string infoFolder, string targetFolder, DownloadConfigThreadFinishDelegate handler)
         {
-            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(targetFolder))
+            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(infoFolder) || string.IsNullOrEmpty(targetFolder))
             {
                 return false;
             }
