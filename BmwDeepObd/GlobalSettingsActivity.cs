@@ -1245,8 +1245,9 @@ namespace BmwDeepObd
 
                         if (result && !aborted)
                         {
+                            string message = string.Format(GetString(Resource.String.settings_extract_config_success), email);
                             AlertDialog alertDialog = new AlertDialog.Builder(this)
-                                .SetMessage(Resource.String.settings_extract_config_success)
+                                .SetMessage(message)
                                 .SetTitle(Resource.String.alert_title_info)
                                 .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
                                 {
