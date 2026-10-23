@@ -37,7 +37,7 @@ Rated by updatestar.com: [https://deep-obd.updatestar.com](https://deep-obd.upda
 
 **Warning:** At the moment the **server side PHP script access** has changed and a **new app version is required**.  
 Google needs some time for testing, in the meantime you can **download the latest version** here:  
-Direct download: [https://holeschak.de/BmwDeepObd/595.apk](https://holeschak.de/BmwDeepObd/595.apk)  
+Direct download: [https://holeschak.de/BmwDeepObd/596.apk](https://holeschak.de/BmwDeepObd/596.apk)  
 
 _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * Standard FTDI based USB "INPA compatible" D-CAN/K-Line adapters (all protocols)
