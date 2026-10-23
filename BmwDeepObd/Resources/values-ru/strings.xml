@@ -542,7 +542,7 @@
   <!--Translate-->
   <string name="settings_select_download_source">Выберите источник загрузки.</string>
   <string name="settings_download_ibus_app">IBUS-APP конфигурации</string>
-  <string name="settings_extract_config_success">Конфигурационные файлы были успешно извлечены.\nВы хотите открыть папку с конфигурацией?</string>
+  <string name="settings_extract_config_success">Конфигурационные файлы были успешно извлечены.\nДля вопросов относительно конфигураций свяжитесь с {0}.\nВы хотите открыть папку с конфигурацией?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>

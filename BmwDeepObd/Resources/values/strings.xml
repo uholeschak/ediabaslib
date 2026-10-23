@@ -531,7 +531,7 @@
   <string name="settings_start_app_failed">The app could not be started.</string>
   <string name="settings_select_download_source">Select download source.</string>
   <string name="settings_download_ibus_app">IBUS-APP configurations</string>
-  <string name="settings_extract_config_success">The configuration files have been extracted successfully.\nDo you want to open the configuration folder?</string>
+  <string name="settings_extract_config_success">The configuration files have been extracted successfully.\nFor questions regarding the configurations please contact {0}.\nDo you want to open the configuration folder?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>
