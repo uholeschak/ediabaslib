@@ -61,7 +61,7 @@ namespace BmwDeepObd
             RequestSelDirDelApp,
         }
 
-        public delegate void DownloadSourceSelected(string url = null, string targetFolder = null);
+        public delegate void DownloadSourceSelected(string url = null, string email = null, string targetFolder = null);
 
         private InstanceData _instanceData = new InstanceData();
         private string _vagDir;
@@ -1153,11 +1153,11 @@ namespace BmwDeepObd
 
         private void DownloadConfigFiles()
         {
-            SelectDownloadSourceDialog((fileName, targetFolder) =>
+            SelectDownloadSourceDialog((fileName, email, targetFolder) =>
             {
-                if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(targetFolder))
+                if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
                 {
-                    DownloadConfigFiles(fileName, targetFolder);
+                    DownloadConfigFiles(fileName, email, targetFolder);
                 }
             });
         }
@@ -1228,14 +1228,14 @@ namespace BmwDeepObd
             }
         }
 
-        private void DownloadConfigFiles(string url, string targetFolder)
+        private void DownloadConfigFiles(string url, string email, string targetFolder)
         {
             if (_activityCommon == null)
             {
                 return;
             }
 
-            if (!_activityCommon.DownloadConfigThread(url, targetFolder,
+            if (!_activityCommon.DownloadConfigThread(url, email, targetFolder,
                     (result, aborted) =>
                     {
                         if (_activityCommon == null)
