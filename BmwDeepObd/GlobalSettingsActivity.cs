@@ -61,7 +61,7 @@ namespace BmwDeepObd
             RequestSelDirDelApp,
         }
 
-        public delegate void DownloadSourceSelected(string url = null, string email = null, string targetFolder = null);
+        public delegate void DownloadSourceSelected(string url, string email, string targetFolder);
 
         private InstanceData _instanceData = new InstanceData();
         private string _vagDir;
@@ -1174,7 +1174,7 @@ namespace BmwDeepObd
             ListView listView = new ListView(this);
             bool handlerCalled = false;
 
-            List<(string Name, string Url, string email, string TargetFolder)> downloadList =
+            List<(string Name, string Url, string Email, string TargetFolder)> downloadList =
             [
                 (GetString(Resource.String.settings_download_ibus_app), IbusAppUrl, IbusAppEmail,
                     Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, "IBUS_APP")),
@@ -1190,12 +1190,12 @@ namespace BmwDeepObd
             {
                 var downloadItem = downloadList[listView.CheckedItemPosition];
                 handlerCalled = true;
-                handler(downloadItem.Url, downloadItem.TargetFolder);
+                handler(downloadItem.Url, downloadItem.Email, downloadItem.TargetFolder);
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
                 handlerCalled = true;
-                handler();
+                handler(null, null, null);
             });
 
             AlertDialog alertDialog = builder.Create();
@@ -1220,7 +1220,7 @@ namespace BmwDeepObd
 
                     if (!handlerCalled)
                     {
-                        handler();
+                        handler(null, null, null);
                     }
                 };
 
