@@ -7317,16 +7317,42 @@ namespace BmwDeepObd
         /// <returns>The same content instance</returns>
         public static MultipartFormDataContent FixMultipartBoundary(MultipartFormDataContent content)
         {
-            NameValueHeaderValue boundaryParam = content?.Headers.ContentType?.Parameters
+            if (content == null)
+            {
+                return null;
+            }
+
+            NameValueHeaderValue boundaryParam = content.Headers.ContentType?.Parameters
                 .FirstOrDefault(p => string.Compare(p.Name, "boundary", StringComparison.OrdinalIgnoreCase) == 0);
             if (boundaryParam?.Value != null)
             {
                 boundaryParam.Value = boundaryParam.Value.Trim('"');
             }
 
+            foreach (HttpContent part in content)
+            {
+                ContentDispositionHeaderValue disposition = part.Headers.ContentDisposition;
+                if (disposition == null)
+                {
+                    continue;
+                }
+
+                // filename* (RFC 5987) is not allowed in multipart/form-data (RFC 7578)
+                disposition.FileNameStar = null;
+
+                if (!string.IsNullOrEmpty(disposition.Name) && !disposition.Name.StartsWith("\""))
+                {
+                    disposition.Name = "\"" + disposition.Name + "\"";
+                }
+
+                if (!string.IsNullOrEmpty(disposition.FileName) && !disposition.FileName.StartsWith("\""))
+                {
+                    disposition.FileName = "\"" + disposition.FileName + "\"";
+                }
+            }
+
             return content;
         }
-
         public static bool SetEdiabasUdsCanId(EdiabasNet ediabas, VehicleInfoVag.EcuAddressEntry ecuAddressEntry = null)
         {
             if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
