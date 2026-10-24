@@ -1080,10 +1080,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        // 1. Ensure that it is sent directly for review
-                        commitRequest.ChangesNotSentForReview = false;
-                        // 2. The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
-                        commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
+                        PrepareCommitRequest(commitRequest);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
@@ -1211,10 +1208,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        // 1. Ensure that it is sent directly for review
-                        commitRequest.ChangesNotSentForReview = false;
-                        // 2. The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
-                        commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
+                        PrepareCommitRequest(commitRequest);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
@@ -1362,10 +1356,7 @@ namespace ApkUploader
                         sb.AppendLine($"Track {track} updated");
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        // 1. Ensure that it is sent directly for review
-                        commitRequest.ChangesNotSentForReview = false;
-                        // 2. The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
-                        commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
+                        PrepareCommitRequest(commitRequest);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
@@ -1621,10 +1612,7 @@ namespace ApkUploader
                         sb.AppendLine($"Track {track} updated");
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        // 1. Ensure that it is sent directly for review
-                        commitRequest.ChangesNotSentForReview = false;
-                        // 2. The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
-                        commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
+                        PrepareCommitRequest(commitRequest);
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
@@ -1704,6 +1692,14 @@ namespace ApkUploader
             _serviceThread.Start();
 
             return true;
+        }
+
+        private void PrepareCommitRequest(EditsResource.CommitRequest commitRequest)
+        {
+            // 1. Ensure that it is sent directly for review
+            commitRequest.ChangesNotSentForReview = false;
+            // 2. The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
+            commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
         }
 
         /// <summary>
