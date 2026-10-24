@@ -1354,11 +1354,10 @@ namespace ApkUploader
                         sb.AppendLine($"Track {track} updated");
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        // directly submit the changes for review
+                        // 1. Ensure that it is sent directly for review
                         commitRequest.ChangesNotSentForReview = false;
-                        // cancel the review if it is in review, since we only update the release notes
+                        // 2. The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
                         commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
-
                         AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
