@@ -1692,9 +1692,9 @@ namespace ApkUploader
 
         private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest)
         {
-            // 1. Ensure that it is sent directly for review
-            commitRequest.ChangesNotSentForReview = false;
-            // 2. The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
+            // Keep the default null, otherwise this triggers an error
+            commitRequest.ChangesNotSentForReview = null;
+            // The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
             commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
             AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
             return appEditCommit;
