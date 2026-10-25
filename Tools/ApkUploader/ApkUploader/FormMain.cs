@@ -1690,10 +1690,27 @@ namespace ApkUploader
             return true;
         }
 
+        /// <summary>
+        /// Executes the commit request for the given <see cref="EditsResource.CommitRequest"/>.
+        /// Alternatives for commitRequest.ChangesInReviewBehavior in the UI of the portal are:
+        /// <list type="bullet">
+        /// <item><description>
+        /// Use the button Send for review if present and enabled
+        /// </description></item>
+        /// <item><description>
+        /// Change the managed publishing state
+        /// </description></item>
+        /// <item><description>
+        /// Create a new internal test track in the UI and assign the release to it, edit the release notes and click save.
+        /// </description></item>
+        /// </list>
+        /// </summary>
+        /// <param name="commitRequest">The commit request to execute.</param>
+        /// <returns>The resulting <see cref="AppEdit"/>.</returns>
         private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest)
         {
             // Keep the default null, otherwise this triggers an error
-            commitRequest.ChangesNotSentForReview = null;
+            // commitRequest.ChangesNotSentForReview = null;
             // The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
             commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
             AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
