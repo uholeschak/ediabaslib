@@ -6,6 +6,7 @@ using Google.Apis.Upload;
 using Google.Apis.Util.Store;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,9 +14,11 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -801,6 +804,40 @@ namespace ApkUploader
             return true;
         }
 
+        public async Task<string> GetLiveStoreVersionAsync(string packageName)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    UriBuilder builder = new UriBuilder("https://play.google.com/store/apps/details");
+                    NameValueCollection query = HttpUtility.ParseQueryString(string.Empty);
+                    query["id"] = packageName;
+                    query["hl"] = "de";
+                    builder.Query = query.ToString();
+
+                    string targetUrl = builder.ToString();
+                    string html = await client.GetStringAsync(targetUrl);
+
+                    Match match = Regex.Match(html, @"\[\[\[\""(\d+\.\d+\.[\d\.]+)\""\]\]");
+                    if (match.Success)
+                    {
+                        string version = match.Groups[1].Value;
+                        if (!string.IsNullOrEmpty(version))
+                        {
+                            return version;
+                        }
+                    }
+
+                    return string.Empty;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ListBundles()
         {
@@ -970,6 +1007,17 @@ namespace ApkUploader
                                 }
                             }
                         }
+                    }
+
+                    string liveStoreVersion = await GetLiveStoreVersionAsync(PackageName);
+                    sb.AppendLine();
+                    if (!string.IsNullOrEmpty(liveStoreVersion))
+                    {
+                        sb.AppendLine($"Live store version: {liveStoreVersion}");
+                    }
+                    else
+                    {
+                        sb.AppendLine("Live store version not found");
                     }
                 }
                 catch (Exception e)
@@ -1756,7 +1804,7 @@ namespace ApkUploader
         private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest)
         {
             // Keep the default null, otherwise this triggers an error
-            // commitRequest.ChangesNotSentForReview = null;
+            commitRequest.ChangesNotSentForReview = null;
             // The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
             commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
             AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
