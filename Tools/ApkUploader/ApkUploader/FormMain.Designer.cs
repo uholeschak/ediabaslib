@@ -65,6 +65,7 @@
             buttonUploadSerials = new System.Windows.Forms.Button();
             comboBoxSerialOem = new System.Windows.Forms.ComboBox();
             labelSerialOem = new System.Windows.Forms.Label();
+            buttonTriggerReview = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // textBoxStatus
@@ -76,8 +77,8 @@
             textBoxStatus.Name = "textBoxStatus";
             textBoxStatus.ReadOnly = true;
             textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            textBoxStatus.Size = new System.Drawing.Size(1239, 464);
-            textBoxStatus.TabIndex = 22;
+            textBoxStatus.Size = new System.Drawing.Size(1268, 464);
+            textBoxStatus.TabIndex = 23;
             textBoxStatus.TabStop = false;
             // 
             // buttonListBundles
@@ -95,7 +96,7 @@
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonClose.Location = new System.Drawing.Point(1164, 724);
+            buttonClose.Location = new System.Drawing.Point(1193, 724);
             buttonClose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(88, 27);
@@ -108,7 +109,7 @@
             // 
             buttonAbort.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonAbort.Location = new System.Drawing.Point(1068, 724);
+            buttonAbort.Location = new System.Drawing.Point(1097, 724);
             buttonAbort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonAbort.Name = "buttonAbort";
             buttonAbort.Size = new System.Drawing.Size(88, 27);
@@ -123,7 +124,7 @@
             buttonUploadBundle.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonUploadBundle.Name = "buttonUploadBundle";
             buttonUploadBundle.Size = new System.Drawing.Size(134, 27);
-            buttonUploadBundle.TabIndex = 7;
+            buttonUploadBundle.TabIndex = 8;
             buttonUploadBundle.Text = "Upload Bundle/Apk";
             buttonUploadBundle.UseVisualStyleBackColor = true;
             buttonUploadBundle.Click += buttonUploadBundle_Click;
@@ -147,11 +148,11 @@
             // buttonSelectBundleFile
             // 
             buttonSelectBundleFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            buttonSelectBundleFile.Location = new System.Drawing.Point(1217, 90);
+            buttonSelectBundleFile.Location = new System.Drawing.Point(1246, 90);
             buttonSelectBundleFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectBundleFile.Name = "buttonSelectBundleFile";
             buttonSelectBundleFile.Size = new System.Drawing.Size(35, 27);
-            buttonSelectBundleFile.TabIndex = 12;
+            buttonSelectBundleFile.TabIndex = 13;
             buttonSelectBundleFile.Text = "...";
             buttonSelectBundleFile.UseVisualStyleBackColor = true;
             buttonSelectBundleFile.Click += buttonSelectBundleFile_Click;
@@ -163,7 +164,7 @@
             labelApkFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelApkFile.Name = "labelApkFile";
             labelApkFile.Size = new System.Drawing.Size(125, 15);
-            labelApkFile.TabIndex = 10;
+            labelApkFile.TabIndex = 11;
             labelApkFile.Text = "Bundle/Apk file name:";
             // 
             // textBoxBundleFile
@@ -172,8 +173,8 @@
             textBoxBundleFile.Location = new System.Drawing.Point(13, 93);
             textBoxBundleFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxBundleFile.Name = "textBoxBundleFile";
-            textBoxBundleFile.Size = new System.Drawing.Size(1194, 23);
-            textBoxBundleFile.TabIndex = 11;
+            textBoxBundleFile.Size = new System.Drawing.Size(1223, 23);
+            textBoxBundleFile.TabIndex = 12;
             textBoxBundleFile.Leave += textBoxBundleFile_Leave;
             // 
             // labelObbFile
@@ -183,7 +184,7 @@
             labelObbFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelObbFile.Name = "labelObbFile";
             labelObbFile.Size = new System.Drawing.Size(226, 15);
-            labelObbFile.TabIndex = 13;
+            labelObbFile.TabIndex = 14;
             labelObbFile.Text = "Obb file name (use * to keep last version):";
             // 
             // textBoxObbFile
@@ -192,17 +193,17 @@
             textBoxObbFile.Location = new System.Drawing.Point(13, 137);
             textBoxObbFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxObbFile.Name = "textBoxObbFile";
-            textBoxObbFile.Size = new System.Drawing.Size(1194, 23);
-            textBoxObbFile.TabIndex = 14;
+            textBoxObbFile.Size = new System.Drawing.Size(1223, 23);
+            textBoxObbFile.TabIndex = 15;
             // 
             // buttonSelectObbFile
             // 
             buttonSelectObbFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            buttonSelectObbFile.Location = new System.Drawing.Point(1217, 134);
+            buttonSelectObbFile.Location = new System.Drawing.Point(1246, 134);
             buttonSelectObbFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectObbFile.Name = "buttonSelectObbFile";
             buttonSelectObbFile.Size = new System.Drawing.Size(35, 27);
-            buttonSelectObbFile.TabIndex = 15;
+            buttonSelectObbFile.TabIndex = 16;
             buttonSelectObbFile.Text = "...";
             buttonSelectObbFile.UseVisualStyleBackColor = true;
             buttonSelectObbFile.Click += buttonSelectObbFile_Click;
@@ -223,7 +224,7 @@
             labelRescourceFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelRescourceFolder.Name = "labelRescourceFolder";
             labelRescourceFolder.Size = new System.Drawing.Size(92, 15);
-            labelRescourceFolder.TabIndex = 16;
+            labelRescourceFolder.TabIndex = 17;
             labelRescourceFolder.Text = "Resource folder:";
             // 
             // textBoxResourceFolder
@@ -232,17 +233,17 @@
             textBoxResourceFolder.Location = new System.Drawing.Point(13, 181);
             textBoxResourceFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxResourceFolder.Name = "textBoxResourceFolder";
-            textBoxResourceFolder.Size = new System.Drawing.Size(1194, 23);
-            textBoxResourceFolder.TabIndex = 17;
+            textBoxResourceFolder.Size = new System.Drawing.Size(1223, 23);
+            textBoxResourceFolder.TabIndex = 18;
             // 
             // buttonSelectResourceFolder
             // 
             buttonSelectResourceFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            buttonSelectResourceFolder.Location = new System.Drawing.Point(1217, 178);
+            buttonSelectResourceFolder.Location = new System.Drawing.Point(1246, 178);
             buttonSelectResourceFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectResourceFolder.Name = "buttonSelectResourceFolder";
             buttonSelectResourceFolder.Size = new System.Drawing.Size(35, 27);
-            buttonSelectResourceFolder.TabIndex = 18;
+            buttonSelectResourceFolder.TabIndex = 19;
             buttonSelectResourceFolder.Text = "...";
             buttonSelectResourceFolder.UseVisualStyleBackColor = true;
             buttonSelectResourceFolder.Click += buttonSelectResourceFolder_Click;
@@ -253,7 +254,7 @@
             buttonChangeTrack.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonChangeTrack.Name = "buttonChangeTrack";
             buttonChangeTrack.Size = new System.Drawing.Size(134, 27);
-            buttonChangeTrack.TabIndex = 5;
+            buttonChangeTrack.TabIndex = 6;
             buttonChangeTrack.Text = "Change Track";
             buttonChangeTrack.UseVisualStyleBackColor = true;
             buttonChangeTrack.Click += buttonChangeTrack_Click;
@@ -263,43 +264,43 @@
             comboBoxTrackUnassign.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             comboBoxTrackUnassign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxTrackUnassign.FormattingEnabled = true;
-            comboBoxTrackUnassign.Location = new System.Drawing.Point(1091, 45);
+            comboBoxTrackUnassign.Location = new System.Drawing.Point(1120, 45);
             comboBoxTrackUnassign.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
             comboBoxTrackUnassign.Size = new System.Drawing.Size(116, 23);
-            comboBoxTrackUnassign.TabIndex = 29;
+            comboBoxTrackUnassign.TabIndex = 32;
             // 
             // comboBoxTrackAssign
             // 
             comboBoxTrackAssign.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             comboBoxTrackAssign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxTrackAssign.FormattingEnabled = true;
-            comboBoxTrackAssign.Location = new System.Drawing.Point(1091, 12);
+            comboBoxTrackAssign.Location = new System.Drawing.Point(1120, 12);
             comboBoxTrackAssign.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             comboBoxTrackAssign.Name = "comboBoxTrackAssign";
             comboBoxTrackAssign.Size = new System.Drawing.Size(116, 23);
-            comboBoxTrackAssign.TabIndex = 26;
+            comboBoxTrackAssign.TabIndex = 29;
             // 
             // labelTrackUnassign
             // 
             labelTrackUnassign.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             labelTrackUnassign.AutoSize = true;
-            labelTrackUnassign.Location = new System.Drawing.Point(997, 48);
+            labelTrackUnassign.Location = new System.Drawing.Point(1026, 48);
             labelTrackUnassign.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelTrackUnassign.Name = "labelTrackUnassign";
             labelTrackUnassign.Size = new System.Drawing.Size(88, 15);
-            labelTrackUnassign.TabIndex = 28;
+            labelTrackUnassign.TabIndex = 31;
             labelTrackUnassign.Text = "Track unassign:";
             // 
             // labelTrackAssign
             // 
             labelTrackAssign.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             labelTrackAssign.AutoSize = true;
-            labelTrackAssign.Location = new System.Drawing.Point(1011, 15);
+            labelTrackAssign.Location = new System.Drawing.Point(1040, 15);
             labelTrackAssign.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelTrackAssign.Name = "labelTrackAssign";
             labelTrackAssign.Size = new System.Drawing.Size(74, 15);
-            labelTrackAssign.TabIndex = 25;
+            labelTrackAssign.TabIndex = 28;
             labelTrackAssign.Text = "Track assign:";
             // 
             // buttonAssignTrack
@@ -308,7 +309,7 @@
             buttonAssignTrack.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonAssignTrack.Name = "buttonAssignTrack";
             buttonAssignTrack.Size = new System.Drawing.Size(134, 27);
-            buttonAssignTrack.TabIndex = 6;
+            buttonAssignTrack.TabIndex = 7;
             buttonAssignTrack.Text = "Assign Ver to Track";
             buttonAssignTrack.UseVisualStyleBackColor = true;
             buttonAssignTrack.Click += buttonAssignTrack_Click;
@@ -316,21 +317,21 @@
             // textBoxVersion
             // 
             textBoxVersion.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            textBoxVersion.Location = new System.Drawing.Point(901, 15);
+            textBoxVersion.Location = new System.Drawing.Point(930, 15);
             textBoxVersion.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxVersion.Name = "textBoxVersion";
             textBoxVersion.Size = new System.Drawing.Size(56, 23);
-            textBoxVersion.TabIndex = 24;
+            textBoxVersion.TabIndex = 27;
             // 
             // labelVersion
             // 
             labelVersion.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             labelVersion.AutoSize = true;
-            labelVersion.Location = new System.Drawing.Point(809, 18);
+            labelVersion.Location = new System.Drawing.Point(838, 18);
             labelVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelVersion.Name = "labelVersion";
             labelVersion.Size = new System.Drawing.Size(84, 15);
-            labelVersion.TabIndex = 23;
+            labelVersion.TabIndex = 26;
             labelVersion.Text = "Version assign:";
             // 
             // buttonUpdateChanges
@@ -347,12 +348,12 @@
             // checkBoxUpdateName
             // 
             checkBoxUpdateName.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            checkBoxUpdateName.Location = new System.Drawing.Point(809, 42);
+            checkBoxUpdateName.Location = new System.Drawing.Point(838, 42);
             checkBoxUpdateName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkBoxUpdateName.Name = "checkBoxUpdateName";
             checkBoxUpdateName.RightToLeft = System.Windows.Forms.RightToLeft.No;
             checkBoxUpdateName.Size = new System.Drawing.Size(152, 28);
-            checkBoxUpdateName.TabIndex = 27;
+            checkBoxUpdateName.TabIndex = 30;
             checkBoxUpdateName.Text = "Update name";
             checkBoxUpdateName.UseVisualStyleBackColor = true;
             // 
@@ -362,7 +363,7 @@
             buttonSetAppInfo.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSetAppInfo.Name = "buttonSetAppInfo";
             buttonSetAppInfo.Size = new System.Drawing.Size(134, 27);
-            buttonSetAppInfo.TabIndex = 8;
+            buttonSetAppInfo.TabIndex = 9;
             buttonSetAppInfo.Text = "Set App Info";
             buttonSetAppInfo.UseVisualStyleBackColor = true;
             buttonSetAppInfo.Click += buttonSetAppInfo_Click;
@@ -374,7 +375,7 @@
             labelSerialFileName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelSerialFileName.Name = "labelSerialFileName";
             labelSerialFileName.Size = new System.Drawing.Size(90, 15);
-            labelSerialFileName.TabIndex = 19;
+            labelSerialFileName.TabIndex = 20;
             labelSerialFileName.Text = "Serial file name:";
             // 
             // textBoxSerialFileName
@@ -383,17 +384,17 @@
             textBoxSerialFileName.Location = new System.Drawing.Point(13, 225);
             textBoxSerialFileName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxSerialFileName.Name = "textBoxSerialFileName";
-            textBoxSerialFileName.Size = new System.Drawing.Size(1194, 23);
-            textBoxSerialFileName.TabIndex = 20;
+            textBoxSerialFileName.Size = new System.Drawing.Size(1223, 23);
+            textBoxSerialFileName.TabIndex = 21;
             // 
             // buttonSelectSerialFile
             // 
             buttonSelectSerialFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            buttonSelectSerialFile.Location = new System.Drawing.Point(1217, 222);
+            buttonSelectSerialFile.Location = new System.Drawing.Point(1246, 222);
             buttonSelectSerialFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectSerialFile.Name = "buttonSelectSerialFile";
             buttonSelectSerialFile.Size = new System.Drawing.Size(35, 27);
-            buttonSelectSerialFile.TabIndex = 21;
+            buttonSelectSerialFile.TabIndex = 22;
             buttonSelectSerialFile.Text = "...";
             buttonSelectSerialFile.UseVisualStyleBackColor = true;
             buttonSelectSerialFile.Click += buttonSelectSerialFile_Click;
@@ -409,30 +410,43 @@
             buttonUploadSerials.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonUploadSerials.Name = "buttonUploadSerials";
             buttonUploadSerials.Size = new System.Drawing.Size(134, 27);
-            buttonUploadSerials.TabIndex = 9;
+            buttonUploadSerials.TabIndex = 10;
             buttonUploadSerials.Text = "Upload Serials";
             buttonUploadSerials.UseVisualStyleBackColor = true;
             buttonUploadSerials.Click += buttonUploadSerials_Click;
             // 
             // comboBoxSerialOem
             // 
+            comboBoxSerialOem.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             comboBoxSerialOem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxSerialOem.FormattingEnabled = true;
-            comboBoxSerialOem.Location = new System.Drawing.Point(581, 15);
+            comboBoxSerialOem.Location = new System.Drawing.Point(696, 15);
             comboBoxSerialOem.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             comboBoxSerialOem.Name = "comboBoxSerialOem";
             comboBoxSerialOem.Size = new System.Drawing.Size(134, 23);
-            comboBoxSerialOem.TabIndex = 30;
+            comboBoxSerialOem.TabIndex = 25;
             // 
             // labelSerialOem
             // 
+            labelSerialOem.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             labelSerialOem.AutoSize = true;
-            labelSerialOem.Location = new System.Drawing.Point(506, 18);
+            labelSerialOem.Location = new System.Drawing.Point(621, 18);
             labelSerialOem.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelSerialOem.Name = "labelSerialOem";
             labelSerialOem.Size = new System.Drawing.Size(67, 15);
-            labelSerialOem.TabIndex = 31;
+            labelSerialOem.TabIndex = 24;
             labelSerialOem.Text = "Serial OEM:";
+            // 
+            // buttonTriggerReview
+            // 
+            buttonTriggerReview.Location = new System.Drawing.Point(439, 12);
+            buttonTriggerReview.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonTriggerReview.Name = "buttonTriggerReview";
+            buttonTriggerReview.Size = new System.Drawing.Size(134, 27);
+            buttonTriggerReview.TabIndex = 5;
+            buttonTriggerReview.Text = "Trigger Review";
+            buttonTriggerReview.UseVisualStyleBackColor = true;
+            buttonTriggerReview.Click += buttonTriggerReview_Click;
             // 
             // FormMain
             // 
@@ -440,7 +454,8 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonAbort;
-            ClientSize = new System.Drawing.Size(1265, 763);
+            ClientSize = new System.Drawing.Size(1294, 763);
+            Controls.Add(buttonTriggerReview);
             Controls.Add(labelSerialOem);
             Controls.Add(comboBoxSerialOem);
             Controls.Add(buttonUploadSerials);
@@ -525,6 +540,7 @@
         private System.Windows.Forms.Button buttonUploadSerials;
         private System.Windows.Forms.ComboBox comboBoxSerialOem;
         private System.Windows.Forms.Label labelSerialOem;
+        private System.Windows.Forms.Button buttonTriggerReview;
     }
 }
 

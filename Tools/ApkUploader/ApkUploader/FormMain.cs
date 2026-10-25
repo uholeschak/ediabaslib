@@ -103,6 +103,7 @@ namespace ApkUploader
             buttonListBundles.Enabled = enable;
             buttonListTracks.Enabled = enable;
             buttonUpdateChanges.Enabled = enable;
+            buttonTriggerReview.Enabled = enable;
             buttonUploadBundle.Enabled = enable;
             buttonChangeTrack.Enabled = enable;
             buttonAssignTrack.Enabled = enable;
@@ -988,7 +989,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool SubmitTrackReview()
+        private bool TriggerTrackReview()
         {
             if (_serviceThread != null)
             {
@@ -1927,6 +1928,11 @@ namespace ApkUploader
                 }
             }
             UpdateChanges(comboBoxTrackAssign.Text, bundleChanges, appVersion);
+        }
+
+        private void buttonTriggerReview_Click(object sender, EventArgs e)
+        {
+            TriggerTrackReview();
         }
 
         private void buttonChangeTrack_Click(object sender, EventArgs e)
