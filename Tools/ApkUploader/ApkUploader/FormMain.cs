@@ -14,7 +14,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,7 +37,8 @@ namespace ApkUploader
         private const string AndroidManifest = "AndroidManifest.xml";
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private const string ExpansionKeep = @"*";
-        private static readonly string[] TracksEdit = { "alpha", "beta", "production", "internal", "Test" };
+        private static readonly string TrackInternal = "internal";
+        private static readonly string[] TracksEdit = { "alpha", "beta", "production", TrackInternal, "Test" };
         private static readonly string[] SerialsOem = { "DeepOBD", "DeepOBDIbus" };
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
@@ -1112,9 +1112,10 @@ namespace ApkUploader
                 return false;
             }
 
-            if (userFraction.HasValue && (userFraction.Value <= 0.0 || userFraction.Value >= 1.0))
+            string userFractionError = ValidateUserFraction(userFraction, toTrack);
+            if (userFractionError != null)
             {
-                UpdateStatus("User fraction must be > 0 and < 1");
+                UpdateStatus(userFractionError);
                 return false;
             }
 
@@ -1239,9 +1240,10 @@ namespace ApkUploader
                 return false;
             }
 
-            if (userFraction.HasValue && (userFraction.Value <= 0.0 || userFraction.Value >= 1.0))
+            string userFractionError = ValidateUserFraction(userFraction, track);
+            if (userFractionError != null)
             {
-                UpdateStatus("User fraction must be > 0 and < 1");
+                UpdateStatus(userFractionError);
                 return false;
             }
 
@@ -1548,9 +1550,10 @@ namespace ApkUploader
                 return false;
             }
 
-            if (userFraction.HasValue && (userFraction.Value <= 0.0 || userFraction.Value >= 1.0))
+            string userFractionError = ValidateUserFraction(userFraction, track);
+            if (userFractionError != null)
             {
-                UpdateStatus("User fraction must be > 0 and < 1");
+                UpdateStatus(userFractionError);
                 return false;
             }
 
@@ -1842,6 +1845,33 @@ namespace ApkUploader
             _serviceThread.Start();
 
             return true;
+        }
+
+        /// <summary>
+        /// Validates the user fraction for a staged rollout.
+        /// </summary>
+        /// <param name="userFraction">User fraction (null = complete rollout)</param>
+        /// <param name="track">Target track</param>
+        /// <returns>Error message or null if valid</returns>
+        private static string ValidateUserFraction(double? userFraction, string track)
+        {
+            if (!userFraction.HasValue)
+            {
+                return null;
+            }
+
+            double value = userFraction.Value;
+            if (double.IsNaN(value) || value <= 0.0 || value >= 1.0)
+            {
+                return "User fraction must be > 0 and < 1";
+            }
+
+            if (string.Compare(track, TrackInternal, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return "User fraction not supported for internal track";
+            }
+
+            return null;
         }
 
         /// <summary>
