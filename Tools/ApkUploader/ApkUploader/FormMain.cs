@@ -1206,7 +1206,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool AssignTrack(string track, int? versionAssign)
+        private bool AssignTrack(string track, int? versionAssign, double? userFraction = null)
         {
             if (_serviceThread != null)
             {
@@ -1216,6 +1216,12 @@ namespace ApkUploader
             if (string.IsNullOrWhiteSpace(track))
             {
                 UpdateStatus("Empty track");
+                return false;
+            }
+
+            if (userFraction.HasValue && (userFraction.Value <= 0.0 || userFraction.Value >= 1.0))
+            {
+                UpdateStatus("User fraction must be > 0 and < 1");
                 return false;
             }
 
@@ -1275,21 +1281,31 @@ namespace ApkUploader
                         {
                             TrackValue = track
                         };
+
                         if (versionAssign.HasValue)
                         {
-                            assignTrack.Releases = new List<TrackRelease>
+                            TrackRelease trackRelease = new TrackRelease
                             {
-                                new TrackRelease
+                                Name = versionAssign.ToString(),
+                                VersionCodes = new List<long?>
                                 {
-                                    Name = versionAssign.ToString(),
-                                    VersionCodes = new List<long?>
-                                    {
-                                        versionAssign
-                                    },
-                                    Status = TrackReleaseStatus.Completed,
-                                    ReleaseNotes = trackReleaseOld?.ReleaseNotes,
-                                }
+                                    versionAssign
+                                },
+                                ReleaseNotes = trackReleaseOld?.ReleaseNotes,
                             };
+
+                            if (userFraction.HasValue)
+                            {
+                                trackRelease.UserFraction = userFraction.Value;
+                                trackRelease.Status = TrackReleaseStatus.InProgress;
+                            }
+                            else
+                            {
+                                trackRelease.Status = TrackReleaseStatus.Completed;
+                            }
+
+                            List<TrackRelease> trackReleases = new List<TrackRelease> { trackRelease };
+                            assignTrack.Releases = trackReleases;
                             sb.AppendLine($"Assign version: {versionAssign}");
                         }
                         else
