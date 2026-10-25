@@ -1480,7 +1480,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool UploadBundle(string bundleFileName, string expansionFileName, string track, List<UpdateInfo> bundleChanges, string appVersion)
+        private bool UploadBundle(string bundleFileName, string expansionFileName, string track, List<UpdateInfo> bundleChanges, string appVersion, double? userFraction = null)
         {
             if (_serviceThread != null)
             {
@@ -1509,6 +1509,12 @@ namespace ApkUploader
             if (string.IsNullOrWhiteSpace(track))
             {
                 UpdateStatus("Empty track");
+                return false;
+            }
+
+            if (userFraction.HasValue && (userFraction.Value <= 0.0 || userFraction.Value >= 1.0))
+            {
+                UpdateStatus("User fraction must be > 0 and < 1");
                 return false;
             }
 
@@ -1689,22 +1695,32 @@ namespace ApkUploader
                         {
                             trackName = versionCode.ToString();
                         }
+
+                        TrackRelease trackRelease = new TrackRelease
+                        {
+                            Name = trackName,
+                            VersionCodes = new List<long?>
+                            {
+                                versionCode.Value
+                            },
+                            ReleaseNotes = releaseNotes,
+                        };
+
+                        if (userFraction.HasValue)
+                        {
+                            trackRelease.UserFraction = userFraction.Value;
+                            trackRelease.Status = TrackReleaseStatus.InProgress;
+                        }
+                        else
+                        {
+                            trackRelease.Status = TrackReleaseStatus.Completed;
+                        }
+
+                        List<TrackRelease> releases = new List<TrackRelease> { trackRelease };
                         Track trackUpdate = new Track
                         {
                             TrackValue = track,
-                            Releases = new List<TrackRelease>
-                            {
-                                new TrackRelease
-                                {
-                                    Name = trackName,
-                                    VersionCodes = new List<long?>
-                                    {
-                                        versionCode.Value
-                                    },
-                                    Status = TrackReleaseStatus.Completed,
-                                    ReleaseNotes = releaseNotes,
-                                }
-                            }
+                            Releases = releases
                         };
 
                         await edits.Tracks.Update(trackUpdate, PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
