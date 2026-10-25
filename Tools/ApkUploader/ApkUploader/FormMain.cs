@@ -1493,6 +1493,7 @@ namespace ApkUploader
                                     {
                                         currentVersion
                                     },
+                                    UserFraction = trackRelease.UserFraction,
                                     Status = trackRelease.Status,
                                     ReleaseNotes = releaseNotes,
                                 }
