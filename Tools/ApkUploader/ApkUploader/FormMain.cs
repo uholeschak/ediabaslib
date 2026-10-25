@@ -27,8 +27,15 @@ namespace ApkUploader
 {
     public partial class FormMain : Form
     {
+        private static class TrackReleaseStatus
+        {
+            public const string Draft = "draft";
+            public const string InProgress = "inProgress";
+            public const string Halted = "halted";
+            public const string Completed = "completed";
+        }
+
         private const string AndroidManifest = "AndroidManifest.xml";
-        private const string StatusCompleted = "completed";
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private const string ExpansionKeep = @"*";
         private static readonly string[] TracksEdit = { "alpha", "beta", "production", "internal", "Test" };
@@ -1166,7 +1173,7 @@ namespace ApkUploader
                             {
                                 new TrackRelease
                                 {
-                                    Status = StatusCompleted
+                                    Status = TrackReleaseStatus.Completed
                                 }
                             }
                         };
@@ -1279,7 +1286,7 @@ namespace ApkUploader
                                     {
                                         versionAssign
                                     },
-                                    Status = StatusCompleted,
+                                    Status = TrackReleaseStatus.Completed,
                                     ReleaseNotes = trackReleaseOld?.ReleaseNotes,
                                 }
                             };
@@ -1291,7 +1298,7 @@ namespace ApkUploader
                             {
                                 new TrackRelease
                                 {
-                                    Status = StatusCompleted
+                                    Status = TrackReleaseStatus.Completed
                                 }
                             };
                             sb.AppendLine("Unassign version");
@@ -1694,7 +1701,7 @@ namespace ApkUploader
                                     {
                                         versionCode.Value
                                     },
-                                    Status = StatusCompleted,
+                                    Status = TrackReleaseStatus.Completed,
                                     ReleaseNotes = releaseNotes,
                                 }
                             }
