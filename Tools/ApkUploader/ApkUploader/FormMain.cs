@@ -37,8 +37,14 @@ namespace ApkUploader
         private const string AndroidManifest = "AndroidManifest.xml";
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private const string ExpansionKeep = @"*";
-        private static readonly string TrackInternal = "internal";
-        private static readonly string[] TracksEdit = { "alpha", "beta", "production", TrackInternal, "Test" };
+        private const string TrackProduction = "production";
+        private const string TrackAlpha = "alpha";
+        private const string TrackBeta = "beta";
+        private const string TrackInternal = "internal";
+        private const string TrackTest = "test";
+
+        private static readonly string[] TracksWithUserFraction = { TrackProduction, TrackAlpha };
+        private static readonly string[] TracksEdit = { TrackAlpha, TrackBeta, TrackProduction, TrackInternal, TrackTest };
         private static readonly string[] SerialsOem = { "DeepOBD", "DeepOBDIbus" };
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
@@ -1866,12 +1872,15 @@ namespace ApkUploader
                 return "User fraction must be > 0 and < 1";
             }
 
-            if (string.Compare(track, TrackInternal, StringComparison.OrdinalIgnoreCase) == 0)
+            foreach (string trackName in TracksWithUserFraction)
             {
-                return "User fraction not supported for internal track";
+                if (string.Compare(track, trackName, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return null;
+                }
             }
 
-            return null;
+            return $"User fraction not supported for track: {track}";
         }
 
         /// <summary>
