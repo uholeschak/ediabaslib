@@ -46,6 +46,7 @@ namespace ApkUploader
         private static readonly string[] TracksWithUserFraction = { TrackProduction, TrackAlpha };
         private static readonly string[] TracksEdit = { TrackAlpha, TrackBeta, TrackProduction, TrackInternal, TrackTest };
         private static readonly string[] SerialsOem = { "DeepOBD", "DeepOBDIbus" };
+        private static readonly Regex LiveVersionRegex = new Regex(@"\[\[\[""(\d+\.\d+(?:\.\d+)*)""\]\]", RegexOptions.Compiled);
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
         private CancellationTokenSource _cts;
@@ -817,29 +818,31 @@ namespace ApkUploader
             return true;
         }
 
-        public async Task<string> GetLiveStoreVersionAsync(string packageName)
+        /// <summary>
+        /// Gets the version currently live in the Play Store (HTML scraping).
+        /// </summary>
+        /// <returns>Version, string.Empty if not found, null on error</returns>
+        private static async Task<string> GetLiveStoreVersionAsync(string packageName, CancellationToken cancellationToken)
         {
             try
             {
-                using (var client = new HttpClient())
+                using (HttpClient client = new HttpClient())
                 {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+
                     UriBuilder builder = new UriBuilder("https://play.google.com/store/apps/details");
                     NameValueCollection query = HttpUtility.ParseQueryString(string.Empty);
                     query["id"] = packageName;
-                    query["hl"] = "de";
+                    query["hl"] = "en";
                     builder.Query = query.ToString();
 
-                    string targetUrl = builder.ToString();
-                    string html = await client.GetStringAsync(targetUrl);
+                    string html = await client.GetStringAsync(builder.Uri, cancellationToken);
 
-                    Match match = Regex.Match(html, @"\[\[\[\""(\d+\.\d+\.[\d\.]+)\""\]\]");
+                    Match match = LiveVersionRegex.Match(html);
                     if (match.Success)
                     {
-                        string version = match.Groups[1].Value;
-                        if (!string.IsNullOrEmpty(version))
-                        {
-                            return version;
-                        }
+                        return match.Groups[1].Value;
                     }
 
                     return string.Empty;
@@ -1025,7 +1028,7 @@ namespace ApkUploader
                         }
                     }
 
-                    string liveStoreVersion = await GetLiveStoreVersionAsync(PackageName);
+                    string liveStoreVersion = await GetLiveStoreVersionAsync(PackageName, _cts.Token);
                     sb.AppendLine();
                     if (!string.IsNullOrEmpty(liveStoreVersion))
                     {
