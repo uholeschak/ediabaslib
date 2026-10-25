@@ -969,6 +969,8 @@ namespace ApkUploader
                                                 {
                                                     sb.Append(string.Format(CultureInfo.InvariantCulture, ", User fraction: {0:0}%", trackRelease.UserFraction.Value * 100));
                                                 }
+
+                                                sb.AppendLine();
                                             }
 
                                             if (trackRelease.ReleaseNotes != null)
@@ -1090,23 +1092,32 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ChangeTrack(string fromTrack, string toTrack)
+        private bool ChangeTrack(string fromTrack, string toTrack, double? userFraction = null)
         {
             if (_serviceThread != null)
             {
                 return false;
             }
+
             UpdateStatus(string.Empty);
             if (string.Compare(fromTrack, toTrack, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 UpdateStatus("Both tracks identical");
                 return false;
             }
+
             if (string.IsNullOrWhiteSpace(fromTrack) || string.IsNullOrWhiteSpace(toTrack))
             {
                 UpdateStatus("Empty track");
                 return false;
             }
+
+            if (userFraction.HasValue && (userFraction.Value <= 0.0 || userFraction.Value >= 1.0))
+            {
+                UpdateStatus("User fraction must be > 0 and < 1");
+                return false;
+            }
+
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
             {
