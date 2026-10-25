@@ -988,6 +988,51 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool SubmitTrackReview()
+        {
+            if (_serviceThread != null)
+            {
+                return false;
+            }
+            UpdateStatus(string.Empty);
+            _cts = new CancellationTokenSource();
+            _serviceThread = new Thread(async () =>
+            {
+                UpdateStatus(string.Empty);
+                StringBuilder sb = new StringBuilder();
+                try
+                {
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
+                    {
+                        EditsResource edits = service.Edits;
+                        EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
+                        AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"Creating app edit: {appEdit.Id}");
+                        UpdateStatus(sb.ToString());
+
+                        EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
+                        sb.AppendLine($"App edit committed: {appEditCommit.Id}");
+                        UpdateStatus(sb.ToString());
+                    }
+                }
+                catch (Exception e)
+                {
+                    sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
+                }
+                finally
+                {
+                    _serviceThread = null;
+                    _cts.Dispose();
+                    UpdateStatus(sb.ToString());
+                }
+            });
+            _serviceThread.Start();
+
+            return true;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool ChangeTrack(string fromTrack, string toTrack)
         {
             if (_serviceThread != null)
