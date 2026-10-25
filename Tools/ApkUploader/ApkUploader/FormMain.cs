@@ -1155,22 +1155,31 @@ namespace ApkUploader
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
 
+                        TrackRelease assignTrackRelease = new TrackRelease
+                        {
+                            Name = trackRelease.Name,
+                            VersionCodes = new List<long?>
+                            {
+                                currentVersion
+                            },
+                            ReleaseNotes = trackRelease.ReleaseNotes,
+                        };
+
+                        if (userFraction.HasValue)
+                        {
+                            assignTrackRelease.UserFraction = userFraction.Value;
+                            assignTrackRelease.Status = TrackReleaseStatus.InProgress;
+                        }
+                        else
+                        {
+                            assignTrackRelease.Status = TrackReleaseStatus.Completed;
+                        }
+
+                        List<TrackRelease> assignTrackReleases = new List<TrackRelease> { assignTrackRelease };
                         Track assignTrack = new Track
                         {
                             TrackValue = toTrack,
-                            Releases = new List<TrackRelease>
-                            {
-                                new TrackRelease
-                                {
-                                    Name = trackRelease.Name,
-                                    VersionCodes = new List<long?>
-                                    {
-                                        currentVersion
-                                    },
-                                    Status = trackRelease.Status,
-                                    ReleaseNotes = trackRelease.ReleaseNotes,
-                                }
-                            }
+                            Releases = assignTrackReleases
                         };
 
                         await edits.Tracks.Update(assignTrack, PackageName, appEdit.Id, toTrack).ExecuteAsync();
