@@ -34,8 +34,8 @@
     <PackageReference Include="MySqlConnector" Version="2.6.2" />
     <PackageReference Include="Nerdbank.MessagePack" Version="1.4.95" />
     <PackageReference Include="StreamJsonRpc" Version="2.26.150" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.13" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.13" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.14" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.14" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PsdzClientLibrary\PsdzClientLibrary.csproj" />

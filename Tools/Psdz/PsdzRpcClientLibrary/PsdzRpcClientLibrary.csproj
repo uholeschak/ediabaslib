@@ -20,7 +20,7 @@
     <PackageReference Include="StreamJsonRpc" Version="2.26.150" />
   </ItemGroup>
   <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.13" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.14" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
