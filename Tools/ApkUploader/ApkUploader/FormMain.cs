@@ -958,9 +958,10 @@ namespace ApkUploader
                                             {
                                                 sb.Append($"Status: {trackRelease.Status}");
 
-                                                string userFraction = trackRelease.UserFraction != null ?
-                                                    string.Format(CultureInfo.InvariantCulture, ", User fraction: {0:0}%", trackRelease.UserFraction * 100) : string.Empty;
-                                                sb.AppendLine(userFraction);
+                                                if (trackRelease.UserFraction != null)
+                                                {
+                                                    sb.Append(string.Format(CultureInfo.InvariantCulture, ", User fraction: {0:0}%", trackRelease.UserFraction.Value * 100));
+                                                }
                                             }
 
                                             if (trackRelease.ReleaseNotes != null)
