@@ -2149,7 +2149,15 @@ namespace ApkUploader
                 }
                 versionAssign = value;
             }
-            AssignTrack(comboBoxTrackAssign.Text, versionAssign);
+
+            double? userFraction = ReadUserFraction(out bool isValid);
+            if (!isValid)
+            {
+                UpdateStatus("Invalid user fraction!");
+                return;
+            }
+
+            AssignTrack(comboBoxTrackAssign.Text, versionAssign, userFraction);
         }
 
         private void buttonUploadBundle_Click(object sender, EventArgs e)
@@ -2173,7 +2181,14 @@ namespace ApkUploader
                 }
             }
 
-            UploadBundle(textBoxBundleFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, bundleChanges, appVersion);
+            double? userFraction = ReadUserFraction(out bool isValid);
+            if (!isValid)
+            {
+                UpdateStatus("Invalid user fraction!");
+                return;
+            }
+
+            UploadBundle(textBoxBundleFile.Text, textBoxObbFile.Text, comboBoxTrackAssign.Text, bundleChanges, appVersion, userFraction);
         }
 
         private void buttonSetAppInfo_Click(object sender, EventArgs e)
