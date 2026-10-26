@@ -1566,6 +1566,152 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool UpdateUserFraction(string track, double? userFraction = null)
+        {
+            if (_serviceThread != null)
+            {
+                return false;
+            }
+
+            string userFractionError = ValidateUserFraction(userFraction, track);
+            if (userFractionError != null)
+            {
+                UpdateStatus(userFractionError);
+                return false;
+            }
+
+            if (!TracksWithUserFraction.Contains(track))
+            {
+                UpdateStatus($"Track {track} does not support user fraction");
+                return false;
+            }
+
+            UpdateStatus(string.Empty);
+
+            _cts = new CancellationTokenSource();
+            _serviceThread = new Thread(async () =>
+            {
+                UpdateStatus(string.Empty);
+                StringBuilder sb = new StringBuilder();
+                try
+                {
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
+                    {
+                        EditsResource edits = service.Edits;
+                        EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
+                        AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
+                        Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"Track: {track}");
+                        if (trackResponse.Releases == null)
+                        {
+                            sb.AppendLine($"No releases");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("No releases");
+                        }
+
+                        if (trackResponse.Releases.Count != 2)
+                        {
+                            sb.AppendLine($"Invalid release count: {trackResponse.Releases.Count}");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid release count");
+                        }
+
+                        TrackRelease trackReleaseInProgress = trackResponse.Releases.FirstOrDefault(r => r.Status == TrackReleaseStatus.InProgress);
+                        TrackRelease trackReleaseCompleted = trackResponse.Releases.FirstOrDefault(r => r.Status == TrackReleaseStatus.Completed);
+                        if (trackReleaseInProgress == null)
+                        {
+                            sb.AppendLine($"No in progress release found for track: {track}");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("No in progress release found");
+                        }
+
+                        if (trackReleaseCompleted == null)
+                        {
+                            sb.AppendLine($"No completed release found for track: {track}");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("No completed release found");
+                        }
+
+                        if (trackReleaseInProgress.VersionCodes == null)
+                        {
+                            sb.AppendLine("No version codes present");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid versions");
+                        }
+
+                        if (trackReleaseInProgress.VersionCodes.Count != 1 || !trackReleaseInProgress.VersionCodes[0].HasValue)
+                        {
+                            sb.AppendLine($"Invalid version count: {trackReleaseInProgress.VersionCodes?.Count}");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid version count");
+                        }
+
+                        if (trackReleaseInProgress.UserFraction == null)
+                        {
+                            sb.AppendLine("UserFraction is null");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("Invalid UserFraction");
+                        }
+
+                        long currentVersion = trackReleaseInProgress.VersionCodes[0].Value;
+                        if (trackReleaseInProgress.Name != null)
+                        {
+                            sb.AppendLine($"Name: {trackReleaseInProgress.Name}");
+                        }
+
+                        sb.AppendLine($"Status: {trackReleaseInProgress.Status}");
+                        sb.AppendLine($"UserFraction: {trackReleaseInProgress.UserFraction * 100}%");
+                        sb.AppendLine($"Version: {currentVersion}");
+                        UpdateStatus(sb.ToString());
+
+                        TrackRelease trackReleaseUpdate = new TrackRelease
+                        {
+                            Name = trackReleaseInProgress.Name,
+                            VersionCodes = trackReleaseInProgress.VersionCodes,
+                            ReleaseNotes = trackReleaseInProgress.ReleaseNotes,
+                            UserFraction = userFraction,
+                            Status = userFraction.HasValue ? TrackReleaseStatus.InProgress : TrackReleaseStatus.Completed
+                        };
+
+                        List<TrackRelease> trackReleasesUpdate = new List<TrackRelease>();
+                        if (userFraction.HasValue)
+                        {
+                            trackReleasesUpdate.Add(trackReleaseCompleted); // Fallback-Release behalten
+                        }
+                        trackReleasesUpdate.Add(trackReleaseUpdate);
+
+                        Track trackUpdate = new Track
+                        {
+                            TrackValue = track,
+                            Releases = trackReleasesUpdate
+                        };
+
+                        await edits.Tracks.Update(trackUpdate, PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"Track {track} updated");
+
+                        EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
+                        sb.AppendLine($"App edit committed: {appEditCommit.Id}");
+                        UpdateStatus(sb.ToString());
+                    }
+                }
+                catch (Exception e)
+                {
+                    sb.AppendLine(_cts.IsCancellationRequested ? "Cancelled" : $"Exception: {e.Message}");
+                }
+                finally
+                {
+                    _serviceThread = null;
+                    _cts.Dispose();
+                    UpdateStatus(sb.ToString());
+                }
+            });
+            _serviceThread.Start();
+
+            return true;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool UploadBundle(string bundleFileName, string expansionFileName, string track, List<UpdateInfo> bundleChanges, string appVersion, double? userFraction = null)
         {
             if (_serviceThread != null)
@@ -1903,6 +2049,11 @@ namespace ApkUploader
         /// <returns>Error message or null if valid</returns>
         private static string ValidateUserFraction(double? userFraction, string track)
         {
+            if (string.IsNullOrEmpty(track))
+            {
+                return "Track must not be null or empty";
+            }
+
             if (!userFraction.HasValue)
             {
                 return null;
