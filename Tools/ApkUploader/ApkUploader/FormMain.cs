@@ -232,6 +232,36 @@ namespace ApkUploader
             return null;
         }
 
+        private double? ReadUserFraction(out bool isValid)
+        {
+            isValid = false;
+            try
+            {
+                string userFractionText = textBoxUserFraction.Text.Trim();
+                if (string.IsNullOrEmpty(userFractionText))
+                {
+                    isValid = true;
+                    return null;
+                }
+
+                userFractionText = userFractionText.TrimEnd('%').TrimEnd();
+                if (double.TryParse(userFractionText, NumberStyles.Float, CultureInfo.InvariantCulture, out double userPercent))
+                {
+                    if ((userPercent >= 0.0) && (userPercent <= 100.0))
+                    {
+                        isValid = true;
+                        return userPercent / 100.0;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return null;
+        }
+
         private string ReadAppVersion(string resourceDir, out int? versionCode)
         {
             versionCode = null;
@@ -2090,7 +2120,14 @@ namespace ApkUploader
 
         private void buttonChangeTrack_Click(object sender, EventArgs e)
         {
-            ChangeTrack(comboBoxTrackUnassign.Text, comboBoxTrackAssign.Text);
+            double? userFraction = ReadUserFraction(out bool isValid);
+            if (!isValid)
+            {
+                UpdateStatus("Invalid user fraction!");
+                return;
+            }
+
+            ChangeTrack(comboBoxTrackUnassign.Text, comboBoxTrackAssign.Text, userFraction);
         }
 
         private void buttonAssignTrack_Click(object sender, EventArgs e)
