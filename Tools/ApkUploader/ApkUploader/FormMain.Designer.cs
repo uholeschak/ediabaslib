@@ -271,6 +271,7 @@
             comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
             comboBoxTrackUnassign.Size = new System.Drawing.Size(116, 23);
             comboBoxTrackUnassign.TabIndex = 32;
+            comboBoxTrackUnassign.SelectedIndexChanged += comboBoxTrackUnassign_SelectedIndexChanged;
             // 
             // comboBoxTrackAssign
             // 
@@ -282,6 +283,7 @@
             comboBoxTrackAssign.Name = "comboBoxTrackAssign";
             comboBoxTrackAssign.Size = new System.Drawing.Size(116, 23);
             comboBoxTrackAssign.TabIndex = 29;
+            comboBoxTrackAssign.SelectedIndexChanged += comboBoxTrackAssign_SelectedIndexChanged;
             // 
             // labelTrackUnassign
             // 

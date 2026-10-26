@@ -117,6 +117,7 @@ namespace ApkUploader
             textBoxStatus.ScrollToCaret();
 
             bool enable = _serviceThread == null;
+            bool userFractionEnable = TracksWithUserFraction.Contains(comboBoxTrackAssign.Text);
             buttonListBundles.Enabled = enable;
             buttonListTracks.Enabled = enable;
             buttonUpdateChanges.Enabled = enable;
@@ -131,7 +132,7 @@ namespace ApkUploader
             comboBoxTrackAssign.Enabled = enable;
             comboBoxTrackUnassign.Enabled = enable;
             checkBoxUpdateName.Enabled = enable;
-            textBoxUserFraction.Enabled = enable;
+            textBoxUserFraction.Enabled = enable && userFractionEnable;
             textBoxVersion.Enabled = enable;
             textBoxBundleFile.Enabled = enable;
             textBoxObbFile.Enabled = enable && isApk;
@@ -237,6 +238,12 @@ namespace ApkUploader
             isValid = false;
             try
             {
+                if (!textBoxUserFraction.Enabled)
+                {
+                    isValid = true;
+                    return null;
+                }
+
                 string userFractionText = textBoxUserFraction.Text.Trim();
                 if (string.IsNullOrEmpty(userFractionText))
                 {
@@ -2280,6 +2287,16 @@ namespace ApkUploader
             }
 
             textBoxSerialFileName.Text = openFileDialogSerial.FileName;
+        }
+
+        private void comboBoxTrackAssign_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateStatus();
+        }
+
+        private void comboBoxTrackUnassign_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateStatus();
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
