@@ -1171,6 +1171,12 @@ namespace ApkUploader
             {
                 UpdateStatus(string.Empty);
                 StringBuilder sb = new StringBuilder();
+                if (userFraction.HasValue)
+                {
+                    sb.AppendLine($"User fraction: {userFraction.Value * 100}%");
+                    UpdateStatus(sb.ToString());
+                }
+
                 try
                 {
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
@@ -1299,6 +1305,12 @@ namespace ApkUploader
             {
                 UpdateStatus(string.Empty);
                 StringBuilder sb = new StringBuilder();
+                if (userFraction.HasValue)
+                {
+                    sb.AppendLine($"User fraction: {userFraction.Value * 100}%");
+                    UpdateStatus(sb.ToString());
+                }
+
                 try
                 {
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
@@ -1593,6 +1605,16 @@ namespace ApkUploader
             {
                 UpdateStatus(string.Empty);
                 StringBuilder sb = new StringBuilder();
+                if (userFraction.HasValue)
+                {
+                    sb.AppendLine($"User fraction: {userFraction.Value * 100}%");
+                }
+                else
+                {
+                    sb.AppendLine("No user fraction");
+                }
+                UpdateStatus(sb.ToString());
+
                 try
                 {
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
@@ -1663,6 +1685,13 @@ namespace ApkUploader
                         sb.AppendLine($"UserFraction: {trackReleaseInProgress.UserFraction * 100}%");
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
+
+                        if (userFraction.HasValue && trackReleaseInProgress.UserFraction + 0.001 >= userFraction.Value)
+                        {
+                            sb.AppendLine($"User fraction must be larger than: {trackReleaseInProgress.UserFraction * 100}%");
+                            UpdateStatus(sb.ToString());
+                            return;
+                        }
 
                         TrackRelease trackReleaseUpdate = new TrackRelease
                         {
@@ -1773,6 +1802,12 @@ namespace ApkUploader
                     if (!string.IsNullOrEmpty(appVersion))
                     {
                         sb.AppendLine($"App version name: {appVersion}");
+                        UpdateStatus(sb.ToString());
+                    }
+
+                    if (userFraction.HasValue)
+                    {
+                        sb.AppendLine($"User fraction: {userFraction.Value * 100}%");
                         UpdateStatus(sb.ToString());
                     }
 
