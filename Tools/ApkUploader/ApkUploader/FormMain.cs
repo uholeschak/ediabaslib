@@ -1512,6 +1512,10 @@ namespace ApkUploader
                         {
                             sb.AppendLine($"Status: {trackRelease.Status}");
                         }
+                        if (trackRelease.UserFraction.HasValue)
+                        {
+                            sb.AppendLine($"User fraction: {trackRelease.UserFraction.Value * 100}%");
+                        }
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
 
@@ -1682,13 +1686,13 @@ namespace ApkUploader
                         }
 
                         sb.AppendLine($"Status: {trackReleaseInProgress.Status}");
-                        sb.AppendLine($"UserFraction: {trackReleaseInProgress.UserFraction * 100}%");
+                        sb.AppendLine($"UserFraction: {trackReleaseInProgress.UserFraction.Value * 100}%");
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
 
-                        if (userFraction.HasValue && trackReleaseInProgress.UserFraction + 0.001 >= userFraction.Value)
+                        if (userFraction.HasValue && trackReleaseInProgress.UserFraction.Value + 0.001 >= userFraction.Value)
                         {
-                            sb.AppendLine($"User fraction must be larger than: {trackReleaseInProgress.UserFraction * 100}%");
+                            sb.AppendLine($"User fraction must be larger than: {trackReleaseInProgress.UserFraction.Value * 100}%");
                             UpdateStatus(sb.ToString());
                             return;
                         }
