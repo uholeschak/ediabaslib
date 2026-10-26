@@ -131,6 +131,7 @@ namespace ApkUploader
             comboBoxTrackAssign.Enabled = enable;
             comboBoxTrackUnassign.Enabled = enable;
             checkBoxUpdateName.Enabled = enable;
+            textBoxUserFraction.Enabled = enable;
             textBoxVersion.Enabled = enable;
             textBoxBundleFile.Enabled = enable;
             textBoxObbFile.Enabled = enable && isApk;
@@ -1980,6 +1981,7 @@ namespace ApkUploader
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            textBoxUserFraction.Text = Properties.Settings.Default.UserFraction;
             textBoxVersion.Text = Properties.Settings.Default.VersionAssign;
             checkBoxUpdateName.Checked = Properties.Settings.Default.UpdateName;
             textBoxBundleFile.Text = Properties.Settings.Default.BundleFileName;
@@ -2247,6 +2249,7 @@ namespace ApkUploader
         {
             try
             {
+                Properties.Settings.Default.UserFraction = textBoxUserFraction.Text;
                 Properties.Settings.Default.VersionAssign = textBoxVersion.Text;
                 Properties.Settings.Default.UpdateName = checkBoxUpdateName.Checked;
                 Properties.Settings.Default.BundleFileName = textBoxBundleFile.Text;

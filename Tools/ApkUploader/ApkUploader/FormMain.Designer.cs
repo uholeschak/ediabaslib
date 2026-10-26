@@ -66,6 +66,8 @@
             comboBoxSerialOem = new System.Windows.Forms.ComboBox();
             labelSerialOem = new System.Windows.Forms.Label();
             buttonTriggerReview = new System.Windows.Forms.Button();
+            textBoxUserFraction = new System.Windows.Forms.TextBox();
+            labelUserFraction = new System.Windows.Forms.Label();
             SuspendLayout();
             // 
             // textBoxStatus
@@ -448,6 +450,26 @@
             buttonTriggerReview.UseVisualStyleBackColor = true;
             buttonTriggerReview.Click += buttonTriggerReview_Click;
             // 
+            // textBoxUserFraction
+            // 
+            textBoxUserFraction.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            textBoxUserFraction.Location = new System.Drawing.Point(906, 15);
+            textBoxUserFraction.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxUserFraction.Name = "textBoxUserFraction";
+            textBoxUserFraction.Size = new System.Drawing.Size(56, 23);
+            textBoxUserFraction.TabIndex = 33;
+            // 
+            // labelUserFraction
+            // 
+            labelUserFraction.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            labelUserFraction.AutoSize = true;
+            labelUserFraction.Location = new System.Drawing.Point(790, 18);
+            labelUserFraction.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            labelUserFraction.Name = "labelUserFraction";
+            labelUserFraction.Size = new System.Drawing.Size(100, 15);
+            labelUserFraction.TabIndex = 34;
+            labelUserFraction.Text = "User Fraction [%]:";
+            // 
             // FormMain
             // 
             AcceptButton = buttonClose;
@@ -455,6 +477,8 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonAbort;
             ClientSize = new System.Drawing.Size(1389, 763);
+            Controls.Add(labelUserFraction);
+            Controls.Add(textBoxUserFraction);
             Controls.Add(buttonTriggerReview);
             Controls.Add(labelSerialOem);
             Controls.Add(comboBoxSerialOem);
@@ -491,7 +515,7 @@
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MaximizeBox = false;
-            MinimumSize = new System.Drawing.Size(1281, 802);
+            MinimumSize = new System.Drawing.Size(1400, 802);
             Name = "FormMain";
             Text = "Bundle/Apk Uploader";
             FormClosing += FormMain_FormClosing;
@@ -541,6 +565,8 @@
         private System.Windows.Forms.ComboBox comboBoxSerialOem;
         private System.Windows.Forms.Label labelSerialOem;
         private System.Windows.Forms.Button buttonTriggerReview;
+        private System.Windows.Forms.TextBox textBoxUserFraction;
+        private System.Windows.Forms.Label labelUserFraction;
     }
 }
 
