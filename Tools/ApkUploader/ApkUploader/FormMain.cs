@@ -117,7 +117,7 @@ namespace ApkUploader
             textBoxStatus.ScrollToCaret();
 
             bool enable = _serviceThread == null;
-            bool userFractionEnable = TracksWithUserFraction.Contains(comboBoxTrackAssign.Text);
+            bool userFractionEnable = TracksWithUserFraction.Contains(comboBoxTrackAssign.Text, StringComparer.OrdinalIgnoreCase);
             buttonListBundles.Enabled = enable;
             buttonListTracks.Enabled = enable;
             buttonUpdateChanges.Enabled = enable;
@@ -1592,7 +1592,7 @@ namespace ApkUploader
                 return false;
             }
 
-            if (!TracksWithUserFraction.Contains(track))
+            if (!TracksWithUserFraction.Contains(track, StringComparer.OrdinalIgnoreCase))
             {
                 UpdateStatus($"Track {track} does not support user fraction");
                 return false;
