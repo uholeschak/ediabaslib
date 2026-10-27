@@ -1855,6 +1855,16 @@ namespace ApkUploader
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
 
+                        TrackRelease trackReleaseCompleted = null;
+                        if (userFraction.HasValue)
+                        {
+                            trackReleaseCompleted = await GetCompletedTrackRelease(sb, edits, appEdit, track);
+                            if (trackReleaseCompleted == null)
+                            {
+                                return;
+                            }
+                        }
+
                         bool reuseExpansion = false;
                         ExpansionInfo expansionInfo = null;
                         if (isApk)
@@ -2023,6 +2033,11 @@ namespace ApkUploader
                         }
 
                         List<TrackRelease> releases = new List<TrackRelease> { trackRelease };
+                        if (trackReleaseCompleted != null)
+                        {
+                            releases.Add(trackReleaseCompleted);
+                        }
+
                         Track trackUpdate = new Track
                         {
                             TrackValue = track,
