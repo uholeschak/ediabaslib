@@ -1118,7 +1118,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, false);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
                     }
@@ -2222,12 +2222,13 @@ namespace ApkUploader
         /// </summary>
         /// <param name="commitRequest">The commit request to execute.</param>
         /// <returns>The resulting <see cref="AppEdit"/>.</returns>
-        private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest)
+        private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest, bool cancelInReview = true)
         {
             // Keep the default null, otherwise this triggers an error
             commitRequest.ChangesNotSentForReview = null;
-            // The "System Wake-up Call": Cancel ongoing/stalled reviews and resubmit them
-            commitRequest.ChangesInReviewBehavior = EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT;
+            commitRequest.ChangesInReviewBehavior = cancelInReview
+                ? EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.CANCELINREVIEWANDSUBMIT
+                : EditsResource.CommitRequest.ChangesInReviewBehaviorEnum.ERRORIFINREVIEW;
             AppEdit appEditCommit = await commitRequest.ExecuteAsync(_cts.Token);
             return appEditCommit;
         }
