@@ -1209,6 +1209,26 @@ namespace ApkUploader
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
 
+                        if (userFraction.HasValue)
+                        {
+                            Track toTrackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, toTrack).ExecuteAsync(_cts.Token);
+                            TrackRelease toTrackReleaseCompleted = toTrackResponse.Releases?.FirstOrDefault(r => r.Status == TrackReleaseStatus.Completed);
+                            if (toTrackReleaseCompleted?.VersionCodes == null || toTrackReleaseCompleted.VersionCodes.Count != 1 || !toTrackReleaseCompleted.VersionCodes[0].HasValue)
+                            {
+                                sb.AppendLine($"No completed release found on target track: {toTrack}");
+                                UpdateStatus(sb.ToString());
+                                return;
+                            }
+
+                            long completedVersion = toTrackReleaseCompleted.VersionCodes[0].Value;
+                            if (currentVersion <= completedVersion)
+                            {
+                                sb.AppendLine($"Version {currentVersion} must be greater than target track version {completedVersion}");
+                                UpdateStatus(sb.ToString());
+                                return;
+                            }
+                        }
+
                         TrackRelease assignTrackRelease = new TrackRelease
                         {
                             Name = trackRelease.Name,
