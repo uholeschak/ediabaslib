@@ -43,7 +43,7 @@ namespace ApkUploader
         private const string TrackInternal = "internal";
         private const string TrackTest = "test";
 
-        private static readonly string[] TracksWithUserFraction = { TrackProduction, TrackAlpha };
+        private static readonly string[] TracksWithUserFraction = { TrackProduction, TrackAlpha, TrackTest };
         private static readonly string[] TracksEdit = { TrackAlpha, TrackBeta, TrackProduction, TrackInternal, TrackTest };
         private static readonly string[] SerialsOem = { "DeepOBD", "DeepOBDIbus" };
         private static readonly Regex LiveVersionRegex = new Regex(@"\[\[\[""(\d+\.\d+(?:\.\d+)*)""\]\]", RegexOptions.Compiled);
@@ -436,6 +436,28 @@ namespace ApkUploader
                 }
             }
             return credential;
+        }
+
+        private static int GetTrackRank(string track)
+        {
+            if (string.Compare(track, TrackInternal, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return 0;
+            }
+            if (string.Compare(track, TrackTest, StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(track, TrackAlpha, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return 1;
+            }
+            if (string.Compare(track, TrackBeta, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return 2;
+            }
+            if (string.Compare(track, TrackProduction, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return 3;
+            }
+            return -1;
         }
 
         private static bool IsApk(string bundleFileName)
@@ -1141,7 +1163,7 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ChangeTrack(string fromTrack, string toTrack, double? userFraction = null)
+        private bool ChangeTrack(string fromTrack, string toTrack, bool unassignFromSourceTrack, double ? userFraction = null)
         {
             if (_serviceThread != null)
             {
@@ -1149,15 +1171,15 @@ namespace ApkUploader
             }
 
             UpdateStatus(string.Empty);
-            if (string.Compare(fromTrack, toTrack, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                UpdateStatus("Both tracks identical");
-                return false;
-            }
-
             if (string.IsNullOrWhiteSpace(fromTrack) || string.IsNullOrWhiteSpace(toTrack))
             {
                 UpdateStatus("Empty track");
+                return false;
+            }
+
+            if (string.Compare(fromTrack, toTrack, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                UpdateStatus("Both tracks identical");
                 return false;
             }
 
@@ -1257,20 +1279,23 @@ namespace ApkUploader
                         sb.AppendLine($"Assigned to track: {toTrack}");
                         UpdateStatus(sb.ToString());
 
-                        Track unassignTrack = new Track
+                        if (unassignFromSourceTrack)
                         {
-                            TrackValue = fromTrack,
-                            Releases = new List<TrackRelease>
+                            Track unassignTrack = new Track
                             {
-                                new TrackRelease
+                                TrackValue = fromTrack,
+                                Releases = new List<TrackRelease>
                                 {
-                                    Status = TrackReleaseStatus.Completed
+                                    new TrackRelease
+                                    {
+                                        Status = TrackReleaseStatus.Completed
+                                    }
                                 }
-                            }
-                        };
-                        await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, fromTrack).ExecuteAsync();
-                        sb.AppendLine($"Unassigned from track: {fromTrack}");
-                        UpdateStatus(sb.ToString());
+                            };
+                            await edits.Tracks.Update(unassignTrack, PackageName, appEdit.Id, fromTrack).ExecuteAsync();
+                            sb.AppendLine($"Unassigned from track: {fromTrack}");
+                            UpdateStatus(sb.ToString());
+                        }
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
                         AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, toTrack);
@@ -2432,7 +2457,11 @@ namespace ApkUploader
                 return;
             }
 
-            ChangeTrack(comboBoxTrackUnassign.Text, comboBoxTrackAssign.Text, userFraction);
+            string fromTrack = comboBoxTrackUnassign.Text;
+            string toTrack = comboBoxTrackAssign.Text;
+            bool unassignFromSourceTrack = GetTrackRank(fromTrack) >= GetTrackRank(toTrack);
+
+            ChangeTrack(fromTrack, toTrack, unassignFromSourceTrack, userFraction);
         }
 
         private void buttonAssignTrack_Click(object sender, EventArgs e)
