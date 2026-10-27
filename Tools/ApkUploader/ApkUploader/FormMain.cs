@@ -1119,7 +1119,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, false);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, TrackInternal);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
                     }
@@ -1273,7 +1273,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, toTrack);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
@@ -1443,7 +1443,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, track);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
@@ -1595,7 +1595,7 @@ namespace ApkUploader
                         sb.AppendLine($"Track {track} updated");
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, track);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
@@ -1759,7 +1759,7 @@ namespace ApkUploader
                         sb.AppendLine($"Track {track} updated");
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, track);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
                     }
@@ -2050,7 +2050,7 @@ namespace ApkUploader
                         sb.AppendLine($"Track {track} updated");
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, track);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
 
@@ -2222,9 +2222,13 @@ namespace ApkUploader
         /// </list>
         /// </summary>
         /// <param name="commitRequest">The commit request to execute.</param>
+        /// <param name="track">The track to commit the changes to.</param>
         /// <returns>The resulting <see cref="AppEdit"/>.</returns>
-        private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest, bool cancelInReview = true)
+        private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest, string track)
         {
+            bool cancelInReview =
+                !(!string.IsNullOrEmpty(track) && string.Compare(track, TrackInternal, StringComparison.OrdinalIgnoreCase) == 0);
+
             // Keep the default null, otherwise this triggers an error
             commitRequest.ChangesNotSentForReview = null;
             commitRequest.ChangesInReviewBehavior = cancelInReview
