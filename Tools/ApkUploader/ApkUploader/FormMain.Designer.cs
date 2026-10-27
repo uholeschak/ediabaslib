@@ -68,6 +68,7 @@
             buttonTriggerReview = new System.Windows.Forms.Button();
             textBoxUserFraction = new System.Windows.Forms.TextBox();
             labelUserFraction = new System.Windows.Forms.Label();
+            buttonUpdateUserFraction = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // textBoxStatus
@@ -443,7 +444,7 @@
             // 
             // buttonTriggerReview
             // 
-            buttonTriggerReview.Location = new System.Drawing.Point(439, 12);
+            buttonTriggerReview.Location = new System.Drawing.Point(581, 12);
             buttonTriggerReview.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonTriggerReview.Name = "buttonTriggerReview";
             buttonTriggerReview.Size = new System.Drawing.Size(134, 27);
@@ -472,6 +473,17 @@
             labelUserFraction.TabIndex = 34;
             labelUserFraction.Text = "User Fraction [%]:";
             // 
+            // buttonUpdateUserFraction
+            // 
+            buttonUpdateUserFraction.Location = new System.Drawing.Point(439, 12);
+            buttonUpdateUserFraction.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonUpdateUserFraction.Name = "buttonUpdateUserFraction";
+            buttonUpdateUserFraction.Size = new System.Drawing.Size(134, 27);
+            buttonUpdateUserFraction.TabIndex = 35;
+            buttonUpdateUserFraction.Text = "Update User Fraction";
+            buttonUpdateUserFraction.UseVisualStyleBackColor = true;
+            buttonUpdateUserFraction.Click += buttonUpdateUserFraction_Click;
+            // 
             // FormMain
             // 
             AcceptButton = buttonClose;
@@ -479,6 +491,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonAbort;
             ClientSize = new System.Drawing.Size(1389, 763);
+            Controls.Add(buttonUpdateUserFraction);
             Controls.Add(labelUserFraction);
             Controls.Add(textBoxUserFraction);
             Controls.Add(buttonTriggerReview);
@@ -569,6 +582,7 @@
         private System.Windows.Forms.Button buttonTriggerReview;
         private System.Windows.Forms.TextBox textBoxUserFraction;
         private System.Windows.Forms.Label labelUserFraction;
+        private System.Windows.Forms.Button buttonUpdateUserFraction;
     }
 }
 

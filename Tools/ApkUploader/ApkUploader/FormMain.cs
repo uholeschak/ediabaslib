@@ -121,6 +121,7 @@ namespace ApkUploader
             buttonListBundles.Enabled = enable;
             buttonListTracks.Enabled = enable;
             buttonUpdateChanges.Enabled = enable;
+            buttonUpdateUserFraction.Enabled = enable;
             buttonTriggerReview.Enabled = enable;
             buttonUploadBundle.Enabled = enable;
             buttonChangeTrack.Enabled = enable;
@@ -2397,6 +2398,18 @@ namespace ApkUploader
                 }
             }
             UpdateChanges(comboBoxTrackAssign.Text, bundleChanges, appVersion);
+        }
+
+        private void buttonUpdateUserFraction_Click(object sender, EventArgs e)
+        {
+            double? userFraction = ReadUserFraction(out bool isValid);
+            if (!isValid)
+            {
+                UpdateStatus("Invalid user fraction!");
+                return;
+            }
+
+            UpdateUserFraction(comboBoxTrackAssign.Text, userFraction);
         }
 
         private void buttonTriggerReview_Click(object sender, EventArgs e)
