@@ -1209,22 +1209,12 @@ namespace ApkUploader
                         sb.AppendLine($"Version: {currentVersion}");
                         UpdateStatus(sb.ToString());
 
+                        TrackRelease trackReleaseCompleted = null;
                         if (userFraction.HasValue)
                         {
-                            Track toTrackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, toTrack).ExecuteAsync(_cts.Token);
-                            TrackRelease toTrackReleaseCompleted = toTrackResponse.Releases?.FirstOrDefault(r => r.Status == TrackReleaseStatus.Completed);
-                            if (toTrackReleaseCompleted?.VersionCodes == null || toTrackReleaseCompleted.VersionCodes.Count != 1 || !toTrackReleaseCompleted.VersionCodes[0].HasValue)
+                            trackReleaseCompleted = await GetCompletedTrackRelease(sb, edits, appEdit, toTrack, currentVersion);
+                            if (trackReleaseCompleted == null)
                             {
-                                sb.AppendLine($"No completed release found on target track: {toTrack}");
-                                UpdateStatus(sb.ToString());
-                                return;
-                            }
-
-                            long completedVersion = toTrackReleaseCompleted.VersionCodes[0].Value;
-                            if (currentVersion <= completedVersion)
-                            {
-                                sb.AppendLine($"Version {currentVersion} must be greater than target track version {completedVersion}");
-                                UpdateStatus(sb.ToString());
                                 return;
                             }
                         }
@@ -1250,6 +1240,11 @@ namespace ApkUploader
                         }
 
                         List<TrackRelease> assignTrackReleases = new List<TrackRelease> { assignTrackRelease };
+                        if (trackReleaseCompleted != null)
+                        {
+                            assignTrackReleases.Add(trackReleaseCompleted);
+                        }
+
                         Track assignTrack = new Track
                         {
                             TrackValue = toTrack,
@@ -2133,6 +2128,46 @@ namespace ApkUploader
             }
 
             return $"User fraction not supported for track: {track}";
+        }
+
+        private async Task<TrackRelease> GetCompletedTrackRelease(StringBuilder sb, EditsResource edits, AppEdit appEdit, string track, long? newVersion = null)
+        {
+            try
+            {
+                Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                TrackRelease trackReleaseCompleted = trackResponse.Releases?.FirstOrDefault(r => r.Status == TrackReleaseStatus.Completed);
+                if (trackReleaseCompleted == null)
+                {
+                    sb.AppendLine($"No completed release found for track: {track}");
+                    UpdateStatus(sb.ToString());
+                    return null;
+                }
+
+                if (trackReleaseCompleted.VersionCodes == null || trackReleaseCompleted.VersionCodes.Count != 1 || !trackReleaseCompleted.VersionCodes[0].HasValue)
+                {
+                    sb.AppendLine($"Invalid completed version count for track: {track}");
+                    UpdateStatus(sb.ToString());
+                    return null;
+                }
+
+                long completedVersion = trackReleaseCompleted.VersionCodes[0].Value;
+                sb.AppendLine($"Completed version on {track}: {completedVersion}");
+                if (newVersion.HasValue && newVersion.Value <= completedVersion)
+                {
+                    sb.AppendLine($"New version {newVersion.Value} must be greater than completed version {completedVersion}");
+                    UpdateStatus(sb.ToString());
+                    return null;
+                }
+
+                UpdateStatus(sb.ToString());
+                return trackReleaseCompleted;
+            }
+            catch (Exception e)
+            {
+                sb.AppendLine($"Error reading track {track}: {e.Message}");
+                UpdateStatus(sb.ToString());
+                return null;
+            }
         }
 
         /// <summary>
