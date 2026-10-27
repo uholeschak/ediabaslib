@@ -874,6 +874,7 @@ namespace ApkUploader
                     NameValueCollection query = HttpUtility.ParseQueryString(string.Empty);
                     query["id"] = packageName;
                     query["hl"] = "en";
+                    query["gl"] = "US"; // oder "DE"
                     builder.Query = query.ToString();
 
                     string html = await client.GetStringAsync(builder.Uri, cancellationToken);
