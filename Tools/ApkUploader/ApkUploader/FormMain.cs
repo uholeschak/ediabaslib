@@ -1323,7 +1323,7 @@ namespace ApkUploader
             {
                 UpdateStatus(string.Empty);
                 StringBuilder sb = new StringBuilder();
-                if (userFraction.HasValue)
+                if (versionAssign.HasValue && userFraction.HasValue)
                 {
                     sb.AppendLine($"User fraction: {userFraction.Value * 100}%");
                     UpdateStatus(sb.ToString());
@@ -1741,12 +1741,11 @@ namespace ApkUploader
                             Status = userFraction.HasValue ? TrackReleaseStatus.InProgress : TrackReleaseStatus.Completed
                         };
 
-                        List<TrackRelease> trackReleasesUpdate = new List<TrackRelease>();
+                        List<TrackRelease> trackReleasesUpdate = new List<TrackRelease> { trackReleaseUpdate };
                         if (userFraction.HasValue)
                         {
                             trackReleasesUpdate.Add(trackReleaseCompleted); // Fallback-Release behalten
                         }
-                        trackReleasesUpdate.Add(trackReleaseUpdate);
 
                         Track trackUpdate = new Track
                         {
