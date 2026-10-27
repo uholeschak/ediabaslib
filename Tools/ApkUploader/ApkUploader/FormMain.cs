@@ -1308,11 +1308,14 @@ namespace ApkUploader
                 return false;
             }
 
-            string userFractionError = ValidateUserFraction(userFraction, track);
-            if (userFractionError != null)
+            if (versionAssign != null)
             {
-                UpdateStatus(userFractionError);
-                return false;
+                string userFractionError = ValidateUserFraction(userFraction, track);
+                if (userFractionError != null)
+                {
+                    UpdateStatus(userFractionError);
+                    return false;
+                }
             }
 
             _cts = new CancellationTokenSource();
@@ -1358,11 +1361,14 @@ namespace ApkUploader
                                         sb.AppendLine($"Status: {trackRelease.Status}");
                                     }
 
-                                    foreach (long? version in trackRelease.VersionCodes)
+                                    if (trackRelease.VersionCodes != null)
                                     {
-                                        if (version.HasValue)
+                                        foreach (long? version in trackRelease.VersionCodes)
                                         {
-                                            sb.AppendLine($"Version: {version.Value}");
+                                            if (version.HasValue)
+                                            {
+                                                sb.AppendLine($"Version: {version.Value}");
+                                            }
                                         }
                                     }
                                 }
@@ -1380,6 +1386,16 @@ namespace ApkUploader
 
                         if (versionAssign.HasValue)
                         {
+                            TrackRelease trackReleaseCompleted = null;
+                            if (userFraction.HasValue)
+                            {
+                                trackReleaseCompleted = await GetCompletedTrackRelease(sb, edits, appEdit, track, versionAssign);
+                                if (trackReleaseCompleted == null)
+                                {
+                                    return;
+                                }
+                            }
+
                             TrackRelease trackRelease = new TrackRelease
                             {
                                 Name = versionAssign.ToString(),
@@ -1401,6 +1417,10 @@ namespace ApkUploader
                             }
 
                             List<TrackRelease> trackReleases = new List<TrackRelease> { trackRelease };
+                            if (trackReleaseCompleted != null)
+                            {
+                                trackReleases.Add(trackReleaseCompleted);
+                            }
                             assignTrack.Releases = trackReleases;
                             sb.AppendLine($"Assign version: {versionAssign}");
                         }
