@@ -1118,13 +1118,20 @@ namespace ApkUploader
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool TriggerTrackReview()
+        private bool TriggerTrackReview(string track)
         {
             if (_serviceThread != null)
             {
                 return false;
             }
+
             UpdateStatus(string.Empty);
+            if (string.IsNullOrWhiteSpace(track))
+            {
+                UpdateStatus("Empty track");
+                return false;
+            }
+
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
             {
@@ -1139,6 +1146,17 @@ namespace ApkUploader
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
                         sb.AppendLine($"Creating app edit: {appEdit.Id}");
                         UpdateStatus(sb.ToString());
+
+                        Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                        sb.AppendLine($"Track: {track}");
+                        UpdateStatus(sb.ToString());
+                        if (trackResponse.Releases != null)
+                        {
+                            if (trackResponse.Releases.Any(r => r.VersionCodes != null && r.VersionCodes.Count > 0))
+                            {
+                                await edits.Tracks.Update(trackResponse, PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
+                            }
+                        }
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
                         AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, TrackInternal);
@@ -1210,6 +1228,12 @@ namespace ApkUploader
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
                         Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, fromTrack).ExecuteAsync(_cts.Token);
                         sb.AppendLine($"From track: {fromTrack}");
+                        if (trackResponse.Releases == null)
+                        {
+                            sb.AppendLine("No releases present");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("No releases present");
+                        }
                         if (trackResponse.Releases.Count != 1)
                         {
                             sb.AppendLine($"Invalid release count: {trackResponse.Releases.Count}");
@@ -1328,6 +1352,7 @@ namespace ApkUploader
             {
                 return false;
             }
+
             UpdateStatus(string.Empty);
             if (string.IsNullOrWhiteSpace(track))
             {
@@ -1369,32 +1394,35 @@ namespace ApkUploader
                             Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
                             sb.AppendLine($"Track: {track}");
 
-                            foreach (TrackRelease trackRelease in trackResponse.Releases)
+                            if (trackResponse.Releases != null)
                             {
-                                if (trackRelease != null)
+                                foreach (TrackRelease trackRelease in trackResponse.Releases)
                                 {
-                                    if (trackReleaseOld == null)
+                                    if (trackRelease != null)
                                     {
-                                        trackReleaseOld = trackRelease;
-                                    }
-
-                                    if (trackRelease.Name != null)
-                                    {
-                                        sb.AppendLine($"Name: {trackRelease.Name}");
-                                    }
-
-                                    if (trackRelease.Status != null)
-                                    {
-                                        sb.AppendLine($"Status: {trackRelease.Status}");
-                                    }
-
-                                    if (trackRelease.VersionCodes != null)
-                                    {
-                                        foreach (long? version in trackRelease.VersionCodes)
+                                        if (trackReleaseOld == null)
                                         {
-                                            if (version.HasValue)
+                                            trackReleaseOld = trackRelease;
+                                        }
+
+                                        if (trackRelease.Name != null)
+                                        {
+                                            sb.AppendLine($"Name: {trackRelease.Name}");
+                                        }
+
+                                        if (trackRelease.Status != null)
+                                        {
+                                            sb.AppendLine($"Status: {trackRelease.Status}");
+                                        }
+
+                                        if (trackRelease.VersionCodes != null)
+                                        {
+                                            foreach (long? version in trackRelease.VersionCodes)
                                             {
-                                                sb.AppendLine($"Version: {version.Value}");
+                                                if (version.HasValue)
+                                                {
+                                                    sb.AppendLine($"Version: {version.Value}");
+                                                }
                                             }
                                         }
                                     }
@@ -1513,13 +1541,19 @@ namespace ApkUploader
                 return false;
             }
 
+            UpdateStatus(string.Empty);
+            if (string.IsNullOrWhiteSpace(track))
+            {
+                UpdateStatus("Empty track");
+                return false;
+            }
+
             if (bundleChanges == null)
             {
                 UpdateStatus("No language changes info");
                 return false;
             }
 
-            UpdateStatus(string.Empty);
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
             {
@@ -1544,7 +1578,7 @@ namespace ApkUploader
                         {
                             sb.AppendLine($"No releases");
                             UpdateStatus(sb.ToString());
-                            throw new Exception("No releases");
+                            throw new Exception("No releases present");
                         }
                         if (trackResponse.Releases.Count != 1)
                         {
@@ -1651,6 +1685,13 @@ namespace ApkUploader
                 return false;
             }
 
+            UpdateStatus(string.Empty);
+            if (string.IsNullOrWhiteSpace(track))
+            {
+                UpdateStatus("Empty track");
+                return false;
+            }
+
             string userFractionError = ValidateUserFraction(userFraction, track);
             if (userFractionError != null)
             {
@@ -1692,9 +1733,9 @@ namespace ApkUploader
                         sb.AppendLine($"Track: {track}");
                         if (trackResponse.Releases == null)
                         {
-                            sb.AppendLine($"No releases");
+                            sb.AppendLine($"No releases present");
                             UpdateStatus(sb.ToString());
-                            throw new Exception("No releases");
+                            throw new Exception("No releases present");
                         }
 
                         if (trackResponse.Releases.Count != 2)
@@ -1810,6 +1851,13 @@ namespace ApkUploader
         {
             if (_serviceThread != null)
             {
+                return false;
+            }
+
+            UpdateStatus(string.Empty);
+            if (string.IsNullOrWhiteSpace(track))
+            {
+                UpdateStatus("Empty track");
                 return false;
             }
 
@@ -2105,7 +2153,14 @@ namespace ApkUploader
             {
                 return false;
             }
+
             UpdateStatus(string.Empty);
+            if (string.IsNullOrWhiteSpace(track))
+            {
+                UpdateStatus("Empty track");
+                return false;
+            }
+
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(() =>
             {
@@ -2445,7 +2500,7 @@ namespace ApkUploader
 
         private void buttonTriggerReview_Click(object sender, EventArgs e)
         {
-            TriggerTrackReview();
+            TriggerTrackReview(comboBoxTrackAssign.Text);
         }
 
         private void buttonChangeTrack_Click(object sender, EventArgs e)
