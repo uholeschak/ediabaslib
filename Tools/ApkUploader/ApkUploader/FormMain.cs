@@ -1159,7 +1159,7 @@ namespace ApkUploader
                         }
 
                         EditsResource.CommitRequest commitRequest = edits.Commit(PackageName, appEdit.Id);
-                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest, TrackInternal);
+                        AppEdit appEditCommit = await ExecuteCommitRequest(commitRequest);
                         sb.AppendLine($"App edit committed: {appEditCommit.Id}");
                         UpdateStatus(sb.ToString());
                     }
@@ -2304,10 +2304,10 @@ namespace ApkUploader
         /// <param name="commitRequest">The commit request to execute.</param>
         /// <param name="track">The track to commit the changes to.</param>
         /// <returns>The resulting <see cref="AppEdit"/>.</returns>
-        private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest, string track)
+        private async Task<AppEdit> ExecuteCommitRequest(EditsResource.CommitRequest commitRequest, string track = null)
         {
-            bool cancelInReview =
-                !(!string.IsNullOrEmpty(track) && string.Compare(track, TrackInternal, StringComparison.OrdinalIgnoreCase) == 0);
+            bool cancelInReview = !string.IsNullOrEmpty(track) &&
+                                  string.Compare(track, TrackInternal, StringComparison.OrdinalIgnoreCase) != 0;
 
             // Keep the default null, otherwise this triggers an error
             commitRequest.ChangesNotSentForReview = null;
