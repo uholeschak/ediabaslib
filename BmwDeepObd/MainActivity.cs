@@ -6007,7 +6007,7 @@ namespace BmwDeepObd
                     }
 
                     int lastZipPercent = -1;
-                    ActivityCommon.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders, encodeExtensions,
+                    ZipUtils.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders, encodeExtensions,
                         (percent, decrypt) =>
                         {
                             if (_activityCommon == null)
@@ -6597,7 +6597,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                ActivityCommon.ExtractZipFile(assets, null, resourceName, sampleDir, null, null, null, null);
+                ZipUtils.ExtractZipFile(assets, null, resourceName, sampleDir, null, null, null, null);
 
                 XElement xmlInfo = new XElement("Info");
                 xmlInfo.Add(new XAttribute("Name", resourceName));
@@ -6717,7 +6717,7 @@ namespace BmwDeepObd
                     // ignored
                 }
 
-                ActivityCommon.ExtractZipFile(assets, null, resourceName, caCertsDir, null, null, null, null);
+                ZipUtils.ExtractZipFile(assets, null, resourceName, caCertsDir, null, null, null, null);
 
                 XElement xmlInfo = new XElement("Info");
                 xmlInfo.Add(new XAttribute("Name", resourceName));
