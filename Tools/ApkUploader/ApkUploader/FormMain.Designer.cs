@@ -81,7 +81,7 @@
             textBoxStatus.ReadOnly = true;
             textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             textBoxStatus.Size = new System.Drawing.Size(1363, 464);
-            textBoxStatus.TabIndex = 23;
+            textBoxStatus.TabIndex = 35;
             textBoxStatus.TabStop = false;
             // 
             // buttonListBundles
@@ -127,7 +127,7 @@
             buttonUploadBundle.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonUploadBundle.Name = "buttonUploadBundle";
             buttonUploadBundle.Size = new System.Drawing.Size(134, 27);
-            buttonUploadBundle.TabIndex = 8;
+            buttonUploadBundle.TabIndex = 9;
             buttonUploadBundle.Text = "Upload Bundle/Apk";
             buttonUploadBundle.UseVisualStyleBackColor = true;
             buttonUploadBundle.Click += buttonUploadBundle_Click;
@@ -155,7 +155,7 @@
             buttonSelectBundleFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectBundleFile.Name = "buttonSelectBundleFile";
             buttonSelectBundleFile.Size = new System.Drawing.Size(35, 27);
-            buttonSelectBundleFile.TabIndex = 13;
+            buttonSelectBundleFile.TabIndex = 25;
             buttonSelectBundleFile.Text = "...";
             buttonSelectBundleFile.UseVisualStyleBackColor = true;
             buttonSelectBundleFile.Click += buttonSelectBundleFile_Click;
@@ -167,7 +167,7 @@
             labelApkFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelApkFile.Name = "labelApkFile";
             labelApkFile.Size = new System.Drawing.Size(125, 15);
-            labelApkFile.TabIndex = 11;
+            labelApkFile.TabIndex = 23;
             labelApkFile.Text = "Bundle/Apk file name:";
             // 
             // textBoxBundleFile
@@ -177,7 +177,7 @@
             textBoxBundleFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxBundleFile.Name = "textBoxBundleFile";
             textBoxBundleFile.Size = new System.Drawing.Size(1318, 23);
-            textBoxBundleFile.TabIndex = 12;
+            textBoxBundleFile.TabIndex = 24;
             textBoxBundleFile.Leave += textBoxBundleFile_Leave;
             // 
             // labelObbFile
@@ -187,7 +187,7 @@
             labelObbFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelObbFile.Name = "labelObbFile";
             labelObbFile.Size = new System.Drawing.Size(226, 15);
-            labelObbFile.TabIndex = 14;
+            labelObbFile.TabIndex = 26;
             labelObbFile.Text = "Obb file name (use * to keep last version):";
             // 
             // textBoxObbFile
@@ -197,7 +197,7 @@
             textBoxObbFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxObbFile.Name = "textBoxObbFile";
             textBoxObbFile.Size = new System.Drawing.Size(1318, 23);
-            textBoxObbFile.TabIndex = 15;
+            textBoxObbFile.TabIndex = 27;
             // 
             // buttonSelectObbFile
             // 
@@ -206,7 +206,7 @@
             buttonSelectObbFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectObbFile.Name = "buttonSelectObbFile";
             buttonSelectObbFile.Size = new System.Drawing.Size(35, 27);
-            buttonSelectObbFile.TabIndex = 16;
+            buttonSelectObbFile.TabIndex = 28;
             buttonSelectObbFile.Text = "...";
             buttonSelectObbFile.UseVisualStyleBackColor = true;
             buttonSelectObbFile.Click += buttonSelectObbFile_Click;
@@ -227,7 +227,7 @@
             labelRescourceFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelRescourceFolder.Name = "labelRescourceFolder";
             labelRescourceFolder.Size = new System.Drawing.Size(92, 15);
-            labelRescourceFolder.TabIndex = 17;
+            labelRescourceFolder.TabIndex = 29;
             labelRescourceFolder.Text = "Resource folder:";
             // 
             // textBoxResourceFolder
@@ -237,7 +237,7 @@
             textBoxResourceFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxResourceFolder.Name = "textBoxResourceFolder";
             textBoxResourceFolder.Size = new System.Drawing.Size(1318, 23);
-            textBoxResourceFolder.TabIndex = 18;
+            textBoxResourceFolder.TabIndex = 30;
             // 
             // buttonSelectResourceFolder
             // 
@@ -246,7 +246,7 @@
             buttonSelectResourceFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectResourceFolder.Name = "buttonSelectResourceFolder";
             buttonSelectResourceFolder.Size = new System.Drawing.Size(35, 27);
-            buttonSelectResourceFolder.TabIndex = 19;
+            buttonSelectResourceFolder.TabIndex = 31;
             buttonSelectResourceFolder.Text = "...";
             buttonSelectResourceFolder.UseVisualStyleBackColor = true;
             buttonSelectResourceFolder.Click += buttonSelectResourceFolder_Click;
@@ -257,7 +257,7 @@
             buttonChangeTrack.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonChangeTrack.Name = "buttonChangeTrack";
             buttonChangeTrack.Size = new System.Drawing.Size(134, 27);
-            buttonChangeTrack.TabIndex = 6;
+            buttonChangeTrack.TabIndex = 7;
             buttonChangeTrack.Text = "Change Track";
             buttonChangeTrack.UseVisualStyleBackColor = true;
             buttonChangeTrack.Click += buttonChangeTrack_Click;
@@ -271,7 +271,7 @@
             comboBoxTrackUnassign.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
             comboBoxTrackUnassign.Size = new System.Drawing.Size(116, 23);
-            comboBoxTrackUnassign.TabIndex = 32;
+            comboBoxTrackUnassign.TabIndex = 22;
             comboBoxTrackUnassign.SelectedIndexChanged += comboBoxTrackUnassign_SelectedIndexChanged;
             // 
             // comboBoxTrackAssign
@@ -283,7 +283,7 @@
             comboBoxTrackAssign.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             comboBoxTrackAssign.Name = "comboBoxTrackAssign";
             comboBoxTrackAssign.Size = new System.Drawing.Size(116, 23);
-            comboBoxTrackAssign.TabIndex = 29;
+            comboBoxTrackAssign.TabIndex = 17;
             comboBoxTrackAssign.SelectedIndexChanged += comboBoxTrackAssign_SelectedIndexChanged;
             // 
             // labelTrackUnassign
@@ -294,7 +294,7 @@
             labelTrackUnassign.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelTrackUnassign.Name = "labelTrackUnassign";
             labelTrackUnassign.Size = new System.Drawing.Size(88, 15);
-            labelTrackUnassign.TabIndex = 31;
+            labelTrackUnassign.TabIndex = 21;
             labelTrackUnassign.Text = "Track unassign:";
             // 
             // labelTrackAssign
@@ -305,7 +305,7 @@
             labelTrackAssign.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelTrackAssign.Name = "labelTrackAssign";
             labelTrackAssign.Size = new System.Drawing.Size(74, 15);
-            labelTrackAssign.TabIndex = 28;
+            labelTrackAssign.TabIndex = 16;
             labelTrackAssign.Text = "Track assign:";
             // 
             // buttonAssignTrack
@@ -314,7 +314,7 @@
             buttonAssignTrack.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonAssignTrack.Name = "buttonAssignTrack";
             buttonAssignTrack.Size = new System.Drawing.Size(134, 27);
-            buttonAssignTrack.TabIndex = 7;
+            buttonAssignTrack.TabIndex = 8;
             buttonAssignTrack.Text = "Assign Ver to Track";
             buttonAssignTrack.UseVisualStyleBackColor = true;
             buttonAssignTrack.Click += buttonAssignTrack_Click;
@@ -326,7 +326,7 @@
             textBoxVersion.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxVersion.Name = "textBoxVersion";
             textBoxVersion.Size = new System.Drawing.Size(56, 23);
-            textBoxVersion.TabIndex = 27;
+            textBoxVersion.TabIndex = 15;
             // 
             // labelVersion
             // 
@@ -336,7 +336,7 @@
             labelVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelVersion.Name = "labelVersion";
             labelVersion.Size = new System.Drawing.Size(84, 15);
-            labelVersion.TabIndex = 26;
+            labelVersion.TabIndex = 14;
             labelVersion.Text = "Version assign:";
             // 
             // buttonUpdateChanges
@@ -353,12 +353,12 @@
             // checkBoxUpdateName
             // 
             checkBoxUpdateName.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            checkBoxUpdateName.Location = new System.Drawing.Point(753, 45);
+            checkBoxUpdateName.Location = new System.Drawing.Point(786, 45);
             checkBoxUpdateName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkBoxUpdateName.Name = "checkBoxUpdateName";
             checkBoxUpdateName.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            checkBoxUpdateName.Size = new System.Drawing.Size(148, 28);
-            checkBoxUpdateName.TabIndex = 30;
+            checkBoxUpdateName.Size = new System.Drawing.Size(112, 28);
+            checkBoxUpdateName.TabIndex = 18;
             checkBoxUpdateName.Text = "Update name";
             checkBoxUpdateName.UseVisualStyleBackColor = true;
             // 
@@ -368,7 +368,7 @@
             buttonSetAppInfo.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSetAppInfo.Name = "buttonSetAppInfo";
             buttonSetAppInfo.Size = new System.Drawing.Size(134, 27);
-            buttonSetAppInfo.TabIndex = 9;
+            buttonSetAppInfo.TabIndex = 10;
             buttonSetAppInfo.Text = "Set App Info";
             buttonSetAppInfo.UseVisualStyleBackColor = true;
             buttonSetAppInfo.Click += buttonSetAppInfo_Click;
@@ -380,7 +380,7 @@
             labelSerialFileName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelSerialFileName.Name = "labelSerialFileName";
             labelSerialFileName.Size = new System.Drawing.Size(90, 15);
-            labelSerialFileName.TabIndex = 20;
+            labelSerialFileName.TabIndex = 32;
             labelSerialFileName.Text = "Serial file name:";
             // 
             // textBoxSerialFileName
@@ -390,7 +390,7 @@
             textBoxSerialFileName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxSerialFileName.Name = "textBoxSerialFileName";
             textBoxSerialFileName.Size = new System.Drawing.Size(1318, 23);
-            textBoxSerialFileName.TabIndex = 21;
+            textBoxSerialFileName.TabIndex = 33;
             // 
             // buttonSelectSerialFile
             // 
@@ -399,7 +399,7 @@
             buttonSelectSerialFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectSerialFile.Name = "buttonSelectSerialFile";
             buttonSelectSerialFile.Size = new System.Drawing.Size(35, 27);
-            buttonSelectSerialFile.TabIndex = 22;
+            buttonSelectSerialFile.TabIndex = 34;
             buttonSelectSerialFile.Text = "...";
             buttonSelectSerialFile.UseVisualStyleBackColor = true;
             buttonSelectSerialFile.Click += buttonSelectSerialFile_Click;
@@ -415,7 +415,7 @@
             buttonUploadSerials.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonUploadSerials.Name = "buttonUploadSerials";
             buttonUploadSerials.Size = new System.Drawing.Size(134, 27);
-            buttonUploadSerials.TabIndex = 10;
+            buttonUploadSerials.TabIndex = 11;
             buttonUploadSerials.Text = "Upload Serials";
             buttonUploadSerials.UseVisualStyleBackColor = true;
             buttonUploadSerials.Click += buttonUploadSerials_Click;
@@ -429,7 +429,7 @@
             comboBoxSerialOem.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             comboBoxSerialOem.Name = "comboBoxSerialOem";
             comboBoxSerialOem.Size = new System.Drawing.Size(134, 23);
-            comboBoxSerialOem.TabIndex = 25;
+            comboBoxSerialOem.TabIndex = 20;
             // 
             // labelSerialOem
             // 
@@ -439,7 +439,7 @@
             labelSerialOem.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelSerialOem.Name = "labelSerialOem";
             labelSerialOem.Size = new System.Drawing.Size(67, 15);
-            labelSerialOem.TabIndex = 24;
+            labelSerialOem.TabIndex = 19;
             labelSerialOem.Text = "Serial OEM:";
             // 
             // buttonTriggerReview
@@ -448,7 +448,7 @@
             buttonTriggerReview.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonTriggerReview.Name = "buttonTriggerReview";
             buttonTriggerReview.Size = new System.Drawing.Size(134, 27);
-            buttonTriggerReview.TabIndex = 5;
+            buttonTriggerReview.TabIndex = 6;
             buttonTriggerReview.Text = "Trigger Review";
             buttonTriggerReview.UseVisualStyleBackColor = true;
             buttonTriggerReview.Click += buttonTriggerReview_Click;
@@ -460,17 +460,17 @@
             textBoxUserFraction.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxUserFraction.Name = "textBoxUserFraction";
             textBoxUserFraction.Size = new System.Drawing.Size(56, 23);
-            textBoxUserFraction.TabIndex = 33;
+            textBoxUserFraction.TabIndex = 13;
             // 
             // labelUserFraction
             // 
             labelUserFraction.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             labelUserFraction.AutoSize = true;
-            labelUserFraction.Location = new System.Drawing.Point(790, 18);
+            labelUserFraction.Location = new System.Drawing.Point(798, 18);
             labelUserFraction.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelUserFraction.Name = "labelUserFraction";
             labelUserFraction.Size = new System.Drawing.Size(100, 15);
-            labelUserFraction.TabIndex = 34;
+            labelUserFraction.TabIndex = 12;
             labelUserFraction.Text = "User Fraction [%]:";
             // 
             // buttonUpdateUserFraction
@@ -479,7 +479,7 @@
             buttonUpdateUserFraction.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonUpdateUserFraction.Name = "buttonUpdateUserFraction";
             buttonUpdateUserFraction.Size = new System.Drawing.Size(134, 27);
-            buttonUpdateUserFraction.TabIndex = 35;
+            buttonUpdateUserFraction.TabIndex = 5;
             buttonUpdateUserFraction.Text = "Update User Fraction";
             buttonUpdateUserFraction.UseVisualStyleBackColor = true;
             buttonUpdateUserFraction.Click += buttonUpdateUserFraction_Click;
