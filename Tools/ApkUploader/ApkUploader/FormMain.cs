@@ -46,6 +46,15 @@ namespace ApkUploader
         private static readonly string[] TracksWithUserFraction = { TrackProduction, TrackAlpha, TrackTest };
         private static readonly string[] TracksEdit = { TrackAlpha, TrackBeta, TrackProduction, TrackInternal, TrackTest };
         private static readonly string[] SerialsOem = { "DeepOBD", "DeepOBDIbus" };
+        private static readonly string[] TrackHierarchy =
+        {
+            TrackInternal,
+            TrackTest,
+            TrackAlpha,
+            TrackBeta,
+            TrackProduction
+        };
+
         private static readonly Regex LiveVersionRegex = new Regex(@"\[\[\[""(\d+\.\d+(?:\.\d+)*)""\]\]", RegexOptions.Compiled);
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
@@ -440,22 +449,12 @@ namespace ApkUploader
 
         private static int GetTrackRank(string track)
         {
-            if (string.Compare(track, TrackInternal, StringComparison.OrdinalIgnoreCase) == 0)
+            for (int i = 0; i < TrackHierarchy.Length; i++)
             {
-                return 0;
-            }
-            if (string.Compare(track, TrackTest, StringComparison.OrdinalIgnoreCase) == 0 ||
-                string.Compare(track, TrackAlpha, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                return 1;
-            }
-            if (string.Compare(track, TrackBeta, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                return 2;
-            }
-            if (string.Compare(track, TrackProduction, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                return 3;
+                if (string.Compare(track, TrackHierarchy[i], StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return i;
+                }
             }
             return -1;
         }
@@ -2514,7 +2513,7 @@ namespace ApkUploader
 
             string fromTrack = comboBoxTrackUnassign.Text;
             string toTrack = comboBoxTrackAssign.Text;
-            bool unassignFromSourceTrack = GetTrackRank(fromTrack) >= GetTrackRank(toTrack);
+            bool unassignFromSourceTrack = GetTrackRank(fromTrack) > GetTrackRank(toTrack);
 
             ChangeTrack(fromTrack, toTrack, unassignFromSourceTrack, userFraction);
         }
