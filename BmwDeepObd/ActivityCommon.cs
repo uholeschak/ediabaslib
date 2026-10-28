@@ -65,34 +65,6 @@ namespace BmwDeepObd
 {
     public class ActivityCommon : IDisposable
     {
-        public class FileSystemBlockInfo
-        {
-            /// <summary>
-            /// The path you asked to check file allocation blocks for
-            /// </summary>
-            public string Path { get; set; }
-
-            /// <summary>
-            /// The file system block size, in bytes, for the given path
-            /// </summary>
-            public double BlockSizeBytes { get; set; }
-
-            /// <summary>
-            /// Total size of the file system at the given path
-            /// </summary>
-            public double TotalSizeBytes { get; set; }
-
-            /// <summary>
-            /// Available size of the file system at the given path
-            /// </summary>
-            public double AvailableSizeBytes { get; set; }
-
-            /// <summary>
-            /// Total free size of the file system at the given path
-            /// </summary>
-            public double FreeSizeBytes { get; set; }
-        }
-
         public class YandexCloudIamTokenRequest
         {
             public YandexCloudIamTokenRequest(string oAuthToken)
@@ -1113,8 +1085,6 @@ namespace BmwDeepObd
         private static readonly object SerialInfoLockObject = new object();
         private static readonly object CompileLock = new object();
         private static int _instanceCount;
-        private static string _externalPath;
-        private static string _externalWritePath;
         private static string _customStorageMedia;
         private static string _appId;
         private static bool _vagUdsActive;
@@ -1372,14 +1342,10 @@ namespace BmwDeepObd
 
         public static bool StaticDataInitialized { get; set; }
 
-        public static string ExternalPath => _externalPath;
-
-        public static string ExternalWritePath => _externalWritePath;
-
         public static string CustomStorageMedia
         {
             get => _customStorageMedia;
-            set => _customStorageMedia = IsWritable(value) ? value : null;
+            set => _customStorageMedia = StorageUtils.IsWritable(value) ? value : null;
         }
 
         public static string CopyToAppSrc { get; set; }
@@ -3032,16 +2998,6 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
-        }
-
-        public static bool IsDocumentTreeSupported()
-        {
-            // basically support starts with Android N, but makes no sense
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
-            {
-                return true;
-            }
-            return false;
         }
 
         public static bool IsCpuStatisticsSupported()
@@ -5111,7 +5067,7 @@ namespace BmwDeepObd
                 string displayName = name;
                 try
                 {
-                    FileSystemBlockInfo blockInfo = GetFileSystemBlockInfo(name);
+                    StorageUtils.FileSystemBlockInfo blockInfo = StorageUtils.GetFileSystemBlockInfo(name);
                     string shortName = GetTruncatedPathName(name);
                     if (!string.IsNullOrEmpty(shortName))
                     {
@@ -13957,17 +13913,17 @@ using System.Threading;"
             instanceData.UserEcuFiles = false;
             if (string.IsNullOrEmpty(CustomStorageMedia))
             {
-                if (string.IsNullOrEmpty(ExternalWritePath))
+                if (string.IsNullOrEmpty(StorageUtils.ExternalWritePath))
                 {
-                    if (string.IsNullOrEmpty(ExternalPath))
+                    if (string.IsNullOrEmpty(StorageUtils.ExternalPath))
                     {
                         return false;
                     }
-                    instanceData.AppDataPath = Path.Combine(ExternalPath, AppFolderName);
+                    instanceData.AppDataPath = Path.Combine(StorageUtils.ExternalPath, AppFolderName);
                 }
                 else
                 {
-                    instanceData.AppDataPath = ExternalWritePath;
+                    instanceData.AppDataPath = StorageUtils.ExternalWritePath;
                 }
             }
             else
@@ -14025,7 +13981,7 @@ using System.Threading;"
                         {
                             string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
                                 Android.OS.Environment.GetExternalStorageState(file) : Android.OS.Environment.ExternalStorageState;
-                            if (extState != null && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(file.AbsolutePath))
+                            if (extState != null && extState.Equals(Android.OS.Environment.MediaMounted) && StorageUtils.IsWritable(file.AbsolutePath))
                             {
                                 storageList.Add(file.AbsolutePath);
                             }
@@ -14035,129 +13991,8 @@ using System.Threading;"
                 return storageList;
             }
 
-            string procMounts = ReadProcMounts();
-            return ParseStorageMedia(procMounts);
-        }
-
-        public static string GetDocumentPath(DocumentFile documentFile)
-        {
-            if (documentFile?.Uri == null)
-            {
-                return null;
-            }
-
-            try
-            {
-                string docId = Android.Provider.DocumentsContract.GetTreeDocumentId(documentFile.Uri);
-                if (!string.IsNullOrEmpty(docId))
-                {
-                    string[] parts = docId.Split(':');
-                    if (parts.Length > 1)
-                    {
-                        string volumeId = parts[0];
-                        string docPath = parts[1];
-                        string volumePath = GetVolumePath(volumeId);
-                        if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
-                        {
-                            string fullPath = Path.Combine(volumePath, docPath);
-                            return fullPath;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            return documentFile.Uri.Path;
-        }
-
-        public static List<string> GetPersistedStorages()
-        {
-            List<string> storageList = new List<string>();
-            if (IsDocumentTreeSupported())
-            {
-                IList<UriPermission> uriPermissions = Android.App.Application.Context.ContentResolver?.PersistedUriPermissions;
-                if (uriPermissions != null)
-                {
-                    foreach (UriPermission uriPermission in uriPermissions)
-                    {
-                        try
-                        {
-                            if (uriPermission.Uri != null && uriPermission.IsWritePermission)
-                            {
-                                string docId = Android.Provider.DocumentsContract.GetTreeDocumentId(uriPermission.Uri);
-                                if (!string.IsNullOrEmpty(docId))
-                                {
-                                    string[] parts = docId.Split(':');
-                                    if (parts.Length > 1)
-                                    {
-                                        string volumeId = parts[0];
-                                        string docPath = parts[1];
-                                        string volumePath = GetVolumePath(volumeId);
-                                        if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
-                                        {
-                                            string fullPath = Path.Combine(volumePath, docPath);
-                                            storageList.Add(fullPath);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
-                }
-            }
-
-            return storageList;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static string GetVolumePath(string volumeId)
-        {
-            try
-            {
-                if (!IsDocumentTreeSupported())
-                {
-                    return null;
-                }
-
-                if (string.IsNullOrEmpty(volumeId))
-                {
-                    return null;
-                }
-
-                StorageManager storageManager = Android.App.Application.Context.GetSystemService(Context.StorageService) as StorageManager;
-                IList<StorageVolume> storageVolumes = storageManager?.StorageVolumes;
-                if (storageVolumes == null)
-                {
-                    return null;
-                }
-
-                foreach (StorageVolume storageVolume in storageVolumes)
-                {
-                    if (storageVolume.IsPrimary && PrimaryVolumeName.Equals(volumeId))
-                    {
-                        return storageVolume.Directory?.Path;
-                    }
-
-                    string uuid = storageVolume.Uuid;
-                    if (!string.IsNullOrEmpty(uuid) && uuid.Equals(volumeId))
-                    {
-                        return storageVolume.Directory?.Path;
-                    }
-                }
-
-                return null;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            string procMounts = StorageUtils.ReadProcMounts();
+            return StorageUtils.ParseStorageMedia(procMounts);
         }
 
         public bool RequestCopyDocumentsThread(DocumentFile documentSrc, DocumentFile documentDst, CopyDocumentsThreadFinishDelegate handler)
@@ -14169,7 +14004,7 @@ using System.Threading;"
                     return false;
                 }
 
-                string documentPath = GetDocumentPath(documentDst);
+                string documentPath = DocumentUtils.GetDocumentPath(documentDst);
                 if (string.IsNullOrEmpty(documentPath))
                 {
                     return false;
@@ -14222,7 +14057,7 @@ using System.Threading;"
             _copyDocumentThread = new Thread(() =>
             {
                 bool result = false;
-                int docCount = GetDocumentCount(documentSrc, name =>
+                int docCount = DocumentUtils.GetDocumentCount(documentSrc, name =>
                 {
                     if (_disposed)
                     {
@@ -14245,7 +14080,7 @@ using System.Threading;"
                     }
 
                     int fileCount = 0;
-                    result = CopyDocumentsRecursive(documentSrc, documentDst, name =>
+                    result = DocumentUtils.CopyDocumentsRecursive(documentSrc, documentDst, name =>
                     {
                         if (_disposed)
                         {
@@ -14306,140 +14141,6 @@ using System.Threading;"
             return false;
         }
 
-        public static bool CopyDocumentsRecursive(DocumentFile documentSrc, DocumentFile documentDst, ProgressDocumentCopyDelegate progressHandler)
-        {
-            try
-            {
-                if (documentSrc?.Uri == null || documentDst?.Uri == null)
-                {
-                    return false;
-                }
-
-                if (!documentSrc.Exists())
-                {
-                    return false;
-                }
-
-                if (documentSrc.IsFile)
-                {
-                    DocumentFile fileDst = documentDst;
-                    if (documentDst.IsDirectory)
-                    {
-                        DocumentFile oldFile = documentDst.FindFile(documentSrc.Name);
-                        if (oldFile != null)
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("Delete file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
-#endif
-                            oldFile.Delete();
-                        }
-#if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
-#endif
-                        fileDst = documentDst.CreateFile(MimeTypeAppAny, documentSrc.Name);
-                    }
-
-                    if (!fileDst.IsFile)
-                    {
-                        return false;
-                    }
-
-                    if (progressHandler != null)
-                    {
-                        if (!progressHandler.Invoke(documentSrc.Name))
-                        {
-                            return false;
-                        }
-                    }
-
-                    ContentResolver contentResolver = Android.App.Application.Context.ContentResolver;
-                    if (contentResolver == null)
-                    {
-                        return false;
-                    }
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Copy file: Name={0}, Type={1}, URI={2}", documentSrc.Name, documentSrc.Type, documentSrc.Uri.ToString()));
-#endif
-                    using (Stream inputStream = contentResolver.OpenInputStream(documentSrc.Uri))
-                    {
-                        if (inputStream == null)
-                        {
-                            return false;
-                        }
-
-                        using (Stream outputStream = contentResolver.OpenOutputStream(fileDst.Uri))
-                        {
-                            if (outputStream == null)
-                            {
-                                return false;
-                            }
-
-                            inputStream.CopyTo(outputStream);
-                        }
-                    }
-
-                    return true;
-                }
-
-                if (!documentSrc.IsDirectory || !documentDst.IsDirectory)
-                {
-                    return false;
-                }
-
-                DocumentFile oldDir = documentDst.FindFile(documentSrc.Name);
-                if (oldDir != null)
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Delete dir: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
-#endif
-                    oldDir.Delete();
-                }
-
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("Create dir: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
-#endif
-                DocumentFile subDirDst = documentDst.CreateDirectory(documentSrc.Name);
-                DocumentFile[] files = documentSrc.ListFiles();
-                foreach (DocumentFile documentFile in files)
-                {
-                    if (documentFile.IsFile)
-                    {
-                        DocumentFile oldFile = subDirDst.FindFile(documentFile.Name);
-                        if (oldFile != null)
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("Delete file: Name={0}, URI={1}", documentFile.Name, documentFile.Uri.ToString()));
-#endif
-                            oldFile.Delete();
-                        }
-#if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, URI={1}", documentFile.Name, documentFile.Uri.ToString()));
-#endif
-                        DocumentFile dstFile = subDirDst.CreateFile(MimeTypeAppAny, documentFile.Name);
-                        if (!CopyDocumentsRecursive(documentFile, dstFile, progressHandler))
-                        {
-                            return false;
-                        }
-                        continue;
-                    }
-
-                    if (documentFile.IsDirectory)
-                    {
-                        if (!CopyDocumentsRecursive(documentFile, subDirDst, progressHandler))
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public bool RequestDeleteDocumentsThread(DocumentFile documentFile, CopyDocumentsThreadFinishDelegate handler)
         {
             try
@@ -14449,7 +14150,7 @@ using System.Threading;"
                     return false;
                 }
 
-                string documentPath = GetDocumentPath(documentFile);
+                string documentPath = DocumentUtils.GetDocumentPath(documentFile);
                 if (string.IsNullOrEmpty(documentPath))
                 {
                     return false;
@@ -14774,93 +14475,6 @@ using System.Threading;"
             return false;
         }
 
-        public static int GetDocumentCount(DocumentFile document, ProgressDocumentCopyDelegate progressHandler)
-        {
-            try
-            {
-                if (document == null)
-                {
-                    return -1;
-                }
-
-                if (document.IsFile)
-                {
-                    if (progressHandler != null)
-                    {
-                        if (!progressHandler.Invoke(document.Name))
-                        {
-                            return -1;
-                        }
-                    }
-
-                    if (document.Exists())
-                    {
-                        return 1;
-                    }
-
-                    return 0;
-                }
-
-                if (!document.IsDirectory)
-                {
-                    return -1;
-                }
-
-                int fileCount = 0;
-                DocumentFile[] files = document.ListFiles();
-                foreach (DocumentFile documentFile in files)
-                {
-                    if (documentFile.IsFile)
-                    {
-                        if (document.Exists())
-                        {
-                            fileCount++;
-                        }
-                        continue;
-                    }
-
-                    if (documentFile.IsDirectory)
-                    {
-                        int count = GetDocumentCount(documentFile, progressHandler);
-                        if (count < 0)
-                        {
-                            return -1;
-                        }
-
-                        fileCount += count;
-                    }
-                }
-
-                return fileCount;
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
-        }
-
-        public static bool DocumentExists(DocumentFile document)
-        {
-            try
-            {
-                if (document == null)
-                {
-                    return false;
-                }
-
-                if (document.Exists())
-                {
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return false;
-        }
-
         public bool IsExStorageAvailable()
         {
             try
@@ -14930,209 +14544,6 @@ using System.Threading;"
             Android.Util.Log.Info(Tag, "IsMediaMounted: Media mounted");
 #endif
             return true;
-        }
-
-        public static void SetStoragePath()
-        {
-            _externalPath = string.Empty;
-            _externalWritePath = string.Empty;
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
-            {
-#pragma warning disable 618
-                Java.IO.File extDir = Android.OS.Environment.ExternalStorageDirectory;
-#pragma warning restore 618
-                string extState = Android.OS.Environment.ExternalStorageState;
-                if (extDir != null && extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted))
-                {
-                    _externalPath = extDir.AbsolutePath;
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("SetStoragePath: ExternalStorageDirectory: {0}", _externalPath));
-#endif
-                }
-            }
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-            {   // writing to external disk is only allowed in special directories.
-                Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
-                if (externalFilesDirs?.Length > 0)
-                {
-                    // index 0 is the internal disk
-                    if (externalFilesDirs.Length > 1)
-                    {
-                        Java.IO.File extDir = externalFilesDirs[1];
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        if (extDir != null)
-                        {
-                            string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
-                                Android.OS.Environment.GetExternalStorageState(extDir) : Android.OS.Environment.ExternalStorageState;
-                            if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
-                            {
-                                _externalWritePath = extDir.AbsolutePath;
-#if DEBUG
-                                Android.Util.Log.Info(Tag, string.Format("SetStoragePath: GetExternalFilesDirs[1]: {0}", _externalWritePath));
-#endif
-                            }
-                        }
-                    }
-
-                    if (string.IsNullOrEmpty(_externalWritePath))
-                    {
-                        Java.IO.File extDir = externalFilesDirs[0];
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        if (extDir != null)
-                        {
-                            string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
-                                Android.OS.Environment.GetExternalStorageState(extDir) : Android.OS.Environment.ExternalStorageState;
-                            if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
-                            {
-                                _externalWritePath = extDir.AbsolutePath;
-#if DEBUG
-                                Android.Util.Log.Info(Tag, string.Format("SetStoragePath: GetExternalFilesDirs[0]: {0}", _externalWritePath));
-#endif
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                string procMounts = ReadProcMounts();
-                string sdCardEntry = ParseProcMounts(procMounts, _externalPath);
-                if (!string.IsNullOrEmpty(sdCardEntry))
-                {
-                    _externalPath = sdCardEntry;
-                }
-            }
-        }
-
-        private static string ReadProcMounts()
-        {
-            try
-            {
-                string contents = File.ReadAllText("/proc/mounts");
-                return contents;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-            return string.Empty;
-        }
-
-        public static bool IsWritable(string pathToTest)
-        {
-            bool result = false;
-
-            if (!string.IsNullOrWhiteSpace(pathToTest))
-            {
-                const string testText = "test text";
-                string testFile = Guid.NewGuid() + ".txt";
-                string testPath = Path.Combine(pathToTest, testFile);
-                try
-                {
-                    File.WriteAllText(testPath, testText);
-                    // case sensitive file systems are supported now
-                    if (File.Exists(testPath))
-                    {
-                        result = true;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-                finally
-                {
-                    try
-                    {
-                        if (File.Exists(testPath))
-                        {
-                            File.Delete(testPath);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-            }
-            return result;
-        }
-
-        private static string ParseProcMounts(string procMounts, string externalPath)
-        {
-            string sdCardEntry = string.Empty;
-            if (!string.IsNullOrWhiteSpace(procMounts))
-            {
-                List<string> procMountEntries = procMounts.Split('\n', '\r').ToList();
-                foreach (string entry in procMountEntries)
-                {
-                    string[] sdCardEntries = entry.Split(' ');
-                    if (sdCardEntries.Length > 2)
-                    {
-                        string path = sdCardEntries[1];
-                        if (path.StartsWith(externalPath, StringComparison.OrdinalIgnoreCase) &&
-                            string.Compare(path, externalPath, StringComparison.OrdinalIgnoreCase) != 0)
-                        {
-                            if (IsWritable(path))
-                            {
-                                sdCardEntry = path;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            return sdCardEntry;
-        }
-
-        private static List<string> ParseStorageMedia(string procMounts)
-        {
-            List<string> sdCardList = new List<string>();
-            if (!string.IsNullOrWhiteSpace(procMounts))
-            {
-                List<string> procMountEntries = procMounts.Split('\n', '\r').ToList();
-                // ReSharper disable once LoopCanBeConvertedToQuery
-                foreach (string entry in procMountEntries)
-                {
-                    string[] sdCardEntries = entry.Split(' ');
-                    if (sdCardEntries.Length > 2)
-                    {
-                        string path = sdCardEntries[1];
-                        if (IsWritable(path))
-                        {
-                            sdCardList.Add(path);
-                        }
-                    }
-                }
-            }
-            return sdCardList;
-        }
-
-        public static FileSystemBlockInfo GetFileSystemBlockInfo(string path)
-        {
-            var statFs = new StatFs(path);
-            var fsbi = new FileSystemBlockInfo();
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.JellyBeanMr2)
-            {
-                fsbi.Path = path;
-                fsbi.BlockSizeBytes = statFs.BlockSizeLong;
-                fsbi.TotalSizeBytes = statFs.BlockCountLong * statFs.BlockSizeLong;
-                fsbi.AvailableSizeBytes = statFs.AvailableBlocksLong * statFs.BlockSizeLong;
-                fsbi.FreeSizeBytes = statFs.FreeBlocksLong * statFs.BlockSizeLong;
-            }
-            else // this was deprecated in API level 18 (Android 4.3), so if your device is below level 18, this is what will be used instead.
-            {
-                fsbi.Path = path;
-                // you may want to disable warning about obsoletes, earlier versions of Android are using the deprecated versions
-#pragma warning disable 618
-                fsbi.BlockSizeBytes = statFs.BlockSize;
-                fsbi.TotalSizeBytes = statFs.BlockCount * (long)statFs.BlockSize;
-                fsbi.AvailableSizeBytes = statFs.AvailableBlocks * (long)statFs.BlockSize;
-                fsbi.FreeSizeBytes = statFs.FreeBlocks * (long)statFs.BlockSize;
-#pragma warning restore 618
-            }
-            return fsbi;
         }
 
         public static long GetDirectorySize(string path)

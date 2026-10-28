@@ -3036,7 +3036,7 @@ namespace BmwDeepObd
         private void StoragePermissionGranted()
         {
             _storageAccessGranted = true;
-            ActivityCommon.SetStoragePath();
+            StorageUtils.SetStoragePath();
             ActivityCommon.RecentConfigListCleanup();
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
@@ -6142,7 +6142,7 @@ namespace BmwDeepObd
             string ecuPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
             try
             {
-                ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_instanceData.AppDataPath);
+                StorageUtils.FileSystemBlockInfo blockInfo = StorageUtils.GetFileSystemBlockInfo(_instanceData.AppDataPath);
                 long ecuDirSize = ActivityCommon.GetDirectorySize(ecuPath);
                 double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
                 long requiredSize = EcuExtractSize;
@@ -6931,7 +6931,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (ActivityCommon.IsDocumentTreeSupported())
+                if (DocumentUtils.IsDocumentTreeSupported())
                 {
                     ActivityCommon.ShowAlertDialogBalloon(this, alertDialog, Resource.String.menu_hint_copy_folder);
                 }
