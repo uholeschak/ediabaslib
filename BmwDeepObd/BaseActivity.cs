@@ -464,7 +464,7 @@ namespace BmwDeepObd
         {
             try
             {
-                int? label = ActivityCommon.GetActivityInfo(PackageManager, ComponentName, PackageInfoFlags.MetaData)?.LabelRes;
+                int? label = PackageUtils.GetActivityInfo(PackageManager, ComponentName, PackageInfoFlags.MetaData)?.LabelRes;
                 if (label.HasValue && label != 0)
                 {
                     SetTitle(label.Value);
