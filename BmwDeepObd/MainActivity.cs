@@ -3246,7 +3246,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        AssetManager assetManager = ActivityCommon.GetPackageContext()?.Assets;
+                        AssetManager assetManager = PackageUtils.GetPackageContext()?.Assets;
                         if (assetManager != null)
                         {
                             long fileSize = ActivityCommon.GetAssetEcuFileSize(assetManager, assetEcuFileNames);
@@ -6512,7 +6512,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                AssetManager assets = ActivityCommon.GetPackageContext()?.Assets;
+                AssetManager assets = PackageUtils.GetPackageContext()?.Assets;
                 if (assets == null)
                 {
                     return false;
@@ -6621,7 +6621,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                AssetManager assets = ActivityCommon.GetPackageContext()?.Assets;
+                AssetManager assets = PackageUtils.GetPackageContext()?.Assets;
                 if (assets == null)
                 {
                     return false;

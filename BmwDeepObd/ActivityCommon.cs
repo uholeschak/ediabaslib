@@ -1069,7 +1069,6 @@ namespace BmwDeepObd
         private readonly Context _context;
         private readonly Android.App.Activity _activity;
         private readonly BaseActivity _baseActivity;
-        private static Context _packageContext;
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
         private long? _versionCode;
@@ -1218,7 +1217,7 @@ namespace BmwDeepObd
             try
             {
                 PackageManager packageManager = context?.PackageManager;
-                IList<ApplicationInfo> appList = GetInstalledApplications(packageManager, PackageInfoFlags.MatchAll);
+                IList<ApplicationInfo> appList = PackageUtils.GetInstalledApplications(packageManager, PackageInfoFlags.MatchAll);
                 if (appList != null)
                 {
                     foreach (ApplicationInfo appInfo in appList)
@@ -2730,24 +2729,6 @@ namespace BmwDeepObd
                 // ignored
             }
             return false;
-        }
-
-        public static Context GetPackageContext()
-        {
-            try
-            {
-                if (_packageContext != null)
-                {
-                    return _packageContext;
-                }
-
-                _packageContext = Android.App.Application.Context.CreatePackageContext(Android.App.Application.Context.PackageName, 0);
-                return _packageContext;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
         }
 
         public static long GetAssetEcuFileSize(AssetManager assetManager, string assetEcuFileNames)
@@ -7690,39 +7671,9 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static PackageInfo GetPackageInfo(PackageManager packageManager, string packageName, PackageInfoFlags infoFlags = 0)
-        {
-            try
-            {
-                if (packageManager == null)
-                {
-                    return null;
-                }
-
-                if (string.IsNullOrEmpty(packageName))
-                {
-                    return null;
-                }
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
-                {
-#pragma warning disable CS0618
-                    return packageManager.GetPackageInfo(packageName, infoFlags);
-#pragma warning restore CS0618
-                }
-
-                return packageManager.GetPackageInfo(packageName, PackageManager.PackageInfoFlags.Of((int)infoFlags));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public PackageInfo GetPackageInfo(PackageInfoFlags infoFlags = 0)
         {
-            return GetPackageInfo(_packageManager, _context?.PackageName, infoFlags);
+            return PackageUtils.GetPackageInfo(_packageManager, _context?.PackageName, infoFlags);
         }
 
         public long GetVersionCode()
@@ -7759,171 +7710,29 @@ namespace BmwDeepObd
             return true;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static string GetInstallerPackageName(PackageManager packageManager, string packageName)
-        {
-            try
-            {
-                if (packageManager == null)
-                {
-                    return string.Empty;
-                }
-
-                if (string.IsNullOrEmpty(packageName))
-                {
-                    return string.Empty;
-                }
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.R)
-                {
-#pragma warning disable CS0618
-#pragma warning disable CA1422
-                    return packageManager.GetInstallerPackageName(packageName);
-#pragma warning restore CA1422
-#pragma warning restore CS0618
-                }
-
-                return packageManager.GetInstallSourceInfo(packageName).InstallingPackageName;
-            }
-            catch (Exception)
-            {
-                return string.Empty;
-            }
-        }
-
         public string GetInstallerPackageName()
         {
-            return GetInstallerPackageName(_packageManager, _context?.PackageName);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static IList<PackageInfo> GetInstalledPackages(PackageManager packageManager, PackageInfoFlags infoFlags = 0)
-        {
-            try
-            {
-                if (packageManager == null)
-                {
-                    return null;
-                }
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
-                {
-#pragma warning disable CS0618
-                    return packageManager.GetInstalledPackages(infoFlags);
-#pragma warning restore CS0618
-                }
-
-                return packageManager.GetInstalledPackages(PackageManager.PackageInfoFlags.Of((int)infoFlags));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return PackageUtils.GetInstallerPackageName(_packageManager, _context?.PackageName);
         }
 
         public IList<PackageInfo> GetInstalledPackages(PackageInfoFlags infoFlags = 0)
         {
-            return GetInstalledPackages(_packageManager, infoFlags);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static IList<ApplicationInfo> GetInstalledApplications(PackageManager packageManager, PackageInfoFlags infoFlags = 0)
-        {
-            try
-            {
-                if (packageManager == null)
-                {
-                    return null;
-                }
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
-                {
-#pragma warning disable CS0618
-                    return packageManager.GetInstalledApplications(infoFlags);
-#pragma warning restore CS0618
-                }
-
-                return packageManager.GetInstalledApplications(PackageManager.ApplicationInfoFlags.Of((int)infoFlags));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return PackageUtils.GetInstalledPackages(_packageManager, infoFlags);
         }
 
         public IList<ApplicationInfo> GetInstalledApplications(PackageInfoFlags infoFlags = 0)
         {
-            return GetInstalledApplications(_packageManager, infoFlags);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static ActivityInfo GetActivityInfo(PackageManager packageManager, ComponentName componentName, PackageInfoFlags infoFlags = 0)
-        {
-            try
-            {
-                if (packageManager == null)
-                {
-                    return null;
-                }
-
-                if (componentName == null)
-                {
-                    return null;
-                }
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
-                {
-#pragma warning disable CS0618
-                    return packageManager.GetActivityInfo(componentName, infoFlags);
-#pragma warning restore CS0618
-                }
-
-                return packageManager.GetActivityInfo(componentName, PackageManager.ComponentInfoFlags.Of((int)infoFlags));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return PackageUtils.GetInstalledApplications(_packageManager, infoFlags);
         }
 
         public ActivityInfo GetActivityInfo(PackageInfoFlags infoFlags = 0)
         {
-            return GetActivityInfo(_packageManager, _activity?.ComponentName, infoFlags);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static IList<ResolveInfo> QueryIntentActivities(PackageManager packageManager, Intent intent, PackageInfoFlags infoFlags = 0)
-        {
-            try
-            {
-                if (packageManager == null)
-                {
-                    return null;
-                }
-
-                if (intent == null)
-                {
-                    return null;
-                }
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
-                {
-#pragma warning disable CS0618
-                    return packageManager.QueryIntentActivities(intent, infoFlags);
-#pragma warning restore CS0618
-                }
-
-                return packageManager.QueryIntentActivities(intent, PackageManager.ResolveInfoFlags.Of((int)infoFlags));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return PackageUtils.GetActivityInfo(_packageManager, _activity?.ComponentName, infoFlags);
         }
 
         public IList<ResolveInfo> QueryIntentActivities(Intent intent, PackageInfoFlags infoFlags = 0)
         {
-            return QueryIntentActivities(_packageManager, intent, infoFlags);
+            return PackageUtils.QueryIntentActivities(_packageManager, intent, infoFlags);
         }
 
         public string[] RetrievePermissions()
@@ -12106,7 +11915,7 @@ namespace BmwDeepObd
             try
             {
                 List<string> assetEcuFileList = new List<string>();
-                AssetManager assets = GetPackageContext()?.Assets;
+                AssetManager assets = PackageUtils.GetPackageContext()?.Assets;
                 if (assets != null)
                 {
                     string[] assetFiles = assets.List(string.Empty);
