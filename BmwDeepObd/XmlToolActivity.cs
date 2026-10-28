@@ -6078,7 +6078,7 @@ namespace BmwDeepObd
                 string xmlFileDir = XmlFileDir();
                 if (xmlFileDir != null)
                 {
-                    string xmlFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
+                    string xmlFile = Path.Combine(xmlFileDir, PathUtils.CreateValidFileName(ecuInfo.Name + PageExtension));
                     if (File.Exists(xmlFile))
                     {
                         try
@@ -8018,7 +8018,7 @@ namespace BmwDeepObd
 
                 foreach (EcuInfo ecuInfo in GetClonedEcuList())
                 {
-                    string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
+                    string xmlPageFile = Path.Combine(xmlFileDir, PathUtils.CreateValidFileName(ecuInfo.Name + PageExtension));
                     if (string.Compare(xmlPageFile, pageFileName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         ExecuteJobsRead(ecuInfo);
@@ -8530,7 +8530,7 @@ namespace BmwDeepObd
                 XAttribute pageLogFileAttr = pageNode.Attribute("logfile");
                 if (pageLogFileAttr == null)
                 {
-                    pageNode.Add(new XAttribute("logfile", ActivityCommon.CreateValidFileName(ecuInfo.Name + ".log")));
+                    pageNode.Add(new XAttribute("logfile", PathUtils.CreateValidFileName(ecuInfo.Name + ".log")));
                 }
 
                 XAttribute dbNameAttr = pageNode.Attribute("db_name");
@@ -8569,7 +8569,7 @@ namespace BmwDeepObd
                 {
                     if (!IsMwTabEmpty(ecuInfo.MwTabFileName))
                     {
-                        string relativePath = ActivityCommon.MakeRelativePath(_ecuDir, ecuInfo.MwTabFileName);
+                        string relativePath = PathUtils.MakeRelativePath(_ecuDir, ecuInfo.MwTabFileName);
                         if (!string.IsNullOrEmpty(relativePath))
                         {
                             jobsNodeNew.Add(new XAttribute("mwtab", relativePath));
@@ -8611,7 +8611,7 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(ecuInfo.VagDataFileName))
                 {
-                    string relativePath = ActivityCommon.MakeRelativePath(_vagDir, ecuInfo.VagDataFileName);
+                    string relativePath = PathUtils.MakeRelativePath(_vagDir, ecuInfo.VagDataFileName);
                     if (!string.IsNullOrEmpty(relativePath))
                     {
                         jobsNodeNew.Add(new XAttribute("vag_data_file", relativePath));
@@ -8620,7 +8620,7 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
                 {
-                    string relativePath = ActivityCommon.MakeRelativePath(_vagDir, ecuInfo.VagUdsFileName);
+                    string relativePath = PathUtils.MakeRelativePath(_vagDir, ecuInfo.VagUdsFileName);
                     if (!string.IsNullOrEmpty(relativePath))
                     {
                         jobsNodeNew.Add(new XAttribute("vag_uds_file", relativePath));
@@ -9019,7 +9019,7 @@ namespace BmwDeepObd
                     ecuNode.Add(new XAttribute("sgbd", ecuInfo.Sgbd));
                     if (!string.IsNullOrEmpty(ecuInfo.VagDataFileName))
                     {
-                        string relativePath = ActivityCommon.MakeRelativePath(_vagDir, ecuInfo.VagDataFileName);
+                        string relativePath = PathUtils.MakeRelativePath(_vagDir, ecuInfo.VagDataFileName);
                         if (!string.IsNullOrEmpty(relativePath))
                         {
                             ecuNode.Add(new XAttribute("vag_data_file", relativePath));
@@ -9027,7 +9027,7 @@ namespace BmwDeepObd
                     }
                     if (!string.IsNullOrEmpty(ecuInfo.VagUdsFileName))
                     {
-                        string relativePath = ActivityCommon.MakeRelativePath(_vagDir, ecuInfo.VagUdsFileName);
+                        string relativePath = PathUtils.MakeRelativePath(_vagDir, ecuInfo.VagUdsFileName);
                         if (!string.IsNullOrEmpty(relativePath))
                         {
                             ecuNode.Add(new XAttribute("vag_uds_file", relativePath));
@@ -9141,7 +9141,7 @@ namespace BmwDeepObd
                         for (int i = 0; i < _ecuList.Count; i++)
                         {
                             EcuInfo ecuInfo = _ecuList[i];
-                            string ecuFileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
+                            string ecuFileName = PathUtils.CreateValidFileName(ecuInfo.Name + PageExtension);
                             if (string.Compare(ecuFileName, fileName, StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 found = true;
@@ -9224,7 +9224,7 @@ namespace BmwDeepObd
 
                 foreach (EcuInfo ecuInfo in GetClonedEcuList())
                 {
-                    string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
+                    string fileName = PathUtils.CreateValidFileName(ecuInfo.Name + PageExtension);
                     if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
                     {
                         continue;
@@ -9570,7 +9570,7 @@ namespace BmwDeepObd
                     }
 
                     if (!ecuInfo.Selected) continue;
-                    string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
+                    string xmlPageFile = Path.Combine(xmlFileDir, PathUtils.CreateValidFileName(ecuInfo.Name + PageExtension));
                     XDocument documentPage = null;
                     if (File.Exists(xmlPageFile))
                     {
@@ -10065,8 +10065,8 @@ namespace BmwDeepObd
                 if (vin.Length == 17)
                 {
                     vin = vin.Substring(10, 7);
-                    string dirShort = Path.Combine(configBaseDir, ActivityCommon.CreateValidFileName(vin));
-                    string dirLong = Path.Combine(configBaseDir, ActivityCommon.CreateValidFileName(_instanceData.Vin));
+                    string dirShort = Path.Combine(configBaseDir, PathUtils.CreateValidFileName(vin));
+                    string dirLong = Path.Combine(configBaseDir, PathUtils.CreateValidFileName(_instanceData.Vin));
                     if (Directory.Exists(dirLong) && !Directory.Exists(dirShort))
                     {   // use long VIN if present for compatibility
                         vin = _instanceData.Vin;
@@ -10075,7 +10075,7 @@ namespace BmwDeepObd
             }
             try
             {
-                return Path.Combine(configBaseDir, ActivityCommon.CreateValidFileName(vin));
+                return Path.Combine(configBaseDir, PathUtils.CreateValidFileName(vin));
             }
             catch (Exception)
             {
@@ -10130,8 +10130,8 @@ namespace BmwDeepObd
                     if (vin.Length == 17)
                     {
                         vin = vin.Substring(10, 7);
-                        string fileShort = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(vin) + "_" + interfaceType + ConfigFileExtension);
-                        string fileLong = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(_instanceData.Vin) + "_" + interfaceType + ConfigFileExtension);
+                        string fileShort = Path.Combine(xmlFileDir, PathUtils.CreateValidFileName(vin) + "_" + interfaceType + ConfigFileExtension);
+                        string fileLong = Path.Combine(xmlFileDir, PathUtils.CreateValidFileName(_instanceData.Vin) + "_" + interfaceType + ConfigFileExtension);
                         if (File.Exists(fileLong) && !File.Exists(fileShort))
                         {   // use long VIN if present for compatibility
                             vin = _instanceData.Vin;
@@ -10142,7 +10142,7 @@ namespace BmwDeepObd
                 {
                     vin = UnknownVinConfigName;
                 }
-                prefix = ActivityCommon.CreateValidFileName(vin);
+                prefix = PathUtils.CreateValidFileName(vin);
             }
             return Path.Combine(xmlFileDir, prefix + "_" + interfaceType + ConfigFileExtension);
         }

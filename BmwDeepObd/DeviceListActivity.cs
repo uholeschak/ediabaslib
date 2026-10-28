@@ -702,7 +702,7 @@ namespace BmwDeepObd
                         AlertDialog alertDialog = new AlertDialog.Builder(this)
                             .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                             .SetCancelable(true)
-                            .SetMessage(ActivityCommon.FromHtml(message))
+                            .SetMessage(ConvertUtils.FromHtml(message))
                             .SetTitle(Resource.String.alert_title_warning)
                             .Show();
                         if (alertDialog != null)
@@ -1428,7 +1428,7 @@ namespace BmwDeepObd
                                     ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(ActivityCommon.FromHtml(message))
+                                .SetMessage(ConvertUtils.FromHtml(message))
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
                             if (alertDialog != null)
@@ -1549,7 +1549,7 @@ namespace BmwDeepObd
                             }
 
                             builder.SetCancelable(true);
-                            builder.SetMessage(ActivityCommon.FromHtml(message));
+                            builder.SetMessage(ConvertUtils.FromHtml(message));
 
                             AlertDialog alertDialog = builder.Show();
                             if (alertDialog != null)

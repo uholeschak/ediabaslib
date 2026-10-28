@@ -394,7 +394,7 @@ namespace BmwDeepObd
                 {
                     SslProtocols = ActivityCommon.DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                    Proxy = ActivityCommon.GetProxySettings()
+                    Proxy = HttpUtils.GetProxySettings()
                 })
                 {
                     Timeout = TimeSpan.FromSeconds(ActivityCommon.HttpClientTimeout)
@@ -3065,7 +3065,7 @@ namespace BmwDeepObd
                     {
                     })
                     .SetCancelable(false)
-                    .SetMessage(ActivityCommon.FromHtml(message))
+                    .SetMessage(ConvertUtils.FromHtml(message))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 if (_startAlertDialog != null)
@@ -4994,7 +4994,7 @@ namespace BmwDeepObd
             JobReader jobReader = ActivityCommon.JobReader;
             _compileCodePending = false;
 
-            if (!ActivityCommon.IsCpuStatisticsSupported() || !ActivityCommon.CheckCpuUsage)
+            if (!SystemUtils.IsCpuStatisticsSupported() || !ActivityCommon.CheckCpuUsage)
             {
                 _instanceData.CheckCpuUsage = false;
             }
@@ -5036,7 +5036,7 @@ namespace BmwDeepObd
                         int maxCount = 5;
                         for (int i = 0; i < maxCount; i++)
                         {
-                            List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
+                            List<int> cpuUsageList = SystemUtils.GetCpuUsageStatistic();
                             if (cpuUsageList == null || !_activityActive)
                             {
                                 cpuUsage = -1;
@@ -5492,7 +5492,7 @@ namespace BmwDeepObd
                             formDownload.Add(new StringContent(certInfo), "cert");
                         }
 
-                        taskDownload = _httpClient.PostAsync(url, ActivityCommon.FixMultipartBoundary(formDownload));
+                        taskDownload = _httpClient.PostAsync(url, HttpUtils.FixMultipartBoundary(formDownload));
                     }
                     else
                     {
@@ -5628,7 +5628,7 @@ namespace BmwDeepObd
             }
 
             string message = GetString(Resource.String.download_failed);
-            if (ActivityCommon.HasValidProxyHost() != null)
+            if (HttpUtils.HasValidProxyHost() != null)
             {
                 message += "\n" + GetString(Resource.String.download_proxy_config);
             }
@@ -5985,8 +5985,8 @@ namespace BmwDeepObd
                     {
                         ignoreFolders = new List<string>
                         {
-                            ActivityCommon.AppendDirectorySeparatorChar(ActivityCommon.EcuDirNameVag),
-                            ActivityCommon.AppendDirectorySeparatorChar(ActivityCommon.VagBaseDir)
+                            PathUtils.AppendDirectorySeparatorChar(ActivityCommon.EcuDirNameVag),
+                            PathUtils.AppendDirectorySeparatorChar(ActivityCommon.VagBaseDir)
                         };
                     }
                     else
@@ -5995,7 +5995,7 @@ namespace BmwDeepObd
                         {
                             ignoreFolders = new List<string>
                             {
-                                ActivityCommon.AppendDirectorySeparatorChar(ActivityCommon.VagBaseDir)
+                                PathUtils.AppendDirectorySeparatorChar(ActivityCommon.VagBaseDir)
                             };
                         }
                     }
@@ -6143,7 +6143,7 @@ namespace BmwDeepObd
             try
             {
                 StorageUtils.FileSystemBlockInfo blockInfo = StorageUtils.GetFileSystemBlockInfo(_instanceData.AppDataPath);
-                long ecuDirSize = ActivityCommon.GetDirectorySize(ecuPath);
+                long ecuDirSize = PathUtils.GetDirectorySize(ecuPath);
                 double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
                 long requiredSize = EcuExtractSize;
                 if (freeSpace < requiredSize)

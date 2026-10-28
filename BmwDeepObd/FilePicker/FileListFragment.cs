@@ -285,7 +285,7 @@ namespace BmwDeepObd.FilePicker
                         string extState = Android.OS.Environment.ExternalStorageState;
                         if (extDir != null && extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted))
                         {
-                            string name = ActivityCommon.GetTruncatedPathName(extDir.AbsolutePath);
+                            string name = PathUtils.GetTruncatedPathName(extDir.AbsolutePath);
                             if (!string.IsNullOrEmpty(name))
                             {
                                 visibleThings.Add(new FileInfoEx(null, FileInfoType.Link, "->" + name, extDir.AbsolutePath));
@@ -303,7 +303,7 @@ namespace BmwDeepObd.FilePicker
                                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                                 if (file != null && file.IsDirectory && !string.IsNullOrEmpty(file.AbsolutePath))
                                 {
-                                    string name = ActivityCommon.GetTruncatedPathName(file.AbsolutePath);
+                                    string name = PathUtils.GetTruncatedPathName(file.AbsolutePath);
                                     string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
                                         Android.OS.Environment.GetExternalStorageState(file) : Android.OS.Environment.ExternalStorageState;
                                     if (!string.IsNullOrEmpty(name) && extState != null && extState.Equals(Android.OS.Environment.MediaMounted))

@@ -302,7 +302,7 @@ namespace BmwDeepObd
 
             _textViewCaptionCpuUsage = FindViewById<TextView>(Resource.Id.textViewCaptionCpuUsage);
             _checkBoxCheckCpuUsage = FindViewById<CheckBox>(Resource.Id.checkBoxCheckCpuUsage);
-            ViewStates viewStateCpuUsage = ActivityCommon.IsCpuStatisticsSupported() ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates viewStateCpuUsage = SystemUtils.IsCpuStatisticsSupported() ? ViewStates.Visible : ViewStates.Gone;
             _textViewCaptionCpuUsage.Visibility = viewStateCpuUsage;
             _checkBoxCheckCpuUsage.Visibility = viewStateCpuUsage;
 
@@ -1126,7 +1126,7 @@ namespace BmwDeepObd
             string displayName = GetString(Resource.String.default_media);
             if (!string.IsNullOrEmpty(ActivityCommon.CustomStorageMedia))
             {
-                string shortName = ActivityCommon.GetTruncatedPathName(ActivityCommon.CustomStorageMedia);
+                string shortName = PathUtils.GetTruncatedPathName(ActivityCommon.CustomStorageMedia);
                 if (!string.IsNullOrEmpty(shortName))
                 {
                     displayName = shortName;

@@ -738,7 +738,7 @@ namespace BmwDeepObd
                 {
                     fwUpdateEnabled = AtmelBootloader.CheckHexFile(ActivityCommon.UsbFirmwareFileName);
                     fwChangeEnabled = false;
-                    _textViewFwFileName.Text = ActivityCommon.GetTruncatedPathName(ActivityCommon.UsbFirmwareFileName) ?? string.Empty;
+                    _textViewFwFileName.Text = PathUtils.GetTruncatedPathName(ActivityCommon.UsbFirmwareFileName) ?? string.Empty;
                 }
                 else if (_adapterType >= 0 && _fwVersion >= 0)
                 {
