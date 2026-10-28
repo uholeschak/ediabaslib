@@ -1150,7 +1150,7 @@ namespace BmwDeepObd
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
                     })
-                    .SetMessage(ActivityCommon.FromHtml(infoMessage))
+                    .SetMessage(ConvertUtils.FromHtml(infoMessage))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 if (_alertDialogInfo != null)
@@ -1216,7 +1216,7 @@ namespace BmwDeepObd
                     {
                         SslProtocols = ActivityCommon.DefaultSslProtocols,
                         ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                        Proxy = ActivityCommon.GetProxySettings()
+                        Proxy = HttpUtils.GetProxySettings()
                     })
                     {
                         Timeout = TimeSpan.FromSeconds(ActivityCommon.HttpClientTimeout)
@@ -1346,7 +1346,7 @@ namespace BmwDeepObd
                         { new StringContent(PsdzRpcServiceConstants.InterfaceVersion.ToString(CultureInfo.InvariantCulture)), "rpc_if_version" },
                     };
 
-                        Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, ActivityCommon.FixMultipartBoundary(formInfo));
+                        Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, HttpUtils.FixMultipartBoundary(formInfo));
 
                         CustomProgressDialog progressLocal = progress;
                         RunOnUiThread(() =>

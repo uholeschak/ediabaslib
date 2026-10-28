@@ -337,7 +337,7 @@ public class CheckAdapter : IDisposable
                             }
 
                             builder.SetCancelable(true);
-                            builder.SetMessage(ActivityCommon.FromHtml(message));
+                            builder.SetMessage(ConvertUtils.FromHtml(message));
 
                             AlertDialog alertDialog = builder.Show();
                             if (alertDialog != null)

@@ -1537,9 +1537,9 @@ namespace BmwDeepObd
                                         {
                                             progDate = new byte[3];
                                             DateTime dateTime = DateTime.Now;
-                                            progDate[0] = (byte)ActivityCommon.DecToBcd(dateTime.Year % 100);
-                                            progDate[1] = (byte)ActivityCommon.DecToBcd(dateTime.Month);
-                                            progDate[2] = (byte)ActivityCommon.DecToBcd(dateTime.Day);
+                                            progDate[0] = (byte)ConvertUtils.DecToBcd(dateTime.Year % 100);
+                                            progDate[1] = (byte)ConvertUtils.DecToBcd(dateTime.Month);
+                                            progDate[2] = (byte)ConvertUtils.DecToBcd(dateTime.Day);
                                         }
                                         writeJobProgDate = XmlToolActivity.JobWriteS2EUds;
                                         writeJobProgDateArgs = "0xF199;" + BitConverter.ToString(progDate).Replace("-", "");

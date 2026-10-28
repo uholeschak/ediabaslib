@@ -2980,16 +2980,6 @@ namespace BmwDeepObd
             }
             return true;
         }
-
-        public static bool IsCpuStatisticsSupported()
-        {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-            {
-                return false;
-            }
-            return true;
-        }
-
         public static bool IsExtrenalStorageAccessRequired()
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
@@ -3273,110 +3263,6 @@ namespace BmwDeepObd
                 return !_serialInfoList.Contains(serialInfo);
             }
         }
-
-        public static List<int> GetCpuUsageStatistic()
-        {
-            if (!IsCpuStatisticsSupported())
-            {
-                return null;
-            }
-
-            try
-            {
-                string tempString = ExecuteTop();
-                if (tempString == null)
-                {
-                    return null;
-                }
-                MatchCollection matches = Regex.Matches(tempString, "User +(\\d+)%, +System +(\\d+)%, +IOW +(\\d+)%, +IRQ +(\\d+)%", RegexOptions.IgnoreCase);
-                if ((matches.Count != 1) || (matches[0].Groups.Count != 5))
-                {
-                    return null;
-                }
-                List<int> resultList = new List<int>();
-                int index = 0;
-                foreach (Group group in matches[0].Groups)
-                {
-                    if (index > 0)
-                    {
-                        if (Int32.TryParse(group.Value, out int value))
-                        {
-                            resultList.Add(value);
-                        }
-                    }
-                    index++;
-                }
-                return resultList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public static List<string> ExecuteCommand(string command)
-        {
-            Java.Lang.Process process = null;
-            Java.IO.BufferedReader input = null;
-            try
-            {
-                process = Java.Lang.Runtime.GetRuntime()?.Exec(command);
-                if (process == null)
-                {
-                    return null;
-                }
-
-                input = new Java.IO.BufferedReader(new Java.IO.InputStreamReader(process.InputStream));
-                if (process.WaitFor() != 0)
-                {
-                    return null;
-                }
-
-                List<string> resultList = new List<string>();
-                for (; ; )
-                {
-                    string line = input.ReadLine();
-                    if (line == null)
-                    {
-                        break;
-                    }
-
-                    if (line.Length > 0)
-                    {
-                        resultList.Add(line);
-                    }
-                }
-                return resultList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-            finally
-            {
-                try
-                {
-                    input?.Close();
-                    process?.Destroy();
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-        }
-
-        public static string ExecuteTop()
-        {
-            List<string> resultList = ExecuteCommand("top -n 1");
-            if (resultList != null && resultList.Count > 0)
-            {
-                return resultList[0];
-            }
-
-            return null;
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static bool PostRunnable(Handler handler, Java.Lang.IRunnable runnable, RunnablePostDelegate runnablePostDelegate = null)
         {
@@ -5049,7 +4935,7 @@ namespace BmwDeepObd
                 try
                 {
                     StorageUtils.FileSystemBlockInfo blockInfo = StorageUtils.GetFileSystemBlockInfo(name);
-                    string shortName = GetTruncatedPathName(name);
+                    string shortName = PathUtils.GetTruncatedPathName(name);
                     if (!string.IsNullOrEmpty(shortName))
                     {
                         displayName = String.Format(new FileSizeFormatProvider(), "{0} ({1:fs1}/{2:fs1} {3})",
@@ -7244,71 +7130,6 @@ namespace BmwDeepObd
             }
 #endif
         }
-
-        /// <summary>
-        /// Normalizes a <see cref="MultipartFormDataContent"/> to the format used by browsers and curl.
-        /// Required since the hoster (IONOS) tightened the PHP multipart parsing rules
-        /// (CVE-2026-109618, CVE-2026-109619). Requests in the default .NET format are rejected
-        /// with HTTP 400 and the hoster error page.
-        /// <list type="bullet">
-        /// <item><description>
-        /// Removes the quotes from the boundary parameter of the Content-Type header
-        /// (<c>boundary="..."</c> -&gt; <c>boundary=...</c>).
-        /// Quoted boundaries are valid according to RFC 2046, but are rejected by the server.
-        /// </description></item>
-        /// <item><description>
-        /// Removes the <c>filename*</c> parameter (RFC 5987) from the Content-Disposition header of all parts.
-        /// .NET always adds it for file parts, but RFC 7578 (section 4.2) prohibits it for multipart/form-data.
-        /// </description></item>
-        /// <item><description>
-        /// Quotes the <c>name</c> and <c>filename</c> parameters if not already quoted.
-        /// Quotes are mandatory for file names containing non token characters (spaces, umlauts, etc.).
-        /// </description></item>
-        /// </list>
-        /// The body is not modified, the boundary inside the body is never quoted.
-        /// Must be called after all parts have been added and before sending the request.
-        /// </summary>
-        /// <param name="content">Multipart content, may be null</param>
-        /// <returns>The same content instance (modified in place) or null</returns>
-        public static MultipartFormDataContent FixMultipartBoundary(MultipartFormDataContent content)
-        {
-            if (content == null)
-            {
-                return null;
-            }
-
-            NameValueHeaderValue boundaryParam = content.Headers.ContentType?.Parameters
-                .FirstOrDefault(p => string.Compare(p.Name, "boundary", StringComparison.OrdinalIgnoreCase) == 0);
-            if (boundaryParam?.Value != null)
-            {
-                boundaryParam.Value = boundaryParam.Value.Trim('"');
-            }
-
-            foreach (HttpContent part in content)
-            {
-                ContentDispositionHeaderValue disposition = part.Headers.ContentDisposition;
-                if (disposition == null)
-                {
-                    continue;
-                }
-
-                // filename* (RFC 5987) is not allowed in multipart/form-data (RFC 7578)
-                disposition.FileNameStar = null;
-
-                if (!string.IsNullOrEmpty(disposition.Name) && !disposition.Name.StartsWith("\""))
-                {
-                    disposition.Name = "\"" + disposition.Name + "\"";
-                }
-
-                if (!string.IsNullOrEmpty(disposition.FileName) && !disposition.FileName.StartsWith("\""))
-                {
-                    disposition.FileName = "\"" + disposition.FileName + "\"";
-                }
-            }
-
-            return content;
-        }
-
         public static bool SetEdiabasUdsCanId(EdiabasNet ediabas, VehicleInfoVag.EcuAddressEntry ecuAddressEntry = null)
         {
             if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
@@ -8117,7 +7938,7 @@ namespace BmwDeepObd
                 {
                     SslProtocols = DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true,
-                    Proxy = GetProxySettings()
+                    Proxy = HttpUtils.GetProxySettings()
                 })
                 {
                     Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
@@ -8159,7 +7980,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, FixMultipartBoundary(formDownload));
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, HttpUtils.FixMultipartBoundary(formDownload));
 
                     CustomProgressDialog progressLocal = progress;
                     _activity?.RunOnUiThread(() =>
@@ -8275,7 +8096,7 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
 
-                    bool? validProxyHost = HasValidProxyHost();
+                    bool? validProxyHost = HttpUtils.HasValidProxyHost();
                     if (validProxyHost != null)
                     {
                         sb.Append(string.Format("\nValid proxy: {0}", validProxyHost.Value));
@@ -8530,7 +8351,7 @@ namespace BmwDeepObd
                             formUpload.Add(new StreamContent(fileStream), "file", Path.GetFileName(sendTraceFile));
                         }
 
-                        System.Threading.Tasks.Task<HttpResponseMessage> taskUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, FixMultipartBoundary(formUpload));
+                        System.Threading.Tasks.Task<HttpResponseMessage> taskUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, HttpUtils.FixMultipartBoundary(formUpload));
 
                         _activity?.RunOnUiThread(() =>
                         {
@@ -9013,7 +8834,7 @@ namespace BmwDeepObd
                     {
                         SslProtocols = DefaultSslProtocols,
                         ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                        Proxy = GetProxySettings()
+                        Proxy = HttpUtils.GetProxySettings()
                     })
                     {
                         Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
@@ -9066,7 +8887,7 @@ namespace BmwDeepObd
                 }
                 formUpdate.Add(new StringContent(sb.ToString()), "info_text");
 
-                System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, FixMultipartBoundary(formUpdate));
+                System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _updateHttpClient.PostAsync(UpdateCheckUrl, HttpUtils.FixMultipartBoundary(formUpdate));
                 _updateCheckActive = true;
                 taskDownload.ContinueWith((task, o) =>
                 {
@@ -9306,88 +9127,6 @@ namespace BmwDeepObd
                 return DefaultLang;
             }
         }
-
-        public static WebProxy GetProxySettings()
-        {
-            try
-            {
-                string proxyHost = Java.Lang.JavaSystem.GetProperty("http.proxyHost");
-                string proxyPort = Java.Lang.JavaSystem.GetProperty("http.proxyPort");
-                string nonProxyHosts = Java.Lang.JavaSystem.GetProperty("http.nonProxyHosts");
-
-                if (!string.IsNullOrEmpty(proxyHost))
-                {
-                    IPHostEntry hostEntry = Dns.GetHostEntry(proxyHost.TrimEnd('/'));
-                    string address = string.Empty;
-                    foreach (IPAddress ipAddress in hostEntry.AddressList)
-                    {
-                        if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            address = ipAddress.ToString();
-                            break;
-                        }
-                    }
-
-                    if (string.IsNullOrEmpty(address))
-                    {
-                        return null;
-                    }
-
-                    int portNum = 0;
-                    if (!string.IsNullOrEmpty(proxyPort))
-                    {
-                        if (!int.TryParse(proxyPort, NumberStyles.Integer, CultureInfo.InvariantCulture, out portNum))
-                        {
-                            portNum = 0;
-                        }
-                    }
-
-                    if (portNum < 1 || portNum > 0xFFFF)
-                    {
-                        return null;
-                    }
-
-                    address += string.Format(CultureInfo.InvariantCulture, ":{0}", portNum);
-                    string[] bypassList = Array.Empty<string>();
-                    if (!string.IsNullOrEmpty(nonProxyHosts))
-                    {
-                        bypassList = nonProxyHosts.Split('|');
-                    }
-
-                    return new WebProxy(address, true, bypassList);
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            return null;
-        }
-
-        public static bool? HasValidProxyHost()
-        {
-            try
-            {
-                string proxyHost = Java.Lang.JavaSystem.GetProperty("http.proxyHost");
-                if (string.IsNullOrEmpty(proxyHost))
-                {
-                    return null;
-                }
-
-                if (GetProxySettings() == null)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public static bool ReadBatteryVoltage(EdiabasNet ediabas, out double? batteryVoltage, out byte[] adapterSerial)
         {
             batteryVoltage = null;
@@ -10493,7 +10232,7 @@ namespace BmwDeepObd
                 {
                     SslProtocols = DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
-                    Proxy = GetProxySettings()
+                    Proxy = HttpUtils.GetProxySettings()
                 })
                 {
                     Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
@@ -11818,71 +11557,6 @@ namespace BmwDeepObd
                 return null;
             }
         }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static Java.Lang.ICharSequence FromHtml(string source)
-        {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-            {
-                return Android.Text.Html.FromHtml(source, Android.Text.FromHtmlOptions.ModeLegacy);
-            }
-#pragma warning disable 618
-#pragma warning disable CA1422
-            return Android.Text.Html.FromHtml(source);
-#pragma warning restore CA1422
-#pragma warning restore 618
-        }
-
-        public static string MakeRelativePath(string fromPath, string toPath)
-        {
-            if (string.IsNullOrEmpty(fromPath))
-            {
-                return string.Empty;
-            }
-            if (string.IsNullOrEmpty(toPath))
-            {
-                return fromPath;
-            }
-            System.Uri fromUri = new System.Uri(AppendDirectorySeparatorChar(fromPath));
-            System.Uri toUri = new System.Uri(AppendDirectorySeparatorChar(toPath));
-
-            if (fromUri.Scheme != toUri.Scheme)
-            {   // path can't be made relative.
-                return toPath; 
-            }
-
-            System.Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-            String relativePath = System.Uri.UnescapeDataString(relativeUri.ToString());
-
-            if (string.Equals(toUri.Scheme, System.Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
-            {
-                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            }
-
-            return relativePath;
-        }
-
-        public static string AppendDirectorySeparatorChar(string path)
-        {
-            // Append a slash only if the path is a directory and does not have a slash.
-            if (!Path.HasExtension(path) &&
-                !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                return path + Path.DirectorySeparatorChar;
-            }
-            return path;
-        }
-
-        public static int DecToBcd(int value)
-        {
-            return (((value / 10) << 4) | (value % 10));
-        }
-
-        public static int BcdToDec(int value)
-        {
-            return (((value >> 4) * 10) + (value & 0xF));
-        }
-
         public static Android.Text.InputTypes ConvertVagUdsDataTypeToInputType(UInt32 dataTypeId)
         {
             Android.Text.InputTypes inputType = Android.Text.InputTypes.ClassText | Android.Text.InputTypes.TextFlagNoSuggestions;
@@ -11985,12 +11659,12 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    bool vagUdsFile = fileName.StartsWith(AppendDirectorySeparatorChar(VagBaseDir));
+                    bool vagUdsFile = fileName.StartsWith(PathUtils.AppendDirectorySeparatorChar(VagBaseDir));
                     if (!vagUdsDirPresent && vagUdsFile)
                     {
                         continue;   // ignore VAG UDS files if not present
                     }
-                    bool vagEcuFile = fileName.StartsWith(AppendDirectorySeparatorChar(EcuDirNameVag));
+                    bool vagEcuFile = fileName.StartsWith(PathUtils.AppendDirectorySeparatorChar(EcuDirNameVag));
                     if (!vagEcuDirPresent && vagEcuFile)
                     {
                         continue;   // ignore VAG ECU files if not present
@@ -12031,12 +11705,12 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    bool vagUdsFile = fileName.StartsWith(AppendDirectorySeparatorChar(VagBaseDir));
+                    bool vagUdsFile = fileName.StartsWith(PathUtils.AppendDirectorySeparatorChar(VagBaseDir));
                     if (!vagUdsDirPresent && vagUdsFile)
                     {
                         continue;   // ignore VAG UDS files if not present
                     }
-                    bool vagEcuFile = fileName.StartsWith(AppendDirectorySeparatorChar(EcuDirNameVag));
+                    bool vagEcuFile = fileName.StartsWith(PathUtils.AppendDirectorySeparatorChar(EcuDirNameVag));
                     if (!vagEcuDirPresent && vagEcuFile)
                     {
                         continue;   // ignore VAG ECU files if not present
@@ -12212,70 +11886,6 @@ namespace BmwDeepObd
                 return false;
             }
         }
-
-        public static List<string> GetCurrentAbiDirs()
-        {
-            bool isArm = false;
-            string abi = null;
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-            {
-                if (Build.SupportedAbis != null && Build.SupportedAbis.Count > 0)
-                {
-                    abi = Build.SupportedAbis[0];
-                }
-            }
-            else
-            {
-#pragma warning disable CS0618 // Type or member is obsolete
-                abi = Build.CpuAbi;
-#pragma warning restore CS0618 // Type or member is obsolete
-            }
-
-            if (!string.IsNullOrEmpty(abi))
-            {
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("GetCurrentAbiDirs ABI={0}", abi));
-#endif
-                if (abi.Contains("arm", StringComparison.OrdinalIgnoreCase))
-                {
-                    isArm = true;
-                }
-            }
-
-            try
-            {
-                string soArch = Java.Lang.JavaSystem.GetProperty("os.arch");
-                if (!string.IsNullOrEmpty(soArch))
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("GetCurrentAbiDirs Arch={0}", soArch));
-#endif
-                    if (soArch.Contains("arm", StringComparison.OrdinalIgnoreCase))
-                    {
-                        isArm = true;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            bool is64Bit = IntPtr.Size == 8;
-#if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("GetCurrentAbiDirs ARM={0}, 64Bit={1}", isArm, is64Bit));
-#endif
-            if (isArm)
-            {
-                // the release version uses _ and debug uses -
-                return is64Bit ? ["arm64", "arm64_v8a", "arm64-v8a", "aarch64"] : ["armeabi_v7a", "armeabi-v7a", "arm"];
-            }
-
-            // only the _ variant is used for release and debug
-            return is64Bit ? ["x86_64", "x86-64"] : ["x86", "i686"];
-        }
-
         public static List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(string packageAssembiesDir, out List<string> errorList)
         {
             string assembliesDir = packageAssembiesDir;
@@ -12283,7 +11893,7 @@ namespace BmwDeepObd
             List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
             errorList = new List<string>();
 
-            List<string> abiDirs = GetCurrentAbiDirs();
+            List<string> abiDirs = SystemUtils.GetCurrentAbiDirs();
 #if DEBUG
             Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI dirs={0}", string.Join(", ", abiDirs)));
 #endif
@@ -12456,14 +12066,6 @@ using System.Threading;"
 
             return result;
         }
-
-        public static string CreateValidFileName(string s, char replaceChar = '_', char[] includeChars = null)
-        {
-            char[] invalid = Path.GetInvalidFileNameChars();
-            if (includeChars != null) invalid = invalid.Union(includeChars).ToArray();
-            return string.Join(string.Empty, s.ToCharArray().Select(o => invalid.Contains(o) ? replaceChar : o));
-        }
-
         public bool InitReaderThread(string bmwPath, string vagPath, InitThreadFinishDelegate handler)
         {
             if (SelectedManufacturer == ManufacturerType.Bmw)
@@ -14068,7 +13670,7 @@ using System.Threading;"
                 {
                     SslProtocols = DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true,
-                    Proxy = GetProxySettings()
+                    Proxy = HttpUtils.GetProxySettings()
                 })
                 {
                     Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
@@ -14354,86 +13956,6 @@ using System.Threading;"
 #endif
             return true;
         }
-
-        public static long GetDirectorySize(string path)
-        {
-            if (!Directory.Exists(path))
-            {
-                return 0;
-            }
-            // 1.
-            // Get array of all file names.
-            string[] a = Directory.GetFiles(path, "*.*");
-
-            // 2.
-            // Calculate total bytes of all files in a loop.
-            return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
-        }
-
-        public static string GetTruncatedPathName(string path, int maxLength = 30)
-        {
-            try
-            {
-                if (path == null)
-                {
-                    return string.Empty;
-                }
-
-                StringBuilder sb = new StringBuilder();
-                List<string> dirList = path.Split(Path.DirectorySeparatorChar).ToList();
-                dirList.RemoveAll(string.IsNullOrWhiteSpace);
-
-                int maxRootParts = 1;
-                if (dirList.Count >= 1)
-                {
-                    int sumLength = dirList[dirList.Count - 1].Length + 1;
-                    for (int i = 0; i < dirList.Count - 1; i++)
-                    {
-                        sumLength += dirList[i].Length + 1;
-                        if (sumLength > maxLength)
-                        {
-                            break;
-                        }
-                        maxRootParts = i + 1;
-                    }
-                }
-
-                for (int i = 0; i < dirList.Count; i++)
-                {
-                    sb.Append(Path.DirectorySeparatorChar.ToString());
-                    sb.Append(dirList[i]);
-                    if (i + 1 >= maxRootParts)
-                    {
-                        if (dirList.Count > maxRootParts + 1)
-                        {
-                            sb.Append(Path.DirectorySeparatorChar.ToString());
-                            sb.Append("...");
-                        }
-
-                        if (dirList.Count > maxRootParts)
-                        {
-                            sb.Append(Path.DirectorySeparatorChar.ToString());
-                            sb.Append(dirList[dirList.Count - 1]);
-                        }
-
-                        break;
-                    }
-                }
-
-                string name = sb.ToString();
-                if (string.IsNullOrEmpty(name))
-                {
-                    name = Path.DirectorySeparatorChar.ToString();
-                }
-
-                return name;
-            }
-            catch (Exception )
-            {
-                return string.Empty;
-            }
-        }
-
         private void NetworkStateChanged()
         {
             _activity?.RunOnUiThread(() =>
@@ -14668,42 +14190,6 @@ using System.Threading;"
 
                 _activityCommon.NetworkStateChanged();
             }
-        }
-    }
-
-    public static class EnumExtensions
-    {
-        public static string ToDescriptionString(this ActivityCommon.InterfaceType val)
-        {
-            DescriptionAttribute[] attributes = (DescriptionAttribute[])val
-                .GetType()
-                .GetField(val.ToString())
-                .GetCustomAttributes(typeof(DescriptionAttribute), false);
-            return attributes.Length > 0 ? attributes[0].Description : string.Empty;
-        }
-    }
-
-    public static class AndroidExtensions
-    {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static T GetParcelableExtraType<T>(this Intent intent, string name)
-        {
-            object parcel;
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
-            {
-                parcel = intent.GetParcelableExtra(name, Java.Lang.Class.FromType(typeof(T)));
-            }
-            else
-            {
-#pragma warning disable CS0618
-#pragma warning disable CA1422
-                parcel = intent.GetParcelableExtra(name);
-#pragma warning restore CA1422
-#pragma warning restore CS0618
-            }
-
-            return (T)Convert.ChangeType(parcel, typeof(T));
         }
     }
 }
