@@ -3036,7 +3036,7 @@ namespace BmwDeepObd
         private void StoragePermissionGranted()
         {
             _storageAccessGranted = true;
-            ActivityCommon.SetStoragePath();
+            StorageUtils.SetStoragePath();
             ActivityCommon.RecentConfigListCleanup();
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
@@ -6007,7 +6007,7 @@ namespace BmwDeepObd
                     }
 
                     int lastZipPercent = -1;
-                    ActivityCommon.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders, encodeExtensions,
+                    ZipUtils.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders, encodeExtensions,
                         (percent, decrypt) =>
                         {
                             if (_activityCommon == null)
@@ -6142,7 +6142,7 @@ namespace BmwDeepObd
             string ecuPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
             try
             {
-                ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_instanceData.AppDataPath);
+                StorageUtils.FileSystemBlockInfo blockInfo = StorageUtils.GetFileSystemBlockInfo(_instanceData.AppDataPath);
                 long ecuDirSize = ActivityCommon.GetDirectorySize(ecuPath);
                 double freeSpace = blockInfo.AvailableSizeBytes + ecuDirSize;
                 long requiredSize = EcuExtractSize;
@@ -6597,7 +6597,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                ActivityCommon.ExtractZipFile(assets, null, resourceName, sampleDir, null, null, null, null);
+                ZipUtils.ExtractZipFile(assets, null, resourceName, sampleDir, null, null, null, null);
 
                 XElement xmlInfo = new XElement("Info");
                 xmlInfo.Add(new XAttribute("Name", resourceName));
@@ -6717,7 +6717,7 @@ namespace BmwDeepObd
                     // ignored
                 }
 
-                ActivityCommon.ExtractZipFile(assets, null, resourceName, caCertsDir, null, null, null, null);
+                ZipUtils.ExtractZipFile(assets, null, resourceName, caCertsDir, null, null, null, null);
 
                 XElement xmlInfo = new XElement("Info");
                 xmlInfo.Add(new XAttribute("Name", resourceName));
@@ -6931,7 +6931,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (ActivityCommon.IsDocumentTreeSupported())
+                if (DocumentUtils.IsDocumentTreeSupported())
                 {
                     ActivityCommon.ShowAlertDialogBalloon(this, alertDialog, Resource.String.menu_hint_copy_folder);
                 }

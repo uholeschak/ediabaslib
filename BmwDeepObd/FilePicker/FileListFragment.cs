@@ -29,10 +29,10 @@ namespace BmwDeepObd.FilePicker
         {
             public InstanceData()
             {
-                DefaultInitialDirectory = ActivityCommon.ExternalWritePath;
+                DefaultInitialDirectory = StorageUtils.ExternalWritePath;
                 if (string.IsNullOrEmpty(DefaultInitialDirectory))
                 {
-                    DefaultInitialDirectory = ActivityCommon.ExternalPath;
+                    DefaultInitialDirectory = StorageUtils.ExternalPath;
                 }
                 if (string.IsNullOrEmpty(DefaultInitialDirectory))
                 {

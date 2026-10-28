@@ -341,7 +341,7 @@ namespace BmwDeepObd
             _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
             _layoutFileManage = FindViewById<LinearLayout>(Resource.Id.layoutFileManage);
-            _layoutFileManage.Visibility = ActivityCommon.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
+            _layoutFileManage.Visibility = DocumentUtils.IsDocumentTreeSupported() ? ViewStates.Visible : ViewStates.Gone;
 
             _buttonStorageCopyTreeToApp = FindViewById<Button>(Resource.Id.buttonStorageCopyTreeToApp);
             _buttonStorageCopyTreeToApp.Click += (sender, args) =>
@@ -1349,7 +1349,7 @@ namespace BmwDeepObd
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private bool SelectCopyDocumentTree(bool fromApp)
         {
-            if (!ActivityCommon.IsDocumentTreeSupported())
+            if (!DocumentUtils.IsDocumentTreeSupported())
             {
                 return false;
             }

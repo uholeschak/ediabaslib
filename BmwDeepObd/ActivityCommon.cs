@@ -1,4 +1,3 @@
-//#define IO_TEST
 using Android.App.Backup;
 using Android.Bluetooth;
 using Android.Content;
@@ -66,34 +65,6 @@ namespace BmwDeepObd
 {
     public class ActivityCommon : IDisposable
     {
-        public class FileSystemBlockInfo
-        {
-            /// <summary>
-            /// The path you asked to check file allocation blocks for
-            /// </summary>
-            public string Path { get; set; }
-
-            /// <summary>
-            /// The file system block size, in bytes, for the given path
-            /// </summary>
-            public double BlockSizeBytes { get; set; }
-
-            /// <summary>
-            /// Total size of the file system at the given path
-            /// </summary>
-            public double TotalSizeBytes { get; set; }
-
-            /// <summary>
-            /// Available size of the file system at the given path
-            /// </summary>
-            public double AvailableSizeBytes { get; set; }
-
-            /// <summary>
-            /// Total free size of the file system at the given path
-            /// </summary>
-            public double FreeSizeBytes { get; set; }
-        }
-
         public class YandexCloudIamTokenRequest
         {
             public YandexCloudIamTokenRequest(string oAuthToken)
@@ -1114,8 +1085,6 @@ namespace BmwDeepObd
         private static readonly object SerialInfoLockObject = new object();
         private static readonly object CompileLock = new object();
         private static int _instanceCount;
-        private static string _externalPath;
-        private static string _externalWritePath;
         private static string _customStorageMedia;
         private static string _appId;
         private static bool _vagUdsActive;
@@ -1373,14 +1342,10 @@ namespace BmwDeepObd
 
         public static bool StaticDataInitialized { get; set; }
 
-        public static string ExternalPath => _externalPath;
-
-        public static string ExternalWritePath => _externalWritePath;
-
         public static string CustomStorageMedia
         {
             get => _customStorageMedia;
-            set => _customStorageMedia = IsWritable(value) ? value : null;
+            set => _customStorageMedia = StorageUtils.IsWritable(value) ? value : null;
         }
 
         public static string CopyToAppSrc { get; set; }
@@ -3033,16 +2998,6 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
-        }
-
-        public static bool IsDocumentTreeSupported()
-        {
-            // basically support starts with Android N, but makes no sense
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
-            {
-                return true;
-            }
-            return false;
         }
 
         public static bool IsCpuStatisticsSupported()
@@ -5112,7 +5067,7 @@ namespace BmwDeepObd
                 string displayName = name;
                 try
                 {
-                    FileSystemBlockInfo blockInfo = GetFileSystemBlockInfo(name);
+                    StorageUtils.FileSystemBlockInfo blockInfo = StorageUtils.GetFileSystemBlockInfo(name);
                     string shortName = GetTruncatedPathName(name);
                     if (!string.IsNullOrEmpty(shortName))
                     {
@@ -8194,7 +8149,7 @@ namespace BmwDeepObd
                         ms.Position = 0;
                         if (CompressTrace)
                         {
-                            if (!CreateZipFile(ms, TraceFileName, traceBackupFile))
+                            if (!ZipUtils.CreateZipFile(ms, TraceFileName, traceBackupFile))
                             {
                                 return false;
                             }
@@ -8284,7 +8239,7 @@ namespace BmwDeepObd
                 }
 
                 string compressedTraceFile = traceFile + ZipExt;
-                if (!CreateZipFile(new[] { traceFile }, compressedTraceFile, null))
+                if (!ZipUtils.CreateZipFile(new[] { traceFile }, compressedTraceFile, null))
                 {
                     compressFailure = true;
                     return null;
@@ -8723,7 +8678,7 @@ namespace BmwDeepObd
 
                     if (!string.IsNullOrEmpty(sendTraceFile))
                     {
-                        Dictionary<string, int> wordDict = ExtractKeyWords(sendTraceFile, wordRegEx, maxWords, linesRegEx, null);
+                        Dictionary<string, int> wordDict = ZipUtils.ExtractKeyWords(sendTraceFile, wordRegEx, maxWords, linesRegEx, null);
                         if (wordDict != null)
                         {
                             sb.Append("\nKeywords:");
@@ -10588,7 +10543,7 @@ namespace BmwDeepObd
                     XDocument doc = new XDocument(xmlLangNodes);
                     doc.Save(ms);
                     ms.Position = 0;
-                    return CreateZipFile(ms, Path.GetFileName(fileName), fileName +".zip");
+                    return ZipUtils.CreateZipFile(ms, Path.GetFileName(fileName), fileName +".zip");
                 }
             }
             catch (Exception)
@@ -10604,7 +10559,7 @@ namespace BmwDeepObd
                 _transDict.Clear();
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    if (!ExtractZipFile(fileName + ".zip", Path.GetFileName(fileName), ms))
+                    if (!ZipUtils.ExtractZipFile(fileName + ".zip", Path.GetFileName(fileName), ms))
                     {
                         return false;
                     }
@@ -12146,32 +12101,6 @@ namespace BmwDeepObd
             return inputType;
         }
 
-        public static bool CheckZipFile(string archiveFilename)
-        {
-            ZipFile zf = null;
-            try
-            {
-                try
-                {
-                    FileStream fs = File.OpenRead(archiveFilename);
-                    zf = new ZipFile(fs);
-                    return zf.TestArchive(false);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            finally
-            {
-                if (zf != null)
-                {
-                    zf.IsStreamOwner = true; // Makes close also shut the underlying stream
-                    zf.Close(); // Ensure we release resources
-                }
-            }
-        }
-
         public static string GetAssetEcuFilenames()
         {
             try
@@ -12207,462 +12136,6 @@ namespace BmwDeepObd
             }
 
             return null;
-        }
-
-        public static void ExtractZipFile(AssetManager assetManager, Assembly resourceAssembly, string archiveFilenameIn, string outFolder, string key,
-            List<string> ignoreFolders, List<string> encodeExtensions, ProgressZipDelegate progressHandler)
-        {
-#if DEBUG
-            string lastFileName = string.Empty;
-            Android.Util.Log.Info(Tag, string.Format("ExtractZipFile Archive: '{0}', Folder: '{1}'", archiveFilenameIn, outFolder));
-#endif
-            Stream fs = null;
-            ZipFile zf = null;
-            string tempFile = Path.Combine(outFolder, "temp.zip");
-            try
-            {
-                if (!string.IsNullOrEmpty(key))
-                {
-                    using (Aes crypto = Aes.Create())
-                    {
-                        crypto.Mode = CipherMode.CBC;
-                        crypto.Padding = PaddingMode.PKCS7;
-                        crypto.KeySize = 256;
-
-                        using (SHA256 sha256 = SHA256.Create())
-                        {
-                            crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
-                        }
-                        using (MD5 md5 = MD5.Create())
-                        {
-                            crypto.IV = md5.ComputeHash(Encoding.ASCII.GetBytes(key));
-                        }
-
-                        bool extractAborted = false;
-                        for (int retry = 0;; retry++)
-                        {
-                            try
-                            {
-                                Stream fsRead = null;
-                                try
-                                {
-                                    if (assetManager != null)
-                                    {
-                                        string tempFileName = Path.GetTempFileName();
-                                        fs = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose);
-                                        string[] archiveFiles = archiveFilenameIn.Split(";");
-                                        byte[] buffer = new byte[StreamBufferSize];
-
-                                        foreach (string archiveFile in archiveFiles)
-                                        {
-                                            using (Stream inputStream = assetManager.Open(archiveFile))
-                                            {
-                                                if (inputStream == null)
-                                                {
-                                                    throw new IOException($"Opening asset stream {archiveFile} failed");
-                                                }
-
-                                                StreamUtils.Copy(inputStream, fs, buffer);
-                                            }
-                                        }
-
-                                        fs.Seek(0, SeekOrigin.Begin);
-                                        fsRead = fs;
-                                    }
-                                    else if (resourceAssembly != null)
-                                    {
-                                        fsRead = resourceAssembly.GetManifestResourceStream(archiveFilenameIn);
-                                    }
-                                    else
-                                    {
-                                        fsRead = File.OpenRead(archiveFilenameIn);
-                                    }
-
-                                    if (fsRead == null)
-                                    {
-                                        extractAborted = true;
-                                        throw new IOException("Opening archive failed");
-                                    }
-
-                                    using (CryptoStream crStream = new CryptoStream(fsRead, crypto.CreateDecryptor(), CryptoStreamMode.Read))
-                                    {
-                                        byte[] buffer = new byte[StreamBufferSize];
-                                        using (FileStream fsWrite = File.Create(tempFile))
-                                        {
-                                            bool aborted = false;
-                                            StreamUtils.Copy(crStream, fsWrite, buffer, (sender, args) =>
-                                            {
-                                                if (progressHandler != null)
-                                                {
-                                                    if (progressHandler((int)args.PercentComplete, true))
-                                                    {
-                                                        args.ContinueRunning = false;
-                                                        aborted = true;
-                                                    }
-                                                }
-                                            }, TimeSpan.FromSeconds(1), null, null, fsRead.Length);
-                                            if (aborted)
-                                            {
-                                                extractAborted = true;
-                                                return;
-                                            }
-#if IO_TEST
-                                            if (retry == 0)
-                                            {
-                                                throw new IOException("Exception test");
-                                            }
-#endif
-                                        }
-                                    }
-                                }
-                                finally
-                                {
-                                    fsRead?.Dispose();
-                                }
-
-                                break;
-                            }
-#pragma warning disable 168
-                            catch (Exception ex)
-#pragma warning restore 168
-                            {
-#if DEBUG
-                                Android.Util.Log.Info(Tag, EdiabasNet.GetExceptionText(ex));
-#endif
-                                if (extractAborted || retry > FileIoRetries)
-                                {
-                                    throw;
-                                }
-
-                                Thread.Sleep(FileIoRetryDelay);
-                            }
-                        }
-                    }
-                    fs = File.OpenRead(tempFile);
-                }
-                else
-                {
-                    if (assetManager != null)
-                    {
-                        string tempFileName = Path.GetTempFileName();
-                        fs = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose);
-                        string[] archiveFiles = archiveFilenameIn.Split(";");
-                        byte[] buffer = new byte[StreamBufferSize];
-
-                        foreach (string archiveFile in archiveFiles)
-                        {
-                            using (Stream inputStream = assetManager.Open(archiveFile))
-                            {
-                                if (inputStream == null)
-                                {
-                                    throw new IOException($"Opening asset stream {archiveFile} failed");
-                                }
-
-                                StreamUtils.Copy(inputStream, fs, buffer);
-                            }
-                        }
-
-                        fs.Seek(0, SeekOrigin.Begin);
-                    }
-                    else if (resourceAssembly != null)
-                    {
-                        fs = resourceAssembly.GetManifestResourceStream(archiveFilenameIn);
-                    }
-                    else
-                    {
-                        fs = File.OpenRead(archiveFilenameIn);
-                    }
-                }
-
-                zf = new ZipFile(fs);
-
-                // count files to extract, to display the correct progress
-                int fileCount = 0;
-                foreach (ZipEntry zipEntry in zf)
-                {
-                    if (!zipEntry.IsFile)
-                    {
-                        continue;           // Ignore directories
-                    }
-
-                    string entryFileName = zipEntry.Name;
-                    if (ignoreFolders != null)
-                    {
-                        bool ignoreFile = false;
-                        foreach (string ignoreFolder in ignoreFolders)
-                        {
-                            if (entryFileName.StartsWith(ignoreFolder))
-                            {
-                                ignoreFile = true;
-                                break;
-                            }
-                        }
-                        if (ignoreFile)
-                        {
-                            continue;
-                        }
-                    }
-                    fileCount++;
-                }
-                if (fileCount == 0)
-                {
-                    fileCount = 1;
-                }
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("ExtractZipFile FileCount: {0}", fileCount));
-#if IO_TEST
-                int testCount = 0;
-#endif
-#endif
-                long index = 0;
-                foreach (ZipEntry zipEntry in zf)
-                {
-                    if (progressHandler != null)
-                    {
-                        if (progressHandler((int)(100 * index / fileCount)))
-                        {
-                            return;
-                        }
-                    }
-                    if (!zipEntry.IsFile)
-                    {
-                        continue;           // Ignore directories
-                    }
-
-                    string entryFileName = zipEntry.Name;
-                    // to remove the folder from the entry:- entryFileName = Path.GetFileName(entryFileName);
-                    // Optionally match entrynames against a selection list here to skip as desired.
-                    // The unpacked length is available in the zipEntry.Size property.
-
-                    if (ignoreFolders != null)
-                    {
-                        bool ignoreFile = false;
-                        foreach (string ignoreFolder in ignoreFolders)
-                        {
-                            if (entryFileName.StartsWith(ignoreFolder))
-                            {
-                                ignoreFile = true;
-                                break;
-                            }
-                        }
-                        if (ignoreFile)
-                        {
-                            continue;
-                        }
-                    }
-
-                    for (int retry = 0; ; retry++)
-                    {
-                        bool noRetry = false;
-                        try
-                        {
-                            // Manipulate the output filename here as desired.
-                            string fullZipToPath = Path.Combine(outFolder, entryFileName);
-                            string fileExt = Path.GetExtension(fullZipToPath);
-                            if (encodeExtensions != null && encodeExtensions.Contains(fileExt, StringComparer.OrdinalIgnoreCase))
-                            {
-                                fullZipToPath = EdiabasNet.EncodeFilePath(fullZipToPath);
-                            }
-                            string directoryName = Path.GetDirectoryName(fullZipToPath);
-                            if (!string.IsNullOrEmpty(directoryName))
-                            {
-                                // ReSharper disable once AssignNullToNotNullAttribute
-                                Directory.CreateDirectory(directoryName);
-                            }
-
-                            byte[] buffer = new byte[StreamBufferSize];
-                            noRetry = true;     // no retry for zip stream exception
-                            using (Stream zipStream = zf.GetInputStream(zipEntry))
-                            {
-                                // Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
-                                // of the file, but does not waste memory.
-                                // The "using" will close the stream even if an exception occurs.
-                                noRetry = false;
-#if DEBUG
-                                lastFileName = fullZipToPath;
-#if IO_TEST
-                                testCount++;
-                                if (testCount % 100 == 0)
-                                {
-                                    throw new IOException("Exception test");
-                                }
-#endif
-#endif
-                                using (FileStream streamWriter = File.Create(fullZipToPath))
-                                {
-                                    StreamUtils.Copy(zipStream, streamWriter, buffer);
-                                }
-                            }
-                            break;
-                        }
-#pragma warning disable 168
-                        catch (Exception ex)
-#pragma warning restore 168
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, EdiabasNet.GetExceptionText(ex));
-#endif
-                            if (noRetry || retry > FileIoRetries)
-                            {
-                                throw;
-                            }
-
-                            Thread.Sleep(FileIoRetryDelay);
-                        }
-                    }
-
-                    index++;
-                }
-#if DEBUG
-                Android.Util.Log.Info(Tag, "ExtractZipFile done");
-#endif
-            }
-#if DEBUG
-            catch (Exception ex)
-            {
-                string exceptionText = EdiabasNet.GetExceptionText(ex);
-                Android.Util.Log.Info(Tag, string.Format("ExtractZipFile File: '{0}', Exception: '{1}', ", lastFileName, exceptionText));
-                throw;
-            }
-#endif
-            finally
-            {
-                // ReSharper disable once ConstantConditionalAccessQualifier
-                zf?.Close(); // Ensure we release resources
-                // ReSharper disable once ConstantConditionalAccessQualifier
-                fs?.Close();
-                if (File.Exists(tempFile))
-                {
-                    File.Delete(tempFile);
-                }
-            }
-        }
-
-        public static bool CreateZipFile(string[] inputFiles, string archiveFilenameOut, ProgressZipDelegate progressHandler)
-        {
-            try
-            {
-                FileStream fsOut = File.Create(archiveFilenameOut);
-                ZipOutputStream zipStream = new ZipOutputStream(fsOut);
-                zipStream.SetLevel(3);
-
-                try
-                {
-                    long index = 0;
-                    foreach (string filename in inputFiles)
-                    {
-                        if (progressHandler != null)
-                        {
-                            if (progressHandler((int)(100 * index / inputFiles.Length)))
-                            {
-                                return false;
-                            }
-                        }
-
-                        FileInfo fi = new FileInfo(filename);
-                        string entryName = Path.GetFileName(filename);
-
-                        ZipEntry newEntry = new ZipEntry(entryName)
-                        {
-                            DateTime = fi.LastWriteTime,
-                            Size = fi.Length
-                        };
-                        zipStream.PutNextEntry(newEntry);
-
-                        byte[] buffer = new byte[StreamBufferSize];
-                        using (FileStream streamReader = File.OpenRead(filename))
-                        {
-                            StreamUtils.Copy(streamReader, zipStream, buffer);
-                        }
-                        zipStream.CloseEntry();
-                        index++;
-                    }
-                }
-                finally
-                {
-                    zipStream.IsStreamOwner = true;
-                    zipStream.Close();
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public static bool ExtractZipFile(string archiveFilenameIn, string archiveName, Stream outStream)
-        {
-            try
-            {
-                ZipFile zf = null;
-                try
-                {
-                    FileStream fs = File.OpenRead(archiveFilenameIn);
-                    zf = new ZipFile(fs);
-                    foreach (ZipEntry zipEntry in zf)
-                    {
-                        if (!zipEntry.IsFile)
-                        {
-                            continue; // Ignore directories
-                        }
-                        if (string.Compare(zipEntry.Name, archiveName, StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            byte[] buffer = new byte[StreamBufferSize];
-                            using (Stream zipStream = zf.GetInputStream(zipEntry))
-                            {
-                                StreamUtils.Copy(zipStream, outStream, buffer);
-                            }
-                            break;
-                        }
-                    }
-                }
-                finally
-                {
-                    if (zf != null)
-                    {
-                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
-                        zf.Close(); // Ensure we release resources
-                    }
-                }
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public static bool CreateZipFile(Stream inStream, string archiveName, string archiveFilenameOut)
-        {
-            try
-            {
-                FileStream fsOut = File.Create(archiveFilenameOut);
-                ZipOutputStream zipStream = new ZipOutputStream(fsOut);
-                zipStream.SetLevel(3);
-
-                try
-                {
-                    ZipEntry newEntry = new ZipEntry(archiveName)
-                    {
-                        Size = inStream.Length
-                    };
-                    zipStream.PutNextEntry(newEntry);
-                    byte[] buffer = new byte[StreamBufferSize];
-                    StreamUtils.Copy(inStream, zipStream, buffer);
-                    zipStream.CloseEntry();
-                }
-                finally
-                {
-                    zipStream.IsStreamOwner = true;
-                    zipStream.Close();
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
         }
 
         public static bool VerifyContent(string contentFile, bool checkMd5, ProgressVerifyDelegate progressHandler)
@@ -13173,115 +12646,6 @@ using System.Threading;"
             }
 
             return result;
-        }
-
-        public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, string wordRegEx, int maxWords, string lineRegEx, ProgressZipDelegate progressHandler)
-        {
-            Dictionary<string, int> wordDict = new Dictionary<string, int>();
-            ZipFile zf = null;
-            try
-            {
-                Regex regExWord = new Regex(wordRegEx);
-                Regex regExLine = string.IsNullOrWhiteSpace(lineRegEx) ? null: new Regex(lineRegEx);
-                long index = 0;
-                FileStream fs = File.OpenRead(archiveFilename);
-                zf = new ZipFile(fs);
-                foreach (ZipEntry zipEntry in zf)
-                {
-                    if (progressHandler != null)
-                    {
-                        if (progressHandler((int)(100 * index / zf.Count)))
-                        {
-                            return null;
-                        }
-                    }
-                    if (!zipEntry.IsFile)
-                    {
-                        continue;           // Ignore directories
-                    }
-
-                    using (Stream zipStream = zf.GetInputStream(zipEntry))
-                    {
-                        using (StreamReader sr = new StreamReader(zipStream))
-                        {
-                            bool exit = false;
-                            for (; ; )
-                            {
-                                string line = sr.ReadLine();
-                                if (line == null)
-                                {
-                                    break;
-                                }
-
-                                if (regExLine != null)
-                                {
-                                    MatchCollection matchesLine = regExLine.Matches(line);
-                                    if ((matchesLine.Count == 1) && (matchesLine[0].Groups.Count > 1))
-                                    {
-                                        for (int match = 1; match < matchesLine[0].Groups.Count; match++)
-                                        {
-                                            if (matchesLine[0].Groups[match].Success)
-                                            {
-                                                string key = matchesLine[0].Groups[match].Value;
-                                                if (!string.IsNullOrWhiteSpace(key))
-                                                {
-                                                    if (wordDict.ContainsKey(key))
-                                                    {
-                                                        wordDict[key] += 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        wordDict[key] = 1;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                string[] words = line.Split(' ', '\t', '\n', '\r');
-                                foreach (string word in words)
-                                {
-                                    if (string.IsNullOrEmpty(word))
-                                    {
-                                        continue;
-                                    }
-                                    if (regExWord.IsMatch(word))
-                                    {
-                                        if (wordDict.ContainsKey(word))
-                                        {
-                                            wordDict[word] += 1;
-                                        }
-                                        else
-                                        {
-                                            if (maxWords > 0 && wordDict.Count > maxWords)
-                                            {
-                                                exit = true;
-                                            }
-                                            wordDict[word] = 1;
-                                        }
-                                    }
-                                }
-                                if (exit)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    index++;
-                }
-            }
-            finally
-            {
-                if (zf != null)
-                {
-                    zf.IsStreamOwner = true; // Makes close also shut the underlying stream
-                    zf.Close(); // Ensure we release resources
-                }
-            }
-            return wordDict;
         }
 
         public static string CreateValidFileName(string s, char replaceChar = '_', char[] includeChars = null)
@@ -14549,17 +13913,17 @@ using System.Threading;"
             instanceData.UserEcuFiles = false;
             if (string.IsNullOrEmpty(CustomStorageMedia))
             {
-                if (string.IsNullOrEmpty(ExternalWritePath))
+                if (string.IsNullOrEmpty(StorageUtils.ExternalWritePath))
                 {
-                    if (string.IsNullOrEmpty(ExternalPath))
+                    if (string.IsNullOrEmpty(StorageUtils.ExternalPath))
                     {
                         return false;
                     }
-                    instanceData.AppDataPath = Path.Combine(ExternalPath, AppFolderName);
+                    instanceData.AppDataPath = Path.Combine(StorageUtils.ExternalPath, AppFolderName);
                 }
                 else
                 {
-                    instanceData.AppDataPath = ExternalWritePath;
+                    instanceData.AppDataPath = StorageUtils.ExternalWritePath;
                 }
             }
             else
@@ -14617,7 +13981,7 @@ using System.Threading;"
                         {
                             string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
                                 Android.OS.Environment.GetExternalStorageState(file) : Android.OS.Environment.ExternalStorageState;
-                            if (extState != null && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(file.AbsolutePath))
+                            if (extState != null && extState.Equals(Android.OS.Environment.MediaMounted) && StorageUtils.IsWritable(file.AbsolutePath))
                             {
                                 storageList.Add(file.AbsolutePath);
                             }
@@ -14627,129 +13991,8 @@ using System.Threading;"
                 return storageList;
             }
 
-            string procMounts = ReadProcMounts();
-            return ParseStorageMedia(procMounts);
-        }
-
-        public static string GetDocumentPath(DocumentFile documentFile)
-        {
-            if (documentFile?.Uri == null)
-            {
-                return null;
-            }
-
-            try
-            {
-                string docId = Android.Provider.DocumentsContract.GetTreeDocumentId(documentFile.Uri);
-                if (!string.IsNullOrEmpty(docId))
-                {
-                    string[] parts = docId.Split(':');
-                    if (parts.Length > 1)
-                    {
-                        string volumeId = parts[0];
-                        string docPath = parts[1];
-                        string volumePath = GetVolumePath(volumeId);
-                        if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
-                        {
-                            string fullPath = Path.Combine(volumePath, docPath);
-                            return fullPath;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            return documentFile.Uri.Path;
-        }
-
-        public static List<string> GetPersistedStorages()
-        {
-            List<string> storageList = new List<string>();
-            if (IsDocumentTreeSupported())
-            {
-                IList<UriPermission> uriPermissions = Android.App.Application.Context.ContentResolver?.PersistedUriPermissions;
-                if (uriPermissions != null)
-                {
-                    foreach (UriPermission uriPermission in uriPermissions)
-                    {
-                        try
-                        {
-                            if (uriPermission.Uri != null && uriPermission.IsWritePermission)
-                            {
-                                string docId = Android.Provider.DocumentsContract.GetTreeDocumentId(uriPermission.Uri);
-                                if (!string.IsNullOrEmpty(docId))
-                                {
-                                    string[] parts = docId.Split(':');
-                                    if (parts.Length > 1)
-                                    {
-                                        string volumeId = parts[0];
-                                        string docPath = parts[1];
-                                        string volumePath = GetVolumePath(volumeId);
-                                        if (!string.IsNullOrEmpty(docPath) && !string.IsNullOrEmpty(volumePath))
-                                        {
-                                            string fullPath = Path.Combine(volumePath, docPath);
-                                            storageList.Add(fullPath);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
-                }
-            }
-
-            return storageList;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static string GetVolumePath(string volumeId)
-        {
-            try
-            {
-                if (!IsDocumentTreeSupported())
-                {
-                    return null;
-                }
-
-                if (string.IsNullOrEmpty(volumeId))
-                {
-                    return null;
-                }
-
-                StorageManager storageManager = Android.App.Application.Context.GetSystemService(Context.StorageService) as StorageManager;
-                IList<StorageVolume> storageVolumes = storageManager?.StorageVolumes;
-                if (storageVolumes == null)
-                {
-                    return null;
-                }
-
-                foreach (StorageVolume storageVolume in storageVolumes)
-                {
-                    if (storageVolume.IsPrimary && PrimaryVolumeName.Equals(volumeId))
-                    {
-                        return storageVolume.Directory?.Path;
-                    }
-
-                    string uuid = storageVolume.Uuid;
-                    if (!string.IsNullOrEmpty(uuid) && uuid.Equals(volumeId))
-                    {
-                        return storageVolume.Directory?.Path;
-                    }
-                }
-
-                return null;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            string procMounts = StorageUtils.ReadProcMounts();
+            return StorageUtils.ParseStorageMedia(procMounts);
         }
 
         public bool RequestCopyDocumentsThread(DocumentFile documentSrc, DocumentFile documentDst, CopyDocumentsThreadFinishDelegate handler)
@@ -14761,7 +14004,7 @@ using System.Threading;"
                     return false;
                 }
 
-                string documentPath = GetDocumentPath(documentDst);
+                string documentPath = DocumentUtils.GetDocumentPath(documentDst);
                 if (string.IsNullOrEmpty(documentPath))
                 {
                     return false;
@@ -14814,7 +14057,7 @@ using System.Threading;"
             _copyDocumentThread = new Thread(() =>
             {
                 bool result = false;
-                int docCount = GetDocumentCount(documentSrc, name =>
+                int docCount = DocumentUtils.GetDocumentCount(documentSrc, name =>
                 {
                     if (_disposed)
                     {
@@ -14837,7 +14080,7 @@ using System.Threading;"
                     }
 
                     int fileCount = 0;
-                    result = CopyDocumentsRecursive(documentSrc, documentDst, name =>
+                    result = DocumentUtils.CopyDocumentsRecursive(documentSrc, documentDst, name =>
                     {
                         if (_disposed)
                         {
@@ -14898,140 +14141,6 @@ using System.Threading;"
             return false;
         }
 
-        public static bool CopyDocumentsRecursive(DocumentFile documentSrc, DocumentFile documentDst, ProgressDocumentCopyDelegate progressHandler)
-        {
-            try
-            {
-                if (documentSrc?.Uri == null || documentDst?.Uri == null)
-                {
-                    return false;
-                }
-
-                if (!documentSrc.Exists())
-                {
-                    return false;
-                }
-
-                if (documentSrc.IsFile)
-                {
-                    DocumentFile fileDst = documentDst;
-                    if (documentDst.IsDirectory)
-                    {
-                        DocumentFile oldFile = documentDst.FindFile(documentSrc.Name);
-                        if (oldFile != null)
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("Delete file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
-#endif
-                            oldFile.Delete();
-                        }
-#if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
-#endif
-                        fileDst = documentDst.CreateFile(MimeTypeAppAny, documentSrc.Name);
-                    }
-
-                    if (!fileDst.IsFile)
-                    {
-                        return false;
-                    }
-
-                    if (progressHandler != null)
-                    {
-                        if (!progressHandler.Invoke(documentSrc.Name))
-                        {
-                            return false;
-                        }
-                    }
-
-                    ContentResolver contentResolver = Android.App.Application.Context.ContentResolver;
-                    if (contentResolver == null)
-                    {
-                        return false;
-                    }
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Copy file: Name={0}, Type={1}, URI={2}", documentSrc.Name, documentSrc.Type, documentSrc.Uri.ToString()));
-#endif
-                    using (Stream inputStream = contentResolver.OpenInputStream(documentSrc.Uri))
-                    {
-                        if (inputStream == null)
-                        {
-                            return false;
-                        }
-
-                        using (Stream outputStream = contentResolver.OpenOutputStream(fileDst.Uri))
-                        {
-                            if (outputStream == null)
-                            {
-                                return false;
-                            }
-
-                            inputStream.CopyTo(outputStream);
-                        }
-                    }
-
-                    return true;
-                }
-
-                if (!documentSrc.IsDirectory || !documentDst.IsDirectory)
-                {
-                    return false;
-                }
-
-                DocumentFile oldDir = documentDst.FindFile(documentSrc.Name);
-                if (oldDir != null)
-                {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("Delete dir: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
-#endif
-                    oldDir.Delete();
-                }
-
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("Create dir: Name={0}, URI={1}", documentSrc.Name, documentSrc.Uri.ToString()));
-#endif
-                DocumentFile subDirDst = documentDst.CreateDirectory(documentSrc.Name);
-                DocumentFile[] files = documentSrc.ListFiles();
-                foreach (DocumentFile documentFile in files)
-                {
-                    if (documentFile.IsFile)
-                    {
-                        DocumentFile oldFile = subDirDst.FindFile(documentFile.Name);
-                        if (oldFile != null)
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("Delete file: Name={0}, URI={1}", documentFile.Name, documentFile.Uri.ToString()));
-#endif
-                            oldFile.Delete();
-                        }
-#if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("Create file: Name={0}, URI={1}", documentFile.Name, documentFile.Uri.ToString()));
-#endif
-                        DocumentFile dstFile = subDirDst.CreateFile(MimeTypeAppAny, documentFile.Name);
-                        if (!CopyDocumentsRecursive(documentFile, dstFile, progressHandler))
-                        {
-                            return false;
-                        }
-                        continue;
-                    }
-
-                    if (documentFile.IsDirectory)
-                    {
-                        if (!CopyDocumentsRecursive(documentFile, subDirDst, progressHandler))
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public bool RequestDeleteDocumentsThread(DocumentFile documentFile, CopyDocumentsThreadFinishDelegate handler)
         {
             try
@@ -15041,7 +14150,7 @@ using System.Threading;"
                     return false;
                 }
 
-                string documentPath = GetDocumentPath(documentFile);
+                string documentPath = DocumentUtils.GetDocumentPath(documentFile);
                 if (string.IsNullOrEmpty(documentPath))
                 {
                     return false;
@@ -15244,7 +14353,7 @@ using System.Threading;"
                             try
                             {
                                 int lastZipPercent = -1;
-                                ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null,
+                                ZipUtils.ExtractZipFile(null, null, tempFileName, targetFolder, null, null, null,
                                     (percent, decrypt) =>
                                     {
                                         if (_disposed)
@@ -15366,93 +14475,6 @@ using System.Threading;"
             return false;
         }
 
-        public static int GetDocumentCount(DocumentFile document, ProgressDocumentCopyDelegate progressHandler)
-        {
-            try
-            {
-                if (document == null)
-                {
-                    return -1;
-                }
-
-                if (document.IsFile)
-                {
-                    if (progressHandler != null)
-                    {
-                        if (!progressHandler.Invoke(document.Name))
-                        {
-                            return -1;
-                        }
-                    }
-
-                    if (document.Exists())
-                    {
-                        return 1;
-                    }
-
-                    return 0;
-                }
-
-                if (!document.IsDirectory)
-                {
-                    return -1;
-                }
-
-                int fileCount = 0;
-                DocumentFile[] files = document.ListFiles();
-                foreach (DocumentFile documentFile in files)
-                {
-                    if (documentFile.IsFile)
-                    {
-                        if (document.Exists())
-                        {
-                            fileCount++;
-                        }
-                        continue;
-                    }
-
-                    if (documentFile.IsDirectory)
-                    {
-                        int count = GetDocumentCount(documentFile, progressHandler);
-                        if (count < 0)
-                        {
-                            return -1;
-                        }
-
-                        fileCount += count;
-                    }
-                }
-
-                return fileCount;
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
-        }
-
-        public static bool DocumentExists(DocumentFile document)
-        {
-            try
-            {
-                if (document == null)
-                {
-                    return false;
-                }
-
-                if (document.Exists())
-                {
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return false;
-        }
-
         public bool IsExStorageAvailable()
         {
             try
@@ -15522,209 +14544,6 @@ using System.Threading;"
             Android.Util.Log.Info(Tag, "IsMediaMounted: Media mounted");
 #endif
             return true;
-        }
-
-        public static void SetStoragePath()
-        {
-            _externalPath = string.Empty;
-            _externalWritePath = string.Empty;
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
-            {
-#pragma warning disable 618
-                Java.IO.File extDir = Android.OS.Environment.ExternalStorageDirectory;
-#pragma warning restore 618
-                string extState = Android.OS.Environment.ExternalStorageState;
-                if (extDir != null && extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted))
-                {
-                    _externalPath = extDir.AbsolutePath;
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("SetStoragePath: ExternalStorageDirectory: {0}", _externalPath));
-#endif
-                }
-            }
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-            {   // writing to external disk is only allowed in special directories.
-                Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
-                if (externalFilesDirs?.Length > 0)
-                {
-                    // index 0 is the internal disk
-                    if (externalFilesDirs.Length > 1)
-                    {
-                        Java.IO.File extDir = externalFilesDirs[1];
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        if (extDir != null)
-                        {
-                            string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
-                                Android.OS.Environment.GetExternalStorageState(extDir) : Android.OS.Environment.ExternalStorageState;
-                            if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
-                            {
-                                _externalWritePath = extDir.AbsolutePath;
-#if DEBUG
-                                Android.Util.Log.Info(Tag, string.Format("SetStoragePath: GetExternalFilesDirs[1]: {0}", _externalWritePath));
-#endif
-                            }
-                        }
-                    }
-
-                    if (string.IsNullOrEmpty(_externalWritePath))
-                    {
-                        Java.IO.File extDir = externalFilesDirs[0];
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        if (extDir != null)
-                        {
-                            string extState = Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop ?
-                                Android.OS.Environment.GetExternalStorageState(extDir) : Android.OS.Environment.ExternalStorageState;
-                            if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
-                            {
-                                _externalWritePath = extDir.AbsolutePath;
-#if DEBUG
-                                Android.Util.Log.Info(Tag, string.Format("SetStoragePath: GetExternalFilesDirs[0]: {0}", _externalWritePath));
-#endif
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                string procMounts = ReadProcMounts();
-                string sdCardEntry = ParseProcMounts(procMounts, _externalPath);
-                if (!string.IsNullOrEmpty(sdCardEntry))
-                {
-                    _externalPath = sdCardEntry;
-                }
-            }
-        }
-
-        private static string ReadProcMounts()
-        {
-            try
-            {
-                string contents = File.ReadAllText("/proc/mounts");
-                return contents;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-            return string.Empty;
-        }
-
-        public static bool IsWritable(string pathToTest)
-        {
-            bool result = false;
-
-            if (!string.IsNullOrWhiteSpace(pathToTest))
-            {
-                const string testText = "test text";
-                string testFile = Guid.NewGuid() + ".txt";
-                string testPath = Path.Combine(pathToTest, testFile);
-                try
-                {
-                    File.WriteAllText(testPath, testText);
-                    // case sensitive file systems are supported now
-                    if (File.Exists(testPath))
-                    {
-                        result = true;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-                finally
-                {
-                    try
-                    {
-                        if (File.Exists(testPath))
-                        {
-                            File.Delete(testPath);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-            }
-            return result;
-        }
-
-        private static string ParseProcMounts(string procMounts, string externalPath)
-        {
-            string sdCardEntry = string.Empty;
-            if (!string.IsNullOrWhiteSpace(procMounts))
-            {
-                List<string> procMountEntries = procMounts.Split('\n', '\r').ToList();
-                foreach (string entry in procMountEntries)
-                {
-                    string[] sdCardEntries = entry.Split(' ');
-                    if (sdCardEntries.Length > 2)
-                    {
-                        string path = sdCardEntries[1];
-                        if (path.StartsWith(externalPath, StringComparison.OrdinalIgnoreCase) &&
-                            string.Compare(path, externalPath, StringComparison.OrdinalIgnoreCase) != 0)
-                        {
-                            if (IsWritable(path))
-                            {
-                                sdCardEntry = path;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            return sdCardEntry;
-        }
-
-        private static List<string> ParseStorageMedia(string procMounts)
-        {
-            List<string> sdCardList = new List<string>();
-            if (!string.IsNullOrWhiteSpace(procMounts))
-            {
-                List<string> procMountEntries = procMounts.Split('\n', '\r').ToList();
-                // ReSharper disable once LoopCanBeConvertedToQuery
-                foreach (string entry in procMountEntries)
-                {
-                    string[] sdCardEntries = entry.Split(' ');
-                    if (sdCardEntries.Length > 2)
-                    {
-                        string path = sdCardEntries[1];
-                        if (IsWritable(path))
-                        {
-                            sdCardList.Add(path);
-                        }
-                    }
-                }
-            }
-            return sdCardList;
-        }
-
-        public static FileSystemBlockInfo GetFileSystemBlockInfo(string path)
-        {
-            var statFs = new StatFs(path);
-            var fsbi = new FileSystemBlockInfo();
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.JellyBeanMr2)
-            {
-                fsbi.Path = path;
-                fsbi.BlockSizeBytes = statFs.BlockSizeLong;
-                fsbi.TotalSizeBytes = statFs.BlockCountLong * statFs.BlockSizeLong;
-                fsbi.AvailableSizeBytes = statFs.AvailableBlocksLong * statFs.BlockSizeLong;
-                fsbi.FreeSizeBytes = statFs.FreeBlocksLong * statFs.BlockSizeLong;
-            }
-            else // this was deprecated in API level 18 (Android 4.3), so if your device is below level 18, this is what will be used instead.
-            {
-                fsbi.Path = path;
-                // you may want to disable warning about obsoletes, earlier versions of Android are using the deprecated versions
-#pragma warning disable 618
-                fsbi.BlockSizeBytes = statFs.BlockSize;
-                fsbi.TotalSizeBytes = statFs.BlockCount * (long)statFs.BlockSize;
-                fsbi.AvailableSizeBytes = statFs.AvailableBlocks * (long)statFs.BlockSize;
-                fsbi.FreeSizeBytes = statFs.FreeBlocks * (long)statFs.BlockSize;
-#pragma warning restore 618
-            }
-            return fsbi;
         }
 
         public static long GetDirectorySize(string path)
