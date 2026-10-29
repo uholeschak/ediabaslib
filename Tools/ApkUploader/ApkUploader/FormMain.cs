@@ -1004,13 +1004,14 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
+                    TracksListResponse tracksListResponse;
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
                     {
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
 
-                        TracksListResponse tracksListResponse = await edits.Tracks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
+                        tracksListResponse = await edits.Tracks.List(PackageName, appEdit.Id).ExecuteAsync(_cts.Token);
                         if (tracksListResponse.Tracks != null)
                         {
                             foreach (Track track in tracksListResponse.Tracks)
@@ -1093,7 +1094,21 @@ namespace ApkUploader
                     sb.AppendLine();
                     if (!string.IsNullOrEmpty(liveStoreVersion))
                     {
-                        sb.AppendLine($"Live store version: {liveStoreVersion}");
+                        long? liveVersionCode = tracksListResponse.Tracks?
+                            .Where(t => t.Releases != null)
+                            .SelectMany(t => t.Releases)
+                            .Where(r => r != null && string.Compare(r.Name, liveStoreVersion, StringComparison.OrdinalIgnoreCase) == 0 && r.VersionCodes != null && r.VersionCodes.Count > 0)
+                            .Select(r => r.VersionCodes[0])
+                            .FirstOrDefault();
+
+                        if (liveVersionCode.HasValue)
+                        {
+                            sb.AppendLine($"Live store version: {liveStoreVersion} (Version: {liveVersionCode.Value})");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"Live store version: {liveStoreVersion}");
+                        }
                     }
                     else
                     {
