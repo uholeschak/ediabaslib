@@ -797,7 +797,7 @@ namespace BmwDeepObd
                         if (ecuResponse1 != null)
                         {
                             errorIndex = 0;
-                            dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse1, saeMode);
+                            dtcList = DtcUtils.ParseEcuDtcResponse(ecuResponse1, saeMode);
                         }
 
                         if (dtcList != null && errorIndex < dtcList.Count)
@@ -823,7 +823,7 @@ namespace BmwDeepObd
                                     dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, udsReader);
                                 if (saeDetail && ecuResponseList.Count > 0)
                                 {
-                                    byte[] detailData = ActivityCommon.ParseSaeDetailDtcResponse(ecuResponseList[0]);
+                                    byte[] detailData = DtcUtils.ParseSaeDetailDtcResponse(ecuResponseList[0]);
                                     if (detailData != null)
                                     {
                                         List<string> saeDetailList = udsReader.DataReader.SaeErrorDetailHeadToString(detailData, udsReader);
@@ -850,7 +850,7 @@ namespace BmwDeepObd
                                     textList = udsReader.ErrorCodeToString(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
                                     if (ecuResponseList.Count > 0)
                                     {
-                                        byte[] response = ActivityCommon.ExtractUdsEcuResponses(ecuResponseList[0]);
+                                        byte[] response = DtcUtils.ExtractUdsEcuResponses(ecuResponseList[0]);
                                         if (response != null)
                                         {
                                             List<string> errorDetailList = udsReader.ErrorDetailBlockToString(udsFileName, response);
@@ -883,7 +883,7 @@ namespace BmwDeepObd
                         if (saeMode)
                         {
                             srMessage.Append("\r\n");
-                            srMessage.Append(string.Format("{0}-{1:X02}", ActivityCommon.SaeCode16ToString(errorCode >> 8), errorCode & 0xFF));
+                            srMessage.Append(string.Format("{0}-{1:X02}", DtcUtils.SaeCode16ToString(errorCode >> 8), errorCode & 0xFF));
                         }
                     }
                     if (textList != null)
