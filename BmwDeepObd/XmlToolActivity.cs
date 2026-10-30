@@ -1353,7 +1353,7 @@ namespace BmwDeepObd
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
+                            IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
                         })
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {

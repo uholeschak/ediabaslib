@@ -1209,39 +1209,13 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static bool IsMtcService(Context context)
-        {
-            try
-            {
-                PackageManager packageManager = context?.PackageManager;
-                IList<ApplicationInfo> appList = PackageUtils.GetInstalledApplications(packageManager, PackageInfoFlags.MatchAll);
-                if (appList != null)
-                {
-                    foreach (ApplicationInfo appInfo in appList)
-                    {
-                        if (string.Compare(appInfo.PackageName, "android.microntek.mtcser", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return false;
-        }
-
         public bool MtcBtService
         {
             get
             {
                 if (_mtcBtService == null)
                 {
-                    _mtcBtService = IsMtcService(_context);
+                    _mtcBtService = ServiceUtils.IsMtcService(_context);
                 }
                 return _mtcBtService ?? false;
             }
@@ -2329,38 +2303,6 @@ namespace BmwDeepObd
             {
                 return false;
             }
-        }
-
-        public static bool StartForegroundService(Context context, bool startComm = false)
-        {
-            try
-            {
-                Intent startServiceIntent = new Intent(context, typeof(ForegroundService));
-                startServiceIntent.SetAction(ForegroundService.ActionStartService);
-                startServiceIntent.PutExtra(ForegroundService.ExtraStartComm, startComm);
-                ContextCompat.StartForegroundService(context, startServiceIntent);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public static bool StopForegroundService(Context context, bool abortThread = false)
-        {
-            try
-            {
-                Intent stopServiceIntent = new Intent(context, typeof(ForegroundService));
-                stopServiceIntent.SetAction(ForegroundService.ActionStopService);
-                stopServiceIntent.PutExtra(ForegroundService.ExtraAbortThread, abortThread);
-                context.StopService(stopServiceIntent);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
@@ -5182,69 +5124,6 @@ namespace BmwDeepObd
             return null;
         }
 
-        public static bool OpenAppSettingDetails(Android.App.Activity activity, int requestCode)
-        {
-            try
-            {
-                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings,
-                    Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
-                activity.StartActivityForResult(intent, requestCode);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public static bool OpenLocationSettings(Android.App.Activity activity, int requestCode)
-        {
-            try
-            {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.P)
-                {
-                    return false;
-                }
-
-                Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
-                    activity.StartActivityForResult(intent, requestCode);
-                    return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static bool OpenAppSettingAccessFiles(Android.App.Activity activity, int requestCode)
-        {
-            try
-            {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.R)
-                {
-                    return false;
-                }
-
-                try
-                {
-                    Intent intent = new Intent(Android.Provider.Settings.ActionManageAppAllFilesAccessPermission,
-                        Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
-                    activity.StartActivityForResult(intent, requestCode);
-                }
-                catch (Exception)
-                {
-                    Intent intent = new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission);
-                    activity.StartActivityForResult(intent, requestCode);
-                }
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool ShowNotificationSettings(int requestCodeApp, int? requestCodeChannel = null, string channelId = null)
         {
@@ -6465,7 +6344,7 @@ namespace BmwDeepObd
                     }
                     if (wait)
                     {
-                        StopForegroundService(_context);
+                        ServiceUtils.StopForegroundService(_context);
                         lock (EdiabasThread.DataLock)
                         {
                             ediabasEvent?.Invoke(false);

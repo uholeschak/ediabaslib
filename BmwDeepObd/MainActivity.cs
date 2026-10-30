@@ -414,7 +414,7 @@ namespace BmwDeepObd
             {
                 if (!ForegroundService.IsCommThreadRunning())
                 {
-                    ActivityCommon.StopForegroundService(this);
+                    ServiceUtils.StopForegroundService(this);
                 }
 
                 if (!_activityRecreated)
@@ -1964,7 +1964,7 @@ namespace BmwDeepObd
                     AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            if (ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions))
+                            if (IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions))
                             {
                                 finish = false;
                             }
@@ -2014,7 +2014,7 @@ namespace BmwDeepObd
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
+                            IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
                         })
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {
@@ -2682,7 +2682,7 @@ namespace BmwDeepObd
 
                 if (UseCommService())
                 {
-                    ActivityCommon.StartForegroundService(this);
+                    ServiceUtils.StartForegroundService(this);
                 }
             }
             catch (Exception)
@@ -2982,7 +2982,7 @@ namespace BmwDeepObd
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                         {
-                            ActivityCommon.OpenAppSettingAccessFiles(this, (int)ActivityRequest.RequestAppSettingsAccessFiles);
+                            IntentUtils.OpenAppSettingAccessFiles(this, (int)ActivityRequest.RequestAppSettingsAccessFiles);
                         })
                         .SetNegativeButton(Resource.String.button_no, (s, a) =>
                         {
@@ -3180,7 +3180,7 @@ namespace BmwDeepObd
                                 AlertDialog altertDialog = new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
-                                        if (ActivityCommon.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings))
+                                        if (IntentUtils.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings))
                                         {
                                             if (handler != null)
                                             {
