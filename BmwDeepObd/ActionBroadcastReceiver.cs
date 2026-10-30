@@ -71,7 +71,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #if DEBUG
                     Log.Info(Tag, "Starting service");
 #endif
-                    ActivityCommon.StartForegroundService(context, true);
+                    ServiceUtils.StartForegroundService(context, true);
                 }
                 break;
             }
@@ -81,7 +81,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #if DEBUG
                 Log.Info(Tag, "Shutting down service");
 #endif
-                ActivityCommon.StopForegroundService(context);
+                ServiceUtils.StopForegroundService(context);
                 break;
             }
         }

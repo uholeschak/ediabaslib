@@ -414,7 +414,7 @@ namespace BmwDeepObd
             {
                 if (!ForegroundService.IsCommThreadRunning())
                 {
-                    ActivityCommon.StopForegroundService(this);
+                    ServiceUtils.StopForegroundService(this);
                 }
 
                 if (!_activityRecreated)
@@ -1964,7 +1964,7 @@ namespace BmwDeepObd
                     AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            if (ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions))
+                            if (IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions))
                             {
                                 finish = false;
                             }
@@ -2014,7 +2014,7 @@ namespace BmwDeepObd
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
+                            IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
                         })
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {
@@ -2682,7 +2682,7 @@ namespace BmwDeepObd
 
                 if (UseCommService())
                 {
-                    ActivityCommon.StartForegroundService(this);
+                    ServiceUtils.StartForegroundService(this);
                 }
             }
             catch (Exception)
@@ -2982,7 +2982,7 @@ namespace BmwDeepObd
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                         {
-                            ActivityCommon.OpenAppSettingAccessFiles(this, (int)ActivityRequest.RequestAppSettingsAccessFiles);
+                            IntentUtils.OpenAppSettingAccessFiles(this, (int)ActivityRequest.RequestAppSettingsAccessFiles);
                         })
                         .SetNegativeButton(Resource.String.button_no, (s, a) =>
                         {
@@ -3180,7 +3180,7 @@ namespace BmwDeepObd
                                 AlertDialog altertDialog = new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
-                                        if (ActivityCommon.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings))
+                                        if (IntentUtils.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings))
                                         {
                                             if (handler != null)
                                             {
@@ -3241,7 +3241,7 @@ namespace BmwDeepObd
 
             if (_assetManager == null || string.IsNullOrEmpty(_assetEcuFileNames))
             {
-                string assetEcuFileNames = ActivityCommon.GetAssetEcuFilenames();
+                string assetEcuFileNames = AssetUtils.GetAssetEcuFilenames();
                 if (!string.IsNullOrEmpty(assetEcuFileNames))
                 {
                     try
@@ -3249,7 +3249,7 @@ namespace BmwDeepObd
                         AssetManager assetManager = PackageUtils.GetPackageContext()?.Assets;
                         if (assetManager != null)
                         {
-                            long fileSize = ActivityCommon.GetAssetEcuFileSize(assetManager, assetEcuFileNames);
+                            long fileSize = AssetUtils.GetAssetEcuFileSize(assetManager, assetEcuFileNames);
                             if (fileSize > 0)
                             {
                                 _assetManager = assetManager;
@@ -5108,7 +5108,7 @@ namespace BmwDeepObd
                         if (ValidEcuPackage(ecuBaseDir))
                         {
                             int lastPercent = -1;
-                            if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), checkMd5, percent =>
+                            if (!AssetUtils.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), checkMd5, percent =>
                             {
                                 if (_activityCommon == null)
                                 {
@@ -5449,7 +5449,7 @@ namespace BmwDeepObd
                     {
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url ?? string.Empty));
-                        xmlInfo.Add(new XAttribute("Name", ActivityCommon.GetAssetEcuFileBaseName(_assetEcuFileNames)));
+                        xmlInfo.Add(new XAttribute("Name", AssetUtils.GetAssetEcuFileBaseName(_assetEcuFileNames)));
                         xmlInfo.Add(new XAttribute("DataId", EdiabasNet.EncodeFileNameKey ?? string.Empty));
                         if (_assetEcuFileSize > 0)
                         {
@@ -5467,7 +5467,7 @@ namespace BmwDeepObd
                         string obbName = string.Empty;
                         try
                         {
-                            obbName = ActivityCommon.GetAssetEcuFileBaseName(_assetEcuFileNames);
+                            obbName = AssetUtils.GetAssetEcuFileBaseName(_assetEcuFileNames);
                         }
                         catch (Exception)
                         {
@@ -5766,7 +5766,7 @@ namespace BmwDeepObd
                 {
                     return null;
                 }
-                string baseName = ActivityCommon.GetAssetEcuFileBaseName(_assetEcuFileNames);
+                string baseName = AssetUtils.GetAssetEcuFileBaseName(_assetEcuFileNames);
                 if (string.IsNullOrEmpty(baseName))
                 {
                     return null;
@@ -6034,7 +6034,7 @@ namespace BmwDeepObd
                         });
 
                     int lastVerifyPercent = -1;
-                    if (!ActivityCommon.VerifyContent(Path.Combine(targetDirectory, ContentFileName), true, percent =>
+                    if (!AssetUtils.VerifyContent(Path.Combine(targetDirectory, ContentFileName), true, percent =>
                     {
                         if (_activityCommon == null)
                         {
@@ -6465,7 +6465,7 @@ namespace BmwDeepObd
                 }
 
                 if (string.IsNullOrEmpty(_assetEcuFileNames) ||
-                    string.Compare(ActivityCommon.GetAssetEcuFileBaseName(nameAttr.Value), ActivityCommon.GetAssetEcuFileBaseName(_assetEcuFileNames), StringComparison.OrdinalIgnoreCase) != 0)
+                    string.Compare(AssetUtils.GetAssetEcuFileBaseName(nameAttr.Value), AssetUtils.GetAssetEcuFileBaseName(_assetEcuFileNames), StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     return false;
                 }

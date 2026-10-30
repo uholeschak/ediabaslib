@@ -441,7 +441,7 @@ namespace BmwDeepObd
                         new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
-                                ActivityCommon.OpenAppSettingDetails(this, (int) ActivityRequest.RequestAppDetailSettings);
+                                IntentUtils.OpenAppSettingDetails(this, (int) ActivityRequest.RequestAppDetailSettings);
                             })
                             .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                             {
@@ -497,7 +497,7 @@ namespace BmwDeepObd
                                 new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
-                                        ActivityCommon.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings);
+                                        IntentUtils.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings);
                                     })
                                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                     {
