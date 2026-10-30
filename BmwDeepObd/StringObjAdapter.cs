@@ -18,7 +18,7 @@ namespace BmwDeepObd
         {
             _context = context;
             _items = new List<StringObjType>();
-            _backgroundColor = ActivityCommon.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
+            _backgroundColor = UiUtils.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
         }
 
         public override long GetItemId(int position)

@@ -163,7 +163,7 @@ namespace BmwDeepObd.FilePicker
 
             if (!string.IsNullOrWhiteSpace(_infoText))
             {
-                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
+                Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(Activity);
                 balloonBuilder.SetText(_infoText);
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(ListView);
@@ -215,7 +215,7 @@ namespace BmwDeepObd.FilePicker
                         {
                             if (!_instanceData.DirSelectHintShown)
                             {
-                                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
+                                Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(Activity);
                                 balloonBuilder.SetText(Activity.GetString(Resource.String.file_picker_dir_select));
                                 Balloon balloon = balloonBuilder.Build();
                                 balloon.ShowAtCenter(view);
@@ -384,7 +384,7 @@ namespace BmwDeepObd.FilePicker
                 if (view != null)
                 {
                     string message = GetString(Resource.String.access_dir_failed) + "\r\n" + directory;
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
+                    Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(Activity);
                     balloonBuilder.SetText(message);
                     Balloon balloon = balloonBuilder.Build();
                     balloon.ShowAtCenter(view);

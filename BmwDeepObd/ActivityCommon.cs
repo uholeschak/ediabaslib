@@ -372,8 +372,8 @@ namespace BmwDeepObd
                 if (storage)
                 {
                     this.RecentLocale = GetLocaleSetting(activityCommon.Context, true);
-                    this.RecentConfigFiles = GetRecentConfigList();
-                    this.SerialInfo = GetSerialInfoList();
+                    this.RecentConfigFiles = RecentConfigUtils.GetRecentConfigList();
+                    this.SerialInfo = SerialInfoUtils.GetSerialInfoList();
                 }
             }
 
@@ -1077,9 +1077,7 @@ namespace BmwDeepObd
         private static readonly object LockObject = new object();
         private static readonly object JobReaderLockObject = new object();
         private static readonly object SettingsLockObject = new object();
-        private static readonly object RecentConfigLockObject = new object();
         private static readonly object LastSerialLockObject = new object();
-        private static readonly object SerialInfoLockObject = new object();
         private static readonly object CompileLock = new object();
         private static int _instanceCount;
         private static string _customStorageMedia;
@@ -1093,8 +1091,6 @@ namespace BmwDeepObd
         private static TranslatorType _translatorType;
         private static Dictionary<string, UdsReader> _udsReaderDict;
         private static EcuFunctionReader _ecuFunctionReader;
-        private static readonly List<string> _recentConfigList;
-        private static readonly List<SerialInfoEntry> _serialInfoList;
         private readonly BluetoothAdapter _btAdapter;
         private readonly BluetoothManager _bluetoothManager;
         private readonly Java.Lang.Object _clipboardManager;
@@ -1652,8 +1648,6 @@ namespace BmwDeepObd
         static ActivityCommon()
         {
             JobReader = new JobReader(false);
-            _recentConfigList = new List<string>();
-            _serialInfoList = new List<SerialInfoEntry>();
             EdiabasNet.EncodeFileNameKey = string.Empty;
         }
 
@@ -2671,64 +2665,6 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static Android.Graphics.Color GetStyleColor(Context context, int attribute)
-        {
-            TypedArray typedArray = context.Theme.ObtainStyledAttributes([attribute]);
-            return typedArray.GetColor(0, 0xFFFFFF);
-        }
-
-        public static Balloon.Builder GetBalloonBuilder(Context context)
-        {
-            Balloon.Builder balloonBuilder = new Balloon.Builder(context);
-            balloonBuilder.SetDismissWhenClicked(true);
-            balloonBuilder.SetDismissWhenTouchOutside(true);
-            balloonBuilder.SetBackgroundColor(GetStyleColor(context, Resource.Attribute.balloonBackgroundColor));
-            balloonBuilder.SetTextColor(GetStyleColor(context, Resource.Attribute.balloonTextColor));
-            balloonBuilder.SetTextSize(14.0f);
-            balloonBuilder.SetTextTypeface((int)Android.Graphics.TypefaceStyle.Italic);
-            balloonBuilder.SetBalloonAnimation(BalloonAnimation.Elastic);
-            balloonBuilder.SetAutoDismissDuration(BalloonDismissDuration);
-            balloonBuilder.SetPadding(10);
-            balloonBuilder.SetArrowOrientation(ArrowOrientation.Bottom);
-            balloonBuilder.SetArrowPosition(0.5f);
-            balloonBuilder.SetArrowOrientationRules(ArrowOrientationRules.AlignFixed);
-            balloonBuilder.SetLifecycleOwner(ProcessLifecycleOwner.Get());
-
-            return balloonBuilder;
-        }
-
-        public static bool ShowAlertDialogBalloon(Context context, AlertDialog alertDialog, int resId, int dismissDuration = BalloonDismissDuration)
-        {
-            View decorView = alertDialog.Window?.DecorView;
-            if (decorView != null)
-            {
-                Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
-                balloonBuilder.SetText(context.GetString(resId));
-                balloonBuilder.SetAutoDismissDuration(dismissDuration);
-                Balloon balloon = balloonBuilder.Build();
-                balloon.ShowAlignTop(decorView);
-                return true;
-            }
-
-            return false;
-        }
-
-        public static bool ShowAlertDialogBalloon(Context context, AlertDialog alertDialog, string text, int dismissDuration = BalloonDismissDuration)
-        {
-            View decorView = alertDialog.Window?.DecorView;
-            if (decorView != null)
-            {
-                Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
-                balloonBuilder.SetText(text);
-                balloonBuilder.SetAutoDismissDuration(dismissDuration);
-                Balloon balloon = balloonBuilder.Build();
-                balloon.ShowAlignTop(decorView);
-                return true;
-            }
-
-            return false;
-        }
-
         public void ShowBallonMessage(View contentView, string message, int dismissDuration = BalloonDismissDuration, BalloonAlligment alignment = BalloonAlligment.Center)
         {
             if (string.IsNullOrWhiteSpace(message))
@@ -2742,7 +2678,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            Balloon.Builder balloonBuilder = GetBalloonBuilder(_context);
+            Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(_context);
             balloonBuilder.SetText(message);
             balloonBuilder.SetAutoDismissDuration(dismissDuration);
             balloonBuilder.SetDismissWhenClicked(true);
@@ -2853,271 +2789,6 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static List<string> GetRecentConfigList()
-        {
-            lock (RecentConfigLockObject)
-            {
-                return new List<string>(_recentConfigList);
-            }
-        }
-
-        public static void SetRecentConfigList(List<string> configList)
-        {
-            lock (RecentConfigLockObject)
-            {
-                _recentConfigList.Clear();
-                if (configList != null)
-                {
-                    foreach (string fileName in configList)
-                    {
-                        if (!_recentConfigList.Contains(fileName))
-                        {
-                            _recentConfigList.Add(fileName);
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void RecentConfigListClear()
-        {
-            lock (RecentConfigLockObject)
-            {
-                _recentConfigList.Clear();
-            }
-        }
-
-        public static bool RecentConfigListAdd(string fileName)
-        {
-            try
-            {
-                lock (RecentConfigLockObject)
-                {
-                    if (_recentConfigList.Contains(fileName))
-                    {
-                        _recentConfigList.Remove(fileName);
-                    }
-
-                    _recentConfigList.Insert(0, fileName);
-                    while (_recentConfigList.Count > 10)
-                    {
-                        _recentConfigList.RemoveAt(_recentConfigList.Count - 1);
-                    }
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public static bool RecentConfigListRemove(string fileName)
-        {
-            try
-            {
-                lock (RecentConfigLockObject)
-                {
-                    if (_recentConfigList.Contains(fileName))
-                    {
-                        _recentConfigList.Remove(fileName);
-                        return true;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return false;
-        }
-
-        public static bool RecentConfigListCleanup()
-        {
-            try
-            {
-                lock (RecentConfigLockObject)
-                {
-                    int index = 0;
-                    while (index < _recentConfigList.Count)
-                    {
-                        if (!File.Exists(_recentConfigList[index]))
-                        {
-                            _recentConfigList.RemoveAt(index);
-                        }
-                        else
-                        {
-                            index++;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return false;
-        }
-
-        public static bool GetSerialInfo(string responseXml, out string serial, out string oem, out bool disabled)
-        {
-            serial = null;
-            oem = null;
-            disabled = false;
-            try
-            {
-                if (string.IsNullOrEmpty(responseXml))
-                {
-                    return false;
-                }
-                XDocument xmlDoc = XDocument.Parse(responseXml);
-                XElement serialInfoNode = xmlDoc.Root?.Element("serial_info");
-                if (serialInfoNode != null)
-                {
-                    XAttribute serialAttr = serialInfoNode.Attribute("serial");
-                    if (serialAttr != null)
-                    {
-                        serial = serialAttr.Value;
-                    }
-
-                    XAttribute oemAttr = serialInfoNode.Attribute("oem");
-                    if (oemAttr != null)
-                    {
-                        oem = oemAttr.Value;
-                    }
-
-                    XAttribute disabledAttr = serialInfoNode.Attribute("disabled");
-                    if (disabledAttr != null)
-                    {
-                        try
-                        {
-                            disabled = XmlConvert.ToBoolean(disabledAttr.Value);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public static bool UpdateSerialInfo(string responseXml)
-        {
-            SerialInfoEntry serialInfo = null;
-            if (GetSerialInfo(responseXml, out string serial, out string oem, out bool disabled))
-            {
-                serialInfo = new SerialInfoEntry(serial, oem, disabled, true);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(LastAdapterSerial))
-                {
-                    serialInfo = new SerialInfoEntry(LastAdapterSerial, string.Empty, false, false);
-                }
-            }
-
-            if (serialInfo != null)
-            {
-                return SerialInfoListAdd(serialInfo);
-            }
-
-            return false;
-        }
-
-        public static List<SerialInfoEntry> GetSerialInfoList()
-        {
-            lock (SerialInfoLockObject)
-            {
-                return new List<SerialInfoEntry>(_serialInfoList);
-            }
-        }
-
-        public static void SetSerialInfoList(List<SerialInfoEntry> serialList)
-        {
-            lock (SerialInfoLockObject)
-            {
-                _serialInfoList.Clear();
-                if (serialList != null)
-                {
-                    foreach (SerialInfoEntry serialInfo in serialList)
-                    {
-                        if (string.IsNullOrEmpty(serialInfo.Serial))
-                        {
-                            continue;
-                        }
-
-                        if (_serialInfoList.Contains(serialInfo))
-                        {
-                            continue;
-                        }
-
-                        _serialInfoList.Add(serialInfo);
-                    }
-                }
-            }
-        }
-
-        public static void SerialInfoListClear()
-        {
-            lock (SerialInfoLockObject)
-            {
-                _serialInfoList.Clear();
-            }
-        }
-
-        public static bool SerialInfoListAdd(SerialInfoEntry serialInfo)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(serialInfo.Serial))
-                {
-                    return false;
-                }
-
-                lock (SerialInfoLockObject)
-                {
-                    if (_serialInfoList.Contains(serialInfo))
-                    {
-                        _serialInfoList.Remove(serialInfo);
-                    }
-
-                    _serialInfoList.Insert(0, serialInfo);
-                    while (_serialInfoList.Count > 10)
-                    {
-                        _serialInfoList.RemoveAt(_serialInfoList.Count - 1);
-                    }
-                }
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public static bool IsSerialNumberCheckRequired()
-        {
-            string serialNumber = LastAdapterSerial;
-            if (string.IsNullOrEmpty(serialNumber))
-            {
-                return false;
-            }
-
-            SerialInfoEntry serialInfo = new SerialInfoEntry(serialNumber, string.Empty, false, true);
-            lock (SerialInfoLockObject)
-            {
-                return !_serialInfoList.Contains(serialInfo);
-            }
-        }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static bool PostRunnable(Handler handler, Java.Lang.IRunnable runnable, RunnablePostDelegate runnablePostDelegate = null)
         {
@@ -5013,7 +4684,7 @@ namespace BmwDeepObd
                     }
 
                     string message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.vag_mode_info_ballon), VagEndDate);
-                    ShowAlertDialogBalloon(_context, _selectManufacturerAlertDialog, message, 20000);
+                    UiUtils.ShowAlertDialogBalloon(_context, _selectManufacturerAlertDialog, message, 20000);
                 };
 
                 _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
@@ -7830,8 +7501,8 @@ namespace BmwDeepObd
                         throw new Exception("Invalid mail line info");
                     }
 
-                    List<SerialInfoEntry> serialInfoListOld = GetSerialInfoList();
-                    UpdateSerialInfo(responseDownloadXml);
+                    List<SerialInfoEntry> serialInfoListOld = SerialInfoUtils.GetSerialInfoList();
+                    SerialInfoUtils.UpdateSerialInfo(responseDownloadXml);
                     string adapterBlacklistOld = AdapterBlacklist;
                     AdapterBlacklist = adapterBlacklistNew ?? string.Empty;
 
@@ -8696,7 +8367,7 @@ namespace BmwDeepObd
 
                         if (success)
                         {
-                            UpdateSerialInfo(responseUpdateXml);
+                            SerialInfoUtils.UpdateSerialInfo(responseUpdateXml);
                             AdapterBlacklist = adapterBlacklist ?? string.Empty;
 
                             if (!string.IsNullOrEmpty(errorMessage))
@@ -12449,7 +12120,7 @@ using System.Threading;"
 
                     SelectedTheme = storageData.SelectedTheme;
                     RecentLocale = storageData.RecentLocale;
-                    SetRecentConfigList(storageData.RecentConfigFiles);
+                    RecentConfigUtils.SetRecentConfigList(storageData.RecentConfigFiles);
                     CustomStorageMedia = storageData.CustomStorageMedia;
                     CopyToAppSrc = storageData.CopyToAppSrc;
                     CopyToAppDst = storageData.CopyToAppDst;
@@ -12468,7 +12139,7 @@ using System.Threading;"
                     ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
                     BatteryWarnings = storageData.BatteryWarnings;
                     BatteryWarningVoltage = storageData.BatteryWarningVoltage;
-                    SetSerialInfoList(storageData.SerialInfo);
+                    SerialInfoUtils.SetSerialInfoList(storageData.SerialInfo);
                     AdapterBlacklist = storageData.AdapterBlacklist;
                     LastAdapterSerial = storageData.LastAdapterSerial;
                     EmailAddress = storageData.EmailAddress;

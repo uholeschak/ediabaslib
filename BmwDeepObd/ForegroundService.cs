@@ -824,7 +824,7 @@ namespace BmwDeepObd
         private bool StoragePermissionGranted(ActivityCommon.InstanceDataCommon instanceData)
         {
             StorageUtils.SetStoragePath();
-            ActivityCommon.RecentConfigListCleanup();
+            RecentConfigUtils.RecentConfigListCleanup();
             return _activityCommon.UpdateDirectories(instanceData);
         }
 

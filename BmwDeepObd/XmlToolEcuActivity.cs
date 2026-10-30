@@ -2226,7 +2226,7 @@ namespace BmwDeepObd
             {
                 if (!_instanceData.ArgLimitCritical)
                 {
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(this);
                     balloonBuilder.SetText(GetString(Resource.String.xml_tool_ecu_arg_limit_hint));
                     Balloon balloon = balloonBuilder.Build();
                     balloon.ShowAtCenter(_spinnerArgLimit);
@@ -2753,7 +2753,7 @@ namespace BmwDeepObd
             {
                 _context = context;
                 _items = new List<JobInfo>();
-                _backgroundColor = ActivityCommon.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
+                _backgroundColor = UiUtils.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
             }
 
             public override long GetItemId(int position)
@@ -2853,7 +2853,7 @@ namespace BmwDeepObd
                 _context = context;
                 _items = new List<ResultInfo>();
                 _itemsVisible = new List<ResultInfo>();
-                _backgroundColor = ActivityCommon.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
+                _backgroundColor = UiUtils.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
             }
 
             public override long GetItemId(int position)

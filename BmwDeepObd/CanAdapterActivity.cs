@@ -798,7 +798,7 @@ namespace BmwDeepObd
                 string serialTypeText = string.Empty;
                 if (_bCustomAdapter && bEnabled && !string.IsNullOrEmpty(serialNumber))
                 {
-                    List<ActivityCommon.SerialInfoEntry> serialInfoList = ActivityCommon.GetSerialInfoList();
+                    List<ActivityCommon.SerialInfoEntry> serialInfoList = SerialInfoUtils.GetSerialInfoList();
                     ActivityCommon.SerialInfoEntry serialCompareEntry = new ActivityCommon.SerialInfoEntry(serialNumber, string.Empty, false, true);
                     ActivityCommon.SerialInfoEntry matchEntry = serialInfoList.FirstOrDefault(x => x.Equals(serialCompareEntry));
                     if (matchEntry != null)

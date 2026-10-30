@@ -1731,7 +1731,7 @@ namespace BmwDeepObd
 
                         if (itemViewBalloon != null)
                         {
-                            Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                            Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(this);
                             balloonBuilder.SetText(GetString(Resource.String.xml_tool_drag_list_hint));
                             Balloon balloon = balloonBuilder.Build();
                             balloon.ShowAtCenter(itemViewBalloon);
@@ -10598,7 +10598,7 @@ namespace BmwDeepObd
             public CustomDragItem(Context context, int layoutId) : base(context, layoutId)
             {
                 _context = context;
-                _backgroundColor = ActivityCommon.GetStyleColor(context, Resource.Attribute.dragBackgroundColor);
+                _backgroundColor = UiUtils.GetStyleColor(context, Resource.Attribute.dragBackgroundColor);
             }
 
             public override void OnBindDragView(View clickedView, View dragView)
