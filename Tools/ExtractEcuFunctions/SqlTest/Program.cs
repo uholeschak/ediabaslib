@@ -24,7 +24,10 @@ namespace SqlTest
                     return 1;
                 }
 
+                SQLitePCL.Batteries_V2.Init();
+
                 // https://www.bricelam.net/2023/11/10/more-sqlite-encryption.html
+                // https://utelle.github.io/SQLite3MultipleCiphers/docs/configuration/config_uri/
                 string hexKey = BitConverter.ToString(Encoding.ASCII.GetBytes(DatabaseFunctions.DatabasePassword)).Replace("-", "");
                 SqliteConnectionStringBuilder connectionBuilder = new SqliteConnectionStringBuilder
                 {
