@@ -1071,7 +1071,7 @@ namespace BmwDeepObd
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.ConfigFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
-                        ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
+                        RecentConfigUtils.RecentConfigListAdd(_instanceData.ConfigFileName);
                         StoreSettings();
                         ReadConfigFile();
                         UpdateOptionsMenu();
@@ -1106,7 +1106,7 @@ namespace BmwDeepObd
                         }
 
                         _instanceData.ConfigFileName = data.Extras.GetString(XmlToolActivity.ExtraFileName);
-                        ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
+                        RecentConfigUtils.RecentConfigListAdd(_instanceData.ConfigFileName);
                         StoreSettings();
                         ReadConfigFile();
                         UpdateOptionsMenu();
@@ -1345,7 +1345,7 @@ namespace BmwDeepObd
                 cfgSelMenu.SetEnabled(!commActive);
             }
 
-            List<string> recentConfigList = ActivityCommon.GetRecentConfigList();
+            List<string> recentConfigList = RecentConfigUtils.GetRecentConfigList();
             IMenuItem recentCfgMenu = menu.FindItem(Resource.Id.menu_recent_cfg_submenu);
             if (recentCfgMenu != null && recentConfigList != null)
             {
@@ -1601,11 +1601,11 @@ namespace BmwDeepObd
                 if (found)
                 {
                     int index = item.ItemId;
-                    List<string> recentConfigList = ActivityCommon.GetRecentConfigList();
+                    List<string> recentConfigList = RecentConfigUtils.GetRecentConfigList();
                     if (recentConfigList != null && index >= 0 && index < recentConfigList.Count)
                     {
                         _instanceData.ConfigFileName = recentConfigList[index];
-                        ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
+                        RecentConfigUtils.RecentConfigListAdd(_instanceData.ConfigFileName);
                         StoreSettings();
                         ReadConfigFile();
                         UpdateOptionsMenu();
@@ -1636,7 +1636,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_recent_cfg_clear:
-                    ActivityCommon.RecentConfigListClear();
+                    RecentConfigUtils.RecentConfigListClear();
                     StoreSettings();
                     UpdateOptionsMenu();
                     return true;
@@ -2544,7 +2544,7 @@ namespace BmwDeepObd
             }
 
             long updateCheckDelay = ActivityCommon.UpdateCheckDelay;
-            bool serialCheck = ActivityCommon.IsSerialNumberCheckRequired();
+            bool serialCheck = SerialInfoUtils.IsSerialNumberCheckRequired();
             if (serialCheck)
             {
                 updateCheckDelay = 0;
@@ -3037,7 +3037,7 @@ namespace BmwDeepObd
         {
             _storageAccessGranted = true;
             StorageUtils.SetStoragePath();
-            ActivityCommon.RecentConfigListCleanup();
+            RecentConfigUtils.RecentConfigListCleanup();
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
             ReadConfigFile();
@@ -4831,7 +4831,7 @@ namespace BmwDeepObd
                 {
                     if (!jobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
                     {
-                        ActivityCommon.RecentConfigListRemove(_instanceData.ConfigFileName);
+                        RecentConfigUtils.RecentConfigListRemove(_instanceData.ConfigFileName);
                         _instanceData.ConfigFileName = string.Empty;
 
                         failed = true;
@@ -5563,7 +5563,7 @@ namespace BmwDeepObd
                             string key = GetObbKey(responseXml, out errorMessage, out string adapterBlacklist);
                             if (key != null)
                             {
-                                ActivityCommon.UpdateSerialInfo(responseXml);
+                                SerialInfoUtils.UpdateSerialInfo(responseXml);
                                 ActivityCommon.AdapterBlacklist = adapterBlacklist ?? string.Empty;
 #if DEBUG
                                 bool yesSelected = false;
@@ -6933,7 +6933,7 @@ namespace BmwDeepObd
 
                 if (DocumentUtils.IsDocumentTreeSupported())
                 {
-                    ActivityCommon.ShowAlertDialogBalloon(this, alertDialog, Resource.String.menu_hint_copy_folder);
+                    UiUtils.ShowAlertDialogBalloon(this, alertDialog, Resource.String.menu_hint_copy_folder);
                 }
             };
 

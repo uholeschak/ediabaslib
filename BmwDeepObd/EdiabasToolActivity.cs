@@ -1506,7 +1506,7 @@ namespace BmwDeepObd
 
                 if (DocumentUtils.IsDocumentTreeSupported())
                 {
-                    ActivityCommon.ShowAlertDialogBalloon(this, alertDialog, Resource.String.menu_hint_copy_folder);
+                    UiUtils.ShowAlertDialogBalloon(this, alertDialog, Resource.String.menu_hint_copy_folder);
                 }
             };
             alertDialog.Show();
@@ -3274,7 +3274,7 @@ namespace BmwDeepObd
             {
                 _context = context;
                 _items = new List<JobInfo>();
-                _backgroundColor = ActivityCommon.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
+                _backgroundColor = UiUtils.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
             }
 
             public override long GetItemId(int position)
@@ -3342,7 +3342,7 @@ namespace BmwDeepObd
                 _context = context;
                 _items = new List<ExtraInfo>();
                 _itemsVisible = new List<ExtraInfo>();
-                _backgroundColor = ActivityCommon.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
+                _backgroundColor = UiUtils.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
             }
 
             public override long GetItemId(int position)

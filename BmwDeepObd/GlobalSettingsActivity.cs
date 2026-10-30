@@ -323,7 +323,7 @@ namespace BmwDeepObd
 
                 if (_checkBoxOldVagMode.Checked)
                 {
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(this);
                     balloonBuilder.SetText(GetString(Resource.String.settings_old_vag_mode_hint));
                     Balloon balloon = balloonBuilder.Build();
                     balloon.ShowAtCenter(_checkBoxOldVagMode);
@@ -582,7 +582,7 @@ namespace BmwDeepObd
                         {
                             if (!_instanceData.BootHintShown)
                             {
-                                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                                Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(this);
                                 balloonBuilder.SetText(message);
                                 Balloon balloon = balloonBuilder.Build();
                                 balloon.ShowAtCenter(_radioButtonStartBoot);
@@ -1210,7 +1210,7 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    ActivityCommon.ShowAlertDialogBalloon(this, alertDialog, Resource.String.config_match_vehicle, 20000);
+                    UiUtils.ShowAlertDialogBalloon(this, alertDialog, Resource.String.config_match_vehicle, 20000);
                 };
 
                 alertDialog.DismissEvent += (sender, args) =>

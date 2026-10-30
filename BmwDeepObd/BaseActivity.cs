@@ -401,7 +401,7 @@ namespace BmwDeepObd
                                 View rootView = contentView?.RootView;
                                 if (rootView != null)
                                 {
-                                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                                    Balloon.Builder balloonBuilder = UiUtils.GetBalloonBuilder(this);
                                     balloonBuilder.SetText(GetString(Resource.String.long_click_show_title));
                                     Balloon balloon = balloonBuilder.Build();
                                     balloon.ShowAtCenter(rootView);
