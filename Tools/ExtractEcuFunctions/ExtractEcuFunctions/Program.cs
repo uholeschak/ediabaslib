@@ -133,6 +133,8 @@ namespace ExtractEcuFunctions
                     // ignored
                 }
 
+                SQLitePCL.Batteries_V2.Init();
+
                 string hexKey = BitConverter.ToString(Encoding.ASCII.GetBytes(DatabaseFunctions.DatabasePassword)).Replace("-", "");
                 SqliteConnectionStringBuilder connectionBuilder = new SqliteConnectionStringBuilder
                 {
