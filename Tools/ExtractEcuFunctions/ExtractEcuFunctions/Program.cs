@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BmwFileReader;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Data.Sqlite;
-using PsdzClient.Core;
 
 namespace ExtractEcuFunctions
 {
