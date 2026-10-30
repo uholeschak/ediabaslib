@@ -9679,7 +9679,7 @@ namespace BmwDeepObd
                         return null;
                     }
                 }
-                ActivityCommon.WriteResourceToFile(typeof(XmlToolActivity).Namespace + ".Xml." + XsdFileName, Path.Combine(xmlFileDir, XsdFileName));
+                AssetUtils.WriteResourceToFile(typeof(XmlToolActivity).Namespace + ".Xml." + XsdFileName, Path.Combine(xmlFileDir, XsdFileName));
                 StoreTranslation();
                 return xmlConfigFile;
             }
