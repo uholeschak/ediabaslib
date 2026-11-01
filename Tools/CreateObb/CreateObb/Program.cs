@@ -26,7 +26,7 @@ namespace CreateObb
             [Option('i', "inputdir", Required = true, HelpText = "Input directory.")]
             public string InputDir { get; set; }
 
-            [Option('o', "outputfile", Required = false, HelpText = "Output file")]
+            [Option('o', "outputfile", Required = false, HelpText = "Output file (absolute or relative to input directory)")]
             public string OutputFile { get; set; }
 
             [Option('k', "key", Required = false, HelpText = "Key")]
@@ -86,6 +86,18 @@ namespace CreateObb
                     return 1;
                 }
 
+                if (!Path.IsPathRooted(outputFile))
+                {
+                    outputFile = Path.GetFullPath(Path.Combine(inputDir, outputFile));
+                }
+
+                string outputDir = Path.GetDirectoryName(outputFile);
+                if (string.IsNullOrEmpty(outputDir) || !Directory.Exists(outputDir))
+                {
+                    Console.WriteLine("Output directory {0} not existing", outputDir);
+                    return 1;
+                }
+
                 Console.WriteLine("Input directory: '{0}'", inputDir);
                 Console.WriteLine("Output file: '{0}'", outputFile);
                 if (string.IsNullOrEmpty(key))
@@ -127,7 +139,7 @@ namespace CreateObb
                     Console.WriteLine($"Output file {outputFile} already existing");
                 }
 
-                List<string> parts = SplitZipFile(outputFile, Path.GetDirectoryName(outputFile), 1024 * 1024 * 100);
+                List<string> parts = SplitZipFile(outputFile, outputDir, 1024 * 1024 * 100);
                 if (parts == null || parts.Count == 0)
                 {
                     Console.WriteLine("Splitting Zip file failed");
