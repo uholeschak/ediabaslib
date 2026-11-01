@@ -78,8 +78,8 @@ namespace PsdzClient
                 // <hostingEnvironment shadowCopyBinAssemblies="false" />
                 if (patchSqliteLoadRequired)
                 {
-                    log.InfoFormat("PatchLoader: Patching Init");
 #if NET
+                    log.InfoFormat("PatchLoader: Patching Init");
                     try
                     {
                         if (_dllDirCookie == IntPtr.Zero)
