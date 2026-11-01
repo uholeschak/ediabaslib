@@ -611,7 +611,7 @@ namespace BmwFileReader
                 ZipFile zf = null;
                 try
                 {
-                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, EcuFunctionReader.EcuFuncFileName)))
+                    using (FileStream fs = File.OpenRead(EcuFunctionReader.GetEcuFuncFilePath(databaseDir)))
                     {
                         zf = new ZipFile(fs);
                         foreach (ZipEntry zipEntry in zf)
@@ -723,7 +723,7 @@ namespace BmwFileReader
                     IComparer<string> comparer = new EbcdicVIN7Comparer();
                     List<VinRangeInfo> vinRangeList = new List<VinRangeInfo>();
 
-                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, EcuFunctionReader.EcuFuncFileName)))
+                    using (FileStream fs = File.OpenRead(EcuFunctionReader.GetEcuFuncFilePath(databaseDir)))
                     {
                         zf = new ZipFile(fs);
                         foreach (ZipEntry zipEntry in zf)

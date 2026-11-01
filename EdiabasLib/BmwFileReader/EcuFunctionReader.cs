@@ -12,7 +12,7 @@ namespace BmwFileReader
 {
     public class EcuFunctionReader
     {
-        public const string EcuFuncFileName = "EcuFunctionsMerge.zip";
+        public const string EcuFuncFilePattern = "EcuFunctions*.zip";
         public const string FaultDataBaseName = "faultdata_";
         public const string FaultDataTypeFault = "F";
         public const string FaultDataTypeInfo = "I";
@@ -26,6 +26,7 @@ namespace BmwFileReader
         private readonly Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel> _ecuEnvCondLabelDict;
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
         private string _ecuFaultDataLanguage;
+        private string _ecuFuncFilePath;
 
         public string FaultDataId
         {
@@ -509,6 +510,23 @@ namespace BmwFileReader
             return ecuFaultData;
         }
 
+        public static string GetEcuFuncFilePath(string dir)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir))
+                {
+                    return null;
+                }
+
+                return Directory.GetFiles(dir, EcuFuncFilePattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         protected object GetEcuDataObject(string name, Type type, ProgressDelegate progressHandler = null)
         {
             try
@@ -523,7 +541,12 @@ namespace BmwFileReader
                 try
                 {
                     string fileName = name.ToLowerInvariant() + ".xml";
-                    FileStream fs = File.OpenRead(Path.Combine(_rootDir, EcuFuncFileName));
+                    if (string.IsNullOrEmpty(_ecuFuncFilePath))
+                    {
+                        _ecuFuncFilePath = GetEcuFuncFilePath(_rootDir);
+                    }
+
+                    FileStream fs = File.OpenRead(_ecuFuncFilePath);
                     zf = new ZipFile(fs);
                     foreach (ZipEntry zipEntry in zf)
                     {
