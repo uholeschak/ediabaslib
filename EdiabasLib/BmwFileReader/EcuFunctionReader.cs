@@ -12,7 +12,7 @@ namespace BmwFileReader
 {
     public class EcuFunctionReader
     {
-        public const string EcuFuncFileName = "EcuFunctions.zip";
+        public const string EcuFuncFileName = "EcuFunctionsMerge.zip";
         public const string FaultDataBaseName = "faultdata_";
         public const string FaultDataTypeFault = "F";
         public const string FaultDataTypeInfo = "I";
