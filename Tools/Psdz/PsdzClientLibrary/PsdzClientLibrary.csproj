@@ -32,7 +32,7 @@
         <Content Include="$(PkgSQLite3MC_PCLRaw_lib)\runtimes\win-arm64\native\sqlite3mc.dll" Link="runtimes\win-arm64\native\sqlite3mc.dll" CopyToOutputDirectory="PreserveNewest" Pack="false" />
     </ItemGroup>
     <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-        <PackageReference Include="HtmlTextWriter" Version="3.0.2" />
+        <PackageReference Include="HtmlTextWriter" Version="3.0.3" />
         <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.1.0" />
         <PackageReference Include="System.Runtime.Serialization.Formatters" Version="10.0.14" />
     </ItemGroup>
