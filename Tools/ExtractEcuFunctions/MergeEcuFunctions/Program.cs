@@ -50,11 +50,22 @@ namespace MergeEcuFunctions
                 return 1;
             }
 
+            string inDir = Path.GetDirectoryName(Path.GetFullPath(inFileName)) ?? string.Empty;
+            if (!Path.IsPathFullyQualified(mergeFileName))
+            {
+                mergeFileName = Path.GetFullPath(Path.Combine(inDir, mergeFileName));
+            }
+
             string outFile = args[2];
             if (string.IsNullOrEmpty(outFile))
             {
                 outTextWriter?.WriteLine("Output file empty");
                 return 1;
+            }
+
+            if (!Path.IsPathFullyQualified(outFile))
+            {
+                outFile = Path.GetFullPath(Path.Combine(inDir, outFile));
             }
 
             try
