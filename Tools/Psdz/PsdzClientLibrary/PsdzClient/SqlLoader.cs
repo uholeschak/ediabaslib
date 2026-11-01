@@ -14,7 +14,12 @@ namespace PsdzClient
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         static extern IntPtr AddDllDirectory(string NewDirectory);
 
-        public const string SqliteLibName = "e_sqlite3mc";
+#if !NET
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern IntPtr LoadLibrary(string lpFileName);
+#endif
+
+        public const string SqliteLibName = "sqlite3mc";
 
         private static readonly ILog log = LogManager.GetLogger(typeof(SqlLoader));
 
@@ -89,7 +94,7 @@ namespace PsdzClient
                                     _dllDirCookie = AddDllDirectory(dllDir);
                                     if (_dllDirCookie != IntPtr.Zero)
                                     {
-                                        NativeLibrary.SetDllImportResolver(typeof(SQLite3Provider_e_sqlite3mc).Assembly, (name, assembly, path) =>
+                                        NativeLibrary.SetDllImportResolver(typeof(SQLite3Provider_sqlite3mc).Assembly, (name, assembly, path) =>
                                         {
                                             IntPtr libHandle = IntPtr.Zero;
                                             if (string.Compare(name, SqliteLibName, StringComparison.OrdinalIgnoreCase) == 0)
@@ -107,22 +112,6 @@ namespace PsdzClient
                     {
                         log.ErrorFormat("PatchLoader: SetDllImportResolver Exception: {0}", e.Message);
                     }
-#else
-                    MethodInfo methodCallSqliteInitPrefix = typeof(SqlLoader).GetMethod("CallSqliteInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
-                    if (methodCallSqliteInitPrefix == null)
-                    {
-                        log.ErrorFormat("PatchLoader: CallSqliteInitPrefix method missing");
-                        return false;
-                    }
-
-                    MethodInfo methodInit = typeof(Batteries_V2).GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
-                    if (methodInit == null)
-                    {
-                        log.ErrorFormat("PatchLoader: Init method missing");
-                        return false;
-                    }
-
-                    harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitPrefix));
 #endif
                 }
 
@@ -178,42 +167,24 @@ namespace PsdzClient
                 UriBuilder uriBuilder = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(new Uri(uriBuilder.Path).LocalPath);
                 string libPath = GetLibPath(path);
-                DoDynamic_cdecl(libPath, NativeLibrary.WHERE_PLAIN);
+                if (LoadLibrary(libPath + ".dll") == IntPtr.Zero)
+                {
+                    log.ErrorFormat("Init: LoadLibrary failed: {0}, Error: {1}", libPath, Marshal.GetLastWin32Error());
+                }
             }
-        }
 
-        public static void DoDynamic_cdecl(string name, int flags = 0)
-        {
-            IGetFunctionPointer gf = MakeDynamic(name, flags);
-            SQLite3Provider_dynamic_cdecl.Setup(name, gf);
-            raw.SetProvider(new SQLite3Provider_dynamic_cdecl());
-        }
-
-        public static IGetFunctionPointer MakeDynamic(string name, int flags = 0)
-        {
-            Assembly assembly = typeof(raw).Assembly;
-            return new MyGetFunctionPointer(NativeLibrary.Load(name, assembly, flags));
-        }
-
-        private class MyGetFunctionPointer : IGetFunctionPointer
-        {
-            private readonly IntPtr _dll;
-
-            public MyGetFunctionPointer(IntPtr dll) => _dll = dll;
-
-            public IntPtr GetFunctionPointer(string name)
-            {
-                IntPtr address;
-                return NativeLibrary.TryGetExport(_dll, name, out address) ? address : IntPtr.Zero;
-            }
-        }
-
-        private static bool CallSqliteInitPrefix()
-        {
-            Init();
-            return false;
+            raw.SetProvider(new SQLite3Provider_sqlite3mc());
         }
 #endif
+        public static void InitSqlite()
+        {
+#if NET
+            Batteries_V2.Init();
+#else
+            // SQLite3MC provider does not resolve runtimes\win-*\native for .NET Framework
+            Init();
+#endif
+        }
         private static bool CallGetTypePrefix(ref object __result, string typeName)
         {
             if (!string.IsNullOrEmpty(typeName))

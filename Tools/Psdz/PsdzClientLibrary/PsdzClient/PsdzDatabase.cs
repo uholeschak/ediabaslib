@@ -1585,6 +1585,8 @@ namespace PsdzClient
                 log.ErrorFormat("PsdzDatabase: PatchLoader failed");
             }
 
+            SqlLoader.InitSqlite();
+
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
             if (!File.Exists(databaseFile))
             {
