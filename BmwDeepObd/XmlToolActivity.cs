@@ -1405,7 +1405,7 @@ namespace BmwDeepObd
             IMenuItem selSgbdSimDirMenu = menu.FindItem(Resource.Id.menu_sel_sim_dir);
             if (selSgbdSimDirMenu != null)
             {
-                bool validDir = ActivityCommon.IsValidSimDir(GetSimulationDir());
+                bool validDir = EdiabasUtils.IsValidSimDir(GetSimulationDir());
                 selSgbdSimDirMenu.SetVisible(!commActive && _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Simulation);
                 selSgbdSimDirMenu.SetChecked(validDir);
             }

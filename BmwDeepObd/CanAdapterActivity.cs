@@ -487,7 +487,7 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    ActivityCommon.SetConnectParamBmwFast(_ediabas);
+                    EdiabasUtils.SetConnectParamBmwFast(_ediabas);
                 }
 
                 _transmitCanceled = false;

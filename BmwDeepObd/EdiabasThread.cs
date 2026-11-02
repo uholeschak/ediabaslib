@@ -483,7 +483,7 @@ namespace BmwDeepObd
                         edInterfaceEnet.RemoteHost = portName;
                     }
 
-                    ActivityCommon.SetDoIpSslProperties(edInterfaceEnet, instanceData.AppDataPath);
+                    EdiabasUtils.SetDoIpSslProperties(edInterfaceEnet, instanceData.AppDataPath);
                 }
 
                 Ediabas.CloseSgbd();
@@ -1194,7 +1194,7 @@ namespace BmwDeepObd
 
         private bool CommEdiabas(JobReader.PageInfo pageInfo)
         {
-            if (ActivityCommon.ReadBatteryVoltage(Ediabas, out double? batteryVoltage, out byte[] adapterSerial))
+            if (EdiabasUtils.ReadBatteryVoltage(Ediabas, out double? batteryVoltage, out byte[] adapterSerial))
             {
                 lock (DataLock)
                 {

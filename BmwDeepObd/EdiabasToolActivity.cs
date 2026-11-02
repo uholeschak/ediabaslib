@@ -680,7 +680,7 @@ namespace BmwDeepObd
             IMenuItem selSgbdSimDirMenu = menu.FindItem(Resource.Id.menu_sel_sim_dir);
             if (selSgbdSimDirMenu != null)
             {
-                bool validDir = ActivityCommon.IsValidSimDir(_instanceData.SimulationDir);
+                bool validDir = EdiabasUtils.IsValidSimDir(_instanceData.SimulationDir);
                 selSgbdSimDirMenu.SetVisible(!commActive && _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Simulation);
                 selSgbdSimDirMenu.SetChecked(validDir);
             }
@@ -2585,7 +2585,7 @@ namespace BmwDeepObd
                         exceptionText = EdiabasNet.GetExceptionText(ex, false, false);
                     }
                     messageList.Add(exceptionText);
-                    if (!_transmitCanceled && ActivityCommon.IsCommunicationError(exceptionText))
+                    if (!_transmitCanceled && EdiabasUtils.IsCommunicationError(exceptionText))
                     {
                         _instanceData.CommErrorsCount++;
                     }
@@ -2994,7 +2994,7 @@ namespace BmwDeepObd
 
                         messageListNew.Add(exceptionText);
 
-                        if (ActivityCommon.IsCommunicationError(exceptionText))
+                        if (EdiabasUtils.IsCommunicationError(exceptionText))
                         {
                             _instanceData.CommErrorsCount++;
                         }
