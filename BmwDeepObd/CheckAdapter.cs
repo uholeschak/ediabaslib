@@ -441,7 +441,7 @@ public class CheckAdapter : IDisposable
                     return false;
                 }
 
-                ActivityCommon.SetConnectParamBmwFast(_ediabas);
+                EdiabasUtils.SetConnectParamBmwFast(_ediabas);
             }
 
             _transmitCancelEvent.Reset();

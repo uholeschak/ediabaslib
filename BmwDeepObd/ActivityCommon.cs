@@ -1568,7 +1568,7 @@ namespace BmwDeepObd
                     }
 
                     case InterfaceType.Simulation:
-                        return IsValidSimDir(simulationDir);
+                        return EdiabasUtils.IsValidSimDir(simulationDir);
                 }
                 return false;
             }
@@ -5382,44 +5382,13 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 edInterfaceEnet.RemoteHost = remoteHost;
-                SetDoIpSslProperties(edInterfaceEnet, appDataDir);
+                EdiabasUtils.SetDoIpSslProperties(edInterfaceEnet, appDataDir);
 
                 connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate);
             }
 
             ediabas.CloseSgbd();
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
-        }
-
-        public static bool SetDoIpSslProperties(EdInterfaceEnet edInterfaceEnet, string appDataDir)
-        {
-            if (!string.IsNullOrEmpty(appDataDir))
-            {
-                string securityDir = Path.Combine(appDataDir, SecuritySubDir);
-                string caCertsDir = Path.Combine(securityDir, CaCertsSubDir);
-                string certsDir = Path.Combine(securityDir, CertsSubDir);
-                edInterfaceEnet.DoIpSslSecurityPath = caCertsDir;
-                edInterfaceEnet.DoIpS29Path = certsDir;
-                edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
-                edInterfaceEnet.Authentication = EdInterfaceEnet.AuthenticationS29;
-                return true;
-            }
-
-            edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolTcp;
-            edInterfaceEnet.Authentication = EdInterfaceEnet.AuthenticationNone;
-            return false;
-        }
-
-        public static bool SetConnectParamBmwFast(EdiabasNet ediabasNet)
-        {
-            if (ediabasNet?.EdInterfaceClass == null)
-            {
-                return false;
-            }
-
-            ediabasNet.EdInterfaceClass.CommParameter = EdInterfaceBase.CommParameterBmwFast;
-            ediabasNet.EdInterfaceClass.CommAnswerLen = EdInterfaceBase.CommAnswerLenBmwFast;
-            return true;
         }
 
         public List<X509CertificateStructure> GenS29Certificate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin, out AsymmetricCipherKeyPair externalKeyPair)
@@ -5940,7 +5909,7 @@ namespace BmwDeepObd
             }
             else
             {
-                result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
+                result = EdiabasUtils.FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
             }
 
             try
@@ -5965,39 +5934,6 @@ namespace BmwDeepObd
             return result;
         }
 
-        public static String FormatResultEdiabas(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
-        {
-            StringBuilder sbResult = new StringBuilder();
-            IList<EdiabasNet.ResultData> resultDataList;
-            if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out resultDataList))
-            {
-                foreach (EdiabasNet.ResultData resultData in resultDataList)
-                {
-                    string result;
-                    if (resultData.OpData.GetType() == typeof(byte[]))
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        byte[] data = (byte[])resultData.OpData;
-                        foreach (byte value in data)
-                        {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02} ", value));
-                        }
-                        result = sb.ToString();
-                    }
-                    else
-                    {
-                        result = EdiabasNet.FormatResult(resultData, format) ?? "?";
-                    }
-                    if (sbResult.Length > 0)
-                    {
-                        sbResult.Append("\r\n");
-                    }
-                    sbResult.Append(result);
-                }
-            }
-            return sbResult.ToString();
-        }
-
         public static bool IsTraceFilePresent(string traceDir)
         {
             if (CollectDebugInfo)
@@ -6010,34 +5946,6 @@ namespace BmwDeepObd
             }
             string traceFile = Path.Combine(traceDir, TraceFileName);
             return File.Exists(traceFile);
-        }
-
-        public static bool IsValidSimDir(string simulationDir)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(simulationDir))
-                {
-                    return false;
-                }
-
-                if (!Directory.Exists(simulationDir))
-                {
-                    return false;
-                }
-
-                string[] simFiles = Directory.GetFiles(simulationDir, "*.sim", SearchOption.TopDirectoryOnly);
-                if (simFiles.Length == 0)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         public PackageInfo GetPackageInfo(PackageInfoFlags infoFlags = 0)
@@ -7489,40 +7397,6 @@ namespace BmwDeepObd
                 return DefaultLang;
             }
         }
-        public static bool ReadBatteryVoltage(EdiabasNet ediabas, out double? batteryVoltage, out byte[] adapterSerial)
-        {
-            batteryVoltage = null;
-            adapterSerial = null;
-            try
-            {
-                if (ediabas == null)
-                {
-                    return false;
-                }
-                if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
-                {
-                    if (!edInterfaceObd.Connected)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-
-                // this only reads cached values
-                batteryVoltage = ediabas.EdInterfaceClass.AdapterVoltage;
-                adapterSerial = ediabas.EdInterfaceClass.AdapterSerial;
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         public List<string> ConvertVagDtcCode(string ecuPath, long code, List<long> typeList, bool kwp1281, bool saeMode)
         {
             try
@@ -9594,19 +9468,6 @@ using System.Threading;"
             {
                 return false;
             }
-        }
-
-        public static bool IsCommunicationError(string exceptionText)
-        {
-            if (string.IsNullOrEmpty(exceptionText))
-            {
-                return false;
-            }
-            if (exceptionText.Contains("executeJob aborted"))
-            {
-                return false;
-            }
-            return true;
         }
 
         public static string GetSettingsFileName(bool secondLocation = false)

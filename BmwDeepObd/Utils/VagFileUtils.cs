@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using UdsFileReader;
-using static BmwDeepObd.ActivityCommon;
 
 namespace BmwDeepObd
 {
@@ -16,31 +13,31 @@ namespace BmwDeepObd
     {
         public static string GetVagDatUkdDir(string ecuPath, bool ignoreManufacturer = false)
         {
-            string lang = GetCurrentLanguageStatic();
+            string lang = ActivityCommon.GetCurrentLanguageStatic();
             string dirName = Path.Combine(ecuPath, "dat.ukd", lang);
             if (!Directory.Exists(dirName))
             {
-                dirName = Path.Combine(ecuPath, "dat.ukd", DefaultLang);
+                dirName = Path.Combine(ecuPath, "dat.ukd", ActivityCommon.DefaultLang);
             }
 
             if (!ignoreManufacturer)
             {
                 string manufactName = string.Empty;
-                switch (SelectedManufacturer)
+                switch (ActivityCommon.SelectedManufacturer)
                 {
-                    case ManufacturerType.Audi:
+                    case ActivityCommon.ManufacturerType.Audi:
                         manufactName = "audi";
                         break;
 
-                    case ManufacturerType.Seat:
+                    case ActivityCommon.ManufacturerType.Seat:
                         manufactName = "seat";
                         break;
 
-                    case ManufacturerType.Skoda:
+                    case ActivityCommon.ManufacturerType.Skoda:
                         manufactName = "skoda";
                         break;
 
-                    case ManufacturerType.Vw:
+                    case ActivityCommon.ManufacturerType.Vw:
                         manufactName = "vw";
                         break;
                 }
@@ -52,7 +49,7 @@ namespace BmwDeepObd
             return dirName;
         }
 
-        public static List<VagEcuEntry> ReadVagEcuList(string ecuPath)
+        public static List<ActivityCommon.VagEcuEntry> ReadVagEcuList(string ecuPath)
         {
             try
             {
@@ -64,7 +61,7 @@ namespace BmwDeepObd
                 {
                     return null;
                 }
-                List<VagEcuEntry> ecuList = new List<VagEcuEntry>();
+                List<ActivityCommon.VagEcuEntry> ecuList = new List<ActivityCommon.VagEcuEntry>();
                 foreach (XElement ecuNode in ecuListNode.Elements("Ecu"))
                 {
                     XElement sysNode = ecuNode.Element("SysName");
@@ -101,7 +98,7 @@ namespace BmwDeepObd
                     {
                         continue;
                     }
-                    ecuList.Add(new VagEcuEntry(sysName, address));
+                    ecuList.Add(new ActivityCommon.VagEcuEntry(sysName, address));
                 }
                 return ecuList;
             }
@@ -114,7 +111,7 @@ namespace BmwDeepObd
         // Convert russian mwtab xml files first with (linux):
         // mkdir ../mwru
         // find -name "*.xml" -exec sh -c "recode UTF8..ISO-8859-1 < '{}' | recode windows-1251..UTF8 > ../mwru/'{}'" \;
-        public static List<MwTabEntry> ReadVagMwTab(string fileName, bool ignoreEmptyUnits = false)
+        public static List<ActivityCommon.MwTabEntry> ReadVagMwTab(string fileName, bool ignoreEmptyUnits = false)
         {
             try
             {
@@ -124,7 +121,7 @@ namespace BmwDeepObd
                 {
                     return null;
                 }
-                List<MwTabEntry> mwTabList = new List<MwTabEntry>();
+                List<ActivityCommon.MwTabEntry> mwTabList = new List<ActivityCommon.MwTabEntry>();
                 foreach (XElement measureNode in xmlDoc.Root.Elements("Messwert"))
                 {
                     try
@@ -269,7 +266,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        mwTabList.Add(new MwTabEntry(blockNumber, valueIndex, description, comment, valueUnit, valueType, valueMin, valueMax));
+                        mwTabList.Add(new ActivityCommon.MwTabEntry(blockNumber, valueIndex, description, comment, valueUnit, valueType, valueMin, valueMax));
                     }
                     catch (Exception)
                     {
@@ -341,9 +338,9 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<MwTabFileEntry> GetMatchingVagMwTabsUds(string mwTabDir, long ecuAddr)
+        public static List<ActivityCommon.MwTabFileEntry> GetMatchingVagMwTabsUds(string mwTabDir, long ecuAddr)
         {
-            List<MwTabFileEntry> mwTabFileList = new List<MwTabFileEntry>();
+            List<ActivityCommon.MwTabFileEntry> mwTabFileList = new List<ActivityCommon.MwTabFileEntry>();
             List<string> fileList = GetMatchingVagMwTabUdsFiles(mwTabDir, ecuAddr);
             if (fileList == null)
             {
@@ -353,20 +350,20 @@ namespace BmwDeepObd
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (string fileName in fileList)
             {
-                List<MwTabEntry> mwTabList = ReadVagMwTab(fileName);
+                List<ActivityCommon.MwTabEntry> mwTabList = ReadVagMwTab(fileName);
                 if (mwTabList == null)
                 {
                     continue;
                 }
-                List<MwTabEntry> mwTabListCleaned = mwTabList.Where(entry => !entry.ValueIndex.HasValue).ToList();
-                mwTabFileList.Add(new MwTabFileEntry(fileName, mwTabListCleaned));
+                List<ActivityCommon.MwTabEntry> mwTabListCleaned = mwTabList.Where(entry => !entry.ValueIndex.HasValue).ToList();
+                mwTabFileList.Add(new ActivityCommon.MwTabFileEntry(fileName, mwTabListCleaned));
             }
             return mwTabFileList;
         }
 
-        public static List<MwTabFileEntry> GetMatchingVagMwTabs(string mwTabDir, string sgName)
+        public static List<ActivityCommon.MwTabFileEntry> GetMatchingVagMwTabs(string mwTabDir, string sgName)
         {
-            List<MwTabFileEntry> mwTabFileList = new List<MwTabFileEntry>();
+            List<ActivityCommon.MwTabFileEntry> mwTabFileList = new List<ActivityCommon.MwTabFileEntry>();
             List<string> fileList = GetMatchingVagMwTabFiles(mwTabDir, sgName);
             if (fileList == null)
             {
@@ -376,24 +373,24 @@ namespace BmwDeepObd
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (string fileName in fileList)
             {
-                List<MwTabEntry> mwTabList = ReadVagMwTab(fileName, true);
+                List<ActivityCommon.MwTabEntry> mwTabList = ReadVagMwTab(fileName, true);
                 if (mwTabList == null)
                 {
                     continue;
                 }
-                List<MwTabEntry> mwTabListCleaned = mwTabList.Where(entry => entry.ValueIndex.HasValue).ToList();
-                mwTabFileList.Add(new MwTabFileEntry(fileName, mwTabListCleaned));
+                List<ActivityCommon.MwTabEntry> mwTabListCleaned = mwTabList.Where(entry => entry.ValueIndex.HasValue).ToList();
+                mwTabFileList.Add(new ActivityCommon.MwTabFileEntry(fileName, mwTabListCleaned));
             }
             return mwTabFileList;
         }
 
-        public static SortedSet<long> ExtractVagMwBlocks(List<MwTabFileEntry> mwTabFileList)
+        public static SortedSet<long> ExtractVagMwBlocks(List<ActivityCommon.MwTabFileEntry> mwTabFileList)
         {
             SortedSet<long> mwBlocks = new SortedSet<long>();
 
-            foreach (MwTabFileEntry mwTabFileEntry in mwTabFileList)
+            foreach (ActivityCommon.MwTabFileEntry mwTabFileEntry in mwTabFileList)
             {
-                foreach (MwTabEntry mwTabEntry in mwTabFileEntry.MwTabList)
+                foreach (ActivityCommon.MwTabEntry mwTabEntry in mwTabFileEntry.MwTabList)
                 {
                     if (!mwBlocks.Contains(mwTabEntry.BlockNumber))
                     {

@@ -3864,7 +3864,7 @@ namespace BmwDeepObd
                             errorMessage = ActivityCommon.EdiabasThread.EdiabasErrorMessage;
                         }
                     }
-                    if (ActivityCommon.IsCommunicationError(errorMessage))
+                    if (EdiabasUtils.IsCommunicationError(errorMessage))
                     {
                         _instanceData.CommErrorsCount++;
                     }
@@ -4227,7 +4227,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    if (ActivityCommon.IsCommunicationError(errorReport.ExceptionText))
+                    if (EdiabasUtils.IsCommunicationError(errorReport.ExceptionText))
                     {
                         commError = true;
                     }
