@@ -615,5 +615,55 @@ namespace BmwDeepObd
                 return null;
             }
         }
+
+        public static bool IsTranslationAvailable()
+        {
+            switch (ActivityCommon.SelectedTranslator)
+            {
+                case ActivityCommon.TranslatorType.YandexTranslate:
+                    return !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey);
+
+                case ActivityCommon.TranslatorType.IbmWatson:
+                    return !string.IsNullOrWhiteSpace(ActivityCommon.IbmTranslatorApiKey) && !string.IsNullOrWhiteSpace(ActivityCommon.IbmTranslatorUrl);
+
+                case ActivityCommon.TranslatorType.Deepl:
+                    return !string.IsNullOrWhiteSpace(ActivityCommon.DeeplApiKey);
+
+                case ActivityCommon.TranslatorType.YandexCloud:
+                    return !string.IsNullOrWhiteSpace(ActivityCommon.YandexCloudApiKey);
+
+                case ActivityCommon.TranslatorType.GoogleApis:
+                    return !string.IsNullOrWhiteSpace(ActivityCommon.GoogleApisUrl);
+            }
+
+            return false;
+        }
+
+        public static bool TranslationRequiresApiKey()
+        {
+            switch (ActivityCommon.SelectedTranslator)
+            {
+                case ActivityCommon.TranslatorType.GoogleApis:
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static bool IsYandexCloudOauthToken(string apiKey)
+        {
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                return false;
+            }
+
+            string keyTrim = apiKey.Trim();
+            if (keyTrim.Length > 40 && keyTrim[2] == '_')
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
