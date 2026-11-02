@@ -593,8 +593,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 else
                 {
                     //[-] xEP_FAULTLABELS = DatabaseProviderFactory.Instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
-                    //[+] xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver); xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
-                    xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver); xEP_FAULTLABELS = ((xepFaultLabelsCollection != null) ? (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null) : instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver));
+                    //[+] xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
+                    xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
                 }
 
                 string value;
@@ -957,9 +957,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
 
                 bool flag = false;
-                decimal? nodeClass = envCondsByUwNrName.NodeClass;
-                decimal num = 5658114;
-                if ((nodeClass.GetValueOrDefault() == num) & nodeClass.HasValue)
+                if (envCondsByUwNrName.NodeClass == (decimal? )5658114)
                 {
                     //[-] IList<XEP_STATEVALUES> ecuResultStateValues = DatabaseProviderFactory.Instance.GetEcuResultStateValues(envCondsByUwNrName.Id);
                     //[+] IList<XEP_STATEVALUES> ecuResultStateValues = ClientContext.GetDatabase(vehicle).GetEcuResultStateValues(envCondsByUwNrName.Id);
