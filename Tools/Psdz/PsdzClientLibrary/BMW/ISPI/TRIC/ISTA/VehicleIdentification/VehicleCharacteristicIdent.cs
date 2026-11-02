@@ -9,6 +9,7 @@ using BMW.ISPI.TRIC.ISTA.MultisourceLogic;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.ISTA.CoreFramework;
+using BmwFileReader;
 using PsdzClient;
 
 namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification
@@ -266,19 +267,9 @@ namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //[-] decimal? istaVisible = characteristic.IstaVisible;
-            //[+] decimal? istaVisible = null;
-            decimal? istaVisible = null;
-            //[+] if (decimal.TryParse(characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
-            if (decimal.TryParse(characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
-            //[+] {
-            {
-                //[+] istaVisible = visible;
-                istaVisible = visible;
-            //[+] }
-            }
-
-            if (!((istaVisible.GetValueOrDefault() == 0m) & istaVisible.HasValue))
+            //[-] if (!(characteristic.IstaVisible == (decimal? )0m))
+            //[+] if ((characteristic.IstaVisible.ConvertToInt() != (decimal?)0m))
+            if ((characteristic.IstaVisible.ConvertToInt() != (decimal?)0m))
             {
                 reactor.SetVerkaufsBezeichnung(characteristic.Name, DataSource.Database);
             }
