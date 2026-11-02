@@ -5197,7 +5197,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out errorList);
+                        referencesList = CompilerUtils.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out errorList);
                         if (errorList.Count == 0)
                         {
                             break;
