@@ -1164,7 +1164,7 @@ namespace BmwDeepObd
 
                             adaptionValueStart = sb.ToString();
                             adaptionValueNew = valueString;
-                            inputType = ActivityCommon.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
+                            inputType = VagFileUtils.ConvertVagUdsDataTypeToInputType(parseInfoAdp.DataTypeEntry.DataTypeId);
                             validData = valueString != null;
                             if (isValueName && _instanceData.UpdateAdaptionValueNew)
                             {

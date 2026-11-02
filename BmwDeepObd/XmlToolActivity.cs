@@ -926,7 +926,7 @@ namespace BmwDeepObd
             _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
             _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
             _lastFileName = Intent.GetStringExtra(ExtraFileName);
-            _datUkdDir = ActivityCommon.GetVagDatUkdDir(_ecuDir);
+            _datUkdDir = VagFileUtils.GetVagDatUkdDir(_ecuDir);
 
             ViewStates visibility = IsPageSelectionActive() ? ViewStates.Gone : ViewStates.Visible;
             _buttonRead.Visibility = visibility;
@@ -5144,7 +5144,7 @@ namespace BmwDeepObd
 
         private void ExecuteAnalyzeJobVag(int searchStartIndex)
         {
-            List<ActivityCommon.VagEcuEntry> ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
+            List<ActivityCommon.VagEcuEntry> ecuVagList = VagFileUtils.ReadVagEcuList(_ecuDir);
             if ((ecuVagList == null) || (ecuVagList.Count == 0))
             {
                 ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_read_ecu_info_failed);
@@ -5178,7 +5178,7 @@ namespace BmwDeepObd
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
             {
-                Dictionary<int, string> ecuNameDict = ActivityCommon.GetVagEcuNamesDict(_ecuDir);
+                Dictionary<int, string> ecuNameDict = VagFileUtils.GetVagEcuNamesDict(_ecuDir);
                 int maxEcuAddress = 0xFF;
                 int ecuCount = ecuVagList.Count;
                 int index = 0;
@@ -5697,7 +5697,7 @@ namespace BmwDeepObd
                                             else
                                             {
                                                 ecuInfo.MwTabFileName = name;
-                                                ecuInfo.MwTabList = ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName);
+                                                ecuInfo.MwTabList = VagFileUtils.ReadVagMwTab(ecuInfo.MwTabFileName);
                                                 ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
                                                 _jobThread = new Thread(() =>
                                                 {
@@ -5728,7 +5728,7 @@ namespace BmwDeepObd
                             }
                         }
                         ecuInfo.MwTabList = (!string.IsNullOrEmpty(ecuInfo.MwTabFileName) && !IsMwTabEmpty(ecuInfo.MwTabFileName)) ?
-                            ActivityCommon.ReadVagMwTab(ecuInfo.MwTabFileName) : null;
+                            VagFileUtils.ReadVagMwTab(ecuInfo.MwTabFileName) : null;
                     }
                     ecuInfo.ReadCommand = GetReadCommand(ecuInfo);
 
@@ -6607,9 +6607,9 @@ namespace BmwDeepObd
                 return GetBestMatchingMwTabUds(ecuInfo, progress);
             }
 
-            List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Sgbd);
+            List<ActivityCommon.MwTabFileEntry> wmTabList = VagFileUtils.GetMatchingVagMwTabs(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Sgbd);
 #if false
-            SortedSet<long> mwBlocks = ActivityCommon.ExtractVagMwBlocks(wmTabList);
+            SortedSet<long> mwBlocks = VagFileUtils.ExtractVagMwBlocks(wmTabList);
 #else
             SortedSet<int> mwBlocks = new SortedSet<int>();
             for (int i = 0; i < 0x100; i++)
@@ -6820,8 +6820,8 @@ namespace BmwDeepObd
         private List<string> GetBestMatchingMwTabUds(EcuInfo ecuInfo, CustomProgressDialog progress)
         {
 #if false
-            List<ActivityCommon.MwTabFileEntry> wmTabList = ActivityCommon.GetMatchingVagMwTabsUds(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Address);
-            SortedSet<long> mwIds = ActivityCommon.ExtractVagMwBlocks(wmTabList);
+            List<ActivityCommon.MwTabFileEntry> wmTabList = VagFileUtils.GetMatchingVagMwTabsUds(Path.Combine(_datUkdDir, "mwtabs"), ecuInfo.Address);
+            SortedSet<long> mwIds = VagFileUtils.ExtractVagMwBlocks(wmTabList);
 #else
             SortedSet<int> mwIds = new SortedSet<int>();
             for (int i = 0x1000; i <= 0x16FF; i++)
@@ -7786,8 +7786,8 @@ namespace BmwDeepObd
                 Dictionary<int, string> ecuNameDict = null;
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
-                    ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
-                    ecuNameDict = ActivityCommon.GetVagEcuNamesDict(_ecuDir);
+                    ecuVagList = VagFileUtils.ReadVagEcuList(_ecuDir);
+                    ecuNameDict = VagFileUtils.GetVagEcuNamesDict(_ecuDir);
                 }
 
                 List<EcuInfo> ecuListTemp = GetClonedEcuList();
