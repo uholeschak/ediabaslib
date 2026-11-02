@@ -7567,40 +7567,6 @@ namespace BmwDeepObd
             return textList;
         }
 
-        public static bool IsTranslationAvailable()
-        {
-            switch (SelectedTranslator)
-            {
-                case TranslatorType.YandexTranslate:
-                    return !string.IsNullOrWhiteSpace(YandexApiKey);
-
-                case TranslatorType.IbmWatson:
-                    return !string.IsNullOrWhiteSpace(IbmTranslatorApiKey) && !string.IsNullOrWhiteSpace(IbmTranslatorUrl);
-
-                case TranslatorType.Deepl:
-                    return !string.IsNullOrWhiteSpace(DeeplApiKey);
-
-                case TranslatorType.YandexCloud:
-                    return !string.IsNullOrWhiteSpace(YandexCloudApiKey);
-
-                case TranslatorType.GoogleApis:
-                    return !string.IsNullOrWhiteSpace(GoogleApisUrl);
-            }
-
-            return false;
-        }
-
-        public static bool TranslationRequiresApiKey()
-        {
-            switch (SelectedTranslator)
-            {
-                case TranslatorType.GoogleApis:
-                    return false;
-            }
-
-            return true;
-        }
-
         public bool IsTranslationRequired()
         {
 #if true
@@ -7613,22 +7579,6 @@ namespace BmwDeepObd
 #else
             return false;
 #endif
-        }
-
-        public static bool IsYandexCloudOauthToken(string apiKey)
-        {
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                return false;
-            }
-
-            string keyTrim = apiKey.Trim();
-            if (keyTrim.Length > 40 && keyTrim[2] == '_')
-            {
-                return true;
-            }
-
-            return false;
         }
 
         public static bool VagFilesRequired()
@@ -7751,7 +7701,7 @@ namespace BmwDeepObd
                 }
                 EnableTranslateRequested = true;
                 string message = string.Format(_context.GetString(Resource.String.translate_enable_request), TranslatorName());
-                if (TranslationRequiresApiKey())
+                if (TranslationUtils.TranslationRequiresApiKey())
                 {
                     message += "\r\n" + _context.GetString(Resource.String.translate_enable_request_key);
                 }
@@ -7795,7 +7745,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (!IsTranslationAvailable())
+            if (!TranslationUtils.IsTranslationAvailable())
             {
                 return false;
             }
@@ -8067,7 +8017,7 @@ namespace BmwDeepObd
                                     {
                                         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                                     };
-                                    bool oauthToken = IsYandexCloudOauthToken(YandexCloudApiKey);
+                                    bool oauthToken = TranslationUtils.IsYandexCloudOauthToken(YandexCloudApiKey);
                                     string folderId = oauthToken ? YandexCloudFolderId : null;
                                     if (string.IsNullOrWhiteSpace(folderId))
                                     {
@@ -8291,7 +8241,7 @@ namespace BmwDeepObd
                                 break;
 
                             case TranslatorType.YandexCloud:
-                                if (IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
+                                if (TranslationUtils.IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
                                 {
                                     _yandexCloudIamToken = TranslationUtils.GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
                                     if (!string.IsNullOrEmpty(_yandexCloudIamToken))

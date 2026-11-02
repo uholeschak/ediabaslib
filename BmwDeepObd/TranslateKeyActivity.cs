@@ -595,7 +595,7 @@ namespace BmwDeepObd
                 bool folderIdVisible = false;
                 if (ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.YandexCloud)
                 {
-                    folderIdVisible = ActivityCommon.IsYandexCloudOauthToken(_editTextYandexApiKey.Text);
+                    folderIdVisible = TranslationUtils.IsYandexCloudOauthToken(_editTextYandexApiKey.Text);
                 }
 
                 _textViewFolderIdPasteTitle.Visibility = folderIdVisible ? ViewStates.Visible : ViewStates.Gone;

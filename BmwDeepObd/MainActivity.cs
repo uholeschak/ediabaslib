@@ -1155,7 +1155,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestYandexKey:
-                    ActivityCommon.EnableTranslation = ActivityCommon.IsTranslationAvailable();
+                    ActivityCommon.EnableTranslation = TranslationUtils.IsTranslationAvailable();
                     StoreSettings();
                     UpdateOptionsMenu();
                     UpdateDisplay();
@@ -1541,7 +1541,7 @@ namespace BmwDeepObd
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
             {
-                translationEnableMenu.SetEnabled(!commActive || ActivityCommon.IsTranslationAvailable());
+                translationEnableMenu.SetEnabled(!commActive || TranslationUtils.IsTranslationAvailable());
                 translationEnableMenu.SetVisible(_activityCommon.IsTranslationRequired());
                 translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
             }
@@ -1822,7 +1822,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_translation_enable:
-                    if (!ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
+                    if (!ActivityCommon.EnableTranslation && !TranslationUtils.IsTranslationAvailable())
                     {
                         EditYandexKey();
                         return true;
@@ -4885,7 +4885,7 @@ namespace BmwDeepObd
 
             try
             {
-                if (ActivityCommon.IsTranslationAvailable() && _activityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                if (TranslationUtils.IsTranslationAvailable() && _activityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
                     string xmlFileDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
                     if (!string.IsNullOrEmpty(xmlFileDir))
@@ -4911,7 +4911,7 @@ namespace BmwDeepObd
 
             try
             {
-                if (ActivityCommon.IsTranslationAvailable() && _activityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                if (TranslationUtils.IsTranslationAvailable() && _activityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
                     string xmlFileDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
                     if (!string.IsNullOrEmpty(xmlFileDir))
