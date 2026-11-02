@@ -321,7 +321,7 @@ namespace BmwDeepObd
                     AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
+                EdiabasUtils.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
@@ -755,7 +755,7 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
+                    EdiabasUtils.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
                     // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionComponentTrigger.PhasePreset
                     EcuFunctionStructs.EcuJob.PhaseType phase = EcuFunctionStructs.EcuJob.PhaseType.Preset;

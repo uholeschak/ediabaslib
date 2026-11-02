@@ -4035,7 +4035,7 @@ namespace BmwDeepObd
                                 if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
                                 {
                                     string udsFileName = Path.Combine(_instanceData.VagPath, pageInfo.JobsInfo.VagUdsFileName);
-                                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out double? dataValueUds);
+                                    string resultUds = EdiabasUtils.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out double? dataValueUds);
                                     if (!string.IsNullOrEmpty(resultUds))
                                     {
                                         result = resultUds;
@@ -4048,7 +4048,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                string resultEcuFunc = ActivityCommon.FormatResultEcuFunction(pageInfo, displayInfo, resultDict, out double? dataValueEcuFunc);
+                                string resultEcuFunc = EdiabasUtils.FormatResultEcuFunction(pageInfo, displayInfo, resultDict, out double? dataValueEcuFunc);
                                 if (!string.IsNullOrEmpty(resultEcuFunc))
                                 {
                                     result = resultEcuFunc;

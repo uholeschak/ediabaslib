@@ -2243,7 +2243,7 @@ namespace BmwDeepObd
 
             if (_ediabas != null)
             {
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, GetSimulationDir(), _instanceData.TraceAppend || _instanceData.ForceAppend);
+                EdiabasUtils.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, GetSimulationDir(), _instanceData.TraceAppend || _instanceData.ForceAppend);
             }
         }
 
@@ -3564,7 +3564,7 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                ActivityCommon.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
+                EdiabasUtils.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
 
                 _ediabas.ArgString = "ALL";
                 _ediabas.ArgBinaryStd = null;
@@ -3894,7 +3894,7 @@ namespace BmwDeepObd
                                 break;
                             }
 
-                            ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, fileName);
                             ForceLoadSgbd();
 
                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file resolved: {0}", _ediabas.SgbdFileName);
@@ -4227,7 +4227,7 @@ namespace BmwDeepObd
 
                         if (!string.IsNullOrEmpty(ecuFileNameUse))
                         {
-                            ActivityCommon.ResolveSgbdFile(_ediabas, ecuFileNameUse);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, ecuFileNameUse);
                             ForceLoadSgbd();
 
                             DetectVehicleBmwBase.JobInfo vinJobUsed = null;
@@ -4402,7 +4402,7 @@ namespace BmwDeepObd
                                     {
                                         try
                                         {
-                                            ActivityCommon.ResolveSgbdFile(_ediabas, group);
+                                            EdiabasUtils.ResolveSgbdFile(_ediabas, group);
                                             ForceLoadSgbd();
                                             groupSgbd = group;
                                             break;
@@ -4739,7 +4739,7 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    ActivityCommon.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
+                                    EdiabasUtils.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
 
                                     _ediabas.ArgString = string.Empty;
                                     _ediabas.ArgBinaryStd = null;
@@ -4846,7 +4846,7 @@ namespace BmwDeepObd
                                 }
                             });
 
-                            ActivityCommon.ResolveSgbdFile(_ediabas, ecuGroup);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, ecuGroup);
 
                             _ediabas.ArgString = string.Empty;
                             _ediabas.ArgBinaryStd = null;
@@ -4981,7 +4981,7 @@ namespace BmwDeepObd
                 }
 
                 // for UDS read VIN from motor
-                ActivityCommon.ResolveSgbdFile(_ediabas, "mot_01");
+                EdiabasUtils.ResolveSgbdFile(_ediabas, "mot_01");
                 ForceLoadSgbd();
 
                 string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
@@ -5015,7 +5015,7 @@ namespace BmwDeepObd
                 }
 
                 // for UDS read hw info from did
-                ActivityCommon.ResolveSgbdFile(_ediabas, "did_19");
+                EdiabasUtils.ResolveSgbdFile(_ediabas, "did_19");
                 ForceLoadSgbd();
 
                 string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
@@ -5232,7 +5232,7 @@ namespace BmwDeepObd
                         EcuInfo thisEcuInfo = null;
                         try
                         {
-                            ActivityCommon.ResolveSgbdFile(_ediabas, ecuEntry.SysName);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, ecuEntry.SysName);
                             ForceLoadSgbd();
 
                             string jobName = JobReadEcuVersion;
@@ -5250,7 +5250,7 @@ namespace BmwDeepObd
                             }
 
                             sgbdFileNameOverride = string.Format(CultureInfo.InvariantCulture, VagUdsCommonSgbd + "#0x{0:X02}", ecuEntry.Address);
-                            ActivityCommon.ResolveSgbdFile(_ediabas, sgbdFileNameOverride);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, sgbdFileNameOverride);
                             ForceLoadSgbd();
 
                             string jobName = JobReadEcuVersion;
@@ -5327,7 +5327,7 @@ namespace BmwDeepObd
                                 }
                                 if (resolveSgbd)
                                 {
-                                    ActivityCommon.ResolveSgbdFile(_ediabas, thisEcuInfo.Sgbd);
+                                    EdiabasUtils.ResolveSgbdFile(_ediabas, thisEcuInfo.Sgbd);
                                 }
                                 if (!ReadVagEcuInfo(thisEcuInfo))
                                 {
@@ -5553,7 +5553,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    ActivityCommon.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
+                    EdiabasUtils.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
 
                     _ediabas.ArgString = "ALL";
                     _ediabas.ArgBinaryStd = null;
@@ -7805,7 +7805,7 @@ namespace BmwDeepObd
                     }
                     try
                     {
-                        ActivityCommon.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
+                        EdiabasUtils.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
 
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;

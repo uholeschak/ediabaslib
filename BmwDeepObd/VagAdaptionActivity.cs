@@ -479,7 +479,7 @@ namespace BmwDeepObd
                     AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
+                EdiabasUtils.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
@@ -1544,7 +1544,7 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
+                    EdiabasUtils.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
                     string repairShopCodeString = string.Format(CultureInfo.InvariantCulture, "{0:000000}{1:000}{2:00000}",
                         _instanceData.CurrentEquipmentNumber ?? 0, _instanceData.CurrentImporterNumber ?? 0, _instanceData.CurrentWorkshopNumber ?? 0);

@@ -1379,7 +1379,7 @@ namespace BmwDeepObd
                     AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
+                EdiabasUtils.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
@@ -2434,7 +2434,7 @@ namespace BmwDeepObd
                 try
                 {
                     bool udsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
-                    ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
+                    EdiabasUtils.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
                     if (_selectedJob.EcuFixedFuncStruct?.EcuJobList != null)
                     {

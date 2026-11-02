@@ -232,7 +232,7 @@ namespace BmwFileReader
 
                         ProgressFunc?.Invoke(100 * index / jobCount);
 
-                        ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
+                        EdiabasUtils.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
                         if (!string.IsNullOrEmpty(jobInfo.JobArgs))
@@ -322,7 +322,7 @@ namespace BmwFileReader
                         }
 
                         bool statVcm = string.Compare(jobInfo.JobName, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
-                        ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
+                        EdiabasUtils.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
                         if (!string.IsNullOrEmpty(jobInfo.JobArgs))
@@ -345,7 +345,7 @@ namespace BmwFileReader
                                     string fa = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(fa))
                                     {
-                                        ActivityCommon.ResolveSgbdFile(_ediabas, "FA");
+                                        EdiabasUtils.ResolveSgbdFile(_ediabas, "FA");
 
                                         _ediabas.ArgString = "1;" + fa;
                                         _ediabas.ArgBinaryStd = null;
@@ -632,7 +632,7 @@ namespace BmwFileReader
                 try
                 {
                     ProgressFunc?.Invoke(100 * index / jobCount);
-                    ActivityCommon.ResolveSgbdFile(_ediabas, "d_0044");
+                    EdiabasUtils.ResolveSgbdFile(_ediabas, "d_0044");
 
                     _ediabas.ArgString = "6";
                     _ediabas.ArgBinaryStd = null;
@@ -679,7 +679,7 @@ namespace BmwFileReader
 
                     if (!string.IsNullOrEmpty(kdData1) && !string.IsNullOrEmpty(kdData2))
                     {
-                        ActivityCommon.ResolveSgbdFile(_ediabas, "grpliste");
+                        EdiabasUtils.ResolveSgbdFile(_ediabas, "grpliste");
 
                         _ediabas.ArgString = kdData1 + kdData2 + ";ja";
                         _ediabas.ArgBinaryStd = null;
@@ -725,7 +725,7 @@ namespace BmwFileReader
                         try
                         {
                             ProgressFunc?.Invoke(100 * index / jobCount);
-                            ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                             _ediabas.ArgString = string.Empty;
                             _ediabas.ArgBinaryStd = null;
@@ -766,7 +766,7 @@ namespace BmwFileReader
                             LogInfoFormat("Read motor job: {0}", fileName);
 
                             ProgressFunc?.Invoke(100 * index / jobCount);
-                            ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, fileName);
 
                             _ediabas.ArgString = string.Empty;
                             _ediabas.ArgBinaryStd = null;
@@ -832,7 +832,7 @@ namespace BmwFileReader
                         try
                         {
                             ProgressFunc?.Invoke(100 * index / jobCount);
-                            ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                             _ediabas.ArgString = typeSnr;
                             _ediabas.ArgBinaryStd = null;
@@ -885,7 +885,7 @@ namespace BmwFileReader
                         try
                         {
                             ProgressFunc?.Invoke(100 * index / jobCount);
-                            ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
+                            EdiabasUtils.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                             _ediabas.ArgString = string.Empty;
                             if (!string.IsNullOrEmpty(jobInfo.JobArgs))
@@ -905,7 +905,7 @@ namespace BmwFileReader
                                     string fa = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(fa))
                                     {
-                                        ActivityCommon.ResolveSgbdFile(_ediabas, "FA");
+                                        EdiabasUtils.ResolveSgbdFile(_ediabas, "FA");
 
                                         _ediabas.ArgString = "1;" + fa;
                                         _ediabas.ArgBinaryStd = null;
@@ -1124,7 +1124,7 @@ namespace BmwFileReader
                         continue;
                     }
 
-                    ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
+                    EdiabasUtils.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
                     _ediabas.ArgString = jobInfo.JobArgs;
                     _ediabas.ArgBinaryStd = null;
                     _ediabas.ResultsRequests = string.Empty;
@@ -1213,7 +1213,7 @@ namespace BmwFileReader
                     return null;
                 }
 
-                ActivityCommon.ResolveSgbdFile(_ediabas, sgbd);
+                EdiabasUtils.ResolveSgbdFile(_ediabas, sgbd);
 
                 _ediabas.ArgString = string.Empty;
                 _ediabas.ArgBinaryStd = null;

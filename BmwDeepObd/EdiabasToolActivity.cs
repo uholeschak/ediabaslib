@@ -2335,7 +2335,7 @@ namespace BmwDeepObd
 
             if (_ediabas != null)
             {
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.SimulationDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
+                EdiabasUtils.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.SimulationDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
             }
         }
 
@@ -2389,7 +2389,7 @@ namespace BmwDeepObd
                 List<string> messageList = new List<string>();
                 try
                 {
-                    ActivityCommon.ResolveSgbdFile(_ediabas, _instanceData.SgbdFileName);
+                    EdiabasUtils.ResolveSgbdFile(_ediabas, _instanceData.SgbdFileName);
 
                     _ediabas.ArgString = "ALL";
                     _ediabas.ArgBinaryStd = null;

@@ -488,7 +488,7 @@ namespace BmwDeepObd
 
                 Ediabas.CloseSgbd();
                 Ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
-                ActivityCommon.SetEdiabasConfigProperties(Ediabas, instanceData.TraceDir, simulationPath, instanceData.TraceAppend);
+                EdiabasUtils.SetEdiabasConfigProperties(Ediabas, instanceData.TraceDir, simulationPath, instanceData.TraceAppend);
                 CloseDataLog();
 
                 CommActive = commActive;
@@ -629,7 +629,7 @@ namespace BmwDeepObd
                 if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
                 {
                     string udsFileName = Path.Combine(_vagPath, pageInfo.JobsInfo.VagUdsFileName);
-                    string resultUds = ActivityCommon.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out double? _);
+                    string resultUds = EdiabasUtils.FormatResultVagUds(udsFileName, pageInfo, displayInfo, resultDict, out double? _);
                     if (!string.IsNullOrEmpty(resultUds))
                     {
                         result = resultUds;
@@ -638,7 +638,7 @@ namespace BmwDeepObd
             }
             else
             {
-                string resultEcuFunc = ActivityCommon.FormatResultEcuFunction(pageInfo, displayInfo, resultDict, out double? _);
+                string resultEcuFunc = EdiabasUtils.FormatResultEcuFunction(pageInfo, displayInfo, resultDict, out double? _);
                 if (!string.IsNullOrEmpty(resultEcuFunc))
                 {
                     result = resultEcuFunc;
@@ -1246,7 +1246,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
+                        EdiabasUtils.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
                         ForceLoadSgbd();
 
                         EdiabasErrorReportReset.ErrorRestState resetState = ResetErrorFunctional(false);
@@ -1344,7 +1344,7 @@ namespace BmwDeepObd
 
                     try
                     {
-                        ActivityCommon.ResolveSgbdFile(Ediabas, ecuInfo.Sgbd);
+                        EdiabasUtils.ResolveSgbdFile(Ediabas, ecuInfo.Sgbd);
                     }
                     catch (Exception ex)
                     {
@@ -1452,7 +1452,7 @@ namespace BmwDeepObd
 
                                         // force reload
                                         Ediabas.CloseSgbd();
-                                        ActivityCommon.ResolveSgbdFile(Ediabas, ecuInfo.Sgbd);
+                                        EdiabasUtils.ResolveSgbdFile(Ediabas, ecuInfo.Sgbd);
                                     }
                                 }
                                 catch (Exception)
@@ -1590,7 +1590,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        ActivityCommon.ResolveSgbdFile(Ediabas, pageInfo.JobsInfo?.Sgbd);
+                        EdiabasUtils.ResolveSgbdFile(Ediabas, pageInfo.JobsInfo?.Sgbd);
                     }
                     catch (Exception ex)
                     {
@@ -1656,7 +1656,7 @@ namespace BmwDeepObd
                             if (!string.IsNullOrEmpty(sgbd) &&
                                 string.Compare(currentSgbd, sgbd, StringComparison.OrdinalIgnoreCase) != 0)
                             {
-                                ActivityCommon.ResolveSgbdFile(Ediabas, sgbd);
+                                EdiabasUtils.ResolveSgbdFile(Ediabas, sgbd);
                                 currentSgbd = sgbd;
                             }
 
