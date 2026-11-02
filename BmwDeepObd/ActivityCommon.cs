@@ -63,94 +63,6 @@ namespace BmwDeepObd
 {
     public class ActivityCommon : IDisposable
     {
-        public class YandexCloudIamTokenRequest
-        {
-            public YandexCloudIamTokenRequest(string oAuthToken)
-            {
-                OAuthToken = oAuthToken;
-            }
-
-            [JsonPropertyName("yandexPassportOauthToken")]
-            public string OAuthToken { get; }
-        }
-
-        public class YandexCloudListLanguagesRequest
-        {
-            public YandexCloudListLanguagesRequest(string folderId = null)
-            {
-                FolderId = folderId;
-            }
-
-            [JsonPropertyName("folderId")]
-            public string FolderId { get; }
-        }
-
-        public class YandexCloudTranslateRequest
-        {
-            public YandexCloudTranslateRequest(string[] textArray, string source, string target, string folderId = null)
-            {
-                TextArray = textArray;
-                Source = source;
-                Target = target;
-                Format = "PLAIN_TEXT";
-                FolderId = folderId;
-            }
-
-            [JsonPropertyName("texts")]
-            public string[] TextArray { get; }
-
-            [JsonPropertyName("sourceLanguageCode")]
-            public string Source { get; }
-
-            [JsonPropertyName("targetLanguageCode")]
-            public string Target { get; }
-
-            [JsonPropertyName("format")]
-            public string Format { get; }
-
-            [JsonPropertyName("folderId")]
-            public string FolderId { get; }
-        }
-
-        public class DeeplTranslateRequest
-        {
-            public DeeplTranslateRequest(string[] textArray, string source, string target)
-            {
-                TextArray = textArray;
-                Source = source;
-                Target = target;
-            }
-
-            [JsonPropertyName("text")]
-            public string[] TextArray { get; }
-
-            [JsonPropertyName("source_lang")]
-            public string Source { get; }
-
-            [JsonPropertyName("target_lang")]
-            public string Target { get; }
-        }
-
-        public class IbmTranslateRequest
-        {
-            public IbmTranslateRequest(string[] textArray, string source, string target)
-            {
-                TextArray = textArray;
-                Source = source;
-                Target = target;
-            }
-
-            [JsonPropertyName("text")]
-            public string[] TextArray { get; }
-
-            [JsonPropertyName("source")]
-            public string Source { get; }
-
-            [JsonPropertyName("target")]
-            public string Target { get; }
-        }
-
-        [XmlType("SerialInfo")]
         public class SerialInfoEntry: IEquatable<SerialInfoEntry>
         {
             public SerialInfoEntry() : this(string.Empty, string.Empty, false, false)
@@ -9645,7 +9557,7 @@ namespace BmwDeepObd
                                             targetLang = "en";
                                         }
 
-                                        IbmTranslateRequest translateRequest = new IbmTranslateRequest(transList.ToArray(), "de", targetLang);
+                                        TranslationUtils.IbmTranslateRequest translateRequest = new TranslationUtils.IbmTranslateRequest(transList.ToArray(), "de", targetLang);
                                         string jsonString = JsonSerializer.Serialize(translateRequest);
 
                                         httpContent = new StringContent(jsonString);
@@ -9717,7 +9629,7 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        DeeplTranslateRequest translateRequest = new DeeplTranslateRequest(transList.ToArray(), "DE", targetLang);
+                                        TranslationUtils.DeeplTranslateRequest translateRequest = new TranslationUtils.DeeplTranslateRequest(transList.ToArray(), "DE", targetLang);
                                         string jsonString = JsonSerializer.Serialize(translateRequest);
 
                                         httpContent = new StringContent(jsonString);
@@ -9760,7 +9672,7 @@ namespace BmwDeepObd
                                         ResetYandexIamToken();
                                         // no IAM Token present
                                         sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
-                                        YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudApiKey);
+                                        TranslationUtils.YandexCloudIamTokenRequest languagesRequest = new TranslationUtils.YandexCloudIamTokenRequest(YandexCloudApiKey);
                                         string jsonString = JsonSerializer.Serialize(languagesRequest, jsonOptions);
                                         httpContent = new StringContent(jsonString);
                                     }
@@ -9768,7 +9680,7 @@ namespace BmwDeepObd
                                     {
                                         // no language list present, get it first
                                         sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/languages");
-                                        YandexCloudListLanguagesRequest languagesRequest = new YandexCloudListLanguagesRequest(folderId);
+                                        TranslationUtils.YandexCloudListLanguagesRequest languagesRequest = new TranslationUtils.YandexCloudListLanguagesRequest(folderId);
                                         string jsonString = JsonSerializer.Serialize(languagesRequest, jsonOptions);
                                         httpContent = new StringContent(jsonString);
                                     }
@@ -9799,7 +9711,7 @@ namespace BmwDeepObd
                                             targetLang = "en";
                                         }
 
-                                        YandexCloudTranslateRequest translateRequest = new YandexCloudTranslateRequest(transList.ToArray(), "de", targetLang, folderId);
+                                        TranslationUtils.YandexCloudTranslateRequest translateRequest = new TranslationUtils.YandexCloudTranslateRequest(transList.ToArray(), "de", targetLang, folderId);
                                         string jsonString = JsonSerializer.Serialize(translateRequest, jsonOptions);
 
                                         httpContent = new StringContent(jsonString);
@@ -9838,7 +9750,7 @@ namespace BmwDeepObd
                                         }
                                     }
 
-                                    _transLangList = GetGoogleApisLanguages();
+                                    _transLangList = TranslationUtils.GetGoogleApisLanguages();
                                     string targetLang = _transCurrentLang;
                                     if (_transLangList.All(lang =>
                                             string.Compare(lang, targetLang, StringComparison.OrdinalIgnoreCase) != 0))
@@ -9968,7 +9880,7 @@ namespace BmwDeepObd
                             case TranslatorType.YandexCloud:
                                 if (IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
                                 {
-                                    _yandexCloudIamToken = GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
+                                    _yandexCloudIamToken = TranslationUtils.GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
                                     if (!string.IsNullOrEmpty(_yandexCloudIamToken))
                                     {
                                         _yandexCloudIamTokenTime = DateTime.Now;
@@ -9997,23 +9909,23 @@ namespace BmwDeepObd
                                 switch (SelectedTranslator)
                                 {
                                     case TranslatorType.YandexTranslate:
-                                        _transLangList = GetYandexLanguages(responseTranslateResult);
+                                        _transLangList = TranslationUtils.GetYandexLanguages(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.IbmWatson:
-                                        _transLangList = GetIbmLanguages(responseTranslateResult);
+                                        _transLangList = TranslationUtils.GetIbmLanguages(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.Deepl:
-                                        _transLangList = GetDeeplLanguages(responseTranslateResult);
+                                        _transLangList = TranslationUtils.GetDeeplLanguages(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.YandexCloud:
-                                        _transLangList = GetYandexCloudLanguages(responseTranslateResult);
+                                        _transLangList = TranslationUtils.GetYandexCloudLanguages(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.GoogleApis:
-                                        _transLangList = GetGoogleApisLanguages();
+                                        _transLangList = TranslationUtils.GetGoogleApisLanguages();
                                         break;
                                 }
 
@@ -10036,23 +9948,23 @@ namespace BmwDeepObd
                                 switch (SelectedTranslator)
                                 {
                                     case TranslatorType.YandexTranslate:
-                                        transList = GetYandexTranslations(responseTranslateResult);
+                                        transList = TranslationUtils.GetYandexTranslations(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.IbmWatson:
-                                        transList = GetIbmTranslations(responseTranslateResult);
+                                        transList = TranslationUtils.GetIbmTranslations(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.Deepl:
-                                        transList = GetDeeplTranslations(responseTranslateResult);
+                                        transList = TranslationUtils.GetDeeplTranslations(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.YandexCloud:
-                                        transList = GetYandexCloudTranslations(responseTranslateResult);
+                                        transList = TranslationUtils.GetYandexCloudTranslations(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.GoogleApis:
-                                        transList = GetGoogleApisTranslations(responseTranslateResult, transRequestList);
+                                        transList = TranslationUtils.GetGoogleApisTranslations(responseTranslateResult, transRequestList);
                                         break;
                                 }
 
@@ -10119,19 +10031,19 @@ namespace BmwDeepObd
                                 switch (SelectedTranslator)
                                 {
                                     case TranslatorType.YandexTranslate:
-                                        errorMessage = GetYandexTranslationError(responseTranslateResult, out int _);
+                                        errorMessage = TranslationUtils.GetYandexTranslationError(responseTranslateResult, out int _);
                                         break;
 
                                     case TranslatorType.IbmWatson:
-                                        errorMessage = GetIbmTranslationError(responseTranslateResult, out int _);
+                                        errorMessage = TranslationUtils.GetIbmTranslationError(responseTranslateResult, out int _);
                                         break;
 
                                     case TranslatorType.Deepl:
-                                        errorMessage = GetDeeplTranslationError(responseTranslateResult);
+                                        errorMessage = TranslationUtils.GetDeeplTranslationError(responseTranslateResult);
                                         break;
 
                                     case TranslatorType.YandexCloud:
-                                        errorMessage = GetYandexCloudTranslationError(responseTranslateResult, out int _);
+                                        errorMessage = TranslationUtils.GetYandexCloudTranslationError(responseTranslateResult, out int _);
                                         break;
                                 }
                             }
@@ -10288,524 +10200,6 @@ namespace BmwDeepObd
             _yandexCloudIamTokenTime = DateTime.MinValue;
         }
 
-        private string GetYandexTranslationError(string xmlResult, out int errorCode)
-        {
-            errorCode = -1;
-            string message = string.Empty;
-            try
-            {
-                if (string.IsNullOrEmpty(xmlResult))
-                {
-                    return message;
-                }
-                XDocument xmlDoc = XDocument.Parse(xmlResult);
-                if (xmlDoc.Root == null)
-                {
-                    return message;
-                }
-                XAttribute attrCode = xmlDoc.Root.Attribute("code");
-                if (attrCode != null)
-                {
-                    errorCode = XmlConvert.ToInt32(attrCode.Value);
-                }
-                XAttribute attrMessage = xmlDoc.Root.Attribute("message");
-                if (attrMessage != null)
-                {
-                    message = attrMessage.Value;
-                }
-                return message;
-            }
-            catch (Exception)
-            {
-                return message;
-            }
-        }
-
-        private string GetIbmTranslationError(string jsonResult, out int errorCode)
-        {
-            errorCode = -1;
-            string message = string.Empty;
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return message;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                if (jsonDocument.RootElement.TryGetProperty("code", out JsonElement jsonErrorCode))
-                {
-                    errorCode = jsonErrorCode.GetInt32();
-                }
-
-                if (jsonDocument.RootElement.TryGetProperty("error", out JsonElement jsonErrorText))
-                {
-                    message = jsonErrorText.GetString();
-                }
-
-                return message;
-            }
-            catch (Exception)
-            {
-                return message;
-            }
-        }
-
-        private string GetDeeplTranslationError(string jsonResult)
-        {
-            string message = string.Empty;
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return message;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                if (jsonDocument.RootElement.TryGetProperty("message", out JsonElement jsonErrorText))
-                {
-                    message = jsonErrorText.GetString();
-                }
-
-                return message;
-            }
-            catch (Exception)
-            {
-                return message;
-            }
-        }
-
-        private string GetYandexCloudTranslationError(string jsonResult, out int errorCode)
-        {
-            errorCode = -1;
-            string message = string.Empty;
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return message;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                if (jsonDocument.RootElement.TryGetProperty("code", out JsonElement jsonErrorCode))
-                {
-                    errorCode = jsonErrorCode.GetInt32();
-                }
-
-                if (jsonDocument.RootElement.TryGetProperty("message", out JsonElement jsonErrorText))
-                {
-                    message = jsonErrorText.GetString();
-                }
-
-                return message;
-            }
-            catch (Exception)
-            {
-                return message;
-            }
-        }
-
-        private string GetYandexCloudIamToken(string jsonResult, out string tokenExpires)
-        {
-            tokenExpires = null;
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return null;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                string iamTokenString = null;
-                if (jsonDocument.RootElement.TryGetProperty("iamToken", out JsonElement iamToken))
-                {
-                    iamTokenString = iamToken.GetString();
-                }
-
-                if (!string.IsNullOrEmpty(iamTokenString))
-                {
-                    if (jsonDocument.RootElement.TryGetProperty("expiresAt", out JsonElement expiresAt))
-                    {
-                        tokenExpires = expiresAt.GetString();
-                    }
-                }
-
-                return iamTokenString;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetYandexLanguages(string xmlResult)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(xmlResult))
-                {
-                    return null;
-                }
-                XDocument xmlDoc = XDocument.Parse(xmlResult);
-                XElement dirsNode = xmlDoc.Root?.Element("dirs");
-                if (dirsNode == null)
-                {
-                    return null;
-                }
-                List<string> transList = new List<string>();
-                foreach (XElement textNode in dirsNode.Elements("string"))
-                {
-                    using (XmlReader reader = textNode.CreateReader())
-                    {
-                        reader.MoveToContent();
-                        transList.Add(reader.ReadInnerXml());
-                    }
-                }
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetIbmLanguages(string jsonResult)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return null;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                List<string> transList = new List<string>();
-                if (!jsonDocument.RootElement.TryGetProperty("languages", out JsonElement languages))
-                {
-                    return null;
-                }
-
-                foreach (JsonElement translation in languages.EnumerateArray())
-                {
-                    if (translation.TryGetProperty("language", out JsonElement transElem))
-                    {
-                        transList.Add(transElem.GetString());
-                    }
-                }
-
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetDeeplLanguages(string jsonResult)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return null;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                List<string> transList = new List<string>();
-                foreach (JsonElement translation in jsonDocument.RootElement.EnumerateArray())
-                {
-                    if (translation.TryGetProperty("language", out JsonElement transElem))
-                    {
-                        transList.Add(transElem.GetString());
-                    }
-                }
-
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetYandexCloudLanguages(string jsonResult)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return null;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                List<string> transList = new List<string>();
-                if (!jsonDocument.RootElement.TryGetProperty("languages", out JsonElement languages))
-                {
-                    return null;
-                }
-
-                foreach (JsonElement language in languages.EnumerateArray())
-                {
-                    if (language.TryGetProperty("code", out JsonElement transElem))
-                    {
-                        transList.Add(transElem.GetString());
-                    }
-                }
-
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetGoogleApisLanguages()
-        {
-            List<string> transList = new List<string>()
-            {
-                "af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "bs", "bg", "my", "ca", "ca",
-                "ceb", "zh-cn", "co", "cs", "da", "nl", "nl", "en", "eo", "et", "fi", "fr", "fy", "ka",
-                "de", "gd", "gd", "ga", "gl", "el", "gu", "ht", "ht", "ha", "haw", "he", "hi", "hr",
-                "hu", "ig", "is", "id", "it", "jw", "ja", "kn", "kk", "km", "ky", "ky", "ko", "ku",
-                "lo", "la", "lv", "lt", "lb", "lb", "mk", "ml", "mi", "mr", "ms", "mg", "mt", "mn",
-                "ne", "no", "ny", "ny", "ny", "or", "pa", "pa", "fa", "pl", "pt", "ps", "ps", "ro",
-                "ro", "ro", "ru", "si", "si", "sk", "sl", "sm", "sn", "sd", "so", "st", "es", "es",
-                "sr", "su", "sw", "sv", "ta", "te", "tg", "tl", "th", "tr", "ug", "ug", "uk", "ur",
-                "uz", "vi", "cy", "xh", "yi", "yo", "zu", "zh-CN", "zh-TW"
-            };
-
-            return transList;
-        }
-
-        private List<string> GetYandexTranslations(string xmlResult)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(xmlResult))
-                {
-                    return null;
-                }
-                XDocument xmlDoc = XDocument.Parse(xmlResult);
-                if (xmlDoc.Root == null)
-                {
-                    return null;
-                }
-                List<string> transList = new List<string>();
-                foreach (XElement textNode in xmlDoc.Root.Elements("text"))
-                {
-                    using (XmlReader reader = textNode.CreateReader())
-                    {
-                        reader.MoveToContent();
-                        transList.Add(reader.ReadInnerXml());
-                    }
-                }
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetIbmTranslations(string jsonResult)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return null;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                List<string> transList = new List<string>();
-                if (!jsonDocument.RootElement.TryGetProperty("translations", out JsonElement translations))
-                {
-                    return null;
-                }
-
-                foreach (JsonElement translation in translations.EnumerateArray())
-                {
-                    if (translation.TryGetProperty("translation", out JsonElement transElem))
-                    {
-                        transList.Add(transElem.GetString());
-                    }
-                }
-
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetDeeplTranslations(string jsonResult)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return null;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                List<string> transList = new List<string>();
-                if (!jsonDocument.RootElement.TryGetProperty("translations", out JsonElement translations))
-                {
-                    return null;
-                }
-
-                foreach (JsonElement translation in translations.EnumerateArray())
-                {
-                    if (translation.TryGetProperty("text", out JsonElement transElem))
-                    {
-                        transList.Add(transElem.GetString());
-                    }
-                }
-
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetYandexCloudTranslations(string jsonResult)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return null;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                List<string> transList = new List<string>();
-                if (!jsonDocument.RootElement.TryGetProperty("translations", out JsonElement translations))
-                {
-                    return null;
-                }
-
-                foreach (JsonElement translation in translations.EnumerateArray())
-                {
-                    if (translation.TryGetProperty("text", out JsonElement transElem))
-                    {
-                        transList.Add(transElem.GetString());
-                    }
-                }
-
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private List<string> GetGoogleApisTranslations(string jsonResult, List<string> transRequestList)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(jsonResult))
-                {
-                    return null;
-                }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                List<string> transList = new List<string>();
-                if (jsonDocument.RootElement.ValueKind != JsonValueKind.Array || jsonDocument.RootElement.GetArrayLength() < 1)
-                {
-                    return null;
-                }
-
-                if (transRequestList != null)
-                {
-                    JsonElement element0 = jsonDocument.RootElement[0];
-                    int itemCount = element0.GetArrayLength();
-                    if (element0.ValueKind != JsonValueKind.Array || itemCount < 1)
-                    {
-                        return null;
-                    }
-
-                    int requestIndex = 0;
-                    string sourceParts = string.Empty;
-                    string translationParts = string.Empty;
-
-                    for (int i = 0; i < itemCount; i++)
-                    {
-                        JsonElement element1 = element0[i];
-                        if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 2)
-                        {
-                            return null;
-                        }
-
-                        if (requestIndex >= transRequestList.Count)
-                        {
-                            return null;
-                        }
-
-                        string requestCleaned = transRequestList[requestIndex].TrimEnd('\n').Replace(" ", string.Empty);
-                        string source = element1[1].GetString() ?? string.Empty;
-                        string translation = element1[0].GetString() ?? string.Empty;
-
-                        sourceParts += source;
-                        translationParts += translation;
-
-                        string sourceCleanded = sourceParts.TrimEnd('\n').Replace(" ", string.Empty);
-                        if (sourceCleanded.Length < requestCleaned.Length)
-                        {
-                            continue;
-                        }
-
-                        if (sourceCleanded.Length == requestCleaned.Length)
-                        {
-                            if (string.Compare(sourceCleanded, requestCleaned, StringComparison.OrdinalIgnoreCase) != 0)
-                            {
-                                return null;
-                            }
-                        }
-                        else
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("GetGoogleApisTranslations Mismatch: Source='{0}', Request='{1}'", sourceCleanded, requestCleaned));
-#endif
-                        }
-
-                        transList.Add(translationParts.TrimEnd('\n'));
-                        requestIndex++;
-                        sourceParts = string.Empty;
-                        translationParts = string.Empty;
-                    }
-
-                    if (requestIndex != transRequestList.Count)
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    int itemCount = jsonDocument.RootElement.GetArrayLength();
-                    for (int i = 0; i < itemCount; i++)
-                    {
-                        JsonElement element = jsonDocument.RootElement[i];
-                        if (element.ValueKind != JsonValueKind.String)
-                        {
-                            return null;
-                        }
-
-                        string translation = element.GetString() ?? string.Empty;
-                        transList.Add(translation);
-                    }
-                }
-                return transList;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
         public static Android.Text.InputTypes ConvertVagUdsDataTypeToInputType(UInt32 dataTypeId)
         {
             Android.Text.InputTypes inputType = Android.Text.InputTypes.ClassText | Android.Text.InputTypes.TextFlagNoSuggestions;
