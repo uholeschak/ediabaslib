@@ -13,13 +13,9 @@ namespace BMW.Rheingold.Measurement.Model
     public static class Mapping
     {
         private static Dictionary<Probes, MeasuringFunction> mappingProbesToKindOfMeasurement = new Dictionary<Probes, MeasuringFunction>();
-
         private static Dictionary<MeasuringSensor, int> mappingMeasuringSensorToConnector = new Dictionary<MeasuringSensor, int>();
-
         private static Dictionary<MeasuringSensor, Probes> measuringSensorToProbes = new Dictionary<MeasuringSensor, Probes>();
-
         private static DataSet dsImibConfig;
-
         public static IDictionary<Probes, MeasuringFunction> ProbesToKindOfMeasurement
         {
             get
@@ -42,6 +38,7 @@ namespace BMW.Rheingold.Measurement.Model
                     mappingProbesToKindOfMeasurement.Add(Probes.TRIG, MeasuringFunction.Voltage);
                     mappingProbesToKindOfMeasurement.Add(Probes.TEMP, MeasuringFunction.Temperature);
                 }
+
                 return mappingProbesToKindOfMeasurement;
             }
         }
@@ -59,6 +56,7 @@ namespace BMW.Rheingold.Measurement.Model
                     mappingMeasuringSensorToConnector.Add(MeasuringSensor.LowPressureSensor1, 7);
                     mappingMeasuringSensorToConnector.Add(MeasuringSensor.LowPressureSensor2, 8);
                 }
+
                 return mappingMeasuringSensorToConnector;
             }
         }
@@ -87,6 +85,7 @@ namespace BMW.Rheingold.Measurement.Model
                         measuringSensorToProbes.Add(MeasuringSensor.KVClip, Probes.KV);
                         measuringSensorToProbes.Add(MeasuringSensor.TriggerClamp, Probes.TRIG);
                     }
+
                     return measuringSensorToProbes;
                 }
             }
@@ -103,6 +102,7 @@ namespace BMW.Rheingold.Measurement.Model
                     CreateFunctionCouplingTable(dsImibConfig);
                     FillImibConfig(dsImibConfig);
                 }
+
                 return dsImibConfig;
             }
         }
@@ -133,8 +133,10 @@ namespace BMW.Rheingold.Measurement.Model
                             break;
                     }
                 }
+
                 return probes;
             }
+
             return MeasuringSensorToProbesOf(sensor);
         }
 
@@ -150,6 +152,7 @@ namespace BMW.Rheingold.Measurement.Model
                 result = Probes.NONE;
                 Log.Error("Mapping.MeasuringSensorToProbes", "Sensor '{0}' is not available.", sensor.ToString());
             }
+
             return result;
         }
 
@@ -171,6 +174,7 @@ namespace BMW.Rheingold.Measurement.Model
                             result = MeasuringSensor.None;
                             break;
                     }
+
                     break;
                 case Probes.I:
                     switch (connector)
@@ -185,6 +189,7 @@ namespace BMW.Rheingold.Measurement.Model
                             result = MeasuringSensor.None;
                             break;
                     }
+
                     break;
                 case Probes.R:
                     switch (connector)
@@ -199,6 +204,7 @@ namespace BMW.Rheingold.Measurement.Model
                             result = MeasuringSensor.None;
                             break;
                     }
+
                     break;
                 case Probes.D:
                     switch (connector)
@@ -213,6 +219,7 @@ namespace BMW.Rheingold.Measurement.Model
                             result = MeasuringSensor.None;
                             break;
                     }
+
                     break;
                 case Probes.I100:
                     result = (((uint)(connector - 1) <= 1u || (uint)(connector - 3) > 1u) ? MeasuringSensor.None : MeasuringSensor.Clamp100A);
@@ -245,6 +252,7 @@ namespace BMW.Rheingold.Measurement.Model
                             result = MeasuringSensor.None;
                             break;
                     }
+
                     break;
                 case Probes.TD:
                     result = (((uint)(connector - 1) <= 1u || (uint)(connector - 3) > 1u) ? MeasuringSensor.None : MeasuringSensor.TDCable);
@@ -262,6 +270,7 @@ namespace BMW.Rheingold.Measurement.Model
                             result = MeasuringSensor.None;
                             break;
                     }
+
                     break;
                 case Probes.TRIG:
                     result = (((uint)(connector - 1) <= 1u || (uint)(connector - 3) > 1u) ? MeasuringSensor.None : MeasuringSensor.TriggerClamp);
@@ -270,6 +279,7 @@ namespace BMW.Rheingold.Measurement.Model
                     Log.Warning("Mapping.ProbesToMeasuringSensor()", "Probe '{0}' is not supported.", probe.ToString());
                     break;
             }
+
             return result;
         }
 
@@ -286,14 +296,17 @@ namespace BMW.Rheingold.Measurement.Model
                     list.Add(value);
                 }
             }
+
             if (array != null && array.Length != 0)
             {
                 for (int i = 0; i < array.Length; i++)
                 {
                     list.Remove((MeasuringCoupling)array[i]["Coupling"]);
                 }
+
                 list.Remove(MeasuringCoupling.GND);
             }
+
             return list;
         }
 
@@ -303,6 +316,7 @@ namespace BMW.Rheingold.Measurement.Model
             {
                 return MeasuringCoupling.DC;
             }
+
             return MeasuringCoupling.None;
         }
 
@@ -313,6 +327,7 @@ namespace BMW.Rheingold.Measurement.Model
             {
                 list.Add($"{value}{unit}");
             }
+
             return list;
         }
 
@@ -325,88 +340,96 @@ namespace BMW.Rheingold.Measurement.Model
                     return list;
                 case Probes.U:
                 case Probes.TD:
+                {
+                    string unit = "V";
+                    switch (connector)
                     {
-                        string unit = "V";
-                        switch (connector)
-                        {
-                            case 1:
-                            case 2:
-                                list.Add("0.5");
-                                list.Add("1");
-                                list.Add("2");
-                                list.Add("5");
-                                list.Add("10");
-                                list.Add("20");
-                                list.Add("50");
-                                list.Add("100");
-                                list.Add("200");
-                                list.Add("500");
-                                break;
-                            case 3:
-                            case 4:
-                                list.Add("0.5");
-                                list.Add("1");
-                                list.Add("5");
-                                list.Add("10");
-                                break;
-                            default:
-                                Log.Error("DeviceDmmImibR2.AvailableRanges", "For probe {0} and connector {1} doesn't exist a range.", probe.ToString(), connector.ToString(CultureInfo.InvariantCulture));
-                                break;
-                        }
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
-                case Probes.I:
-                    {
-                        string unit = "A";
-                        if (connector == 1)
-                        {
+                        case 1:
+                        case 2:
                             list.Add("0.5");
+                            list.Add("1");
                             list.Add("2");
-                        }
-                        else
-                        {
-                            Log.Error("DeviceDmmImibR2.AvailableRanges", "For probe {0} and connector {1} doesn't exist a range.", probe.ToString(), connector.ToString(CultureInfo.InvariantCulture));
-                        }
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
-                case Probes.I100:
-                    {
-                        string unit = "A";
-                        if (connector == 3 || connector == 4)
-                        {
                             list.Add("5");
                             list.Add("10");
                             list.Add("20");
                             list.Add("50");
                             list.Add("100");
-                        }
-                        else
-                        {
-                            Log.Error("DeviceDmmImibR2.AvailableRanges", "For probe {0} and connector {1} doesn't exist a range.", probe.ToString(), connector.ToString(CultureInfo.InvariantCulture));
-                        }
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
-                case Probes.I1800:
-                    {
-                        string unit = "A";
-                        if (connector == 3 || connector == 4)
-                        {
-                            list.Add("100");
                             list.Add("200");
                             list.Add("500");
-                            list.Add("1000");
-                            list.Add("2000");
-                        }
-                        else
-                        {
+                            break;
+                        case 3:
+                        case 4:
+                            list.Add("0.5");
+                            list.Add("1");
+                            list.Add("5");
+                            list.Add("10");
+                            break;
+                        default:
                             Log.Error("DeviceDmmImibR2.AvailableRanges", "For probe {0} and connector {1} doesn't exist a range.", probe.ToString(), connector.ToString(CultureInfo.InvariantCulture));
-                        }
-                        list = AddUnit(list, unit).ToList();
-                        break;
+                            break;
                     }
+
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
+                case Probes.I:
+                {
+                    string unit = "A";
+                    if (connector == 1)
+                    {
+                        list.Add("0.5");
+                        list.Add("2");
+                    }
+                    else
+                    {
+                        Log.Error("DeviceDmmImibR2.AvailableRanges", "For probe {0} and connector {1} doesn't exist a range.", probe.ToString(), connector.ToString(CultureInfo.InvariantCulture));
+                    }
+
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
+                case Probes.I100:
+                {
+                    string unit = "A";
+                    if (connector == 3 || connector == 4)
+                    {
+                        list.Add("5");
+                        list.Add("10");
+                        list.Add("20");
+                        list.Add("50");
+                        list.Add("100");
+                    }
+                    else
+                    {
+                        Log.Error("DeviceDmmImibR2.AvailableRanges", "For probe {0} and connector {1} doesn't exist a range.", probe.ToString(), connector.ToString(CultureInfo.InvariantCulture));
+                    }
+
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
+                case Probes.I1800:
+                {
+                    string unit = "A";
+                    if (connector == 3 || connector == 4)
+                    {
+                        list.Add("100");
+                        list.Add("200");
+                        list.Add("500");
+                        list.Add("1000");
+                        list.Add("2000");
+                    }
+                    else
+                    {
+                        Log.Error("DeviceDmmImibR2.AvailableRanges", "For probe {0} and connector {1} doesn't exist a range.", probe.ToString(), connector.ToString(CultureInfo.InvariantCulture));
+                    }
+
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
                 case Probes.R:
                     if (connector == 1)
                     {
@@ -422,72 +445,81 @@ namespace BMW.Rheingold.Measurement.Model
                     {
                         Log.Error("DeviceDmmImibR2.AvailableRanges", "For probe {0} and connector {1} doesn't exist a range.", probe.ToString(), connector.ToString(CultureInfo.InvariantCulture));
                     }
+
                     break;
                 case Probes.P25:
                 case Probes.P25KV:
-                    {
-                        string unit = "bar";
-                        list.Add("1");
-                        list.Add("5");
-                        list.Add("25");
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
+                {
+                    string unit = "bar";
+                    list.Add("1");
+                    list.Add("5");
+                    list.Add("25");
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
                 case Probes.P100:
-                    {
-                        string unit = "bar";
-                        list.Add("5");
-                        list.Add("10");
-                        list.Add("20");
-                        list.Add("50");
-                        list.Add("100");
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
+                {
+                    string unit = "bar";
+                    list.Add("5");
+                    list.Add("10");
+                    list.Add("20");
+                    list.Add("50");
+                    list.Add("100");
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
                 case Probes.P400:
-                    {
-                        string unit = "bar";
-                        list.Add("50");
-                        list.Add("100");
-                        list.Add("200");
-                        list.Add("400");
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
+                {
+                    string unit = "bar";
+                    list.Add("50");
+                    list.Add("100");
+                    list.Add("200");
+                    list.Add("400");
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
                 case Probes.LP:
-                    {
-                        string unit = "bar";
-                        list.Add("2.0");
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
+                {
+                    string unit = "bar";
+                    list.Add("2.0");
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
                 case Probes.KV:
-                    {
-                        string unit = "V";
-                        list.Add("10000");
-                        list.Add("25000");
-                        list.Add("50000");
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
+                {
+                    string unit = "V";
+                    list.Add("10000");
+                    list.Add("25000");
+                    list.Add("50000");
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
                 case Probes.TRIG:
-                    {
-                        string unit = "V";
-                        list.Add("50");
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
+                {
+                    string unit = "V";
+                    list.Add("50");
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
                 case Probes.TEMP:
-                    {
-                        string unit = "°C";
-                        list.Add("200");
-                        list = AddUnit(list, unit).ToList();
-                        break;
-                    }
+                {
+                    string unit = "°C";
+                    list.Add("200");
+                    list = AddUnit(list, unit).ToList();
+                    break;
+                }
+
                 default:
                     Log.Warning("DeviceDmmImibR2.AvailableRanges", "No Range availabe for connector {0} and probe {1}.", connector, probe);
                     break;
             }
+
             return list;
         }
 
@@ -497,16 +529,18 @@ namespace BMW.Rheingold.Measurement.Model
             {
                 return range;
             }
+
             if (string.IsNullOrEmpty(range) && availableRanges.Count > 0)
             {
                 return availableRanges.Last();
             }
+
             string result = range;
             if (!availableRanges.Contains(range))
             {
                 double num = UnitHelper.FromUnitPrefix(range);
                 result = availableRanges.Last();
-                for (int i = 0; i < availableRanges.Count(); i++)
+                for (int i = 0; i < Enumerable.Count(availableRanges); i++)
                 {
                     if (num <= UnitHelper.FromUnitPrefix(availableRanges[i]))
                     {
@@ -515,6 +549,7 @@ namespace BMW.Rheingold.Measurement.Model
                     }
                 }
             }
+
             return result;
         }
 
@@ -745,6 +780,7 @@ namespace BMW.Rheingold.Measurement.Model
                 {
                     throw new ArgumentException("For this parameter doesn't exist any mapping", "enumType");
                 }
+
                 dictionary.Add(PlugFunction.Load, "Load");
                 dictionary.Add(PlugFunction.Unload, "UNLoad");
                 dictionary.Add(PlugFunction.Get, "Gets");
@@ -758,6 +794,7 @@ namespace BMW.Rheingold.Measurement.Model
                 dictionary.Add(PlugFunction.GetP, "GETP");
                 dictionary.Add(PlugFunction.SetP, "SETP");
             }
+
             return dictionary;
         }
 
@@ -791,6 +828,7 @@ namespace BMW.Rheingold.Measurement.Model
                     Log.Error("Mapping.TriggerSourceToRanges()", "Triggersource '{0}' not supported.", source.ToString());
                     break;
             }
+
             return result;
         }
 
@@ -831,6 +869,7 @@ namespace BMW.Rheingold.Measurement.Model
                     Log.Error("Mapping.TriggerSourceToRanges()", "Triggersource '{0}' not supported.", source.ToString());
                     break;
             }
+
             return result;
         }
 
@@ -840,6 +879,7 @@ namespace BMW.Rheingold.Measurement.Model
             {
                 return "N3";
             }
+
             return "N2";
         }
 
@@ -850,11 +890,12 @@ namespace BMW.Rheingold.Measurement.Model
             if (!source.Any((DataRow x) => modeType.Equals((DMMModeType)x["ModeType"])))
             {
                 IEnumerable<MeasuringFunction> inner = source.Select((DataRow x) => (MeasuringFunction)x["Function"]);
-                return (from fToCoup in DsImibConfig.Tables["FunctionToCoupling"].AsEnumerable()
-                        join measFunc in inner on (MeasuringFunction)fToCoup["Function"] equals measFunc
-                        where (DMMModeType)fToCoup["ModeType"] == modeType
-                        select fToCoup["ModeType"]).Any();
+                return (
+                    from fToCoup in DsImibConfig.Tables["FunctionToCoupling"].AsEnumerable()join measFunc in inner on (MeasuringFunction)fToCoup["Function"] equals measFunc
+                    where (DMMModeType)fToCoup["ModeType"] == modeType
+                    select fToCoup["ModeType"]).Any();
             }
+
             return true;
         }
 
@@ -875,13 +916,14 @@ namespace BMW.Rheingold.Measurement.Model
             {
                 result = (DMMModeType)dataRow["ModeType"];
             }
+
             return result;
         }
 
         public static IEnumerable<MeasuringFunction> FunctionOfSensor(MeasuringSensor sensorName)
         {
-            return (from x in DsImibConfig.Tables["SensorToFuntion"].Select(string.Format(CultureInfo.InvariantCulture, "Sensor = {0}", (int)sensorName))
-                    select x["Function"]).Cast<MeasuringFunction>();
+            return (
+                from x in DsImibConfig.Tables["SensorToFuntion"].Select(string.Format(CultureInfo.InvariantCulture, "Sensor = {0}", (int)sensorName))select x["Function"]).Cast<MeasuringFunction>();
         }
 
         private static void CreateSensorFunctionTable(DataSet dsImib)
@@ -908,8 +950,8 @@ namespace BMW.Rheingold.Measurement.Model
             dataTable.Columns.Add(dataColumn);
             dataTable.PrimaryKey = new DataColumn[2]
             {
-            dataTable.Columns["Sensor"],
-            dataTable.Columns["Function"]
+                dataTable.Columns["Sensor"],
+                dataTable.Columns["Function"]
             };
             dsImib.Tables.Add(dataTable);
         }
@@ -938,8 +980,8 @@ namespace BMW.Rheingold.Measurement.Model
             dataTable.Columns.Add(dataColumn);
             dataTable.PrimaryKey = new DataColumn[2]
             {
-            dataTable.Columns["Function"],
-            dataTable.Columns["Coupling"]
+                dataTable.Columns["Function"],
+                dataTable.Columns["Coupling"]
             };
             dsImib.Tables.Add(dataTable);
         }

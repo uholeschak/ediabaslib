@@ -72,7 +72,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 if (document == null)
                 {
-                    //[-] document = InfoObjectFactory.Instance.GetFaultCodeDocument(ID, FortAsHexString, vehicleContext);
+                //[-] document = InfoObjectFactory.Instance.GetFaultCodeDocument(ID, FortAsHexString, vehicleContext);
                 }
 
                 return document;
@@ -342,8 +342,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
-                decimal? rELEVANCE = RELEVANCE;
-                if ((rELEVANCE.GetValueOrDefault() == 0m) & rELEVANCE.HasValue)
+                if (RELEVANCE == (decimal? )0m)
                 {
                     return false;
                 }

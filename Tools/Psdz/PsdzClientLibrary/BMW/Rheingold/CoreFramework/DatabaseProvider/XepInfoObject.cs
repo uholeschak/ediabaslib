@@ -2659,17 +2659,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public void SetFastNavigation(decimal? fastNav)
         {
-            decimal? num = fastNav;
-            if (((num.GetValueOrDefault() == 0m) & num.HasValue) || !fastNav.HasValue)
+            if (fastNav == (decimal? )0m || !fastNav.HasValue)
             {
                 fastNavigation = false;
                 return;
             }
 
             fastNavigation = true;
-            num = fastNav;
-            decimal num2 = 1;
-            if (!((num.GetValueOrDefault() == num2) & num.HasValue))
+            if (!(fastNav == (decimal? )1))
             {
                 Log.Error("XepInfoObject.SetFastNavigation()", "Wrong value for column Fast_Navigation in XEP_INFOOBJECTS where id = {0}", Id.ToString(CultureInfo.InvariantCulture));
             }

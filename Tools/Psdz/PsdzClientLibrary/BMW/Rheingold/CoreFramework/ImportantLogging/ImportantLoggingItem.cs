@@ -259,7 +259,7 @@ namespace BMW.Rheingold.CoreFramework.ImportantLogging
         {
             Log.Info(method, "*************** *************** List of ECU's and their status *************** ***************");
             Log.Info(method, " ");
-            Log.Info(method, "Total amount of ECU's: {0}, of which were {1} OK and {2} not OK. OK and not OK will be 0 if only an Ident was run.", items.Count, items.Count(((string Name, bool IsSuccessful) x) => x.IsSuccessful), items.Count(((string Name, bool IsSuccessful) x) => !x.IsSuccessful));
+            Log.Info(method, "Total amount of ECU's: {0}, of which were {1} OK and {2} not OK. OK and not OK will be 0 if only an Ident was run.", items.Count, Enumerable.Count(items, ((string Name, bool IsSuccessful) x) => x.IsSuccessful), Enumerable.Count(items, ((string Name, bool IsSuccessful) x) => !x.IsSuccessful));
             Log.Info(method, " ");
             foreach (var item in items)
             {

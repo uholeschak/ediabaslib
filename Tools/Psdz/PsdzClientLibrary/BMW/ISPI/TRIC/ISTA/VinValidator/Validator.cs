@@ -22,15 +22,10 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
         }
 
         private readonly IVinValidatorSVMDAccess svmdAccess;
-
         private readonly IVinValidatorDataAccess dbAccess;
-
         private readonly IVinValidatorFDLAccess fdlAccess;
-
         private readonly ILogger log;
-
         public static List<TypeKeys> TypeKeys { get; set; } = new List<TypeKeys>();
-
         public List<TypeKeys> PossibleTypeKeys { get; set; } = new List<TypeKeys>();
 
         public Validator(IVinValidatorVehicle vehicle, IVinValidatorSVMDAccess svmdAccess, IVinValidatorDataAccess dbAccess, IVinValidatorFDLAccess fdlAccess, ILogger log)
@@ -53,11 +48,13 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
             {
                 return vINResolverResult;
             }
+
             vINResolverResult = ValidateOverFDLGate(vin, language);
             if (vINResolverResult.FDLGateStatus == BackendStatus.Success)
             {
                 return vINResolverResult;
             }
+
             return ValidateOverDB(vin);
         }
 
@@ -74,34 +71,37 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
             switch (possibleVIN17AndTypeKeys.Status)
             {
                 case BackendStatus.Success:
+                {
+                    VinValidatorSVMDRequestVINResponse data = possibleVIN17AndTypeKeys.Data;
+                    vINResolverResult.PossibleVINs = data.Keys;
+                    vINResolverResult.ResultType = ((Enumerable.Count(data) <= 1) ? VINResolverResultType.SingleHit : VINResolverResultType.MultipleHit);
+                    if (vINResolverResult.ResultType == VINResolverResultType.MultipleHit && !isVehicleConnected && !flag)
                     {
-                        VinValidatorSVMDRequestVINResponse data = possibleVIN17AndTypeKeys.Data;
-                        vINResolverResult.PossibleVINs = data.Keys;
-                        vINResolverResult.ResultType = ((data.Count() <= 1) ? VINResolverResultType.SingleHit : VINResolverResultType.MultipleHit);
-                        if (vINResolverResult.ResultType == VINResolverResultType.MultipleHit && !isVehicleConnected && !flag)
-                        {
-                            log.Info(log.CurrentMethod(), "Multiple hits in SVMD. Validation over DB to determine EBezeichnung.");
-                            ValidateOverDB(text);
-                            break;
-                        }
-                        string text2 = vINResolverResult.PossibleVINs.FirstOrDefault((string v) => v.Equals(vin, StringComparison.CurrentCultureIgnoreCase));
-                        if (text2 != null)
-                        {
-                            vINResolverResult.VINResolvedSuccessfully = true;
-                            VinValidationTypeKeyResult vinValidationTypeKeyResult = data[text2];
-                            vinValidationTypeKeyResult.TypeKeyLead = GetTypeKeyLeadFromDB(vinValidationTypeKeyResult.TypeKey);
-                            AssignTypeKeys(vinValidationTypeKeyResult, Datasource.SVMD);
-                            log.Info(log.CurrentMethod(), "Vin properly validated over SVMD. Type keys assigned.");
-                        }
-                        else if (!flag && vINResolverResult.ResultType == VINResolverResultType.MultipleHit)
-                        {
-                            IEnumerable<string> allMatchingTypSchluessels = dbAccess.GetAllMatchingTypSchluessels(text);
-                            Dictionary<string, string> eBezeichnungsByTypeSchlussels = GetEBezeichnungsByTypeSchlussels(allMatchingTypSchluessels);
-                            log.Info(log.CurrentMethod(), "Multiple hits from the SVMD. User would be informed which vehicle he wants to use.");
-                            log.Info(log.CurrentMethod(), "Multiple hits from the SVMD. Found EBezeichnungs: " + string.Join(",", eBezeichnungsByTypeSchlussels.Values));
-                        }
+                        log.Info(log.CurrentMethod(), "Multiple hits in SVMD. Validation over DB to determine EBezeichnung.");
+                        ValidateOverDB(text);
                         break;
                     }
+
+                    string text2 = vINResolverResult.PossibleVINs.FirstOrDefault((string v) => v.Equals(vin, StringComparison.CurrentCultureIgnoreCase));
+                    if (text2 != null)
+                    {
+                        vINResolverResult.VINResolvedSuccessfully = true;
+                        VinValidationTypeKeyResult vinValidationTypeKeyResult = data[text2];
+                        vinValidationTypeKeyResult.TypeKeyLead = GetTypeKeyLeadFromDB(vinValidationTypeKeyResult.TypeKey);
+                        AssignTypeKeys(vinValidationTypeKeyResult, Datasource.SVMD);
+                        log.Info(log.CurrentMethod(), "Vin properly validated over SVMD. Type keys assigned.");
+                    }
+                    else if (!flag && vINResolverResult.ResultType == VINResolverResultType.MultipleHit)
+                    {
+                        IEnumerable<string> allMatchingTypSchluessels = dbAccess.GetAllMatchingTypSchluessels(text);
+                        Dictionary<string, string> eBezeichnungsByTypeSchlussels = GetEBezeichnungsByTypeSchlussels(allMatchingTypSchluessels);
+                        log.Info(log.CurrentMethod(), "Multiple hits from the SVMD. User would be informed which vehicle he wants to use.");
+                        log.Info(log.CurrentMethod(), "Multiple hits from the SVMD. Found EBezeichnungs: " + string.Join(",", eBezeichnungsByTypeSchlussels.Values));
+                    }
+
+                    break;
+                }
+
                 case BackendStatus.SuccessNoData:
                     log.Info(log.CurrentMethod(), "No info found in SVMD. Session would be closed.");
                     break;
@@ -109,6 +109,7 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
                     log.Error(log.CurrentMethod(), "Error getting data from SVMDProcessor.");
                     break;
             }
+
             return vINResolverResult;
         }
 
@@ -122,6 +123,7 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
             {
                 return vINResolverResult;
             }
+
             BackendData<VinValidationTypeKeyResult> typeKeys = fdlAccess.GetTypeKeys(vin, language);
             vINResolverResult.FDLGateStatus = typeKeys.Status;
             if (typeKeys.Status != BackendStatus.Success)
@@ -129,9 +131,13 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
                 log.Info(log.CurrentMethod(), "Request to FDLGate failed. Validation impossible.");
                 return vINResolverResult;
             }
+
             vINResolverResult.VINResolvedSuccessfully = true;
             vINResolverResult.ResultType = VINResolverResultType.SingleHit;
-            vINResolverResult.PossibleVINs = new List<string> { vin };
+            vINResolverResult.PossibleVINs = new List<string>
+            {
+                vin
+            };
             AssignTypeKeys(typeKeys.Data, Datasource.FBM);
             log.Info(log.CurrentMethod(), "Successfully validated over FDLGate. Type keys assigned.");
             return vINResolverResult;
@@ -144,6 +150,7 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
             {
                 return xepCharacteristics.Name;
             }
+
             log.Info(log.CurrentMethod(), "Unable to determine TypKeyLead from DB for vin {0}.", typeKey);
             return null;
         }
@@ -187,6 +194,7 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
             {
                 log.Info(log.CurrentMethod(), "No info found in the database. Session would be closed.");
             }
+
             return vINResolverResult;
         }
 
@@ -208,6 +216,7 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
                     vinValidationTypeKeyResult.TypeKeyLead = characteristic.Name;
                 }
             }
+
             return vinValidationTypeKeyResult;
         }
 
@@ -222,23 +231,14 @@ namespace BMW.ISPI.TRIC.ISTA.VinValidator
                     dictionary.Add(typeSchlussel, xepCharacteristics.Name);
                 }
             }
+
             return dictionary;
         }
 
         private void AssignTypeKeys(VinValidationTypeKeyResult typeKeys, Datasource source)
         {
-            PossibleTypeKeys.Add(new TypeKeys
-            {
-                TypeKey = typeKeys.TypeKey,
-                TypeKeyBasic = typeKeys.TypeKeyBasics,
-                TypeKeyLead = typeKeys.TypeKeyLead
-            });
-            TypeKeys.Add(new TypeKeys
-            {
-                TypeKey = typeKeys.TypeKey,
-                TypeKeyBasic = typeKeys.TypeKeyBasics,
-                TypeKeyLead = typeKeys.TypeKeyLead
-            });
+            PossibleTypeKeys.Add(new TypeKeys { TypeKey = typeKeys.TypeKey, TypeKeyBasic = typeKeys.TypeKeyBasics, TypeKeyLead = typeKeys.TypeKeyLead });
+            TypeKeys.Add(new TypeKeys { TypeKey = typeKeys.TypeKey, TypeKeyBasic = typeKeys.TypeKeyBasics, TypeKeyLead = typeKeys.TypeKeyLead });
             log.Info(log.CurrentMethod(), string.Format("Determined values from {0}: TypeKey: {1} TypeKeyBasic: {2} TypeKeyLead: {3}", source, (typeKeys.TypeKey != null) ? typeKeys.TypeKey : "-", (typeKeys.TypeKeyBasics != null) ? typeKeys.TypeKeyBasics : "-", (typeKeys.TypeKeyLead != null) ? typeKeys.TypeKeyLead : "-"));
         }
     }

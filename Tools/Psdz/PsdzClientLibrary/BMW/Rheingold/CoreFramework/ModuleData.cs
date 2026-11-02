@@ -134,9 +134,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 if (InfoObj != null)
                 {
-                //[-] decimal? nodeclass = InfoObj.XepInfoObject.Nodeclass;
-                //[-] decimal num = 41153666;
-                //[-] return (nodeclass.GetValueOrDefault() == num) & nodeclass.HasValue;
+                    return InfoObj.XepInfoObject.Nodeclass == (decimal? )41153666;
                 }
 
                 return false;

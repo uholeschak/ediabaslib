@@ -860,9 +860,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
-                decimal? versteckt = Versteckt;
-                decimal num = 1;
-                if ((versteckt.GetValueOrDefault() == num) & versteckt.HasValue)
+                if (Versteckt == (decimal? )1)
                 {
                     return true;
                 }

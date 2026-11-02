@@ -15,13 +15,9 @@ namespace BMW.Rheingold.CoreFramework
     public class VehicleContext : IVehicleContext
     {
         private readonly Vehicle vehicle;
-
         private readonly IFFMDynamicResolver ffmResolver;
-
         private Exception exception;
-
         public Exception Exception => exception;
-
         public BrandName? VehicleBrandName => vehicle.BrandName;
 
         [Obsolete("Please use AuthoringApiFactory.GetVehicle(this).Details.Fahrzeug.Nr3stellig", false)]
@@ -54,6 +50,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return null;
                 }
+
                 return vehicle.GwszUnit.ToString();
             }
         }
@@ -67,6 +64,7 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     return null;
                 }
+
                 return vehicle.ProductionDate;
             }
         }
@@ -79,11 +77,8 @@ namespace BMW.Rheingold.CoreFramework
 
         [Obsolete("Please request alternative implementation inside Authoring namespace if still needed.", false)]
         public IVciDevice MIB => vehicle.MIB;
-
         public IVciDevice VCI => vehicle.VCI;
-
         public IFa FA => vehicle.FA;
-
         public IEnumerable<IEcu> ECU => vehicle.ECU;
 
         public VehicleContext(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
@@ -100,6 +95,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning("VehicleContext.IsSet(IEcuGroupLocator)", "group was null");
                 return false;
             }
+
             try
             {
                 string groupName = group.GetDataValue("NAME");
@@ -112,6 +108,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.WarningException("VehicleContext.IsSet(IEcuGroupLocator)", ex);
             }
+
             return false;
         }
 
@@ -129,6 +126,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning("VehicleContext.IsSet(IEcuVariantLocator)", "variant was null");
                 return false;
             }
+
             try
             {
                 string variantName = variant.GetDataValue("NAME");
@@ -141,6 +139,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.WarningException("VehicleContext.IsSet(IEcuVariantLocator)", ex);
             }
+
             return false;
         }
 
@@ -163,6 +162,7 @@ namespace BMW.Rheingold.CoreFramework
                         Log.Info("VehicleContext.IsSet()", "characterValueSet with Key:{0} Value:{1} Result:{2}", characteristicsLocator.DataClassName, characteristicsLocator.Name, flag);
                         return flag;
                     }
+
                     Log.Info("VehicleContext.IsSet()", "characterValueSet was null; Result: false");
                 }
                 else
@@ -174,6 +174,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.WarningException("VehicleIdent.IsSet()", ex);
             }
+
             return flag;
         }
 
@@ -182,14 +183,15 @@ namespace BMW.Rheingold.CoreFramework
         {
             if (diagObject != null)
             {
-                //[-] foreach (TestPlanItem item in vehicle.Testplan.Item)
-                //[-] {
-                //[-] if (item.DiagParent != null && item.DiagParent.Id.ToString(CultureInfo.InvariantCulture) == diagObject.Id)
-                //[-] {
-                //[-] return true;
-                //[-] }
-                //[-] }
+            //[-] foreach (TestPlanItem item in vehicle.Testplan.Item)
+            //[-] {
+            //[-] if (item.DiagParent != null && item.DiagParent.Id.ToString(CultureInfo.InvariantCulture) == diagObject.Id)
+            //[-] {
+            //[-] return true;
+            //[-] }
+            //[-] }
             }
+
             return false;
         }
 
@@ -200,6 +202,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return false;
             }
+
             if (vehicle.PerceivedSymptoms != null)
             {
                 foreach (XEP_PERCEIVEDSYMPTOMSEX perceivedSymptom2 in vehicle.PerceivedSymptoms)
@@ -210,6 +213,7 @@ namespace BMW.Rheingold.CoreFramework
                     }
                 }
             }
+
             return false;
         }
 
@@ -221,6 +225,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning("VehicleContext.IsSet(IFaultModeLocator)", "faultMode was null");
                 return false;
             }
+
             long code = Convert.ToInt32(faultModeLocator.Code);
             if (vehicle != null && vehicle.ECU != null)
             {
@@ -232,6 +237,7 @@ namespace BMW.Rheingold.CoreFramework
                     }
                 }
             }
+
             return false;
         }
 
@@ -244,9 +250,11 @@ namespace BMW.Rheingold.CoreFramework
             {
                 return Enumerable.Empty<ITechnicalAction>();
             }
-            return (from tc in enumerable
-                    where tc.IsSoftwareCampaign == isSoftwareCampaign
-                    select ConvertToTypeTechnicalAction(tc)).ToList();
+
+            return (
+                from tc in enumerable
+                where tc.IsSoftwareCampaign == isSoftwareCampaign
+                select ConvertToTypeTechnicalAction(tc)).ToList();
         }
 
         private ITechnicalAction ConvertToTypeTechnicalAction(ITechnicalCampaign technicalCampaign)
@@ -305,6 +313,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning("VehicleContext.IsSet(IFaultCodeLocator)", "faultCode was null");
                 return false;
             }
+
             try
             {
                 if (vehicle.ECU != null)
@@ -315,11 +324,10 @@ namespace BMW.Rheingold.CoreFramework
                         {
                             continue;
                         }
+
                         foreach (DTC item2 in item.FEHLER)
                         {
-                            decimal? id = item2.Id;
-                            decimal num = Convert.ToDecimal(faultCodeLocator.Id, CultureInfo.InvariantCulture);
-                            if ((id.GetValueOrDefault() == num) & id.HasValue)
+                            if (item2.Id == (decimal? )Convert.ToDecimal(faultCodeLocator.Id, CultureInfo.InvariantCulture))
                             {
                                 return true;
                             }
@@ -332,6 +340,7 @@ namespace BMW.Rheingold.CoreFramework
                 Log.WarningException("VehicleContext.IsSet(IFaultCodeLocator)", ex);
                 exception = ex;
             }
+
             return false;
         }
 
@@ -343,12 +352,14 @@ namespace BMW.Rheingold.CoreFramework
                 Log.Warning("VehicleContext.IsSet(IEquipmentLocator)", "equipment was null");
                 return false;
             }
+
             bool? flag = vehicle.hasFFM(equipment.Name);
             if (flag.HasValue)
             {
                 Log.Info("VehicleContext.IsSet(IEquipmentLocator)", "result was: {0} for equipment check: {1}/{2}", flag, equipment.Id, equipment.Name);
                 return flag.Value;
             }
+
             try
             {
                 Log.Info("VehicleContext.IsSet(IEquipmentLocator)", "equipment check evaluation needed for equipment: {0}/{1}", equipment.Id, equipment.Name);
@@ -373,6 +384,7 @@ namespace BMW.Rheingold.CoreFramework
             {
                 Log.WarningException("VehicleContext.IsSet(IEquipmentLocator)", ex);
             }
+
             Log.Warning("VehicleContext.IsSet(IEquipmentLocator)", "returning in default path with false! for equipment check: {0}/{1}", equipment.Id, equipment.Name);
             return false;
         }
@@ -384,7 +396,8 @@ namespace BMW.Rheingold.CoreFramework
             //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
             SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
             //[+] if (sessionInfo != null) sessionInfo.Clamp15MinValue = voltage;
-            if (sessionInfo != null) sessionInfo.Clamp15MinValue = voltage;
+            if (sessionInfo != null)
+                sessionInfo.Clamp15MinValue = voltage;
         }
 
         public void SetClamp30GuardianTrigger(double voltage)
@@ -394,7 +407,8 @@ namespace BMW.Rheingold.CoreFramework
             //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
             SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
             //[+] if (sessionInfo != null) sessionInfo.Clamp30MinValue = voltage;
-            if (sessionInfo != null) sessionInfo.Clamp30MinValue = voltage;
+            if (sessionInfo != null)
+                sessionInfo.Clamp30MinValue = voltage;
         }
 
         [Obsolete("Please request alternative implementation inside Authoring namespace if still needed.", false)]
@@ -408,11 +422,13 @@ namespace BMW.Rheingold.CoreFramework
                 {
                     hashSet.Add(item);
                 }
+
                 //[-] SessionInfoAccessor.SessionInfo.ValidPWFStates = hashSet;
                 //[+] SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 //[+] if (sessionInfo != null) sessionInfo.ValidPWFStates = hashSet;
-                if (sessionInfo != null) sessionInfo.ValidPWFStates = hashSet;
+                if (sessionInfo != null)
+                    sessionInfo.ValidPWFStates = hashSet;
             }
             else
             {

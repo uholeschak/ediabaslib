@@ -10,15 +10,11 @@ namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
     public class JsonInheritanceConverter : JsonConverter
     {
         internal static readonly string DefaultDiscriminatorName = "discriminator";
-
         private readonly string _discriminatorName;
-
         [ThreadStatic]
         private static bool _isReading;
-
         [ThreadStatic]
         private static bool _isWriting;
-
         public string DiscriminatorName => _discriminatorName;
 
         public override bool CanWrite
@@ -30,6 +26,7 @@ namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
                     _isWriting = false;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -43,6 +40,7 @@ namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
                     _isReading = false;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -84,12 +82,15 @@ namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
             {
                 return null;
             }
-            string discriminator = jObject.GetValue(_discriminatorName)?.Value<string>();
+
+            JToken value = jObject.GetValue(_discriminatorName);
+            string discriminator = ((value != null) ? value.Value<string>() : null);
             Type objectSubtype = GetObjectSubtype(objectType, discriminator);
-            if (!(serializer.ContractResolver.ResolveContract(objectSubtype) is JsonObjectContract jsonObjectContract) || jsonObjectContract.Properties.All((JsonProperty p) => p.PropertyName != _discriminatorName))
+            if (!(serializer.ContractResolver.ResolveContract(objectSubtype)is JsonObjectContract jsonObjectContract) || jsonObjectContract.Properties.All((JsonProperty p) => p.PropertyName != _discriminatorName))
             {
                 jObject.Remove(_discriminatorName);
             }
+
             try
             {
                 _isReading = true;
@@ -110,6 +111,7 @@ namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
                     return customAttribute.Type;
                 }
             }
+
             return objectType;
         }
 
@@ -122,6 +124,7 @@ namespace RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects
                     return customAttribute.Key;
                 }
             }
+
             return objectType.Name;
         }
     }

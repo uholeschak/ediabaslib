@@ -452,7 +452,7 @@ namespace BMW.Rheingold.CoreFramework
 
             if (IsLocalized)
             {
-                if (textContent.IsLocalized && locText.Count == textContent.TextLocalized.Count())
+                if (textContent.IsLocalized && locText.Count == Enumerable.Count(textContent.TextLocalized))
                 {
                     for (int i = 0; i < locText.Count; i++)
                     {

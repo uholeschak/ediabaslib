@@ -728,12 +728,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
-                decimal? parentId = ParentId;
-                decimal num = 7866251;
-                if (!((parentId.GetValueOrDefault() == num) & parentId.HasValue) && ParentId.HasValue)
+                if (!(ParentId == (decimal? )7866251) && ParentId.HasValue)
                 {
-                    parentId = ParentId;
-                    return (parentId.GetValueOrDefault() == 0m) & parentId.HasValue;
+                    return ParentId == (decimal? )0m;
                 }
 
                 return true;

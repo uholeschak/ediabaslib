@@ -75,13 +75,7 @@ namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
                 {
                     flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.Id, ffmResolver);
                     ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CLIQUENKURZBEZEICHNUNG, vec.VehicleIdentLevel, flag);
-                    if (!flag || !item.EcuGroupId.HasValue)
-                    {
-                        continue;
-                    }
-
-                    decimal? ecuGroupId = item.EcuGroupId;
-                    if ((ecuGroupId.GetValueOrDefault() > 0m) & ecuGroupId.HasValue)
+                    if (flag && item.EcuGroupId.HasValue && item.EcuGroupId > (decimal? )0m)
                     {
                         flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.EcuGroupId.Value, ffmResolver);
                         ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", item.Name, item.EcuGroupId, flag);

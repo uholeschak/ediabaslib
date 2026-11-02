@@ -708,7 +708,7 @@ namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
                         goto IL_01d5;
                     }
 
-                    goto end_IL_0039;
+                    continue;
                     IL_0223:
                         string[] array4 = array3[3].Split('&');
                     bool flag = true;
@@ -727,7 +727,7 @@ namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
                         vecInfo.AddEcu(ecu);
                     }
 
-                    goto end_IL_0039;
+                    continue;
                     IL_01d5:
                         if (string.IsNullOrEmpty(array3[6]) || array3[6].Length != 6)
                         {
@@ -739,9 +739,6 @@ namespace BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.Core
                     {
                         goto IL_0223;
                     }
-
-                    end_IL_0039:
-                        ;
                 }
                 catch (Exception exception)
                 {

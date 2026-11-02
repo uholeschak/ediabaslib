@@ -451,12 +451,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
             if (vehicle.CombinedFaults != null)
             {
-                return vehicle.CombinedFaults.FirstOrDefault((DTC item) =>
-                {
-                    decimal? id2 = item.Id;
-                    decimal num = id;
-                    return (id2.GetValueOrDefault() == num) & id2.HasValue;
-                });
+                return vehicle.CombinedFaults.FirstOrDefault((DTC item) => item.Id == (decimal? )id);
             }
 
             return null;
@@ -948,8 +943,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 SessionInfo sessionInfo = ClientContext.GetClientContext(vehicle)?.SessionInfo;
                 //[+] if (sessionInfo == null)
                 if (sessionInfo == null)
-                //[+] return;
-                return;
+                    //[+] return;
+                    return;
                 //[-] string status_FunctionName = SessionInfoAccessor.SessionInfo.Status_FunctionName;
                 //[+] string status_FunctionName = sessionInfo.Status_FunctionName;
                 string status_FunctionName = sessionInfo.Status_FunctionName;

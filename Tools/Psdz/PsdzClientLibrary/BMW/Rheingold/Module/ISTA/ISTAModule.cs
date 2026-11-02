@@ -1268,9 +1268,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (!string.IsNullOrEmpty(xepInfoObject.Identifikator))
                 {
-                    decimal? generell = xepInfoObject.Generell;
-                    decimal num = 1;
-                    if ((generell.GetValueOrDefault() == num) & generell.HasValue)
+                    if (xepInfoObject.Generell == (decimal? )1)
                     {
                         feedbackViewHeaderHelper?.SetDocumentSubTitle(xepInfoObject.DocNumber, xepInfoObject.VersionNumber.Value.ToString());
                     }

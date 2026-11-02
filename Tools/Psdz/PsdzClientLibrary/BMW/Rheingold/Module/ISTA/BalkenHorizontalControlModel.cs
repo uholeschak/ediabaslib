@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -217,7 +217,7 @@ namespace BMW.Rheingold.Module.ISTA
 
                 ITextContent textContent = inParam.getParameter($"i_Balken{identifier}Textbox", null) as ITextContent;
                 TxtOverBalkenTextbox = textLocator?.TextContent.GetTextForUI(lang)[0].TextItem;
-                TxtBalkenTextbox = textContent?.GetTextForUI(lang)[0].TextItem;
+                TxtBalkenTextbox = ((textContent != null) ? textContent.GetTextForUI(lang)[0].TextItem : null);
                 BarValue = Convert.ToDouble(inoutParam.getParameter($"i_Balkenwert{identifier}", 0.0));
                 Minimum(Convert.ToDouble(inParam.getParameter($"i_Balken{identifier}Min", 0.0)));
                 Maximum(Convert.ToDouble(inParam.getParameter($"i_Balken{identifier}Max", 0.0)));

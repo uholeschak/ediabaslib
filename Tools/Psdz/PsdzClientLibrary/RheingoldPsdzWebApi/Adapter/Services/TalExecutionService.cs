@@ -283,7 +283,23 @@ namespace RheingoldPsdzWebApi.Adapter.Services
 
         private long GetSecondsToCompletion(PsdzHddUpdate hddUpdate)
         {
-            using (IEnumerator<PsdzHddUpdateTA> enumerator = (hddUpdate?.Tas?.Cast<PsdzHddUpdateTA>() ?? Array.Empty<PsdzHddUpdateTA>()).GetEnumerator())
+            object obj;
+            if (hddUpdate == null)
+            {
+                obj = null;
+            }
+            else
+            {
+                IEnumerable<IPsdzTa> tas = hddUpdate.Tas;
+                obj = ((tas != null) ? tas.Cast<PsdzHddUpdateTA>() : null);
+            }
+
+            if (obj == null)
+            {
+                obj = Array.Empty<PsdzHddUpdateTA>();
+            }
+
+            using (IEnumerator<PsdzHddUpdateTA> enumerator = ((IEnumerable<PsdzHddUpdateTA>)obj).GetEnumerator())
             {
                 if (enumerator.MoveNext())
                 {
