@@ -3284,7 +3284,7 @@ namespace BmwDeepObd
 
             if (EdiabasProxyClient?.Ediabas != null)
             {
-                ActivityCommon.SetEdiabasConfigProperties(EdiabasProxyClient.Ediabas, _instanceData.TraceDir, string.Empty, _instanceData.TraceAppend);
+                EdiabasUtils.SetEdiabasConfigProperties(EdiabasProxyClient.Ediabas, _instanceData.TraceDir, string.Empty, _instanceData.TraceAppend);
             }
         }
 

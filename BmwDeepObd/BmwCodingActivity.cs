@@ -1216,7 +1216,7 @@ namespace BmwDeepObd
 
             if (_ediabas != null)
             {
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, string.Empty, _instanceData.TraceAppend);
+                EdiabasUtils.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, string.Empty, _instanceData.TraceAppend);
             }
         }
 
