@@ -2044,15 +2044,28 @@ namespace BmwDeepObd
                         {
                             break;
                         }
-                    }
+                        if (_instanceData.AutoStart)
+                        {
+                            ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto));
+                            break;
+                        }
 
-                    if (_instanceData.AutoStart)
-                    {
-                        ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto));
+                        _instanceData.AutoStart = false;
                         break;
                     }
 
-                    _instanceData.AutoStart = false;
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.access_permission_rejected)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
                     break;
             }
         }
