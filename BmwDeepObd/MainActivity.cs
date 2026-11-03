@@ -4029,7 +4029,7 @@ namespace BmwDeepObd
                     {   // no error page
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
-                            string result = ActivityCommon.FormatResult(ActivityCommon.EdiabasThread?.Ediabas, pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor, out double? dataValue);
+                            string result = EdiabasUtils.FormatResult(ActivityCommon.EdiabasThread?.Ediabas, pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor, out double? dataValue);
                             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                             {
                                 if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
