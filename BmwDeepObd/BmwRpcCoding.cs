@@ -95,7 +95,7 @@ public class BmwRpcCoding : IDisposable
             _statusData = new StatusData();
         }
         _appContext = appContext;
-        _resourceContext = ActivityCommon.GetLocaleContext(_appContext);
+        _resourceContext = LocaleUtils.GetLocaleContext(_appContext);
         _activityCommon = new ActivityCommon(appContext);
     }
 

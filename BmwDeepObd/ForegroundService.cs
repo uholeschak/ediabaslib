@@ -110,7 +110,7 @@ namespace BmwDeepObd
             _notificationRunnable = new UpdateNotificationRunnable(this);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
-            _resourceContext = ActivityCommon.GetLocaleContext(this);
+            _resourceContext = LocaleUtils.GetLocaleContext(this);
             _instanceData = null;
             _notificationUpdateTime = DateTime.MinValue.Ticks;
             _progressValue = -1;
