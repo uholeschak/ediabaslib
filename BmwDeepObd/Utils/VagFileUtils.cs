@@ -13,7 +13,7 @@ namespace BmwDeepObd
     {
         public static string GetVagDatUkdDir(string ecuPath, bool ignoreManufacturer = false)
         {
-            string lang = ActivityCommon.GetCurrentLanguageStatic();
+            string lang = LocaleUtils.GetCurrentLanguageStatic();
             string dirName = Path.Combine(ecuPath, "dat.ukd", lang);
             if (!Directory.Exists(dirName))
             {

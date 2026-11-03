@@ -210,7 +210,7 @@ namespace BmwDeepObd
 
                 if (e == Lifecycle.Event.OnCreate)
                 {
-                    ResourceContext = ActivityCommon.GetLocaleContext(CarContext);
+                    ResourceContext = LocaleUtils.GetLocaleContext(CarContext);
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(CarContext).RegisterReceiver(_bcReceiver, new IntentFilter(CarSessionBroadcastAction));
                 }
                 else if (e == Lifecycle.Event.OnDestroy)
@@ -785,7 +785,7 @@ namespace BmwDeepObd
                     ActivityCommon.LockType lockTypeComm = ActivityCommon.LockTypeCommunication;
                     ActivityCommon.LockType lockTypeLogging = ActivityCommon.LockTypeLogging;
 
-                    sbStructureContent.AppendLine(ActivityCommon.GetLocaleSetting(CarContext));
+                    sbStructureContent.AppendLine(LocaleUtils.GetLocaleSetting(CarContext));
                     sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
 
                     sbValueContent.AppendLine();

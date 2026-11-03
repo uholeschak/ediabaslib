@@ -4731,8 +4731,8 @@ namespace BmwDeepObd
 
         public static string GetPageString(JobReader.PageInfo pageInfo, string name)
         {
-            string lang = ActivityCommon.GetCurrentLanguageStatic();
-            string langIso = ActivityCommon.GetCurrentLanguageStatic(true);
+            string lang = LocaleUtils.GetCurrentLanguageStatic();
+            string langIso = LocaleUtils.GetCurrentLanguageStatic(true);
             JobReader.StringInfo stringInfoDefault = null;
             JobReader.StringInfo stringInfoSel = null;
             foreach (JobReader.StringInfo stringInfo in pageInfo.StringList)

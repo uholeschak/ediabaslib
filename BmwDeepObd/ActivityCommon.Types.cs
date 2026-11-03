@@ -240,7 +240,7 @@ namespace BmwDeepObd
                 this.DataLogAppend = instanceData.DataLogAppend;
                 if (storage)
                 {
-                    this.RecentLocale = GetLocaleSetting(activityCommon.Context, true);
+                    this.RecentLocale = LocaleUtils.GetLocaleSetting(activityCommon.Context, true);
                     this.RecentConfigFiles = RecentConfigUtils.GetRecentConfigList();
                     this.SerialInfo = SerialInfoUtils.GetSerialInfoList();
                 }
