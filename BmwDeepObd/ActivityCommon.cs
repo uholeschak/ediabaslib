@@ -163,6 +163,12 @@ namespace BmwDeepObd
             Android.Manifest.Permission.BluetoothConnect,
         };
 
+        [SupportedOSPlatform("android37.0")]
+        public static readonly string[] PermissionsLocalNetwork =
+        {
+            "android.permission.ACCESS_LOCAL_NETWORK",
+        };
+
         [SupportedOSPlatform("android36.0")]
         public static readonly string[] PermissionsNearbyWifi =
         {
@@ -4916,7 +4922,13 @@ namespace BmwDeepObd
                 }
 
                 string[] requestPermissions;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                if (Build.VERSION.SdkInt >= (BuildVersionCodes) 37)
+                {
+#pragma warning disable CA1416
+                    requestPermissions = PermissionsLocalNetwork;
+#pragma warning restore CA1416
+                }
+                else if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                 {
 #pragma warning disable CA1416
                     requestPermissions = PermissionsNearbyWifi;
