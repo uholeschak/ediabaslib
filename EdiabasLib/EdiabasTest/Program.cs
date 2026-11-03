@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using EdiabasLib;
-using NDesk.Options;
+using Mono.Options;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
