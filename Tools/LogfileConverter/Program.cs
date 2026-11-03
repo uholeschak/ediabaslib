@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using NDesk.Options;
+using Mono.Options;
 using UdsFileReader;
 
 namespace LogfileConverter

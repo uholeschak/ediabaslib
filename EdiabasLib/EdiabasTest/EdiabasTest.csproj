@@ -16,7 +16,7 @@
     <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NDesk.Options.Core" Version="1.2.8" />
+    <PackageReference Include="Mono.Options" Version="6.12.0.148" />
     <PackageReference Include="Ranges" Version="1.0.11" />
   </ItemGroup>
 </Project>
