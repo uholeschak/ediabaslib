@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using EdiabasLib;
 using UdsFileReader;
@@ -234,6 +235,99 @@ namespace BmwDeepObd
             ediabasNet.EdInterfaceClass.CommParameter = EdInterfaceBase.CommParameterBmwFast;
             ediabasNet.EdInterfaceClass.CommAnswerLen = EdInterfaceBase.CommAnswerLenBmwFast;
             return true;
+        }
+
+        public static string FormatResult(EdiabasNet ediabas, JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, out Android.Graphics.Color? textColor, out double? dataValue)
+        {
+            textColor = null;
+            dataValue = null;
+            if (pageInfo == null)
+            {
+                return string.Empty;
+            }
+
+            MethodInfo formatResult = null;
+            MethodInfo formatResultColor = null;
+            MethodInfo formatResultMulti = null;
+            MethodInfo formatResultValue = null;
+            MethodInfo formatResultOverride = null;
+            if (pageInfo.ClassObject != null)
+            {
+                Type pageType = pageInfo.ClassObject.GetType();
+                formatResult = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string) });
+                formatResultColor = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(Dictionary<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
+                formatResultMulti = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType() });
+                formatResultValue = pageType.GetMethod("FormatResult", new[] { typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(Android.Graphics.Color?).MakeByRefType(), typeof(double?).MakeByRefType() });
+                formatResultOverride = pageType.GetMethod("FormatResult", new[] { typeof(EdiabasNet), typeof(JobReader.PageInfo), typeof(MultiMap<string, EdiabasNet.ResultData>), typeof(string), typeof(string).MakeByRefType(), typeof(Android.Graphics.Color?).MakeByRefType(), typeof(double?).MakeByRefType() });
+            }
+
+            string result = string.Empty;
+            if (displayInfo.Format == null)
+            {
+                if (resultDict != null)
+                {
+                    try
+                    {
+                        if (formatResultValue != null)
+                        {
+                            object[] args = { pageInfo, resultDict, displayInfo.Result, null, null };
+                            result = formatResultValue.Invoke(pageInfo.ClassObject, args) as string;
+                            textColor = args[3] as Android.Graphics.Color?;
+                            dataValue = args[4] as double?;
+                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
+                        }
+                        else if (formatResultMulti != null)
+                        {
+                            object[] args = { pageInfo, resultDict, displayInfo.Result, null };
+                            result = formatResultMulti.Invoke(pageInfo.ClassObject, args) as string;
+                            textColor = args[3] as Android.Graphics.Color?;
+                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict, displayInfo.Result, ref textColor);
+                        }
+                        else if (formatResultColor != null)
+                        {
+                            object[] args = { pageInfo, resultDict.ToDictionary(), displayInfo.Result, null };
+                            result = formatResultColor.Invoke(pageInfo.ClassObject, args) as string;
+                            textColor = args[3] as Android.Graphics.Color?;
+                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result, ref textColor);
+                        }
+                        else if (formatResult != null)
+                        {
+                            object[] args = { pageInfo, resultDict.ToDictionary(), displayInfo.Result };
+                            result = formatResult.Invoke(pageInfo.ClassObject, args) as string;
+                            //result = pageInfo.ClassObject.FormatResult(pageInfo, resultDict.ToDictionary(), displayInfo.Result);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+            else
+            {
+                result = FormatResultEdiabas(resultDict, displayInfo.Result, displayInfo.Format);
+            }
+
+            try
+            {
+                if (formatResultOverride != null)
+                {
+                    object[] args = { ediabas, pageInfo, resultDict, displayInfo.Result, result, null, null };
+                    // ReSharper disable once UsePatternMatching
+                    bool? valid = formatResultOverride.Invoke(pageInfo.ClassObject, args) as bool?;
+                    if (valid.HasValue && valid.Value)
+                    {
+                        result = args[4] as string;
+                        textColor = args[5] as Android.Graphics.Color?;
+                        dataValue = args[6] as double?;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return result;
         }
 
         public static String FormatResultEdiabas(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, string format)

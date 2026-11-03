@@ -623,7 +623,7 @@ namespace BmwDeepObd
 
         public string FormatResult(JobReader.PageInfo pageInfo, JobReader.DisplayInfo displayInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
         {
-            string result = ActivityCommon.FormatResult(Ediabas, pageInfo, displayInfo, resultDict, out Android.Graphics.Color? _, out double? _);
+            string result = EdiabasUtils.FormatResult(Ediabas, pageInfo, displayInfo, resultDict, out Android.Graphics.Color? _, out double? _);
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
                 if (ActivityCommon.VagUdsActive && !string.IsNullOrEmpty(pageInfo.JobsInfo.VagUdsFileName))
