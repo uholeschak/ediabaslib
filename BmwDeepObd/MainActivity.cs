@@ -984,9 +984,6 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAppDetailBtSettings:
-                    UpdateOptionsMenu();
-                    break;
-
                 case ActivityRequest.RequestAppDetailNearbySettings:
                     UpdateOptionsMenu();
                     break;

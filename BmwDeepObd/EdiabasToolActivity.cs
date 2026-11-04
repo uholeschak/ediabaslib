@@ -480,10 +480,6 @@ namespace BmwDeepObd
             switch ((ActivityRequest)requestCode)
             {
                 case ActivityRequest.RequestAppDetailBtSettings:
-                    UpdateOptionsMenu();
-                    UpdateDisplay();
-                    break;
-
                 case ActivityRequest.RequestAppDetailNearbySettings:
                     UpdateOptionsMenu();
                     UpdateDisplay();
