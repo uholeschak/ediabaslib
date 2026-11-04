@@ -69,6 +69,7 @@ namespace BmwDeepObd
         {
             RequestAppStorePermissions,
             RequestAppDetailBtSettings,
+            RequestAppDetailNearbySettings,
             RequestLocationSettings,
             RequestAppSettingsAccessFiles,
             RequestNotificationSettingsApp,
@@ -983,6 +984,10 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAppDetailBtSettings:
+                    UpdateOptionsMenu();
+                    break;
+
+                case ActivityRequest.RequestAppDetailNearbySettings:
                     UpdateOptionsMenu();
                     break;
 
@@ -2044,15 +2049,28 @@ namespace BmwDeepObd
                         {
                             break;
                         }
-                    }
+                        if (_instanceData.AutoStart)
+                        {
+                            ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto));
+                            break;
+                        }
 
-                    if (_instanceData.AutoStart)
-                    {
-                        ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto));
+                        _instanceData.AutoStart = false;
                         break;
                     }
 
-                    _instanceData.AutoStart = false;
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailNearbySettings);
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.nearby_devices_permission_rejected)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
                     break;
             }
         }
