@@ -840,6 +840,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 return;
             }
 
+            DTC dTC = fault.DTC;
             if (cleanDtcUwDisplayData)
             {
                 DTC.F_UW_Display.Clear();
@@ -855,36 +856,36 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         switch (listEnvCond.Uwident)
                         {
                             case "F_EREIGNIS_DTC":
-                                list.Add(new F_UW_Display(listEnvCond, fault.DTC.F_EREIGNIS_DTC, listEnvCond.Unit));
+                                list.Add(new F_UW_Display(listEnvCond, dTC.F_EREIGNIS_DTC, listEnvCond.Unit));
                                 break;
                             case "F_HFK":
-                                list.Add(new F_UW_Display(listEnvCond, fault.DTC.F_HFK, listEnvCond.Unit));
+                                list.Add(new F_UW_Display(listEnvCond, dTC.F_HFK, listEnvCond.Unit));
                                 break;
                             case "F_UW_ZEIT_SUPREME":
                             case "F_UW_ZEIT":
-                                list.Add(GetTimeStampDisplayItem(vehicle, fault, listEnvCond));
+                                list.Add(GetTimeStampDisplayItem(vehicle, dTC, listEnvCond));
                                 break;
                             case "F_UW_KM":
                             case "F_UW_KM_SUPREME":
-                                list.Add(GetMileageDisplayItem(fault, listEnvCond));
+                                list.Add(GetMileageDisplayItem(dTC, listEnvCond));
                                 break;
                             case "F_HLZ":
-                                list.Add(new F_UW_Display(listEnvCond, fault.DTC.F_HLZ, listEnvCond.Unit));
+                                list.Add(new F_UW_Display(listEnvCond, dTC.F_HLZ, listEnvCond.Unit));
                                 break;
                             case "F_PCODE_STRING":
-                                list.Add(new F_UW_Display(listEnvCond, fault.DTC.F_PCODE_STRING, listEnvCond.Unit));
+                                list.Add(new F_UW_Display(listEnvCond, dTC.F_PCODE_STRING, listEnvCond.Unit));
                                 break;
                             case "F_PCODE":
-                                list.Add(new F_UW_Display(listEnvCond, fault.DTC.F_PCODE, listEnvCond.Unit));
+                                list.Add(new F_UW_Display(listEnvCond, dTC.F_PCODE, listEnvCond.Unit));
                                 break;
                             case "F_SAE_CODE_STRING":
-                                list.Add(GetSAEDisplayItem(fault, listEnvCond, vehicle.BNType == BNType.BN2000));
+                                list.Add(GetSAEDisplayItem(dTC, listEnvCond, vehicle.BNType == BNType.BN2000));
                                 break;
                             case "F_LZ":
-                                list.Add(new F_UW_Display(listEnvCond, fault.DTC.F_LZ, listEnvCond.Unit));
+                                list.Add(new F_UW_Display(listEnvCond, dTC.F_LZ, listEnvCond.Unit));
                                 break;
                             case "F_CODE":
-                                list.Add(new F_UW_Display(listEnvCond, fault.DTC.F_CODE, listEnvCond.Unit));
+                                list.Add(new F_UW_Display(listEnvCond, dTC.F_CODE, listEnvCond.Unit));
                                 break;
                         }
                     }
@@ -1090,13 +1091,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             throw new NotSupportedException();
         }
 
-        private F_UW_Display GetSAEDisplayItem(Fault fault, XEP_ENVCONDSLABELS label, bool isBN2000Vehicle)
+        private F_UW_Display GetSAEDisplayItem(DTC faultDtc, XEP_ENVCONDSLABELS label, bool isBN2000Vehicle)
         {
             string text = string.Empty;
-            DTC dTC = fault?.DTC;
-            if (dTC != null)
+            if (faultDtc != null)
             {
-                text = ((!isBN2000Vehicle) ? dTC.F_SAE_CODE_STRING : dTC.F_PCODE_STRING);
+                text = ((!isBN2000Vehicle) ? faultDtc.F_SAE_CODE_STRING : faultDtc.F_PCODE_STRING);
             }
 
             if (string.IsNullOrEmpty(text))
@@ -1107,7 +1107,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return new F_UW_Display(label, text, label.Unit);
         }
 
-        private F_UW_Display GetTimeStampDisplayItem(Vehicle vehicle, Fault fault, XEP_ENVCONDSLABELS label)
+        private F_UW_Display GetTimeStampDisplayItem(Vehicle vehicle, DTC faultDtc, XEP_ENVCONDSLABELS label)
         {
             string current_F_UW_WERT = "-1";
             string first_F_UW_WERT = "-1";
@@ -1117,77 +1117,77 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             string second_F_UW_EINH = null;
             if (vehicle.VehicleLifeStartDate != default(DateTime))
             {
-                if (fault.DTC.F_UW_ZEIT_SUPREME > 0.0)
+                if (faultDtc.F_UW_ZEIT_SUPREME > 0.0)
                 {
-                    current_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(fault.DTC.F_UW_ZEIT_SUPREME.Value).ToGeneralDateLongTimeWithMiliseconds();
+                    current_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(faultDtc.F_UW_ZEIT_SUPREME.Value).ToGeneralDateLongTimeWithMiliseconds();
                 }
-                else if (fault.DTC.F_UW_ZEIT > 0)
+                else if (faultDtc.F_UW_ZEIT > 0)
                 {
-                    current_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(fault.DTC.F_UW_ZEIT).ToString("G");
-                }
-
-                if (fault.DTC.First != null)
-                {
-                    if (fault.DTC.First.F_UW_ZEIT_SUPREME > 0.0)
-                    {
-                        first_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(fault.DTC.First.F_UW_ZEIT_SUPREME.Value).ToGeneralDateLongTimeWithMiliseconds();
-                    }
-                    else if (fault.DTC.First.F_UW_ZEIT > 0)
-                    {
-                        first_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(fault.DTC.First.F_UW_ZEIT.Value).ToString("G");
-                    }
+                    current_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(faultDtc.F_UW_ZEIT).ToString("G");
                 }
 
-                if (fault.DTC.Second != null)
+                if (faultDtc.First != null)
                 {
-                    if (fault.DTC.Second.F_UW_ZEIT_SUPREME > 0.0)
+                    if (faultDtc.First.F_UW_ZEIT_SUPREME > 0.0)
                     {
-                        second_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(fault.DTC.Second.F_UW_ZEIT_SUPREME.Value).ToGeneralDateLongTimeWithMiliseconds();
+                        first_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(faultDtc.First.F_UW_ZEIT_SUPREME.Value).ToGeneralDateLongTimeWithMiliseconds();
                     }
-                    else if (fault.DTC.Second.F_UW_ZEIT > 0)
+                    else if (faultDtc.First.F_UW_ZEIT > 0)
                     {
-                        second_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(fault.DTC.Second.F_UW_ZEIT.Value).ToString("G");
+                        first_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(faultDtc.First.F_UW_ZEIT.Value).ToString("G");
+                    }
+                }
+
+                if (faultDtc.Second != null)
+                {
+                    if (faultDtc.Second.F_UW_ZEIT_SUPREME > 0.0)
+                    {
+                        second_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(faultDtc.Second.F_UW_ZEIT_SUPREME.Value).ToGeneralDateLongTimeWithMiliseconds();
+                    }
+                    else if (faultDtc.Second.F_UW_ZEIT > 0)
+                    {
+                        second_F_UW_WERT = vehicle.VehicleLifeStartDate.AddSeconds(faultDtc.Second.F_UW_ZEIT.Value).ToString("G");
                     }
                 }
             }
             else
             {
                 string text = (string.IsNullOrEmpty(label.Unit) ? "s" : label.Unit);
-                if (fault.DTC.F_UW_ZEIT_SUPREME > 0.0)
+                if (faultDtc.F_UW_ZEIT_SUPREME > 0.0)
                 {
-                    current_F_UW_WERT = fault.DTC.F_UW_ZEIT_SUPREME.Value.ToString();
+                    current_F_UW_WERT = faultDtc.F_UW_ZEIT_SUPREME.Value.ToString();
                     current_F_UW_EINH = text;
                 }
-                else if (fault.DTC.F_UW_ZEIT > 0)
+                else if (faultDtc.F_UW_ZEIT > 0)
                 {
-                    current_F_UW_WERT = fault.DTC.F_UW_ZEIT.ToString();
+                    current_F_UW_WERT = faultDtc.F_UW_ZEIT.ToString();
                     current_F_UW_EINH = text;
                 }
 
-                if (fault.DTC.First != null)
+                if (faultDtc.First != null)
                 {
-                    if (fault.DTC.First.F_UW_ZEIT_SUPREME > 0.0)
+                    if (faultDtc.First.F_UW_ZEIT_SUPREME > 0.0)
                     {
-                        first_F_UW_WERT = fault.DTC.First.F_UW_ZEIT_SUPREME.Value.ToString();
+                        first_F_UW_WERT = faultDtc.First.F_UW_ZEIT_SUPREME.Value.ToString();
                         first_F_UW_EINH = text;
                     }
-                    else if (fault.DTC.First.F_UW_ZEIT > 0)
+                    else if (faultDtc.First.F_UW_ZEIT > 0)
                     {
-                        first_F_UW_WERT = fault.DTC.First.F_UW_ZEIT.Value.ToString();
+                        first_F_UW_WERT = faultDtc.First.F_UW_ZEIT.Value.ToString();
                         first_F_UW_EINH = text;
                     }
                 }
 
-                if (fault.DTC.Second != null)
+                if (faultDtc.Second != null)
                 {
-                    if (fault.DTC.Second.F_UW_ZEIT_SUPREME > 0.0)
+                    if (faultDtc.Second.F_UW_ZEIT_SUPREME > 0.0)
                     {
-                        second_F_UW_WERT = fault.DTC.Second.F_UW_ZEIT_SUPREME.Value.ToString();
+                        second_F_UW_WERT = faultDtc.Second.F_UW_ZEIT_SUPREME.Value.ToString();
                         second_F_UW_EINH = text;
                     }
-                    else if (fault.DTC.Second.F_UW_ZEIT > 0)
+                    else if (faultDtc.Second.F_UW_ZEIT > 0)
                     {
-                        second_F_UW_WERT = fault.DTC.Second.F_UW_ZEIT.Value.ToString();
+                        second_F_UW_WERT = faultDtc.Second.F_UW_ZEIT.Value.ToString();
                         second_F_UW_EINH = text;
                     }
                 }
@@ -1196,46 +1196,46 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return new F_UW_Display(label, current_F_UW_WERT, current_F_UW_EINH, first_F_UW_WERT, first_F_UW_EINH, second_F_UW_WERT, second_F_UW_EINH);
         }
 
-        private F_UW_Display GetMileageDisplayItem(Fault fault, XEP_ENVCONDSLABELS label)
+        private F_UW_Display GetMileageDisplayItem(DTC faultDtc, XEP_ENVCONDSLABELS label)
         {
             string text = (string.IsNullOrEmpty(label.Unit) ? "km" : label.Unit);
             string text2 = "-1";
             string text3 = "0.0";
             string text4 = text2;
-            if (fault.DTC.F_UW_KM_SUPREME.HasValue)
+            if (faultDtc.F_UW_KM_SUPREME.HasValue)
             {
-                text4 = fault.DTC.F_UW_KM_SUPREME.Value.ToString(text3);
+                text4 = faultDtc.F_UW_KM_SUPREME.Value.ToString(text3);
             }
-            else if (fault.DTC.F_UW_KM.HasValue)
+            else if (faultDtc.F_UW_KM.HasValue)
             {
-                text4 = fault.DTC.F_UW_KM.Value.ToString();
+                text4 = faultDtc.F_UW_KM.Value.ToString();
             }
 
             string current_F_UW_EINH = ((text4 != text2) ? text : null);
             string text5 = text2;
-            if (fault.DTC.First != null)
+            if (faultDtc.First != null)
             {
-                if (fault.DTC.First.F_UW_KM_SUPREME.HasValue)
+                if (faultDtc.First.F_UW_KM_SUPREME.HasValue)
                 {
-                    text5 = fault.DTC.First.F_UW_KM_SUPREME.Value.ToString(text3);
+                    text5 = faultDtc.First.F_UW_KM_SUPREME.Value.ToString(text3);
                 }
-                else if (fault.DTC.First.F_UW_KM.HasValue)
+                else if (faultDtc.First.F_UW_KM.HasValue)
                 {
-                    text5 = fault.DTC.First.F_UW_KM.Value.ToString();
+                    text5 = faultDtc.First.F_UW_KM.Value.ToString();
                 }
             }
 
             string first_F_UW_EINH = ((text5 != text2) ? text : null);
             string text6 = text2;
-            if (fault.DTC.Second != null)
+            if (faultDtc.Second != null)
             {
-                if (fault.DTC.Second.F_UW_KM_SUPREME.HasValue)
+                if (faultDtc.Second.F_UW_KM_SUPREME.HasValue)
                 {
-                    text6 = fault.DTC.Second.F_UW_KM_SUPREME.Value.ToString(text3);
+                    text6 = faultDtc.Second.F_UW_KM_SUPREME.Value.ToString(text3);
                 }
-                else if (fault.DTC.Second.F_UW_KM.HasValue)
+                else if (faultDtc.Second.F_UW_KM.HasValue)
                 {
-                    text6 = fault.DTC.Second.F_UW_KM.Value.ToString();
+                    text6 = faultDtc.Second.F_UW_KM.Value.ToString();
                 }
             }
 

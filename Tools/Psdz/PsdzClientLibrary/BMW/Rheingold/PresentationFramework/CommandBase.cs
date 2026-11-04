@@ -32,6 +32,9 @@ namespace BMW.Rheingold.PresentationFramework
         private Task doExecuteTask;
         private bool traceEnabled;
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
+        private readonly object executeSync = new object ();
+        private DateTime lastExecuteTime = DateTime.MinValue;
+        private const int TimeToWait = 500;
         [PreserveSource(Hint = "IMultisessionLogic", Placeholder = true)]
         private PlaceholderType logic;
         [PreserveSource(Hint = "IMultisessionLogic", Placeholder = true)]
@@ -240,6 +243,18 @@ namespace BMW.Rheingold.PresentationFramework
             _ = 1;
             try
             {
+                lock (executeSync)
+                {
+                    DateTime now = DateTime.Now;
+                    double totalMilliseconds = (now - lastExecuteTime).TotalMilliseconds;
+                    lastExecuteTime = now;
+                    if (totalMilliseconds < 500.0)
+                    {
+                        Log.Info("CommandBase.ExecuteAsync()", "Skip execution of command \"{1}\", because last execution started only {0} milliseconds before.", totalMilliseconds, ID);
+                        return;
+                    }
+                }
+
                 Dispatcher = Dispatcher.CurrentDispatcher;
                 await CheckForAbort(parameter);
                 FinishedExecution = false;
@@ -524,7 +539,6 @@ namespace BMW.Rheingold.PresentationFramework
                 //[-] {
                 //[-] Environment.Exit(0);
                 //[-] }
-
                 Dispatcher.Invoke((DelegateFunction)(() =>
                 {
                     try
@@ -533,7 +547,7 @@ namespace BMW.Rheingold.PresentationFramework
                     }
                     catch (Exception ex4)
                     {
-                        //[-] Logic.Services.InteractionService.Register(new InteractionMessageModel(ExceptionHandler.Instance.Handle(ex4).Text));
+                    //[-] Logic.Services.InteractionService.Register(new InteractionMessageModel(ExceptionHandler.Instance.Handle(ex4).Text));
                     }
                 }));
             }

@@ -121,12 +121,6 @@ namespace BMW.ISPI.IstaServices.Client
         }
 
         [PreserveSource(Cleaned = true)]
-        public string GetLogin2faRequired()
-        {
-            return string.Empty;
-        }
-
-        [PreserveSource(Cleaned = true)]
         public string GetWebEamNextAlphaBaseUrl()
         {
             return string.Empty;
@@ -134,12 +128,6 @@ namespace BMW.ISPI.IstaServices.Client
 
         [PreserveSource(Cleaned = true)]
         public string GetSecureFeatureActivationUrl()
-        {
-            return string.Empty;
-        }
-
-        [PreserveSource(Cleaned = true)]
-        public string PrepareSecureFeatureActivationQaProdUrlIfRequired(string url)
         {
             return string.Empty;
         }
@@ -214,12 +202,6 @@ namespace BMW.ISPI.IstaServices.Client
         public string GetAirForkServiceUrl()
         {
             return string.Empty;
-        }
-
-        [PreserveSource(Cleaned = true)]
-        public bool GetSessionTakeover()
-        {
-            return false;
         }
 
         [PreserveSource(Cleaned = true)]
@@ -409,6 +391,24 @@ namespace BMW.ISPI.IstaServices.Client
         public string GetCallAirInAwpUrl()
         {
             return null;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string GetLogin2faRequired()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public string PrepareSecureFeatureActivationQaProdUrlIfRequired(string url)
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool GetSessionTakeover()
+        {
+            return false;
         }
 
         [PreserveSource(Cleaned = true)]

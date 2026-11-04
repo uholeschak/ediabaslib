@@ -22,6 +22,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 
+#pragma warning disable CS0618
 namespace RheingoldPsdzWebApi.Adapter.Contracts
 {
     internal class PsdzObjectBuilder : IPsdzObjectBuilder
@@ -378,6 +379,7 @@ Vin = vin17,
                             psdzEcu.PrimaryKey = BuildEcuIdentifier((int)srcEcu.ID_SG_ADR, srcEcu.ECU_GROBNAME);
                         }
 
+                        psdzEcu.PsdzEcuPdxInfo = BuildPdxInfo(srcEcu.EcuPdxInfo);
                         PsdzStandardSvk psdzStandardSvk = new PsdzStandardSvk();
                         SgbmIdParser sgbmIdParser = new SgbmIdParser();
                         IList<IPsdzSgbmId> list2 = new List<IPsdzSgbmId>();

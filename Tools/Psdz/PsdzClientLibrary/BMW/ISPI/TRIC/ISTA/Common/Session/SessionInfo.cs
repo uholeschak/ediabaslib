@@ -48,7 +48,6 @@ namespace BMW.ISPI.TRIC.ISTA.Common.Session
         private bool noVehicleCommunicationRunning;
         private bool connectionLossRecognized;
         private bool isSecurityPopupAlreadyShown;
-        private bool shouldSkipPinAuthentication;
         private string vinRangeTypeLastResolvedType;
         private string statusFunctionName;
         private string vin17FromInputFieldMR;
@@ -805,26 +804,6 @@ namespace BMW.ISPI.TRIC.ISTA.Common.Session
             {
                 nonSignalErrorFaultCodeSum = value;
                 OnPropertyChanged("NonSignalErrorFaultCodeSum");
-            }
-        }
-
-        [DataMember]
-        [XmlIgnore]
-        [IgnoreForReopenedOperations]
-        public bool ShouldSkipPinAuthentication
-        {
-            get
-            {
-                return shouldSkipPinAuthentication;
-            }
-
-            set
-            {
-                if (shouldSkipPinAuthentication != value)
-                {
-                    shouldSkipPinAuthentication = value;
-                    OnPropertyChanged("ShouldSkipPinAuthentication");
-                }
             }
         }
 

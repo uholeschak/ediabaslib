@@ -18,17 +18,20 @@ namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
             public const string FastaSlowApiJobServCode = "FastaSlowApiJobServCode";
             public const string FdlGateOverTricCloud = "FdlGateOverTricCloud";
             public const string FillFuncJobInFstdat = "FillFuncJobInFstdat";
+            public const string ForceEnetUsage = "ForceEnetUsage";
             public const string FscOverTricCloud = "FscOverTricCloud";
             public const string FsLesenExpertOldCode = "FsLesenExpertOldCode";
-            public const string ForceEnetUsage = "ForceEnetUsage";
             public const string GetEFuseTitlesNewWay = "GetEFuseTitlesNewWay";
             public const string GetEslDocFromAirViaTrz = "GetEslDocFromAirViaTrz";
+            public const string HandoverAmpToAsisstant = "HandoverAmpToAsisstant";
             public const string IcomNextPCapReadout = "IcomNextPCapReadout";
             public const string IpmOverTricCloud = "IpmOverTricCloud";
             public const string IsCompassHelpEnabled = "IsCompassHelpEnabled";
             public const string JumpAirInAwp = "JumpAirInAwp";
             public const string KaiServiceHistory = "KaiServiceHistory";
+            public const string KaiOverTricCloud = "KaiOverTricCloud";
             public const string Login = "Login";
+            public const string Login2FA = "Login2FA";
             public const string LogTracingMaximum = "LogTracingMaximum";
             public const string MidaOverTricCloud = "MidaOverTricCloud";
             public const string MultipleIcomUpdate = "MultipleIcomUpdate";
@@ -44,7 +47,6 @@ namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
             public const string SchedUserHousekeepJob = "SchedUserHousekeepJob";
             public const string SdpOnlnPatchMultisess = "SdpOnlnPatchMultisess";
             public const string SeamLM2OverTricCloud = "SeamLM2OverTricCloud";
-            public const string SendAmpToAssistant = "SendAmpToAssistant";
             public const string SendFastaProtToAsst = "SendFastaProtToAsst";
             public const string SessionStateDialog = "SessionStateDialog";
             public const string SFAOverTricCloud = "SFAOverTricCloud";
@@ -54,13 +56,13 @@ namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
             public const string ShowTabFluids = "ShowTabFluids";
             public const string SmartMaintenanceOverTRC = "SmartMaintenanceOverTRC";
             public const string SpecialModeAllowAllBrand = "SpecialModeAllowAllBrand";
+            public const string StartWithNativeMP = "StartWithNativeMP";
             public const string SyncLoginDatabasesJob = "SyncLoginDatabasesJob";
             public const string TCMOverTricCloud = "TCMOverTricCloud";
             public const string UseAlphaRealm = "UseAlphaRealm";
             public const string UseFastaJson = "UseFastaJson";
             public const string UseNewIcomFwUpdate = "UseNewIcomFwUpdate";
             public const string UsePsdzSeriesFormatter = "UsePsdzSeriesFormatter";
-            public const string UseQaBackendForSfaAndFsc = "UseQaBackendForSfaAndFsc";
             public const string UseReducPortRangeMirror = "UseReducPortRangeMirror";
             public const string UseSweParallelDownloader = "UseSweParallelDownloader";
             public const string VcmComparison = "VcmComparison";
@@ -70,6 +72,8 @@ namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
             public const string Vps25OverTricCloud = "Vps25OverTricCloud";
             public const string VpsOverTricCloud = "VpsOverTricCloud";
             public const string ZgwRepOverstForIpbBoot = "ZgwRepOverstForIpbBoot";
+            public const string ShowIcomTracingOption = "ShowIcomTracingOption";
+            public const string OverrideTypeKeyForVIN17 = "OverrideTypeKeyForVIN17";
             public static bool DefaultValue(string featureName, IstaMode mode)
             {
                 switch (mode)
@@ -107,7 +111,7 @@ namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
                     case "VcmComparison":
                     case "KaiServiceHistory":
                     case "Login":
-                    case "UseQaBackendForSfaAndFsc":
+                    case "Login2FA":
                     case "ZgwRepOverstForIpbBoot":
                         return true;
                     default:
@@ -128,7 +132,6 @@ namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
                     case "VcmComparison":
                     case "KaiServiceHistory":
                     case "RenewConAfterEcuReset":
-                    case "UseQaBackendForSfaAndFsc":
                     case "VinRangesOverConWoy":
                     case "ZgwRepOverstForIpbBoot":
                         return true;
@@ -145,7 +148,6 @@ namespace BMW.ISPI.TRIC.ISTA.Configuration.Constants
                     case "FastaSlowApiJobServCode":
                     case "RenewConAfterEcuReset":
                     case "ShowTabFluids":
-                    case "UseQaBackendForSfaAndFsc":
                     case "ShowImibDisconnectPopUp":
                         return true;
                     default:

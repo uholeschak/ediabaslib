@@ -1,5 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.Programming.API
 {
     internal class IntegrationLevelTriple : IIstufenTriple

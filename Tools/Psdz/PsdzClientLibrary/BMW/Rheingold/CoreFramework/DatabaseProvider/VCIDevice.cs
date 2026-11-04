@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
@@ -33,6 +34,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private string receivingIP;
         private bool isMarkedToDefault;
         private BasicFeaturesVci basicFeaturesVci;
+        private string deviceHashId;
         private string accuCapacityField;
         private string kl15VoltageField;
         private string kl30VoltageField;
@@ -161,6 +163,21 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
 
                 return null;
+            }
+        }
+
+        [XmlIgnore]
+        [IgnoreDataMember]
+        public string DeviceHashId
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(deviceHashId))
+                {
+                    deviceHashId = ComputeDeviceHashId();
+                }
+
+                return deviceHashId;
             }
         }
 
@@ -1448,6 +1465,35 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             VCIType = vciType;
         }
 
+        private string ComputeDeviceHashId()
+        {
+            Dictionary<string, string> attributes = new Dictionary<string, string>
+            {
+                {
+                    "VIN",
+                    VIN ?? string.Empty
+                },
+                {
+                    "DevId",
+                    DevId ?? string.Empty
+                },
+                {
+                    "Serial",
+                    Serial ?? string.Empty
+                },
+                {
+                    "DevType",
+                    DevType ?? string.Empty
+                }
+            };
+            IOrderedEnumerable<string> source = attributes.Keys.OrderBy((string k) => k);
+            string s = string.Join("|", source.Select((string k) => k + "=" + attributes[k]));
+            using (SHA1 sHA = SHA1.Create())
+            {
+                return BitConverter.ToString(sHA.ComputeHash(Encoding.UTF8.GetBytes(s))).Replace("-", string.Empty).ToLowerInvariant();
+            }
+        }
+
         private void LoadCharacteristicsFromDatabase()
         {
             if (basicFeaturesVci != null)
@@ -1854,6 +1900,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             vCIDevice.VCIType = VCIType;
             vCIDevice.IsDoIP = IsDoIP;
             vCIDevice.IsSimulation = IsSimulation;
+            vCIDevice.deviceHashId = deviceHashId;
             return vCIDevice;
         }
 

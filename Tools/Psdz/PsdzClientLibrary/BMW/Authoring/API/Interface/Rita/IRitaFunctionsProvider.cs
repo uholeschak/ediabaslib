@@ -12,26 +12,25 @@ namespace BMW.Authoring.API.Interface.Rita
         [Obsolete("This function is not supported")]
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IBoolResultObject ClearAllFaults();
-
         [Obsolete("This function is not supported please use DeleteFaultsStatusUpdate")]
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IBoolResultObject DeleteFaultsFailed(string errorCode);
-
-        [Obsolete("This function is not supported")]
+        [Obsolete("This function is not supported. Please use ReadAndCalculateFaultsInRita")]
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IBoolResultObject ReadAndCalculateFaults();
-
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IBoolResultObject StartDeleteAllFaults();
-
-        [Obsolete("This function is not supported please use DeleteFaultsStatusUpdate")]
+        [Obsolete("This function is not supported please use RunStepInRita('UpdateRitaAfterFaultResets)")]
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IBoolResultObject UpdateDtcAndFaultList();
-
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IBoolResultObject IsSilentDarkModeEnabled();
-
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         IBoolResultObject DeleteFaultsStatusUpdate(string statusCode);
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        IBoolResultObject RunStepInRita(string stepName);
+        [Obsolete("This function is not supported please use RunStepInRita('ReadDtcAndCalculateFaults')")]
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        IBoolResultObject ReadAndCalculateFaultsByRita();
     }
 }

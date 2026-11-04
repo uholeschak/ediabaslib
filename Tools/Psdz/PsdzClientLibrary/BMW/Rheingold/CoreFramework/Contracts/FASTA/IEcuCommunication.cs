@@ -9,14 +9,10 @@ namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
     {
         bool HasOrder { get; }
 
-        IEcuFunction CreateAndAddFunction(string jobName, JobStatus jobStatus);
-
+        IEcuFunction CreateAndAddFunction(string jobName, JobStatus jobStatus, int duration);
         void AddEcuJob(IEcuJob ecuJob, IEnumerable<DTC> dtcs, bool doFastaRelevantFiltering);
-
         void Initialize(IEcu ecu, IEnumerable<IEcuJob> ecuJobs, bool doFastaRelevantFiltering);
-
         void Initialize(string ecuName, IEnumerable<IEcuJob> ecuJobs, bool doFastaRelevantFiltering);
-
         void Initialize(IEcu ecu, IEnumerable<IEcuJob> ecuJobs, IEnumerable<JobResultData> jobFormatedResults, bool doFastaRelevantFiltering);
     }
 }

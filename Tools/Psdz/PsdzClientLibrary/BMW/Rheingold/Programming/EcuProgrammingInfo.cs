@@ -17,6 +17,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.Programming
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework.AutomotiveSecurity;
@@ -22,8 +22,10 @@ namespace BMW.Rheingold.CoreFramework
         IBoolResultObject GenerateSecureTokenRequestFileForVehicle(IList<ISecureTokenMetaObject> secureTokenMetaObjects, bool isInBackground);
         EcuMode GetECUMode(IEcuIdentifier ecuIdentifier);
         IList<IFeatureStatusResult> RequestTokenStatus(IList<ISecureTokenMetaObject> stmoList);
+        IList<IFeatureStatusResult> RequestTokenStatusUsingActualSvt(IList<ISecureTokenMetaObject> stmoList);
         [Obsolete("This API-Function is deprecated. Please use 'RequestTokenStatus(IList<ISecureTokenMetaObject>)' instead.")]
         IList<IFeatureStatusResult> RequestTokenStatus(string hexEcuAddress, List<long> featureID);
+        [Obsolete("This API-Function is deprecated. Please use 'RequestTokenStatusUsingActualSvt(IList<ISecureTokenMetaObject>)' instead.")]
         IList<IFeatureStatusResult> RequestTokenStatusUsingActualSvt(string hexEcuAddress, List<long> featureID);
         bool SwitchECUToFieldMode(IEcuIdentifier ecuIdentifier);
         IBoolResultObject GenerateSecureTokenRequestZip_SecureToken();

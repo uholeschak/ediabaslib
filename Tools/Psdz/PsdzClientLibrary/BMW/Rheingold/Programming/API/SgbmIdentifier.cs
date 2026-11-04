@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.Programming.API
 {
     [DataContract]

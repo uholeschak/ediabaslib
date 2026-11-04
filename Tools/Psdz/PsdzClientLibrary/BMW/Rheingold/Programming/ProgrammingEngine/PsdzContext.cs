@@ -31,7 +31,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal.TalFilter;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169, CS0618
 namespace BMW.Rheingold.Programming.ProgrammingEngine
 {
     [PreserveSource(Hint = "IDisposable added", AccessModified = true, InheritanceModified = true)]

@@ -34,6 +34,7 @@ namespace BMW.Rheingold.CoreFramework
         private const string KeyOssParamFile = "OssParamFile";
         private const string KeyIsProgrammingLocked = "IsProgrammingLocked";
         private const string KeyIsProgrammingDataInValid = "IsProgrammingDataInValid";
+        private const string KeyIsProgrammingApiModeActive = "IsProgrammingApiModeActive";
         public const string TEST_DISTRIBUTION_PARTNER_NUMBER = "40626";
         private static string currentUiCulture;
         private static CultureInfo currentCultureInfo;
@@ -154,6 +155,15 @@ namespace BMW.Rheingold.CoreFramework
             }
         }
 
+        public static bool IsOpapiTrcProxyEnabled
+        {
+            get
+            {
+                bool defaultValue = true;
+                return getConfigStringAsBoolean("OPAPI.UseTrcProxy", defaultValue);
+            }
+        }
+
         public static bool IsISTAModeHO
         {
             get
@@ -260,6 +270,7 @@ namespace BMW.Rheingold.CoreFramework
             isProgrammingLocked = getConfigStringAsBoolean("IsProgrammingLocked", defaultValue: false);
             areSDPPacksInvalid = getConfigStringAsBoolean("IsProgrammingDataInValid", defaultValue: false);
             OssParamFile = getConfigString("OssParamFile");
+            IsProgrammingApiModeActive = getConfigStringAsBoolean("IsProgrammingApiModeActive", defaultValue: false);
         }
 
         public static string GetLogisticBaseVersion()
@@ -398,6 +409,7 @@ namespace BMW.Rheingold.CoreFramework
             dictionary.Add("OssParamFile", OssParamFile);
             dictionary.Add("IsProgrammingLocked", IsProgrammingLocked.ToString());
             dictionary.Add("IsProgrammingDataInValid", areSDPPacksInvalid.ToString());
+            dictionary.Add("IsProgrammingApiModeActive", IsProgrammingApiModeActive.ToString());
             return dictionary;
         }
 
@@ -1225,11 +1237,6 @@ namespace BMW.Rheingold.CoreFramework
         {
             bool defaultValue = !IsLightModeActive || !RunIstaRsuRepairMode;
             return getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.VehicleIdent.ReadFASTAData", defaultValue);
-        }
-
-        public static bool IsStartWithNativeMeasurePlanEnabled()
-        {
-            return getConfigStringAsBoolean("BMW.Rheingold.Programming.StartWithNativeMeasurePlanEnabled", defaultValue: false);
         }
 
         public static bool ShowReleaseNotesOnIstaStart()

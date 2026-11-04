@@ -20,9 +20,9 @@
         public const string LOG04_WEN_Session_Started_nu_LF = "LOG04_WEN_Session_Started_nu_LF";
         public const string LOG05_WEN_Session_Opened_nu_LF = "LOG05_WEN_Session_Opened_nu_LF";
         public const string LOG06_WEN_Session_Error_nu_LF = "LOG06_WEN_Session_Error_nu_LF";
-        public const string LOG07_PIN_creation_change_nu_LF = "LOG07_PIN_creation_change_nu_LF";
         public const string LOG08_NetworkDiscrepancyDetected_nu_LF = "LOG08_NetworkDiscrepancyDetected_nu_LF";
         public const string LOG09_AccessTokenNotFound_nu_LF = "LOG09_AccessTokenNotFound_nu_LF ";
+        public const string LOG10_ReloginBlockedInsufficientRoles_nu_LF = "LOG10_ReloginBlockedInsufficientRoles_nu_LF";
         public const string SDP10_BLPDownloadSuccess_nu_LF = "SDP10_BLPDownloadSuccess_nu_LF";
         public const string SDP11_BLPDownloadFailed_nu_LF = "SDP11_BLPDownloadFailed_nu_LF";
         public const string SDP12_SWEDownloadSuccess_nu_LF = "SDP12_SWEDownloadSuccess_nu_LF";
@@ -64,6 +64,7 @@
         public static string ANA07_FastaMesswerteConsumeToMuchTime_nu_LF => "ANA07_FastaMesswerteConsumeToMuchTime_nu_LF";
         public static string ANA08_TestmodulesUsingNotAllowedIstaFunctions_nu_LF => "ANA08_TestmodulesUsingNotAllowedIstaFunctions_nu_LF";
         public static string ANA09_ResultSetFailed_nu_LF => "ANA09_ResultSetFailed_nu_LF";
+        public static string ANA17_SessionReopened_nu_LF => "ANA17_SessionReopened_nu_LF";
         public static string BNT01_BnTopologieNotFound_nu_LF => "BNT01_BnTopologieNotFound_nu_LF";
         public static string EDI00_SGBDW2VinUse_nu_LF => "EDI00_SGBDW2VinUse_nu_LF";
         public static string ECU01_EdiabasError_nu_LF => "ECU01_EdiabasError_nu_LF";
@@ -198,6 +199,7 @@
         public static string ISL05_LauncherServiceExternalIsUsed_nu_LF => "ISL05_LauncherServiceExternalIsUsed_nu_LF";
         public static string ISL06_InstallationErrorCorruptSDP_nu_LF => "ISL06_InstallationErrorCorruptSDP_nu_LF";
         public static string ISL07_InstallationErrorCorruptMsi_nu_LF => "ISL07_InstallationErrorCorruptMsi_nu_LF";
+        public static string ISL08_ElapsedTimePackageComplete_nu_LF => "ISL08_ElapsedTimePackageComplete_nu_LF";
         public static string HDD01_LanConnectionError_nu_LF => "HDD01_LanConnectionError_nu_LF";
         public static string HDD02_HddServerNotVailable_nu_LF => "HDD02_HddServerNotVailable_nu_LF";
         public static string HDD03_TherapyPlanResetNotOk_nu_LF => "HDD03_TherapyPlanResetNotOk_nu_LF";

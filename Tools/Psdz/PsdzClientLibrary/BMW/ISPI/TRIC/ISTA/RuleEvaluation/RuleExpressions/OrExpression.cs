@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Implementations;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleVariantHandling;
@@ -75,15 +77,19 @@ namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             bool flag = false;
-            internalResult.RuleExpression = this;
             ILogger logger = ruleEvaluationUtils.Logger;
             RuleExpression[] array = operands;
             foreach (RuleExpression ruleExpression in array)
             {
+                internalResult.RuleExpression = this;
                 logger.Debug("OrExpression.Evaluate()", "operand: {0}", ruleExpression);
                 //[-] flag |= RuleExpression.Evaluate(vec, dealer, ruleExpression, ffmResolver, dataProvider, ruleEvaluationUtils, internalResult);
                 //[+] flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
                 flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
+                if (flag && !internalResult.Any((ValidationRuleInternalResult r) => r.Type == CharacteristicType.HeatMotor))
+                {
+                    return true;
+                }
             }
 
             logger.Debug("OrExpression.Evaluate()", "validity: {0}", flag);

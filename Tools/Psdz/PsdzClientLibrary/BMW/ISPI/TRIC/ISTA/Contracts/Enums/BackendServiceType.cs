@@ -69,6 +69,7 @@
         HighVoltageBatteryPass,
         TCMv2,
         AWPForkService,
-        AIRTRZ
+        AIRTRZ,
+        VehicleServiceInfo
     }
 }

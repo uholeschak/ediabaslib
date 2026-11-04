@@ -22,7 +22,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Vcm;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169, CS0618
 namespace BMW.Rheingold.Programming.API
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]

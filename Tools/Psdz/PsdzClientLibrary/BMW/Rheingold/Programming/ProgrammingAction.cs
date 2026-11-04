@@ -13,7 +13,7 @@ using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Swt;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169, CS0618
 namespace BMW.Rheingold.Programming
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
