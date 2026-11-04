@@ -69,6 +69,7 @@ namespace BmwDeepObd
         {
             RequestAppStorePermissions,
             RequestAppDetailBtSettings,
+            RequestAppDetailNearbySettings,
             RequestLocationSettings,
             RequestAppSettingsAccessFiles,
             RequestNotificationSettingsApp,
@@ -983,6 +984,10 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAppDetailBtSettings:
+                    UpdateOptionsMenu();
+                    break;
+
+                case ActivityRequest.RequestAppDetailNearbySettings:
                     UpdateOptionsMenu();
                     break;
 
@@ -2057,13 +2062,13 @@ namespace BmwDeepObd
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
+                            IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailNearbySettings);
                         })
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {
                         })
                         .SetCancelable(true)
-                        .SetMessage(Resource.String.access_permission_rejected)
+                        .SetMessage(Resource.String.nearby_devices_permission_rejected)
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     break;
