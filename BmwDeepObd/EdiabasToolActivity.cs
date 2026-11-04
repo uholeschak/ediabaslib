@@ -34,6 +34,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestAppDetailBtSettings,
+            RequestAppDetailNearbySettings,
             RequestSelectSim,
             RequestSelectSgbd,
             RequestSelectDevice,
@@ -483,6 +484,11 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     break;
 
+                case ActivityRequest.RequestAppDetailNearbySettings:
+                    UpdateOptionsMenu();
+                    UpdateDisplay();
+                    break;
+
                 case ActivityRequest.RequestSelectSim:
                     // When FilePickerActivity returns with a file
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
@@ -619,7 +625,21 @@ namespace BmwDeepObd
                     if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
                         UpdateOptionsMenu();
+                        break;
                     }
+
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            IntentUtils.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailNearbySettings);
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.nearby_devices_permission_rejected)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
                     break;
             }
         }
