@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Utility;
+using BMW.Rheingold.Measurement.Common;
+using Newtonsoft.Json;
 using PsdzClient;
 using System;
 using System.Collections.Generic;
@@ -7,8 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Utility;
 
 namespace RheingoldPsdzWebApi.Adapter
 {
@@ -195,28 +196,64 @@ namespace RheingoldPsdzWebApi.Adapter
             }
         }
 
+        public static void ClearStatusIfProcessDied()
+        {
+            Process process = Process.GetCurrentProcess();
+            using (FileStream lockFileStream = GetReadWriteFileLock())
+            {
+                List<SessionData> list = ReadSessionsFromFile(lockFileStream);
+                SessionData sessionData = list.FirstOrDefault((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+                if (sessionData == null)
+                {
+                    throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
+                }
+
+                if (IsRegisteredAsRunningButProcessIsDead(sessionData))
+                {
+                    Log.Warning(Log.CurrentMethod(), $"Psdz Webservice process {sessionData.PsdzWebserviceProcessId} is registered as running but is no longer alive (it likely crashed, e.g. after an OutOfMemoryError). Resetting session status so it can be restarted.");
+                    sessionData.Status = WebserviceSessionStatus.Created;
+                    sessionData.PsdzWebserviceProcessId = 0;
+                    WriteSessionsToFile(lockFileStream, list);
+                }
+            }
+        }
+
         public static WebserviceSessionStatus GetWebserviceStatus()
         {
             //[-]Process process = Process.GetCurrentProcess();
             //[+]int processId = GetProcessId();
             int processId = GetProcessId();
-            List<SessionData> source;
             using (FileStream lockFileStream = GetReadonlyFileLock())
             {
-                source = ReadSessionsFromFile(lockFileStream);
+                //[-] return (ReadSessionsFromFile(lockFileStream).FirstOrDefault((SessionData s) => s.IstaProcessIds.Contains(process.Id)) ?? throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).")).Status;
+                //[+] return (ReadSessionsFromFile(lockFileStream).FirstOrDefault((SessionData s) => s.IstaProcessIds.Contains(processId)) ?? throw new InvalidOperationException($"No webservice session was registered for ISTA process {processId}.")).Status;
+                return (ReadSessionsFromFile(lockFileStream).FirstOrDefault((SessionData s) => s.IstaProcessIds.Contains(processId)) ?? throw new InvalidOperationException($"No webservice session was registered for ISTA process {processId}.")).Status;
             }
+        }
 
-            //[-]IEnumerable<SessionData> source2 = source.Where((SessionData s) => s.IstaProcessIds.Contains(process.Id));
-            //[+]IEnumerable<SessionData> source2 = source.Where((SessionData s) => s.IstaProcessIds.Contains(processId));
-            IEnumerable<SessionData> source2 = source.Where((SessionData s) => s.IstaProcessIds.Contains(processId));
-            if (!source2.Any())
+        private static bool IsRegisteredAsRunningButProcessIsDead(SessionData session)
+        {
+            if (session.Status == WebserviceSessionStatus.Running && session.PsdzWebserviceProcessId != 0)
             {
-                //[-]throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
-                //[+]throw new InvalidOperationException($"No webservice session was registered for ISTA process ({processId}).");
-                throw new InvalidOperationException($"No webservice session was registered for ISTA process ({processId}).");
+                return !IsProcessAlive(session.PsdzWebserviceProcessId);
             }
 
-            return source2.Single().Status;
+            return false;
+        }
+
+        private static bool IsProcessAlive(int processId)
+        {
+            try
+            {
+                using (Process process = Process.GetProcessById(processId))
+                {
+                    return !process.HasExited;
+                }
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
         }
 
         private static int GetPort(IEnumerable<SessionData> allSessions)
