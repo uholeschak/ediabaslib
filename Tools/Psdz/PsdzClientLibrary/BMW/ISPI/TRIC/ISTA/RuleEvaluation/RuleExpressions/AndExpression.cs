@@ -74,14 +74,18 @@ namespace BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions
         [PreserveSource(Hint = "dataProvider removed, using ruleEvaluationServices", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
-            internalResult.RuleExpression = this;
+            ValidationRuleInternalResults validationRuleInternalResults = new ValidationRuleInternalResults
+            {
+                RuleExpression = this
+            };
             RuleExpression[] array = operands;
             foreach (RuleExpression ruleExpression in array)
             {
+                validationRuleInternalResults.RuleExpression = this;
                 ruleEvaluationUtils.Logger.Debug("AndExpression.Evaluate()", "operand: {0}", ruleExpression);
-                //[-] bool flag = RuleExpression.Evaluate(vec, dealer, ruleExpression, ffmResolver, dataProvider, ruleEvaluationUtils, internalResult);
-                //[+] bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
-                bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
+                //[-] bool flag = RuleExpression.Evaluate(vec, dealer, ruleExpression, ffmResolver, dataProvider, ruleEvaluationUtils, validationRuleInternalResults);
+                //[+] bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, validationRuleInternalResults);
+                bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, validationRuleInternalResults);
                 ruleEvaluationUtils.Logger.Debug("AndExpression.Evaluate()", "validity: {0} for operand: {1}", flag, ruleExpression);
                 if (!flag)
                 {
