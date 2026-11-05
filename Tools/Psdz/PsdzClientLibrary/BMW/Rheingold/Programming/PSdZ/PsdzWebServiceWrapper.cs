@@ -96,7 +96,6 @@ namespace BMW.Rheingold.Programming.PSdZ
 
         public string PsdzServiceLogFilePath => _psdzConfig.PsdzWebServiceLogFilePath;
         public string PsdzLogFilePath => _psdzConfig.PsdzLogFilePath;
-        public string ProdiasDriverLogFilePath => _psdzConfig.ProdiasDriverLogFilePath;
 
         [PreserveSource(Hint = "istaFolder, dealerId added", SignatureModified = true)]
         public PsdzWebServiceWrapper(PsdzWebServiceConfig psdzConfig, string istaFolder, string dealerId)
@@ -125,7 +124,7 @@ namespace BMW.Rheingold.Programming.PSdZ
             catch (Exception ex)
             {
                 Log.Error(Log.CurrentMethod(), "PSdZ could not be initialized: {0}", ex);
-                //[-] throw new AppException(new FormatedData("#PSdZNotStarted"));
+                //[-] throw new AppException(new FormatedData("#PSdZNotStarted", BuildMetadataProvider.DisplayName));
                 //[+] throw new Exception("PSdZNotStarted");
                 throw new Exception("PSdZNotStarted");
             }
@@ -133,8 +132,11 @@ namespace BMW.Rheingold.Programming.PSdZ
 
         private static void DisplayJavaFaultyInstallationPopUp()
         {
-            ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
-            service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
+            //[-] if (!SessionInfoAccessor.SessionInfo.IsClosingOperationActive)
+            {
+                ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
+                //[-] service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation", BuildMetadataProvider.DisplayName).Localize());
+            }
         }
 
         public void Shutdown()
