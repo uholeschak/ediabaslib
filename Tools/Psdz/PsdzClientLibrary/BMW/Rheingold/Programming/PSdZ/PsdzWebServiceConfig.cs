@@ -23,7 +23,6 @@ namespace BMW.Rheingold.Programming.PSdZ
         public string PsdzLogFilePath { get; }
         public string PsdzWebServiceTomcatLogFilePath { get; }
         public string PsdzWebServiceSpringbootLogFilePath { get; }
-        public string ProdiasDriverLogFilePath { get; set; }
         public string[] JvmOptions { get; }
         public string[] JarArguments { get; }
 
@@ -32,7 +31,7 @@ namespace BMW.Rheingold.Programming.PSdZ
         {
             if (dealerId == null)
             {
-                //[-]dealerId = LicenseHelper.DealerInstance.GetDistributionPartnerNumber(5);
+                //[-] dealerId = Dealer.DealerInstance.GetDistributionPartnerNumber(5);
             }
 
             //[-] string key = "BMW.Rheingold.Logging.Directory.Current";
@@ -52,7 +51,6 @@ namespace BMW.Rheingold.Programming.PSdZ
             PsdzLogFilePath = Path.Combine(PsdzWebApiLogDir, "psdz.log");
             PsdzWebServiceTomcatLogFilePath = Path.Combine(PsdzWebApiLogDir, "tomcat.log");
             PsdzWebServiceSpringbootLogFilePath = Path.Combine(PsdzWebApiLogDir, "springboot.log");
-            ProdiasDriverLogFilePath = Path.Combine(PsdzWebApiLogDir, "prodias_driver.log");
             if (!File.Exists(PsdzWebServiceLogFilePath))
             {
                 File.Create(PsdzWebServiceLogFilePath).Close();
@@ -66,11 +64,6 @@ namespace BMW.Rheingold.Programming.PSdZ
             if (!File.Exists(PsdzWebServiceSpringbootLogFilePath))
             {
                 File.Create(PsdzWebServiceSpringbootLogFilePath).Close();
-            }
-
-            if (!File.Exists(ProdiasDriverLogFilePath))
-            {
-                File.Create(ProdiasDriverLogFilePath).Close();
             }
 
             //[-] PsdzDataPath = ((psdzDataPath != null) ? psdzDataPath : Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzDataPath", "..\\..\\..\\PSdZ\\data")));
@@ -88,7 +81,7 @@ namespace BMW.Rheingold.Programming.PSdZ
             DealerId = convertDealerIdToHex(dealerId);
             string text = "EC25F6127D1D02E37827F68A0DC41F3341A9F8C63C96EB970BCDCDEA70E619A8";
             JvmOptions = GetPsdzJvmOptions();
-            JarArguments = new string[9]
+            JarArguments = new string[8]
             {
                 PsdzDataPath,
                 EdiabasBinPath,
@@ -97,8 +90,7 @@ namespace BMW.Rheingold.Programming.PSdZ
                 PsdzLogFilePath,
                 PsdzWebServiceTomcatLogFilePath,
                 text,
-                PsdzWebServiceSpringbootLogFilePath,
-                ProdiasDriverLogFilePath
+                PsdzWebServiceSpringbootLogFilePath
             };
             Log.Info(Log.CurrentMethod(), "Psdz Webservice log file:".PadRight(40) + "{0}", PsdzWebServiceLogFilePath);
             Log.Info(Log.CurrentMethod(), "Psdz log file:".PadRight(40) + "{0}", PsdzLogFilePath);
@@ -178,6 +170,7 @@ namespace BMW.Rheingold.Programming.PSdZ
                 item,
                 "-XX:MaxGCPauseMillis=50",
                 "-Dcom.sun.management.jmxremote",
+                "-XX:+ExitOnOutOfMemoryError",
                 //[-] "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath() + "\""
                 //[+] "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath(Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\WebService"))) + "\""
                 "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath(Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\WebService"))) + "\""
