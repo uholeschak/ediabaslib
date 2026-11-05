@@ -13,6 +13,7 @@ using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Localization;
+using BMW.Rheingold.CoreFramework.Metadata;
 using BMW.Rheingold.CoreFramework.Utility;
 using PsdzClient;
 using RheingoldPsdzWebApi.Adapter.Contracts;
@@ -83,12 +84,31 @@ namespace RheingoldPsdzWebApi.Adapter
 
         public void StartIfNotRunning(string jrePath, string jvmOptions, string jarArguments)
         {
+            bool flag = false;
             try
             {
                 if (webCallHandler != null)
                 {
-                    Log.Info(Log.CurrentMethod(), "Psdz Webservice is already running.");
-                    return;
+                    if (IsReady())
+                    {
+                        Log.Info(Log.CurrentMethod(), "Psdz Webservice is already running.");
+                        return;
+                    }
+
+                    string text;
+                    try
+                    {
+                        text = psdzWebserviceProcess?.Id.ToString() ?? "n/a";
+                    }
+                    catch (InvalidOperationException ex)when (ex.Message == "No process is associated with this object.")
+                    {
+                        text = "n/a";
+                    }
+
+                    Log.Warning(Log.CurrentMethod(), "Psdz Webservice (previous PID=" + text + ") was previously initialized but is no longer responding (it likely crashed, e.g. after an OutOfMemoryError). Resetting adapter state so it can be started again.");
+                    webCallHandler = null;
+                    lifeCycleController = null;
+                    flag = true;
                 }
 
                 Log.Debug(Log.CurrentMethod(), "Psdz Webservice will be started.");
@@ -100,6 +120,7 @@ namespace RheingoldPsdzWebApi.Adapter
                 string jarPath = GetJarPath();
                 string javaExePath = Path.Combine(jrePath, "bin", "java.exe");
                 _preflightChecker.Execute(num, jarPath, javaExePath);
+                PsdzWebserviceRegistrar.ClearStatusIfProcessDied();
                 switch (PsdzWebserviceRegistrar.GetWebserviceStatus())
                 {
                     case WebserviceSessionStatus.Created:
@@ -118,12 +139,17 @@ namespace RheingoldPsdzWebApi.Adapter
                 }
 
                 Log.Info(Log.CurrentMethod(), "PSdZ Webservice is now ready and configured.");
+                if (flag)
+                {
+                    Log.Info(Log.CurrentMethod(), "Psdz Webservice was successfully restarted after the previous process was detected to have crashed. New PID=" + (psdzWebserviceProcess?.Id.ToString() ?? "n/a") + ".");
+                }
+
                 stopwatch.Stop();
                 AddServiceCodeToFastaProtocol("PWS01_DurationWebserviceStart_nu_LF", $"Duration={stopwatch.Elapsed.TotalSeconds} seconds");
             }
-            catch (PsdzWebserviceStartException ex)
+            catch (PsdzWebserviceStartException ex2)
             {
-                AddServiceCodeToFastaProtocol(ex.ServiceCode, ex.Message);
+                AddServiceCodeToFastaProtocol(ex2.ServiceCode, ex2.Message);
                 throw;
             }
             catch (Exception exception)
@@ -182,7 +208,7 @@ namespace RheingoldPsdzWebApi.Adapter
 
             if (ServiceLocator.Current.TryGetService<IInteractionService>(out var service2))
             {
-                service2.RegisterAsync(new InteractionMessageModel { Title = new FormatedData("#NotificationMessageTitle.Error").Localize(), MessageText = new FormatedData("#SetRootDirectoryFailed").Localize(), IsDetailButtonVisible = false, IsCloseButtonEnabled = false });
+                service2.RegisterAsync(new InteractionMessageModel { Title = new FormatedData("#NotificationMessageTitle.Error").Localize(), MessageText = new FormatedData("#SetRootDirectoryFailed", BuildMetadataProvider.DisplayName).Localize(), IsDetailButtonVisible = false, IsCloseButtonEnabled = false });
             }
 
             PsdzWebserviceHelper.TryKillTree(psdzWebserviceProcess);
@@ -334,6 +360,11 @@ namespace RheingoldPsdzWebApi.Adapter
 
             string text3 = (text2 + "\n" + text).Trim();
             Log.Error(Log.CurrentMethod(), "Process failed (exit={0}). Output:\n{1}", process.ExitCode, text3);
+            if (text3.IndexOf("OutOfMemoryError", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                Log.Error(Log.CurrentMethod(), $"Psdz Webservice process (PID={process.Id}) exited with code {process.ExitCode} due to an OutOfMemoryError (-XX:+ExitOnOutOfMemoryError triggered).");
+            }
+
             (Regex, PsdzWebserviceStartFailureReason)[] patterns = PsdzWebserviceErrorPatterns.Patterns;
             for (int i = 0; i < patterns.Length; i++)
             {
@@ -363,9 +394,10 @@ namespace RheingoldPsdzWebApi.Adapter
 
         private void StartPsdzWebserviceProcess()
         {
-            psdzWebserviceProcess.StartInfo.WorkingDirectory = _psdzWebApiLogDir;
             try
             {
+                _detectedStartFailureReason = PsdzWebserviceStartFailureReason.None;
+                psdzWebserviceProcess.StartInfo.WorkingDirectory = _psdzWebApiLogDir;
                 if (PsdzWebserviceRegistrar.StartAndRegisterWebserviceProcess(psdzWebserviceProcess))
                 {
                     try
@@ -530,7 +562,11 @@ namespace RheingoldPsdzWebApi.Adapter
         private void HandleOngoingInitializationByAnotherThread()
         {
             Log.Info(Log.CurrentMethod(), "Psdz Webservice is being started by a different thread, waiting for initialization to be completed.");
-            WaitForWebserviceInitialization(() => PsdzWebserviceRegistrar.GetWebserviceStatus() == WebserviceSessionStatus.Running);
+            WaitForWebserviceInitialization(() =>
+            {
+                PsdzWebserviceRegistrar.ClearStatusIfProcessDied();
+                return PsdzWebserviceRegistrar.GetWebserviceStatus() == WebserviceSessionStatus.Running;
+            });
             InitLifeCycleController();
         }
 
