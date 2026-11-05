@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using BMW.Authoring.API.Math;
 using BMW.Authoring.Database;
+using BMW.Authoring.Programming.API.Implementation;
+using BMW.Authoring.Programming.API.Interface;
 using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.API
@@ -75,6 +77,12 @@ namespace BMW.Authoring.API
             //[-] return new MathFunctions();
             //[+] return null;
             return null;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        public static IProgrammingService GetProgrammingService(IAuthoringModule istaModule)
+        {
+            return new ProgrammingService(istaModule);
         }
     }
 }
