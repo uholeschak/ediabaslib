@@ -1,5 +1,6 @@
 ﻿using System;
 
+#pragma warning disable CS0618
 namespace BMW.Authoring.Programming.API.Models.Implementation
 {
     public class SgbmIdChange : BMW.Authoring.Programming.API.Models.Interfaces.ISgbmIdChange, IHideObjectMembers

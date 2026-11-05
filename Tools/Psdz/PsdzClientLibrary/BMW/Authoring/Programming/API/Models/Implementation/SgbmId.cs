@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
+#pragma warning disable CS0618
 namespace BMW.Authoring.Programming.API.Models.Implementation
 {
     public class SgbmId : BMW.Authoring.Programming.API.Models.Interfaces.ISgbmId, IHideObjectMembers

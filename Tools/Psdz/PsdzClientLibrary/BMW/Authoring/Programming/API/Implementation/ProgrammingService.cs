@@ -10,6 +10,7 @@ using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.RheingoldSessionController;
 
+#pragma warning disable CS0618
 namespace BMW.Authoring.Programming.API.Implementation
 {
     public class ProgrammingService : BMW.Authoring.Programming.API.Interface.IProgrammingService, IHideObjectMembers

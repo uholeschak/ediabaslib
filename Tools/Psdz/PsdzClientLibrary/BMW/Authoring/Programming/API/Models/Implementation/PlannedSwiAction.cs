@@ -1,5 +1,6 @@
 ﻿using System;
 
+#pragma warning disable CS0618
 namespace BMW.Authoring.Programming.API.Models.Implementation
 {
     public class PlannedSwiAction : BMW.Authoring.Programming.API.Models.Interfaces.IPlannedSwiAction, IHideObjectMembers
