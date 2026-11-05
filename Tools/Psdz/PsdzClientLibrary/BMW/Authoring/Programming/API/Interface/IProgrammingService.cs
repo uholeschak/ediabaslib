@@ -1,8 +1,8 @@
-﻿using BMW.Rheingold.CoreFramework;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Authoring;
+using BMW.Authoring.Programming.API.Models.Interfaces;
+using BMW.Rheingold.CoreFramework;
 
 namespace BMW.Authoring.Programming.API.Interface
 {
