@@ -33,6 +33,7 @@ using BMW.ISPI.TRIC.ISTA.Common.Session;
 using BMW.ISPI.TRIC.ISTA.Configuration.Constants;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.Dealer;
 using BMW.Rheingold.CoreFramework.Interaction.Models;
 using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.FASTA;
@@ -194,7 +195,8 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 if (sfaHandler == null)
                 {
-                //[-] sfaHandler = new SfaHandler(Vehicle, CommonServiceHelper.GetIdentificationStringOfClient(), CommonServiceHelper.GetIdentificationStringOfSystem(), new SfaService(logic.BackendCallWatchDog, new ErrorManager(FastaProtocoler)), EcuKomStatement, FastaProtocoler);
+                    //[-] NugetLogger nugetLogger = new NugetLogger();
+                    //[-] sfaHandler = new SfaHandler(Vehicle, CommonServiceHelper.GetIdentificationStringOfClient(), CommonServiceHelper.GetIdentificationStringOfSystem(), new SfaService(logic.BackendCallWatchDog, new ErrorManager(FastaProtocoler), nugetLogger), EcuKomStatement, FastaProtocoler, nugetLogger);
                 }
 
                 return sfaHandler;
@@ -1167,7 +1169,7 @@ namespace BMW.Rheingold.Module.ISTA
                         logic = moduleParameter.getParameter(ModuleParameter.ParameterName.Logic) as ILogic;
                         vehicle = moduleParameter.getParameter(ModuleParameter.ParameterName.Vehicle) as BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle;
                         authoringVehicle = new Lazy<BMW.Authoring.Vehicle.IVehicle>(() => new BMW.Authoring.Vehicle.Vehicle(this));
-                        //[-] _ISOCAccessor = new SOCAccessor(vehicle, LicenseHelper.DealerInstance);
+                        //[-] _ISOCAccessor = new SOCAccessor(vehicle, Dealer.DealerInstance);
                         _globalModuleInParameter.setParameter("__RheinGoldSOCAccessor__", _ISOCAccessor);
                         SetTextContentManager();
                         if (logic != null)
