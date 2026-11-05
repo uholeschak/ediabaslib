@@ -30,6 +30,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private string existing;
         private string faultGroupLabel;
         private bool isNewFaultMemoryActive;
+        private bool isFaultLabelResolved;
         protected string faultClass;
         public bool IsCheckControlMessage => FaultGroupNumber == 7;
 
@@ -481,7 +482,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
             try
             {
-                if (IsCheckControlMessage)
+                if (IsCheckControlMessage || isFaultLabelResolved)
                 {
                     return;
                 }
@@ -490,235 +491,235 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 //[+] PsdzDatabase instance = ClientContext.GetDatabase(vehicle);
                 PsdzDatabase instance = ClientContext.GetDatabase(vehicle);
                 SetExisting();
-                //[-] if (instance == null || instance.DatabaseAccessType == DatabaseType.None)
-                //[+] if (instance == null)
-                if (instance == null)
+                //[-] if (instance != null && instance.DatabaseAccessType != DatabaseType.None)
+                //[+] if (instance != null)
+                if (instance != null)
                 {
-                    return;
-                }
-
-                if (DTC.IsVirtual || DTC.IsCombined)
-                {
-                    Log.Info("Fault.ResolveLabels()", "found unidentified ecu variant or virtual/combined fault: {0} {1:X}", DTC.Id, DTC.F_ORT);
-                    if (DTC.IsVirtual && !DTC.IsCombined && ECU != null)
+                    if (DTC.IsVirtual || DTC.IsCombined)
                     {
-                        XEP_VIRTUALFAULTCODES xEP_VIRTUALFAULTCODES = null;
-                        if (DTC.Id.HasValue)
+                        Log.Info("Fault.ResolveLabels()", "found unidentified ecu variant or virtual/combined fault: {0} {1:X}", DTC.Id, DTC.F_ORT);
+                        if (DTC.IsVirtual && !DTC.IsCombined && ECU != null)
                         {
-                            //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeById(DTC.Id.Value, vehicle, resolver);
-                            //[+] xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeById(DTC.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, resolver);
-                            xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeById(DTC.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, resolver);
-                        }
-
-                        if (xEP_VIRTUALFAULTCODES == null && !string.IsNullOrEmpty(ECU.ECU_GRUPPE))
-                        {
-                            string[] array = ECU.ECU_GRUPPE.Split('|');
-                            string text = string.Format(CultureInfo.InvariantCulture, "S {0:X4}", DTC.F_ORT);
-                            string[] array2 = array;
-                            foreach (string ecuGroup in array2)
+                            XEP_VIRTUALFAULTCODES xEP_VIRTUALFAULTCODES = null;
+                            if (DTC.Id.HasValue)
                             {
+                                //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeById(DTC.Id.Value, vehicle, resolver);
+                                //[+] xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeById(DTC.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, resolver);
+                                xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeById(DTC.Id.Value.ToString(CultureInfo.InvariantCulture), vehicle, resolver);
+                            }
+
+                            if (xEP_VIRTUALFAULTCODES == null && !string.IsNullOrEmpty(ECU.ECU_GRUPPE))
+                            {
+                                string[] array = ECU.ECU_GRUPPE.Split('|');
+                                string text = string.Format(CultureInfo.InvariantCulture, "S {0:X4}", DTC.F_ORT);
+                                string[] array2 = array;
+                                foreach (string ecuGroup in array2)
+                                {
+                                    if (xEP_VIRTUALFAULTCODES == null)
+                                    {
+                                        //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
+                                        //[+] xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
+                                        xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
+                                        if (xEP_VIRTUALFAULTCODES != null)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+
                                 if (xEP_VIRTUALFAULTCODES == null)
                                 {
-                                    //[-] xEP_VIRTUALFAULTCODES = DatabaseProviderFactory.Instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
-                                    //[+] xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
-                                    xEP_VIRTUALFAULTCODES = instance.GetVirtualFaultCodeByCodeAndEcuGroup(text, ecuGroup, vehicle, resolver);
-                                    if (xEP_VIRTUALFAULTCODES != null)
-                                    {
-                                        break;
-                                    }
+                                    Log.Warning("Fault.ResolveLabels()", "Unable to resolve label for: {0} ECU: {1}", text, ECU);
                                 }
                             }
 
-                            if (xEP_VIRTUALFAULTCODES == null)
+                            if (xEP_VIRTUALFAULTCODES != null)
                             {
-                                Log.Warning("Fault.ResolveLabels()", "Unable to resolve label for: {0} ECU: {1}", text, ECU);
+                                //[-] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = DatabaseProviderFactory.Instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
+                                //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
+                                XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
+                                if (xepVirtualFaultLabelsByVirtualFaultCodeId != null)
+                                {
+                                    XepFaultLabel = xepVirtualFaultLabelsByVirtualFaultCodeId;
+                                    if (!string.IsNullOrEmpty(FaultLabel))
+                                    {
+                                        FaultLabel = FaultLabel.Trim();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Log.Warning("Fault.ResolveLabels()", "Unable to resolve label for: {0} ECU: {1}", DTC.Id, ECU);
                             }
                         }
-
-                        if (xEP_VIRTUALFAULTCODES != null)
+                        else
                         {
-                            //[-] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = DatabaseProviderFactory.Instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
-                            //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
-                            XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(xEP_VIRTUALFAULTCODES.ID);
-                            if (xepVirtualFaultLabelsByVirtualFaultCodeId != null)
+                            Log.Info("Fault.ResolveLabels()", "found combined fault: {0} Code: {1}", DTC.Id, DTC.FortAsHexString);
+                            //[-] XEP_COMBINEDFAULTS xepCombinedFaultById = DatabaseProviderFactory.Instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
+                            //[+] XEP_COMBINEDFAULTS xepCombinedFaultById = instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
+                            XEP_COMBINEDFAULTS xepCombinedFaultById = instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
+                            if (xepCombinedFaultById != null)
                             {
-                                XepFaultLabel = xepVirtualFaultLabelsByVirtualFaultCodeId;
+                                //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
+                                //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
+                                XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
+                                if (xepCombiFaultLabelByCode == null)
+                                {
+                                    FaultLabel = xepCombinedFaultById.CODE;
+                                }
+                                else
+                                {
+                                    XepFaultLabel = xepCombiFaultLabelByCode;
+                                }
+
                                 if (!string.IsNullOrEmpty(FaultLabel))
                                 {
                                     FaultLabel = FaultLabel.Trim();
                                 }
                             }
                         }
-                        else
-                        {
-                            Log.Warning("Fault.ResolveLabels()", "Unable to resolve label for: {0} ECU: {1}", DTC.Id, ECU);
-                        }
-
-                        return;
                     }
-
-                    Log.Info("Fault.ResolveLabels()", "found combined fault: {0} Code: {1}", DTC.Id, DTC.FortAsHexString);
-                    //[-] XEP_COMBINEDFAULTS xepCombinedFaultById = DatabaseProviderFactory.Instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
-                    //[+] XEP_COMBINEDFAULTS xepCombinedFaultById = instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
-                    XEP_COMBINEDFAULTS xepCombinedFaultById = instance.GetXepCombinedFaultById(DTC.Id.Value, vehicle, resolver);
-                    if (xepCombinedFaultById != null)
+                    else
                     {
-                        //[-] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = DatabaseProviderFactory.Instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
-                        //[+] XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
-                        XEP_COMBIFAULTLABELS xepCombiFaultLabelByCode = instance.GetXepCombiFaultLabelByCode(xepCombinedFaultById.CODE, vehicle, resolver);
-                        if (xepCombiFaultLabelByCode == null)
+                        DtcFOrtEcuVariantKey key = new DtcFOrtEcuVariantKey(DTC.F_ORT.ToString(), ECU.VARIANTE.ToLowerInvariant());
+                        XEP_FAULTLABELS xEP_FAULTLABELS = null;
+                        if (xepFaultLabelsCollection != null)
                         {
-                            FaultLabel = xepCombinedFaultById.CODE;
+                            xEP_FAULTLABELS = (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null);
                         }
                         else
                         {
-                            XepFaultLabel = xepCombiFaultLabelByCode;
+                            //[-] xEP_FAULTLABELS = DatabaseProviderFactory.Instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
+                            //[+] xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
+                            xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
+                        }
+
+                        string value;
+                        if (xEP_FAULTLABELS == null)
+                        {
+                            value = string.Empty;
+                            Log.Info("Fault.ResolveLabels()", "The Fault label for fault {0} could not be set.", DTC.F_ORT.ToString());
+                        }
+                        else
+                        {
+                            value = xEP_FAULTLABELS.Title;
+                            XepFaultLabel = xEP_FAULTLABELS;
+                        }
+
+                        IEnumerable<XEP_FAULTMODELABELS> enumerable;
+                        if (xepFaultModelLabelsCollection == null)
+                        {
+                            //[-] enumerable = DatabaseProviderFactory.Instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
+                            //[+] enumerable = instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
+                            enumerable = instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
+                        }
+                        else
+                        {
+                            IEnumerable<XEP_FAULTMODELABELS> enumerable2;
+                            if (!xepFaultModelLabelsCollection.ContainsKey(key))
+                            {
+                                enumerable2 = Enumerable.Empty<XEP_FAULTMODELABELS>();
+                            }
+                            else
+                            {
+                                IEnumerable<XEP_FAULTMODELABELS> enumerable3 = xepFaultModelLabelsCollection[key];
+                                enumerable2 = enumerable3;
+                            }
+
+                            enumerable = enumerable2;
+                        }
+
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            FaultLabel = value;
+                        }
+                        else
+                        {
+                            FaultLabel = DTC.F_ORT_TEXT;
+                            Log.Info("Fault.ResolveLabels()", "The Fault label for fault {0} was replaced by the F_ORT_TEXT.", DTC.F_ORT.ToString(), DTC.F_ORT_TEXT);
                         }
 
                         if (!string.IsNullOrEmpty(FaultLabel))
                         {
                             FaultLabel = FaultLabel.Trim();
                         }
-                    }
 
-                    return;
-                }
-
-                DtcFOrtEcuVariantKey key = new DtcFOrtEcuVariantKey(DTC.F_ORT.ToString(), ECU.VARIANTE.ToLowerInvariant());
-                XEP_FAULTLABELS xEP_FAULTLABELS = null;
-                if (xepFaultLabelsCollection != null)
-                {
-                    xEP_FAULTLABELS = (xepFaultLabelsCollection.ContainsKey(key) ? xepFaultLabelsCollection[key].LastOrDefault() : null);
-                }
-                else
-                {
-                    //[-] xEP_FAULTLABELS = DatabaseProviderFactory.Instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
-                    //[+] xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
-                    xEP_FAULTLABELS = instance.GetEcuFaultLabelByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), (ECU.VARIANTE != null) ? ECU.VARIANTE.ToLowerInvariant() : string.Empty, vehicle, resolver);
-                }
-
-                string value;
-                if (xEP_FAULTLABELS == null)
-                {
-                    value = string.Empty;
-                    Log.Info("Fault.ResolveLabels()", "The Fault label for fault {0} could not be set.", DTC.F_ORT.ToString());
-                }
-                else
-                {
-                    value = xEP_FAULTLABELS.Title;
-                    XepFaultLabel = xEP_FAULTLABELS;
-                }
-
-                IEnumerable<XEP_FAULTMODELABELS> enumerable;
-                if (xepFaultModelLabelsCollection == null)
-                {
-                    //[-] enumerable = DatabaseProviderFactory.Instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
-                    //[+] enumerable = instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
-                    enumerable = instance.GetEcuFaultAdditionalLabel(DTC.F_ORT.ToString(), ECU.VARIANTE);
-                }
-                else
-                {
-                    IEnumerable<XEP_FAULTMODELABELS> enumerable2;
-                    if (!xepFaultModelLabelsCollection.ContainsKey(key))
-                    {
-                        enumerable2 = Enumerable.Empty<XEP_FAULTMODELABELS>();
-                    }
-                    else
-                    {
-                        IEnumerable<XEP_FAULTMODELABELS> enumerable3 = xepFaultModelLabelsCollection[key];
-                        enumerable2 = enumerable3;
-                    }
-
-                    enumerable = enumerable2;
-                }
-
-                if (!string.IsNullOrEmpty(value))
-                {
-                    FaultLabel = value;
-                }
-                else
-                {
-                    FaultLabel = DTC.F_ORT_TEXT;
-                    Log.Info("Fault.ResolveLabels()", "The Fault label for fault {0} was replaced by the F_ORT_TEXT.", DTC.F_ORT.ToString(), DTC.F_ORT_TEXT);
-                }
-
-                if (!string.IsNullOrEmpty(FaultLabel))
-                {
-                    FaultLabel = FaultLabel.Trim();
-                }
-
-                ArtLabel = new ObservableCollection<string>();
-                foreach (XEP_FAULTMODELABELS item in enumerable)
-                {
-                    //[-] if (!DatabaseProviderFactory.Instance.EvaluateXepRulesById(item.ID, vehicle, resolver) || string.IsNullOrEmpty(item.Code))
-                    //[+] if (instance.EvaluateXepRulesById(item.ID.ToString(CultureInfo.InvariantCulture), vehicle, resolver) != true || string.IsNullOrEmpty(item.Code))
-                    if (instance.EvaluateXepRulesById(item.ID.ToString(CultureInfo.InvariantCulture), vehicle, resolver) != true || string.IsNullOrEmpty(item.Code))
-                    {
-                        continue;
-                    }
-
-                    long num = Convert.ToInt64(item.Code, CultureInfo.InvariantCulture);
-                    if (DTC.F_VORHANDEN_NR.HasValue && num == DTC.F_VORHANDEN_NR.Value)
-                    {
-                        ExistingLabel = item.Title;
-                        DtcFVorhandenNr = item;
-                    }
-
-                    if (DTC.F_SYMPTOM_NR.HasValue && num == DTC.F_SYMPTOM_NR.Value)
-                    {
-                        SymptomLabel = item.Title;
-                    }
-
-                    if (DTC.F_FEHLERKLASSE_NR.HasValue && num == DTC.F_FEHLERKLASSE_NR.Value && DTC.F_FEHLERKLASSE_NR.Value != 0)
-                    {
-                        ClassLabel = item.Title;
-                    }
-
-                    if (DTC.F_WARNUNG_NR.HasValue && num == DTC.F_WARNUNG_NR.Value && DTC.F_WARNUNG_NR.Value != 0)
-                    {
-                        WarningLabel = item.Title;
-                    }
-
-                    if ((DTC.F_ART.HasValue && num == DTC.F_ART.Value) || DTC.F_ART_EXT == null || DTC.F_ART_EXT.Count <= 0)
-                    {
-                        continue;
-                    }
-
-                    foreach (typeFArtExt item2 in DTC.F_ART_EXT)
-                    {
-                        if (item2.F_ART_NR == num)
+                        ArtLabel = new ObservableCollection<string>();
+                        foreach (XEP_FAULTMODELABELS item in enumerable)
                         {
-                            ArtLabel.Add(item.Title);
+                            //[-] if (!DatabaseProviderFactory.Instance.EvaluateXepRulesById(item.ID, vehicle, resolver) || string.IsNullOrEmpty(item.Code))
+                            //[+] if (instance.EvaluateXepRulesById(item.ID.ToString(CultureInfo.InvariantCulture), vehicle, resolver) != true || string.IsNullOrEmpty(item.Code))
+                            if (instance.EvaluateXepRulesById(item.ID.ToString(CultureInfo.InvariantCulture), vehicle, resolver) != true || string.IsNullOrEmpty(item.Code))
+                            {
+                                continue;
+                            }
+
+                            long num = Convert.ToInt64(item.Code, CultureInfo.InvariantCulture);
+                            if (DTC.F_VORHANDEN_NR.HasValue && num == DTC.F_VORHANDEN_NR.Value)
+                            {
+                                ExistingLabel = item.Title;
+                                DtcFVorhandenNr = item;
+                            }
+
+                            if (DTC.F_SYMPTOM_NR.HasValue && num == DTC.F_SYMPTOM_NR.Value)
+                            {
+                                SymptomLabel = item.Title;
+                            }
+
+                            if (DTC.F_FEHLERKLASSE_NR.HasValue && num == DTC.F_FEHLERKLASSE_NR.Value && DTC.F_FEHLERKLASSE_NR.Value != 0)
+                            {
+                                ClassLabel = item.Title;
+                            }
+
+                            if (DTC.F_WARNUNG_NR.HasValue && num == DTC.F_WARNUNG_NR.Value && DTC.F_WARNUNG_NR.Value != 0)
+                            {
+                                WarningLabel = item.Title;
+                            }
+
+                            if ((DTC.F_ART.HasValue && num == DTC.F_ART.Value) || DTC.F_ART_EXT == null || DTC.F_ART_EXT.Count <= 0)
+                            {
+                                continue;
+                            }
+
+                            foreach (typeFArtExt item2 in DTC.F_ART_EXT)
+                            {
+                                if (item2.F_ART_NR == num)
+                                {
+                                    ArtLabel.Add(item.Title);
+                                }
+                            }
+                        }
+
+                        if (!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.DatabaseProvider.Fault.UseOnlyModelledLabels", defaultValue: true))
+                        {
+                            if (string.IsNullOrEmpty(ExistingLabel))
+                            {
+                                ExistingLabel = DTC.F_VORHANDEN_TEXT;
+                            }
+
+                            if (string.IsNullOrEmpty(ClassLabel))
+                            {
+                                ClassLabel = DTC.F_FEHLERKLASSE_TEXT;
+                            }
+
+                            if (!string.IsNullOrEmpty(ExistingLabel))
+                            {
+                                ExistingLabel = ExistingLabel.Trim();
+                            }
+
+                            if (!string.IsNullOrEmpty(ClassLabel))
+                            {
+                                ClassLabel = ClassLabel.Trim();
+                            }
+                        }
+                        else
+                        {
+                            Log.Debug("Fault.ResolveLabels()", "No fallback values for not modelled fault labels were set for Fault: {0}", DTC.F_ORT);
                         }
                     }
                 }
 
-                if (!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.DatabaseProvider.Fault.UseOnlyModelledLabels", defaultValue: true))
-                {
-                    if (string.IsNullOrEmpty(ExistingLabel))
-                    {
-                        ExistingLabel = DTC.F_VORHANDEN_TEXT;
-                    }
-
-                    if (string.IsNullOrEmpty(ClassLabel))
-                    {
-                        ClassLabel = DTC.F_FEHLERKLASSE_TEXT;
-                    }
-
-                    if (!string.IsNullOrEmpty(ExistingLabel))
-                    {
-                        ExistingLabel = ExistingLabel.Trim();
-                    }
-
-                    if (!string.IsNullOrEmpty(ClassLabel))
-                    {
-                        ClassLabel = ClassLabel.Trim();
-                    }
-                }
-                else
-                {
-                    Log.Debug("Fault.ResolveLabels()", "No fallback values for not modelled fault labels were set for Fault: {0}", DTC.F_ORT);
-                }
+                isFaultLabelResolved = true;
             }
             catch (Exception exception)
             {
