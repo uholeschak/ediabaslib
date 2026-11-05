@@ -8,11 +8,8 @@ namespace BMW.Rheingold.CoreFramework.Metadata
     public static class BuildMetadataProvider
     {
         private const string DisplayNameKey = "ProgrammingApiDisplayName";
-
         private const string DefaultDisplayName = "Open ProgrammingAPI";
-
         private const string ProgrammingApiExeName = "ProgrammingAPI.exe";
-
         public static string DisplayName
         {
             get
@@ -21,7 +18,9 @@ namespace BMW.Rheingold.CoreFramework.Metadata
                 {
                     return "ISTA";
                 }
-                return GetProgrammingApiAssembly()?.GetCustomAttributes<AssemblyMetadataAttribute>().FirstOrDefault((AssemblyMetadataAttribute a) => a.Key == "ProgrammingApiDisplayName")?.Value ?? "Open ProgrammingAPI";
+
+                Assembly programmingApiAssembly = GetProgrammingApiAssembly();
+                return (((object)programmingApiAssembly == null) ? null : programmingApiAssembly.GetCustomAttributes<AssemblyMetadataAttribute>().FirstOrDefault((AssemblyMetadataAttribute a) => a.Key == "ProgrammingApiDisplayName")?.Value) ?? "Open ProgrammingAPI";
             }
         }
 
@@ -32,11 +31,13 @@ namespace BMW.Rheingold.CoreFramework.Metadata
             {
                 return entryAssembly;
             }
+
             string text = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProgrammingAPI.exe");
             if (!File.Exists(text))
             {
                 return entryAssembly;
             }
+
             return Assembly.LoadFrom(text);
         }
     }
