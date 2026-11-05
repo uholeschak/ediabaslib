@@ -1,6 +1,8 @@
-﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using System;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BMW.Authoring.Session.Interface;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 
@@ -35,7 +37,11 @@ namespace BMW.Authoring.Session
         BMW.Authoring.Session.Enums.OperationalMode OperationalMode { get; }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
-        IEnumerable<IDiagCode> DiagCodes { get; }
+        [Obsolete("Use DiagCodeList instead. To be removed with 4.64.")]
+        IEnumerable<BMW.Rheingold.CoreFramework.Contracts.Vehicle.IDiagCode> DiagCodes { get; }
+
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        IDiagCodeList DiagCodeList { get; }
 
         [EditorBrowsable(EditorBrowsableState.Always)]
         ITestPlan TestPlan { get; }
@@ -45,7 +51,6 @@ namespace BMW.Authoring.Session
 
         [EditorBrowsable(EditorBrowsableState.Always)]
         bool StartEcuKomDCan();
-
         [EditorBrowsable(EditorBrowsableState.Always)]
         void StopEcuKomDCan();
     }

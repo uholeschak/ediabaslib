@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VinValidator;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models;
@@ -258,10 +259,12 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         IEcu getECUbyECU_SGBD(string ECU_SGBD);
         IEcu getECUbyTITLE_ECUTREE(string grobName);
         bool AddEcu(IEcu ecu);
+        bool AddEcu(IEcu ecu, EcuDataSource source);
         bool RemoveEcu(IEcu ecu);
+        bool RemoveEcu(IEcu ecu, EcuDataSource source);
         bool IsProgrammingSupported(bool considerLogisticBase);
         bool IsEreiheValid();
-        bool hasBusType(BusType bus);
+        bool hasBusType(BMW.Rheingold.CoreFramework.DatabaseProvider.BusType bus);
         bool HasSA(string checkSA);
     }
 }

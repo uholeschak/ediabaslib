@@ -78,8 +78,9 @@ namespace RheingoldPsdzWebApi.Adapter
                 {
                     text = "WebService is not initialized. Cannot execute request to " + serviceName + "/" + endpoint;
                     Log.Debug(text2, text);
-                    return new ApiResult<T>(default(T), isSuccessful: false, text);
+                    return new ApiResult<T>(default, isSuccessful: false, text);
                 }
+
                 HttpRequestMessage request = PrepareRequest(serviceName, endpoint, method, requestBodyObject, queryParameters);
                 Log.Debug(text2, CreateRequestLogMessage("API-Request", _httpClient, request, requestBodyObject));
                 httpResponseMessage = _httpClient.SendAsync(request).GetAwaiter().GetResult();
@@ -89,6 +90,7 @@ namespace RheingoldPsdzWebApi.Adapter
                     Log.Debug(text2, CreateResponseLogMessage("API-Response-Valid", httpResponseMessage, responseData));
                     return new ApiResult<T>(responseData, isSuccessful: true, string.Empty);
                 }
+
                 string result = httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 text = $"Request to {serviceName}/{endpoint} failed with status code {httpResponseMessage.StatusCode}. Response body: {result}";
                 Log.Error(text2, "Error Message from HTTP body: " + text);
@@ -102,7 +104,8 @@ namespace RheingoldPsdzWebApi.Adapter
             {
                 DecrementRequestCounts();
             }
-            return new ApiResult<T>(default(T), isSuccessful: false, text);
+
+            return new ApiResult<T>(default, isSuccessful: false, text);
         }
 
         private static T GetResponseData<T>(HttpResponseMessage response)

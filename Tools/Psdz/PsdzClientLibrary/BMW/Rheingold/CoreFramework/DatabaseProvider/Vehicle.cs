@@ -460,6 +460,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
+                (bool, string) overriddingTypeKey = VehicleFunctions.GetOverriddingTypeKey(VIN17);
+                if (overriddingTypeKey.Item1)
+                {
+                    return overriddingTypeKey.Item2;
+                }
+
                 VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(typField, "Typ");
                 return typField;
             }
@@ -2204,6 +2210,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
+                (bool, string) overriddingTypeKey = VehicleFunctions.GetOverriddingTypeKey(VIN17);
+                if (overriddingTypeKey.Item1)
+                {
+                    return overriddingTypeKey.Item2;
+                }
+
                 VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(vinRangeType, "VINRangeType");
                 return vinRangeType;
             }
@@ -2301,6 +2313,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 try
                 {
+                    (bool, string) overriddingTypeKey = VehicleFunctions.GetOverriddingTypeKey(VIN17);
+                    if (overriddingTypeKey.Item1)
+                    {
+                        return overriddingTypeKey.Item2;
+                    }
+
                     if (FA != null && !string.IsNullOrEmpty(FA.TYPE) && FA.TYPE.Length == 4)
                     {
                         VehicleFunctions.AddServiceCodeAndLogsForTypeKeys(FA.TYPE, "GMType.FA.TYPE");
@@ -2374,6 +2392,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 try
                 {
+                    (bool, string) overriddingTypeKey = VehicleFunctions.GetOverriddingTypeKey(VIN17);
+                    if (overriddingTypeKey.Item1)
+                    {
+                        return overriddingTypeKey.Item2;
+                    }
+
                     if (string.IsNullOrEmpty(VIN17) || VIN17.Length < 17)
                     {
                         return null;
@@ -3097,12 +3121,34 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public bool AddEcu(IEcu ecu)
         {
-            return ECU.AddIfNotContains(ecu as ECU);
+            return AddEcu(ecu, EcuDataSource.Unknown);
+        }
+
+        public bool AddEcu(IEcu ecu, EcuDataSource source)
+        {
+            bool flag = ECU.AddIfNotContains(ecu as ECU);
+            if (flag && ecu is ECU ecu2)
+            {
+                BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.AddEcu(ecu2, source);
+            }
+
+            return flag;
         }
 
         public bool RemoveEcu(IEcu ecu)
         {
-            return ECU.Remove(ecu as ECU);
+            return RemoveEcu(ecu, EcuDataSource.Unknown);
+        }
+
+        public bool RemoveEcu(IEcu ecu, EcuDataSource source)
+        {
+            bool flag = ECU.Remove(ecu as ECU);
+            if (flag && ecu is ECU eCU)
+            {
+                BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.RemoveEcu(eCU.ID_SG_ADR, source);
+            }
+
+            return flag;
         }
 
         public IEcu getECUbyECU_SGBD(string ECU_SGBD)
@@ -3241,6 +3287,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             ECU.AddIfNotContains(eCU);
         }
 
+        public void AddEcu(IIdentEcu ecu, EcuDataSource source)
+        {
+            AddEcu(ecu);
+            BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.AddEcu(ecu, source);
+        }
+
         public bool IsVehicleWithOnlyVin7()
         {
             return VIN10Prefix.Equals("FILLER17II", StringComparison.InvariantCultureIgnoreCase);
@@ -3330,18 +3382,35 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         bool IEcuTreeVehicle.AddEcu(IEcuTreeEcu ecu)
         {
+            return AddEcuTreeEcuInternal(ecu);
+        }
+
+        private bool AddEcuTreeEcuInternal(IEcuTreeEcu ecu)
+        {
             if (ecu == null)
             {
                 return false;
             }
 
-            if (ecu is ECU item)
+            if (ecu is ECU eCU)
             {
-                return ECU.AddIfNotContains(item);
+                bool flag = ECU.AddIfNotContains(eCU);
+                if (flag)
+                {
+                    BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.AddEcu(eCU, EcuDataSource.EcuTreeCharacteristics);
+                }
+
+                return flag;
             }
 
-            ECU item2 = new ECU(ecu);
-            return ECU.AddIfNotContains(item2);
+            ECU eCU2 = new ECU(ecu);
+            bool flag2 = ECU.AddIfNotContains(eCU2);
+            if (flag2)
+            {
+                BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.AddEcu(eCU2, EcuDataSource.EcuTreeCharacteristics);
+            }
+
+            return flag2;
         }
 
         bool IEcuTreeVehicle.RemoveEcu(IEcuTreeEcu ecu)
@@ -3351,13 +3420,25 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 return false;
             }
 
-            if (ecu is ECU item)
+            if (ecu is ECU eCU)
             {
-                return ECU.Remove(item);
+                bool flag = ECU.Remove(eCU);
+                if (flag)
+                {
+                    BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.RemoveEcu(eCU.ID_SG_ADR, EcuDataSource.EcuTreeCharacteristics);
+                }
+
+                return flag;
             }
 
-            ECU item2 = new ECU(ecu);
-            return ECU.Remove(item2);
+            ECU eCU2 = new ECU(ecu);
+            bool flag2 = ECU.Remove(eCU2);
+            if (flag2)
+            {
+                BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.RemoveEcu(eCU2.ID_SG_ADR, EcuDataSource.EcuTreeCharacteristics);
+            }
+
+            return flag2;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

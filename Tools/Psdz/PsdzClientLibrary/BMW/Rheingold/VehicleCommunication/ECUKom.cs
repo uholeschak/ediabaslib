@@ -25,6 +25,7 @@ using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.ImportantLogging;
 using BMW.Rheingold.CoreFramework.Localization;
+using BMW.Rheingold.CoreFramework.Metadata;
 using BMW.Rheingold.CoreFramework.Metrics;
 using BMW.Rheingold.CoreFramework.Sec4Diag;
 using BMW.Rheingold.CoreFramework.Utility;
@@ -957,7 +958,7 @@ namespace BMW.Rheingold.VehicleCommunication
                         if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
                         {
                             TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
-                            interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
+                            interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days, BuildMetadataProvider.DisplayName).Localize());
                             ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_007", TYPES.Sec4Diag);
                             service3.AddServiceCode(ServiceCodes.S4D02_InfoCode_nu_LF, "SEC4DIAG_007", LayoutGroup.D);
                             boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);

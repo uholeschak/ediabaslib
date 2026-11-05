@@ -950,9 +950,10 @@ namespace BMW.Rheingold.DiagnosticsBusinessData
                 eCU.ID_SG_ADR = 54L;
                 eCU.ECU_GRUPPE = "D_TEL";
                 eCU.ECU_GROBNAME = "TEL";
-                vecInfo.AddEcu(eCU);
+                vecInfo.AddEcu(eCU, EcuDataSource.DiagnosticsBusinessData);
                 doECUIdentDelegate(vecInfo, eCU, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+
             if (vecInfo.HasSA("610") && vecInfo.getECU(61L) == null)
             {
                 ECU eCU2 = new ECU();
@@ -960,9 +961,10 @@ namespace BMW.Rheingold.DiagnosticsBusinessData
                 eCU2.ID_SG_ADR = 61L;
                 eCU2.ECU_GRUPPE = "D_HUD";
                 eCU2.ECU_GROBNAME = "HUD";
-                vecInfo.AddEcu(eCU2);
+                vecInfo.AddEcu(eCU2, EcuDataSource.DiagnosticsBusinessData);
                 doECUIdentDelegate(vecInfo, eCU2, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+
             if (vecInfo.HasSA("672") && vecInfo.getECU(60L) == null)
             {
                 ECU eCU3 = new ECU();
@@ -970,9 +972,10 @@ namespace BMW.Rheingold.DiagnosticsBusinessData
                 eCU3.ID_SG_ADR = 60L;
                 eCU3.ECU_GRUPPE = "D_CDC";
                 eCU3.ECU_GROBNAME = "CDC";
-                vecInfo.AddEcu(eCU3);
+                vecInfo.AddEcu(eCU3, EcuDataSource.DiagnosticsBusinessData);
                 doECUIdentDelegate(vecInfo, eCU3, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+
             if (vecInfo.HasSA("696") && vecInfo.getECU(49L) == null)
             {
                 ECU eCU4 = new ECU();
@@ -980,9 +983,10 @@ namespace BMW.Rheingold.DiagnosticsBusinessData
                 eCU4.ID_SG_ADR = 49L;
                 eCU4.ECU_GRUPPE = "D_MMC";
                 eCU4.ECU_GROBNAME = "MMC";
-                vecInfo.AddEcu(eCU4);
+                vecInfo.AddEcu(eCU4, EcuDataSource.DiagnosticsBusinessData);
                 doECUIdentDelegate(vecInfo, eCU4, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+
             if (vecInfo.hasBusType(BMW.Rheingold.CoreFramework.DatabaseProvider.BusType.MOST) && vecInfo.getECUbyECU_GRUPPE("D_MOSTGW") != null)
             {
                 ECU eCU5 = new ECU();
@@ -990,7 +994,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessData
                 eCU5.ID_SG_ADR = 255L;
                 eCU5.ECU_GRUPPE = "D_MOST";
                 eCU5.ECU_GROBNAME = "MOST";
-                vecInfo.AddEcu(eCU5);
+                vecInfo.AddEcu(eCU5, EcuDataSource.DiagnosticsBusinessData);
                 doECUIdentDelegate(vecInfo, eCU5, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
         }
@@ -1031,7 +1035,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessData
                     eCUbyECU_GRUPPE.ID_LIN_SLAVE_ADR = 128L;
                     eCUbyECU_GRUPPE.ECU_GROBNAME = "RLS";
                     eCUbyECU_GRUPPE.TITLE_ECUTREE = "RLS";
-                    vecInfo.AddEcu(eCUbyECU_GRUPPE);
+                    vecInfo.AddEcu(eCUbyECU_GRUPPE, EcuDataSource.DiagnosticsBusinessData);
                 }
                 else if (ecuKom.DefaultApiJob("D_RLS", "IDENT", string.Empty, string.Empty).IsOkay())
                 {
@@ -1041,7 +1045,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessData
                     eCUbyECU_GRUPPE.ID_LIN_SLAVE_ADR = 128L;
                     eCUbyECU_GRUPPE.ECU_GROBNAME = "RLS";
                     eCUbyECU_GRUPPE.TITLE_ECUTREE = "RLS";
-                    vecInfo.AddEcu(eCUbyECU_GRUPPE);
+                    vecInfo.AddEcu(eCUbyECU_GRUPPE, EcuDataSource.DiagnosticsBusinessData);
                 }
             }
 
@@ -1059,7 +1063,7 @@ namespace BMW.Rheingold.DiagnosticsBusinessData
             foreach (IEcu item in ecusToRemoveKMM)
             {
                 Log.Info("VehicleIdent.doECUIdent()", "remove ECU at address: {0} due to KMM error.", item.ID_SG_ADR);
-                vecInfo.RemoveEcu(item);
+                vecInfo.RemoveEcu(item, EcuDataSource.DiagnosticsBusinessData);
             }
         }
 

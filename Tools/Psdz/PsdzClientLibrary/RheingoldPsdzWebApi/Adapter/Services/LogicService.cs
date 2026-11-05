@@ -6,6 +6,7 @@ using System.Net.Http;
 using RheingoldPsdzWebApi.Adapter.Contracts;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Exceptions;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Obd;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Sfa;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Svb;
@@ -16,6 +17,7 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Services;
 using RheingoldPsdzWebApi.Adapter.Contracts.TransferObjects;
 using RheingoldPsdzWebApi.Adapter.Mapper;
 
+#pragma warning disable CA2200
 namespace RheingoldPsdzWebApi.Adapter.Services
 {
     internal class LogicService : ILogicService
@@ -185,12 +187,22 @@ namespace RheingoldPsdzWebApi.Adapter.Services
                     TalFilter = TalFilterMapper.Map(talFilter),
                     FaultTolerant = false
                 };
-                return SollverbauungMapper.Map(_webCallHandler.ExecuteRequest<SollverbauungModel>(endpointService, $"generatesollverbauunggesamtflash/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
+                ApiResult<SollverbauungModel> apiResult = _webCallHandler.ExecuteRequest<SollverbauungModel>(endpointService, $"generatesollverbauunggesamtflash/{connection.Id}", HttpMethod.Post, requestBodyObject);
+                if (!apiResult.IsSuccessful)
+                {
+                    string errorMessage = apiResult.ErrorMessage;
+                    if (errorMessage != null && errorMessage.Contains("PSdZSystemException"))
+                    {
+                        throw new PsdzRuntimeException(0, apiResult.ErrorMessage);
+                    }
+                }
+
+                return SollverbauungMapper.Map(apiResult.Data);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Log.ErrorException(Log.CurrentMethod(), exception);
-                throw;
+                Log.ErrorException(Log.CurrentMethod(), ex);
+                throw ex;
             }
         }
 

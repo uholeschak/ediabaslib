@@ -48,6 +48,7 @@ namespace BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent
         IReactorFa GetFaInstance();
         bool HasSA(string checkSA);
         void AddEcu(IIdentEcu ecu);
+        void AddEcu(IIdentEcu ecu, EcuDataSource source);
         bool IsPreE65Vehicle();
         bool IsVehicleWithOnlyVin7();
         IIdentEcu getECU(long? sgAdr);

@@ -478,7 +478,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             vehicle.FaultList = new List<Fault>(observableCollection);
         }
 
-        private static int? CalculateFaultCodeSum(IEnumerable<IEcu> ecus, IEnumerable<Fault> faults, bool onlyNonSignalFaultDtcs)
+        public static int? CalculateFaultCodeSum(IEnumerable<IEcu> ecus, IEnumerable<Fault> faults, bool onlyNonSignalFaultDtcs)
         {
             int num = 0;
             num = (onlyNonSignalFaultDtcs ? faults.Count((Fault f) => f.FaultGroupNumber != 6) : faults.Count());
@@ -869,12 +869,29 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return false;
         }
 
-        public static void AddEcu(this Vehicle vehicle, ECU ecu)
+        public static void AddEcu(this Vehicle vehicle, ECU ecu, EcuDataSource source)
         {
             vehicle.ECU.Add(ecu);
+            BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.AddEcu(ecu, source);
         }
 
-        public static bool AddOrUpdateECU(this Vehicle vehicle, ECU nECU)
+        public static bool RemoveEcu(this Vehicle vehicle, ECU ecu, EcuDataSource source)
+        {
+            if (ecu == null || vehicle.ECU == null)
+            {
+                return false;
+            }
+
+            bool flag = vehicle.ECU.Remove(ecu);
+            if (flag)
+            {
+                BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.RemoveEcu(ecu.ID_SG_ADR, source);
+            }
+
+            return flag;
+        }
+
+        public static bool AddOrUpdateECU(this Vehicle vehicle, ECU nECU, EcuDataSource source)
         {
             try
             {
@@ -897,6 +914,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         if (num >= 0 && num < vehicle.ECU.Count)
                         {
                             vehicle.ECU[num] = nECU;
+                            BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.UpdateEcu(nECU, source);
                             Log.Info("Vehicle.AddOrUpdateECU()", "updating ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
                             return true;
                         }
@@ -904,6 +922,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
 
                 vehicle.ECU.Add(nECU);
+                BMW.Rheingold.CoreFramework.EcuManager.EcuManager.Instance.AddEcu(nECU, source);
                 Log.Info("Vehicle.AddOrUpdateECU()", "adding ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
                 return true;
             }
@@ -1407,6 +1426,49 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
 
             return num * num2;
+        }
+
+        public static (bool enabled, string typeKey) GetOverriddingTypeKey(string VIN17)
+        {
+            try
+            {
+                if (ConfigSettings.GetFeatureEnabledStatus("OverrideTypeKeyForVIN17").IsActive && ConfigSettings.IsVerificationMode)
+                {
+                    Log.Info(Log.CurrentMethod(), "Override the typeKey is enabled.");
+                    if (string.IsNullOrEmpty(VIN17) || VIN17.Length != 17)
+                    {
+                        return (enabled: false, typeKey: string.Empty);
+                    }
+
+                    string configString = ConfigSettings.getConfigString("BMW.Rheingold.VehicleIdent.OverrideTypeKeyForVIN17", string.Empty);
+                    if (string.IsNullOrEmpty(configString))
+                    {
+                        return (enabled: false, typeKey: string.Empty);
+                    }
+
+                    string[] array = configString.Split('#');
+                    if (array.Length != 2)
+                    {
+                        return (enabled: false, typeKey: string.Empty);
+                    }
+
+                    string obj = ((array.Length != 0) ? array[0] : string.Empty);
+                    string item = ((array.Length > 1) ? array[1] : string.Empty);
+                    if (obj.Equals(VIN17, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return (enabled: true, typeKey: item);
+                    }
+
+                    return (enabled: false, typeKey: string.Empty);
+                }
+
+                return (enabled: false, typeKey: string.Empty);
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(Log.CurrentMethod(), exception);
+                return (enabled: false, typeKey: string.Empty);
+            }
         }
     }
 }
