@@ -1,5 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class PlannedSwiAction : IPlannedSwiAction

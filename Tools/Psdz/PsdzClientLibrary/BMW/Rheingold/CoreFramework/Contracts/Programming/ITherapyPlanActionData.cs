@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface ITherapyPlanActionData : ITherapyPlanAction2, ITherapyPlanAction, INotifyPropertyChanged

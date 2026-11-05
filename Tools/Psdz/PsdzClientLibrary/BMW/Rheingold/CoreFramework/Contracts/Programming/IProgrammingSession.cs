@@ -6,6 +6,7 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.Programming;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]

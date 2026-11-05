@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using RheingoldPsdzWebApi.Adapter.Contracts.Model.Tal;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]

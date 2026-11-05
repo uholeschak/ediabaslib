@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
+#pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     public interface ITherapyPlanAction2 : ITherapyPlanAction, INotifyPropertyChanged
