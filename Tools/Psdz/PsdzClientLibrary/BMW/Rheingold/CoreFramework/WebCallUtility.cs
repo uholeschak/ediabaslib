@@ -12,7 +12,7 @@ namespace BMW.Rheingold.CoreFramework
         private const string GoogleDNSIp = "8.8.8.8";
         private const string BaiduDNSIp = "180.76.76.76";
         private const int PingRetryCount = 4;
-        [PreserveSource(Cleaned = true, OriginalHash = "D2F0CA039B712D9F02281814FF34111A")]
+        [PreserveSource(Cleaned = true, OriginalHash = "0319A8A0C67CE96CD5D0B63BDFD9524E")]
         public static bool CheckForInternetConnection()
         {
             try

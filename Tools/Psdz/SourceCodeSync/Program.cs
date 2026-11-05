@@ -1,4 +1,4 @@
-using CommandLine;
+﻿using CommandLine;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -82,6 +82,7 @@ namespace SourceCodeSync
             "BMW.ISPI.TRIC.ISTA.Contracts",
             "BMW.ISPI.TRIC.ISTA.Configurations",
             "BMW.ISPI.TRIC.ISTA.DiagnosticsBusinessDataCore",
+            "BMW.ISPI.TRIC.ISTA.EcuManager",
             "BMW.ISPI.TRIC.ISTA.EcuTree",
             "BMW.ISPI.TRIC.ISTA.FusionReactor",
             "BMW.ISPI.TRIC.ISTA.MultisourceLogic",
