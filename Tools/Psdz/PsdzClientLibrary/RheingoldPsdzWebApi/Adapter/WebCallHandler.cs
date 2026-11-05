@@ -67,39 +67,42 @@ namespace RheingoldPsdzWebApi.Adapter
             return ExecuteRequestImpl<T>(serviceName, endpoint, method, requestBodyObject, queryParameters);
         }
 
-        private ApiResult<T> ExecuteRequestImpl<T>(string serviceName, string endpoint, HttpMethod method, object requestBodyObject = null, IDictionary<string, string> queryParameters = null)
+        private ApiResult<T> ExecuteRequestImpl<T>(string serviceName, string endpoint, HttpMethod method, object requestBodyObject, IDictionary<string, string> queryParameters)
         {
             HttpResponseMessage httpResponseMessage = null;
+            string text = null;
+            string text2 = Log.CurrentMethod();
             try
             {
                 if (!endpoint.Equals("isready") && !_isPsdzInitialized())
                 {
-                    Log.Debug(Log.CurrentMethod(), "WebService is not initialized. Cannot execute request");
-                    return new ApiResult<T>(default, isSuccessful: false);
+                    text = "WebService is not initialized. Cannot execute request to " + serviceName + "/" + endpoint;
+                    Log.Debug(text2, text);
+                    return new ApiResult<T>(default(T), isSuccessful: false, text);
                 }
-
                 HttpRequestMessage request = PrepareRequest(serviceName, endpoint, method, requestBodyObject, queryParameters);
-                Log.Debug(Log.CurrentMethod(), CreateRequestLogMessage("API-Request", _httpClient, request, requestBodyObject));
+                Log.Debug(text2, CreateRequestLogMessage("API-Request", _httpClient, request, requestBodyObject));
                 httpResponseMessage = _httpClient.SendAsync(request).GetAwaiter().GetResult();
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     T responseData = GetResponseData<T>(httpResponseMessage);
-                    Log.Debug(Log.CurrentMethod(), CreateResponseLogMessage("API-Response-Valid", httpResponseMessage, responseData));
-                    return new ApiResult<T>(responseData, isSuccessful: true);
+                    Log.Debug(text2, CreateResponseLogMessage("API-Response-Valid", httpResponseMessage, responseData));
+                    return new ApiResult<T>(responseData, isSuccessful: true, string.Empty);
                 }
-
-                Log.Error(Log.CurrentMethod(), CreateResponseLogMessage("API-Response-Invalid", httpResponseMessage, GetResponseData<T>(httpResponseMessage)));
+                string result = httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                text = $"Request to {serviceName}/{endpoint} failed with status code {httpResponseMessage.StatusCode}. Response body: {result}";
+                Log.Error(text2, "Error Message from HTTP body: " + text);
+                Log.Error(text2, CreateResponseLogMessage("API-Response-Invalid", httpResponseMessage, GetResponseData<T>(httpResponseMessage)));
             }
             catch (Exception ex)
             {
-                HandleException<T>(ex, httpResponseMessage, serviceName, endpoint, method, Log.CurrentMethod());
+                HandleException<T>(ex, httpResponseMessage, serviceName, endpoint, method, text2);
             }
             finally
             {
                 DecrementRequestCounts();
             }
-
-            return new ApiResult<T>(default, isSuccessful: false);
+            return new ApiResult<T>(default(T), isSuccessful: false, text);
         }
 
         private static T GetResponseData<T>(HttpResponseMessage response)
