@@ -59,7 +59,7 @@ namespace BMW.Rheingold.Module.ISTA
 
             try
             {
-                //[-] List<TypeFSCProvidedDto> list = new SwtProcessorV3Service(new SWTProcessorV3Impl(null)).GetFSCList(vin7, vin17, new string[1] { sHaendlernummer }, TypeResourceIndicatorDto.INI, applicationNo, upgradeIndex, 3)?.ToList();
+                //[-] List<TypeFSCProvidedDto> list = new SwtProcessorV3Service(new SWTProcessorV3Impl(null), new LoggerFactory()).GetFSCList(vin7, vin17, new string[1] { sHaendlernummer }, TypeResourceIndicatorDto.INI, applicationNo, upgradeIndex, 3)?.ToList();
                 //[+] List<TypeFSCProvidedDto> list = null;
                 List<TypeFSCProvidedDto> list = null;
                 if (list == null)
@@ -92,7 +92,7 @@ namespace BMW.Rheingold.Module.ISTA
             try
             {
                 Log.Info("NavigationMapProcessor.GetActivationCodes()", "Input svin: " + svin + ", Haendlernummer " + string.Join(", ", sHaendlernummer));
-                //[-] List<IFSCProvided> iFscProvidedList = new SwtProcessorV3Service(new SWTProcessorV3Impl(logic)).GetIFscProvidedList(svin, sHaendlernummer);
+                //[-] List<IFSCProvided> iFscProvidedList = new SwtProcessorV3Service(new SWTProcessorV3Impl(logic), new LoggerFactory()).GetIFscProvidedList(svin, sHaendlernummer);
                 //[+] List<IFSCProvided> iFscProvidedList = null;
                 List<IFSCProvided> iFscProvidedList = null;
                 if (iFscProvidedList != null)
@@ -139,7 +139,7 @@ namespace BMW.Rheingold.Module.ISTA
             //[-] }
             try
             {
-                //[-] Dealer dealerInstance = LicenseHelper.DealerInstance;
+                //[-] Dealer dealerInstance = Dealer.DealerInstance;
                 //[+] Dealer dealerInstance = null;
                 Dealer dealerInstance = null;
                 if (dealerInstance != null && dealerInstance.HasOutlet() && dealerInstance.FirstOutlet != null)
@@ -186,11 +186,11 @@ namespace BMW.Rheingold.Module.ISTA
                     Contract contract = null;
                     if (brandName != EnumConverter.ConvertBrandNameToContractsBrandName(BrandName.TOYOTA))
                     {
-                        //[-] contract = (brandName.HasValue ? dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, "T") : null);
+                    //[-] contract = (brandName.HasValue ? dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, "T") : null);
                     }
                     else
                     {
-                        //[-] contract = dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, null);
+                    //[-] contract = dealerInstance.GetValidContract(dealerInstance.DealerData?.OutletNumber, brandName.Value, null);
                     }
 
                     if (contract != null)
@@ -233,7 +233,7 @@ namespace BMW.Rheingold.Module.ISTA
         public List<string> GetInternationalDealerNumbersForAllBrandsUnderCurrentOutlet(string product)
         {
             Log.Info("NavigationMapProcessor.GetInternationalDealerNumbersForAllBrandsUnderCurrentOutlet()", "Input Product: " + product);
-            //[-] string[] array = LicenseHelper.DealerInstance.GetRelevantBrandNames(ConfigSettings.OperationalMode).TrimSplit(',');
+            //[-] string[] array = Dealer.DealerInstance.GetRelevantBrandNames(ConfigSettings.OperationalMode).TrimSplit(',');
             //[+] string[] array = Array.Empty<string>();
             string[] array = Array.Empty<string>();
             List<string> haendlerNrs = new List<string>();
