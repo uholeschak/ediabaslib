@@ -1,4 +1,4 @@
-using BMW.ISPI.IstaOperation.Impl;
+﻿using BMW.ISPI.IstaOperation.Impl;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.Module.ISTA;
@@ -27,7 +27,7 @@ namespace PsdzClient
     [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public class TestModuleRunner
     {
-        public delegate bool ProgressDelegate(bool start, int progress, int failures);
+        public delegate bool ProgressDelegate(bool start, int progress, int failures, string errorMessage = null);
 
         private static readonly ILog log = LogManager.GetLogger(typeof(TestModuleRunner));
         public static string IgnoreAssembliesFile = "IgnoreAssemblies.txt";
@@ -341,6 +341,7 @@ namespace PsdzClient
                 if (!Directory.Exists(testModulesPath))
                 {
                     log.ErrorFormat("CompileAllModules: Test modules directory does not exist: {0}", testModulesPath);
+                    progressDelegate?.Invoke(true, 0, 1, $"Test modules directory does not exist: {testModulesPath}");
                     return false;
                 }
 
@@ -348,6 +349,7 @@ namespace PsdzClient
                 if (string.IsNullOrEmpty(appDir))
                 {
                     log.ErrorFormat("CompileAllModules: AssemblyDirectory is null or empty");
+                    progressDelegate?.Invoke(true, 0, 1, "AssemblyDirectory is null or empty");
                     return false;
                 }
 

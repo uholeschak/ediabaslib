@@ -859,7 +859,7 @@ namespace PsdzClient
                         }
                     }
 #else
-                    bool resultCompile = TestModuleRunner.CompileAllModules(ClientContext, (start, progress, errorCount) =>
+                    bool resultCompile = TestModuleRunner.CompileAllModules(ClientContext, (start, progress, errorCount, errorMessage) =>
                     {
                         if (start)
                         {
@@ -870,6 +870,12 @@ namespace PsdzClient
                         {
                             string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, errorCount);
                             ProgressEvent?.Invoke(progress, false, message);
+                        }
+
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            sbResult.AppendLine(errorMessage);
+                            UpdateStatus(sbResult.ToString());
                         }
 
                         if (cts != null)
