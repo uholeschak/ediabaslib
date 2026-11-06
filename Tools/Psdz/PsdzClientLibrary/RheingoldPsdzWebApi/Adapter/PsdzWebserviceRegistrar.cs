@@ -198,14 +198,19 @@ namespace RheingoldPsdzWebApi.Adapter
 
         public static void ClearStatusIfProcessDied()
         {
-            Process process = Process.GetCurrentProcess();
+            //[-]Process process = Process.GetCurrentProcess();
+            //[+]int processId = GetProcessId();
+            int processId = GetProcessId();
             using (FileStream lockFileStream = GetReadWriteFileLock())
             {
                 List<SessionData> list = ReadSessionsFromFile(lockFileStream);
-                SessionData sessionData = list.FirstOrDefault((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+                //[-]SessionData sessionData = list.FirstOrDefault((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+                //[+]SessionData sessionData = list.FirstOrDefault((SessionData s) => s.IstaProcessIds.Contains(processId));
+                SessionData sessionData = list.FirstOrDefault((SessionData s) => s.IstaProcessIds.Contains(processId));
                 if (sessionData == null)
                 {
-                    throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
+                    //[-]throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
+                    throw new InvalidOperationException($"No webservice session was registered for ISTA process {processId}.");
                 }
 
                 if (IsRegisteredAsRunningButProcessIsDead(sessionData))
