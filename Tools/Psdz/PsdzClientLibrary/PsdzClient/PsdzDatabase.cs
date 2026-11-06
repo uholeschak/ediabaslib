@@ -4053,7 +4053,7 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT infoObj.ID, NODECLASS, ASSEMBLY, DEBUGINFO, USEDDEVICEADAPTERS, VERSIONNUMBER, PROGRAMTYPE, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, TITLEID, " + SqlTitleItemsC + @", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, HINWEISID, " +
+                    @"SELECT infoObj.ID, NODECLASS, ASSEMBLY, DEBUGINFO, USEDDEVICEADAPTERS, VERSIONNUMBER, PROGRAMTYPE, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, TITLEID, " + DatabaseFunctions.SqlTitleItems + @", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, HINWEISID, " +
                     @"HINWEIS_DEDE, HINWEIS_ENGB, HINWEIS_ENUS, HINWEIS_FR, HINWEIS_TH, HINWEIS_SV, HINWEIS_IT, HINWEIS_ES, HINWEIS_ID, HINWEIS_KO, HINWEIS_EL, HINWEIS_TR, HINWEIS_ZHCN, HINWEIS_RU, HINWEIS_NL, HINWEIS_PT, HINWEIS_ZHTW, HINWEIS_JA, " +
                     @"NAME, INFORMATIONSTYP, IDENTIFIKATOR, CREATEDATE, EXPIRYDATE, CHANGEDATE, LAUNCHDATE, ABGASRELEVANT, DRINGLICHKEIT, INFORMATIONSFORMAT, GROBZEICHEN, AWNUMMER, " +
                     @"SWZNUMMER, SINUMMER, ZIELISTUFE, infoObj.CONTROLID, MODIFICATIONTIME, INFOTYPE, INFOFORMAT, DOCNUMBER, infoObj.PRIORITY, IDENTIFIER " +
@@ -5329,7 +5329,7 @@ namespace PsdzClient
             List<XEP_STATEVALUES> list = new List<XEP_STATEVALUES>();
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLEID, " + SqlTitleItemsC + @", STATEVALUE, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, PARENTID FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", ecuResultId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLEID, " + DatabaseFunctions.SqlTitleItems + @", STATEVALUE, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, PARENTID FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", ecuResultId);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -5415,7 +5415,7 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT ID, NODECLASS, TITLEID, " + SqlTitleItemsC +
+                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
                     @", TELESERVICERELEVANT,SICHERHEITSRELEVANT, VALIDTO, VALIDFROM, FASTARELEVANT, STEUERGERAETEFUNKTIONENRELEVAN, FAHRZEUGTESTRELEVANT, FASTADATATYPE, FDMRELEVANT, PREPARINGOPERATORTEXTID," +
                     @"PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_ENGB, PREPARINGOPERATORTEXT_ENUS, PREPARINGOPERATORTEXT_FR, PREPARINGOPERATORTEXT_TH, " +
                     @"PREPARINGOPERATORTEXT_SV, PREPARINGOPERATORTEXT_IT, PREPARINGOPERATORTEXT_ES, PREPARINGOPERATORTEXT_ID, PREPARINGOPERATORTEXT_KO, " +
@@ -5692,7 +5692,7 @@ namespace PsdzClient
                 foreach (decimal hashSetFaultCodeId in hashSetFaultCodeIds)
                 {
                     string sql = string.Format(CultureInfo.InvariantCulture,
-                        @"SELECT ID, CODE, SAECODE, TITLEID, " + SqlTitleItemsC +
+                        @"SELECT ID, CODE, SAECODE, TITLEID, " + DatabaseFunctions.SqlTitleItems +
                         @", RELEVANCE, DATATYPE FROM XEP_FAULTLABELS where (code = {0}) and (id in (SELECT LABELID FROM XEP_REFFAULTLABELS where (id = {1})))", faultCode, hashSetFaultCodeId);
                     using (SqliteCommand command = _mDbConnection.CreateCommand())
                     {
@@ -5727,7 +5727,7 @@ namespace PsdzClient
             int num = 0;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, SAECODE, TITLEID, " + SqlTitleItemsC + @", RELEVANCE, DATATYPE FROM XEP_FAULTLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS WHERE ID = {0})", faultCodeId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, SAECODE, TITLEID, " + DatabaseFunctions.SqlTitleItems + @", RELEVANCE, DATATYPE FROM XEP_FAULTLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS WHERE ID = {0})", faultCodeId);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -5802,7 +5802,7 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT ID, CODE, TITLEID, " + SqlTitleItemsC + @", RELEVANCE, ERWEITERT " +
+                    @"SELECT ID, CODE, TITLEID, " + DatabaseFunctions.SqlTitleItems + @", RELEVANCE, ERWEITERT " +
                     @"FROM XEP_FAULTMODELABELS WHERE ID IN (SELECT XEP_REFFAULTLABELS.LABELID FROM XEP_FAULTCODES, XEP_ECUVARIANTS, XEP_REFFAULTLABELS " +
                     @"WHERE (XEP_FAULTCODES.ECUVARIANTID = XEP_ECUVARIANTS.ID) AND (XEP_ECUVARIANTS.NAME = {0} COLLATE UTF8CI) AND (XEP_FAULTCODES.CODE = {1} COLLATE UTF8CI) AND (XEP_FAULTCODES.ID = XEP_REFFAULTLABELS.ID))", ecuVariant, faultCode);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
@@ -5871,7 +5871,7 @@ namespace PsdzClient
             {
                 XEP_VIRTUALFAULTLABELS xEP_VIRTUALFAULTLABELS = null;
                 int num = 0;
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLEID, " + SqlTitleItemsC + @", CODE FROM XEP_VIRTUALFAULTLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS WHERE ID = {0})", id);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLEID, " + DatabaseFunctions.SqlTitleItems + @", CODE FROM XEP_VIRTUALFAULTLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS WHERE ID = {0})", id);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -5955,7 +5955,7 @@ namespace PsdzClient
             try
             {
                 XEP_COMBIFAULTLABELS xEP_COMBIFAULTLABELS = null;
-                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + SqlTitleItemsC + ", CODE FROM XEP_COMBIFAULTLABELS WHERE ID = {0}", combinedFaultLabelId);
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", CODE FROM XEP_COMBIFAULTLABELS WHERE ID = {0}", combinedFaultLabelId);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -5983,7 +5983,7 @@ namespace PsdzClient
             try
             {
                 XEP_COMBIFAULTLABELS xEP_COMBIFAULTLABELS = null;
-                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + SqlTitleItemsC + ", CODE FROM XEP_COMBIFAULTLABELS WHERE CODE = '{0}'", combinedFaultCode);
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", CODE FROM XEP_COMBIFAULTLABELS WHERE CODE = '{0}'", combinedFaultCode);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -6012,7 +6012,7 @@ namespace PsdzClient
             try
             {
                 ICollection<XEP_ENVCONDSLABELS> collection = new HashSet<XEP_ENVCONDSLABELS>();
-                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, NODECLASS, TITLEID, " + SqlTitleItemsC + ", NAME, TYPE, RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT, PARENTID FROM XEP_ENVCONDSLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS, XEP_FAULTCODES WHERE CODE = {0} AND ECUVARIANTID = {1} AND XEP_REFFAULTLABELS.ID = XEP_FAULTCODES.ID)", faultCode, ecuVariantId);
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", NAME, TYPE, RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT, PARENTID FROM XEP_ENVCONDSLABELS WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS, XEP_FAULTCODES WHERE CODE = {0} AND ECUVARIANTID = {1} AND XEP_REFFAULTLABELS.ID = XEP_FAULTCODES.ID)", faultCode, ecuVariantId);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
