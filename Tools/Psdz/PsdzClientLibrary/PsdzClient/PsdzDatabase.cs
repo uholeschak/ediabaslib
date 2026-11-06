@@ -5206,7 +5206,7 @@ namespace PsdzClient
             List<XEP_FAULTCLASSES> list = new List<XEP_FAULTCLASSES>();
             try
             {
-                string sql = @"SELECT ID, TITLEID, " + SqlTitleItemsC + ", REGEL, PRIORITY, PARENTID FROM XEP_FAULTCLASSES";
+                string sql = @"SELECT ID, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", REGEL, PRIORITY, PARENTID FROM XEP_FAULTCLASSES";
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
