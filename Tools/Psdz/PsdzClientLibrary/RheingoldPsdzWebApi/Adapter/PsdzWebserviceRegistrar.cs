@@ -210,6 +210,7 @@ namespace RheingoldPsdzWebApi.Adapter
                 if (sessionData == null)
                 {
                     //[-]throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
+                    //[+]throw new InvalidOperationException($"No webservice session was registered for ISTA process {processId}.");
                     throw new InvalidOperationException($"No webservice session was registered for ISTA process {processId}.");
                 }
 

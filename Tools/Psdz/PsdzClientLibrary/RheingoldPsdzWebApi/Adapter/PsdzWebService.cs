@@ -397,7 +397,6 @@ namespace RheingoldPsdzWebApi.Adapter
             try
             {
                 _detectedStartFailureReason = PsdzWebserviceStartFailureReason.None;
-                //[-]psdzWebserviceProcess.StartInfo.WorkingDirectory = _psdzWebApiLogDir;
                 if (PsdzWebserviceRegistrar.StartAndRegisterWebserviceProcess(psdzWebserviceProcess))
                 {
                     try
