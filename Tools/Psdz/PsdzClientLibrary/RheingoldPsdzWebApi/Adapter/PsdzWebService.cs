@@ -187,12 +187,8 @@ namespace RheingoldPsdzWebApi.Adapter
 
             //[+] if (ClientContext.GetSwiVersionNum() < 40056)
             if (ClientContext.GetSwiVersionNum() < 40056)
-            //[+] {
-            {
                 //[+] return true;
                 return true;
-            //[+] }
-            }
 
             RootDirectorySetupResultModel rootDirectorySetupResult = ConfigurationService.GetRootDirectorySetupResult();
             if (rootDirectorySetupResult != null && rootDirectorySetupResult.Success)
