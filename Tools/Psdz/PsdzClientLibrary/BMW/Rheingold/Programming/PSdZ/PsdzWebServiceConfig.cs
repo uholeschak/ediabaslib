@@ -31,7 +31,7 @@ namespace BMW.Rheingold.Programming.PSdZ
         {
             if (dealerId == null)
             {
-                //[-] dealerId = Dealer.DealerInstance.GetDistributionPartnerNumber(5);
+            //[-] dealerId = Dealer.DealerInstance.GetDistributionPartnerNumber(5);
             }
 
             //[-] string key = "BMW.Rheingold.Logging.Directory.Current";
@@ -92,8 +92,10 @@ namespace BMW.Rheingold.Programming.PSdZ
                 text,
                 PsdzWebServiceSpringbootLogFilePath
             };
-            //[+] if (ClientContext.GetSwiVersionNum() < 40062) JarArguments = JarArguments.Append(PsdzWebServiceSpringbootLogFilePath).ToArray();
-            if (ClientContext.GetSwiVersionNum() < 40062) JarArguments = JarArguments.Append(PsdzWebServiceSpringbootLogFilePath).ToArray();
+            //[+] if (ClientContext.GetSwiVersionNum() < 40062)
+            if (ClientContext.GetSwiVersionNum() < 40062)
+                //[+] JarArguments = JarArguments.Append(PsdzWebServiceSpringbootLogFilePath).ToArray();
+                JarArguments = JarArguments.Append(PsdzWebServiceSpringbootLogFilePath).ToArray();
             Log.Info(Log.CurrentMethod(), "Psdz Webservice log file:".PadRight(40) + "{0}", PsdzWebServiceLogFilePath);
             Log.Info(Log.CurrentMethod(), "Psdz log file:".PadRight(40) + "{0}", PsdzLogFilePath);
             Log.Info(Log.CurrentMethod(), "Psdz Webservice tomcat log file:".PadRight(40) + "{0}", PsdzWebServiceTomcatLogFilePath);
