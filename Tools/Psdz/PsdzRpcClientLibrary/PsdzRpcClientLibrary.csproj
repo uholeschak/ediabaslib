@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MessagePack" Version="3.1.12" />
-    <PackageReference Include="Nerdbank.MessagePack" Version="1.4.95" />
+    <PackageReference Include="Nerdbank.MessagePack" Version="1.4.104" />
     <PackageReference Include="StreamJsonRpc" Version="2.26.150" />
   </ItemGroup>
   <ItemGroup Condition="!$(TargetFramework.Contains('android'))">
