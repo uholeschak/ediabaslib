@@ -99,6 +99,15 @@ namespace PsdzRpcServer
                     // Verbindungsfehler: loggen und weitermachen – nicht den Server beenden
                     _output?.WriteLine($"Pipe connection error (continuing): {ex.Message}");
                     pipeServer.Dispose();
+
+                    try
+                    {
+                        await Task.Delay(100, ct).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
                 }
             }
         }
