@@ -35,11 +35,6 @@ Download app from Google Play: [https://play.google.com/store/apps/details?id=de
 [![updatestar](https://www.updatestar.com/img/rating_4stars.png)](https://deep-obd.updatestar.com)  
 Rated by updatestar.com: [https://deep-obd.updatestar.com](https://deep-obd.updatestar.com)  
 
-**Warning:** At the moment the **server side PHP script access** has changed and a **new app version is required**.  
-Google needs some time for testing, in the meantime you can **download the latest version** here:  
-Direct download: [https://holeschak.de/BmwDeepObd/597.apk](https://holeschak.de/BmwDeepObd/597.apk)  
-Dropbox: [597.apk](https://www.dropbox.com/scl/fi/eh7j8paokijl3kotvh18s/597.apk?rlkey=o2w5cfrupgn2n16mkjrk3k7bs&st=mvgbovm2&dl=0)  
-
 _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * Standard FTDI based USB "INPA compatible" D-CAN/K-Line adapters (all protocols)
 * ELM327 Bluetooth and WiFi adapters based on PIC18F2480 microcontroller (no MCP2515 chip). Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1. (D-CAN protocol only)
