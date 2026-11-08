@@ -94,6 +94,12 @@ namespace PsdzRpcServer
                     pipeServer.Dispose();
                     break;
                 }
+                catch (Exception ex)
+                {
+                    // Verbindungsfehler: loggen und weitermachen – nicht den Server beenden
+                    _output?.WriteLine($"Pipe connection error (continuing): {ex.Message}");
+                    pipeServer.Dispose();
+                }
             }
         }
 

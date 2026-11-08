@@ -299,7 +299,7 @@ namespace PsdzRpcServer
                     await Task.WhenAny(serverTask, keyTask, server.AllClientsDisconnected).ConfigureAwait(false);
                     if (server.AllClientsDisconnected.IsCompleted)
                     {
-                        if (_verbosity <= Options.VerbosityOption.Important)
+                        if (_verbosity >= Options.VerbosityOption.Important)
                         {
                             Console.WriteLine("Last client disconnected. Shutting down...");
                         }
@@ -321,7 +321,7 @@ namespace PsdzRpcServer
                 return 1;
             }
 
-            if (_verbosity <= Options.VerbosityOption.Important)
+            if (_verbosity >= Options.VerbosityOption.Important)
             {
                 Console.WriteLine("PsdzJsonRpcServer stopped.");
             }
