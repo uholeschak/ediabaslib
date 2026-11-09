@@ -157,12 +157,6 @@ namespace BmwDeepObd
         public const int RequestPermissionLocation = (int)PermissionRequestCodes.RequestPermissionLocation;
 
         [SupportedOSPlatform("android31.0")]
-        public static readonly string[] PermissionsBluetoothConnect =
-        {
-            Android.Manifest.Permission.BluetoothConnect,
-        };
-
-        [SupportedOSPlatform("android31.0")]
         public static readonly string[] PermissionsBluetoothScan =
         {
             Android.Manifest.Permission.BluetoothScan,
@@ -4002,7 +3996,8 @@ namespace BmwDeepObd
 
             try
             {
-                if (PermissionsBluetoothConnect.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
+                // Bluetooth scan permission alone is not sufficient
+                if (PermissionsBluetoothScan.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
                 {
                     if (grantedHandler != null)
                     {
@@ -4011,7 +4006,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                ActivityCompat.RequestPermissions(_activity, PermissionsBluetoothConnect, RequestPermissionBluetooth);
+                ActivityCompat.RequestPermissions(_activity, PermissionsBluetoothScan, RequestPermissionBluetooth);
                 if (grantedHandler != null)
                 {
                     grantedHandler.Invoke(false);
@@ -4402,7 +4397,7 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
                 {
-                    if (PermissionsBluetoothConnect.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) != Permission.Granted))
+                    if (PermissionsBluetoothScan.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) != Permission.Granted))
                     {
                         return false;
                     }
