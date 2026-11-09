@@ -3987,7 +3987,7 @@ namespace BmwDeepObd
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public bool RequestBtPermissions()
+        public bool RequestBtPermissions(BtPermissionGranted grantedHandler = null)
         {
             if (MtcBtService)
             {
@@ -4006,10 +4006,18 @@ namespace BmwDeepObd
             {
                 if (PermissionsBluetooth.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
                 {
+                    if (grantedHandler != null)
+                    {
+                        grantedHandler(true);
+                    }
                     return true;
                 }
 
                 ActivityCompat.RequestPermissions(_activity, PermissionsBluetooth, RequestPermissionBluetooth);
+                if (grantedHandler != null)
+                {
+                    grantedHandler(false);
+                }
                 return true;
             }
             catch (Exception)
