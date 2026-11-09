@@ -285,7 +285,7 @@ namespace BmwDeepObd
         protected override void OnResume()
         {
             base.OnResume();
-            RequestBtPermissions();
+            RequestBtScanPermissions();
             if (_activityCommon.MtcBtService)
             {
                 if (_deviceUpdateTimer == null)
@@ -456,7 +456,7 @@ namespace BmwDeepObd
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        private void RequestBtPermissions()
+        private void RequestBtScanPermissions()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
             {
@@ -468,7 +468,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsFineLocation : ActivityCommon.PermissionsBluetooth;
+            string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsFineLocation : ActivityCommon.PermissionsBluetoothScan;
             if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
                 BtPermissionGranted();

@@ -157,7 +157,13 @@ namespace BmwDeepObd
         public const int RequestPermissionLocation = (int)PermissionRequestCodes.RequestPermissionLocation;
 
         [SupportedOSPlatform("android31.0")]
-        public static readonly string[] PermissionsBluetooth =
+        public static readonly string[] PermissionsBluetoothConnect =
+        {
+            Android.Manifest.Permission.BluetoothConnect,
+        };
+
+        [SupportedOSPlatform("android31.0")]
+        public static readonly string[] PermissionsBluetoothScan =
         {
             Android.Manifest.Permission.BluetoothScan,
             Android.Manifest.Permission.BluetoothConnect,
@@ -3987,7 +3993,39 @@ namespace BmwDeepObd
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public bool RequestBtPermissions(BtPermissionGranted grantedHandler = null)
+        public bool RequestBtConnectPermissions(BtPermissionGranted grantedHandler = null)
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.S)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (PermissionsBluetoothConnect.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
+                {
+                    if (grantedHandler != null)
+                    {
+                        grantedHandler.Invoke(true);
+                    }
+                    return false;
+                }
+
+                ActivityCompat.RequestPermissions(_activity, PermissionsBluetoothConnect, RequestPermissionBluetooth);
+                if (grantedHandler != null)
+                {
+                    grantedHandler.Invoke(false);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
+        public bool RequestBtScanPermissions()
         {
             if (MtcBtService)
             {
@@ -4004,20 +4042,12 @@ namespace BmwDeepObd
 
             try
             {
-                if (PermissionsBluetooth.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
+                if (PermissionsBluetoothScan.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
                 {
-                    if (grantedHandler != null)
-                    {
-                        grantedHandler(true);
-                    }
                     return true;
                 }
 
-                ActivityCompat.RequestPermissions(_activity, PermissionsBluetooth, RequestPermissionBluetooth);
-                if (grantedHandler != null)
-                {
-                    grantedHandler(false);
-                }
+                ActivityCompat.RequestPermissions(_activity, PermissionsBluetoothScan, RequestPermissionBluetooth);
                 return true;
             }
             catch (Exception)
@@ -4244,7 +4274,7 @@ namespace BmwDeepObd
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
-                    if (!RequestBtPermissions())
+                    if (!RequestBtScanPermissions())
                     {
                         return false;
                     }
@@ -4363,39 +4393,46 @@ namespace BmwDeepObd
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool IsBluetoothConnected()
         {
-            if (!IsBluetoothEnabled())
+            try
             {
-                return false;
-            }
-
-            if (Build.VERSION.SdkInt > BuildVersionCodes.Tiramisu)
-            {
-                if (PermissionsBluetooth.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) != Permission.Granted))
+                if (!IsBluetoothEnabled())
                 {
                     return false;
                 }
-            }
 
-            bool result = false;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.IceCreamSandwich)
-            {
-                foreach (ProfileType profile in Enum.GetValues(typeof(ProfileType)))
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
                 {
-                    try
+                    if (PermissionsBluetoothConnect.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) != Permission.Granted))
                     {
-                        if (_btAdapter.GetProfileConnectionState(profile) != ProfileState.Disconnected)
-                        {
-                            result = true;
-                            break;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
+                        return false;
                     }
                 }
+
+                bool result = false;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.IceCreamSandwich)
+                {
+                    foreach (ProfileType profile in Enum.GetValues(typeof(ProfileType)))
+                    {
+                        try
+                        {
+                            if (_btAdapter.GetProfileConnectionState(profile) != ProfileState.Disconnected)
+                            {
+                                result = true;
+                                break;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+                return result;
             }
-            return result;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool BluetoothDisable()
