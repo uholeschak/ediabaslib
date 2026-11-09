@@ -990,7 +990,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestLocationSettings:
                     UpdateOptionsMenu();
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.P && Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
                     {
                         if (_activityCommon.LocationManager != null && _activityCommon.LocationManager.IsLocationEnabled)
                         {
