@@ -618,6 +618,7 @@ namespace BmwDeepObd
         public delegate void EnetSsidWarnDelegate(SsidWarnAction action);
         public delegate void WifiConnectedWarnDelegate();
         public delegate void WifiPermissionGranted(bool granted);
+        public delegate void BtPermissionGranted(bool granted);
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate bool InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
