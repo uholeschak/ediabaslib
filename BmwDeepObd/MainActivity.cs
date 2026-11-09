@@ -2115,7 +2115,7 @@ namespace BmwDeepObd
 
                 if (!ActivityCommon.CommActive && autoConnect == ConnectActionArgs.AutoConnectMode.None)
                 {
-                    if (RequestWifiPermissions(true))
+                    if (RequestNearbyPermissions(true))
                     {
                         return;
                     }
@@ -3127,7 +3127,7 @@ namespace BmwDeepObd
             StoragePermissionGranted();
         }
 
-        public bool RequestWifiPermissions(bool autoStart = false)
+        public bool RequestNearbyPermissions(bool autoStart = false)
         {
             try
             {
@@ -3146,28 +3146,50 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (_activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Enet)
+                switch (_activityCommon.SelectedInterface)
                 {
-                    return false;
+                    case ActivityCommon.InterfaceType.Enet:
+                    case ActivityCommon.InterfaceType.ElmWifi:
+                    case ActivityCommon.InterfaceType.DeepObdWifi:
+                        if (!_activityCommon.RequestWifiPermissions(granted =>
+                            {
+                                if (granted)
+                                {
+                                    LocationPermissionsGranted();
+                                }
+                                else
+                                {
+                                    _locationPermissionRequested = true;
+                                    _instanceData.AutoStart = autoStart;
+                                }
+                            }))
+                        {
+                            return false;
+                        }
+
+                        return true;
+#if false
+                    case ActivityCommon.InterfaceType.Bluetooth:
+                        if (!_activityCommon.RequestBtPermissions(granted =>
+                        {
+                            if (granted)
+                            {
+                            }
+                            else
+                            {
+                                _locationPermissionRequested = true;
+                                _instanceData.AutoStart = autoStart;
+                            }
+                        }))
+                        {
+                            return false;
+                        }
+
+                        return true;
+#endif
                 }
 
-                if (!_activityCommon.RequestWifiPermissions(granted =>
-                    {
-                        if (granted)
-                        {
-                            LocationPermissionsGranted();
-                        }
-                        else
-                        {
-                            _locationPermissionRequested = true;
-                            _instanceData.AutoStart = autoStart;
-                        }
-                    }))
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
             catch (Exception)
             {
@@ -3180,7 +3202,7 @@ namespace BmwDeepObd
         {
             _locationPermissionGranted = true;
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.P && Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
             {
                 if (_activityCommon.LocationManager != null)
                 {
@@ -7069,7 +7091,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (RequestWifiPermissions())
+            if (RequestNearbyPermissions())
             {
                 return;
             }
