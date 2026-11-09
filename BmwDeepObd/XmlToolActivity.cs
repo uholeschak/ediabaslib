@@ -818,7 +818,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (RequestWifiPermissions())
+                if (RequestNearbyPermissions())
                 {
                     return;
                 }
@@ -3689,7 +3689,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (RequestWifiPermissions())
+            if (RequestNearbyPermissions())
             {
                 return;
             }
@@ -3704,19 +3704,22 @@ namespace BmwDeepObd
             });
         }
 
-        private bool RequestWifiPermissions()
+        private bool RequestNearbyPermissions()
         {
             if (_activityCommon == null)
             {
                 return false;
             }
 
-            if (_activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Enet)
+            switch (_activityCommon.SelectedInterface)
             {
-                return false;
+                case ActivityCommon.InterfaceType.Enet:
+                case ActivityCommon.InterfaceType.ElmWifi:
+                case ActivityCommon.InterfaceType.DeepObdWifi:
+                    return _activityCommon.RequestWifiPermissions();
             }
 
-            return _activityCommon.RequestWifiPermissions();
+            return false;
         }
 
         private void PerformAnalyze(int searchStartIndex = -1)
