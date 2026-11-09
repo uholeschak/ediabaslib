@@ -3717,6 +3717,9 @@ namespace BmwDeepObd
                 case ActivityCommon.InterfaceType.ElmWifi:
                 case ActivityCommon.InterfaceType.DeepObdWifi:
                     return _activityCommon.RequestWifiPermissions();
+
+                case ActivityCommon.InterfaceType.Bluetooth:
+                    return _activityCommon.RequestBtConnectPermissions();
             }
 
             return false;
