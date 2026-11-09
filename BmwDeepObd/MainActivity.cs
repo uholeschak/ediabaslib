@@ -2010,6 +2010,10 @@ namespace BmwDeepObd
                     if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
                         UpdateOptionsMenu();
+                        if (_instanceData.AutoStart)
+                        {
+                            ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto));
+                        }
                         break;
                     }
 
@@ -3168,9 +3172,9 @@ namespace BmwDeepObd
                         }
 
                         return true;
-#if false
+
                     case ActivityCommon.InterfaceType.Bluetooth:
-                        if (!_activityCommon.RequestBtPermissions(granted =>
+                        if (!_activityCommon.RequestBtConnectPermissions(granted =>
                         {
                             if (granted)
                             {
@@ -3186,7 +3190,6 @@ namespace BmwDeepObd
                         }
 
                         return true;
-#endif
                 }
 
                 return false;
