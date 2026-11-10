@@ -1361,7 +1361,7 @@ namespace BmwDeepObd
                         {
                         })
                         .SetCancelable(true)
-                        .SetMessage(Resource.String.access_permission_rejected)
+                        .SetMessage(Resource.String.bt_access_permission_rejected)
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     break;
@@ -3717,6 +3717,9 @@ namespace BmwDeepObd
                 case ActivityCommon.InterfaceType.ElmWifi:
                 case ActivityCommon.InterfaceType.DeepObdWifi:
                     return _activityCommon.RequestWifiPermissions();
+
+                case ActivityCommon.InterfaceType.Bluetooth:
+                    return _activityCommon.RequestBtConnectPermissions();
             }
 
             return false;
