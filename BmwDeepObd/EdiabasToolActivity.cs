@@ -633,7 +633,7 @@ namespace BmwDeepObd
                         {
                         })
                         .SetCancelable(true)
-                        .SetMessage(Resource.String.nearby_devices_permission_rejected)
+                        .SetMessage(Resource.String.lan_access_permission_rejected)
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     break;
