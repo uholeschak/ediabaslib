@@ -22,7 +22,7 @@
         <EmbeddedResource Include="$(PkgInTheHand_BluetoothLE)\lib\net9.0-windows10.0.19041\*.dll" />
         <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net6.0\*.dll" />
         <EmbeddedResource Include="$(PkgNewtonsoft_Json)\lib\net6.0\*.dll" />
-        <EmbeddedResource Include="$(PkgSystem_IO_Ports)\lib\net8.0\*.dll" />
+        <EmbeddedResource Include="$(PkgSystem_IO_Ports)\lib\net10.0\*.dll" />
     </ItemGroup>
   </Target>
 </Project>
