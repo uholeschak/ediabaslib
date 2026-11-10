@@ -281,8 +281,8 @@
   <string name="adapter_cfg_required">The adapter may require configuration.\nDo you want to open the adapter configuration page?</string>
   <string name="adapter_fw_update">There is a firmware update available for this adapter.\nDo you want to open the adapter configuration page for update installation?</string>
   <string name="adapter_no_escape_mode">For this Bluetooth module type a firmware update of the OBD adapter is required.</string>
-  <string name="bt_access_permission_rejected">Without access permissions connecting to Bluetooth devices is not possible.\nDo you want to open the app settings?</string>
-  <string name="nearby_devices_permission_rejected">Without nearby devices access permissions connecting to the vehicle is not possible.\nDo you want to open the app settings?</string>
+  <string name="bt_access_permission_rejected">Without nearby devices access permissions connecting to Bluetooth devices is not possible.\nDo you want to open the app settings?</string>
+  <string name="lan_access_permission_rejected">Without nearby devices access permissions connecting to vehicles in the LAN is not possible.\nDo you want to open the app settings?</string>
   <string name="location_provider_disabled_bt">The location services have to be enabled for Bluetooth device searching.\nDo you want to enable the location service?</string>
   <string name="location_provider_disabled_wifi">The location services have to be enabled for Wi-Fi adapter detection.\nDo you want to enable the location service?</string>
   <string name="bt_device_enter_mac">Enter the Bluetooth address of an already paired OBD adapter in the specified format</string>
