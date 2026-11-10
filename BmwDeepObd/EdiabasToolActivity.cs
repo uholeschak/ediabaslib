@@ -612,7 +612,7 @@ namespace BmwDeepObd
                         {
                         })
                         .SetCancelable(true)
-                        .SetMessage(Resource.String.access_permission_rejected)
+                        .SetMessage(Resource.String.bt_access_permission_rejected)
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     break;
