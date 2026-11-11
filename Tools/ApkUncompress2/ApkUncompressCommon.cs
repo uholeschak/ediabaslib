@@ -22,6 +22,7 @@ public class ApkUncompressCommon
     private const string AssembliesPathLibApk = "lib/";
     private const string AssembliesPathLibAab = "base/lib/";
     private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
+    private const uint CompressedDataMagicZstd = 0x535A4158; // 'XAZS', little-endian
     // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c
     private static readonly Regex regexCulture = new Regex("^([a-z]{2,3}-[a-z0-9]{2,4}-[a-z]{2}|[a-z]{2,3}-[a-z]{2,3}_[a-z]{2,6}|[a-z]{2,3}-[a-z0-9]{2,4}|[a-z]{2,3})[-_]", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private readonly ArrayPool<byte> bytePool;
@@ -42,15 +43,15 @@ public class ApkUncompressCommon
             using (FileStream inputStream = File.Open(fileName, FileMode.Open, FileAccess.Read))
             {
                 //
-                // LZ4 compressed assembly header format:
-                //   uint magic;                 // 0x5A4C4158; 'XALZ', little-endian
+                // LZ4 (Mono) or Zstandard (CoreCLR) compressed assembly header format:
+                //   uint magic;                 // 0x5A4C4158; 'XALZ' or 0x535A4158; 'XAZS', little-endian
                 //   uint descriptor_index;      // Index into an internal assembly descriptor table
                 //   uint uncompressed_length;   // Size of assembly, uncompressed
                 //
                 using (BinaryReader reader = new BinaryReader(inputStream, new UTF8Encoding(false), true))
                 {
                     uint magic = reader.ReadUInt32();
-                    if (magic == CompressedDataMagic)
+                    if (IsCompressedDataMagic(magic))
                     {
                         reader.ReadUInt32(); // descriptor index, ignore
                         uint decompressedLength = reader.ReadUInt32();
@@ -64,7 +65,19 @@ public class ApkUncompressCommon
                         else
                         {
                             byte[] assemblyBytes = bytePool.Rent((int)decompressedLength);
-                            int decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
+                            int decoded;
+                            if (magic == CompressedDataMagicZstd)
+                            {
+                                if (!System.IO.Compression.ZstandardDecoder.TryDecompress(sourceBytes.AsSpan(0, inputLength), assemblyBytes.AsSpan(0, (int)decompressedLength), out decoded))
+                                {
+                                    decoded = -1;
+                                }
+                            }
+                            else
+                            {
+                                decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
+                            }
+
                             if (decoded != (int)decompressedLength)
                             {
                                 retVal = false;
@@ -97,6 +110,11 @@ public class ApkUncompressCommon
         }
 
         return retVal;
+    }
+
+    private static bool IsCompressedDataMagic(uint magic)
+    {
+        return magic == CompressedDataMagic || magic == CompressedDataMagicZstd;
     }
 
     public bool UncompressFromAPK_IndividualElfFiles(ZipFile apk, string filePath, string outputPath, ProgressDelegate? progressDelegate = null)
@@ -267,7 +285,7 @@ public class ApkUncompressCommon
                         if (payloadData.Length >= 4)
                         {
                             uint magic = BitConverter.ToUInt32(payloadData, 0);
-                            if (magic == CompressedDataMagic)
+                            if (IsCompressedDataMagic(magic))
                             {
                                 if (!UncompressFile(outputFile))
                                 {
