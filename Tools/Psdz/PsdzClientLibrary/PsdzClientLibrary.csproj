@@ -36,6 +36,12 @@
         <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.1.0" />
         <PackageReference Include="System.Runtime.Serialization.Formatters" Version="11.0.0" />
     </ItemGroup>
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
+        <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="[10.0.15]" />
+    </ItemGroup>
+    <ItemGroup Condition="!$(TargetFramework.StartsWith('net4'))">
+        <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0" />
+    </ItemGroup>
   <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0">
       <HintPath>.\jni4net.n-0.8.8.0.dll</HintPath>
@@ -83,7 +89,6 @@
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
     <PackageReference Include="Lib.Harmony" Version="2.4.3" />
     <PackageReference Include="log4net" Version="3.5.0" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.14" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="RestSharp" Version="114.1.0" />
