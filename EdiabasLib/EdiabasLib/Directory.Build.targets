@@ -13,16 +13,27 @@
     <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
       <Reference Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
       <EmbeddedResource Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
-      <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net462\*.dll" />
-      <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net461\*.dll" />
-      <EmbeddedResource Include="$(PkgNewtonsoft_Json)\lib\net45\*.dll" />
+      <_EmbedNugetPath Include="$(PkgInTheHand_Net_Bluetooth)\lib\net462" />
+      <_EmbedNugetPath Include="$(PkgBouncyCastle_Cryptography)\lib\net461" />
+      <_EmbedNugetPath Include="$(PkgNewtonsoft_Json)\lib\net45" />
     </ItemGroup>
+    <PropertyGroup Condition="$(TargetFramework.Contains('windows'))">
+      <_TargetFrameworkShortName>$([System.Text.RegularExpressions.Regex]::Match('$(TargetFramework)', '^net[0-9]+\.[0-9]+').Value)</_TargetFrameworkShortName>
+    </PropertyGroup>
     <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-        <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net9.0-windows7.0\*.dll" />
-        <EmbeddedResource Include="$(PkgInTheHand_BluetoothLE)\lib\net9.0-windows10.0.19041\*.dll" />
-        <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net6.0\*.dll" />
-        <EmbeddedResource Include="$(PkgNewtonsoft_Json)\lib\net6.0\*.dll" />
-        <EmbeddedResource Include="$(PkgSystem_IO_Ports)\lib\net10.0\*.dll" />
+        <_EmbedNugetPath Include="$(PkgInTheHand_Net_Bluetooth)\lib\net9.0-windows7.0" />
+        <_EmbedNugetPath Include="$(PkgInTheHand_BluetoothLE)\lib\net9.0-windows10.0.19041" />
+        <_EmbedNugetPath Include="$(PkgBouncyCastle_Cryptography)\lib\net6.0" />
+        <_EmbedNugetPath Include="$(PkgNewtonsoft_Json)\lib\net6.0" />
+        <_EmbedNugetPath Include="$(PkgSystem_IO_Ports)\lib\$(_TargetFrameworkShortName)" />
     </ItemGroup>
+    <ItemGroup Condition="'@(_EmbedNugetPath)' != ''">
+      <_EmbedNugetFile Include="%(_EmbedNugetPath.Identity)\*.dll" EmbedSourcePath="%(_EmbedNugetPath.Identity)" />
+      <_EmbedNugetFoundPath Include="@(_EmbedNugetFile->'%(EmbedSourcePath)')" />
+      <_EmbedNugetMissingPath Include="@(_EmbedNugetPath)" Exclude="@(_EmbedNugetFoundPath)" />
+      <EmbeddedResource Include="@(_EmbedNugetFile)" />
+    </ItemGroup>
+    <Error Condition="'@(_EmbedNugetMissingPath)' != ''" Text="No DLLs found to embed for $(TargetFramework) in: @(_EmbedNugetMissingPath, '; ')" />
+    <Message Condition="'%(EmbeddedResource.Extension)' == '.dll'" Text="Embedded DLL $(TargetFramework): %(EmbeddedResource.FullPath)" Importance="High" />
   </Target>
 </Project>
