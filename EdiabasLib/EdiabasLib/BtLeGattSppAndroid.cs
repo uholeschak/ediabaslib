@@ -144,9 +144,9 @@ namespace EdiabasLib
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
                 BGattBaseCallback bGattCallback = Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu ? new BGatt2Callback(this) : new BGatt1Callback(this);
-#pragma warning disable CA1416
+#pragma warning disable CA1422
                 _bluetoothGatt = device.ConnectGatt(context, false, bGattCallback, BluetoothTransports.Le);
-#pragma warning restore CA1416
+#pragma warning restore CA1422
                 if (_bluetoothGatt == null)
                 {
                     LogString("*** ConnectGatt failed");

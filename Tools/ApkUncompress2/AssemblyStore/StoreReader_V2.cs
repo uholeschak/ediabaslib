@@ -35,42 +35,48 @@ partial class StoreReader_V2 : AssemblyStoreReader
 
     static StoreReader_V2()
     {
-        var paths = new List<string> {
-            GetArchPath (AndroidTargetArch.Arm64),
-            GetArchPath (AndroidTargetArch.Arm),
-            GetArchPath (AndroidTargetArch.X86_64),
-            GetArchPath (AndroidTargetArch.X86),
+        // [UH] modified: all store file names per architecture
+        AndroidTargetArch[] archs = {
+            AndroidTargetArch.Arm64,
+            AndroidTargetArch.Arm,
+            AndroidTargetArch.X86_64,
+            AndroidTargetArch.X86,
         };
+
+        var paths = new List<string>();
+        foreach (AndroidTargetArch arch in archs)
+        {
+            paths.AddRange(GetArchPaths(arch));
+        }
         ApkPaths = paths.AsReadOnly();
         AabBasePaths = ApkPaths;
 
         const string AabBaseDir = "base";
-        paths = new List<string> {
-            GetArchPath (AndroidTargetArch.Arm64, AabBaseDir),
-            GetArchPath (AndroidTargetArch.Arm, AabBaseDir),
-            GetArchPath (AndroidTargetArch.X86_64, AabBaseDir),
-            GetArchPath (AndroidTargetArch.X86, AabBaseDir),
-        };
+        paths = new List<string>();
+        foreach (AndroidTargetArch arch in archs)
+        {
+            paths.AddRange(GetArchPaths(arch, AabBaseDir));
+        }
         AabPaths = paths.AsReadOnly();
 
-        string GetArchPath(AndroidTargetArch arch, string? root = null)
+        IEnumerable<string> GetArchPaths(AndroidTargetArch arch, string? root = null)
         {
             const string LibDirName = "lib";
 
             string abi = MonoAndroidHelper.ArchToAbi(arch);
-            var parts = new List<string>();
-            if (!String.IsNullOrEmpty(root))
+            foreach (string blobName in GetBlobNames(abi))
             {
-                parts.Add(LibDirName);
-            }
-            else
-            {
-                root = LibDirName;
-            }
-            parts.Add(abi);
-            parts.Add(GetBlobName(abi));
+                string archRoot = root ?? LibDirName;
+                var parts = new List<string>();
+                if (!String.IsNullOrEmpty(root))
+                {
+                    parts.Add(LibDirName);
+                }
+                parts.Add(abi);
+                parts.Add(blobName);
 
-            return MonoAndroidHelper.MakeZipArchivePath(root, parts);
+                yield return MonoAndroidHelper.MakeZipArchivePath(archRoot, parts);
+            }
         }
     }
 
@@ -85,7 +91,8 @@ partial class StoreReader_V2 : AssemblyStoreReader
         };
     }
 
-    static string GetBlobName(string abi) => $"libassemblies.{abi}.blob.so";
+    // [UH] modified: CoreCLR (.NET 11) uses libassembly-store.so
+    static string[] GetBlobNames(string abi) => new[] { "libassembly-store.so", $"libassemblies.{abi}.blob.so" };
 
     protected override ulong GetStoreStartDataOffset() => elfOffset;
 
@@ -164,21 +171,40 @@ partial class StoreReader_V2 : AssemblyStoreReader
         StoreStream.Seek((long)elfOffset + Header.NativeSize, SeekOrigin.Begin);
         using var reader = CreateReader();
 
+        // [UH] modified: index entry size is not bound to the store bitness (CoreCLR 64-bit stores use 32-bit hashes)
+        uint indexEntrySize = GetIndexEntrySize();
         var index = new List<IndexEntry>();
         for (uint i = 0; i < header.index_entry_count; i++)
         {
             ulong name_hash;
-            if (Is64Bit)
+            bool hasIgnoreFlag;
+            if (indexEntrySize == IndexEntry.NativeSize64)
             {
                 name_hash = reader.ReadUInt64();
+                hasIgnoreFlag = true;
+            }
+            else if (indexEntrySize == IndexEntry.NativeSize32)
+            {
+                name_hash = (ulong)reader.ReadUInt32();
+                hasIgnoreFlag = true;
+            }
+            else if (indexEntrySize == IndexEntry.NativeSize64_V2)
+            {
+                name_hash = reader.ReadUInt64();
+                hasIgnoreFlag = false;
+            }
+            else if (indexEntrySize == IndexEntry.NativeSize32_V2)
+            {
+                name_hash = (ulong)reader.ReadUInt32();
+                hasIgnoreFlag = false;
             }
             else
             {
-                name_hash = (ulong)reader.ReadUInt32();
+                throw new InvalidOperationException($"Assembly store '{StorePath}' index entry size {indexEntrySize} is not supported.");
             }
 
             uint descriptor_index = reader.ReadUInt32();
-            bool ignore = reader.ReadByte() != 0;
+            bool ignore = hasIgnoreFlag && reader.ReadByte() != 0;
             index.Add(new IndexEntry(name_hash, descriptor_index, ignore));
         }
 
@@ -238,5 +264,20 @@ partial class StoreReader_V2 : AssemblyStoreReader
             storeItems.Add(item);
         }
         Assemblies = storeItems.AsReadOnly();
+
+        uint GetIndexEntrySize()
+        {
+            if (header.index_entry_count == 0)
+            {
+                return 0;
+            }
+
+            if (header.index_size % header.index_entry_count != 0)
+            {
+                throw new InvalidOperationException($"Assembly store '{StorePath}' index is corrupted: index size {header.index_size} is not evenly divisible by entry count {header.index_entry_count}.");
+            }
+
+            return header.index_size / header.index_entry_count;
+        }
     }
 }

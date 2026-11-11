@@ -166,7 +166,7 @@ namespace BmwDeepObd
         [SupportedOSPlatform("android37.0")]
         public static readonly string[] PermissionsLocalNetwork =
         {
-            "android.permission.ACCESS_LOCAL_NETWORK",
+            Android.Manifest.Permission.AccessLocalNetwork
         };
 
         [SupportedOSPlatform("android36.0")]
@@ -4962,7 +4962,7 @@ namespace BmwDeepObd
                 }
 
                 string[] requestPermissions;
-                if (Build.VERSION.SdkInt >= (BuildVersionCodes) 37)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.CinnamonBun)
                 {
 #pragma warning disable CA1416
                     requestPermissions = PermissionsLocalNetwork;
