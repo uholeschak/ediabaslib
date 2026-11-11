@@ -363,7 +363,6 @@ namespace BmwDeepObd
         private static readonly object JobReaderLockObject = new object();
         private static readonly object SettingsLockObject = new object();
         private static readonly object LastSerialLockObject = new object();
-        private static readonly object CompileLock = new object();
         private static int _instanceCount;
         private static string _customStorageMedia;
         private static string _appId;
@@ -8601,58 +8600,54 @@ using System.Threading;"
             string result = string.Empty;
             try
             {
-                // ToDo: Mono init bug, limit to one thread: https://github.com/dotnet/runtime/issues/96804
-                lock (CompileLock)
+                Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
+                Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
+                    "UserCode",
+                    new[] { syntaxTree },
+                    referencesList,
+                    new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(
+                        Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary,
+                        concurrentBuild: false));
+
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
-                    Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
-                        "UserCode",
-                        new[] { syntaxTree },
-                        referencesList,
-                        new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(
-                            Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary,
-                            concurrentBuild: false));
-
-                    using (MemoryStream ms = new MemoryStream())
+                    Microsoft.CodeAnalysis.Emit.EmitResult emitResult = compilation.Emit(ms);
+                    if (!emitResult.Success)
                     {
-                        Microsoft.CodeAnalysis.Emit.EmitResult emitResult = compilation.Emit(ms);
-                        if (!emitResult.Success)
+                        StringBuilder sb = new StringBuilder();
+                        foreach (Microsoft.CodeAnalysis.Diagnostic diagnostic in emitResult.Diagnostics)
                         {
-                            StringBuilder sb = new StringBuilder();
-                            foreach (Microsoft.CodeAnalysis.Diagnostic diagnostic in emitResult.Diagnostics)
-                            {
-                                sb.AppendLine(diagnostic.ToString());
-                            }
-
-                            result = sb.ToString();
+                            sb.AppendLine(diagnostic.ToString());
                         }
-                        else
+
+                        result = sb.ToString();
+                    }
+                    else
+                    {
+                        ms.Seek(0, SeekOrigin.Begin);
+                        Assembly assembly = Assembly.Load(ms.ToArray());
+                        Type pageClassType = assembly.GetType("PageClass");
+                        if (pageClassType == null)
                         {
-                            ms.Seek(0, SeekOrigin.Begin);
-                            Assembly assembly = Assembly.Load(ms.ToArray());
-                            Type pageClassType = assembly.GetType("PageClass");
-                            if (pageClassType == null)
-                            {
-                                throw new Exception("Compiling PageClass failed");
-                            }
-
-                            if (((pageInfo.JobsInfo == null) || (pageInfo.JobsInfo.JobList.Count == 0)) &&
-                                ((pageInfo.ErrorsInfo == null) || (pageInfo.ErrorsInfo.EcuList.Count == 0)))
-                            {
-                                if (pageClassType.GetMethod("ExecuteJob") == null)
-                                {
-                                    throw new Exception("No ExecuteJob method");
-                                }
-                            }
-
-                            object pageClassInstance = Activator.CreateInstance(pageClassType);
-                            if (pageClassInstance == null)
-                            {
-                                throw new Exception("Compiling PageClass failed");
-                            }
-
-                            pageInfo.ClassObject = pageClassInstance;
+                            throw new Exception("Compiling PageClass failed");
                         }
+
+                        if (((pageInfo.JobsInfo == null) || (pageInfo.JobsInfo.JobList.Count == 0)) &&
+                            ((pageInfo.ErrorsInfo == null) || (pageInfo.ErrorsInfo.EcuList.Count == 0)))
+                        {
+                            if (pageClassType.GetMethod("ExecuteJob") == null)
+                            {
+                                throw new Exception("No ExecuteJob method");
+                            }
+                        }
+
+                        object pageClassInstance = Activator.CreateInstance(pageClassType);
+                        if (pageClassInstance == null)
+                        {
+                            throw new Exception("Compiling PageClass failed");
+                        }
+
+                        pageInfo.ClassObject = pageClassInstance;
                     }
                 }
             }
