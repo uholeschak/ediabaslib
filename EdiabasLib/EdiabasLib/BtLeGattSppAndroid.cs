@@ -54,6 +54,7 @@ namespace EdiabasLib
         private AutoResetEvent _btGattReceivedEvent;
         private AutoResetEvent _btGattWriteEvent;
         private BluetoothGatt _bluetoothGatt;
+        private Java.Util.Concurrent.IExecutorService _bluetoothGattExecutor;
         private BluetoothGattCharacteristic _gattCharacteristicSppRead;
         private BluetoothGattCharacteristic _gattCharacteristicSppWrite;
         private volatile State _gattConnectionState = State.Disconnected;
@@ -144,9 +145,23 @@ namespace EdiabasLib
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
                 BGattBaseCallback bGattCallback = Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu ? new BGatt2Callback(this) : new BGatt1Callback(this);
+                if (OperatingSystem.IsAndroidVersionAtLeast(37))
+                {
+                    BluetoothGattConnectionSettings connectionSettings = new BluetoothGattConnectionSettings.Builder()
+                        .SetTransport((int)BluetoothTransports.Le)
+                        .SetAutoConnectEnabled(false)
+                        .Build();
+                    // single thread executor: keep callback order, don't use the UI thread
+                    _bluetoothGattExecutor = Java.Util.Concurrent.Executors.NewSingleThreadExecutor();
+                    _bluetoothGatt = device.ConnectGatt(connectionSettings, _bluetoothGattExecutor, bGattCallback);
+                }
+                else
+                {
 #pragma warning disable CA1422
-                _bluetoothGatt = device.ConnectGatt(context, false, bGattCallback, BluetoothTransports.Le);
+                    _bluetoothGatt = device.ConnectGatt(context, false, bGattCallback, BluetoothTransports.Le);
 #pragma warning restore CA1422
+                }
+
                 if (_bluetoothGatt == null)
                 {
                     LogString("*** ConnectGatt failed");
@@ -576,6 +591,22 @@ namespace EdiabasLib
 
                     _bluetoothGatt.Dispose();
                     _bluetoothGatt = null;
+                }
+
+                if (_bluetoothGattExecutor != null)
+                {
+                    try
+                    {
+                        // already queued callbacks are still executed
+                        _bluetoothGattExecutor.Shutdown();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    _bluetoothGattExecutor.Dispose();
+                    _bluetoothGattExecutor = null;
                 }
 
                 if (_btGattSppInStream != null)
