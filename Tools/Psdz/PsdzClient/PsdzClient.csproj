@@ -68,16 +68,14 @@
         <Reference Include="System.Xml.Serialization" />
         <Reference Include="WindowsBase" />
     </ItemGroup>
-    <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
-        <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.1.0" />
-    </ItemGroup>
     <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
         <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="[10.0.15]" />
     </ItemGroup>
-    <ItemGroup Condition="!$(TargetFramework.StartsWith('net4'))">
+    <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
+        <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.1.0" />
         <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0" />
     </ItemGroup>
-  <ItemGroup>
+    <ItemGroup>
     <PackageReference Include="log4net" Version="3.5.0" />
     <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.6.1" />
     <PackageReference Include="System.Memory" Version="4.6.3" />
