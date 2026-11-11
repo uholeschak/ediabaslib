@@ -1,0 +1,6 @@
+# Global property for command line builds (dotnet build/restore, msbuild).
+# NuGet restore ignores AdditionalProperties of ProjectReferences, so the referenced
+# projects (EdiabasLib, PsdzRpcClientLibrary) would be restored without the Android target.
+-p:EnableAndroidTargets=true
+# The implicit restore of dotnet build does not use the -p properties of this file.
+-restoreProperty:EnableAndroidTargets=true
