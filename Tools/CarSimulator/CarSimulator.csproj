@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
@@ -95,7 +95,6 @@
     </PackageReference>
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
     <PackageReference Include="Singulink.Net.Dhcp" Version="1.0.3" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.IO.Ports" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
