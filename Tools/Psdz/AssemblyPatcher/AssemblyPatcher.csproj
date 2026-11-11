@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net10.0-windows;net481</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows;net11.0-windows10.0.26100.0;net481</TargetFrameworks>
     <DefaultTargetFramework>net481</DefaultTargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>AssemblyPatcher</AssemblyTitle>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}</ProjectGuid>
-    <TargetFrameworks>net10.0-windows;net481</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows;net11.0-windows10.0.26100.0;net481</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyTitle>dnpatch</AssemblyTitle>
     <Product>dnpatch</Product>
