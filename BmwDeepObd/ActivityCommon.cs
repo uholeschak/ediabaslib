@@ -8615,8 +8615,6 @@ using System.Threading;"
 
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        // ToDo: 5.6.0 not usable yet: Volatile.ReadBarrier() hangs on mono/android (interpreter).
-                        // Runtime fix dotnet/runtime#124538 (.NET 11); .NET 10 backport tracked in #130265.
                         Microsoft.CodeAnalysis.Emit.EmitResult emitResult = compilation.Emit(ms);
                         if (!emitResult.Success)
                         {
