@@ -131,7 +131,7 @@ namespace EdiabasLib
 
         public bool ConnectLeGattDevice(Context context, BluetoothDevice device, ManualResetEvent cancelEvent = null)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.M)
+            if (!OperatingSystem.IsAndroidVersionAtLeast(23))
             {
                 return false;
             }
@@ -144,8 +144,8 @@ namespace EdiabasLib
                 _gattServicesDiscovered = false;
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
-                BGattBaseCallback bGattCallback = Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu ? new BGatt2Callback(this) : new BGatt1Callback(this);
-                if (OperatingSystem.IsAndroidVersionAtLeast((int) BuildVersionCodes.CinnamonBun))
+                BGattBaseCallback bGattCallback = OperatingSystem.IsAndroidVersionAtLeast(33) ? new BGatt2Callback(this) : new BGatt1Callback(this);
+                if (OperatingSystem.IsAndroidVersionAtLeast(37))
                 {
                     BluetoothGattConnectionSettings connectionSettings = new BluetoothGattConnectionSettings.Builder()
                         .SetTransport((int)BluetoothTransports.Le)
@@ -444,11 +444,9 @@ namespace EdiabasLib
 
                 _gattWriteStatus = GattStatus.Failure;
                 byte[] enableNotifyArray = BluetoothGattDescriptor.EnableNotificationValue.ToArray();
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                if (OperatingSystem.IsAndroidVersionAtLeast(33))
                 {
-#pragma warning disable CA1416
                     if (_bluetoothGatt.WriteDescriptor(descriptor, enableNotifyArray) != (int) CurrentBluetoothStatusCodes.Success)
-#pragma warning restore CA1416
                     {
                         LogString("*** GATT SPP write config descriptor failed");
                         return false;
@@ -456,12 +454,8 @@ namespace EdiabasLib
                 }
                 else
                 {
-#pragma warning disable CS0618
-#pragma warning disable CA1422
                     descriptor.SetValue(enableNotifyArray);
                     if (!_bluetoothGatt.WriteDescriptor(descriptor))
-#pragma warning restore CA1422
-#pragma warning restore CS0618
                     {
                         LogString("*** GATT SPP write config descriptor failed");
                         return false;
@@ -522,13 +516,9 @@ namespace EdiabasLib
                     characteristic.Uuid.Equals(_gattCharacteristicSppRead.Uuid))
                 {
                     byte[] data = value;
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                    if (!OperatingSystem.IsAndroidVersionAtLeast(33))
                     {
-#pragma warning disable CS0618
-#pragma warning disable CA1422
                         data = characteristic.GetValue();
-#pragma warning restore CA1422
-#pragma warning restore CS0618
                     }
 
                     if (data != null)
@@ -752,7 +742,7 @@ namespace EdiabasLib
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
 #pragma warning restore CS0672
             {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                if (OperatingSystem.IsAndroidVersionAtLeast(33))
                 {
                     return;
                 }
@@ -834,7 +824,7 @@ namespace EdiabasLib
                         BitConverter.ToString(sendData).Replace("-", ""), Encoding.UTF8.GetString(sendData)));
 #endif
                     _btLeGattSpp._gattWriteStatus = GattStatus.Failure;
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                    if (OperatingSystem.IsAndroidVersionAtLeast(33))
                     {
                         if (_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSppWrite, sendData, (int) GattWriteType.Default)
                             != (int)CurrentBluetoothStatusCodes.Success)
@@ -844,12 +834,8 @@ namespace EdiabasLib
                     }
                     else
                     {
-#pragma warning disable CS0618
-#pragma warning disable CA1422
                         _btLeGattSpp._gattCharacteristicSppWrite.SetValue(sendData);
                         if (!_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSppWrite))
-#pragma warning restore CA1422
-#pragma warning restore CS0618
                         {
                             throw new IOException("WriteCharacteristic failed");
                         }
