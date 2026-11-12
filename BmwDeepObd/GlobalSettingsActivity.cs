@@ -45,9 +45,17 @@ namespace BmwDeepObd
         public const string SettingsFileName = "DeepObdSettings.xml";
         public const string ExportsDir = "Exports";
 
-        public const string IbusAppUrl = @"http://download.speedy-pics.de/uploads/android/DeepOBD.zip";
+        public const string IbusAppUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD.zip";
+        public const string IbusAppUserCfgUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD/userconfigs/storage/zips/";
         public const string IbusAppEmail = "info@ibus-app.de";
         public const string IbusAppFolder = "IBUS_APP";
+        public const string IbusAppUserCfgFolder = "IBUS_APP_USER";
+
+        public enum DownloadType
+        {
+            IbusApp,
+            IbusAppUserCfg,
+        }
 
         private enum ActivityRequest
         {
@@ -62,7 +70,7 @@ namespace BmwDeepObd
             RequestSelDirDelApp,
         }
 
-        public delegate void DownloadSourceSelected(string url, string email, string infoFolder, string targetFolder);
+        public delegate void DownloadSourceSelected(DownloadType? downloadType, string url, string email, string infoFolder, string targetFolder);
 
         private InstanceData _instanceData = new InstanceData();
         private string _vagDir;
@@ -1154,11 +1162,11 @@ namespace BmwDeepObd
 
         private void DownloadConfigFiles()
         {
-            SelectDownloadSourceDialog((fileName, email, infoFolder, targetFolder) =>
+            SelectDownloadSourceDialog((downloadType, fileName, email, infoFolder, targetFolder) =>
             {
                 if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
                 {
-                    DownloadConfigFiles(fileName, email, infoFolder, targetFolder);
+                    DownloadConfigFiles(downloadType, fileName, email, infoFolder, targetFolder);
                 }
             });
         }
@@ -1175,11 +1183,14 @@ namespace BmwDeepObd
             ListView listView = new ListView(this);
             bool handlerCalled = false;
 
-            List<(string Name, string Url, string Email, string InfoFolder, string TargetFolder)> downloadList =
+            List<(DownloadType Type, string Name, string Url, string Email, string InfoFolder, string TargetFolder)> downloadList =
             [
-                (GetString(Resource.String.settings_download_ibus_app), IbusAppUrl, IbusAppEmail,
+                (DownloadType.IbusApp, GetString(Resource.String.settings_download_ibus_app), IbusAppUrl, IbusAppEmail,
                     Path.Combine(ActivityCommon.ConfigBaseSubDir, IbusAppFolder),
                     Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, IbusAppFolder)),
+                (DownloadType.IbusAppUserCfg, GetString(Resource.String.settings_download_ibus_app_user_cfg), IbusAppUserCfgUrl, IbusAppEmail,
+                    Path.Combine(ActivityCommon.ConfigBaseSubDir, IbusAppUserCfgFolder),
+                    Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir, IbusAppUserCfgFolder)),
             ];
 
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
@@ -1192,12 +1203,12 @@ namespace BmwDeepObd
             {
                 var downloadItem = downloadList[listView.CheckedItemPosition];
                 handlerCalled = true;
-                handler(downloadItem.Url, downloadItem.Email, downloadItem.InfoFolder, downloadItem.TargetFolder);
+                handler(downloadItem.Type, downloadItem.Url, downloadItem.Email, downloadItem.InfoFolder, downloadItem.TargetFolder);
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
                 handlerCalled = true;
-                handler(null, null, null, null);
+                handler(null, null, null, null, null);
             });
 
             AlertDialog alertDialog = builder.Create();
@@ -1222,7 +1233,7 @@ namespace BmwDeepObd
 
                     if (!handlerCalled)
                     {
-                        handler(null, null, null, null);
+                        handler(null, null, null, null, null);
                     }
                 };
 
@@ -1230,7 +1241,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void DownloadConfigFiles(string url, string email, string infoFolder, string targetFolder)
+        private void DownloadConfigFiles(DownloadType? downloadType, string url, string email, string infoFolder, string targetFolder)
         {
             if (_activityCommon == null)
             {
