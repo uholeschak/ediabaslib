@@ -157,9 +157,7 @@ namespace EdiabasLib
                 }
                 else
                 {
-#pragma warning disable CA1422
                     _bluetoothGatt = device.ConnectGatt(context, false, bGattCallback, BluetoothTransports.Le);
-#pragma warning restore CA1422
                 }
 
                 if (_bluetoothGatt == null)
