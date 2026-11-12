@@ -145,7 +145,7 @@ namespace EdiabasLib
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
                 BGattBaseCallback bGattCallback = Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu ? new BGatt2Callback(this) : new BGatt1Callback(this);
-                if (OperatingSystem.IsAndroidVersionAtLeast(37))
+                if (OperatingSystem.IsAndroidVersionAtLeast((int) BuildVersionCodes.CinnamonBun))
                 {
                     BluetoothGattConnectionSettings connectionSettings = new BluetoothGattConnectionSettings.Builder()
                         .SetTransport((int)BluetoothTransports.Le)
