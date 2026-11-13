@@ -10126,9 +10126,10 @@ using System.Threading;"
             return false;
         }
 
-        public bool DownloadConfigThread(string url, string email, string infoFolder, string targetFolder, DownloadConfigThreadFinishDelegate handler)
+        public bool DownloadConfigThread(string url, string email, string infoFolder, string targetFolder, bool deleteDirectory, DownloadConfigThreadFinishDelegate handler)
         {
-            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(infoFolder) || string.IsNullOrEmpty(targetFolder))
+            if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(email) ||
+                string.IsNullOrEmpty(infoFolder) || string.IsNullOrEmpty(targetFolder))
             {
                 return false;
             }
@@ -10212,27 +10213,31 @@ using System.Threading;"
                                 }
                             }
 
-                            for (int retry = 0; ; retry++)
+                            if (deleteDirectory)
                             {
-                                try
+                                for (int retry = 0; ; retry++)
                                 {
-                                    if (Directory.Exists(targetFolder))
+                                    try
                                     {
-                                        Directory.Delete(targetFolder, true);
-                                    }
+                                        if (Directory.Exists(targetFolder))
+                                        {
+                                            Directory.Delete(targetFolder, true);
+                                        }
 
-                                    Directory.CreateDirectory(targetFolder);
-                                    break;
-                                }
-                                catch (Exception)
-                                {
-                                    if (retry > FileIoRetries)
+                                        Directory.CreateDirectory(targetFolder);
+                                        break;
+                                    }
+                                    catch (Exception)
                                     {
-                                        throw;
-                                    }
+                                        if (retry > FileIoRetries)
+                                        {
+                                            throw;
+                                        }
 
-                                    Thread.Sleep(FileIoRetryDelay);
+                                        Thread.Sleep(FileIoRetryDelay);
+                                    }
                                 }
+
                             }
 
                             try

@@ -1166,7 +1166,7 @@ namespace BmwDeepObd
         {
             SelectDownloadSourceDialog((downloadType, url, email, infoFolder, targetFolder) =>
             {
-                if (downloadType.HasValue && !string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
+                if (downloadType != null && !string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
                 {
                     if (downloadType == DownloadType.IbusAppUserCfg)
                     {
@@ -1291,7 +1291,13 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!_activityCommon.DownloadConfigThread(url, email, infoFolder, targetFolder,
+            if (downloadType == null)
+            {
+                return;
+            }
+
+            bool deleteDirectory = downloadType != DownloadType.IbusAppUserCfg;
+            if (!_activityCommon.DownloadConfigThread(url, email, infoFolder, targetFolder, deleteDirectory,
                     (result, aborted) =>
                     {
                         if (_activityCommon == null)
