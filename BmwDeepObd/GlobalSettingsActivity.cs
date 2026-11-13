@@ -47,7 +47,7 @@ namespace BmwDeepObd
         public const string ExportsDir = "Exports";
 
         public const string IbusAppUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD.zip";
-        public const string IbusAppUserCfgUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD/userconfigs/storage/zips/";
+        public const string IbusAppUserCfgUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD/userconfigs/get.php";
         public const string IbusAppEmail = "info@ibus-app.de";
         public const string IbusAppFolder = "IBUS_APP";
         public const string IbusAppUserCfgFolder = "IBUS_APP_USER";
@@ -1174,7 +1174,7 @@ namespace BmwDeepObd
                         {
                             if (!string.IsNullOrEmpty(id))
                             {
-                                string urlWithId = url + id + ".zip";
+                                string urlWithId = url + "?id=" + id;
                                 DownloadConfigFiles(downloadType, urlWithId, email, infoFolder, targetFolder);
                             }
                         });
