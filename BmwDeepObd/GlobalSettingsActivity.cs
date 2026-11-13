@@ -1187,10 +1187,10 @@ namespace BmwDeepObd
         public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler)
         {
             NumberInputDialog numberInputDialog = new NumberInputDialog(this);
-            numberInputDialog.Info = string.Empty;
-            numberInputDialog.InfoVisible = false;
+            numberInputDialog.Info = GetString(Resource.String.settings_enter_ibus_app_user_id);
+            numberInputDialog.InfoVisible = true;
 
-            numberInputDialog.Message1 = GetString(Resource.String.select_enet_ip_edit);
+            numberInputDialog.Message1 = GetString(Resource.String.settings_ibus_app_user_id);
             numberInputDialog.Digits1 = "0123456789-";
             numberInputDialog.Number1 = string.Empty;
             numberInputDialog.Visible1 = true;

@@ -533,6 +533,8 @@
   <string name="settings_select_download_source">Select download source.</string>
   <string name="settings_download_ibus_app">IBUS-APP configurations</string>
   <string name="settings_download_ibus_app_user_cfg">IBUS-APP user configurations</string>
+  <string name="settings_enter_ibus_app_user_id">Enter IBUS-APP ID including the dash for download.</string>
+  <string name="settings_ibus_app_user_id">ID for download</string>
   <string name="settings_extract_config_success">The configuration files have been extracted successfully at:\n\'{0}\'.\nFor questions regarding the configurations please contact \'{1}\'.\nDo you want to open the configuration folder?</string>
 
   <!--  EdiabasToolActivity -->
