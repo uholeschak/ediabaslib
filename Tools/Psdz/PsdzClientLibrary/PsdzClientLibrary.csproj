@@ -86,14 +86,14 @@
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
     <PackageReference Include="Lib.Harmony" Version="2.4.3" />
-    <PackageReference Include="log4net" Version="3.5.0" />
+    <PackageReference Include="log4net" Version="3.6.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="RestSharp" Version="114.1.0" />
     <PackageReference Include="SharpLearning.Containers" Version="0.31.8" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.6.1" />
-    <PackageReference Include="SQLite3MC.PCLRaw.lib" Version="2.6.1" GeneratePathProperty="true" />
+    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.7.0" />
+    <PackageReference Include="SQLite3MC.PCLRaw.lib" Version="2.7.0" GeneratePathProperty="true" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="System.Management" Version="11.0.0" />
     <PackageReference Include="System.Memory" Version="4.6.3" />
