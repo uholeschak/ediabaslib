@@ -546,6 +546,8 @@
   <string name="settings_select_download_source">Выберите источник загрузки.</string>
   <string name="settings_download_ibus_app">IBUS-APP конфигурации</string>
   <string name="settings_download_ibus_app_user_cfg">IBUS-APP пользовательские конфигурации</string>
+  <string name="settings_enter_ibus_app_user_id">Введите IBUS-APP ID включая дефис для загрузки.</string>
+  <string name="settings_ibus_app_user_id">ID для загрузки</string>
   <string name="settings_extract_config_success">Конфигурационные файлы были успешно извлечены в:\n\'{0}\'.\nДля вопросов относительно конфигураций свяжитесь с \'{1}\'.\nВы хотите открыть папку с конфигурацией?</string>
 
   <!--  EdiabasToolActivity -->

@@ -4,6 +4,7 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.DocumentFile.Provider;
+using BmwDeepObd.Dialogs;
 using BmwDeepObd.FilePicker;
 using Skydoves.BalloonLib;
 using System;
@@ -46,7 +47,7 @@ namespace BmwDeepObd
         public const string ExportsDir = "Exports";
 
         public const string IbusAppUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD.zip";
-        public const string IbusAppUserCfgUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD/userconfigs/storage/zips/";
+        public const string IbusAppUserCfgUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD/userconfigs/get.php";
         public const string IbusAppEmail = "info@ibus-app.de";
         public const string IbusAppFolder = "IBUS_APP";
         public const string IbusAppUserCfgFolder = "IBUS_APP_USER";
@@ -71,6 +72,7 @@ namespace BmwDeepObd
         }
 
         public delegate void DownloadSourceSelected(DownloadType? downloadType, string url, string email, string infoFolder, string targetFolder);
+        public delegate void DownloadIbusAppUserIdHandler(string id);
 
         private InstanceData _instanceData = new InstanceData();
         private string _vagDir;
@@ -1162,13 +1164,54 @@ namespace BmwDeepObd
 
         private void DownloadConfigFiles()
         {
-            SelectDownloadSourceDialog((downloadType, fileName, email, infoFolder, targetFolder) =>
+            SelectDownloadSourceDialog((downloadType, url, email, infoFolder, targetFolder) =>
             {
-                if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
+                if (downloadType.HasValue && !string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
                 {
-                    DownloadConfigFiles(downloadType, fileName, email, infoFolder, targetFolder);
+                    if (downloadType == DownloadType.IbusAppUserCfg)
+                    {
+                        SelectIbusAppUserId(id =>
+                        {
+                            if (!string.IsNullOrEmpty(id))
+                            {
+                                string urlWithId = url + "?id=" + Uri.EscapeDataString(id);
+                                DownloadConfigFiles(downloadType, urlWithId, email, infoFolder, targetFolder);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        DownloadConfigFiles(downloadType, url, email, infoFolder, targetFolder);
+                    }
                 }
             });
+        }
+
+        public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler)
+        {
+            NumberInputDialog numberInputDialog = new NumberInputDialog(this);
+            numberInputDialog.Info = GetString(Resource.String.settings_enter_ibus_app_user_id);
+            numberInputDialog.InfoVisible = true;
+
+            numberInputDialog.Message1 = GetString(Resource.String.settings_ibus_app_user_id);
+            numberInputDialog.Digits1 = "0123456789-";
+            numberInputDialog.Number1 = string.Empty;
+            numberInputDialog.Visible1 = true;
+
+            numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                string userId = numberInputDialog.Number1.Trim();
+                handler(userId);
+            });
+            numberInputDialog.SetNeutralButton(Resource.String.button_abort, (s, arg) =>
+            {
+            });
+            numberInputDialog.Show();
         }
 
         public void SelectDownloadSourceDialog(DownloadSourceSelected handler)
