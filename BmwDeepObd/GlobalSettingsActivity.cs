@@ -4,6 +4,7 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.DocumentFile.Provider;
+using BmwDeepObd.Dialogs;
 using BmwDeepObd.FilePicker;
 using Skydoves.BalloonLib;
 using System;
@@ -71,6 +72,7 @@ namespace BmwDeepObd
         }
 
         public delegate void DownloadSourceSelected(DownloadType? downloadType, string url, string email, string infoFolder, string targetFolder);
+        public delegate void DownloadIbusAppUserIdHandler(string id);
 
         private InstanceData _instanceData = new InstanceData();
         private string _vagDir;
@@ -1162,13 +1164,51 @@ namespace BmwDeepObd
 
         private void DownloadConfigFiles()
         {
-            SelectDownloadSourceDialog((downloadType, fileName, email, infoFolder, targetFolder) =>
+            SelectDownloadSourceDialog((downloadType, url, email, infoFolder, targetFolder) =>
             {
-                if (!string.IsNullOrEmpty(fileName) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
+                if (downloadType.HasValue && !string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(targetFolder))
                 {
-                    DownloadConfigFiles(downloadType, fileName, email, infoFolder, targetFolder);
+                    if (downloadType == DownloadType.IbusAppUserCfg)
+                    {
+                        SelectIbusAppUserId(id =>
+                        {
+                            if (!string.IsNullOrEmpty(id))
+                            {
+                                string urlWithId = url + id + ".zip";
+                                DownloadConfigFiles(downloadType, urlWithId, email, infoFolder, targetFolder);
+                            }
+                        });
+                    }
+                    DownloadConfigFiles(downloadType, url, email, infoFolder, targetFolder);
                 }
             });
+        }
+
+        public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler)
+        {
+            NumberInputDialog numberInputDialog = new NumberInputDialog(this);
+            numberInputDialog.Info = string.Empty;
+            numberInputDialog.InfoVisible = false;
+
+            numberInputDialog.Message1 = GetString(Resource.String.select_enet_ip_edit);
+            numberInputDialog.Digits1 = "0123456789-";
+            numberInputDialog.Number1 = string.Empty;
+            numberInputDialog.Visible1 = true;
+
+            numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                string userId = numberInputDialog.Number1.Trim();
+                handler(userId);
+            });
+            numberInputDialog.SetNeutralButton(Resource.String.button_abort, (s, arg) =>
+            {
+            });
+            numberInputDialog.Show();
         }
 
         public void SelectDownloadSourceDialog(DownloadSourceSelected handler)
