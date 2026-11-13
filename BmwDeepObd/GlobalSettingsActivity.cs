@@ -1174,12 +1174,15 @@ namespace BmwDeepObd
                         {
                             if (!string.IsNullOrEmpty(id))
                             {
-                                string urlWithId = url + "?id=" + id;
+                                string urlWithId = url + "?id=" + Uri.EscapeDataString(id);
                                 DownloadConfigFiles(downloadType, urlWithId, email, infoFolder, targetFolder);
                             }
                         });
                     }
-                    DownloadConfigFiles(downloadType, url, email, infoFolder, targetFolder);
+                    else
+                    {
+                        DownloadConfigFiles(downloadType, url, email, infoFolder, targetFolder);
+                    }
                 }
             });
         }
