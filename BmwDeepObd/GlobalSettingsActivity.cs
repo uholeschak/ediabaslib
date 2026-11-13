@@ -1174,8 +1174,7 @@ namespace BmwDeepObd
                         {
                             if (!string.IsNullOrEmpty(id))
                             {
-                                string urlWithId = url + "?id=" + Uri.EscapeDataString(id);
-                                DownloadConfigFiles(downloadType, urlWithId, email, infoFolder, targetFolder);
+                                DownloadConfigFiles(downloadType, url, email, infoFolder, targetFolder, id);
                             }
                         });
                     }
@@ -1187,7 +1186,7 @@ namespace BmwDeepObd
             });
         }
 
-        public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler)
+        public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler, string userId = null)
         {
             NumberInputDialog numberInputDialog = new NumberInputDialog(this);
             numberInputDialog.Info = GetString(Resource.String.settings_enter_ibus_app_user_id);
@@ -1195,7 +1194,7 @@ namespace BmwDeepObd
 
             numberInputDialog.Message1 = GetString(Resource.String.settings_ibus_app_user_id);
             numberInputDialog.Digits1 = "0123456789-";
-            numberInputDialog.Number1 = string.Empty;
+            numberInputDialog.Number1 = userId ?? string.Empty;
             numberInputDialog.Visible1 = true;
 
             numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
@@ -1284,7 +1283,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void DownloadConfigFiles(DownloadType? downloadType, string url, string email, string infoFolder, string targetFolder)
+        private void DownloadConfigFiles(DownloadType? downloadType, string url, string email, string infoFolder, string targetFolder, string userId = null)
         {
             if (_activityCommon == null)
             {
@@ -1296,8 +1295,14 @@ namespace BmwDeepObd
                 return;
             }
 
+            string downloadUrl = url;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                downloadUrl += "?id=" + Uri.EscapeDataString(userId);
+            }
+
             bool deleteDirectory = downloadType != DownloadType.IbusAppUserCfg;
-            if (!_activityCommon.DownloadConfigThread(url, email, infoFolder, targetFolder, deleteDirectory,
+            if (!_activityCommon.DownloadConfigThread(downloadUrl, email, infoFolder, targetFolder, deleteDirectory,
                     (result, aborted) =>
                     {
                         if (_activityCommon == null)
@@ -1305,7 +1310,12 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        if (result && !aborted)
+                        if (aborted)
+                        {
+                            return;
+                        }
+
+                        if (result)
                         {
                             string message = string.Format(GetString(Resource.String.settings_extract_config_success), infoFolder, email);
                             AlertDialog alertDialog = new AlertDialog.Builder(this)
@@ -1324,6 +1334,19 @@ namespace BmwDeepObd
                                 })
                                 .SetCancelable(true)
                                 .Show();
+                        }
+                        else
+                        {
+                            if (downloadType == DownloadType.IbusAppUserCfg)
+                            {
+                                SelectIbusAppUserId(id =>
+                                {
+                                    if (!string.IsNullOrEmpty(id))
+                                    {
+                                        DownloadConfigFiles(downloadType, url, email, infoFolder, targetFolder, id);
+                                    }
+                                }, userId);
+                            }
                         }
                     }))
             {
