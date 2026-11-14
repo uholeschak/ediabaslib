@@ -9,6 +9,7 @@ using BmwDeepObd.FilePicker;
 using Skydoves.BalloonLib;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -1170,13 +1171,14 @@ namespace BmwDeepObd
                 {
                     if (downloadType == DownloadType.IbusAppUserCfg)
                     {
+                        string defaultUserId = DateTime.UtcNow.ToString("yyyyMMdd-", CultureInfo.InvariantCulture);
                         SelectIbusAppUserId(id =>
                         {
                             if (!string.IsNullOrEmpty(id))
                             {
                                 DownloadConfigFiles(downloadType, url, email, infoFolder, targetFolder, id);
                             }
-                        });
+                        }, defaultUserId);
                     }
                     else
                     {
