@@ -10311,10 +10311,26 @@ using System.Threading;"
 
                         if (!success)
                         {
-                            ShowAlert(_context.GetString(Resource.String.download_failed), Resource.String.alert_title_error);
+                            string message = _context.GetString(Resource.String.download_failed);
+                            message += "\r\n" + _context.GetString(Resource.String.download_retry);
+                            new AlertDialog.Builder(_context)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    handler?.Invoke(false, true, false);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                    handler?.Invoke(false, false, false);
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(message)
+                                .SetTitle(Resource.String.alert_title_error)
+                                .Show();
                         }
-
-                        handler?.Invoke(success);
+                        else
+                        {
+                            handler?.Invoke(true, false, false);
+                        }
                     });
                 }
                 catch (Exception ex)
@@ -10339,10 +10355,25 @@ using System.Threading;"
                         {
                             string message = extractFailed ?
                                 _context.GetString(Resource.String.extract_failed) : _context.GetString(Resource.String.download_failed);
-                            ShowAlert(message, Resource.String.alert_title_error);
+                            message += "\r\n" + _context.GetString(Resource.String.download_retry);
+                            new AlertDialog.Builder(_context)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    handler?.Invoke(false, true, false);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                    handler?.Invoke(false, false, false);
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(message)
+                                .SetTitle(Resource.String.alert_title_error)
+                                .Show();
                         }
-
-                        handler?.Invoke(false, aborted);
+                        else
+                        {
+                            handler?.Invoke(false, false, true);
+                        }
                     });
                 }
             });

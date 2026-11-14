@@ -622,7 +622,7 @@ namespace BmwDeepObd
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate bool InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
-        public delegate void DownloadConfigThreadFinishDelegate(bool result, bool aborted = false);
+        public delegate void DownloadConfigThreadFinishDelegate(bool result, bool retry, bool aborted);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
         public delegate void SendEnetBroadacstDelegate(int count);
