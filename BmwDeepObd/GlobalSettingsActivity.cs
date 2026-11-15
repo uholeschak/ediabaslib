@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace BmwDeepObd
 {
@@ -1188,7 +1189,7 @@ namespace BmwDeepObd
             });
         }
 
-        public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler, string userId = null)
+        public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler, string defaultUserId = null)
         {
             NumberInputDialog numberInputDialog = new NumberInputDialog(this);
             numberInputDialog.Info = GetString(Resource.String.settings_enter_ibus_app_user_id);
@@ -1196,7 +1197,7 @@ namespace BmwDeepObd
 
             numberInputDialog.Message1 = GetString(Resource.String.settings_ibus_app_user_id);
             numberInputDialog.Digits1 = "0123456789-";
-            numberInputDialog.Number1 = userId ?? string.Empty;
+            numberInputDialog.Number1 = defaultUserId ?? string.Empty;
             numberInputDialog.Visible1 = true;
 
             numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
@@ -1207,12 +1208,40 @@ namespace BmwDeepObd
                 }
 
                 string userId = numberInputDialog.Number1.Trim();
-                handler(userId);
+                if (ValidateUserId(userId))
+                {
+                    handler(userId);
+                }
+                else
+                {
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                        {
+                            SelectIbusAppUserId(handler, userId);
+                        })
+                        .SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.settings_ibus_app_user_id_invalid)
+                        .SetTitle(Resource.String.alert_title_error)
+                        .Show();
+                }
             });
             numberInputDialog.SetNeutralButton(Resource.String.button_abort, (s, arg) =>
             {
             });
             numberInputDialog.Show();
+        }
+
+        public bool ValidateUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+
+            return Regex.IsMatch(userId, @"^[0-9]+-[0-9]+-[0-9]+\z", RegexOptions.CultureInvariant);
         }
 
         public void SelectDownloadSourceDialog(DownloadSourceSelected handler)
