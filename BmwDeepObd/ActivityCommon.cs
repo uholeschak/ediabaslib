@@ -10312,7 +10312,7 @@ using System.Threading;"
                         if (!success)
                         {
                             string message = _context.GetString(Resource.String.download_failed);
-                            message += "\r\n" + _context.GetString(Resource.String.download_retry);
+                            message += "\r\n" + _context.GetString(Resource.String.download_operation_retry);
                             new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
@@ -10355,7 +10355,7 @@ using System.Threading;"
                         {
                             string message = extractFailed ?
                                 _context.GetString(Resource.String.extract_failed) : _context.GetString(Resource.String.download_failed);
-                            message += "\r\n" + _context.GetString(Resource.String.download_retry);
+                            message += "\r\n" + _context.GetString(Resource.String.download_operation_retry);
                             new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
