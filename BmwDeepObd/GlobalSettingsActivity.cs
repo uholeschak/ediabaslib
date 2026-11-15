@@ -1171,7 +1171,7 @@ namespace BmwDeepObd
                 {
                     if (downloadType == DownloadType.IbusAppUserCfg)
                     {
-                        string defaultUserId = DateTime.UtcNow.ToString("yyyyMMdd-", CultureInfo.InvariantCulture);
+                        string defaultUserId = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(2)).ToString("yyyyMMdd-", CultureInfo.InvariantCulture);
                         SelectIbusAppUserId(id =>
                         {
                             if (!string.IsNullOrEmpty(id))
