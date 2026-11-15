@@ -124,7 +124,6 @@ namespace BmwDeepObd.Dialogs
                 {
                     if (!string.IsNullOrEmpty(value))
                     {
-                        _editTextNumber1.InputType = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal;
                         _editTextNumber1.KeyListener = DigitsKeyListener.GetInstance(value);
                     }
                     else
@@ -143,7 +142,6 @@ namespace BmwDeepObd.Dialogs
                 {
                     if (!string.IsNullOrEmpty(value))
                     {
-                        _editTextNumber2.InputType = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal;
                         _editTextNumber2.KeyListener = DigitsKeyListener.GetInstance(value);
                     }
                     else
