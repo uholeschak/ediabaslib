@@ -1215,11 +1215,11 @@ namespace BmwDeepObd
                 else
                 {
                     new AlertDialog.Builder(this)
-                        .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
                             SelectIbusAppUserId(handler, userId);
                         })
-                        .SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {
                         })
                         .SetCancelable(true)
