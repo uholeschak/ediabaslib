@@ -3,7 +3,6 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using AndroidX.Car.App.Model;
 using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.Dialogs;
 using BmwDeepObd.FilePicker;
