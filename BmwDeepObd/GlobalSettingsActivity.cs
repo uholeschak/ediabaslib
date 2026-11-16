@@ -1332,8 +1332,8 @@ namespace BmwDeepObd
                 downloadUrl += "?id=" + Uri.EscapeDataString(userId);
             }
 
-            bool deleteDirectory = downloadType != DownloadType.IbusAppUserCfg;
-            if (!_activityCommon.DownloadConfigThread(downloadUrl, email, infoFolder, targetFolder, deleteDirectory,
+            bool deleteRootDirectory = downloadType != DownloadType.IbusAppUserCfg;
+            if (!_activityCommon.DownloadConfigThread(downloadUrl, email, infoFolder, targetFolder, deleteRootDirectory,
                     (result, retry, aborted) =>
                     {
                         if (_activityCommon == null)

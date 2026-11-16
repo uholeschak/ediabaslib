@@ -10126,7 +10126,7 @@ using System.Threading;"
             return false;
         }
 
-        public bool DownloadConfigThread(string url, string email, string infoFolder, string targetFolder, bool deleteDirectory, DownloadConfigThreadFinishDelegate handler)
+        public bool DownloadConfigThread(string url, string email, string infoFolder, string targetFolder, bool deleteRootDirectory, DownloadConfigThreadFinishDelegate handler)
         {
             if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(email) ||
                 string.IsNullOrEmpty(infoFolder) || string.IsNullOrEmpty(targetFolder))
@@ -10213,7 +10213,7 @@ using System.Threading;"
                                 }
                             }
 
-                            if (deleteDirectory)
+                            if (deleteRootDirectory)
                             {
                                 for (int retry = 0; ; retry++)
                                 {
