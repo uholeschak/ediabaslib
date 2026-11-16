@@ -10213,18 +10213,21 @@ using System.Threading;"
                                 }
                             }
 
-                            if (deleteRootDirectory)
+                            void DeleteDirectory(string folder, bool create)
                             {
                                 for (int retry = 0; ; retry++)
                                 {
                                     try
                                     {
-                                        if (Directory.Exists(targetFolder))
+                                        if (Directory.Exists(folder))
                                         {
-                                            Directory.Delete(targetFolder, true);
+                                            Directory.Delete(folder, true);
                                         }
 
-                                        Directory.CreateDirectory(targetFolder);
+                                        if (create)
+                                        {
+                                            Directory.CreateDirectory(folder);
+                                        }
                                         break;
                                     }
                                     catch (Exception)
@@ -10237,7 +10240,34 @@ using System.Threading;"
                                         Thread.Sleep(FileIoRetryDelay);
                                     }
                                 }
+                            }
 
+                            if (deleteRootDirectory)
+                            {
+                                DeleteDirectory(targetFolder, true);
+                            }
+                            else
+                            {
+                                string zipRootDir = null;
+                                using (FileStream fsZip = File.OpenRead(tempFileName))
+                                {
+                                    ZipUtils.ZipTreeNode zipRootNode = ZipUtils.ReadZipTree(fsZip);
+                                    if (zipRootNode != null && zipRootNode.Children.Count == 1 && zipRootNode.Children[0].IsDirectory)
+                                    {
+                                        zipRootDir = zipRootNode.Children[0].Name;
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(zipRootDir))
+                                {
+                                    string targetFolderFull = Path.GetFullPath(targetFolder);
+                                    string zipRootFolder = Path.GetFullPath(Path.Combine(targetFolderFull, zipRootDir));
+                                    // Prevent deleting folders outside the target folder (e.g. "..")
+                                    if (string.Equals(Path.GetDirectoryName(zipRootFolder), targetFolderFull.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal))
+                                    {
+                                        DeleteDirectory(zipRootFolder, false);
+                                    }
+                                }
                             }
 
                             try
