@@ -10181,6 +10181,7 @@ using System.Threading;"
             _downloadConfigThread = new Thread(() =>
             {
                 bool extractFailed = false;
+                string zipRootFolder = null;
                 try
                 {
                     _downloadConfigHttpClient.DefaultRequestHeaders.Authorization = null;
@@ -10232,11 +10233,12 @@ using System.Threading;"
                                 if (!string.IsNullOrEmpty(zipRootDir))
                                 {
                                     string targetFolderFull = Path.GetFullPath(targetFolder);
-                                    string zipRootFolder = Path.GetFullPath(Path.Combine(targetFolderFull, zipRootDir));
+                                    string zipRootFolderFull = Path.GetFullPath(Path.Combine(targetFolderFull, zipRootDir));
                                     // Prevent deleting folders outside the target folder (e.g. "..")
-                                    if (string.Equals(Path.GetDirectoryName(zipRootFolder), targetFolderFull.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal))
+                                    if (string.Equals(Path.GetDirectoryName(zipRootFolderFull), targetFolderFull.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal))
                                     {
-                                        PathUtils.DeleteDirectory(zipRootFolder);
+                                        PathUtils.DeleteDirectory(zipRootFolderFull);
+                                        zipRootFolder = zipRootFolderFull;
                                     }
                                 }
                             }
@@ -10317,11 +10319,11 @@ using System.Threading;"
                             new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    handler?.Invoke(false, true, false);
+                                    handler?.Invoke(false, true, false, null);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
-                                    handler?.Invoke(false, false, false);
+                                    handler?.Invoke(false, false, false, null);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(message)
@@ -10330,7 +10332,7 @@ using System.Threading;"
                         }
                         else
                         {
-                            handler?.Invoke(true, false, false);
+                            handler?.Invoke(true, false, false, zipRootFolder);
                         }
                     });
                 }
@@ -10360,11 +10362,11 @@ using System.Threading;"
                             new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    handler?.Invoke(false, true, false);
+                                    handler?.Invoke(false, true, false, null);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
-                                    handler?.Invoke(false, false, false);
+                                    handler?.Invoke(false, false, false, null);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(message)
@@ -10373,7 +10375,7 @@ using System.Threading;"
                         }
                         else
                         {
-                            handler?.Invoke(false, false, true);
+                            handler?.Invoke(false, false, true, null);
                         }
                     });
                 }
