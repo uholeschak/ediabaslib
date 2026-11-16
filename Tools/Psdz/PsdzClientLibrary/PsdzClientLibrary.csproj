@@ -92,8 +92,8 @@
     <PackageReference Include="RestSharp" Version="114.1.0" />
     <PackageReference Include="SharpLearning.Containers" Version="0.31.8" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.7.0" />
-    <PackageReference Include="SQLite3MC.PCLRaw.lib" Version="2.7.0" GeneratePathProperty="true" />
+    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.7.1" />
+    <PackageReference Include="SQLite3MC.PCLRaw.lib" Version="2.7.1" GeneratePathProperty="true" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageReference Include="System.Management" Version="11.0.0" />
     <PackageReference Include="System.Memory" Version="4.6.3" />

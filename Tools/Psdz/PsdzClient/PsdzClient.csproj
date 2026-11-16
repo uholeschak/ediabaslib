@@ -77,7 +77,7 @@
     </ItemGroup>
     <ItemGroup>
     <PackageReference Include="log4net" Version="3.6.0" />
-    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.7.0" />
+    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.7.1" />
     <PackageReference Include="System.Memory" Version="4.6.3" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
   </ItemGroup>
