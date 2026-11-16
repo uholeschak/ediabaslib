@@ -28,6 +28,11 @@
         <_EmbedNugetPath Include="$(PkgSystem_IO_Ports)\lib\$(_TargetFrameworkShortName)" />
     </ItemGroup>
     <ItemGroup Condition="'@(_EmbedNugetPath)' != ''">
+      <!-- Empty Pkg* property (package not restored for this target framework) results in a path starting with '\' -->
+      <_EmbedNugetUnresolvedPath Include="@(_EmbedNugetPath)" Condition="$([System.String]::Copy('%(_EmbedNugetPath.Identity)').StartsWith('\'))" />
+    </ItemGroup>
+    <Error Condition="'@(_EmbedNugetUnresolvedPath)' != ''" Text="NuGet package path not set for $(TargetFramework) (missing or outdated NuGet restore, please restore NuGet packages and rebuild): @(_EmbedNugetUnresolvedPath, '; ')" />
+    <ItemGroup Condition="'@(_EmbedNugetPath)' != ''">
       <_EmbedNugetFile Include="%(_EmbedNugetPath.Identity)\*.dll" EmbedSourcePath="%(_EmbedNugetPath.Identity)" />
       <_EmbedNugetFoundPath Include="@(_EmbedNugetFile->'%(EmbedSourcePath)')" />
       <_EmbedNugetMissingPath Include="@(_EmbedNugetPath)" Exclude="@(_EmbedNugetFoundPath)" />
