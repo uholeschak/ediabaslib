@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="ICSharpCode.Decompiler" Version="11.2.0.10050" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.12.0" />
     <PackageReference Include="System.Resources.Extensions" Version="11.0.0" />
   </ItemGroup>
 
