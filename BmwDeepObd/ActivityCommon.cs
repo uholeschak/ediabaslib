@@ -10213,38 +10213,9 @@ using System.Threading;"
                                 }
                             }
 
-                            void DeleteDirectory(string folder, bool create)
-                            {
-                                for (int retry = 0; ; retry++)
-                                {
-                                    try
-                                    {
-                                        if (Directory.Exists(folder))
-                                        {
-                                            Directory.Delete(folder, true);
-                                        }
-
-                                        if (create)
-                                        {
-                                            Directory.CreateDirectory(folder);
-                                        }
-                                        break;
-                                    }
-                                    catch (Exception)
-                                    {
-                                        if (retry > FileIoRetries)
-                                        {
-                                            throw;
-                                        }
-
-                                        Thread.Sleep(FileIoRetryDelay);
-                                    }
-                                }
-                            }
-
                             if (deleteRootDirectory)
                             {
-                                DeleteDirectory(targetFolder, true);
+                                PathUtils.DeleteDirectory(targetFolder, true);
                             }
                             else
                             {
@@ -10265,7 +10236,7 @@ using System.Threading;"
                                     // Prevent deleting folders outside the target folder (e.g. "..")
                                     if (string.Equals(Path.GetDirectoryName(zipRootFolder), targetFolderFull.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal))
                                     {
-                                        DeleteDirectory(zipRootFolder, false);
+                                        PathUtils.DeleteDirectory(zipRootFolder);
                                     }
                                 }
                             }

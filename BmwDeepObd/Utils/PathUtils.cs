@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace BmwDeepObd
 {
@@ -72,6 +73,36 @@ namespace BmwDeepObd
             // 2.
             // Calculate total bytes of all files in a loop.
             return a.Select(name => new FileInfo(name)).Select(info => info.Length).Sum();
+        }
+
+        // Deletes the directory with retries, optionally creates an empty one afterwards
+        public static void DeleteDirectory(string path, bool create = false)
+        {
+            for (int retry = 0; ; retry++)
+            {
+                try
+                {
+                    if (Directory.Exists(path))
+                    {
+                        Directory.Delete(path, true);
+                    }
+
+                    if (create)
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    break;
+                }
+                catch (Exception)
+                {
+                    if (retry > ActivityCommon.FileIoRetries)
+                    {
+                        throw;
+                    }
+
+                    Thread.Sleep(ActivityCommon.FileIoRetryDelay);
+                }
+            }
         }
 
         public static string GetTruncatedPathName(string path, int maxLength = 30)
