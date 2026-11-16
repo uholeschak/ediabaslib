@@ -22,6 +22,84 @@ namespace BmwDeepObd
 #endif
         private const int StreamBufferSize = 4096;
 
+        public class ZipTreeNode
+        {
+            private readonly List<ZipTreeNode> _children = new List<ZipTreeNode>();
+            private readonly Dictionary<string, ZipTreeNode> _childDict = new Dictionary<string, ZipTreeNode>(StringComparer.Ordinal);
+
+            public ZipTreeNode(string name, bool isDirectory, ZipTreeNode parent)
+            {
+                Name = name ?? string.Empty;
+                IsDirectory = isDirectory;
+                Parent = parent;
+                FullName = string.IsNullOrEmpty(parent?.FullName) ? Name : parent.FullName + "/" + Name;
+            }
+
+            public string Name { get; }
+
+            // Path inside the archive with '/' as separator, empty for the root node
+            public string FullName { get; }
+
+            public bool IsDirectory { get; }
+
+            public bool IsFile => !IsDirectory;
+
+            public bool IsRoot => Parent == null;
+
+            public ZipTreeNode Parent { get; }
+
+            public IReadOnlyList<ZipTreeNode> Children => _children;
+
+            // -1 if unknown
+            public long Size { get; internal set; } = -1;
+
+            // -1 if unknown
+            public long CompressedSize { get; internal set; } = -1;
+
+            // null for directories that have no own archive entry
+            public DateTime? LastModified { get; internal set; }
+
+            public ZipTreeNode GetChild(string name)
+            {
+                if (name == null)
+                {
+                    return null;
+                }
+
+                return _childDict.TryGetValue(name, out ZipTreeNode childNode) ? childNode : null;
+            }
+
+            internal ZipTreeNode AddChild(string name, bool isDirectory)
+            {
+                ZipTreeNode childNode = new ZipTreeNode(name, isDirectory, this);
+                _children.Add(childNode);
+                _childDict.Add(name, childNode);
+                return childNode;
+            }
+
+            internal void SortChildren()
+            {
+                _children.Sort((x, y) =>
+                {
+                    if (x.IsDirectory != y.IsDirectory)
+                    {
+                        return x.IsDirectory ? -1 : 1;
+                    }
+
+                    int result = string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+                    return result != 0 ? result : string.CompareOrdinal(x.Name, y.Name);
+                });
+
+                foreach (ZipTreeNode childNode in _children)
+                {
+                    if (childNode.IsDirectory)
+                    {
+                        childNode.SortChildren();
+                    }
+                }
+            }
+        }
+
         public static bool CheckZipFile(string archiveFilename)
         {
             ZipFile zf = null;
@@ -611,6 +689,111 @@ namespace BmwDeepObd
                 }
             }
             return wordDict;
+        }
+
+        // Returns the root directory node or null on error. The stream is not closed.
+        public static ZipTreeNode ReadZipTree(Stream zipStream)
+        {
+            if (zipStream == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                ZipTreeNode rootNode = new ZipTreeNode(string.Empty, true, null);
+                if (zipStream.CanSeek)
+                {
+                    // Reads only the central directory
+                    ZipFile zf = null;
+                    try
+                    {
+                        zf = new ZipFile(zipStream);
+                        foreach (ZipEntry zipEntry in zf)
+                        {
+                            AddZipTreeEntry(rootNode, zipEntry);
+                        }
+                    }
+                    finally
+                    {
+                        if (zf != null)
+                        {
+                            zf.IsStreamOwner = false;
+                            zf.Close();
+                        }
+                    }
+                }
+                else
+                {
+                    ZipInputStream zipInputStream = new ZipInputStream(zipStream);
+                    try
+                    {
+                        for (;;)
+                        {
+                            ZipEntry zipEntry = zipInputStream.GetNextEntry();
+                            if (zipEntry == null)
+                            {
+                                break;
+                            }
+
+                            AddZipTreeEntry(rootNode, zipEntry);
+                        }
+                    }
+                    finally
+                    {
+                        zipInputStream.IsStreamOwner = false;
+                        zipInputStream.Close();
+                    }
+                }
+
+                rootNode.SortChildren();
+                return rootNode;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private static void AddZipTreeEntry(ZipTreeNode rootNode, ZipEntry zipEntry)
+        {
+            if (!zipEntry.IsFile && !zipEntry.IsDirectory)
+            {
+                return;
+            }
+
+            string[] nameParts = zipEntry.Name.Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries)
+                .Where(part => part != ".").ToArray();
+            if (nameParts.Length == 0)
+            {
+                return;
+            }
+
+            ZipTreeNode node = rootNode;
+            for (int i = 0; i < nameParts.Length; i++)
+            {
+                // Parent directories may be missing as separate entries
+                bool isDirectory = i < nameParts.Length - 1 || zipEntry.IsDirectory;
+                ZipTreeNode childNode = node.GetChild(nameParts[i]);
+                if (childNode == null)
+                {
+                    childNode = node.AddChild(nameParts[i], isDirectory);
+                }
+                else if (childNode.IsDirectory != isDirectory)
+                {
+                    return; // File and directory with the same name
+                }
+
+                node = childNode;
+            }
+
+            if (node.IsFile)
+            {
+                node.Size = zipEntry.Size;
+                node.CompressedSize = zipEntry.CompressedSize;
+            }
+
+            node.LastModified = zipEntry.DateTime;
         }
     }
 }

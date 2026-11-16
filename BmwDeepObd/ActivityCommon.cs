@@ -10126,7 +10126,7 @@ using System.Threading;"
             return false;
         }
 
-        public bool DownloadConfigThread(string url, string email, string infoFolder, string targetFolder, bool deleteDirectory, DownloadConfigThreadFinishDelegate handler)
+        public bool DownloadConfigThread(string url, string email, string infoFolder, string targetFolder, bool deleteRootDirectory, DownloadConfigThreadFinishDelegate handler)
         {
             if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(email) ||
                 string.IsNullOrEmpty(infoFolder) || string.IsNullOrEmpty(targetFolder))
@@ -10181,6 +10181,7 @@ using System.Threading;"
             _downloadConfigThread = new Thread(() =>
             {
                 bool extractFailed = false;
+                string zipRootFolder = null;
                 try
                 {
                     _downloadConfigHttpClient.DefaultRequestHeaders.Authorization = null;
@@ -10213,31 +10214,33 @@ using System.Threading;"
                                 }
                             }
 
-                            if (deleteDirectory)
+                            if (deleteRootDirectory)
                             {
-                                for (int retry = 0; ; retry++)
+                                PathUtils.DeleteDirectory(targetFolder, true);
+                            }
+                            else
+                            {
+                                string zipRootDir = null;
+                                using (FileStream fsZip = File.OpenRead(tempFileName))
                                 {
-                                    try
+                                    ZipUtils.ZipTreeNode zipRootNode = ZipUtils.ReadZipTree(fsZip);
+                                    if (zipRootNode != null && zipRootNode.Children.Count == 1 && zipRootNode.Children[0].IsDirectory)
                                     {
-                                        if (Directory.Exists(targetFolder))
-                                        {
-                                            Directory.Delete(targetFolder, true);
-                                        }
-
-                                        Directory.CreateDirectory(targetFolder);
-                                        break;
-                                    }
-                                    catch (Exception)
-                                    {
-                                        if (retry > FileIoRetries)
-                                        {
-                                            throw;
-                                        }
-
-                                        Thread.Sleep(FileIoRetryDelay);
+                                        zipRootDir = zipRootNode.Children[0].Name;
                                     }
                                 }
 
+                                if (!string.IsNullOrEmpty(zipRootDir))
+                                {
+                                    string targetFolderFull = Path.GetFullPath(targetFolder);
+                                    string zipRootFolderFull = Path.GetFullPath(Path.Combine(targetFolderFull, zipRootDir));
+                                    // Prevent deleting folders outside the target folder (e.g. "..")
+                                    if (string.Equals(Path.GetDirectoryName(zipRootFolderFull), targetFolderFull.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal))
+                                    {
+                                        PathUtils.DeleteDirectory(zipRootFolderFull);
+                                        zipRootFolder = zipRootFolderFull;
+                                    }
+                                }
                             }
 
                             try
@@ -10316,11 +10319,11 @@ using System.Threading;"
                             new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    handler?.Invoke(false, true, false);
+                                    handler?.Invoke(false, true, false, null);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
-                                    handler?.Invoke(false, false, false);
+                                    handler?.Invoke(false, false, false, null);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(message)
@@ -10329,7 +10332,7 @@ using System.Threading;"
                         }
                         else
                         {
-                            handler?.Invoke(true, false, false);
+                            handler?.Invoke(true, false, false, zipRootFolder);
                         }
                     });
                 }
@@ -10359,11 +10362,11 @@ using System.Threading;"
                             new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    handler?.Invoke(false, true, false);
+                                    handler?.Invoke(false, true, false, null);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
-                                    handler?.Invoke(false, false, false);
+                                    handler?.Invoke(false, false, false, null);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(message)
@@ -10372,7 +10375,7 @@ using System.Threading;"
                         }
                         else
                         {
-                            handler?.Invoke(false, false, true);
+                            handler?.Invoke(false, false, true, null);
                         }
                     });
                 }

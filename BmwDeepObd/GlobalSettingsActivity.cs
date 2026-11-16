@@ -1332,9 +1332,9 @@ namespace BmwDeepObd
                 downloadUrl += "?id=" + Uri.EscapeDataString(userId);
             }
 
-            bool deleteDirectory = downloadType != DownloadType.IbusAppUserCfg;
-            if (!_activityCommon.DownloadConfigThread(downloadUrl, email, infoFolder, targetFolder, deleteDirectory,
-                    (result, retry, aborted) =>
+            bool deleteRootDirectory = downloadType != DownloadType.IbusAppUserCfg;
+            if (!_activityCommon.DownloadConfigThread(downloadUrl, email, infoFolder, targetFolder, deleteRootDirectory,
+                    (result, retry, aborted, zipRootFolder) =>
                     {
                         if (_activityCommon == null)
                         {
@@ -1355,7 +1355,7 @@ namespace BmwDeepObd
                                 .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
                                 {
                                     Intent intent = new Intent();
-                                    intent.PutExtra(ExtraOpenConfigDir, targetFolder);
+                                    intent.PutExtra(ExtraOpenConfigDir, zipRootFolder ?? targetFolder);
                                     SetResult(Android.App.Result.Ok, intent);
                                     StoreSettings();
                                     Finish();
