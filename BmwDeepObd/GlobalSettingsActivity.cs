@@ -1348,7 +1348,14 @@ namespace BmwDeepObd
 
                         if (result)
                         {
-                            string message = string.Format(GetString(Resource.String.settings_extract_config_success), infoFolder, email);
+                            string displayFolder = infoFolder;
+                            if (zipRootFolder != null)
+                            {
+                                // Show the last two directory levels, e.g. IBUS_APP_USER/<zip folder>
+                                displayFolder = Path.Combine(Path.GetFileName(Path.GetDirectoryName(zipRootFolder)) ?? string.Empty, Path.GetFileName(zipRootFolder));
+                            }
+
+                            string message = string.Format(GetString(Resource.String.settings_extract_config_success), displayFolder, email);
                             AlertDialog alertDialog = new AlertDialog.Builder(this)
                                 .SetMessage(message)
                                 .SetTitle(Resource.String.alert_title_info)
