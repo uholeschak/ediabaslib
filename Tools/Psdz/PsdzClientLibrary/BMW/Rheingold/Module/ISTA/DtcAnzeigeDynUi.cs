@@ -19,7 +19,7 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         [DebuggerNonUserCode]
-        [GeneratedCode("PresentationBuildTasks", "10.0.11.0")]
+        [GeneratedCode("PresentationBuildTasks", "10.0.14.0")]
         public void InitializeComponent()
         {
             if (!_contentLoaded)
@@ -31,7 +31,7 @@ namespace BMW.Rheingold.Module.ISTA
         }
 
         [DebuggerNonUserCode]
-        [GeneratedCode("PresentationBuildTasks", "10.0.11.0")]
+        [GeneratedCode("PresentationBuildTasks", "10.0.14.0")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         void IComponentConnector.Connect(int connectionId, object target)
         {

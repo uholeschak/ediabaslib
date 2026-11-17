@@ -46,6 +46,7 @@ namespace BMW.Rheingold.CoreFramework
         private static bool areSDPPacksInvalid;
         private static bool? ignoreRegKeys;
         private static bool runIstaRsuRepairMode;
+        private static readonly Lazy<bool> sendFastaProtToAsstActive;
         public static string hypenedDatabaseVersionForOnlinePatches { get; set; }
         public static CultureInfo CurrentCultureInfo => currentCultureInfo;
         public static IList<string> SupportedTestModuleLanguages { get; set; }
@@ -248,11 +249,16 @@ namespace BMW.Rheingold.CoreFramework
             }
         }
 
+        public static bool IsSendFastaProtToAsstActive => sendFastaProtToAsstActive.Value;
+
         public static event EventHandler<EventArgs> LanguageChangedEventhandler;
         static ConfigSettings()
         {
             isMaster = true;
             runIstaRsuRepairMode = true;
+            //[-] sendFastaProtToAsstActive = new Lazy<bool>(() => !IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA") && GetFeatureEnabledStatus("SendFastaProtToAsst").IsActive, isThreadSafe: true);
+            //[+] sendFastaProtToAsstActive = new Lazy<bool>(() => GetFeatureEnabledStatus("SendFastaProtToAsst").IsActive, isThreadSafe: true);
+            sendFastaProtToAsstActive = new Lazy<bool>(() => GetFeatureEnabledStatus("SendFastaProtToAsst").IsActive, isThreadSafe: true);
             firstLogging = new BlockingCollection<LogValue>();
             currentConfigValues = new ConcurrentDictionary<string, ConfigValue>();
             LogInfo("ConfigSettings.ConfigSettings()", "OperationalMode is {0}", OperationalMode);
@@ -1388,10 +1394,13 @@ namespace BMW.Rheingold.CoreFramework
 
         public static (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
         {
+            //[-] if (IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
+            //[-] {
+            //[-] return (IsActive: false, Message: "No ICS for TOYOTA");
+            //[-] }
+
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
-                //[-] if (istaIcsServiceClient.IsAvailable() || IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
-                //[+] if (istaIcsServiceClient.IsAvailable())
                 if (istaIcsServiceClient.IsAvailable())
                 {
                     return istaIcsServiceClient.GetFeatureEnabledStatus(feature, istaIcsServiceClient.IsAvailable());

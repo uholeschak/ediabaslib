@@ -88,7 +88,7 @@
 			<Text id="#Auth.AuthenticationSuccessfull" name="Die Authentifizierung für Sitzung {0} (Operation ID: {1}) war erfolgreich. Benutzer `{2}`, mit Rollen: `{3}`." />
 			<Text id="#Auth.BackendConnection" name="Backend-Verbindung:" />
 			<Text id="#Auth.Cancel" name="Abbrechen" />
-			<Text id="#Auth.CancelConfirmMessage" name="Der Anmeldevorgang wurde abgebrochen. Die ISTA Applikation wird geschlossen." />
+			<Text id="#Auth.CancelConfirmMessage" name="Der Anmeldevorgang wurde abgebrochen. Die ISTA-Applikation wird geschlossen." />
 			<Text id="#Auth.CancelConfirmTitle" name="Anmeldung abbrechen?" />
 			<Text id="#Auth.CertificateValidUntil" name="Zertifikat gültig bis: " />
 			<Text id="#Auth.ChangeUser" name="Benutzer wechseln" />
@@ -4367,7 +4367,7 @@
 			<Text id="#Auth.AuthenticationSuccessfull" name="Authentication for session {0} (Operation ID: {1}) successful. User `{2}`, with roles: `{3}`." />
 			<Text id="#Auth.BackendConnection" name="Backend connection:" />
 			<Text id="#Auth.Cancel" name="Cancel" />
-			<Text id="#Auth.CancelConfirmMessage" name="Sign-In process was canceled. The ISTA application will be closed." />
+			<Text id="#Auth.CancelConfirmMessage" name="The login process has been cancelled. The ISTA application will close." />
 			<Text id="#Auth.CancelConfirmTitle" name="Cancel login?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certificate valid until: " />
 			<Text id="#Auth.ChangeUser" name="Switch user" />
@@ -6446,6 +6446,8 @@
 			<Text id="#Auth.AuthenticationStart" name="La autentificación para la sesión {0} (ID de operación: {1}) se ha iniciado. La autentificación se ha realizado mediante {2}." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="La autentificación para la sesión {0} (ID de operación: {1}) se ha realizado correctamente. Usuario `{2}`, con los roles: `{3}`." />
 			<Text id="#Auth.Cancel" name="Cancelar" />
+			<Text id="#Auth.CancelConfirmMessage" name="El proceso de inicio de sesión se ha interrumpido. La aplicación ISTA se cerrará." />
+			<Text id="#Auth.CancelConfirmTitle" name="¿Desea cancelar el inicio de sesión?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certificado válido hasta: " />
 			<Text id="#Auth.ChangeUser" name="Cambiar de usuario" />
 			<Text id="#Auth.ConnectToInternet" name="El dispositivo debe estar conectado a Internet. También puede utilizar ISTA sin conexión." />
@@ -8481,6 +8483,8 @@
 			<Text id="#Auth.AuthenticationStart" name="L’authentification pour la session {0} (Operation ID : {1}) est lancée. L’authentification est effectuée avec {2}." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="L’authentification pour la session {0} (Operation ID : {1}) a été réalisée avec succès. Utilisateur « {2} » avec les rôles : « {3} »." />
 			<Text id="#Auth.Cancel" name="Annuler" />
+			<Text id="#Auth.CancelConfirmMessage" name="La procédure d'inscription a été interrompue. L'application ISTA va se fermer." />
+			<Text id="#Auth.CancelConfirmTitle" name="Annuler l'inscription ?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certificat valable jusqu'au : " />
 			<Text id="#Auth.ChangeUser" name="Changer d'utilisateur" />
 			<Text id="#Auth.ConnectToInternet" name="L'appareil doit être connecté à Internet. Vous pouvez également utiliser ISTA hors ligne." />
@@ -10520,6 +10524,8 @@
 			<Text id="#Auth.AuthenticationStart" name="L’autentificazione per la sessione {0} (Operation ID: {1}) è stata avviata. L’autentificazione viene eseguita mediante {2}" />
 			<Text id="#Auth.AuthenticationSuccessfull" name="L’autentificazione per la sessione {0} (Operation ID: {1}) è riuscita. Utente “{2}”, con ruoli: “{3}”." />
 			<Text id="#Auth.Cancel" name="Annulla" />
+			<Text id="#Auth.CancelConfirmMessage" name="La procedura di registrazione è stata interrotta. L'applicazione ISTA viene chiusa." />
+			<Text id="#Auth.CancelConfirmTitle" name="Annullare la registrazione?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certificato valido fino al: " />
 			<Text id="#Auth.ChangeUser" name="Cambia utente" />
 			<Text id="#Auth.ConnectToInternet" name="Il dispositivo deve essere connesso a Internet. È possibile utilizzare ISTA anche in modalità offline." />
@@ -12559,6 +12565,8 @@
 			<Text id="#Auth.AuthenticationStart" name="Uwierzytelnianie sesji {0} (Operation ID: {1}) zostało rozpoczęte. Uwierzytelnianie zostaje przeprowadzone za pomocą {2}." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="Uwierzytelnianie sesji {0} (Operation ID: {1}) powiodło się. Użytkownicy `{2}`, z rolami: `{3}`." />
 			<Text id="#Auth.Cancel" name="Anuluj" />
+			<Text id="#Auth.CancelConfirmMessage" name="Proces logowania został przerwany. Aplikacja ISTA zostanie zamknięta." />
+			<Text id="#Auth.CancelConfirmTitle" name="Czy chcesz przerwać logowanie?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certyfikat ważny do: " />
 			<Text id="#Auth.ChangeUser" name="Zmień użytkownika" />
 			<Text id="#Auth.ConnectToInternet" name="Urządzenie musi być podłączone do Internetu. Z aplikacji ISTA można korzystać również w trybie offline." />
@@ -14597,6 +14605,8 @@
 			<Text id="#Auth.AuthenticationStart" name="Autentizace relace {0} (ID operace: {1}) se spustila. Autentizace se provede prostřednictvím {2}." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="Autentizace relace {0} (ID operace: {1}) byla úspěšná. Uživatel `{2}`, s rolemi: `{3}`." />
 			<Text id="#Auth.Cancel" name="Storno" />
+			<Text id="#Auth.CancelConfirmMessage" name="Proces registrace byl přerušen. Aplikace ISTA se zavře." />
+			<Text id="#Auth.CancelConfirmTitle" name="Zrušit registraci?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certifikát platný do: " />
 			<Text id="#Auth.ChangeUser" name="Změnit uživatele" />
 			<Text id="#Auth.ConnectToInternet" name="Zařízení musí být připojeno k internetu. Aplikaci ISTA můžete používat i offline." />
@@ -16635,6 +16645,8 @@
 			<Text id="#Auth.AuthenticationStart" name="A autenticação da sessão {0} (Operation ID: {1}) foi iniciada. A autenticação foi feita através de {2}." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="A autenticação da sessão {0} (Operation ID: {1}) foi bem-sucedida. Utilizador ‘{2}’, com as funções: ‘{3}’." />
 			<Text id="#Auth.Cancel" name="Cancelar" />
+			<Text id="#Auth.CancelConfirmMessage" name="O processo de início de sessão foi interrompido. A aplicação ISTA será encerrada." />
+			<Text id="#Auth.CancelConfirmTitle" name="Cancelar o início de sessão?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certificado válido até: " />
 			<Text id="#Auth.ChangeUser" name="Mudar de utilizador" />
 			<Text id="#Auth.ConnectToInternet" name="O dispositivo tem de estar ligado à Internet. Também pode utilizar o ISTA offline." />
@@ -18673,6 +18685,8 @@
 			<Text id="#Auth.AuthenticationStart" name="{0} oturumu için kimlik doğrulaması (operasyon ID: {1}) başlatıldı. Kimlik doğrulaması {2} ile yapılacak." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="{0} oturumu için kimlik doğrulaması (operasyon ID: {1}) başarılı oldu. Kullanıcı `{2}`, roller: `{3}`." />
 			<Text id="#Auth.Cancel" name="İptal" />
+			<Text id="#Auth.CancelConfirmMessage" name="Oturum açma işlemi iptal edildi. ISTA uygulaması kapatılıyor." />
+			<Text id="#Auth.CancelConfirmTitle" name="Oturum açma işlemi iptal mi edilsin?" />
 			<Text id="#Auth.CertificateValidUntil" name="Sertifikanın son geçerlilik tarihi: " />
 			<Text id="#Auth.ChangeUser" name="Kullanıcıyı değiştir" />
 			<Text id="#Auth.ConnectToInternet" name="Cihaz internete bağlı olmalıdır. ISTA’yı çevrim dışı olarak da kullanabilirsiniz." />
@@ -20709,6 +20723,8 @@
 			<Text id="#Auth.AuthenticationStart" name="Autentiseringen för session {0} (Operation ID: {1}) har startats. Autentiseringen genomförs med hjälp av {2}." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="Autentiseringen för session {0} (Operation ID: {1}) lyckades. Användare ”{2}”, med roller: ”{3}”." />
 			<Text id="#Auth.Cancel" name="Avbryt" />
+			<Text id="#Auth.CancelConfirmMessage" name="Inloggningsproceduren avbröts. ISTA applikationen stängs." />
+			<Text id="#Auth.CancelConfirmTitle" name="Avbryta inloggningen?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certifikatet giltigt till: " />
 			<Text id="#Auth.ChangeUser" name="Växla användare" />
 			<Text id="#Auth.ConnectToInternet" name="Enheten måste vara ansluten till internet. Du kan även använda ISTA offline." />
@@ -22752,6 +22768,8 @@
 			<Text id="#Auth.AuthenticationStart" name="De authentificatie voor sessie {0} (Operation ID: {1}) is gestart. De authentificatie wordt met {2} uitgevoerd." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="De authentificatie voor sessie {0} (Operation ID: {1}) is geslaagd. Gebruiker `{2}`, met de rollen: `{3}`." />
 			<Text id="#Auth.Cancel" name="Afbreken" />
+			<Text id="#Auth.CancelConfirmMessage" name="Het aanmeldingsproces is afgebroken. De ISTA-toepassing wordt gesloten." />
+			<Text id="#Auth.CancelConfirmTitle" name="Aanmelding afbreken?" />
 			<Text id="#Auth.CertificateValidUntil" name="Certificaat geldig tot: " />
 			<Text id="#Auth.ChangeUser" name="Van gebruiker wisselen" />
 			<Text id="#Auth.ConnectToInternet" name="Het apparaat moet verbonden zijn met het internet. U kunt ISTA ook offline gebruiken." />
@@ -24789,6 +24807,8 @@
 			<Text id="#Auth.AuthenticationStart" name="Аутентификация для сеанса {0} (идентификатор операции: {1}) запущена. Аутентификация выполняется с помощью {2}." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="Аутентификация для сеанса {0} (идентификатор операции: {1}) успешно выполнена. Пользователь `{2}`, с ролями: `{3}`." />
 			<Text id="#Auth.Cancel" name="Отмена" />
+			<Text id="#Auth.CancelConfirmMessage" name="Процесс входа был прерван. Приложение ISTA будет закрыто." />
+			<Text id="#Auth.CancelConfirmTitle" name="Отменить вход?" />
 			<Text id="#Auth.CertificateValidUntil" name="Сертификат действителен до: " />
 			<Text id="#Auth.ChangeUser" name="Сменить пользователя" />
 			<Text id="#Auth.ConnectToInternet" name="Устройство должно быть подключено к интернету. Вы также можете использовать ISTA в автономном режиме." />
@@ -26827,6 +26847,8 @@
 			<Text id="#Auth.AuthenticationStart" name="会话 {0} 的身份证明（操作 ID：{1}）已启动。会借助 {2} 进行身份证明。" />
 			<Text id="#Auth.AuthenticationSuccessfull" name="会话 {0} 的身份证明（操作 ID：{1}）成功。用户 ‘{2}’，角色为：‘{3}’。" />
 			<Text id="#Auth.Cancel" name="取消" />
+			<Text id="#Auth.CancelConfirmMessage" name="登录过程已被中断。ISTA 应用程序将被关闭。" />
+			<Text id="#Auth.CancelConfirmTitle" name="取消登录？" />
 			<Text id="#Auth.CertificateValidUntil" name="证书有效期至： " />
 			<Text id="#Auth.ChangeUser" name="切换用户" />
 			<Text id="#Auth.ConnectToInternet" name="设备必须已连接到互联网。您也可以离线使用 ISTA。" />
@@ -29612,6 +29634,8 @@
 			<Text id="#Auth.AuthenticationStart" name="セッションの認証 {0} (オペレーション ID：{1}) が開始しました。認証は {2} を使用して実行されます。" />
 			<Text id="#Auth.AuthenticationSuccessfull" name="セッションの認証 {0} (オペレーション ID：{1}) が完了しました。ユーザー「{2}」、ロール：「{3}」。" />
 			<Text id="#Auth.Cancel" name="キャンセル" />
+			<Text id="#Auth.CancelConfirmMessage" name="登録手続きが中断されました。ISTAアプリケーションが閉じられます。" />
+			<Text id="#Auth.CancelConfirmTitle" name="登録をキャンセルしますか？" />
 			<Text id="#Auth.CertificateValidUntil" name="証明書の有効期限： " />
 			<Text id="#Auth.ChangeUser" name="ユーザーの切り替え" />
 			<Text id="#Auth.ConnectToInternet" name="デバイスは、必ずインターネットに接続してください。ISTAはオフラインでも使用できます。" />
@@ -31649,6 +31673,8 @@
 			<Text id="#Auth.AuthenticationStart" name="{0} 세션(Operation ID: {1})에 대한 인증이 시작되었습니다. 인증은 {2}를 사용하여 수행됩니다." />
 			<Text id="#Auth.AuthenticationSuccessfull" name="{0} 세션(Operation ID: {1})에 대한 인증에 성공했습니다. 역할이 있는 사용자 ‘{2}’: ‘{3}’." />
 			<Text id="#Auth.Cancel" name="취소" />
+			<Text id="#Auth.CancelConfirmMessage" name="로그인 절차가 중단되었습니다. ISTA 애플리케이션이 종료됩니다." />
+			<Text id="#Auth.CancelConfirmTitle" name="로그인을 취소하시겠습니까?" />
 			<Text id="#Auth.CertificateValidUntil" name="인증서 유효 기간: " />
 			<Text id="#Auth.ChangeUser" name="사용자 변경" />
 			<Text id="#Auth.ConnectToInternet" name="기기가 인터넷에 연결되어 있어야 합니다. ISTA는 오프라인 상태에서도 사용할 수 있습니다." />
@@ -33686,6 +33712,8 @@
 			<Text id="#Auth.AuthenticationStart" name="การรับรองว่าเป็นของแท้สำหรับเซสชัน {0} (Operation ID: {1}) เริ่มต้นแล้ว ดำเนินการการรับรองว่าเป็นของแท้โดยอาศัย {2}" />
 			<Text id="#Auth.AuthenticationSuccessfull" name="การรับรองว่าเป็นของแท้สำหรับเซสชัน {0} (Operation ID: {1}) สำเร็จแล้ว ผู้ใช้ `{2}`, ที่มีบทบาท: `{3}`" />
 			<Text id="#Auth.Cancel" name="ยกเลิก" />
+			<Text id="#Auth.CancelConfirmMessage" name="ขั้นตอนการลงทะเบียนได้ถูกยกเลิกแล้ว กำลังปิดแอปพลิเคชัน ISTA" />
+			<Text id="#Auth.CancelConfirmTitle" name="ยกเลิกการลงทะเบียนหรือไม่?" />
 			<Text id="#Auth.CertificateValidUntil" name="ใบรับรองใช้ได้ถึง: " />
 			<Text id="#Auth.ChangeUser" name="เปลี่ยนผู้ใช้" />
 			<Text id="#Auth.ConnectToInternet" name="อุปกรณ์จะต้องเชื่อมต่อกับอินเทอร์เน็ต คุณสามารถใช้ ISTA ขณะออฟไลน์ได้ด้วย" />

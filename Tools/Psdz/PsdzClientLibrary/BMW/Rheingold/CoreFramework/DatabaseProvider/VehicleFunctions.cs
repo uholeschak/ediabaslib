@@ -26,6 +26,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public static class VehicleFunctions
     {
+        private static bool VinRangeUsagesLoggingActive = ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive;
+        private static bool OverrideTypeKeyForVIN17Active = ConfigSettings.GetFeatureEnabledStatus("OverrideTypeKeyForVIN17").IsActive;
         public static void AddServiceCodeAndLogsForTypeKeys(string currentValue, string propertyName)
         {
             if (Environment.StackTrace.Contains("System.Runtime.Serialization") || Environment.StackTrace.Contains("BMW.Rheingold.ISTAGUI") || Environment.StackTrace.Contains("PropertyChangedEventHandler"))
@@ -38,7 +40,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
                 service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
-                if (ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive)
+                if (VinRangeUsagesLoggingActive)
                 {
                     Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
                 }
@@ -1432,7 +1434,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             try
             {
-                if (ConfigSettings.GetFeatureEnabledStatus("OverrideTypeKeyForVIN17").IsActive && ConfigSettings.IsVerificationMode)
+                if (OverrideTypeKeyForVIN17Active && ConfigSettings.IsVerificationMode)
                 {
                     Log.Info(Log.CurrentMethod(), "Override the typeKey is enabled.");
                     if (string.IsNullOrEmpty(VIN17) || VIN17.Length != 17)
