@@ -35,7 +35,21 @@ namespace BmwDeepObd.Dialogs
             {
                 if (_textViewInfo != null)
                 {
+                    _textViewInfo.MovementMethod = null;
                     _textViewInfo.Text = value;
+                }
+            }
+        }
+
+        // Info text with HTML formatting and clickable links
+        public string InfoHtml
+        {
+            set
+            {
+                if (_textViewInfo != null)
+                {
+                    _textViewInfo.SetText(ConvertUtils.FromHtml(value ?? string.Empty), TextView.BufferType.Spannable);
+                    _textViewInfo.MovementMethod = LinkMovementMethod.Instance;
                 }
             }
         }
