@@ -533,9 +533,9 @@
   <string name="settings_start_app_failed">Die App konnte nicht gestartet werden.</string>
   <string name="settings_select_download_source">Downloadquelle auswählen.</string>
   <string name="settings_download_ibus_app">IBUS-APP Konfigurationen</string>
-  <string name="settings_download_ibus_app_user_cfg">IBUS-APP Benutzerkonfigurationen</string>
-  <string name="settings_enter_ibus_app_user_id">Geben Sie die IBUS-APP ID einschließlich des Bindestrichs für den Download ein.</string>
-  <string name="settings_ibus_app_user_id_invalid">Die IBUS-APP ID hat ein ungültiges Format.\nMöchten Sie die ID ändern?</string>
+  <string name="settings_download_ibus_app_user_cfg">IBUS-APP Konfigurationen mit Konfigurator ID</string>
+  <string name="settings_enter_ibus_app_user_id">Geben Sie die IBUS-APP Konfigurator ID, einschließlich des Bindestrichs für den Download ein.</string>
+  <string name="settings_ibus_app_user_id_invalid">Die IBUS-APP Konfigurator ID hat ein ungültiges Format.\nMöchten Sie die ID ändern?</string>
   <string name="settings_ibus_app_user_id">ID für den Download</string>
   <string name="settings_extract_config_success">Die Konfigurationsdateien wurden erfolgreich extrahiert unter:\n\'{0}\'.\nBei Fragen bezüglich der Konfigurationen kontaktieren Sie bitte \'{1}\'.\nMöchten Sie den Konfigurationsordner öffnen?</string>
 
