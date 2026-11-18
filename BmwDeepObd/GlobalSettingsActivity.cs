@@ -1192,7 +1192,8 @@ namespace BmwDeepObd
         public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler, string defaultUserId = null)
         {
             NumberInputDialog numberInputDialog = new NumberInputDialog(this);
-            numberInputDialog.Info = GetString(Resource.String.settings_enter_ibus_app_user_id);
+            numberInputDialog.InfoHtml = GetString(Resource.String.settings_enter_ibus_app_user_id);
+            numberInputDialog.LinkClickHandler = url => _activityCommon != null && _activityCommon.OpenWebUrl(url);
             numberInputDialog.InfoVisible = true;
 
             numberInputDialog.Message1 = GetString(Resource.String.settings_ibus_app_user_id);
