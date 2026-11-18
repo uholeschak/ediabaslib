@@ -70,7 +70,9 @@ namespace BmwDeepObd.Dialogs
             {
                 if (_textViewInfo != null)
                 {
-                    SpannableString spannable = new SpannableString(ConvertUtils.FromHtml(value ?? string.Empty));
+                    // HTML ignores line feeds
+                    string html = (value ?? string.Empty).Replace("\r\n", "\n").Replace("\n", "<br>");
+                    SpannableString spannable = new SpannableString(ConvertUtils.FromHtml(html));
                     Java.Lang.Object[] urlSpans = spannable.GetSpans(0, spannable.Length(), Java.Lang.Class.FromType(typeof(URLSpan)));
                     if (urlSpans != null)
                     {
