@@ -153,7 +153,6 @@
   <string name="compile_compat_id_warn">The configuration has been created with a different BMW database, some entries may be incompatible.\nTo correct this, open every ECU, that is marked with * in the page title, in the configuration generator, check the entries and store the configuration again.</string>
 
   <!-- Download -->
-  <string formatted="false" name="download_manual">If you have problems with the automatic download of the ECU files you could download them from&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;and install them manually.&lt;br&gt;Do you want to use manual installation?</string>
   <string name="select_ecu_zip">Select ECU Zip</string>
   <string name="downloading_file">Downloading files</string>
   <string name="download_failed">Download files failed.\nPlease check your network connection.</string>
@@ -534,7 +533,9 @@
   <string name="settings_select_download_source">Select download source.</string>
   <string name="settings_download_ibus_app">IBUS-APP configurations</string>
   <string name="settings_download_ibus_app_user_cfg">IBUS-APP configurations with configurator ID</string>
-  <string name="settings_enter_ibus_app_user_id">Enter IBUS-APP configurator ID, including the dash for download.</string>
+  <string formatted="false" name="settings_enter_ibus_app_user_id">Enter IBUS-APP configurator ID.
+\nYou could generate a configurator ID at the following website:
+\n&lt;a href=\'https://www.ibus-app.de/deepobdconfig\'&gt;www.ibus-app.de/deepobdconfig&lt;/a&gt;</string>
   <string name="settings_ibus_app_user_id_invalid">The IBUS-APP configurator ID has an invalid format.\nDo you want to change the ID?</string>
   <string name="settings_ibus_app_user_id">ID for download</string>
   <string name="settings_extract_config_success">The configuration files have been extracted successfully at:\n\'{0}\'.\nFor questions regarding the configurations please contact \'{1}\'.\nDo you want to open the configuration folder?</string>

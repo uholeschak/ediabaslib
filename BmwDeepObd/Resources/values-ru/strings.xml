@@ -159,7 +159,6 @@
   <string name="compile_compat_id_warn">Конфигурация была создана с другой базой данных BMW и некоторые записи могут быть несовместимы.\nЧтобы исправить это, необходимо открыть каждый ECU, отмеченный * в заголовке страницы в генераторе конфигурации, проверить записи и снова сохранить конфигурацию.</string>
 
   <!-- Download -->
-  <string formatted="false" name="download_manual">Если у вас возникли проблемы с автоматической загрузкой ECU файлов - загрузите их с&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;и установите вручную.&lt;br&gt;Использовать ручную установку?</string>
   <string name="select_ecu_zip">Выбрать ECU Zip</string>
   <string name="downloading_file">Скачать файлы</string>
   <string name="download_failed">Не удалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
@@ -548,7 +547,9 @@
   <string name="settings_select_download_source">Выберите источник загрузки.</string>
   <string name="settings_download_ibus_app">IBUS-APP конфигурации</string>
   <string name="settings_download_ibus_app_user_cfg">IBUS-APP конфигурации с идентификатором конфигуратора</string>
-  <string name="settings_enter_ibus_app_user_id">Введите IBUS-APP Конфигуратор ID, включая дефис для загрузки.</string>
+  <string formatted="false" name="settings_enter_ibus_app_user_id">Введите IBUS-APP Конфигуратор ID.
+\nВы можете сгенерировать ID конфигуратора на следующем сайте:
+\n&lt;a href=\'https://www.ibus-app.de/deepobdconfig\'&gt;www.ibus-app.de/deepobdconfig&lt;/a&gt;</string>
   <string name="settings_ibus_app_user_id_invalid">IBUS-APP Конфигуратор ID имеет недопустимый формат.\nХотите изменить ID?</string>
   <string name="settings_ibus_app_user_id">ID для загрузки</string>
   <string name="settings_extract_config_success">Конфигурационные файлы были успешно извлечены в:\n\'{0}\'.\nДля вопросов относительно конфигураций свяжитесь с \'{1}\'.\nВы хотите открыть папку с конфигурацией?</string>
