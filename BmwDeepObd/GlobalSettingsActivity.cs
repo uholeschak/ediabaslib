@@ -50,6 +50,7 @@ namespace BmwDeepObd
 
         public const string IbusAppUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD.zip";
         public const string IbusAppUserCfgUrl = @"https://download.speedy-pics.de/uploads/android/DeepOBD/userconfigs/get.php";
+        public const string IbusAppConfiguratorUrl = @"https://www.ibus-app.de/deepobdconfig";
         public const string IbusAppEmail = "info@ibus-app.de";
         public const string IbusAppFolder = "IBUS_APP";
         public const string IbusAppUserCfgFolder = "IBUS_APP_USER";
@@ -1192,7 +1193,8 @@ namespace BmwDeepObd
         public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler, string defaultUserId = null)
         {
             NumberInputDialog numberInputDialog = new NumberInputDialog(this);
-            numberInputDialog.InfoHtml = GetString(Resource.String.settings_enter_ibus_app_user_id);
+            string configuratorLink = string.Format(CultureInfo.InvariantCulture, "<a href='{0}'>{0}</a>", IbusAppConfiguratorUrl);
+            numberInputDialog.InfoHtml = string.Format(GetString(Resource.String.settings_enter_ibus_app_user_id), configuratorLink);
             numberInputDialog.LinkClickHandler = url => _activityCommon != null && _activityCommon.OpenWebUrl(url);
             numberInputDialog.InfoVisible = true;
 
