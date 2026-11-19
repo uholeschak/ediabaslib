@@ -3067,9 +3067,7 @@ namespace BmwDeepObd
                 _instanceData.VersionInfoShown = true;
 
                 StringBuilder sbMessage = new StringBuilder();
-                Uri gitHubUri = new Uri(GitHubProjectUrl);
-                string gitHubLink = string.Format(CultureInfo.InvariantCulture, "<a href='{0}'>{1}</a>", GitHubProjectUrl, gitHubUri.Host + gitHubUri.AbsolutePath);
-                sbMessage.AppendLine(string.Format(GetString(Resource.String.version_change_info_message), gitHubLink));
+                sbMessage.AppendLine(HttpUtils.FormatHtmlLinkText(GetString(Resource.String.version_change_info_message), GitHubProjectUrl));
                 sbMessage.AppendLine();
                 sbMessage.AppendLine(GetString(Resource.String.version_last_changes_header));
 #if !ANDROID_AUTO
@@ -3077,7 +3075,7 @@ namespace BmwDeepObd
 #endif
                 sbMessage.AppendLine(GetString(Resource.String.version_last_changes));
 
-                string message = sbMessage.ToString().Replace("\n", "<br>");
+                string message = HttpUtils.LineFeedToHtml(sbMessage.ToString());
                 _startAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_donate, (sender, args) =>
                     {
@@ -3087,7 +3085,7 @@ namespace BmwDeepObd
                     {
                     })
                     .SetCancelable(false)
-                    .SetMessage(ConvertUtils.FromHtml(message))
+                    .SetMessage(ConvertUtils.FromHtml(message, url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 if (_startAlertDialog != null)

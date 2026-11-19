@@ -1,7 +1,6 @@
 ﻿using Android.Content;
 using Android.Text;
 using Android.Text.Method;
-using Android.Text.Style;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
@@ -10,27 +9,6 @@ namespace BmwDeepObd.Dialogs
 {
     public class NumberInputDialog : AlertDialog.Builder
     {
-        private class HandlerUrlSpan : URLSpan
-        {
-            private readonly NumberInputDialog _numberInputDialog;
-
-            public HandlerUrlSpan(string url, NumberInputDialog numberInputDialog) : base(url)
-            {
-                _numberInputDialog = numberInputDialog;
-            }
-
-            public override void OnClick(View widget)
-            {
-                System.Func<string, bool> handler = _numberInputDialog.LinkClickHandler;
-                if (handler != null && handler(URL))
-                {
-                    return;
-                }
-
-                base.OnClick(widget);
-            }
-        }
-
         private Android.App.Activity _activity;
         private AlertDialog _dialog;
         private View _view;
@@ -70,26 +48,8 @@ namespace BmwDeepObd.Dialogs
             {
                 if (_textViewInfo != null)
                 {
-                    // HTML ignores line feeds
-                    string html = (value ?? string.Empty).Replace("\r\n", "\n").Replace("\n", "<br>");
-                    SpannableString spannable = new SpannableString(ConvertUtils.FromHtml(html));
-                    Java.Lang.Object[] urlSpans = spannable.GetSpans(0, spannable.Length(), Java.Lang.Class.FromType(typeof(URLSpan)));
-                    if (urlSpans != null)
-                    {
-                        foreach (Java.Lang.Object spanObject in urlSpans)
-                        {
-                            if (spanObject is URLSpan urlSpan)
-                            {
-                                int start = spannable.GetSpanStart(urlSpan);
-                                int end = spannable.GetSpanEnd(urlSpan);
-                                SpanTypes flags = spannable.GetSpanFlags(urlSpan);
-                                spannable.RemoveSpan(urlSpan);
-                                spannable.SetSpan(new HandlerUrlSpan(urlSpan.URL, this), start, end, flags);
-                            }
-                        }
-                    }
-
-                    _textViewInfo.SetText(spannable, TextView.BufferType.Spannable);
+                    // LinkClickHandler is evaluated on click, so it could be set after InfoHtml
+                    _textViewInfo.SetText(ConvertUtils.FromHtml(value ?? string.Empty, url => LinkClickHandler != null && LinkClickHandler(url)), TextView.BufferType.Spannable);
                     _textViewInfo.MovementMethod = LinkMovementMethod.Instance;
                 }
             }

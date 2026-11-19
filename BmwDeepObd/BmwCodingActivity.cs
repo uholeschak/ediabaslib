@@ -653,7 +653,7 @@ namespace BmwDeepObd
             try
             {
                 bool ignoreDismiss = false;
-                string infoMessage = GetString(Resource.String.bmw_coding_connect_request).Replace("\n", "<br>"); ;
+                string infoMessage = HttpUtils.LineFeedToHtml(GetString(Resource.String.bmw_coding_connect_request));
                 _alertDialogInfo = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
