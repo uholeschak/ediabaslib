@@ -77,6 +77,25 @@ namespace BmwDeepObd
             return content;
         }
 
+        // Replaces {0} in format with a HTML link to url (displayed without scheme), line feeds are converted to <br>
+        public static string FormatHtmlLinkText(string format, string url)
+        {
+            string displayUrl = url ?? string.Empty;
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+            {
+                displayUrl = uri.Authority + uri.PathAndQuery.TrimEnd('/');
+            }
+
+            string link = string.Format(CultureInfo.InvariantCulture, "<a href='{0}'>{1}</a>", WebUtility.HtmlEncode(url ?? string.Empty), WebUtility.HtmlEncode(displayUrl));
+            return string.Format(CultureInfo.InvariantCulture, LineFeedToHtml(format), link);
+        }
+
+        // HTML ignores line feeds, convert them to <br>
+        public static string LineFeedToHtml(string text)
+        {
+            return (text ?? string.Empty).Replace("\r\n", "\n").Replace("\n", "<br>");
+        }
+
         public static WebProxy GetProxySettings()
         {
             try

@@ -1193,8 +1193,7 @@ namespace BmwDeepObd
         public void SelectIbusAppUserId(DownloadIbusAppUserIdHandler handler, string defaultUserId = null)
         {
             NumberInputDialog numberInputDialog = new NumberInputDialog(this);
-            string configuratorLink = string.Format(CultureInfo.InvariantCulture, "<a href='{0}'>{0}</a>", IbusAppConfiguratorUrl);
-            numberInputDialog.InfoHtml = string.Format(GetString(Resource.String.settings_enter_ibus_app_user_id), configuratorLink);
+            numberInputDialog.InfoHtml = HttpUtils.FormatHtmlLinkText(GetString(Resource.String.settings_enter_ibus_app_user_id), IbusAppConfiguratorUrl);
             numberInputDialog.LinkClickHandler = url => _activityCommon != null && _activityCommon.OpenWebUrl(url);
             numberInputDialog.InfoVisible = true;
 

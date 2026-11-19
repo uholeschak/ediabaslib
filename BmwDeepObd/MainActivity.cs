@@ -166,6 +166,7 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(ActivityMain).FullName;
 #endif
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
+        private const string GitHubProjectUrl = @"https://github.com/uholeschak/ediabaslib";
         private const long EcuExtractSize = 3400000000;         // extracted ecu files size
         private const string EcuPackInfoXmlName = "EcuPackInfo.xml";
         private const string SampleInfoFileName = "SampleInfo.xml";
@@ -3066,7 +3067,7 @@ namespace BmwDeepObd
                 _instanceData.VersionInfoShown = true;
 
                 StringBuilder sbMessage = new StringBuilder();
-                sbMessage.AppendLine(GetString(Resource.String.version_change_info_message));
+                sbMessage.AppendLine(HttpUtils.FormatHtmlLinkText(GetString(Resource.String.version_change_info_message), GitHubProjectUrl));
                 sbMessage.AppendLine();
                 sbMessage.AppendLine(GetString(Resource.String.version_last_changes_header));
 #if !ANDROID_AUTO
@@ -3074,7 +3075,7 @@ namespace BmwDeepObd
 #endif
                 sbMessage.AppendLine(GetString(Resource.String.version_last_changes));
 
-                string message = sbMessage.ToString().Replace("\n", "<br>");
+                string message = HttpUtils.LineFeedToHtml(sbMessage.ToString());
                 _startAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_donate, (sender, args) =>
                     {
@@ -3084,7 +3085,7 @@ namespace BmwDeepObd
                     {
                     })
                     .SetCancelable(false)
-                    .SetMessage(ConvertUtils.FromHtml(message))
+                    .SetMessage(ConvertUtils.FromHtml(message, url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 if (_startAlertDialog != null)
