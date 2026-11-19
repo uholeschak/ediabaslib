@@ -144,6 +144,9 @@ namespace BmwDeepObd
                 _notificationHandler = null;
             }
 
+            // A timer callback may still post the runnable after the handler has been cleared
+            _notificationRunnable?.Clear();
+
 #if DEBUG
             Android.Util.Log.Info(Tag, "OnDestroy: Removing notifications");
 #endif
@@ -256,6 +259,12 @@ namespace BmwDeepObd
         {
             try
             {
+                ActivityCommon activityCommon = _activityCommon;
+                if (activityCommon == null)
+                {
+                    return;
+                }
+
                 if (delayUpdate)
                 {
                     if (Stopwatch.GetTimestamp() - _notificationUpdateTime < NotificationUpdateDelay * ActivityCommon.TickResolMs)
@@ -265,7 +274,7 @@ namespace BmwDeepObd
                 }
 
                 Android.App.Notification notification = GetNotification();
-                NotificationManagerCompat notificationManager = _activityCommon.NotificationManagerCompat;
+                NotificationManagerCompat notificationManager = activityCommon.NotificationManagerCompat;
                 notificationManager?.Notify(ServiceRunningNotificationId, notification);
 
                 _notificationUpdateTime = Stopwatch.GetTimestamp();
@@ -409,6 +418,11 @@ namespace BmwDeepObd
             {
                 _foregroundService = foregroundService;
                 DelayUpdate = false;
+            }
+
+            public void Clear()
+            {
+                _foregroundService = null;
             }
 
             public void Run()
