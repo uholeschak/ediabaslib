@@ -657,9 +657,6 @@ namespace BmwDeepObd
                     _activityCommon.StartMtcService();
                 }
 
-                _alertDialogInfo = null;
-                _alertDialogConnectError = null;
-                _alertDialogRpcMessage = null;
 #if !STATIC_RPC_CODING
                 GetConnectionInfoRequest();
 #endif
