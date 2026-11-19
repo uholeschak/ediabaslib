@@ -1061,7 +1061,7 @@ namespace BmwDeepObd
             try
             {
                 bool ignoreDismiss = false;
-                string infoMessage = HttpUtils.LineFeedToHtml(GetString(Resource.String.bmw_coding_connect_request));
+                string infoMessage = HttpUtils.LineFeedToHtml(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_coding_connect_request), ActivityCommon.ElmReplacementBuyAdapterUrl));
                 _alertDialogInfo = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
@@ -1150,7 +1150,7 @@ namespace BmwDeepObd
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
                     })
-                    .SetMessage(ConvertUtils.FromHtml(infoMessage))
+                    .SetMessage(ConvertUtils.FromHtml(infoMessage, url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 if (_alertDialogInfo != null)

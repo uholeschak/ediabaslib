@@ -87,7 +87,6 @@
   <string name="version_last_changes_header">Изменения в этой версии:</string>
   <string name="version_last_changes">- Android 17 поддержка\n- Обновление базы данных BMW\n- Загрузка конфигураций IBUS-APP\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
-  <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://uholeschak.github.io/ediabaslib/docs/Replacement_firmware_for_ELM327.html\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
   <string name="vag_mode_info_ballon">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо Deep OBD устройство с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
   <string name="asset_read_error">Не удалось прочитать файл ресурса, недостаточно доступной памяти.</string>
 
@@ -279,8 +278,8 @@
   <string name="limited_elm_adapter_type">Адаптер ELM327 не является оригинальным и не поддерживает все функции. Не все операции могут быть выполнены.</string>
   <string name="elm_no_can">Автомобиль не поддерживает D-CAN, коммуникация с ELM327 адаптером невозможна.</string>
   <string name="fake_elm_try">Вы всё-таки хотите попробовать использовать адаптер?</string>
-  <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://uholeschak.github.io/ediabaslib/docs/Replacement_firmware_for_ELM327.html\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; можете найти улучшенную прошивку.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
-  <string formatted="false" name="adapter_elm_replacement">ELM327 устройства медленные и поддерживают только D-CAN (автомобили начиная с 3/2007).&lt;br&gt;Вы можете купить улучшенную прошивку&lt;br&gt;&lt;a href=\'https://uholeschak.github.io/ediabaslib/docs/Replacement_firmware_for_ELM327.html\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
+  <string name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'{0}\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; можете найти улучшенную прошивку.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
+  <string name="adapter_elm_replacement">ELM327 устройства медленные и поддерживают только D-CAN (автомобили начиная с 3/2007).&lt;br&gt;Вы можете купить улучшенную прошивку&lt;br&gt;&lt;a href=\'{0}\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
   <string name="adapter_stn_firmware">Рекомендуется сначала обновить прошивку адаптера.\nХотите открыть приложение OBDLink для выполнения обновления?</string>
   <string name="adapter_elm_firmware">Рекомендуется прошить альтернативное программное обеспечение ELM327.\nОткрыть конфигурацию адаптера для обновления программного обеспечения?</string>
   <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
@@ -802,7 +801,7 @@
   <string name="bmw_coding_series">Текущая серия автомобилей: {0}.</string>
   <string name="bmw_coding_requirement">Кодировка BMW доступна только для серии F или выше.</string>
   <string name="bmw_coding_network_error">Загрузка веб-страницы не удалась, повторная попытка.</string>
-  <string formatted="false" name="bmw_coding_connect_request">Кодирование BMW — это онлайн-сервис, требующий быстрого и стабильного подключения к Интернету.\nЭто доступно только для серии F или выше.\nПри кодировании требуется сильноточное зарядное устройство.\nНа этапе тестирования это будет бесплатно, позже потребуется лицензия для оплаты стоимости сервера.\Оригинальные &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md#buy-a-preprogrammed-adapter\'&gt;адаптеры Deep OBD&lt;/a&gt; содержат лицензию на кодирование одного автомобиля.\nВы хотите продолжить?</string>
+  <string name="bmw_coding_connect_request">Кодирование BMW — это онлайн-сервис, требующий быстрого и стабильного подключения к Интернету.\nЭто доступно только для серии F или выше.\nПри кодировании требуется сильноточное зарядное устройство.\nНа этапе тестирования это будет бесплатно, позже потребуется лицензия для оплаты стоимости сервера.\nОригинальные &lt;a href=\'{0}\'&gt;адаптеры Deep OBD&lt;/a&gt; содержат лицензию на кодирование одного автомобиля.\nВы хотите продолжить?</string>
   <string name="bmw_coding_connecting">Establish connection.</string>
   <string name="bmw_coding_connect_url_failed">Не удалось подключиться к серверу.\nХотите попробовать еще раз?</string>
   <string name="bmw_coding_connect_failed">Не удалось установить соединение.\nПожалуйста, проверьте подключение к сети.</string>
