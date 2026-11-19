@@ -311,17 +311,17 @@ public class CheckAdapter : IDisposable
                                 case AdapterTypeDetect.AdapterType.Elm327Fake:
                                 case AdapterTypeDetect.AdapterType.Elm327FakeOpt:
                                     message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.fake_elm_adapter_type), _adapterTypeDetect.ElmVerH, _adapterTypeDetect.ElmVerL);
-                                    message += "<br>" + _context.GetString(Resource.String.recommened_adapter_type);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareUrl);
                                     break;
 
                                 case AdapterTypeDetect.AdapterType.Elm327NoCan:
                                     message = _context.GetString(Resource.String.elm_no_can);
-                                    message += "<br>" + _context.GetString(Resource.String.adapter_elm_replacement);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.adapter_elm_replacement), ActivityCommon.ElmReplacementFirmwareUrl);
                                     break;
 
                                 default:
                                     message = _context.GetString(Resource.String.invalid_adapter_type);
-                                    message += "<br>" + _context.GetString(Resource.String.recommened_adapter_type);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareUrl);
                                     break;
                             }
 
@@ -337,7 +337,7 @@ public class CheckAdapter : IDisposable
                             }
 
                             builder.SetCancelable(true);
-                            builder.SetMessage(ConvertUtils.FromHtml(message));
+                            builder.SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)));
 
                             AlertDialog alertDialog = builder.Show();
                             if (alertDialog != null)

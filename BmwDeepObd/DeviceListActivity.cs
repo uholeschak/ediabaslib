@@ -1414,11 +1414,11 @@ namespace BmwDeepObd
                             {
                                 case AdapterTypeDetect.AdapterType.Elm327Limited:
                                     message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.limited_elm_adapter_type), _adapterTypeDetect.ElmVerH, _adapterTypeDetect.ElmVerL);
-                                    message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareUrl);
                                     break;
 
                                 default:
-                                    message = GetString(Resource.String.adapter_elm_replacement);
+                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.adapter_elm_replacement), ActivityCommon.ElmReplacementFirmwareUrl);
                                     break;
                             }
 
@@ -1428,7 +1428,7 @@ namespace BmwDeepObd
                                     ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(ConvertUtils.FromHtml(message))
+                                .SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
                             if (alertDialog != null)
@@ -1518,17 +1518,17 @@ namespace BmwDeepObd
                                 case AdapterTypeDetect.AdapterType.Elm327Fake:
                                 case AdapterTypeDetect.AdapterType.Elm327FakeOpt:
                                     message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.fake_elm_adapter_type), _adapterTypeDetect.ElmVerH, _adapterTypeDetect.ElmVerL);
-                                    message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareUrl);
                                     break;
 
                                 case AdapterTypeDetect.AdapterType.Elm327NoCan:
                                     message = GetString(Resource.String.elm_no_can);
-                                    message += "<br>" + GetString(Resource.String.adapter_elm_replacement);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.adapter_elm_replacement), ActivityCommon.ElmReplacementFirmwareUrl);
                                     break;
 
                                 default:
                                     message = GetString(Resource.String.invalid_adapter_type);
-                                    message += "<br>" + GetString(Resource.String.recommened_adapter_type);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareUrl);
                                     break;
                             }
 
@@ -1549,7 +1549,7 @@ namespace BmwDeepObd
                             }
 
                             builder.SetCancelable(true);
-                            builder.SetMessage(ConvertUtils.FromHtml(message));
+                            builder.SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)));
 
                             AlertDialog alertDialog = builder.Show();
                             if (alertDialog != null)
