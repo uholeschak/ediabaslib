@@ -166,6 +166,7 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(ActivityMain).FullName;
 #endif
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
+        private const string GitHubProjectUrl = @"https://github.com/uholeschak/ediabaslib";
         private const long EcuExtractSize = 3400000000;         // extracted ecu files size
         private const string EcuPackInfoXmlName = "EcuPackInfo.xml";
         private const string SampleInfoFileName = "SampleInfo.xml";
@@ -3066,7 +3067,9 @@ namespace BmwDeepObd
                 _instanceData.VersionInfoShown = true;
 
                 StringBuilder sbMessage = new StringBuilder();
-                sbMessage.AppendLine(GetString(Resource.String.version_change_info_message));
+                Uri gitHubUri = new Uri(GitHubProjectUrl);
+                string gitHubLink = string.Format(CultureInfo.InvariantCulture, "<a href='{0}'>{1}</a>", GitHubProjectUrl, gitHubUri.Host + gitHubUri.AbsolutePath);
+                sbMessage.AppendLine(string.Format(GetString(Resource.String.version_change_info_message), gitHubLink));
                 sbMessage.AppendLine();
                 sbMessage.AppendLine(GetString(Resource.String.version_last_changes_header));
 #if !ANDROID_AUTO
