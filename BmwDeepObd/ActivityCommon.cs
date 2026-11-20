@@ -80,7 +80,7 @@ namespace BmwDeepObd
         public const string FreeflaxAutosetAppName = @"freeflax.autoset";
         public const string AutomationAppName = @"com.jens.automation2";
         public const string MacrodroidAppName = @"com.arlosoft.macrodroid";
-        public const string ElmReplacementFirmwareUrl = @"https://uholeschak.github.io/ediabaslib/docs/Replacement_firmware_for_ELM327.html";
+        public const string ElmReplacementFirmwareUrl = @"https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md";
         public const string ElmReplacementBuyAdapterUrl = ElmReplacementFirmwareUrl + "#buy-a-preprogrammed-adapter";
         public const string DefaultLang = "en";
         public const string BackupExt = ".bak";
