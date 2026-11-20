@@ -444,6 +444,8 @@ namespace BmwDeepObd
         private const string DisplayNameEcuPrefix = "!ECU#";
         private const string ManualConfigName = "Manual";
         private const string UnknownVinConfigName = "Unknown";
+        private const string AdapterTypesUrl = @"https://github.com/uholeschak/ediabaslib/blob/master/docs/AdapterTypes.md";
+        private const string ConfigurationGeneratorUrl = @"https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md";
 
         private static readonly Tuple<VagUdsS22DataType, int>[] VagUdsS22Data =
         {
@@ -1686,7 +1688,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md");
+                        _activityCommon.OpenWebUrl(ConfigurationGeneratorUrl);
                     });
                     return true;
             }
@@ -4642,6 +4644,7 @@ namespace BmwDeepObd
                                     }
                                     else
                                     {
+                                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.xml_tool_no_response_manual), AdapterTypesUrl, ConfigurationGeneratorUrl);
                                         AlertDialog alertDialog = new AlertDialog.Builder(this)
                                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                             {
@@ -4651,7 +4654,7 @@ namespace BmwDeepObd
                                             {
                                             })
                                             .SetCancelable(true)
-                                            .SetMessage(Resource.String.xml_tool_no_response_manual)
+                                            .SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
                                             .SetTitle(Resource.String.alert_title_warning)
                                             .Show();
                                         if (alertDialog != null)
