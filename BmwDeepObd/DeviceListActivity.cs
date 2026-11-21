@@ -698,11 +698,16 @@ namespace BmwDeepObd
                     if (Build.Fingerprint.Contains(InvalidHtcFwName, StringComparison.OrdinalIgnoreCase))
                     {
                         _instanceData.MtcFirmwareErrorShown = true;
-                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_mtc_firmware_error), InvalidHtcFwName, InvalidHtcFwUpdateLink, InvalidHtcFwHowToLink);
+                        StringBuilder sbMessage = new StringBuilder();
+                        sbMessage.Append(HttpUtils.LineFeedToHtml(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_mtc_firmware_error), InvalidHtcFwName)));
+                        sbMessage.Append("<br>");
+                        sbMessage.Append(HttpUtils.HtmlLink(InvalidHtcFwUpdateLink, GetString(Resource.String.bt_mtc_firmware_download)));
+                        sbMessage.Append("<br>");
+                        sbMessage.Append(HttpUtils.HtmlLink(InvalidHtcFwHowToLink, GetString(Resource.String.bt_mtc_firmware_update_instructions)));
                         AlertDialog alertDialog = new AlertDialog.Builder(this)
                             .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                             .SetCancelable(true)
-                            .SetMessage(ConvertUtils.FromHtml(message))
+                            .SetMessage(ConvertUtils.FromHtml(sbMessage.ToString(), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
                             .SetTitle(Resource.String.alert_title_warning)
                             .Show();
                         if (alertDialog != null)
