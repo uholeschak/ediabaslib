@@ -160,19 +160,19 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
-                            _activityCommon.OpenWebUrl("https://translate.yandex.com/developers/keys");
+                            IntentUtils.OpenWebUrl(this, "https://translate.yandex.com/developers/keys");
                             break;
 
                         case ActivityCommon.TranslatorType.IbmWatson:
-                            _activityCommon.OpenWebUrl("https://cloud.ibm.com/catalog/services/language-translator");
+                            IntentUtils.OpenWebUrl(this, "https://cloud.ibm.com/catalog/services/language-translator");
                             break;
 
                         case ActivityCommon.TranslatorType.Deepl:
-                            _activityCommon.OpenWebUrl("https://www.deepl.com/account");
+                            IntentUtils.OpenWebUrl(this, "https://www.deepl.com/account");
                             break;
 
                         case ActivityCommon.TranslatorType.YandexCloud:
-                            _activityCommon.OpenWebUrl("https://cloud.yandex.com/en/docs/translate/");
+                            IntentUtils.OpenWebUrl(this, "https://cloud.yandex.com/en/docs/translate/");
                             break;
                     }
                 });
@@ -197,19 +197,19 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
-                            _activityCommon.OpenWebUrl("https://translate.yandex.com/developers/keys");
+                            IntentUtils.OpenWebUrl(this, "https://translate.yandex.com/developers/keys");
                             break;
 
                         case ActivityCommon.TranslatorType.IbmWatson:
-                            _activityCommon.OpenWebUrl("https://cloud.ibm.com/resources");
+                            IntentUtils.OpenWebUrl(this, "https://cloud.ibm.com/resources");
                             break;
 
                         case ActivityCommon.TranslatorType.Deepl:
-                            _activityCommon.OpenWebUrl("https://www.deepl.com/de/account/summary");
+                            IntentUtils.OpenWebUrl(this, "https://www.deepl.com/de/account/summary");
                             break;
 
                         case ActivityCommon.TranslatorType.YandexCloud:
-                            _activityCommon.OpenWebUrl("https://cloud.yandex.com/en/docs/iam/operations/iam-token/create");
+                            IntentUtils.OpenWebUrl(this, "https://cloud.yandex.com/en/docs/iam/operations/iam-token/create");
                             break;
                     }
                 });
@@ -314,7 +314,7 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.GoogleApis:
-                            _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md#google-translation-apis");
+                            IntentUtils.OpenWebUrl(this, "https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md#google-translation-apis");
                             break;
                     }
                 });

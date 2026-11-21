@@ -1861,7 +1861,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md");
+                        IntentUtils.OpenWebUrl(this, "https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md");
                     });
                     return true;
 
@@ -3085,7 +3085,7 @@ namespace BmwDeepObd
                     {
                     })
                     .SetCancelable(false)
-                    .SetMessage(ConvertUtils.FromHtml(message, url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
+                    .SetMessage(ConvertUtils.FromHtml(message, url => IntentUtils.OpenWebUrl(this, url)))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 if (_startAlertDialog != null)
@@ -6983,7 +6983,7 @@ namespace BmwDeepObd
 
         private void OpenDonateLink()
         {
-            _activityCommon?.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
+            IntentUtils.OpenWebUrl(this, "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
         }
 
         private void ShowBallonMessage(string message, int dismissDuration = ActivityCommon.BalloonDismissDuration, ActivityCommon.BalloonAlligment alignment = ActivityCommon.BalloonAlligment.Center)

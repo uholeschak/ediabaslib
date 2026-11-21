@@ -835,7 +835,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/BMW_Coding.md");
+                        IntentUtils.OpenWebUrl(this, "https://github.com/uholeschak/ediabaslib/blob/master/docs/BMW_Coding.md");
                     });
                     return true;
             }
@@ -1147,7 +1147,7 @@ namespace BmwDeepObd
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
                     })
-                    .SetMessage(ConvertUtils.FromHtml(infoMessage, url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
+                    .SetMessage(ConvertUtils.FromHtml(infoMessage, url => IntentUtils.OpenWebUrl(this, url)))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 if (_alertDialogInfo != null)

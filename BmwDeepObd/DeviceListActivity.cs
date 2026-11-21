@@ -707,7 +707,7 @@ namespace BmwDeepObd
                         AlertDialog alertDialog = new AlertDialog.Builder(this)
                             .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                             .SetCancelable(true)
-                            .SetMessage(ConvertUtils.FromHtml(sbMessage.ToString(), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
+                            .SetMessage(ConvertUtils.FromHtml(sbMessage.ToString(), url => IntentUtils.OpenWebUrl(this, url)))
                             .SetTitle(Resource.String.alert_title_warning)
                             .Show();
                         if (alertDialog != null)
@@ -1433,7 +1433,7 @@ namespace BmwDeepObd
                                     ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
+                                .SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => IntentUtils.OpenWebUrl(this, url)))
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
                             if (alertDialog != null)
@@ -1554,7 +1554,7 @@ namespace BmwDeepObd
                             }
 
                             builder.SetCancelable(true);
-                            builder.SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)));
+                            builder.SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => IntentUtils.OpenWebUrl(this, url)));
 
                             AlertDialog alertDialog = builder.Show();
                             if (alertDialog != null)

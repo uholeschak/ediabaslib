@@ -1887,7 +1887,7 @@ namespace BmwDeepObd
                 // ignored
             }
 
-            return OpenWebUrl("https://play.google.com/store/apps/details?id=" + packageName);
+            return IntentUtils.OpenWebUrl(_context, "https://play.google.com/store/apps/details?id=" + packageName);
         }
 
         public bool RestartAppHard(DestroyDelegate destroyDelegate)
@@ -2879,32 +2879,7 @@ namespace BmwDeepObd
 
         public bool StartEnetAdapterConfig(string adapterIp)
         {
-            return OpenWebUrl("http://" + adapterIp);
-        }
-
-        public bool OpenWebUrl(string url)
-        {
-            try
-            {
-                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://"));
-                intent.AddCategory(Intent.CategoryBrowsable);
-                ComponentName componentName = intent.ResolveActivity(PackageManager);
-                if (componentName == null)
-                {
-                    return false;
-                }
-
-                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
-                intent.SetComponent(componentName);
-                intent.SetData(Android.Net.Uri.Parse(url));
-                _context.StartActivity(intent);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
+            return IntentUtils.OpenWebUrl(_context, "http://" + adapterIp);
         }
 
         public bool IsNetworkPresent(out string domains)

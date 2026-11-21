@@ -1194,7 +1194,7 @@ namespace BmwDeepObd
         {
             NumberInputDialog numberInputDialog = new NumberInputDialog(this);
             numberInputDialog.InfoHtml = HttpUtils.FormatHtmlLinkText(GetString(Resource.String.settings_enter_ibus_app_user_id), IbusAppConfiguratorUrl);
-            numberInputDialog.LinkClickHandler = url => _activityCommon != null && _activityCommon.OpenWebUrl(url);
+            numberInputDialog.LinkClickHandler = url => IntentUtils.OpenWebUrl(this, url);
             numberInputDialog.InfoVisible = true;
 
             numberInputDialog.Message1 = GetString(Resource.String.settings_ibus_app_user_id);

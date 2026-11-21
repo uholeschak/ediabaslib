@@ -1688,7 +1688,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _activityCommon.OpenWebUrl(ConfigurationGeneratorUrl);
+                        IntentUtils.OpenWebUrl(this, ConfigurationGeneratorUrl);
                     });
                     return true;
             }
@@ -4654,7 +4654,7 @@ namespace BmwDeepObd
                                             {
                                             })
                                             .SetCancelable(true)
-                                            .SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)))
+                                            .SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => IntentUtils.OpenWebUrl(this, url)))
                                             .SetTitle(Resource.String.alert_title_warning)
                                             .Show();
                                         if (alertDialog != null)
