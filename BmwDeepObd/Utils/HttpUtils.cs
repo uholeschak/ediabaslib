@@ -86,8 +86,13 @@ namespace BmwDeepObd
                 displayUrl = uri.Authority + uri.PathAndQuery.TrimEnd('/');
             }
 
-            string link = string.Format(CultureInfo.InvariantCulture, "<a href='{0}'>{1}</a>", WebUtility.HtmlEncode(url ?? string.Empty), WebUtility.HtmlEncode(displayUrl));
+            string link = HtmlLink(url, displayUrl);
             return string.Format(CultureInfo.InvariantCulture, LineFeedToHtml(format), link);
+        }
+
+        public static string HtmlLink(string url, string text)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "<a href='{0}'>{1}</a>", WebUtility.HtmlEncode(url ?? string.Empty), WebUtility.HtmlEncode(text ?? string.Empty));
         }
 
         // HTML ignores line feeds, convert them to <br>
