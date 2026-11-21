@@ -337,7 +337,7 @@ public class CheckAdapter : IDisposable
                             }
 
                             builder.SetCancelable(true);
-                            builder.SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => _activityCommon != null && _activityCommon.OpenWebUrl(url)));
+                            builder.SetMessage(ConvertUtils.FromHtml(HttpUtils.LineFeedToHtml(message), url => IntentUtils.OpenWebUrl(_context, url)));
 
                             AlertDialog alertDialog = builder.Show();
                             if (alertDialog != null)

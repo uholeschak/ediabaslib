@@ -6,6 +6,36 @@ namespace BmwDeepObd
 {
     public static class IntentUtils
     {
+        public static bool OpenWebUrl(Context context, string url)
+        {
+            try
+            {
+                if (context == null)
+                {
+                    return false;
+                }
+
+                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://"));
+                intent.AddCategory(Intent.CategoryBrowsable);
+                ComponentName componentName = intent.ResolveActivity(context.PackageManager);
+                if (componentName == null)
+                {
+                    return false;
+                }
+
+                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                intent.SetComponent(componentName);
+                intent.SetData(Android.Net.Uri.Parse(url));
+                context.StartActivity(intent);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static bool OpenAppSettingDetails(Android.App.Activity activity, int requestCode)
         {
             try
