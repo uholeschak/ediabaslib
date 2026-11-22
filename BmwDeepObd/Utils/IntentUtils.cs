@@ -36,6 +36,29 @@ namespace BmwDeepObd
             return true;
         }
 
+        public static bool OpenPlayStoreForPackage(Context context, string packageName)
+        {
+            if (context == null || string.IsNullOrEmpty(packageName))
+            {
+                return false;
+            }
+
+            try
+            {
+                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"market://details?id=" + packageName));
+                intent.SetPackage("com.android.vending");
+                intent.SetFlags(ActivityFlags.NewTask);
+                context.StartActivity(intent);
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return OpenWebUrl(context, "https://play.google.com/store/apps/details?id=" + packageName);
+        }
+
         public static bool OpenAppSettingDetails(Android.App.Activity activity, int requestCode)
         {
             try
