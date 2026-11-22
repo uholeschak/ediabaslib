@@ -80,14 +80,19 @@ namespace BmwDeepObd
         // Replaces {0} in format with a HTML link to url (displayed without scheme), line feeds are converted to <br>
         public static string FormatHtmlLinkText(string format, string url)
         {
-            string displayUrl = url ?? string.Empty;
+            string link = HtmlLink(url, UrlDisplayText(url));
+            return string.Format(CultureInfo.InvariantCulture, LineFeedToHtml(format), link);
+        }
+
+        // URL without scheme and trailing slash
+        public static string UrlDisplayText(string url)
+        {
             if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
             {
-                displayUrl = uri.Authority + uri.PathAndQuery.TrimEnd('/');
+                return uri.Authority + uri.PathAndQuery.TrimEnd('/');
             }
 
-            string link = HtmlLink(url, displayUrl);
-            return string.Format(CultureInfo.InvariantCulture, LineFeedToHtml(format), link);
+            return url ?? string.Empty;
         }
 
         public static string HtmlLink(string url, string text)

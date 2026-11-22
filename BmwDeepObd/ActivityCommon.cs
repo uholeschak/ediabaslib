@@ -82,6 +82,7 @@ namespace BmwDeepObd
         public const string MacrodroidAppName = @"com.arlosoft.macrodroid";
         public const string ElmReplacementFirmwareUrl = @"https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md";
         public const string ElmReplacementBuyAdapterUrl = ElmReplacementFirmwareUrl + "#buy-a-preprogrammed-adapter";
+        public const string GitHubProjectUrl = @"https://github.com/uholeschak/ediabaslib";
         public const string DefaultLang = "en";
         public const string BackupExt = ".bak";
         public const string ValidExt = ".valid";
@@ -919,6 +920,8 @@ namespace BmwDeepObd
         public PowerManager PowerManager => _powerManager;
 
         public PackageManager PackageManager => _packageManager;
+
+        public static string ElmReplacementFirmwareHtmlLink => HttpUtils.HtmlLink(ElmReplacementFirmwareUrl, HttpUtils.UrlDisplayText(GitHubProjectUrl));
 
         public BackupManager BackupManager => _backupManager;
 
