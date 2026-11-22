@@ -6396,7 +6396,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _activityCommon.OpenPlayStoreForPackage(PackageName);
+                        IntentUtils.OpenPlayStoreForPackage(this, PackageName);
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {

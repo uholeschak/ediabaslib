@@ -1851,7 +1851,7 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    OpenPlayStoreForPackage(packageName);
+                    IntentUtils.OpenPlayStoreForPackage(_context, packageName);
                     return true;
                 }
 
@@ -1865,29 +1865,6 @@ namespace BmwDeepObd
                 // ignored
             }
             return false;
-        }
-
-        public bool OpenPlayStoreForPackage(string packageName)
-        {
-            if (string.IsNullOrEmpty(packageName))
-            {
-                return false;
-            }
-
-            try
-            {
-                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"market://details?id=" + packageName));
-                intent.SetPackage("com.android.vending");
-                intent.SetFlags(ActivityFlags.NewTask);
-                _context.StartActivity(intent);
-                return true;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            return IntentUtils.OpenWebUrl(_context, "https://play.google.com/store/apps/details?id=" + packageName);
         }
 
         public bool RestartAppHard(DestroyDelegate destroyDelegate)
