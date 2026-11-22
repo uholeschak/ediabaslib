@@ -311,17 +311,17 @@ public class CheckAdapter : IDisposable
                                 case AdapterTypeDetect.AdapterType.Elm327Fake:
                                 case AdapterTypeDetect.AdapterType.Elm327FakeOpt:
                                     message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.fake_elm_adapter_type), _adapterTypeDetect.ElmVerH, _adapterTypeDetect.ElmVerL);
-                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareUrl);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareHtmlLink);
                                     break;
 
                                 case AdapterTypeDetect.AdapterType.Elm327NoCan:
                                     message = _context.GetString(Resource.String.elm_no_can);
-                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.adapter_elm_replacement), ActivityCommon.ElmReplacementFirmwareUrl);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.adapter_elm_replacement), ActivityCommon.ElmReplacementFirmwareHtmlLink);
                                     break;
 
                                 default:
                                     message = _context.GetString(Resource.String.invalid_adapter_type);
-                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareUrl);
+                                    message += "<br>" + string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.recommened_adapter_type), ActivityCommon.ElmReplacementFirmwareHtmlLink);
                                     break;
                             }
 
