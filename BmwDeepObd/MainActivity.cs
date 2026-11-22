@@ -38,7 +38,6 @@ using BmwFileReader;
 using EdiabasLib;
 using Google.Android.Material.Tabs;
 using Java.Interop;
-using Skydoves.BalloonLib;
 
 // ReSharper disable MergeCastWithTypeCheck
 // ReSharper disable IdentifierTypo
