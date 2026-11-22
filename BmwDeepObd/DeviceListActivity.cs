@@ -698,26 +698,7 @@ namespace BmwDeepObd
                     if (Build.Fingerprint.Contains(InvalidHtcFwName, StringComparison.OrdinalIgnoreCase))
                     {
                         _instanceData.MtcFirmwareErrorShown = true;
-                        StringBuilder sbMessage = new StringBuilder();
-                        sbMessage.Append(HttpUtils.LineFeedToHtml(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_mtc_firmware_error), InvalidHtcFwName)));
-                        sbMessage.Append("<br>");
-                        sbMessage.Append(HttpUtils.HtmlLink(InvalidHtcFwUpdateLink, GetString(Resource.String.bt_mtc_firmware_download)));
-                        sbMessage.Append("<br>");
-                        sbMessage.Append(HttpUtils.HtmlLink(InvalidHtcFwHowToLink, GetString(Resource.String.bt_mtc_firmware_update_instructions)));
-                        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                            .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
-                            .SetCancelable(true)
-                            .SetMessage(ConvertUtils.FromHtml(sbMessage.ToString(), url => IntentUtils.OpenWebUrl(this, url)))
-                            .SetTitle(Resource.String.alert_title_warning)
-                            .Show();
-                        if (alertDialog != null)
-                        {
-                            TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                            if (messageView != null)
-                            {
-                                messageView.MovementMethod = new LinkMovementMethod();
-                            }
-                        }
+                        ShowMtcFirmwareError();
                     }
                 }
 
@@ -833,6 +814,30 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
+            }
+        }
+
+        private void ShowMtcFirmwareError()
+        {
+            StringBuilder sbMessage = new StringBuilder();
+            sbMessage.Append(HttpUtils.LineFeedToHtml(string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_mtc_firmware_error), InvalidHtcFwName)));
+            sbMessage.Append("<br>");
+            sbMessage.Append(HttpUtils.HtmlLink(InvalidHtcFwUpdateLink, GetString(Resource.String.bt_mtc_firmware_download)));
+            sbMessage.Append("<br>");
+            sbMessage.Append(HttpUtils.HtmlLink(InvalidHtcFwHowToLink, GetString(Resource.String.bt_mtc_firmware_update_instructions)));
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                .SetCancelable(true)
+                .SetMessage(ConvertUtils.FromHtml(sbMessage.ToString(), url => IntentUtils.OpenWebUrl(this, url)))
+                .SetTitle(Resource.String.alert_title_warning)
+                .Show();
+            if (alertDialog != null)
+            {
+                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                if (messageView != null)
+                {
+                    messageView.MovementMethod = new LinkMovementMethod();
+                }
             }
         }
 
