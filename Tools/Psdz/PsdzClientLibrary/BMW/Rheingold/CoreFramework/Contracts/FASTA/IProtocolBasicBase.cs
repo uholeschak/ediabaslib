@@ -23,9 +23,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts.FASTA
 
         void AddNewFeedback(string message, string user, string eMail, KeyValuePair<string, string> errorLocation, string typeOfMessage);
 
-        //IAction<IUiDialog> CreateAndAddUiDialogFromServiceProgram(string type, string methodName);
+        IAction<IUiDialog> CreateAndAddUiDialogFromServiceProgram(string type, string methodName);
 
-        //IAction<IUiDialog> CreateAndAddUiDialog(string type, LayoutGroup layoutGroup);
+        IAction<IUiDialog> CreateAndAddUiDialog(string type, LayoutGroup layoutGroup);
 
         void ProtocolDialog(DateTime start, string dialog, IList<LocalizedText> titleTextList, IList<LocalizedText> messageTextList, string[] buttonId, string buttonPressed, LayoutGroup layoutGroup, IList<LocalizedText> answerList = null, bool display = true);
 

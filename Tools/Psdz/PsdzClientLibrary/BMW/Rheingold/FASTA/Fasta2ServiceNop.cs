@@ -1,15 +1,16 @@
-﻿using BMW.Rheingold.CoreFramework;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.OnlinePatch;
+using BMW.Rheingold.CoreFramework.TableDataHelper;
+using BMW.Rheingold.FASTA.Model;
 using PsdzClient;
 using System;
 using System.Collections.Generic;
-using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
-using BMW.Rheingold.CoreFramework.Contracts;
-using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
-using BMW.Rheingold.CoreFramework.OnlinePatch;
-using BMW.Rheingold.FASTA.Model;
 
 namespace BMW.Rheingold.FASTA
 {
@@ -149,6 +150,15 @@ namespace BMW.Rheingold.FASTA
             Log.Debug("Fasta2ServiceNop.CreateAndAddEcuCommunications()", "Not implemented.");
         }
 
+        public IAction<IUiDialog> CreateAndAddUiDialog(string type, LayoutGroup layoutGroup)
+        {
+            Log.Debug("Fasta2ServiceNop.CreateAndAddUiDialog()", "Not operation executed.");
+            return new ActionNop<IUiDialog>
+            {
+                SpecialAction = new UiDialogNop()
+            };
+        }
+
         public IAction<IUiDialog> CreateAndAddUiDialogFromServiceProgram(string type, string methodName)
         {
             Log.Debug("Fasta2ServiceNop.CreateAndAddUiDialogFromServiceProgram()", "Not operation executed.");
@@ -243,6 +253,11 @@ namespace BMW.Rheingold.FASTA
         public void WriteLoopEntriesToLog(bool verboseLoop)
         {
             Log.Debug("Fasta2ServiceNop.WriteLoopEntriesToLog()", "Not implemented.");
+        }
+        public object AddMultiLanguageEFuseInfoTable(string infoTitle, Dictionary<string, TableData> multiLanguageData, DateTime now)
+        {
+            Log.Debug(Log.CurrentMethod(), "Not implemented");
+            return null;
         }
     }
 }

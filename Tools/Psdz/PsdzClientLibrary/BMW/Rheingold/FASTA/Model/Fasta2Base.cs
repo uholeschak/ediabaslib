@@ -1,14 +1,15 @@
-﻿using BMW.Rheingold.CoreFramework;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
+using BMW.Rheingold.CoreFramework.TableDataHelper;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
-using BMW.Rheingold.CoreFramework.Contracts;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
-using PsdzClient;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.FASTA.Model
@@ -209,12 +210,22 @@ namespace BMW.Rheingold.FASTA.Model
             currentAmountOfCyclicEntries.Clear();
         }
 
+        public object AddMultiLanguageEFuseInfoTable(string infoTitle, Dictionary<string, TableData> multiLanguageTableData, DateTime startTime)
+        {
+            return null;
+        }
+
         public void AddLogStatement(string headlineValue, Dictionary<string, string> logStatementEntries, DateTime startTime)
         {
         }
 
         public void AddInfoLogStatementWhithTitle(bool removePreviousInfoLog, string infoTitle, Dictionary<string, string> logInfoEntries)
         {
+        }
+
+        public IAction<IUiDialog> CreateAndAddUiDialog(string type, LayoutGroup layoutGroup)
+        {
+            return null;
         }
 
         public IAction<IUiDialog> CreateAndAddUiDialogFromServiceProgram(string type, string methodName)
