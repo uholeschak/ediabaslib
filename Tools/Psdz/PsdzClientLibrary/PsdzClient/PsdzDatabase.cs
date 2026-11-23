@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using BMW.Rheingold.ISTA.CoreFramework;
 
 namespace PsdzClient
 {
@@ -2628,10 +2629,20 @@ namespace PsdzClient
                     LEFT JOIN XEP_RULES R_EFUSE ON R_EFUSE.ID = e.ID
                     WHERE h.level = 4
                         AND LOWER(e.VE_NAME) IN ({0});", idStringList);
+                    ILogger logger = new NugetLogger();
                     using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
+                            byte[] rule = GetReaderBytes(reader, "RULE");
+                            if (rule != null)
+                            {
+                                RuleExpression exp = RuleExpression.Deserialize(new MemoryStream(rule), logger, vehicle);
+                                if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                {
+                                    continue;
+                                }
+                            }
                         }
                     }
                 }
@@ -7201,6 +7212,22 @@ namespace PsdzClient
             }
 
             return Convert.ToString(value, CultureInfo.InvariantCulture)?.Trim();
+        }
+
+        private static byte[] GetReaderBytes(SqliteDataReader reader, string name)
+        {
+            object value = reader[name];
+            if (value == null || value is DBNull)
+            {
+                return null;
+            }
+
+            if (value is byte[] data)
+            {
+                return data;
+            }
+
+            return null;
         }
 
         private static List<string> AddSqlParameters(SqliteCommand command, IEnumerable<string> values, string prefix)
