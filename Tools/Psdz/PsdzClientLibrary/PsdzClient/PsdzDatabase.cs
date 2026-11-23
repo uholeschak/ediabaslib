@@ -2488,6 +2488,43 @@ namespace PsdzClient
             return ecuVarList;
         }
 
+        public ICollection<XEP_EFUSE> GetEFusesById(IEnumerable<string> ids, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            List<XEP_EFUSE> list = new List<XEP_EFUSE>();
+            if (!ids.Any())
+            {
+                return list;
+            }
+
+            try
+            {
+                string idStringList = string.Join(",", ids.Select((i) => "'" + i + "'"));
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT * FROM XEP_EFUSE WHERE VE_NAME COLLATE NOCASE IN ({0})", idStringList);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            XEP_EFUSE ecuVar = ReadEFuse(reader);
+                            if (ecuVar != null)
+                            {
+                                list.Add(ecuVar);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEFusesById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return list;
+        }
+
         public EcuVar FindEcuVariantFromBntn(string bntn, int? diagAddrAsInt, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             if (string.IsNullOrEmpty(bntn))
@@ -6834,6 +6871,23 @@ namespace PsdzClient
             return faultCode;
         }
 
+        private static XEP_EFUSE ReadEFuse(SqliteDataReader reader)
+        {
+            XEP_EFUSE xEP_EFUSE = new XEP_EFUSE();
+            xEP_EFUSE.Id = GetReaderLong(reader, "ID") ?? 0;
+            xEP_EFUSE.Kurzname = GetReaderString(reader, "KURZNAME");
+            xEP_EFUSE.Grobzeichen = GetReaderString(reader, "GROBZEICHEN");
+            xEP_EFUSE.Ve_Name = GetReaderString(reader, "VE_NAME");
+            xEP_EFUSE.Booletool_validity = GetReaderString(reader, "BOOLETOOL_VALIDITY");
+            xEP_EFUSE.Devtext = GetReaderString(reader, "DEVTEXT");
+            xEP_EFUSE.Passthrough = GetReaderString(reader, "PASSTHROUGH");
+            xEP_EFUSE.Ve_Nennwert = GetReaderDouble(reader, "VE_NENNWERT") ?? 0;
+            xEP_EFUSE.ValidFrom = GetReaderDateTime(reader, "VALIDFROM") ?? default;
+            xEP_EFUSE.ValidTo = GetReaderDateTime(reader, "VALIDTO") ?? default;
+            xEP_EFUSE.Sicherheitsrelevant = GetReaderInt(reader, "SICHERHEITSRELEVANT") ?? 0;
+            return xEP_EFUSE;
+        }
+
         private static XEP_FAULTMODELABELS ReadXepFaultModelLabel(SqliteDataReader reader)
         {
             XEP_FAULTMODELABELS xEP_FAULTMODELABELS = new XEP_FAULTMODELABELS();
@@ -6912,6 +6966,78 @@ namespace PsdzClient
             }
 
             return null;
+        }
+
+        private static long? GetReaderLong(SqliteDataReader reader, string name)
+        {
+            object value = reader[name];
+            if (value == null || value is DBNull)
+            {
+                return null;
+            }
+
+            if (value is long longValue)
+            {
+                return longValue;
+            }
+
+            try
+            {
+                if (value is decimal || value is int || value is double || value is float)
+                {
+                    return Convert.ToInt64(value, CultureInfo.InvariantCulture);
+                }
+            }
+            catch (OverflowException)
+            {
+                return null;
+            }
+
+            string text = value.ToString()?.Trim();
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            if (long.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out long result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
+        private static int? GetReaderInt(SqliteDataReader reader, string name)
+        {
+            long? value = GetReaderLong(reader, name);
+            if (value == null || value < int.MinValue || value > int.MaxValue)
+            {
+                return null;
+            }
+
+            return (int)value.Value;
+        }
+
+        private static double? GetReaderDouble(SqliteDataReader reader, string name)
+        {
+            object value = reader[name];
+            if (value is double doubleValue)
+            {
+                return doubleValue;
+            }
+
+            if (value is float floatValue)
+            {
+                return floatValue;
+            }
+
+            decimal? decimalValue = GetReaderDecimal(reader, name);
+            if (decimalValue == null)
+            {
+                return null;
+            }
+
+            return (double)decimalValue.Value;
         }
 
         private static DateTime? GetReaderDateTime(SqliteDataReader reader, string name)
