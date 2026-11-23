@@ -2507,10 +2507,10 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            XEP_EFUSE ecuVar = ReadEFuse(reader);
-                            if (ecuVar != null)
+                            XEP_EFUSE xEP_EFUSE = ReadEFuse(reader);
+                            if (xEP_EFUSE != null)
                             {
-                                list.Add(ecuVar);
+                                list.Add(xEP_EFUSE);
                             }
                         }
                     }
