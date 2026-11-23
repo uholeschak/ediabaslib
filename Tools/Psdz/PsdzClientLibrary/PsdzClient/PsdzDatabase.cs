@@ -9,6 +9,7 @@ using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
 using BMW.Rheingold.CoreFramework.DatabaseProvider.Helpers;
 using BMW.Rheingold.CoreFramework.Enums;
 using BMW.Rheingold.Diagnostics.Common;
+using BMW.Rheingold.ISTA.CoreFramework;
 using BmwFileReader;
 using HarmonyLib;
 using log4net;
@@ -19,12 +20,12 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using BMW.Rheingold.ISTA.CoreFramework;
 
 namespace PsdzClient
 {
@@ -1284,7 +1285,10 @@ namespace PsdzClient
                     try
                     {
                         log.InfoFormat("EvaluateRule Create expression");
-                        RuleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), new NugetLogger(), vehicle);
+                        using (MemoryStream ms = new MemoryStream(Rule))
+                        {
+                            RuleExpression = RuleExpression.Deserialize(ms, new NugetLogger(), vehicle);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -1319,8 +1323,11 @@ namespace PsdzClient
 
                 try
                 {
-                    RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), new NugetLogger(), vehicle);
-                    return ruleExpression.ToString();
+                    using (MemoryStream ms = new MemoryStream(Rule))
+                    {
+                        RuleExpression ruleExpression = RuleExpression.Deserialize(ms, new NugetLogger(), vehicle);
+                        return ruleExpression.ToString();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -1340,13 +1347,16 @@ namespace PsdzClient
 
                 try
                 {
-                    RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), new NugetLogger(), vehicle);
-                    RuleExpression.FormulaConfig formulaConfigCurrent = formulaConfig;
-                    if (formulaConfigCurrent == null)
+                    using (MemoryStream ms = new MemoryStream(Rule))
                     {
-                        formulaConfigCurrent = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", true, subRuleIds);
+                        RuleExpression ruleExpression = RuleExpression.Deserialize(ms, new NugetLogger(), vehicle);
+                        RuleExpression.FormulaConfig formulaConfigCurrent = formulaConfig;
+                        if (formulaConfigCurrent == null)
+                        {
+                            formulaConfigCurrent = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", true, subRuleIds);
+                        }
+                        return ruleExpression.ToFormula(formulaConfigCurrent);
                     }
-                    return ruleExpression.ToFormula(formulaConfigCurrent);
                 }
                 catch (Exception e)
                 {
@@ -2637,10 +2647,13 @@ namespace PsdzClient
                             byte[] rule = GetReaderBytes(reader, "RULE");
                             if (rule != null)
                             {
-                                RuleExpression exp = RuleExpression.Deserialize(new MemoryStream(rule), logger, vehicle);
-                                if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                using (MemoryStream ms = new MemoryStream(rule))
                                 {
-                                    continue;
+                                    RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
+                                    if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                    {
+                                        continue;
+                                    }
                                 }
                             }
                         }
