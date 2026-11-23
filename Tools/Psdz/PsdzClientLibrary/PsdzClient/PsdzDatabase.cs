@@ -2682,6 +2682,30 @@ namespace PsdzClient
                                     }
                                 }
                             }
+
+                            long? efuseId = GetReaderLong(reader, "ID");
+                            if (efuseId.HasValue)
+                            {
+                                List<LocalizedTitleItem> list = new List<LocalizedTitleItem>();
+                                foreach (string languageCode in LanguageCodeHelper.LanguageCodes)
+                                {
+                                    string shortLanguageCode = LanguageCodeHelper.GetShortLanguageCode(languageCode);
+                                    string titleValue = GetReaderString(reader, $"TITLE_{shortLanguageCode}");
+                                    if (!string.IsNullOrEmpty(titleValue))
+                                    {
+                                        list.Add(new LocalizedTitleItem
+                                        {
+                                            Language = languageCode,
+                                            Value = titleValue
+                                        });
+                                    }
+                                }
+
+                                if (!dictionary.AddIfNotContains(efuseId.Value, list))
+                                {
+                                    log.ErrorFormat("GetEFuseTitlesFromDiagnosisObjectsTableWithCheckingValidity Non-unique EFuseId detected: {0} ", efuseId.Value);
+                                }
+                            }
                         }
                     }
                 }
