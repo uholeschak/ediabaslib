@@ -2656,6 +2656,32 @@ namespace PsdzClient
                                     }
                                 }
                             }
+
+                            byte[] consumerRule = GetReaderBytes(reader, "CONSUMER_RULE");
+                            if (consumerRule != null)
+                            {
+                                using (MemoryStream ms = new MemoryStream(consumerRule))
+                                {
+                                    RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
+                                    if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+
+                            byte[] efuseRule = GetReaderBytes(reader, "EFUSE_RULE");
+                            if (efuseRule != null)
+                            {
+                                using (MemoryStream ms = new MemoryStream(efuseRule))
+                                {
+                                    RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
+                                    if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
