@@ -2394,6 +2394,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetEcuVariantByName EcuVariant: {0}", ecuVariant);
             EcuVar ecuVar = null;
             try
             {
@@ -2426,6 +2427,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetEcuVariantById EcuVariantId: {0}", ecuVariantId);
             EcuVar ecuVar = null;
             try
             {
@@ -2458,6 +2460,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetEcuVariantsByEcuCliquesId EcuCliquesId: {0}", ecuCliquesId);
             List<EcuVar> ecuVarList = new List<EcuVar>();
             try
             {
@@ -2496,13 +2499,13 @@ namespace PsdzClient
                 return list;
             }
 
+            log.InfoFormat("GetEFusesById Ids: {0}", string.Join(",", ids));
             try
             {
-                string idStringList = string.Join(",", ids.Select((i) => "'" + i + "'"));
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT * FROM XEP_EFUSE WHERE VE_NAME COLLATE NOCASE IN ({0})", idStringList);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    command.CommandText = sql;
+                    List<string> paramNames = AddSqlParameters(command, ids, "id");
+                    command.CommandText = string.Format(CultureInfo.InvariantCulture, @"SELECT * FROM XEP_EFUSE WHERE VE_NAME COLLATE NOCASE IN ({0})", string.Join(",", paramNames));
                     using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -2517,7 +2520,7 @@ namespace PsdzClient
                 }
 
                 Dictionary<long, List<LocalizedTitleItem>> titlesDictionary = new Dictionary<long, List<LocalizedTitleItem>>();
-                titlesDictionary = null; // GetEFuseTitlesFromDiagnosisObjectsTableWithCheckingValidity(ids, vehicle, ffmDynamicResolver);
+                titlesDictionary = GetEFuseTitlesFromDiagnosisObjectsTableWithCheckingValidity(ids, vehicle, ffmDynamicResolver);
                 list = list.Where((XEP_EFUSE efuse) => titlesDictionary.ContainsKey(efuse.Id)).ToList();
                 foreach (XEP_EFUSE item2 in list)
                 {
@@ -2540,6 +2543,106 @@ namespace PsdzClient
             }
 
             return list;
+        }
+
+        private Dictionary<long, List<LocalizedTitleItem>> GetEFuseTitlesFromDiagnosisObjectsTableWithCheckingValidity(IEnumerable<string> ids, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            log.InfoFormat("GetEFuseTitlesFromDiagnosisObjectsTableWithCheckingValidity Ids: {0}", string.Join(",", ids));
+            Dictionary<long, List<LocalizedTitleItem>> dictionary = new Dictionary<long, List<LocalizedTitleItem>>();
+
+            try
+            {
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    List<string> paramNames = AddSqlParameters(command, ids, "id");
+                    string idStringList = string.Join(",", paramNames.Select(name => "LOWER(" + name + ")"));
+                    command.CommandText = string.Format(CultureInfo.InvariantCulture,
+                    @"WITH RECURSIVE TREE AS (
+                        SELECT
+                            d.CONTROLID AS CONSUMER_OID,
+                            t.ID AS FIRST_LEVEL_OID,
+                            d.ID AS WISSENSBASIS_VID
+                        FROM XEP_DIAGNOSISOBJECTS d
+                        JOIN XEP_REFDIAGNOSISTREE t
+                            ON t.DIAGNOSISOBJECTCONTROLID = d.CONTROLID
+                    ),
+                    HIERARCHY AS (
+                        -- Anchor: start nodes
+                        SELECT
+                            t.CONSUMER_OID AS STARTING_OID,
+                            t.FIRST_LEVEL_OID,
+                            t.WISSENSBASIS_VID,
+                            1 AS level
+                        FROM TREE t
+                        WHERE t.CONSUMER_OID IN (
+                            SELECT i.INFOOBJECTID
+                            FROM XEP_REFINFOOBJECTS i
+                            WHERE i.LINK_TYPE_ID = 'EFuseDstComponentConsumerLink'
+                        )
+
+                        UNION ALL
+
+                        -- Recursive step
+                        SELECT
+                            h.STARTING_OID,
+                            t.FIRST_LEVEL_OID,
+                            t.WISSENSBASIS_VID,
+                            h.level + 1
+                        FROM HIERARCHY h
+                        JOIN TREE t
+                            ON t.CONSUMER_OID = h.FIRST_LEVEL_OID
+                        WHERE h.level < 4
+                    )
+                    SELECT
+                        e.ID,
+                        e.VE_NAME,
+                        d.TITLE_DEDE,
+                        d.TITLE_ENGB,
+                        d.TITLE_ENUS,
+                        d.TITLE_FR,
+                        d.TITLE_TH,
+                        d.TITLE_SV,
+                        d.TITLE_IT,
+                        d.TITLE_ES,
+                        d.TITLE_ID,
+                        d.TITLE_KO,
+                        d.TITLE_EL,
+                        d.TITLE_TR,
+                        d.TITLE_ZHCN,
+                        d.TITLE_RU,
+                        d.TITLE_NL,
+                        d.TITLE_PT,
+                        d.TITLE_ZHTW,
+                        d.TITLE_JA,
+                        d.TITLE_CSCZ,
+                        d.TITLE_PLPL,
+                        r.RULE, -- rootNode Rule (validity)
+                        R_CONSUMER.RULE CONSUMER_RULE, -- consumer validity
+                        R_EFUSE.RULE EFUSE_RULE -- efuse validity
+                    FROM HIERARCHY h
+                    JOIN XEP_REFINFOOBJECTS i ON i.INFOOBJECTID = h.STARTING_OID
+                    JOIN XEP_DIAGNOSISOBJECTS d ON i.INFOOBJECTID = d.CONTROLID
+                    JOIN XEP_EFUSE e ON e.ID = i.ID
+                    JOIN XEP_RULES r ON r.ID = h.WISSENSBASIS_VID
+                    LEFT JOIN XEP_RULES R_CONSUMER ON R_CONSUMER.ID = d.ID
+                    LEFT JOIN XEP_RULES R_EFUSE ON R_EFUSE.ID = e.ID
+                    WHERE h.level = 4
+                        AND LOWER(e.VE_NAME) IN ({0});", idStringList);
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEFuseTitlesFromDiagnosisObjectsTableWithCheckingValidity Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return dictionary;
         }
 
         public EcuVar FindEcuVariantFromBntn(string bntn, int? diagAddrAsInt, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
@@ -7098,6 +7201,19 @@ namespace PsdzClient
             }
 
             return Convert.ToString(value, CultureInfo.InvariantCulture)?.Trim();
+        }
+
+        private static List<string> AddSqlParameters(SqliteCommand command, IEnumerable<string> values, string prefix)
+        {
+            List<string> paramNames = new List<string>();
+            foreach (string value in values)
+            {
+                string paramName = "@" + prefix + paramNames.Count.ToString(CultureInfo.InvariantCulture);
+                command.Parameters.AddWithValue(paramName, (object)value ?? DBNull.Value);
+                paramNames.Add(paramName);
+            }
+
+            return paramNames;
         }
 
         private static EcuTranslation GetTranslation(SqliteDataReader reader, string prefix = "TITLE", string language = null)
