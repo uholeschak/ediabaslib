@@ -1,12 +1,21 @@
-﻿using BMW.Rheingold.CoreFramework;
+﻿using BMW.ISPI.TRIC.ISTA.Common;
+using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
+using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
-using BMW.Rheingold.Programming.Common;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
+using BMW.Rheingold.CoreFramework.DatabaseProvider.Helpers;
+using BMW.Rheingold.CoreFramework.Enums;
+using BMW.Rheingold.Diagnostics.Common;
 using BmwFileReader;
 using HarmonyLib;
 using log4net;
 using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model;
+using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,15 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using BMW.ISPI.TRIC.ISTA.Common;
-using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
-using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
-using BMW.Rheingold.CoreFramework.Contracts.FASTA;
-using BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderHelper;
-using BMW.Rheingold.CoreFramework.Enums;
-using BMW.Rheingold.Diagnostics.Common;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model;
-using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 
 namespace PsdzClient
 {
@@ -2513,6 +2513,23 @@ namespace PsdzClient
                                 list.Add(xEP_EFUSE);
                             }
                         }
+                    }
+                }
+
+                Dictionary<long, List<LocalizedTitleItem>> titlesDictionary = new Dictionary<long, List<LocalizedTitleItem>>();
+                titlesDictionary = null; // GetEFuseTitlesFromDiagnosisObjectsTableWithCheckingValidity(ids, vehicle, ffmDynamicResolver);
+                list = list.Where((XEP_EFUSE efuse) => titlesDictionary.ContainsKey(efuse.Id)).ToList();
+                foreach (XEP_EFUSE item2 in list)
+                {
+                    if (titlesDictionary.TryGetValue(item2.Id, out var value))
+                    {
+                        item2.Entries.AddRange(value);
+                        continue;
+                    }
+                    foreach (string languageCode in LanguageCodeHelper.LanguageCodes)
+                    {
+                        LanguageCodeHelper.GetShortLanguageCode(languageCode);
+                        item2.AddLocalizedTitle("UNKNOWN", languageCode);
                     }
                 }
             }
