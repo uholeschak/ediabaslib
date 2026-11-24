@@ -1648,7 +1648,9 @@ namespace PsdzClient
                     log.ErrorFormat(CultureInfo.InvariantCulture, "RunTestModule failed: VecInfo is null");
                     return false;
                 }
-
+#if false
+                ClientContext.Database.GetEFusesById(new List<string> { "eF1076", "eF150" }, null, null);
+#endif
                 List<PsdzDatabase.SwiInfoObj> completeInfoObjects = ClientContext.Database.GetAllServiceInfoObjs(PsdzContext.VecInfo, new List<string> { PsdzDatabase.AblFilter });
                 if (completeInfoObjects == null)
                 {
