@@ -12,6 +12,40 @@ namespace PsdzClient
     [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public static class XepConverter
     {
+        public static XEP_CHARACTERISTICS Convert(PsdzDatabase.Characteristics characteristics)
+        {
+            if (characteristics == null)
+            {
+                return null;
+            }
+
+            XEP_CHARACTERISTICS xepCharacteristics = new XEP_CHARACTERISTICS();
+            xepCharacteristics.Id = characteristics.Id.ConvertToInt();
+            xepCharacteristics.Nodeclass = characteristics.NodeClass.ConvertToInt();
+            xepCharacteristics.TitleId = characteristics.TitleId.ConvertToInt();
+            xepCharacteristics.IstaVisible = characteristics.IstaVisible.ConvertToInt();
+            xepCharacteristics.StaticClassVariables = characteristics.StaticClassVar.ConvertToInt();
+            xepCharacteristics.StaticClassVariablesMotorrad = characteristics.StaticClassVarMCycle.ConvertToInt();
+            xepCharacteristics.ParentId = characteristics.ParentId.ConvertToInt();
+            xepCharacteristics.Name = characteristics.Name;
+            xepCharacteristics.LegacyName = characteristics.LegacyName;
+            xepCharacteristics.DriveId = characteristics.DriveId;
+            xepCharacteristics.RootNodeClass = characteristics.RootNodeClass.ConvertToInt();
+
+            CopyEcuTranslation(characteristics.EcuTranslation, xepCharacteristics);
+            return xepCharacteristics;
+        }
+
+        public static ICollection<XEP_CHARACTERISTICS> Convert(ICollection<PsdzDatabase.Characteristics> characteristicsList)
+        {
+            List<XEP_CHARACTERISTICS> xepCharacteristicsList = new List<XEP_CHARACTERISTICS>();
+            foreach (PsdzDatabase.Characteristics characteristics in characteristicsList)
+            {
+                xepCharacteristicsList.Add(Convert(characteristics));
+            }
+            return xepCharacteristicsList;
+        }
+
         public static XEP_CHARACTERISTICROOTS Convert(PsdzDatabase.CharacteristicRoots characteristicRoot)
         {
             if (characteristicRoot == null)
