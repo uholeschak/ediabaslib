@@ -20,7 +20,6 @@ using RheingoldPsdzWebApi.Adapter.Contracts.Model.Ecu;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
