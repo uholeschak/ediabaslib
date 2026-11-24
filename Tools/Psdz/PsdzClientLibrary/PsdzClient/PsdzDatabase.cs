@@ -2643,41 +2643,44 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            byte[] rule = GetReaderBytes(reader, "RULE");
-                            if (rule != null)
+                            if (vehicle != null)
                             {
-                                using (MemoryStream ms = new MemoryStream(rule))
+                                byte[] rule = GetReaderBytes(reader, "RULE");
+                                if (rule != null)
                                 {
-                                    RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
-                                    if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                    using (MemoryStream ms = new MemoryStream(rule))
                                     {
-                                        continue;
+                                        RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
+                                        if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                        {
+                                            continue;
+                                        }
                                     }
                                 }
-                            }
 
-                            byte[] consumerRule = GetReaderBytes(reader, "CONSUMER_RULE");
-                            if (consumerRule != null)
-                            {
-                                using (MemoryStream ms = new MemoryStream(consumerRule))
+                                byte[] consumerRule = GetReaderBytes(reader, "CONSUMER_RULE");
+                                if (consumerRule != null)
                                 {
-                                    RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
-                                    if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                    using (MemoryStream ms = new MemoryStream(consumerRule))
                                     {
-                                        continue;
+                                        RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
+                                        if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                        {
+                                            continue;
+                                        }
                                     }
                                 }
-                            }
 
-                            byte[] efuseRule = GetReaderBytes(reader, "EFUSE_RULE");
-                            if (efuseRule != null)
-                            {
-                                using (MemoryStream ms = new MemoryStream(efuseRule))
+                                byte[] efuseRule = GetReaderBytes(reader, "EFUSE_RULE");
+                                if (efuseRule != null)
                                 {
-                                    RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
-                                    if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                    using (MemoryStream ms = new MemoryStream(efuseRule))
                                     {
-                                        continue;
+                                        RuleExpression exp = RuleExpression.Deserialize(ms, logger, vehicle);
+                                        if (!RuleExpression.Evaluate(vehicle, exp, ffmDynamicResolver))
+                                        {
+                                            continue;
+                                        }
                                     }
                                 }
                             }
