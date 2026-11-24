@@ -1649,7 +1649,7 @@ namespace PsdzClient
                     return false;
                 }
 #if false
-                ClientContext.Database.GetEFusesById(new List<string> { "eF1076", "eF150" }, null, null);
+                ClientContext.Database.GetEFusesById(new List<string> { "eF1076", "eF150" }, PsdzContext.VecInfo, null);
 #endif
                 List<PsdzDatabase.SwiInfoObj> completeInfoObjects = ClientContext.Database.GetAllServiceInfoObjs(PsdzContext.VecInfo, new List<string> { PsdzDatabase.AblFilter });
                 if (completeInfoObjects == null)
