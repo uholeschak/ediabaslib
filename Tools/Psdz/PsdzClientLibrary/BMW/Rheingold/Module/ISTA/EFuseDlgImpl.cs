@@ -9,8 +9,7 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class EFuseDlgImpl : ServiceDlgImplBase<EFuseDlgModel>
     {
-        public EFuseDlgImpl(ParameterContainer inParam)
-            : base(inParam)
+        public EFuseDlgImpl(ParameterContainer inParam) : base(inParam)
         {
         }
 
@@ -18,14 +17,15 @@ namespace BMW.Rheingold.Module.ISTA
         {
             bool.TryParse(inParam.getKeyValuePair("Protocol")?.Value.ToString(), out var _);
             string infoTitle = "EFuseDlgImpl";
-            Dictionary<string, TableData> tableData = TableDataHelper.GetTableData(inParam, logic.Lang, Vehicle, DBProvider, base.FFMDynamicResolver);
+            Dictionary<string, TableData> tableData = TableDataHelper.GetTableData(inParam, logic.Lang, Vehicle, DBProvider, FFMDynamicResolver);
             if (tableData != null && tableData.Any())
             {
-                base.Model.ResultData = tableData.Values.FirstOrDefault();
+                Model.ResultData = tableData.Values.FirstOrDefault();
                 if (FastaProtocoler != null)
                 {
                     FastaProtocoler.AddMultiLanguageEFuseInfoTable(infoTitle, tableData, DateTime.Now);
                 }
+
                 SetNextButtonEnabled(value: true);
                 WaitOnUserInteraction();
             }
@@ -38,7 +38,7 @@ namespace BMW.Rheingold.Module.ISTA
                 ServiceProgramNavigationAction serviceProgramNavigationAction;
                 do
                 {
-                    serviceProgramNavigationAction = base.ServiceProgramController.AwaitUserAction(-1) as ServiceProgramNavigationAction;
+                    serviceProgramNavigationAction = ServiceProgramController.AwaitUserAction(-1) as ServiceProgramNavigationAction;
                 }
                 while (serviceProgramNavigationAction == null);
                 Log.Info("EFuseDlgImpl.WaitOnUserInteraction()", "Navigation action: {0}", serviceProgramNavigationAction.NavigationAction);

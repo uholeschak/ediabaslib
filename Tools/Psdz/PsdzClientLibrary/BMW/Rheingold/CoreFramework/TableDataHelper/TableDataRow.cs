@@ -10,13 +10,13 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
     {
         [DataMember]
         private List<object> cells;
-
         public List<object> Cells
         {
             get
             {
                 return cells;
             }
+
             set
             {
                 if (cells != value)
@@ -28,7 +28,6 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public TableDataRow(List<object> cells)
         {
             Cells = cells;
@@ -36,7 +35,7 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

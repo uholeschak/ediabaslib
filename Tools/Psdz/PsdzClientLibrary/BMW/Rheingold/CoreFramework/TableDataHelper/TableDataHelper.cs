@@ -9,7 +9,7 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
 {
     public static class TableDataHelper
     {
-        [PreserveSource(Hint= "IDatabaseProvider replaced", SignatureModified = true)]
+        [PreserveSource(Hint = "IDatabaseProvider replaced", SignatureModified = true)]
         public static Dictionary<string, TableData> GetTableData(ParameterContainer inParam, IList<string> languages, Vehicle vehicle, PsdzDatabase databaseProvider, IFFMDynamicResolver fFMDynamicResolver)
         {
             List<int> list = (inParam.getParameter("eFuse_ID") as List<int>) ?? new List<int>();
@@ -31,6 +31,7 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
                 SetBeforeAndAfterText(inParam, tableData, new List<string> { language });
                 dictionary[language] = tableData;
             }
+
             return dictionary;
         }
 
@@ -81,6 +82,7 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
                     }
                 }
             }
+
             return list;
         }
 
@@ -90,15 +92,16 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             foreach (string item in lang)
             {
                 dictionary[item] = new List<List<object>>
-            {
-                GetValueAndConvert(inParam.getParameter("eFuse_ID") as List<int>),
-                GetValueAndConvert(inParam.getParameter("eFuseNennwert") as List<double>),
-                GetValueAndConvert(inParam.getParameter("eFuseVerbraucher") as List<ITextLocator>, item),
-                GetValueAndConvert(inParam.getParameter("Grobzeichen") as List<string>, item, eFuseResults, originalIds),
-                GetValueAndConvert(inParam.getParameter("eFuseSOLL") as List<ITextLocator>, item),
-                GetValueAndConvert(inParam.getParameter("eFuseIST") as List<ITextLocator>, item)
-            };
+                {
+                    GetValueAndConvert(inParam.getParameter("eFuse_ID") as List<int>),
+                    GetValueAndConvert(inParam.getParameter("eFuseNennwert") as List<double>),
+                    GetValueAndConvert(inParam.getParameter("eFuseVerbraucher") as List<ITextLocator>, item),
+                    GetValueAndConvert(inParam.getParameter("Grobzeichen") as List<string>, item, eFuseResults, originalIds),
+                    GetValueAndConvert(inParam.getParameter("eFuseSOLL") as List<ITextLocator>, item),
+                    GetValueAndConvert(inParam.getParameter("eFuseIST") as List<ITextLocator>, item)
+                };
             }
+
             return dictionary;
         }
 
@@ -108,16 +111,17 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             foreach (string language in languages)
             {
                 List<string> value = new List<string>
-            {
-                GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_A", TextLocator.Empty), language),
-                GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_B", TextLocator.Empty), language),
-                GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_C", TextLocator.Empty), language),
-                GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_D", TextLocator.Empty), language),
-                GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_E", TextLocator.Empty), language),
-                GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_F", TextLocator.Empty), language)
-            };
+                {
+                    GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_A", TextLocator.Empty), language),
+                    GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_B", TextLocator.Empty), language),
+                    GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_C", TextLocator.Empty), language),
+                    GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_D", TextLocator.Empty), language),
+                    GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_E", TextLocator.Empty), language),
+                    GetLocalizedPlainText((ITextLocator)inParam.getParameter("TableName_F", TextLocator.Empty), language)
+                };
                 dictionary[language] = value;
             }
+
             return dictionary;
         }
 
@@ -127,31 +131,37 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             {
                 return new List<object>();
             }
+
             Type typeFromHandle = typeof(T);
             if (typeFromHandle == typeof(double))
             {
-                return (from double value in valuesList
-                        select (value % 1.0 != 0.0) ? value.ToString("F1") : value.ToString("F0")).Cast<object>().ToList();
+                return (
+                    from double value in valuesList
+                    select (value % 1.0 != 0.0) ? value.ToString("F1") : value.ToString("F0")).Cast<object>().ToList();
             }
+
             if (typeFromHandle == typeof(int) || typeFromHandle == typeof(string) || typeFromHandle == typeof(ITextLocator))
             {
                 if (typeFromHandle == typeof(ITextLocator))
                 {
-                    return valuesList.Cast<ITextLocator>().Select(delegate (ITextLocator item)
+                    return valuesList.Cast<ITextLocator>().Select((ITextLocator item) =>
                     {
                         string localizedPlainText = GetLocalizedPlainText(item, lang);
                         return (!string.IsNullOrEmpty(localizedPlainText)) ? localizedPlainText : string.Empty;
-                    }).Cast<object>()
-                        .ToList();
+                    }).Cast<object>().ToList();
                 }
+
                 if (typeFromHandle == typeof(string))
                 {
                     Dictionary<string, string> translationMap = BuildLocalizedTextMap(eFuseResults, lang);
-                    return (from string text in valuesList
-                            select GetLocalizedPlainText(text, lang, translationMap)).Cast<object>().ToList();
+                    return (
+                        from string text in valuesList
+                        select GetLocalizedPlainText(text, lang, translationMap)).Cast<object>().ToList();
                 }
+
                 return valuesList.Cast<object>().ToList();
             }
+
             return new List<object>();
         }
 
@@ -161,10 +171,12 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             string result = string.Empty;
             if (textContent.TextLocalized != null)
             {
-                result = new TextContent((from y in textContent.TextLocalized
-                                          where y.Language == lang
-                                          select y.TextItem).FirstOrDefault()).PlainText;
+                result = new TextContent((
+                    from y in textContent.TextLocalized
+                    where y.Language == lang
+                    select y.TextItem).FirstOrDefault()).PlainText;
             }
+
             return result;
         }
 
@@ -174,10 +186,12 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             {
                 return string.Empty;
             }
+
             if (!translationMap.TryGetValue(stringLocator.Trim(), out var value))
             {
                 return stringLocator;
             }
+
             return value;
         }
 
@@ -188,17 +202,20 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             {
                 return dictionary;
             }
+
             foreach (XEP_EFUSE eFuseResult in eFuseResults)
             {
                 if (eFuseResult?.Entries == null)
                 {
                     continue;
                 }
+
                 Dictionary<string, string> dictionary2 = eFuseResult.Entries.ToDictionary((LocalizedTitleItem e) => e.Language, (LocalizedTitleItem e) => e.Value);
                 if (!dictionary2.TryGetValue(targetLang, out var value))
                 {
                     continue;
                 }
+
                 foreach (KeyValuePair<string, string> item in dictionary2)
                 {
                     string text = item.Value?.Trim();
@@ -208,6 +225,7 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
                     }
                 }
             }
+
             return dictionary;
         }
     }

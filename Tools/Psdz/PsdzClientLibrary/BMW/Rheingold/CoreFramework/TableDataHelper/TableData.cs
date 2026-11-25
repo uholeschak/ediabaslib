@@ -9,25 +9,21 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
     public class TableData : INotifyPropertyChanged
     {
         public string InfoTitle;
-
         [DataMember]
         private List<string> columnHeaders;
-
         [DataMember]
         private List<TableDataRow> rows;
-
         [DataMember]
         private string beforeText;
-
         [DataMember]
         private string afterText;
-
         public List<string> ColumnHeaders
         {
             get
             {
                 return columnHeaders;
             }
+
             set
             {
                 if (columnHeaders != value)
@@ -44,6 +40,7 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             {
                 return rows;
             }
+
             set
             {
                 if (rows != value)
@@ -60,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             {
                 return beforeText;
             }
+
             set
             {
                 if (beforeText != value)
@@ -76,6 +74,7 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
             {
                 return afterText;
             }
+
             set
             {
                 if (afterText != value)
@@ -87,7 +86,6 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public TableData(List<string> columnHeaders, List<TableDataRow> rows)
         {
             for (int i = 0; i < rows.Count; i++)
@@ -97,13 +95,14 @@ namespace BMW.Rheingold.CoreFramework.TableDataHelper
                     rows[i].Cells.Add("");
                 }
             }
+
             ColumnHeaders = columnHeaders;
             Rows = rows;
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
