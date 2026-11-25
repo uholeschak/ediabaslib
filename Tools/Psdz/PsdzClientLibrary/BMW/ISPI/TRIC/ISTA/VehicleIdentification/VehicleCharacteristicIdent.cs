@@ -2,6 +2,7 @@
 using System.Linq;
 using BMW.ISPI.TRIC.ISTA.Contracts;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using BMW.ISPI.TRIC.ISTA.Contracts.Models;
 using BMW.ISPI.TRIC.ISTA.FusionReactor;
@@ -18,8 +19,7 @@ namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification
     {
         public const string DefaultEmptyCharacteristicValue = "-";
         private IIdentVehicle vecInfo;
-        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
-        private PsdzDatabase.Characteristics characteristic;
+        private IXepCharacteristics characteristic;
         private ReactorEngine reactor;
         private readonly ILogger log;
         [PreserveSource(Hint = "Reactor removed", SignatureModified = true)]
@@ -29,8 +29,7 @@ namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification
             this.log = log;
         }
 
-        [PreserveSource(Hint = "Characteristic modified", SignatureModified = true)]
-        public bool AssignVehicleCharacteristic(string vehicleCode, IIdentVehicle vehicle, PsdzDatabase.Characteristics characteristic)
+        public bool AssignVehicleCharacteristic(string vehicleCode, IIdentVehicle vehicle, IXepCharacteristics characteristic)
         {
             return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
         }
@@ -267,9 +266,7 @@ namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //[-] if (!(characteristic.IstaVisible == (decimal? )0m))
-            //[+] if ((characteristic.IstaVisible.ConvertToInt() != (decimal?)0m))
-            if ((characteristic.IstaVisible.ConvertToInt() != (decimal?)0m))
+            if (!(characteristic.IstaVisible == (decimal? )0m))
             {
                 reactor.SetVerkaufsBezeichnung(characteristic.Name, DataSource.Database);
             }
@@ -495,11 +492,9 @@ namespace BMW.ISPI.TRIC.ISTA.VehicleIdentification
         private void GetIdentParameters(params object[] parameters)
         {
             vecInfo = (IIdentVehicle)parameters[0];
-            //[-] characteristic = (IXepCharacteristics)parameters[1];
+            characteristic = (IXepCharacteristics)parameters[1];
             //[+] reactor = (vecInfo as Vehicle)?.Reactor;
             reactor = (vecInfo as Vehicle)?.Reactor;
-            //[+] characteristic = (PsdzDatabase.Characteristics)parameters[1];
-            characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
 
         private HeatMotor GetHeatMotorByDriveId(string driveId)

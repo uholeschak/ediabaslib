@@ -1,5 +1,6 @@
 ﻿using System;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces.VehicleIdent;
 using PsdzClient;
 
@@ -174,9 +175,7 @@ namespace BMW.ISPI.TRIC.ISTA.Contracts
                             case 4:
                                 return ComputeMOTKraftstoffart(param);
                             case 0:
-                                //[-] if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is IXepCharacteristics xepCharacteristics)
-                                //[+] if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
-                                if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
+                                if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is IXepCharacteristics xepCharacteristics)
                                 {
                                     identVehicle.TempTypeKeyLeadFromDb = xepCharacteristics.Name;
                                 }

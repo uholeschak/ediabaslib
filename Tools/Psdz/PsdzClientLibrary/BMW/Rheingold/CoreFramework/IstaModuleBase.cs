@@ -1,7 +1,11 @@
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
+using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
 using BMW.Rheingold.CoreFramework.EnergySettings;
+using BMW.Rheingold.CoreFramework.Interaction.Models;
+using BMW.Rheingold.CoreFramework.Localization;
 using BMW.Rheingold.CoreFramework.Module;
 using BMW.Rheingold.ISTA.CoreFramework;
 using BMW.Rheingold.ISTA.CoreFramework.Module;
@@ -13,9 +17,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication;
-using BMW.Rheingold.CoreFramework.Interaction.Models;
-using BMW.Rheingold.CoreFramework.Localization;
 
 #pragma warning disable CS0169, CS0649, CS0162, CS0618
 namespace BMW.Rheingold.CoreFramework
@@ -1400,8 +1401,8 @@ namespace BMW.Rheingold.CoreFramework
             try
             {
                 //[-] IXepCharacteristics characteristicById = DBProvider.GetCharacteristicById(Convert.ToInt64(controlId, CultureInfo.InvariantCulture));
-                //[+] PsdzDatabase.Characteristics characteristicById = DBProvider.GetCharacteristicById(controlId);
-                PsdzDatabase.Characteristics characteristicById = DBProvider.GetCharacteristicById(controlId);
+                //[+] IXepCharacteristics characteristicById = XepConverter.Convert(DBProvider.GetCharacteristicById(controlId));
+                IXepCharacteristics characteristicById = XepConverter.Convert(DBProvider.GetCharacteristicById(controlId));
                 if (characteristicById != null)
                 {
                     //[-] return new CharacteristicsLocator(characteristicById);

@@ -1,4 +1,5 @@
 ﻿using BMW.ISPI.TRIC.ISTA.Contracts;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
@@ -6,10 +7,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public sealed class VehicleCharacteristicVCIDeviceHelper : VehicleCharacteristicAbstract
     {
         private BasicFeaturesVci basicFeatures;
-        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
-        private PsdzDatabase.Characteristics characteristic;
-        [PreserveSource(Hint = "Characteristics modified", SignatureModified = true)]
-        public bool AssignBasicFeaturesVciCharacteristic(string vehicleCode, BasicFeaturesVci vehicle, PsdzDatabase.Characteristics characteristic)
+        private XEP_CHARACTERISTICS characteristic;
+        public bool AssignBasicFeaturesVciCharacteristic(string vehicleCode, BasicFeaturesVci vehicle, IXepCharacteristics characteristic)
         {
             return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
         }
@@ -17,9 +16,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeMotor(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Motor = characteristic.Title;
-            //[+] basicFeatures.Motor = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Motor = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Motor = characteristic.Title;
             return true;
         }
 
@@ -31,9 +28,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.AEKurzbezeichnung = characteristic.Title;
-            //[+] basicFeatures.AEKurzbezeichnung = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.AEKurzbezeichnung = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.AEKurzbezeichnung = characteristic.Title;
             return true;
         }
 
@@ -60,9 +55,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeBaseVersion(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.BaseVersion = characteristic.Title;
-            //[+] basicFeatures.BaseVersion = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.BaseVersion = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.BaseVersion = characteristic.Title;
             return true;
         }
 
@@ -74,9 +67,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeBaureihe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Baureihe = characteristic.Title;
-            //[+] basicFeatures.Baureihe = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Baureihe = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Baureihe = characteristic.Title;
             return true;
         }
 
@@ -98,18 +89,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeBrandName(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Marke = characteristic.Title;
-            //[+] basicFeatures.Marke = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Marke = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Marke = characteristic.Title;
             return true;
         }
 
         protected override bool ComputeCountryOfAssembly(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.CountryOfAssembly = characteristic.Title;
-            //[+] basicFeatures.CountryOfAssembly = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.CountryOfAssembly = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.CountryOfAssembly = characteristic.Title;
             return true;
         }
 
@@ -166,18 +153,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeEreihe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Ereihe = characteristic.Title;
-            //[+] basicFeatures.Ereihe = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Ereihe = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Ereihe = characteristic.Title;
             return true;
         }
 
         protected override bool ComputeGetriebe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Getriebe = characteristic.Title;
-            //[+] basicFeatures.Getriebe = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Getriebe = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Getriebe = characteristic.Title;
             return true;
         }
 
@@ -194,9 +177,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeKarosserie(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Karosserie = characteristic.Title;
-            //[+] basicFeatures.Karosserie = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Karosserie = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Karosserie = characteristic.Title;
             return true;
         }
 
@@ -208,9 +189,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeLand(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Land = characteristic.Title;
-            //[+] basicFeatures.Land = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Land = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Land = characteristic.Title;
             return true;
         }
 
@@ -222,9 +201,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeLenkung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Lenkung = characteristic.Title;
-            //[+] basicFeatures.Lenkung = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Lenkung = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Lenkung = characteristic.Title;
             return true;
         }
 
@@ -251,9 +228,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeProdart(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.Prodart = characteristic.Title;
-            //[+] basicFeatures.Prodart = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.Prodart = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.Prodart = characteristic.Title;
             return true;
         }
 
@@ -275,9 +250,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeTyp(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.TypeCode = characteristic.Title;
-            //[+] basicFeatures.TypeCode = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.TypeCode = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.TypeCode = characteristic.Title;
             return true;
         }
 
@@ -289,9 +262,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
-            //[-] basicFeatures.VerkaufsBezeichnung = characteristic.Title;
-            //[+] basicFeatures.VerkaufsBezeichnung = characteristic.EcuTranslation.GetTitle(_clientContext);
-            basicFeatures.VerkaufsBezeichnung = characteristic.EcuTranslation.GetTitle(_clientContext);
+            basicFeatures.VerkaufsBezeichnung = characteristic.Title;
             return true;
         }
 
@@ -370,17 +341,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         private void GetVCIDeviceParameters(params object[] parameters)
         {
             basicFeatures = (BasicFeaturesVci)parameters[0];
-            //[-] characteristic = (XEP_CHARACTERISTICS)parameters[1];
-            //[+] characteristic = (PsdzDatabase.Characteristics)parameters[1];
-            characteristic = (PsdzDatabase.Characteristics)parameters[1];
-        }
-
-        [PreserveSource(Added = true)]
-        private ClientContext _clientContext;
-        [PreserveSource(Added = true)]
-        public VehicleCharacteristicVCIDeviceHelper(ClientContext clientContext)
-        {
-            _clientContext = clientContext;
+            characteristic = (XEP_CHARACTERISTICS)parameters[1];
         }
     }
 }

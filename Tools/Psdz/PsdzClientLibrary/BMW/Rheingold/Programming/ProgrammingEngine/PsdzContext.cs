@@ -864,7 +864,7 @@ namespace BMW.Rheingold.Programming.ProgrammingEngine
             {
                 if (string.IsNullOrEmpty(vehicle.VerkaufsBezeichnung) || !(characteristic.RootNodeClass == "40143490"))
                 {
-                    vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristic.RootNodeClass, vehicle, characteristic);
+                    vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristic.RootNodeClass, vehicle, XepConverter.Convert(characteristic));
                     HandleSpecialTreatmentOfCharacteristicForISTA(characteristic, vehicle);
                     List<PsdzDatabase.CharacteristicRoots> characteristicRootsByNodeClassId = database.GetCharacteristicRootsByNodeClassId(characteristic.RootNodeClass);
                     if (!characteristicRootsByNodeClassId.Any())

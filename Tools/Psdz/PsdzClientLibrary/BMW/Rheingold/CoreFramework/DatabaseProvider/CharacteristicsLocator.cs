@@ -1,14 +1,14 @@
-﻿using System;
-using System.Globalization;
+﻿using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BmwFileReader;
 using PsdzClient;
+using System;
+using System.Globalization;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class CharacteristicsLocator : ICharacteristicsLocator, ISPELocator
     {
-        [PreserveSource(Hint = "IXepCharacteristics", Placeholder = true)]
-        private readonly PsdzDatabase.Characteristics characteristicsContainer;
+        private readonly IXepCharacteristics characteristicsContainer;
         private readonly ISPELocator[] children;
         private readonly ISPELocator[] parents;
         public ISPELocator[] Children => children;
@@ -19,13 +19,11 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
-                //[-] if (characteristicsContainer.Nodeclass.HasValue)
-                //[+] if (!string.IsNullOrEmpty(characteristicsContainer.NodeClass))
-                if (!string.IsNullOrEmpty(characteristicsContainer.NodeClass))
+                if (characteristicsContainer.Nodeclass.HasValue)
                 {
                     //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(characteristicsContainer.Nodeclass.Value);
-                    //[+] return clientContext?.Database?.GetXepNodeClassNameById(characteristicsContainer.NodeClass);
-                    return clientContext?.Database?.GetXepNodeClassNameById(characteristicsContainer.NodeClass);
+                    //[+] return clientContext?.Database?.GetXepNodeClassNameById(characteristicsContainer.Nodeclass.Value.ToString(CultureInfo.InvariantCulture));
+                    return clientContext?.Database?.GetXepNodeClassNameById(characteristicsContainer.Nodeclass.Value.ToString(CultureInfo.InvariantCulture));
                 }
 
                 return string.Empty;
@@ -75,9 +73,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return -1m;
                 }
 
-                //[-] return characteristicsContainer.Id;
-                //[+] return characteristicsContainer.Id.ConvertToInt();
-                return characteristicsContainer.Id.ConvertToInt();
+                return characteristicsContainer.Id;
             }
         }
 
@@ -93,9 +89,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return -1m;
                 }
 
-                //[-] return characteristicsContainer.ParentId.Value;
-                //[+] return characteristicsContainer.ParentId.ConvertToInt();
-                return characteristicsContainer.ParentId.ConvertToInt();
+                return characteristicsContainer.ParentId.Value;
             }
         }
 
@@ -108,9 +102,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return null;
                 }
 
-                //[-] return characteristicsContainer.Title;
-                //[+] return characteristicsContainer.EcuTranslation.GetTitleTranslated(clientContext.Language);
-                return characteristicsContainer.EcuTranslation.GetTitleTranslated(clientContext.Language);
+                return characteristicsContainer.Title;
             }
         }
 
@@ -123,9 +115,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     return null;
                 }
 
-                //[-] return characteristicsContainer.Title_dede;
-                //[+] return characteristicsContainer.EcuTranslation.TextDe;
-                return characteristicsContainer.EcuTranslation.TextDe;
+                return characteristicsContainer.Title_dede;
             }
         }
 
@@ -142,8 +132,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        [PreserveSource(Hint = "IXepCharacteristics replaced", SignatureModified = true)]
-        public CharacteristicsLocator(PsdzDatabase.Characteristics characteristicsContainer, ClientContext clientContext)
+        [PreserveSource(Hint = "clientContext added", SignatureModified = true)]
+        public CharacteristicsLocator(IXepCharacteristics characteristicsContainer, ClientContext clientContext)
         {
             this.characteristicsContainer = characteristicsContainer;
             //[+] this.clientContext = clientContext;
@@ -164,138 +154,80 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 case "ID":
                     return characteristicsContainer.Id.ToString(CultureInfo.InvariantCulture);
                 case "NODECLASS":
-                    //[-] if (!characteristicsContainer.Nodeclass.HasValue)
-                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.NodeClass))
-                    if (string.IsNullOrEmpty(characteristicsContainer.NodeClass))
+                    if (!characteristicsContainer.Nodeclass.HasValue)
                     {
                         return "0";
                     }
-                    //[-] return characteristicsContainer.Nodeclass.ToString();
-                    //[+]return characteristicsContainer.NodeClass;
-                    return characteristicsContainer.NodeClass;
+                    return characteristicsContainer.Nodeclass.ToString();
                 case "TITLEID":
-                    //[-] if (!characteristicsContainer.TitleId.HasValue)
-                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.TitleId))
-                    if (string.IsNullOrEmpty(characteristicsContainer.TitleId))
+                    if (!characteristicsContainer.TitleId.HasValue)
                     {
                         return "0";
                     }
                     return characteristicsContainer.TitleId.ToString();
                 case "TITLE_DEDE":
-                    //[-] return characteristicsContainer.Title_dede;
-                    //[+] return characteristicsContainer.EcuTranslation.TextDe;
-                    return characteristicsContainer.EcuTranslation.TextDe;
+                    return characteristicsContainer.Title_dede;
                 case "TITLE_ENGB":
-                    //[-] return characteristicsContainer.Title_engb;
-                    //[+] return characteristicsContainer.EcuTranslation.TextEn;
-                    return characteristicsContainer.EcuTranslation.TextEn;
+                    return characteristicsContainer.Title_engb;
                 case "TITLE_ENUS":
-                    //[-] return characteristicsContainer.Title_enus;
-                    //[+] return characteristicsContainer.EcuTranslation.TextUs;
-                    return characteristicsContainer.EcuTranslation.TextUs;
+                    return characteristicsContainer.Title_enus;
                 case "TITLE_FR":
-                    //[-] return characteristicsContainer.Title_fr;
-                    //[+] return characteristicsContainer.EcuTranslation.TextFr;
-                    return characteristicsContainer.EcuTranslation.TextFr;
+                    return characteristicsContainer.Title_fr;
                 case "TITLE_TH":
-                    //[-] return characteristicsContainer.Title_th;
-                    //[+] return characteristicsContainer.EcuTranslation.TextTh;
-                    return characteristicsContainer.EcuTranslation.TextTh;
+                    return characteristicsContainer.Title_th;
                 case "TITLE_SV":
-                    //[-] return characteristicsContainer.Title_sv;
-                    //[+] return characteristicsContainer.EcuTranslation.TextSv;
-                    return characteristicsContainer.EcuTranslation.TextSv;
+                    return characteristicsContainer.Title_sv;
                 case "TITLE_IT":
-                    //[-] return characteristicsContainer.Title_it;
-                    //[+] return characteristicsContainer.EcuTranslation.TextIt;
-                    return characteristicsContainer.EcuTranslation.TextIt;
+                    return characteristicsContainer.Title_it;
                 case "TITLE_ES":
-                    //[-] return characteristicsContainer.Title_es;
-                    //[+] return characteristicsContainer.EcuTranslation.TextEs;
-                    return characteristicsContainer.EcuTranslation.TextEs;
+                    return characteristicsContainer.Title_es;
                 case "TITLE_ID":
-                    //[-] return characteristicsContainer.Title_id;
-                    //[+] return characteristicsContainer.EcuTranslation.TextId;
-                    return characteristicsContainer.EcuTranslation.TextId;
+                    return characteristicsContainer.Title_id;
                 case "TITLE_KO":
-                    //[-] return characteristicsContainer.Title_ko;
-                    //[+] return characteristicsContainer.EcuTranslation.TextKo;
-                    return characteristicsContainer.EcuTranslation.TextKo;
+                    return characteristicsContainer.Title_ko;
                 case "TITLE_EL":
-                    //[-] return characteristicsContainer.Title_el;
-                    //[+] return characteristicsContainer.EcuTranslation.TextEl;
-                    return characteristicsContainer.EcuTranslation.TextEl;
+                    return characteristicsContainer.Title_el;
                 case "TITLE_TR":
-                    //[-] return characteristicsContainer.Title_tr;
-                    //[+] return characteristicsContainer.EcuTranslation.TextTr;
-                    return characteristicsContainer.EcuTranslation.TextTr;
+                    return characteristicsContainer.Title_tr;
                 case "TITLE_ZHCN":
-                    //[-] return characteristicsContainer.Title_zhcn;
-                    //[+] return characteristicsContainer.EcuTranslation.TextZh;
-                    return characteristicsContainer.EcuTranslation.TextZh;
+                    return characteristicsContainer.Title_zhcn;
                 case "TITLE_RU":
-                    //[-] return characteristicsContainer.Title_ru;
-                    //[+] return characteristicsContainer.EcuTranslation.TextRu;
-                    return characteristicsContainer.EcuTranslation.TextRu;
+                    return characteristicsContainer.Title_ru;
                 case "TITLE_NL":
-                    //[-] return characteristicsContainer.Title_nl;
-                    //[+] return characteristicsContainer.EcuTranslation.TextNl;
-                    return characteristicsContainer.EcuTranslation.TextNl;
+                    return characteristicsContainer.Title_nl;
                 case "TITLE_PT":
-                    //[-] return characteristicsContainer.Title_pt;
-                    //[+] return characteristicsContainer.EcuTranslation.TextPt;
-                    return characteristicsContainer.EcuTranslation.TextPt;
+                    return characteristicsContainer.Title_pt;
                 case "TITLE_ZHTW":
-                    //[-] return characteristicsContainer.Title_zhtw;
-                    //[+] return characteristicsContainer.EcuTranslation.TextZh;
-                    return characteristicsContainer.EcuTranslation.TextZh;
+                    return characteristicsContainer.Title_zhtw;
                 case "TITLE_JA":
-                    //[-] return characteristicsContainer.Title_ja;
-                    //[+] return characteristicsContainer.EcuTranslation.TextJa;
-                    return characteristicsContainer.EcuTranslation.TextJa;
+                    return characteristicsContainer.Title_ja;
                 case "TITLE_CSCZ":
-                    //[-] return characteristicsContainer.Title_cscz;
-                    //[+] return characteristicsContainer.EcuTranslation.TextCs;
-                    return characteristicsContainer.EcuTranslation.TextCs;
+                    return characteristicsContainer.Title_cscz;
                 case "TITLE_PLPL":
-                    //[-] return characteristicsContainer.Title_plpl;
-                    //[+] return characteristicsContainer.EcuTranslation.TextPl;
-                    return characteristicsContainer.EcuTranslation.TextPl;
+                    return characteristicsContainer.Title_plpl;
                 case "STATICCLASSVARIABLES":
-                    //[-] if (!characteristicsContainer.StaticClassVariables.HasValue)
-                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.StaticClassVar))
-                    if (string.IsNullOrEmpty(characteristicsContainer.StaticClassVar))
+                    if (!characteristicsContainer.StaticClassVariables.HasValue)
                     {
                         return "0";
                     }
 
-                    //[-] return characteristicsContainer.StaticClassVariables.ToString();
-                    //[+] return characteristicsContainer.StaticClassVar;
-                    return characteristicsContainer.StaticClassVar;
+                    return characteristicsContainer.StaticClassVariables.ToString();
                 case "STATICCLASSVARIABLESMOTORRAD":
-                    //[-] if (!characteristicsContainer.StaticClassVariablesMotorrad.HasValue)
-                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.StaticClassVarMCycle))
-                    if (string.IsNullOrEmpty(characteristicsContainer.StaticClassVarMCycle))
+                    if (!characteristicsContainer.StaticClassVariablesMotorrad.HasValue)
                     {
                         return "0";
                     }
 
-                    //[-] return characteristicsContainer.StaticClassVariablesMotorrad.ToString();
-                    //[+] return characteristicsContainer.StaticClassVarMCycle;
-                    return characteristicsContainer.StaticClassVarMCycle;
+                    return characteristicsContainer.StaticClassVariablesMotorrad.ToString();
                 case "PARENTID":
-                    //[-] if (!characteristicsContainer.ParentId.HasValue)
-                    //[+] if (string.IsNullOrEmpty(characteristicsContainer.ParentId))
-                    if (string.IsNullOrEmpty(characteristicsContainer.ParentId))
+                    if (!characteristicsContainer.ParentId.HasValue)
                     {
                         return "0";
                     }
 
                     return characteristicsContainer.ParentId.ToString();
                 case "TITLE":
-                    //[-] return characteristicsContainer.Title;
-                    //[+] return characteristicsContainer.EcuTranslation.GetTitleTranslated(clientContext.Language);
-                    return characteristicsContainer.EcuTranslation.GetTitleTranslated(clientContext.Language);
+                    return characteristicsContainer.Title;
                 case "NAME":
                     return characteristicsContainer.Name;
                 case "LEGACY_NAME":

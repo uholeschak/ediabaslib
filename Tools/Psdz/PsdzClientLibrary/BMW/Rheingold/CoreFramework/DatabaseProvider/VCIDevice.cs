@@ -1545,20 +1545,16 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
 
             //[-] IList<IXepCharacteristics> vehicleIdentByTypeKey = instance.GetVehicleIdentByTypeKey(text);
-            //[+] List<PsdzDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
-            List<PsdzDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
+            //[+] IList<IXepCharacteristics> vehicleIdentByTypeKey = XepConverter.Convert(_clientContext?.Database?.GetVehicleIdentByTypeKey(text, false));
+            IList<IXepCharacteristics> vehicleIdentByTypeKey = XepConverter.Convert(_clientContext?.Database?.GetVehicleIdentByTypeKey(text, false));
             if (vehicleIdentByTypeKey == null)
             {
                 return;
             }
 
             BasicFeaturesVci vehicle = new BasicFeaturesVci();
-            //[-] VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper();
-            //[-] foreach (IXepCharacteristics item in vehicleIdentByTypeKey)
-            //[+] VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
-            VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
-            //[+] foreach (PsdzDatabase.Characteristics item in vehicleIdentByTypeKey)
-            foreach (PsdzDatabase.Characteristics item in vehicleIdentByTypeKey)
+            VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper();
+            foreach (IXepCharacteristics item in vehicleIdentByTypeKey)
             {
                 vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(item.RootNodeClass.ToString(), vehicle, item);
             }
