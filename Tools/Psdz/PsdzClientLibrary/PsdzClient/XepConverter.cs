@@ -36,9 +36,14 @@ namespace PsdzClient
             return xepCharacteristics;
         }
 
-        public static ICollection<XEP_CHARACTERISTICS> Convert(ICollection<PsdzDatabase.Characteristics> characteristicsList)
+        public static IList<IXepCharacteristics> Convert(ICollection<PsdzDatabase.Characteristics> characteristicsList)
         {
-            List<XEP_CHARACTERISTICS> xepCharacteristicsList = new List<XEP_CHARACTERISTICS>();
+            if (characteristicsList == null)
+            {
+                return null;
+            }
+
+            List<IXepCharacteristics> xepCharacteristicsList = new List<IXepCharacteristics>();
             foreach (PsdzDatabase.Characteristics characteristics in characteristicsList)
             {
                 xepCharacteristicsList.Add(Convert(characteristics));
