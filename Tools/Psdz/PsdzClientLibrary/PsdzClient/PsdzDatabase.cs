@@ -5519,6 +5519,8 @@ namespace PsdzClient
             {
                 return null;
             }
+
+            log.InfoFormat("GetFaultCodeByCodeAndVariantName: Code: {0}, VariantName: {1}, DataType: {2}", code, variantName, dataType);
             IList<IXepFaultCode> faultCodeCandidates = GetFaultCodeCandidates(code, variantName, dataType, vec, ffmResolver);
             return SelectFaultCode(faultCodeCandidates, variantName, code, "GetFaultCodeByCodeAndVariantName()") as FaultCode;
         }
@@ -5545,7 +5547,9 @@ namespace PsdzClient
             List<IXepFaultCode> list = new List<IXepFaultCode>();
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, string.IsNullOrEmpty(dataType) ? "SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{0}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{1}' COLLATE UTF8CI)))" : "SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{0}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{1}' COLLATE UTF8CI))) and (datatype = '{2}')", code, variantName, dataType);
+                string sql = string.Format(CultureInfo.InvariantCulture, string.IsNullOrEmpty(dataType) ?
+                    "SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{0}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{1}' COLLATE UTF8CI)))" :
+                    "SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{0}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{1}' COLLATE UTF8CI))) and (datatype = '{2}')", code, variantName, dataType);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
