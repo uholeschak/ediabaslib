@@ -1,5 +1,6 @@
 ﻿using BMW.ISPI.TRIC.ISTA.Common;
 using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
+using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using BMW.Rheingold.CoreFramework;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
@@ -5514,12 +5515,37 @@ namespace PsdzClient
 
         public FaultCode GetFaultCodeByCodeAndVariantName(decimal code, string variantName, string dataType, Vehicle vec, IFFMDynamicResolver ffmResolver)
         {
+            if (string.IsNullOrEmpty(variantName))
+            {
+                return null;
+            }
+            IList<IXepFaultCode> faultCodeCandidates = GetFaultCodeCandidates(code, variantName, dataType, vec, ffmResolver);
+            return SelectFaultCode(faultCodeCandidates, variantName, code, "GetFaultCodeByCodeAndVariantName()") as FaultCode;
+        }
+
+        private IXepFaultCode SelectFaultCode(IList<IXepFaultCode> candidates, string variantName, decimal code, string callerName)
+        {
+            if (candidates.Count == 1)
+            {
+                return candidates[0];
+            }
+            if (candidates.Count > 1)
+            {
+                log.ErrorFormat(callerName, "{0} FaultCodes for Variant Name {1} and Code {2} found. Only the first hit will be returned!", candidates.Count, variantName, code);
+                return candidates[0];
+            }
+            log.InfoFormat(callerName, "No FaultCodes for Variant Name {0} and Code {1} found. Returning NULL!", variantName, code);
+            return null;
+        }
+
+        public IList<IXepFaultCode> GetFaultCodeCandidates(decimal code, string variantName, string dataType, Vehicle vec, IFFMDynamicResolver ffmResolver)
+        {
             log.InfoFormat("GetFaultCodeByCodeAndVariantName: Code: {0}, VariantName: {1}, DataType: {2}", code, variantName, dataType);
 
-            List<FaultCode> list = new List<FaultCode>();
+            List<IXepFaultCode> list = new List<IXepFaultCode>();
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{{0}}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{{1}}' COLLATE UTF8CI)))"" : ""SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{0}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{1}' COLLATE UTF8CI))) and (datatype = '{2}')", code, variantName, dataType);
+                string sql = string.Format(CultureInfo.InvariantCulture, string.IsNullOrEmpty(dataType) ? "SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{0}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{1}' COLLATE UTF8CI)))" : "SELECT ID, CODE, DATATYPE, WEIGHTING, SCHEINFEHLER, AUSBLENDINDEX, RELEVANCE, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM,\r\n                         DIAGNOSEINDEX, ECUVARIANTID\r\n                  FROM XEP_FAULTCODES\r\n                  WHERE (code = '{0}' COLLATE UTF8CI) and (ecuvariantid = (SELECT ID FROM XEP_ECUVARIANTS where (name = '{1}' COLLATE UTF8CI))) and (datatype = '{2}')", code, variantName, dataType);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -5543,16 +5569,7 @@ namespace PsdzClient
             }
 
             log.InfoFormat("GetFaultCodeByCodeAndVariantName Count: {0}", list.Count);
-            if (list.Count == 1)
-            {
-                return list.First();
-            }
-            if (list.Count > 1)
-            {
-                log.ErrorFormat("GetFaultCodeByCodeAndVariantName(): {0} FaultCodes for Variant Name {1} and Code {2} found. Only the first hit will be returned!", list.Count, variantName, code);
-                return list.First();
-            }
-            return null;
+            return list;
         }
 
         public IList<XEP_STATEVALUES> GetEcuResultStateValues(decimal ecuResultId)
