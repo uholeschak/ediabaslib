@@ -5576,6 +5576,11 @@ namespace PsdzClient
             return list;
         }
 
+        public ICollection<FaultCode> GetIncomingFaultCodesForDiagObject(decimal diagObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            return null;
+        }
+
         public XEP_STATEVALUES GetXepStateValuesById(decimal id)
         {
             log.InfoFormat("GetXepStateValuesById Id: {0}", id);

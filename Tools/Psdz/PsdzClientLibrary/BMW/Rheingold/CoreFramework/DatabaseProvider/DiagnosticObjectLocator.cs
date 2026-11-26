@@ -227,14 +227,16 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public ISPELocator[] GetIncomingLinks()
         {
             //[-] ICollection<FaultCode> incomingFaultCodesForDiagObject = DatabaseProviderFactory.Instance.GetIncomingFaultCodesForDiagObject(diagnosticObjectContainer.GetXepDiagnosisObject().Id, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver);
+            //[+] ICollection<FaultCode> incomingFaultCodesForDiagObject = clientContext?.Database.GetIncomingFaultCodesForDiagObject(diagnosticObjectContainer.GetXepDiagnosisObject().Id, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver);
+            ICollection<FaultCode> incomingFaultCodesForDiagObject = clientContext?.Database.GetIncomingFaultCodesForDiagObject(diagnosticObjectContainer.GetXepDiagnosisObject().Id, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver);
             List<ISPELocator> list = new List<ISPELocator>();
-            //[-] if (incomingFaultCodesForDiagObject != null)
-            //[-] {
-            //[-] foreach (FaultCode item in incomingFaultCodesForDiagObject)
-            //[-] {
-            //[-] list.Add(new FaultCodeLocator(item, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver));
-            //[-] }
-            //[-] }
+            if (incomingFaultCodesForDiagObject != null)
+            {
+                foreach (FaultCode item in incomingFaultCodesForDiagObject)
+                {
+                    list.Add(new FaultCodeLocator(item, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver));
+                }
+            }
             return list.ToArray();
         }
 
@@ -244,11 +246,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             if ("SUSPICIONLINK".Equals(incomingLinkName, StringComparison.OrdinalIgnoreCase))
             {
                 //[-] ICollection<FaultCode> incomingFaultCodesForDiagObject = DatabaseProviderFactory.Instance.GetIncomingFaultCodesForDiagObject(diagnosticObjectContainer.GetXepDiagnosisObject().Id, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver);
+                //[+] ICollection<FaultCode> incomingFaultCodesForDiagObject = clientContext?.Database.GetIncomingFaultCodesForDiagObject(diagnosticObjectContainer.GetXepDiagnosisObject().Id, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver);
+                ICollection<FaultCode> incomingFaultCodesForDiagObject = clientContext?.Database.GetIncomingFaultCodesForDiagObject(diagnosticObjectContainer.GetXepDiagnosisObject().Id, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver);
                 List<ISPELocator> list = new List<ISPELocator>();
-                //[-] foreach (FaultCode item in incomingFaultCodesForDiagObject)
-                //[-] {
-                //[-] list.Add(new FaultCodeLocator(item, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver));
-                //[-] }
+                foreach (FaultCode item in incomingFaultCodesForDiagObject)
+                {
+                    list.Add(new FaultCodeLocator(item, diagnosticObjectContainer.Vehicle, diagnosticObjectContainer.FFMResolver));
+                }
                 return list.ToArray();
             }
             return parents;
