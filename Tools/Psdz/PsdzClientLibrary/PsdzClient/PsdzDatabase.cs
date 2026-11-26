@@ -6301,6 +6301,38 @@ namespace PsdzClient
             }
         }
 
+        public XEP_VEHICLEPART GetXepVehiclePartById(decimal id)
+        {
+            log.InfoFormat("GetXepVehiclePartById called with id: '{0}'", id);
+            try
+            {
+                XEP_VEHICLEPART xEP_VEHICLEPART = null;
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + DatabaseFunctions.SqlTitleItems + " FROM XEP_VEHICLEPART WHERE ID = {0}", id);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xEP_VEHICLEPART = new XEP_VEHICLEPART();
+                            xEP_VEHICLEPART.Id = GetReaderDecimal(reader, "ID") ?? 0;
+                            xEP_VEHICLEPART.TitleId = GetReaderDecimal(reader, "TITLEID") ?? 0;
+                            EcuTranslation translation = GetTranslation(reader);
+                            XepConverter.CopyEcuTranslation(translation, xEP_VEHICLEPART);
+                            break;
+                        }
+                    }
+                }
+                return xEP_VEHICLEPART;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEnvCondLabels Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
         public IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> GetRefFaultLabelsLabelIdByFaultList(IEnumerable<Fault> faultList)
         {
             log.InfoFormat("GetRefFaultLabelsLabelIdByFaultList called with faultList: '{0}'", string.Join(",", faultList.Select(f => f.ToString())));

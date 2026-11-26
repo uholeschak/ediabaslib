@@ -991,11 +991,11 @@ namespace BMW.Rheingold.CoreFramework
         {
             try
             {
-            //[-] XEP_VEHICLEPART xepVehiclePartById = DBProvider.GetXepVehiclePartById(Convert.ToDecimal(refText));
-            //[-] if (xepVehiclePartById != null)
-            //[-] {
-            //[-] return new VehiclePart(xepVehiclePartById);
-            //[-] }
+                XEP_VEHICLEPART xepVehiclePartById = DBProvider.GetXepVehiclePartById(Convert.ToDecimal(refText));
+                if (xepVehiclePartById != null)
+                {
+                    return new VehiclePart(xepVehiclePartById);
+                }
             }
             catch (Exception exception)
             {
