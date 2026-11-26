@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Globalization;
 using BMW.Rheingold.CoreFramework.Contracts;
+using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 {
     public class DocumentLocator : IDocumentLocator, ISPELocator
     {
         private readonly InfoObject infoObject;
+        [PreserveSource(Added = true)]
+        private readonly PsdzDatabase psdzDatabase;
         public ISPELocator[] Children
         {
             get
@@ -42,7 +45,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 if (infoObject.XepInfoObject.Nodeclass.HasValue)
                 {
-                //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(infoObject.XepInfoObject.Nodeclass.Value);
+                    //[-] return DatabaseProviderFactory.Instance.GetXepNodeClassNameById(infoObject.XepInfoObject.Nodeclass.Value);
+                    //[+] return psdzDatabase.GetXepNodeClassNameById(infoObject.XepInfoObject.Nodeclass.Value.ToString(CultureInfo.InvariantCulture));
+                    return psdzDatabase.GetXepNodeClassNameById(infoObject.XepInfoObject.Nodeclass.Value.ToString(CultureInfo.InvariantCulture));
                 }
 
                 return string.Empty;
@@ -91,13 +96,16 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             }
         }
 
-        public DocumentLocator(InfoObject infoObject)
+        [PreserveSource(Hint = "database added", SignatureModified = true)]
+        public DocumentLocator(InfoObject infoObject, PsdzDatabase database)
         {
             this.infoObject = infoObject;
             if (infoObject == null)
             {
                 throw new ArgumentNullException("infoObject");
             }
+            //[+] psdzDatabase = database;
+            psdzDatabase = database;
         }
 
         public ISPELocator[] GetIncomingLinks()

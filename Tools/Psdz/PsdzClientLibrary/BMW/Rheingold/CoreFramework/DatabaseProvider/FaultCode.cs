@@ -824,7 +824,9 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 if (documentLocator == null)
                 {
-                    documentLocator = new DocumentLocator(Doc);
+                    //[-] documentLocator = new DocumentLocator(Doc);
+                    //[+] documentLocator = new DocumentLocator(Doc, ClientContext.GetDatabase(vehicleContext));
+                    documentLocator = new DocumentLocator(Doc, ClientContext.GetDatabase(vehicleContext));
                 }
 
                 return documentLocator;
