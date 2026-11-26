@@ -5576,6 +5576,37 @@ namespace PsdzClient
             return list;
         }
 
+        public XEP_STATEVALUES GetXepStateValuesById(decimal id)
+        {
+            log.InfoFormat("GetXepStateValuesById Id: {0}", id);
+
+            XEP_STATEVALUES xEP_STATEVALUES = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, "SELECT ID, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", STATEVALUE, VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, PARENTID FROM XEP_STATEVALUES WHERE ID = {0}", id);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xEP_STATEVALUES = ReadXepStateValues(reader);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetXepStateValuesById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetXepStateValuesById StateValues: {0}", xEP_STATEVALUES != null);
+            return xEP_STATEVALUES;
+        }
+
         public IList<XEP_STATEVALUES> GetEcuResultStateValues(decimal ecuResultId)
         {
             log.InfoFormat("GetEcuResultStateValues Id: {0}", ecuResultId);
@@ -5591,16 +5622,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            XEP_STATEVALUES xEP_STATEVALUES = new XEP_STATEVALUES();
-                            xEP_STATEVALUES.Id = GetReaderDecimal(reader, "ID") ?? 0;
-                            xEP_STATEVALUES.TitleId = GetReaderDecimal(reader, "TITLEID");
-                            xEP_STATEVALUES.Statevalue = GetReaderString(reader, "STATEVALUE");
-                            xEP_STATEVALUES.ValidFrom = GetReaderDateTime(reader, "VALIDFROM");
-                            xEP_STATEVALUES.ValidTo = GetReaderDateTime(reader, "VALIDTO");
-                            xEP_STATEVALUES.Sicherheitsrelevant = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
-                            xEP_STATEVALUES.ParentId = GetReaderDecimal(reader, "PARENTID");
-                            EcuTranslation translation = GetTranslation(reader);
-                            XepConverter.CopyEcuTranslation(translation, xEP_STATEVALUES);
+                            XEP_STATEVALUES xEP_STATEVALUES = ReadXepStateValues(reader);
                             list.Add(xEP_STATEVALUES);
                         }
                     }
@@ -7188,6 +7210,21 @@ namespace PsdzClient
             EcuTranslation translation = GetTranslation(reader);
             XepConverter.CopyEcuTranslation(translation, faultLabel);
             return faultLabel;
+        }
+
+        private static XEP_STATEVALUES ReadXepStateValues(SqliteDataReader reader)
+        {
+            XEP_STATEVALUES xEP_STATEVALUES = new XEP_STATEVALUES();
+            xEP_STATEVALUES.Id = GetReaderDecimal(reader, "ID") ?? 0;
+            xEP_STATEVALUES.TitleId = GetReaderDecimal(reader, "TITLEID");
+            xEP_STATEVALUES.Statevalue = GetReaderString(reader, "STATEVALUE");
+            xEP_STATEVALUES.ValidFrom = GetReaderDateTime(reader, "VALIDFROM");
+            xEP_STATEVALUES.ValidTo = GetReaderDateTime(reader, "VALIDTO");
+            xEP_STATEVALUES.Sicherheitsrelevant = GetReaderDecimal(reader, "SICHERHEITSRELEVANT");
+            xEP_STATEVALUES.ParentId = GetReaderDecimal(reader, "PARENTID");
+            EcuTranslation translation = GetTranslation(reader);
+            XepConverter.CopyEcuTranslation(translation, xEP_STATEVALUES);
+            return xEP_STATEVALUES;
         }
 
         private static decimal? GetReaderDecimal(SqliteDataReader reader, string name)
