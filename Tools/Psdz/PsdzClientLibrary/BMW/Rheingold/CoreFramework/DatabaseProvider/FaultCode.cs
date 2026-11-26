@@ -813,11 +813,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return default;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public InfoObject GetDocument()
         {
             return Doc;
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public IDocumentLocator GetDocument(string docType)
         {
             if (Doc.XepInfoObject.DocumentType.Equals(docType))
