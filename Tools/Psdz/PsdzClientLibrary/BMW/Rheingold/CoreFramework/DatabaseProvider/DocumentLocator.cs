@@ -8,8 +8,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class DocumentLocator : IDocumentLocator, ISPELocator
     {
         private readonly InfoObject infoObject;
-        [PreserveSource(Added = true)]
-        private readonly PsdzDatabase psdzDatabase;
         public ISPELocator[] Children
         {
             get
@@ -100,12 +98,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         public DocumentLocator(InfoObject infoObject, PsdzDatabase database)
         {
             this.infoObject = infoObject;
+            //[+] psdzDatabase = database;
+            psdzDatabase = database;
             if (infoObject == null)
             {
                 throw new ArgumentNullException("infoObject");
             }
-            //[+] psdzDatabase = database;
-            psdzDatabase = database;
         }
 
         public ISPELocator[] GetIncomingLinks()
@@ -142,5 +140,8 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             return infoObject;
         }
+
+        [PreserveSource(Added = true)]
+        private readonly PsdzDatabase psdzDatabase;
     }
 }
