@@ -8,24 +8,42 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class StateLocator : IStateLocator, ISPELocator
     {
         private Exception exception;
-
         private readonly XEP_STATEVALUES state;
-
         private ITextContent localTc;
-
         public ISPELocator[] Children => new ISPELocator[0];
-
         public string DataClassName => "State";
-
         public string[] DataValueNames => new string[28]
         {
-        "ID", "TITLEID", "TITLE", "TITLE_DEDE", "TITLE_ENGB", "TITLE_ENUS", "TITLE_FR", "TITLE_TH", "TITLE_SV", "TITLE_IT",
-        "TITLE_ES", "TITLE_ID", "TITLE_KO", "TITLE_EL", "TITLE_TR", "TITLE_ZHCN", "TITLE_RU", "TITLE_NL", "TITLE_PT", "TITLE_ZHTW",
-        "TITLE_JA", "TITLE_CSCZ", "TITLE_PLPL", "STATEVALUE", "VALIDFROM", "VALIDTO", "SICHERHEITSRELEVANT", "PARENTID"
+            "ID",
+            "TITLEID",
+            "TITLE",
+            "TITLE_DEDE",
+            "TITLE_ENGB",
+            "TITLE_ENUS",
+            "TITLE_FR",
+            "TITLE_TH",
+            "TITLE_SV",
+            "TITLE_IT",
+            "TITLE_ES",
+            "TITLE_ID",
+            "TITLE_KO",
+            "TITLE_EL",
+            "TITLE_TR",
+            "TITLE_ZHCN",
+            "TITLE_RU",
+            "TITLE_NL",
+            "TITLE_PT",
+            "TITLE_ZHTW",
+            "TITLE_JA",
+            "TITLE_CSCZ",
+            "TITLE_PLPL",
+            "STATEVALUE",
+            "VALIDFROM",
+            "VALIDTO",
+            "SICHERHEITSRELEVANT",
+            "PARENTID"
         };
-
         public Exception Exception => exception;
-
         public bool HasException => exception != null;
 
         public string Id
@@ -36,12 +54,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return state.Id.ToString(CultureInfo.InvariantCulture);
                 }
+
                 return string.Empty;
             }
         }
 
         public string[] IncomingLinkNames => new string[0];
-
         public string[] OutgoingLinkNames => new string[0];
 
         public decimal? ParentId
@@ -52,6 +70,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return state.ParentId;
                 }
+
                 return null;
             }
         }
@@ -66,6 +85,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return -1m;
                 }
+
                 return state.Id;
             }
         }
@@ -78,8 +98,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return state.Statevalue;
                 }
+
                 return null;
             }
+
             set
             {
                 if (state != null)
@@ -99,10 +121,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         return new TextContent(state.Title);
                     }
+
                     return localTc;
                 }
+
                 return null;
             }
+
             set
             {
                 localTc = value;
@@ -160,6 +185,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         {
                             return state.TitleId.ToString();
                         }
+
                         break;
                     case "TITLE":
                         return state.Title;
@@ -210,27 +236,32 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         {
                             return state.ValidFrom.ToString();
                         }
+
                         break;
                     case "VALIDTO":
                         if (state.ValidTo.HasValue)
                         {
                             return state.ValidTo.ToString();
                         }
+
                         break;
                     case "SICHERHEITSRELEVANT":
                         if (state.Sicherheitsrelevant.HasValue)
                         {
                             return state.Sicherheitsrelevant.ToString();
                         }
+
                         break;
                     case "PARENTID":
                         if (state.ParentId.HasValue)
                         {
                             return state.ParentId.ToString();
                         }
+
                         break;
                 }
             }
+
             return null;
         }
 
@@ -256,7 +287,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public T GetDataValue<T>(string name)
         {
-            return default(T);
+            return default;
         }
     }
 }

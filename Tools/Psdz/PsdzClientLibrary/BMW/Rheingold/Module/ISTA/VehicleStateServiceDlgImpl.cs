@@ -20,81 +20,86 @@ namespace BMW.Rheingold.Module.ISTA
     internal class VehicleStateServiceDlgImpl : ServiceDlgImplBase<VehicleStateServiceDlgModel>
     {
         private bool p_WeiterButtonEnabledStack;
-
         private bool display;
-
         private IProtocolBasic fasta;
-
         private string callingMethod;
-
         private IAction<IUiDialog> fastaUiAction;
-
         private bool p_Quitted;
-
         private bool outStateZuendungMet;
-
         private bool outStateMotorMet;
-
         private bool outStateZuendungOn;
-
         private bool outStateMotorOn;
-
         private VehicleState VehicleStates = new VehicleState();
-
         private bool pMotorSollZustandEin;
-
         private bool pbFormAutomaticInstructionDisplayed;
-
         private IVehiclePartLocator[] vehiclePartArray;
-
         private IVehicleStateLocator[] vehicleStateArray;
-
         private string[] verificationMethodArray;
-
         private bool pbPTT_Device_Detected;
-
         private int pMotorIndex = -1;
-
         public int pStandlichtIndex = -1;
-
         public int pTesterIndex = -1;
-
         public int pZuendungIndex = -1;
-
         private ITextLocator wertFeld;
-
         private bool pb_ErrorJob_Status_TD_Signal;
-
         private bool pZuendungSollZustandEin;
-
         private ITextLocator txtTraceAutomaticStates = new TextLocator();
-
         private ITextLocator txtTracePTTStates = new TextLocator();
-
         private ITextLocator traceTxt = new TextLocator();
-
         private bool ibStateZuendungMet;
-
         private bool ibStateMotorMet;
-
         private string[] pArrayCharacteristics_PTT_EBezeichnung = new string[22]
         {
-        "E93", "E38", "E52", "E39", "E90", "E92", "R50", "E86", "E83", "E60",
-        "E53", "E65", "R52", "E87", "E91", "E46", "R53", "E63", "E85", "E64",
-        "E61", "E66"
+            "E93",
+            "E38",
+            "E52",
+            "E39",
+            "E90",
+            "E92",
+            "R50",
+            "E86",
+            "E83",
+            "E60",
+            "E53",
+            "E65",
+            "R52",
+            "E87",
+            "E91",
+            "E46",
+            "R53",
+            "E63",
+            "E85",
+            "E64",
+            "E61",
+            "E66"
         };
-
         private string[] pArrayProductionDate_PTT_EBezeichnung = new string[22]
         {
-        null, null, null, null, null, null, null, null, null, null,
-        null, "2006/09", null, null, "2007/03", "2007/03", "2007/03", "2007/03", "2007/03", null,
-        null, null
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "2006/09",
+            null,
+            null,
+            "2007/03",
+            "2007/03",
+            "2007/03",
+            "2007/03",
+            "2007/03",
+            null,
+            null,
+            null
         };
-
         private bool pbIs_PTT_Case;
-
-        public VehicleStateServiceDlgImpl(ParameterContainer inParam)
-            : base(inParam)
+        public VehicleStateServiceDlgImpl(ParameterContainer inParam) : base(inParam)
         {
             //[+] VehicleStates = new VehicleState(logic.ClientContext);
             VehicleStates = new VehicleState(logic.ClientContext);
@@ -108,10 +113,12 @@ namespace BMW.Rheingold.Module.ISTA
                 InitializeGUI(inParameters);
                 if (display)
                 {
-                    NavigateTo(base.Model);
+                    NavigateTo(Model);
                 }
+
                 WaitForContinue(parentTab, -1);
             }
+
             SetNextButtonEnabled(p_WeiterButtonEnabledStack);
         }
 
@@ -131,12 +138,14 @@ namespace BMW.Rheingold.Module.ISTA
                     ProcessPTTStates();
                     ProcessNonAutomaticStates();
                 }
+
                 return p_Quitted;
             }
             catch (Exception exception)
             {
                 Log.WarningException("VehicleStateServiceDlg.WaitForContinue()", exception);
             }
+
             p_Quitted = false;
             if (fastaUiAction != null)
             {
@@ -144,6 +153,7 @@ namespace BMW.Rheingold.Module.ISTA
                 list.AddRange(logic.Lang.Select((string x) => new LocalizedText("timout reached", x)));
                 fastaUiAction.SpecialAction.AddAnswer(list, null);
             }
+
             return false;
         }
 
@@ -156,6 +166,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 return;
             }
+
             int num = 0;
             textLocator.TextContent = textLocator.TextContent.Concat(__Text("49952741259").TextContent);
             for (int i = 0; i < vehicleStateArray.Length; i++)
@@ -166,19 +177,17 @@ namespace BMW.Rheingold.Module.ISTA
                     if (vehiclePartLocator != null)
                     {
                         ITextContent value = __Text(string.Empty).TextContent.Concat(vehiclePartLocator.GetDataValue("Title"));
-                        ITextContent textContent = __Text("55899027083", new __TextParameter[1]
-                        {
-                        new __TextParameter("parameter1", value)
-                        }).TextContent;
+                        ITextContent textContent = __Text("55899027083", new __TextParameter[1] { new __TextParameter("parameter1", value) }).TextContent;
                         textLocator.TextContent = textLocator.TextContent.Concat(textContent);
                         num++;
                     }
                 }
             }
+
             if (num > 0)
             {
                 textLocator.TextContent = textLocator.TextContent.Concat(__Text("49952744587").TextContent);
-                base.Model.MainText = GetContent(textLocator.TextContent);
+                Model.MainText = GetContent(textLocator.TextContent);
                 textLocator2.TextContent = textLocator2.TextContent.Concat(textLocator.TextContent);
                 DisplayWaitCursor(value: false);
                 bool isNextEnabled = parentTab.IsNextEnabled;
@@ -188,6 +197,7 @@ namespace BMW.Rheingold.Module.ISTA
                 SetNextButtonEnabled(isNextEnabled);
                 SetNonAutomaticStates();
             }
+
             if (pStandlichtIndex < 0)
             {
                 SetStateStandlicht();
@@ -232,7 +242,7 @@ namespace BMW.Rheingold.Module.ISTA
             if (pbIs_PTT_Case)
             {
                 textLocator = ((!pZuendungSollZustandEin) ? __Text("62193171723") : __Text("62193169035"));
-                base.Model.MainText = GetContent(textLocator.TextContent);
+                Model.MainText = GetContent(textLocator.TextContent);
                 txtTracePTTStates.TextContent = txtTracePTTStates.TextContent.Concat(textLocator.TextContent);
                 DisplayWaitCursor(value: false);
                 SetNextButtonEnabled(value: true);
@@ -240,7 +250,7 @@ namespace BMW.Rheingold.Module.ISTA
                 DisplayWaitCursor(value: true);
                 SetNextButtonEnabled(value: false);
                 VehicleStates.SetState(vehiclePartArray[pZuendungIndex], vehicleStateArray[pZuendungIndex]);
-                base.ResultSet.CollectiveResult = CollectiveResultSet.Ok;
+                ResultSet.CollectiveResult = CollectiveResultSet.Ok;
             }
         }
 
@@ -256,47 +266,53 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 VehicleStates.SetState(vehiclePartArray[pZuendungIndex], vehicleStateArray[pZuendungIndex]);
             }
+
             if (pMotorIndex >= 0 && (verificationMethodArray[pMotorIndex].ToUpper() == "TEST" || verificationMethodArray[pMotorIndex].ToUpper() == "CHECK") && flag2)
             {
                 VehicleStates.SetState(vehiclePartArray[pMotorIndex], vehicleStateArray[pMotorIndex]);
             }
+
             if (pZuendungIndex >= 0 && pbIs_PTT_Case)
             {
                 flag = true;
             }
+
             if (pZuendungIndex >= 0 && (verificationMethodArray[pZuendungIndex].ToUpper() == "TEST" || verificationMethodArray[pZuendungIndex].ToUpper() == "CHECK") && pMotorIndex < 0 && !pbIs_PTT_Case)
             {
                 if (flag)
                 {
-                    base.ResultSet.CollectiveResult = CollectiveResultSet.Ok;
+                    ResultSet.CollectiveResult = CollectiveResultSet.Ok;
                 }
                 else
                 {
-                    base.ResultSet.CollectiveResult = CollectiveResultSet.NotOk;
+                    ResultSet.CollectiveResult = CollectiveResultSet.NotOk;
                 }
             }
+
             if (pZuendungIndex < 0 && pMotorIndex >= 0 && (verificationMethodArray[pMotorIndex].ToUpper() == "TEST" || verificationMethodArray[pMotorIndex].ToUpper() == "CHECK"))
             {
                 if (flag2)
                 {
-                    base.ResultSet.CollectiveResult = CollectiveResultSet.Ok;
+                    ResultSet.CollectiveResult = CollectiveResultSet.Ok;
                 }
                 else
                 {
-                    base.ResultSet.CollectiveResult = CollectiveResultSet.NotOk;
+                    ResultSet.CollectiveResult = CollectiveResultSet.NotOk;
                 }
             }
+
             if (pZuendungIndex >= 0 && (verificationMethodArray[pZuendungIndex].ToUpper() == "TEST" || verificationMethodArray[pZuendungIndex].ToUpper() == "CHECK") && pMotorIndex >= 0 && (verificationMethodArray[pMotorIndex].ToUpper() == "TEST" || verificationMethodArray[pMotorIndex].ToUpper() == "CHECK"))
             {
-                if (flag && flag2)
+                if (flag & flag2)
                 {
-                    base.ResultSet.CollectiveResult = CollectiveResultSet.Ok;
+                    ResultSet.CollectiveResult = CollectiveResultSet.Ok;
                 }
                 else
                 {
-                    base.ResultSet.CollectiveResult = CollectiveResultSet.NotOk;
+                    ResultSet.CollectiveResult = CollectiveResultSet.NotOk;
                 }
             }
+
             outStateZuendungMet = flag;
             outStateMotorMet = flag2;
             outStateZuendungOn = flag3;
@@ -318,6 +334,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     flag5 = true;
                 }
+
                 if (vehicleStateArray[pZuendungIndex].SignedId == 49626635m)
                 {
                     pZuendungSollZustandEin = true;
@@ -327,6 +344,7 @@ namespace BMW.Rheingold.Module.ISTA
                     pZuendungSollZustandEin = false;
                 }
             }
+
             if (pMotorIndex >= 0)
             {
                 flag6 = true;
@@ -339,20 +357,23 @@ namespace BMW.Rheingold.Module.ISTA
                     pMotorSollZustandEin = false;
                 }
             }
-            base._DoLoopHandling = true;
-            while (flag5 || flag6)
+
+            _DoLoopHandling = true;
+            while (flag5 | flag6)
             {
                 ReadAutomaticStatesOnce(ref outStateZuendungMet, ref outStateMotorMet, ref outStateZuendungOn, ref outStateMotorOn);
                 if ((pZuendungIndex >= 0) & outStateZuendungMet)
                 {
                     flag5 = false;
                 }
+
                 if (pMotorIndex >= 0)
                 {
                     if (outStateMotorMet)
                     {
                         flag6 = false;
                     }
+
                     if (pb_ErrorJob_Status_TD_Signal)
                     {
                         flag6 = false;
@@ -362,6 +383,7 @@ namespace BMW.Rheingold.Module.ISTA
                         flag6 = false;
                     }
                 }
+
                 if (pZuendungIndex >= 0)
                 {
                     if (verificationMethodArray[pZuendungIndex].ToUpper() != "CHECK")
@@ -373,6 +395,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     flag5 = false;
                 }
+
                 if (pMotorIndex >= 0)
                 {
                     if (verificationMethodArray[pMotorIndex].ToUpper() != "CHECK")
@@ -384,7 +407,8 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     flag6 = false;
                 }
-                if (display && (flag5 || flag6))
+
+                if (display && (flag5 | flag6))
                 {
                     if ((pZuendungIndex >= 0 || pMotorIndex >= 0) && ((pZuendungIndex >= 0 && verificationMethodArray[pZuendungIndex] == "CHECK") || (pMotorIndex >= 0 && verificationMethodArray[pMotorIndex] == "CHECK")) && !pbFormAutomaticInstructionDisplayed)
                     {
@@ -398,7 +422,8 @@ namespace BMW.Rheingold.Module.ISTA
                     flag6 = false;
                 }
             }
-            base._DoLoopHandling = false;
+
+            _DoLoopHandling = false;
             if ((pZuendungIndex >= 0 && verificationMethodArray[pZuendungIndex] == "TEST" && !outStateZuendungMet) || (pMotorIndex >= 0 && verificationMethodArray[pMotorIndex] == "TEST" && !outStateMotorMet))
             {
                 bool isNextEnabled = parentTab.IsNextEnabled;
@@ -407,6 +432,7 @@ namespace BMW.Rheingold.Module.ISTA
                 SetNextButtonEnabled(isNextEnabled);
                 ReadAutomaticStatesOnce(ref outStateZuendungMet, ref outStateMotorMet, ref outStateZuendungOn, ref outStateMotorOn);
             }
+
             outStateZuendungMet = flag;
             outStateMotorMet = flag2;
             outStateZuendungOn = flag3;
@@ -426,33 +452,27 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     ITextContent theTextContent = new TextContent(vehicleStateArray[pZuendungIndex].Title);
                     textContent2 = __Text(string.Empty).TextContent.Concat(theTextContent);
-                    textContent = __Text("55899027083", new __TextParameter[1]
-                    {
-                    new __TextParameter("parameter1", textContent2)
-                    }).TextContent;
+                    textContent = __Text("55899027083", new __TextParameter[1] { new __TextParameter("parameter1", textContent2) }).TextContent;
                     textLocator.TextContent = textLocator.TextContent.Concat(textContent);
                 }
+
                 if (pMotorIndex >= 0 && !pb_ErrorJob_Status_TD_Signal && (verificationMethodArray[pMotorIndex] == "CHECK" || verificationMethodArray[pZuendungIndex] == "CHECK"))
                 {
                     ITextContent theTextContent2 = new TextContent(vehicleStateArray[pMotorIndex].Title);
                     textContent2 = __Text(string.Empty).TextContent.Concat(theTextContent2);
-                    textContent = __Text("55899027083", new __TextParameter[1]
-                    {
-                    new __TextParameter("parameter1", textContent2)
-                    }).TextContent;
+                    textContent = __Text("55899027083", new __TextParameter[1] { new __TextParameter("parameter1", textContent2) }).TextContent;
                     textLocator.TextContent = textLocator.TextContent.Concat(textContent);
                 }
+
                 if (pTesterIndex >= 0)
                 {
                     ITextContent theTextContent3 = new TextContent(vehicleStateArray[pTesterIndex].Title);
                     textContent2 = __Text(string.Empty).TextContent.Concat(theTextContent3);
-                    textContent = __Text("55899027083", new __TextParameter[1]
-                    {
-                    new __TextParameter("parameter1", textContent2)
-                    }).TextContent;
+                    textContent = __Text("55899027083", new __TextParameter[1] { new __TextParameter("parameter1", textContent2) }).TextContent;
                     textLocator.TextContent = textLocator.TextContent.Concat(textContent);
                 }
-                base.Model.MainText = GetContent(textLocator.TextContent);
+
+                Model.MainText = GetContent(textLocator.TextContent);
                 txtTraceAutomaticStates.TextContent = txtTraceAutomaticStates.TextContent.Concat(textLocator.TextContent);
                 pbFormAutomaticInstructionDisplayed = true;
             }
@@ -493,6 +513,7 @@ namespace BMW.Rheingold.Module.ISTA
                 {
                     AddServiceCodeToProtocol(ServiceCodes.SKIPPEDECUKOM_UNKNOWNGROUP, CallingModule);
                 }
+
                 if (text == "OKAY")
                 {
                     if (num >= 9000)
@@ -509,10 +530,12 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
+
             if (pMotorIndex < 0)
             {
                 return;
             }
+
             EcuKomStatement.ShowErrors = true;
             if (HasVehicleVariant("UNKNOWNGROUP", "DIA_DOSE"))
             {
@@ -533,6 +556,7 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 AddServiceCodeToProtocol(ServiceCodes.SKIPPEDECUKOM_UNKNOWNGROUP, CallingModule);
             }
+
             if (text2 == "OKAY")
             {
                 if (num2 > 0)
@@ -561,10 +585,12 @@ namespace BMW.Rheingold.Module.ISTA
             {
                 Log.Error("VehicleStateServiceDlgImpl.ctor", "FASTA protocoling not possible.");
             }
+
             if (string.IsNullOrEmpty(callingMethod))
             {
                 callingMethod = inParameters.getParameter("methodname") as string;
             }
+
             int num = 0;
             foreach (KeyValuePair<string, object> item in inParameters.Parameter)
             {
@@ -573,28 +599,29 @@ namespace BMW.Rheingold.Module.ISTA
                     num++;
                 }
             }
+
             vehiclePartArray = new IVehiclePartLocator[num];
             vehicleStateArray = new IVehicleStateLocator[num];
             verificationMethodArray = new string[num];
             ITextLocator textLocator = new TextLocator();
             for (int i = 0; i < num; i++)
             {
-                if (inParameters.getParameter($"/WurzelIn/Vehicle/VehicleParts[{i}]/VehiclePart") is IVehiclePartLocator vehiclePartLocator)
+                if (inParameters.getParameter($"/WurzelIn/Vehicle/VehicleParts[{i}]/VehiclePart")is IVehiclePartLocator vehiclePartLocator)
                 {
                     vehiclePartArray[i] = vehiclePartLocator;
                 }
-                if (inParameters.getParameter($"/WurzelIn/Vehicle/VehicleParts[{i}]/VehicleState") is IVehicleStateLocator vehicleStateLocator)
+
+                if (inParameters.getParameter($"/WurzelIn/Vehicle/VehicleParts[{i}]/VehicleState")is IVehicleStateLocator vehicleStateLocator)
                 {
                     vehicleStateArray[i] = vehicleStateLocator;
-                    ITextLocator theTextLocator = __Text("55899027083", new __TextParameter[1]
-                    {
-                    new __TextParameter("parameter1", new TextLocator($"<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>{vehicleStateArray[i].Title}</spe:PARAGRAPH></spe:TEXTITEM>"))
-                    });
+                    ITextLocator theTextLocator = __Text("55899027083", new __TextParameter[1] { new __TextParameter("parameter1", new TextLocator($"<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>{vehicleStateArray[i].Title}</spe:PARAGRAPH></spe:TEXTITEM>")) });
                     textLocator = textLocator.Concat(theTextLocator);
                 }
+
                 string text = inParameters.getParameter($"/WurzelIn/Vehicle/VehicleParts[{i}]/VerificationMethod") as string;
                 verificationMethodArray[i] = (string.IsNullOrEmpty(text) ? "CHECK" : text);
             }
+
             display = (bool)inParameters.getParameter("Display", true);
             ReadPositions(num);
             PttHandling();
@@ -615,18 +642,21 @@ namespace BMW.Rheingold.Module.ISTA
                 traceTxt = traceTxt.Concat(textLocator);
                 wertFeld = __Text("49952744587");
             }
+
             if (display && traceTxt != null)
             {
-                base.Model.MainText = GetContent(traceTxt.TextContent);
+                Model.MainText = GetContent(traceTxt.TextContent);
                 if (wertFeld != null)
                 {
-                    base.Model.ValueField = GetContent(wertFeld.TextContent);
+                    Model.ValueField = GetContent(wertFeld.TextContent);
                 }
             }
+
             if (fasta == null)
             {
                 return;
             }
+
             fastaUiAction = fasta.CreateAndAddUiDialogFromServiceProgram("VehicleStateServiceDlg", callingMethod);
             fastaUiAction.SpecialAction.Display = display;
             List<LocalizedText> list = new List<LocalizedText>();
@@ -636,6 +666,7 @@ namespace BMW.Rheingold.Module.ISTA
                 fastaUiAction.SpecialAction.CreateAndAddMessageText(list);
                 return;
             }
+
             list.AddRange(logic.Lang.Select((string x) => new LocalizedText("(empty)", x)));
             fastaUiAction.SpecialAction.CreateAndAddMessageText(list);
         }
@@ -677,7 +708,7 @@ namespace BMW.Rheingold.Module.ISTA
             if (pZuendungIndex >= 0)
             {
                 GetCommunicationInterfaceType(ref interfaceType, ref resultOK);
-                if (interfaceType == VCIDeviceType.EDIABAS.ToString() && resultOK && pArrayCharacteristics_PTT_EBezeichnung != null && num >= 0)
+                if (((interfaceType == VCIDeviceType.EDIABAS.ToString()) & resultOK) && pArrayCharacteristics_PTT_EBezeichnung != null && num >= 0)
                 {
                     for (int i = 0; i < pArrayCharacteristics_PTT_EBezeichnung.Length; i++)
                     {
@@ -689,6 +720,7 @@ namespace BMW.Rheingold.Module.ISTA
                         }
                     }
                 }
+
                 if (flag)
                 {
                     num3 = Convert.ToInt32(logic.VecInfo.Modelljahr, CultureInfo.InvariantCulture);
@@ -697,6 +729,7 @@ namespace BMW.Rheingold.Module.ISTA
                         Log.Error("VehicleStetDlg", " invalid value for vehicle production year:" + num3);
                         num3 = 0;
                     }
+
                     num4 = Convert.ToInt32(logic.VecInfo.Modellmonat, CultureInfo.InvariantCulture);
                     if (num4 < 1 && num4 > 12)
                     {
@@ -704,6 +737,7 @@ namespace BMW.Rheingold.Module.ISTA
                         num4 = 0;
                     }
                 }
+
                 if (flag)
                 {
                     if (pArrayProductionDate_PTT_EBezeichnung[num2] != null)
@@ -728,6 +762,7 @@ namespace BMW.Rheingold.Module.ISTA
                                     {
                                         num5 = Convert.ToInt32(text3, CultureInfo.InvariantCulture);
                                     }
+
                                     if (text4 != null)
                                     {
                                         num6 = Convert.ToInt32(text4, CultureInfo.InvariantCulture);
@@ -742,6 +777,7 @@ namespace BMW.Rheingold.Module.ISTA
                             {
                                 Log.Error("VehicleStateDlg", " Exception occured in  InitializeDialog() Label=" + text2 + ":" + ex);
                             }
+
                             if (num7 > 0)
                             {
                                 if (num3 > 0 && num3 < num5)
@@ -761,6 +797,7 @@ namespace BMW.Rheingold.Module.ISTA
                     }
                 }
             }
+
             Log.Debug("VehicleStateDlg()", " Result of PTT Determination PTT-Device-detected=" + pbPTT_Device_Detected + " IsPTTCase=" + pbIs_PTT_Case + " ResultOK=" + resultOK + " FoundInArrayEBez=" + flag + " Index of CharacteristicEBez=" + num2);
         }
 
@@ -782,6 +819,8 @@ namespace BMW.Rheingold.Module.ISTA
         [PreserveSource(Hint = "static removed", SignatureModified = true)]
         private new IVehiclePartLocator __Part(string refText)
         {
+            //[-] return new VehiclePart(refText);
+            //[+] return new VehiclePart(refText, logic.ClientContext);
             return new VehiclePart(refText, logic.ClientContext);
         }
     }

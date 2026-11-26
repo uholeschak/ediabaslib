@@ -4,28 +4,28 @@ namespace BMW.Rheingold.Module.ISTA
 {
     internal class MesswerteGenerator1Cmd : ServiceDialogCmdBase
     {
-        public MesswerteGenerator1Cmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo)
-            : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
+        public MesswerteGenerator1Cmd(ISTAModule callingModule, string methodName, string path, IModuleExecutionParent globalTabModuleISTA, int elementNo) : base(callingModule, methodName, path, globalTabModuleISTA, elementNo)
         {
         }
 
         public override void CreateDialog(ParameterContainer inParam, ParameterContainer inoutParam)
         {
             Log.Info("MesswerteGenerator1Cmd.CreateDialog()", "Messwerte_Generator1 init started.");
-            base.Display = false;
+            Display = false;
         }
 
         public override void DoInvoke(string method, ParameterContainer inParam, ParameterContainer outParam, ParameterContainer inoutParam)
         {
-            if (base.CallingModule == null)
+            if (CallingModule == null)
             {
                 Log.Error("MesswerteGenerator1Cmd.Invoke()", "Failed to invoke method {0}, because calling module is null.", method);
                 return;
             }
-            ModuleParameter value = base.CallingModule.__RheinGoldCoreModuleParameters__.Clone();
+
+            ModuleParameter value = CallingModule.__RheinGoldCoreModuleParameters__.Clone();
             inParam.Parameter.Add("__RheinGoldCoreModuleParameters__", value);
-            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", base.CallingModule.GlobalTabModuleISTA);
-            inParam.Parameter.Add("__RheinGoldSOCAccessor__", base.CallingModule.SOCAccessor);
+            inParam.Parameter.Add("__RheinGoldTabModuleISTA__", CallingModule.GlobalTabModuleISTA);
+            inParam.Parameter.Add("__RheinGoldSOCAccessor__", CallingModule.SOCAccessor);
             if ("Zufallszahl".Equals(method))
             {
                 int von = (int)inParam.getParameter("Von", 0);
@@ -36,6 +36,7 @@ namespace BMW.Rheingold.Module.ISTA
                 outParam.setParameter("Wert", Wert);
                 return;
             }
+
             if ("Zahlenbereich_hin_her".Equals(method))
             {
                 int von2 = (int)inParam.getParameter("Von", 0);
@@ -47,6 +48,7 @@ namespace BMW.Rheingold.Module.ISTA
                 outParam.setParameter("Wert", Wert2);
                 return;
             }
+
             throw new ServiceDialogMethodUnsupportedException();
         }
     }

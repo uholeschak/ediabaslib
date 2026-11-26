@@ -11,23 +11,35 @@ namespace BMW.Rheingold.ISTA.CoreFramework
     {
         private readonly string[] dataValueNames = new string[22]
         {
-        "ID", "TITLEID", "TITLE_DEDE", "TITLE_ENGB", "TITLE_ENUS", "TITLE_FR", "TITLE_TH", "TITLE_SV", "TITLE_IT", "TITLE_ES",
-        "TITLE_ID", "TITLE_KO", "TITLE_EL", "TITLE_TR", "TITLE_ZHCN", "TITLE_RU", "TITLE_NL", "TITLE_PT", "TITLE_ZHTW", "TITLE_JA",
-        "TITLE_CSCZ", "TITLE_PLPL"
+            "ID",
+            "TITLEID",
+            "TITLE_DEDE",
+            "TITLE_ENGB",
+            "TITLE_ENUS",
+            "TITLE_FR",
+            "TITLE_TH",
+            "TITLE_SV",
+            "TITLE_IT",
+            "TITLE_ES",
+            "TITLE_ID",
+            "TITLE_KO",
+            "TITLE_EL",
+            "TITLE_TR",
+            "TITLE_ZHCN",
+            "TITLE_RU",
+            "TITLE_NL",
+            "TITLE_PT",
+            "TITLE_ZHTW",
+            "TITLE_JA",
+            "TITLE_CSCZ",
+            "TITLE_PLPL"
         };
-
         private readonly Exception exception;
-
         private readonly XEP_VEHICLEPART part;
-
         public ISPELocator[] Children => new ISPELocator[0];
-
         public string DataClassName => "VehiclePart";
-
         public string[] DataValueNames => dataValueNames;
-
         public Exception Exception => exception;
-
         public bool HasException => exception != null;
 
         public string Id
@@ -38,14 +50,13 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                 {
                     return part.Id.ToString(CultureInfo.InvariantCulture);
                 }
+
                 return "0";
             }
         }
 
         public string[] IncomingLinkNames => new string[0];
-
         public string[] OutgoingLinkNames => new string[0];
-
         public ISPELocator[] Parents => new ISPELocator[0];
 
         public decimal SignedId
@@ -56,6 +67,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                 {
                     return -1m;
                 }
+
                 return part.Id;
             }
         }
@@ -68,6 +80,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                 {
                     return null;
                 }
+
                 return part.Title;
             }
         }
@@ -151,17 +164,19 @@ namespace BMW.Rheingold.ISTA.CoreFramework
                         Log.Error("VehiclePart.GetDataValue()", "No such name as '{0}' available! Returnning null!", name);
                         return null;
                 }
+
                 if (part.TitleId.HasValue)
                 {
                     return part.TitleId.ToString();
                 }
             }
+
             return null;
         }
 
         public T GetDataValue<T>(string name)
         {
-            return default(T);
+            return default;
         }
 
         public ISPELocator[] GetIncomingLinks()

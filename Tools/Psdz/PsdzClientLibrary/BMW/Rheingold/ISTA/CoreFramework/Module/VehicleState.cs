@@ -10,9 +10,6 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
     internal class VehicleState
     {
         private readonly Dictionary<string, IStateLocator> vehicleStateList;
-        [PreserveSource(Added = true)]
-        private readonly ClientContext clientContext;
-
         [PreserveSource(Hint = "ClientContext added", SignatureModified = true)]
         public VehicleState(ClientContext clientContext = null)
         {
@@ -27,6 +24,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
             {
                 return value;
             }
+
             return null;
         }
 
@@ -36,6 +34,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
             {
                 return value;
             }
+
             return null;
         }
 
@@ -158,5 +157,8 @@ namespace BMW.Rheingold.ISTA.CoreFramework.Module
                     return vehiclePart.Title_dede;
             }
         }
+
+        [PreserveSource(Added = true)]
+        private readonly ClientContext clientContext;
     }
 }
