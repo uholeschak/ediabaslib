@@ -19,20 +19,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
-                //[-] if (!string.IsNullOrEmpty(styleSheetField))
-                //[-] {
-                //[-] return styleSheetField;
-                //[-] }
-                //[-] if (!string.IsNullOrEmpty(parent.XepInfoObject.DocumentType))
-                //[-] {
-                //[-] StyleSheet = DatabaseProviderFactory.Instance.GetStyleSheet(parent.XepInfoObject.DocumentType);
-                //[-] return styleSheetField;
-                //[-] }
-                //[-] if (parent.InfoType == "ESL")
-                //[-] {
-                //[-] StyleSheet = Resources.ESL_Stylesheet;
-                //[-] return styleSheetField;
-                //[-] }
+                if (!string.IsNullOrEmpty(styleSheetField))
+                {
+                    return styleSheetField;
+                }
+                if (!string.IsNullOrEmpty(parent.XepInfoObject.DocumentType))
+                {
+                    //[-] StyleSheet = DatabaseProviderFactory.Instance.GetStyleSheet(parent.XepInfoObject.DocumentType);
+                    return styleSheetField;
+                }
+                if (parent.InfoType == "ESL")
+                {
+                    //[-] StyleSheet = Resources.ESL_Stylesheet;
+                    return styleSheetField;
+                }
                 return string.Empty;
             }
 
@@ -60,14 +60,14 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         {
             get
             {
-                //[-] if (!IsDocumentTransformationValid)
-                //[-] {
-                //[-] parent.DoDocumentTransformation();
-                //[-] }
-                //[-] if (string.IsNullOrEmpty(transformedDocumentField))
-                //[-] {
-                //[-] return parent.Content.Doc;
-                //[-] }
+                if (!IsDocumentTransformationValid)
+                {
+                    //[-] parent.DoDocumentTransformation();
+                }
+                if (string.IsNullOrEmpty(transformedDocumentField))
+                {
+                    return parent.Content.Doc;
+                }
                 return transformedDocumentField;
             }
 
