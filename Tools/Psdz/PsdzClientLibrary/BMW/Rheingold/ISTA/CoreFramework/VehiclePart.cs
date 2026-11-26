@@ -85,6 +85,7 @@ namespace BMW.Rheingold.ISTA.CoreFramework
             {
                 decimal id = Convert.ToDecimal(partValueId);
                 //[-] part = DatabaseProviderFactory.Instance.GetXepVehiclePartById(id);
+                //[+] part = clientContext.Database.GetXepVehiclePartById(id);
                 part = clientContext.Database.GetXepVehiclePartById(id);
             }
             catch (Exception ex)
