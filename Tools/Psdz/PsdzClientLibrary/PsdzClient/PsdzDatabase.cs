@@ -5578,7 +5578,38 @@ namespace PsdzClient
 
         public ICollection<FaultCode> GetIncomingFaultCodesForDiagObject(decimal diagObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
-            return null;
+            log.InfoFormat("GetIncomingFaultCodesForDiagObject Id: {0}", diagObjectId);
+
+            List<decimal> list = new List<decimal>();
+            HashSet<FaultCode> hashSet = new HashSet<FaultCode>();
+
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    "SELECT XEP_REFDIAGOBJECTS.ID AS ID FROM XEP_REFDIAGOBJECTS JOIN XEP_DIAGNOSISOBJECTS ON XEP_REFDIAGOBJECTS.DIAGNOSISOBJECTCONTROLID = XEP_DIAGNOSISOBJECTS.CONTROLID WHERE XEP_DIAGNOSISOBJECTS.ID = {0}", diagObjectId);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            decimal? id = GetReaderDecimal(reader, "ID");
+                            if (id.HasValue)
+                            {
+                                list.Add(id.Value);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetIncomingFaultCodesForDiagObject Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return hashSet;
         }
 
         public XEP_STATEVALUES GetXepStateValuesById(decimal id)
