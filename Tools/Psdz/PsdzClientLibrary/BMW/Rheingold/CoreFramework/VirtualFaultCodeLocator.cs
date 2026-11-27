@@ -3,6 +3,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts;
+using PsdzClient;
 
 #pragma warning disable CS0649
 namespace BMW.Rheingold.CoreFramework
@@ -26,8 +27,8 @@ namespace BMW.Rheingold.CoreFramework
                 if (faultCode != null)
                 {
                     //[-] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = DatabaseProviderFactory.Instance.GetXepVirtualFaultLabelsByVirtualFaultCodeId(faultCode.ID);
-                    //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = null;
-                    XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = null;
+                    //[+] XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = ClientContext.GetDatabase(vehicle)?.GetXepVirtualFaultLabelsByVirtualFaultCodeId(faultCode.ID);
+                    XEP_VIRTUALFAULTLABELS xepVirtualFaultLabelsByVirtualFaultCodeId = ClientContext.GetDatabase(vehicle)?.GetXepVirtualFaultLabelsByVirtualFaultCodeId(faultCode.ID);
                     if (xepVirtualFaultLabelsByVirtualFaultCodeId != null)
                     {
                         return new TextContent(xepVirtualFaultLabelsByVirtualFaultCodeId.Title);
