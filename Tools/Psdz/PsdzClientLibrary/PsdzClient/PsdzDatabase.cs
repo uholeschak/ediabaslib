@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace PsdzClient
 {
@@ -5601,6 +5602,82 @@ namespace PsdzClient
                             }
                         }
                     }
+                }
+
+                foreach (decimal item in list)
+                {
+                    if (!EvaluateXepRulesById(item.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver))
+                    {
+                        continue;
+                    }
+                    FaultCode faultCode = GetFaultCodeById(item, vehicle, ffmDynamicResolver);
+                    if (faultCode == null)
+                    {
+                        XEP_VIRTUALFAULTCODES virtualFaultCodeById = GetVirtualFaultCodeById(item.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver);
+                        if (virtualFaultCodeById != null)
+                        {
+                            faultCode = FaultCode.GetVirtualFaultCode(virtualFaultCodeById.ID.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver);
+                            if (faultCode.PARENTID.HasValue)
+                            {
+                                IEcuGroupLocator ecuGroupLocator = new EcuGroupLocator(faultCode.PARENTID.Value, vehicle, ffmDynamicResolver);
+                                if (ecuGroupLocator != null)
+                                {
+                                    string dataValue = ecuGroupLocator.GetDataValue("NAME");
+                                    ECU eCUbyECU_GRUPPE = vehicle.getECUbyECU_GRUPPE(dataValue);
+                                    if (eCUbyECU_GRUPPE == null && vehicle.ECU.Count > 0)
+                                    {
+                                        continue;
+                                    }
+                                    faultCode.ECU = eCUbyECU_GRUPPE;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        IEcuVariantLocator ecuVariantLocator = new EcuVariantLocator(faultCode.ECUVARIANTID.Value, vehicle, ffmDynamicResolver);
+                        string dataValue2 = ecuVariantLocator.GetDataValue("NAME");
+                        if (ecuVariantLocator != null && !string.IsNullOrEmpty(dataValue2))
+                        {
+                            if (vehicle.getECUbyECU_SGBD(dataValue2) is ECU eCU)
+                            {
+                                faultCode.ECU = eCU;
+                            }
+                            else
+                            {
+                                IEcuGroupLocator ecuGroupLocator2 = new EcuGroupLocator(ecuVariantLocator.GetDataValue<decimal>("ECUGROUPID"), vehicle, ffmDynamicResolver);
+                                if (ecuGroupLocator2 != null)
+                                {
+                                    string dataValue3 = ecuGroupLocator2.GetDataValue("NAME");
+                                    ECU eCUbyECU_GRUPPE2 = vehicle.getECUbyECU_GRUPPE(dataValue3);
+                                    if ((eCUbyECU_GRUPPE2 == null && vehicle.ECU.Count > 0) || (eCUbyECU_GRUPPE2 != null && !string.IsNullOrEmpty(eCUbyECU_GRUPPE2.VARIANTE)))
+                                    {
+                                        continue;
+                                    }
+                                    faultCode.ECU = eCUbyECU_GRUPPE2;
+                                }
+                            }
+                        }
+                    }
+
+                    if (faultCode == null)
+                    {
+                        XEP_COMBINEDFAULTS xepCombinedFaultById = GetXepCombinedFaultById(item, vehicle, ffmDynamicResolver);
+                        if (xepCombinedFaultById != null)
+                        {
+                            DTC dTC = vehicle.GetDTC(xepCombinedFaultById.ID);
+                            if (dTC != null)
+                            {
+                                faultCode = FaultCode.GetCombinedFaultCode(dTC, vehicle, ffmDynamicResolver);
+                            }
+                        }
+                    }
+                    if (faultCode != null)
+                    {
+                        hashSet.AddIfNotContains(faultCode);
+                        continue;
+                    }
+                    log.ErrorFormat("GetIncomingFaultCodesForDiagObject Error: FaultCode is null for item: {0}", item);
                 }
             }
             catch (Exception e)
