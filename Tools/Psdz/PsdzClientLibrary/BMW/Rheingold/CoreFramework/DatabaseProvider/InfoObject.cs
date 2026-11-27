@@ -271,6 +271,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             return null;
         }
 
+        public void DoDocumentTransformation()
+        {
+        }
+
         public override bool Equals(object obj)
         {
             return false;

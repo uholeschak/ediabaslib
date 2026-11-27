@@ -62,7 +62,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 if (!IsDocumentTransformationValid)
                 {
-                    //[-] parent.DoDocumentTransformation();
+                    parent.DoDocumentTransformation();
                 }
                 if (string.IsNullOrEmpty(transformedDocumentField))
                 {
