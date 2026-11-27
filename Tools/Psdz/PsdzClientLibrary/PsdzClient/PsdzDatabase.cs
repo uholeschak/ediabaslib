@@ -3,6 +3,7 @@ using BMW.ISPI.TRIC.ISTA.Contracts.Enums;
 using BMW.ISPI.TRIC.ISTA.Contracts.Interfaces;
 using BMW.ISPI.TRIC.ISTA.RuleEvaluation.RuleExpressions;
 using BMW.Rheingold.CoreFramework;
+using BMW.Rheingold.CoreFramework.Contracts;
 using BMW.Rheingold.CoreFramework.Contracts.FASTA;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.CoreFramework.DatabaseProvider;
@@ -26,7 +27,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using BMW.Rheingold.CoreFramework.Contracts;
 
 namespace PsdzClient
 {
@@ -1482,6 +1482,7 @@ namespace PsdzClient
         private Dictionary<string, SwiInfoObj> _infoObjectByControlIdCache;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
+        private ObservableCollection<FaultCodeRelevance> _faultCodeRelevanceCache = new ObservableCollection<FaultCodeRelevance>();
 
         public string DatabasePath => _databasePath;
         public string DatabaseExtractPath => _databaseExtractPath;
@@ -1630,6 +1631,7 @@ namespace PsdzClient
             _diagObjRootNodeIdSet = null;
             SwiRegisterTree = null;
             UseIsAtLeastOnePathToRootValid = true;
+            InitializeFaultCodeRelevanceCache();
             FaultCodeConverters.SetFaultClasses(this);  // register fault code converters for this database
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
@@ -1713,7 +1715,6 @@ namespace PsdzClient
 
             return "SOFORTMASSNAHMEN_PROGRAMMIERUNG_PKW";
         }
-
 
         public static SwiRegisterGroup GetSwiRegisterGroup(BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.SwiRegister swiRegisterEnum)
         {
@@ -6946,6 +6947,69 @@ namespace PsdzClient
 
             log.InfoFormat("GetCountryById Country: {0}", country);
             return country;
+        }
+
+        private void InitializeFaultCodeRelevanceCache()
+        {
+            log.InfoFormat("InitializeFaultCodeRelevanceCache");
+
+            try
+            {
+                _faultCodeRelevanceCache.Clear();
+                string sql = "SELECT faults.id ECUFAULT_ID, faults.RELEVANCE_F_VORH_NR RELEVANCE, faults.code FAULTCODE, NAME ECUVARIANT_NAME FROM XEP_ECUVARIANTS ecus, xep_faultcodes faults WHERE ecus.id = faults.ecuvariantid AND faults.RELEVANCE_F_VORH_NR IS NOT NULL";
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            decimal id = GetReaderDecimal(reader, "ECUFAULT_ID") ?? 0;
+                            string relevance = GetReaderString(reader, "RELEVANCE");
+                            string faultCode = GetReaderString(reader, "FAULTCODE");
+                            string ecuVariant = GetReaderString(reader, "ECUVARIANT_NAME");
+                            ObservableCollection<int> faultAvailableNumbers = ParseRelevanceFaultCode(relevance);
+                            _faultCodeRelevanceCache.Add(new FaultCodeRelevance
+                            {
+                                Id = id,
+                                EcuVariant = ecuVariant,
+                                FaultCode = faultCode,
+                                FaultAvailableNumbers = faultAvailableNumbers
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetCountryById Exception: '{0}'", e.Message);
+            }
+        }
+
+        private ObservableCollection<int> ParseRelevanceFaultCode(string relevance)
+        {
+            ObservableCollection<int> observableCollection = new ObservableCollection<int>();
+            observableCollection.Clear();
+            if (relevance == null || relevance == string.Empty)
+            {
+                return observableCollection;
+            }
+            try
+            {
+                char[] separator = new char[3] { ' ', ',', ';' };
+                string[] array = relevance.Split(separator);
+                for (int i = 0; i < array.Length; i++)
+                {
+                    int item = Convert.ToInt32(array[i], 16);
+                    observableCollection.Add(item);
+                }
+                return observableCollection;
+            }
+            catch (Exception)
+            {
+                log.ErrorFormat("Exception occurred parsing the RelevanceFaultCode \"{0}\"", relevance);
+                return observableCollection;
+            }
         }
 
         public DbInfo GetDbInfo()
