@@ -6949,6 +6949,16 @@ namespace PsdzClient
             return country;
         }
 
+        public ObservableCollection<int> GetRelevanceFaultCodeByFaultCodeAndEcuVariant(string faultCode, string ecuVariant, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            FaultCodeRelevance faultCodeRelevance = _faultCodeRelevanceCache.FirstOrDefault((FaultCodeRelevance rel) => rel.EcuVariant.Equals(ecuVariant, StringComparison.OrdinalIgnoreCase) && rel.FaultCode.Equals(faultCode, StringComparison.OrdinalIgnoreCase));
+            if (faultCodeRelevance != null && (vehicle == null || EvaluateXepRulesById(faultCodeRelevance.Id.ToString(CultureInfo.InvariantCulture), vehicle, ffmDynamicResolver)) && faultCodeRelevance.FaultAvailableNumbers.Any())
+            {
+                return faultCodeRelevance.FaultAvailableNumbers;
+            }
+            return null;
+        }
+
         private void InitializeFaultCodeRelevanceCache()
         {
             log.InfoFormat("InitializeFaultCodeRelevanceCache");

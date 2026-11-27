@@ -459,7 +459,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 }
                 else if (ConfigSettings.getConfigStringAsBoolean("EnableRelevanceFaultCode", defaultValue: true) && DTC.F_VORHANDEN_NR.HasValue)
                 {
-                    //[-] DTC.RelevanceFaultCode = instance.GetRelevanceFaultCodeByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), ECU.VARIANTE, vehicle, resolver);
+                    DTC.RelevanceFaultCode = instance.GetRelevanceFaultCodeByFaultCodeAndEcuVariant(DTC.F_ORT.ToString(), ECU.VARIANTE, vehicle, resolver);
                     if (DTC.RelevanceFaultCode != null && !DTC.RelevanceFaultCode.Contains(DTC.F_VORHANDEN_NR.Value))
                     {
                         Log.Info("Fault.ResolveRelevanceFaultCode", $"Relevance set to false for ecu variant: {ECU.VARIANTE} and f_ort: {DTC.F_ORT} due to fault code relevance rules from database.");
