@@ -283,14 +283,12 @@ namespace BMW.Rheingold.CoreFramework
                 throw new ArgumentException("infoObject");
             }
 
-            //[-] if (infoObject.XepInfoObject == null)
-            //[-] {
-            //[-] throw new ArgumentException("XepInfoObject");
-            //[-] }
+            if (infoObject.XepInfoObject == null)
+            {
+                throw new ArgumentException("XepInfoObject");
+            }
             InfoObj = infoObject;
-            //[-] Name = infoObj.Title ?? infoObj.XepInfoObject.Identifikator;
-            //[+] Name = infoObj.Title ?? string.Empty;
-            Name = infoObj.Title ?? string.Empty;
+            Name = infoObj.Title ?? infoObj.XepInfoObject.Identifikator;
             InfoType = "ABL";
             IsMinimizable = true;
             VisibleName = Name;
