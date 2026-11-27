@@ -32,10 +32,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return F_UW_TEXT_vec;
                 }
-                //[-] if (f_UW_TEXT_EnvCondLabels != null)
-                //[-] {
-                //[-] return f_UW_TEXT_EnvCondLabels.Title;
-                //[-] }
+                if (f_UW_TEXT_EnvCondLabels != null)
+                {
+                    return f_UW_TEXT_EnvCondLabels.Title;
+                }
                 return null;
             }
         }
