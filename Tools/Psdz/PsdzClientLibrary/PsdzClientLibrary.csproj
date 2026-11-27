@@ -33,12 +33,14 @@
     </ItemGroup>
     <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
         <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="[10.0.15]" />
+        <PackageReference Include="Saxon-HE" Version="10.9.0" />
     </ItemGroup>
     <ItemGroup Condition="$(TargetFramework.Contains('windows'))">
         <PackageReference Include="HtmlTextWriter" Version="3.0.3" />
         <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.1.0" />
         <PackageReference Include="System.Runtime.Serialization.Formatters" Version="11.0.0" />
         <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0" />
+        <PackageReference Include="SaxonCS-HE" Version="13.1.0" />
     </ItemGroup>
   <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0">
