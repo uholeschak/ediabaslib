@@ -5,17 +5,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class LinkType : INotifyPropertyChanged
     {
         private decimal infoObjectControlIdField;
-
         private string linkIdField;
-
         private bool ctordoneField;
-
         public decimal InfoObjectControlId
         {
             get
             {
                 return infoObjectControlIdField;
             }
+
             set
             {
                 _ = infoObjectControlIdField;
@@ -33,6 +31,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return linkIdField;
             }
+
             set
             {
                 if (linkIdField != null)
@@ -58,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return ctordoneField;
             }
+
             set
             {
                 if (!ctordoneField.Equals(value))
@@ -69,7 +69,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public LinkType()
         {
             ctordoneField = true;
@@ -77,7 +76,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

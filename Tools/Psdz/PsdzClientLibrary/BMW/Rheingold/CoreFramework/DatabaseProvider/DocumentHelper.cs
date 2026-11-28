@@ -23,21 +23,17 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class DocumentHelper : InfoObjectTransformationStrategie
     {
         private const string JAVASCRIPT_RG_PICTURE = "function rg_showPicture(id) { window.chrome.webview.hostObjects.sync.external.RG_ShowPicture(id) };";
-
         private const string JAVASCRIPT_RG_SHOW = "function rg_showLink(id, isNews) { window.chrome.webview.hostObjects.sync.external.RG_Show(id, isNews) };";
-
         private const string JAVASCRIPT_RG_SVGLINK = "function rg_openSvgLink(grobzeichen)\r\n                                                        { \r\n                                                            try \r\n                                                            { \r\n                                                                window.chrome.webview.hostObjects.sync.external.RG_SvgLinkClicked(grobzeichen); \r\n                                                            } \r\n                                                            catch(err)\r\n                                                            {\r\n                                                                try \r\n                                                                { \r\n                                                                    window.parent.postMessage({ type: 'SVG_LINK_CLICK', data: grobzeichen }, '*') \r\n                                                                } \r\n                                                                catch(err) {}  \r\n                                                            }\r\n                                                        };";
-
         private static readonly bool newXsltTransformationEngineEnabled = ConfigSettings.GetFeatureEnabledStatus("NewDocTransformation").IsActive;
-
         private static readonly Lazy<Processor> xsltProcessor = new Lazy<Processor>(() => new Processor(), isThreadSafe: true);
-
         public void DoDocumentTransformation(InfoObject infoObj)
         {
             if (infoObj.Content.IsDocumentTransformationValid && !ConfigSettings.getConfigStringAsBoolean("SpoolHtmlDocs"))
             {
                 return;
             }
+
             if (CoreFramework.DebugLevel > 1)
             {
                 string tempFolder = ConfigSettings.GetTempFolder();
@@ -49,6 +45,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     StreamToFile(fileName2, infoObj.Content.StyleSheet);
                 }
             }
+
             infoObj.Content.IsDocumentTransformationValid = true;
             switch (DocumentTypeConverter.GetEnumDocumentType(infoObj.DocumentType))
             {
@@ -68,6 +65,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     infoObj.Content.TransformedDocument = infoObj.Content.Doc;
                     return;
             }
+
             Log.Warning("Document.doDocumentTransformation", "Unknown format: {0}", infoObj.XepInfoObject.DocumentType);
             infoObj.Content.TransformedDocument = "Unknown format!";
         }
@@ -85,8 +83,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         Log.Error("Logic.GetDocumentUtf8()", "Retuning null, because document=\"{0}\".", text);
                         return null;
                     }
+
                     return Encoding.UTF8.GetBytes(DisableLinksAndZoom(disableLinks, disablePictureZoom, text));
                 }
+
                 if (!string.IsNullOrEmpty(text) && text.StartsWith("<html", StringComparison.Ordinal))
                 {
                     int num = text.IndexOf(">", 2, StringComparison.Ordinal);
@@ -94,8 +94,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         text = text.Insert(num + 1, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />");
                     }
+
                     text = DisableLinksAndZoom(disableLinks, disablePictureZoom, text);
                 }
+
                 return Encoding.UTF8.GetBytes(text);
             }
             catch (Exception ex)
@@ -114,17 +116,19 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 string tempFolder = ConfigSettings.GetTempFolder();
                 text = text.Replace(tempFolder, string.Empty);
             }
+
             if (disablePictureZoom)
             {
                 text = text.Replace("function rg_showPicture(id) { window.chrome.webview.hostObjects.sync.external.RG_ShowPicture(id) };", "void(0);");
             }
+
             return text;
         }
 
         private string SetHrefAttribute(bool isNews, IEnumerable<LinkType> links)
         {
             string text = string.Join(",", links.Select((LinkType item) => item.InfoObjectControlId));
-            return "javascript:rg_showLink('" + text + "', " + (isNews ? 1 : 0) + ")";
+            return "javascript:rg_showLink('" + text + "', " + (int)(isNews ? 1 : 0) + ")";
         }
 
         private void TraceDocumentTransformation(decimal? controlId, string name, string data)
@@ -137,6 +141,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     text = "HtmlTextWriter";
                 }
+
                 StreamToFile($"{tempFolder}\\doc\\{controlId}_{text}_{name}", data);
             }
         }
@@ -157,6 +162,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Document.StreamToFile()", exception);
             }
+
             return false;
         }
 
@@ -168,6 +174,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 Log.Warning("Document.StreamToFile()", "byteArray was null");
                 return false;
             }
+
             try
             {
                 using (FileStream fileStream = File.Create(fileName))
@@ -183,6 +190,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Document.StreamToFile()", exception);
             }
+
             return result;
         }
 
@@ -206,6 +214,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 writer.WriteAttributeString("linkid", link.LinkId);
                 writer.WriteEndElement();
             }
+
             writer.WriteEndElement();
             writer.WriteRaw(svg);
             writer.WriteEndElement();
@@ -231,6 +240,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         RemoveCcmTitlePlaceholders(xmlDocument);
                     }
+
                     if (newXsltTransformationEngineEnabled)
                     {
                         XsltTransformer xsltTransformer = xsltProcessor.Value.NewXsltCompiler().Compile(new StringReader(text2)).Load();
@@ -255,6 +265,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             {
                                 xslCompiledTransform.Transform(xmlDocument, GetXsltTransformationArguments(infoObj), results);
                             }
+
                             text = uTF8Encoding.GetString(memoryStream.ToArray());
                             int num = text.IndexOf('<');
                             if (num > 0)
@@ -294,11 +305,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 Log.WarningException("Document.DoXsltTransformation()", exception);
             }
+
             if (text == null)
             {
                 Log.Error("Document.DoXsltTransformation()", "Failed to transform document, thus returning XML document.");
                 text = dataToTransform;
             }
+
             return text;
         }
 
@@ -309,6 +322,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return;
             }
+
             foreach (XmlNode item in xmlNodeList)
             {
                 item.InnerText = CheckControlMessage.TitlePlaceholderRegex.Replace(item.InnerText, string.Empty).Trim();
@@ -332,6 +346,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             Log.Error("Document.AddLinksToXmlDocument()", "Missing attribute LINKID in elemnent {0} with value {1} (Document ID {2}, Title {3}).", localName, item.Value, infoObj.Id, infoObj.XepInfoObject.Title_enus);
                             continue;
                         }
+
                         string linkId = xAttribute.Value;
                         if (!dictionary.ContainsKey(linkId))
                         {
@@ -341,6 +356,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                                 dictionary.Add(linkId, new DocumentLink(linkId, SetHrefAttribute(infoObj.XepInfoObject.IsNews, enumerable)));
                                 continue;
                             }
+
                             Log.Error("Document.AddLinksToXmlDocument()", "Missing link of element {4} to {0} with ID {1} (Document ID {2}, Title {3}).", item.Value, linkId, infoObj.Id, infoObj.XepInfoObject.Title_enus, localName);
                         }
                     }
@@ -350,17 +366,20 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         {
                             continue;
                         }
+
                         XAttribute xAttribute2 = item.Attribute("LINKID");
                         if (xAttribute2 == null || string.IsNullOrWhiteSpace(xAttribute2.Value))
                         {
                             Log.Error("Document.AddLinksToXmlDocument()", "Missing attribute LINKID in element {0} with value {1} (Document ID {2}, Title {3}).", localName, item.Value, infoObj.Id, infoObj.XepInfoObject.Title_enus);
                             continue;
                         }
+
                         string linkId2 = xAttribute2.Value;
                         if (dictionary.ContainsKey(linkId2))
                         {
                             continue;
                         }
+
                         GraphicsType graphicsType = infoObj.Content.ListGraphics.FirstOrDefault((GraphicsType item) => item.LinkId.Equals(linkId2, StringComparison.OrdinalIgnoreCase));
                         if (graphicsType == null)
                         {
@@ -369,36 +388,40 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             Log.Error("Document.AddLinksToXmlDocument()", "Missing link of element {4} to {0} with ID {1} (Document ID {2}, Title {3}).", text, linkId2, infoObj.Id, infoObj.XepInfoObject.Title_enus, localName);
                             continue;
                         }
+
                         switch (GraphicsType.GetSuffixByFormat(graphicsType.Type))
                         {
                             case "svg":
-                                {
-                                    byte[] byteArray = TransformSvgToUseJsOnLinkClick(graphicsType);
-                                    string graphicsPath3 = InfoObjectUtils.GetGraphicsPath(infoObj.Id, graphicsType.LinkId, graphicsType.Type);
-                                    dictionary.Add(linkId2, new DocumentLink(linkId2, graphicsPath3));
-                                    StreamToFile(graphicsPath3, byteArray);
-                                    break;
-                                }
+                            {
+                                byte[] byteArray = TransformSvgToUseJsOnLinkClick(graphicsType);
+                                string graphicsPath3 = InfoObjectUtils.GetGraphicsPath(infoObj.Id, graphicsType.LinkId, graphicsType.Type);
+                                dictionary.Add(linkId2, new DocumentLink(linkId2, graphicsPath3));
+                                StreamToFile(graphicsPath3, byteArray);
+                                break;
+                            }
+
                             case "wmv":
                             case "mp4":
                             case "mp3":
-                                {
-                                    string graphicsPath2 = InfoObjectUtils.GetGraphicsPath(infoObj.Id, graphicsType.LinkId, graphicsType.Type);
-                                    dictionary.Add(linkId2, new DocumentLink(linkId2, graphicsPath2));
-                                    StreamToFile(graphicsPath2, graphicsType.Graphic);
-                                    break;
-                                }
+                            {
+                                string graphicsPath2 = InfoObjectUtils.GetGraphicsPath(infoObj.Id, graphicsType.LinkId, graphicsType.Type);
+                                dictionary.Add(linkId2, new DocumentLink(linkId2, graphicsPath2));
+                                StreamToFile(graphicsPath2, graphicsType.Graphic);
+                                break;
+                            }
+
                             default:
-                                {
-                                    string graphicsPath = InfoObjectUtils.GetGraphicsPath(infoObj.Id, graphicsType.LinkId, graphicsType.Type);
-                                    string zoomUrl = ((!graphicsType.Name.StartsWith("GRA-SYM", StringComparison.OrdinalIgnoreCase) && !graphicsType.Name.StartsWith("GRC", StringComparison.OrdinalIgnoreCase)) ? $"javascript:rg_showPicture('{linkId2}');" : null);
-                                    dictionary.Add(linkId2, new DocumentLink(linkId2, graphicsPath, zoomUrl));
-                                    StreamToFile(graphicsPath, graphicsType.Graphic);
-                                    break;
-                                }
+                            {
+                                string graphicsPath = InfoObjectUtils.GetGraphicsPath(infoObj.Id, graphicsType.LinkId, graphicsType.Type);
+                                string zoomUrl = ((!graphicsType.Name.StartsWith("GRA-SYM", StringComparison.OrdinalIgnoreCase) && !graphicsType.Name.StartsWith("GRC", StringComparison.OrdinalIgnoreCase)) ? $"javascript:rg_showPicture('{linkId2}');" : null);
+                                dictionary.Add(linkId2, new DocumentLink(linkId2, graphicsPath, zoomUrl));
+                                StreamToFile(graphicsPath, graphicsType.Graphic);
+                                break;
+                            }
                         }
                     }
                 }
+
                 XElement xElement = new XElement("view");
                 XElement xElement2 = new XElement("slave");
                 xElement.Add(xElement2);
@@ -412,6 +435,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         xElement3.Add(value.ToXml());
                     }
                 }
+
                 XElement xElement4 = new XElement("script");
                 xElement4.Add(new XAttribute("content", "function rg_showLink(id, isNews) { window.chrome.webview.hostObjects.sync.external.RG_Show(id, isNews) };function rg_showPicture(id) { window.chrome.webview.hostObjects.sync.external.RG_ShowPicture(id) };"));
                 xElement2.Add(xElement4);
@@ -475,11 +499,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return;
                 }
+
                 EslDocumentIsta eslDocument = infoObject.EslDocument;
                 if (eslDocument != null && eslDocument.LinkedMedia?.Count == 0)
                 {
                     return;
                 }
+
                 foreach (LinkedMedia linkedMedium in infoObject.EslDocument.LinkedMedia)
                 {
                     if (linkedMedium.ContentInBytes != null && !string.IsNullOrEmpty(linkedMedium.Name) && !string.IsNullOrEmpty(linkedMedium.Type))
@@ -503,6 +529,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     infoObj.XepInfoObjectCasted.Title_engb = "Information";
                 }
+
                 string tempFolder = ConfigSettings.GetTempFolder();
                 string text = tempFolder + infoObj.XepInfoObject.ControlId + ".pdf";
                 string text2 = tempFolder + infoObj.XepInfoObject.ControlId + ".html";
@@ -511,6 +538,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     fileStream.Write(infoObj.Content.BinaryDocument, 0, infoObj.Content.BinaryDocument.Length);
                     fileStream.Close();
                 }
+
                 string s = string.Format("<!-- saved from url=(0016)http://localhost -->\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:svg=\"http://www.w3.org/2000/svg\"><body><embed src=\"file:///{0}#toolbar=0&navpanes=0&scrollbar=0\" width=\"100%\" height=\"100%\"/></body></html>", text.Replace("\\", "/"));
                 using (FileStream fileStream2 = new FileStream(text2, FileMode.Create))
                 {
@@ -518,6 +546,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     fileStream2.Write(bytes, 0, bytes.Length);
                     fileStream2.Close();
                 }
+
                 infoObj.Content.FilenameOfContent = text;
                 infoObj.Content.UriOfContent = string.Format("file:///{0}", text2.Replace("\\", "/"));
                 infoObj.Content.TransformedDocument = string.Format("<!-- saved from url=(0016)http://localhost -->\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:svg=\"http://www.w3.org/2000/svg\"><body><iframe src=\"file:///{0}\" frameborder=\"0\" width=\"100%\" height=\"100%\"/></body></html>", text2.Replace("\\", "/"));
@@ -554,6 +583,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     infoObj.XepInfoObjectCasted.Title_cscz = "Elektrické schéma";
                     infoObj.XepInfoObjectCasted.Title_plpl = "Schemat połączeń";
                 }
+
                 if (!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Document.showSVGNative", defaultValue: false))
                 {
                     string tempFolder = ConfigSettings.GetTempFolder();
@@ -566,6 +596,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     {
                         name = "SchematicNew";
                     }
+
                     using (XmlReader stylesheet = XmlReader.Create(new StringReader(Resources.ResourceManager.GetString(name))))
                     {
                         XslCompiledTransform xslCompiledTransform = new XslCompiledTransform(enableDebug: true);
@@ -575,6 +606,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             CreateLinkCollection(xmlTextWriter, infoObj.Content.Doc, infoObj.Content.ListSvgLinks);
                             xmlTextWriter.Close();
                         }
+
                         using (XmlReader input = new XmlTextReader(text))
                         {
                             using (XmlTextWriter xmlTextWriter2 = new XmlTextWriter(text2, null))
@@ -585,11 +617,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                             }
                         }
                     }
+
                     DeleteFileIfExists(text);
                     using (StreamReader streamReader = new StreamReader(text2))
                     {
                         infoObj.Content.TransformedDocument = streamReader.ReadToEnd();
                     }
+
                     infoObj.Content.FilenameOfContent = text2;
                     infoObj.Content.UriOfContent = string.Format("file:///{0}", text2.Replace("\\", "/"));
                 }
@@ -614,6 +648,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     infoObj.Content.TransformedDocument = infoObj.Content.Doc;
                     return;
                 }
+
                 infoObj.Content.IsDocumentTransformationValid = true;
                 string text = infoObj.Content.Doc;
                 TraceDocumentTransformation(infoObj.XepInfoObject.ControlId, "1_document-from-database.xml", text);
@@ -629,6 +664,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     text = DoXsltTransformation(infoObj, text);
                     TraceDocumentTransformation(infoObj.XepInfoObject.ControlId, "6_document-transformed.html", text);
                 }
+
                 infoObj.Content.TransformedDocument = text;
             }
             catch (Exception ex)
@@ -648,6 +684,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     fileStream.Write(infoObj.Content.BinaryDocument, 0, infoObj.Content.BinaryDocument.Length);
                     fileStream.Close();
                 }
+
                 infoObj.Content.FilenameOfContent = text;
                 infoObj.Content.UriOfContent = string.Format("{0}", text.Replace("\\", "/"));
                 infoObj.Content.TransformedDocument = infoObj.Content.UriOfContent;
@@ -667,6 +704,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 xsltArgumentList.AddParam(parameter: "|" + text + "|", name: "VALIDITYIDS", namespaceUri: string.Empty);
                 return xsltArgumentList;
             }
+
             if (infoObj != null && infoObj.IsESLError)
             {
                 XsltArgumentList xsltArgumentList2 = new XsltArgumentList();
@@ -677,6 +715,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 xsltArgumentList2.AddParam(parameter: ConfigSettings.GetTempFolder(), name: "ATT_FOLDER", namespaceUri: string.Empty);
                 return xsltArgumentList2;
             }
+
             return null;
         }
 

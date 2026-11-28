@@ -14,39 +14,26 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class InfoObject : ITherapyPlanAction, INotifyPropertyChanged, IServiceProgramProgramming
     {
         private readonly InfoObjectTransformationStrategie transformation = new DocumentHelper();
-
         private InfoObjectContentTransformed content;
-
         private XEP_WSCONFIGFILTERS infoTypeTitle;
-
         private IXepInfoObject xepInfoObject;
-
         private EslDocumentIsta eslDocument;
-
         private bool isMarkedForExport;
-
         private bool isLoadedAsHotspot;
-
         private byte[] documentUtf8;
-
         private decimal? implicitVersion;
-
         private bool isESLError;
-
         private uint historyIndexField;
-
         private typeDiagObjectState stateField;
-
         private decimal idField;
-
         private InfoObjectExecutionCout executionCoutField;
-
         public bool IsESLError
         {
             get
             {
                 return isESLError;
             }
+
             set
             {
                 isESLError = value;
@@ -62,6 +49,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return documentUtf8;
             }
+
             set
             {
                 documentUtf8 = value;
@@ -77,6 +65,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     content = new InfoObjectContentTransformed(this);
                 }
+
                 return content;
             }
         }
@@ -94,8 +83,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     xepInfoObject = new XepInfoObject();
                 }
+
                 return xepInfoObject;
             }
+
             set
             {
                 if (xepInfoObject != value)
@@ -113,6 +104,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return eslDocument;
             }
+
             set
             {
                 eslDocument = value;
@@ -129,8 +121,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                     //[-] InfoTypeTitle = DatabaseProviderFactory.Instance.GetInfoTypes(xepInfoObject?.InfoType);
                     return infoTypeTitle;
                 }
+
                 return infoTypeTitle;
             }
+
             set
             {
                 if (infoTypeTitle != value)
@@ -216,10 +210,12 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                         text = xepInfoObject.Hinweis_engb;
                         break;
                 }
+
                 if (string.IsNullOrEmpty(text))
                 {
                     return xepInfoObject.Hinweis_engb;
                 }
+
                 return text;
             }
         }
@@ -233,6 +229,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return xepInfoObject.Title;
                 }
+
                 return eslDocument.Title;
             }
         }
@@ -253,6 +250,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return isMarkedForExport;
             }
+
             set
             {
                 isMarkedForExport = value;
@@ -269,6 +267,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return XepInfoObject.InfoType;
                 }
+
                 return EslDocument.InfoType;
             }
         }
@@ -282,6 +281,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return XepInfoObject.DocumentType;
                 }
+
                 return "XML";
             }
         }
@@ -298,6 +298,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return XepInfoObject.Identifikator;
                 }
+
                 return EslDocument.Identifier;
             }
         }
@@ -324,6 +325,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return isLoadedAsHotspot;
             }
+
             set
             {
                 isLoadedAsHotspot = value;
@@ -337,6 +339,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return historyIndexField;
             }
+
             set
             {
                 _ = historyIndexField;
@@ -354,6 +357,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return stateField;
             }
+
             set
             {
                 if (!stateField.Equals(value))
@@ -370,6 +374,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return idField;
             }
+
             set
             {
                 _ = idField;
@@ -387,6 +392,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return executionCoutField;
             }
+
             set
             {
                 if (executionCoutField != null)
@@ -406,7 +412,6 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public InfoObject(IXepInfoObject xep)
         {
             historyIndexField = 0u;
@@ -432,8 +437,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             Priority = 1;
         }
 
-        public InfoObject(IXepInfoObject xep, decimal? priority)
-            : this(xep)
+        public InfoObject(IXepInfoObject xep, decimal? priority) : this(xep)
         {
             Priority = priority;
         }
@@ -445,6 +449,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return list;
             }
+
             list.AddRange(lang.Select((string x) => new LocalizedText(xepInfoObject.GetLocalizedInfoObjectTitle(x), x)));
             return list;
         }
@@ -473,11 +478,13 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 {
                     return false;
                 }
+
                 if (infoObject != null && XepInfoObject != null && GetHashCode() == infoObject.GetHashCode() && XepInfoObject.Equals(infoObject.XepInfoObject))
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -537,7 +544,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

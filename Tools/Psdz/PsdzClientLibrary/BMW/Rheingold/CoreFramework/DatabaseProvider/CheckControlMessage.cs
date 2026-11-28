@@ -9,15 +9,10 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
     public class CheckControlMessage : ILocalizedTitle, INotifyPropertyChanged
     {
         public static Regex TitlePlaceholderRegex = new Regex("{{[^}]*}}\\s?");
-
         private static int faultGroupNumber = 7;
-
         private static string faultGroupLabel = FormatedData.Localize($"#FaultGroup{faultGroupNumber}");
-
         private static string unknownTitle = FormatedData.Localize("#UnknownCCMOrWarningLight");
-
         private HashSet<decimal> sourceDtcIds;
-
         public XEP_CCMESSAGE XepCCM { get; set; }
 
         public HashSet<decimal> SourceDtcIds
@@ -26,6 +21,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return sourceDtcIds;
             }
+
             set
             {
                 if (sourceDtcIds != value)
@@ -37,37 +33,22 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
         }
 
         public long Id { get; set; }
-
         public long? DbId => XepCCM?.Id;
-
         public long Frequency { get; set; }
-
         public double Mileage { get; set; }
-
         public double Timestamp { get; set; }
-
         public string SGVariante { get; set; }
-
         public string Cause { get; set; }
-
         public string Longtext { get; set; }
-
         public int Timestamp_NS { get; set; }
-
         public int Occurence { get; set; }
-
         public int PWF_STATE { get; set; }
-
         public string Diag_Addr_Sender_Hex { get; set; }
-
         public int FaultGroupNumber => faultGroupNumber;
-
         public string FaultGroupLabel => faultGroupLabel;
-
         public string Title { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public CheckControlMessage()
         {
         }
@@ -104,6 +85,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
             {
                 return unknownTitle;
             }
+
             return XepCCM.GetLocalizedTitle(language);
         }
 
@@ -115,15 +97,15 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
                 DTC = new DTC
                 {
                     DTCContext = new ObservableCollection<typeDTCContext>
-                {
-                    new typeDTCContext
                     {
-                        F_UW_KM_SUPREME = Mileage,
-                        F_UW_KM = (long)Mileage,
-                        F_UW_ZEIT = (long)Timestamp,
-                        F_UW_ZEIT_SUPREME = Timestamp
-                    }
-                },
+                        new typeDTCContext
+                        {
+                            F_UW_KM_SUPREME = Mileage,
+                            F_UW_KM = (long)Mileage,
+                            F_UW_ZEIT = (long)Timestamp,
+                            F_UW_ZEIT_SUPREME = Timestamp
+                        }
+                    },
                     F_ORT = Id,
                     FaultGroup = faultGroupNumber,
                     F_HFK = Frequency
@@ -136,7 +118,7 @@ namespace BMW.Rheingold.CoreFramework.DatabaseProvider
 
         public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void SetTitle()
