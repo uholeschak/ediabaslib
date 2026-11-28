@@ -70,6 +70,9 @@
     <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Strings.de.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
