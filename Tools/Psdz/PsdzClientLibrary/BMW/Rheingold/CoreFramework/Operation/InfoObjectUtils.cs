@@ -5,16 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using PsdzClient;
 
 namespace BMW.Rheingold.CoreFramework.Operation
 {
     public static class InfoObjectUtils
     {
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static string GetInfoTypeDescription(InfoObject doc)
         {
             return GetInfoTypeDescription(doc.XepInfoObject);
         }
 
+        [PreserveSource(Hint = "No change", SignatureModified = true)]
         public static string GetInfoTypeDescription(IXepInfoObject xepInfoObject, bool isLoadedFromHotSpot = false)
         {
             string text = string.Empty;
@@ -22,6 +25,7 @@ namespace BMW.Rheingold.CoreFramework.Operation
             {
                 return text;
             }
+
             //[-] XEP_WSCONFIGFILTERS infoTypes = DatabaseProviderFactory.Instance.GetInfoTypes(xepInfoObject.InfoType);
             //[+] XEP_WSCONFIGFILTERS infoTypes = null;
             XEP_WSCONFIGFILTERS infoTypes = null;
@@ -29,6 +33,7 @@ namespace BMW.Rheingold.CoreFramework.Operation
             {
                 text = infoTypes.Title;
             }
+
             if (!string.IsNullOrEmpty(xepInfoObject.InfoType))
             {
                 switch (xepInfoObject.InfoType)
@@ -52,6 +57,7 @@ namespace BMW.Rheingold.CoreFramework.Operation
                                 text = new FormatedData("#FunctionalDescription", true).Localize();
                                 break;
                         }
+
                         break;
                     case "SPI":
                         text = new FormatedData("#SPI", true).Localize();
@@ -88,10 +94,12 @@ namespace BMW.Rheingold.CoreFramework.Operation
                         break;
                 }
             }
+
             if (!string.IsNullOrEmpty(text))
             {
                 return text;
             }
+
             return "Info";
         }
 
@@ -107,25 +115,28 @@ namespace BMW.Rheingold.CoreFramework.Operation
                 Log.Error("InfoObjectTitleConverter.FormatTitle()", "Failed to format info object null. Returning empty string instead.");
                 return string.Empty;
             }
-            decimal? nodeclass = xepInfoObj.Nodeclass;
-            decimal num = 41153666;
-            if ((nodeclass.GetValueOrDefault() == num) & nodeclass.HasValue)
+
+            if (xepInfoObj.Nodeclass == (decimal? )41153666)
             {
                 if (!string.Equals("std", xepInfoObj.Title, StringComparison.Ordinal))
                 {
                     return xepInfoObj.Title;
                 }
+
                 return FormatedData.Localize("#VehicleTest");
             }
+
             IList<string> list = new List<string>();
             if (!string.IsNullOrEmpty(xepInfoObj.Identifikator))
             {
                 list.Add(xepInfoObj.Identifikator);
             }
+
             if (!string.IsNullOrEmpty(xepInfoObj.Title))
             {
                 list.Add(xepInfoObj.Title);
             }
+
             if (implicitVersion.HasValue)
             {
                 list.Add(string.Format(CultureInfo.InvariantCulture, "V.{0}", implicitVersion));
@@ -134,6 +145,7 @@ namespace BMW.Rheingold.CoreFramework.Operation
             {
                 list.Add(string.Format(CultureInfo.InvariantCulture, "V.{0}", xepInfoObj.VersionNumber));
             }
+
             return string.Join(" - ", list);
         }
 
